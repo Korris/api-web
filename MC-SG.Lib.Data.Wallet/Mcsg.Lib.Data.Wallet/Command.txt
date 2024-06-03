@@ -1,0 +1,1 @@
+﻿dotnet ef migrations add UpdateTransaction -c WalletDbContext -- "Server=tcp:mcsgwalletdbserver-dev.database.windows.net,1433;Initial Catalog=mcsgwalletdb-dev;Persist Security Info=False;User ID=mcsgdbadmin;Password=MyPassword@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"

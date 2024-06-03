@@ -1,0 +1,65 @@
+﻿using Mcsg.Lib.Common.Constants;
+using Mcsg.Lib.Common.Exceptions;
+using Mcsg.Lib.Common.Web.Extensions;
+using Mcsg.Lib.Data.Domain.Entities;
+using Mcsg.Lib.Data.Repositories;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace Mcsg.Lib.Common.Web.Middlewares
+{
+    public class SessionAuthorizationMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private IRepository<Session> _sessionRepository;
+        public SessionAuthorizationMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+        public async Task InvokeAsync(HttpContext context, IRepository<Session> sessionRepository)
+        {
+            _sessionRepository = sessionRepository;
+
+            if (!(context.User?.Identity?.IsAuthenticated ?? false))
+            {
+                await _next(context);
+                return;
+            }
+
+            Guid sessionId = context.GetSessionId();
+            Session session = await _sessionRepository.GetByIdAsync(sessionId, newConection: true);
+            if (session == null || session.ExpiredDateUtc <= DateTime.UtcNow)
+                throw new AppUnauthorizedAccessException(ErrorCodes.InvalidSession);
+            context.Items[nameof(Session).ToLower()] = session;
+            await UpdateUserSessionAsync(session);
+            UpdateUserClaims(session, context);
+
+            await _next(context);
+        }
+
+        #region Private Methods
+        private async Task<bool> UpdateUserSessionAsync(Session session)
+        {
+            session.LastActionDateUtc = DateTime.UtcNow;
+            return await _sessionRepository.UpdateAsync(session, newConection: true);
+        }
+        private void UpdateUserClaims(Session session, HttpContext context)
+        {
+            var claims = new List<Claim>();
+            claims.AddRange(session.Roles.Split(",").Select(role => new Claim(ClaimTypes.Role, role)));
+            claims.Add(new Claim(SecurityClaimTypes.UserNameClaimName, session.UserName ?? ""));
+            claims.Add(new Claim(SecurityClaimTypes.ProfileNameClaimName, session.ProfileName ?? ""));
+            claims.Add(new Claim(SecurityClaimTypes.UserIdClaimName, session.UserId.ToString()));
+            claims.Add(new Claim(SecurityClaimTypes.SessionIdClaimName, session.Id.ToString()));
+            claims.Add(new Claim(SecurityClaimTypes.UserAvatarClaimName, session.UserAvatar ?? ""));
+
+            context.User.AddIdentity(new ClaimsIdentity(claims));
+        }
+        #endregion
+    }
+}

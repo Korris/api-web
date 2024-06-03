@@ -1,0 +1,9 @@
+﻿namespace Mcsg.Admin.Api.DTOs.Settings
+{
+    public class GlobalSettingRespone : BaseSystemSetting
+    {
+        public string Favicon { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
+}

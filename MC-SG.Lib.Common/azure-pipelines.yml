@@ -1,0 +1,56 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  major: '1'
+  minor: '0'
+  revision: $[counter(variables['minor'], 1)]
+  nugetVersion: '$(major).$(minor).$(revision)'
+  nugetProjectName: 'Mcsg.Lib.Common'
+  feedId: '8ae86b2f-d2e8-494b-8af7-4a4d8aa061fd'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: "Install nuget tool"
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore' 
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
+    vstsFeed: '$(feedId)'
+
+- task: VSBuild@1
+  displayName: 'Build solution'
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Create package'
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/$(nugetProjectName).csproj'
+    versioningScheme: byEnvVar
+    versionEnvVar: 'nugetVersion'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Push package to feed'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '$(feedId)'

@@ -1,0 +1,82 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- dev
+- release
+
+stages:
+  - stage: 'Build'
+    variables:
+      - ${{ if contains(variables['build.SourceBranchName'], 'release') }}:
+        - group: Prod-Lib.Data.Analytic
+      - ${{ elseif contains(variables['build.SourceBranchName'], 'main') }}:
+        - group: Dev-Lib.Data.Analytic
+      - ${{ elseif contains(variables['build.SourceBranchName'], 'uat') }}:
+        - group: Uat-Lib.Data.Analytic
+      - ${{ else }}:
+        - group: Dev-Lib.Data.Analytic
+    jobs:
+      - job: 
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - task: NuGetToolInstaller@1
+            displayName: "Install nuget tool"
+          - task: NuGetCommand@2
+            displayName: 'Restore nuget packages'
+            inputs:
+              command: 'restore'
+              restoreSolution: '$(solution)'
+              feedsToUse: 'select'
+              vstsFeed: '8ae86b2f-d2e8-494b-8af7-4a4d8aa061fd'
+          - task: VSBuild@1
+            displayName: 'Build solution'
+            inputs:
+              solution: '$(solution)'
+              msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+              platform: '$(buildPlatform)'
+              configuration: '$(buildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Instal EF cli'
+            inputs:
+              command: custom
+              custom: tool
+              arguments: install dotnet-ef --global --version 7.0.13
+          - task: DotNetCoreCLI@2
+            displayName: 'Run migration for DbContext'
+            inputs:
+              command: custom
+              custom: ef
+              arguments: database update -c AnalyticDbContext -- "$(DbConnectionString)"
+              workingDirectory: '$(System.DefaultWorkingDirectory)/Mcsg.Lib.Data.Analytic'
+  - stage: 'Create_And_Push_Pakage'
+    variables:
+      major: '1'
+      minor: '0'
+      revision: $[counter(variables['minor'], 1)]
+      nugetVersion: '$(major).$(minor).$(revision)'
+      nugetProjectName: 'Mcsg.Lib.Data.Analytic'
+      feedId: '8ae86b2f-d2e8-494b-8af7-4a4d8aa061fd'
+    dependsOn: 'Build'
+    condition: succeeded()
+    jobs:
+      - job: 
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: 'Create package'
+            inputs:
+              command: 'pack'
+              packagesToPack: '**/$(nugetProjectName).csproj'
+              versioningScheme: byEnvVar
+              versionEnvVar: 'nugetVersion'
+          - task: NuGetCommand@2
+            displayName: 'Push package to feed'
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+              nuGetFeedType: 'internal'
+              publishVstsFeed: '$(feedId)'
+              allowPackageConflicts: true

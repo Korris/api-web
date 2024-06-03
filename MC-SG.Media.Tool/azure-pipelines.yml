@@ -1,0 +1,68 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+- dev-1.0.0
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  feedId: '8ae86b2f-d2e8-494b-8af7-4a4d8aa061fd'
+
+stages:
+
+- stage: BuildPublishArtifact
+  displayName: Build - Publish Artifact
+  jobs:
+  - job: Build
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetRestore@2
+      inputs:
+        solution: '**/*.sln'
+        selectOrConfig: 'select'
+        feed: '$(feedId)'
+
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        msbuildArgs: '/target:publish'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\Mcsg.Media.Tool\bin\$(BuildConfiguration)\net7.0\publish\'
+        Contents: '**\**'
+        targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishBuildArtifacts@1    
+      displayName: 'Publish Artifact: MediaTool'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
+- stage: Deploy
+  displayName: Deploy to VM and run app
+  jobs:
+  - deployment: Deployment
+    environment: 
+      name: dev-mc-sg-media-tool
+      resourceType: VirtualMachine
+      tags: DEV
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(Pipeline.Workspace)\drop\'
+              Contents: '**'
+              TargetFolder: 'C:\Users\mcsgadmin\Desktop\MediaToolDeploy\'
+              OverWrite: true
