@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Realtime.Api", "Mcsg.Realtime.Api\Mcsg.Realtime.Api.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Api", "Mcsg.Social.Api\Mcsg.Social.Api.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{0594ABDF-D8D6-42FC-8A91-39A5A8017741}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "Lib\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Analytic", "Lib\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj", "{CC154E7D-C99B-47E1-8DBB-108D849BFAE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC154E7D-C99B-47E1-8DBB-108D849BFAE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC154E7D-C99B-47E1-8DBB-108D849BFAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC154E7D-C99B-47E1-8DBB-108D849BFAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC154E7D-C99B-47E1-8DBB-108D849BFAE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

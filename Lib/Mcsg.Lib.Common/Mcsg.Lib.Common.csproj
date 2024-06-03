@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>False</GenerateDocumentationFile>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AngleSharp" Version="1.0.7" />
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.12" />
+        <PackageReference Include="Hangfire.Core" Version="1.8.12" />
+        <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
+        <PackageReference Include="Hangfire.MaximumConcurrentExecutions" Version="1.1.0" />
+        <PackageReference Include="Hangfire.PostgreSql" Version="1.20.8" />
+        <PackageReference Include="Hangfire.SqlServer" Version="1.8.12" />
+        <PackageReference Include="HD.ZaloPay" Version="1.0.0" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.11" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+        <PackageReference Include="PuppeteerSharp" Version="13.0.2" />
+        <PackageReference Include="SendGrid" Version="9.28.1" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+        <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+        <PackageReference Include="Twilio" Version="6.15.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj" />
+        <ProjectReference Include="..\..\Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj" />
+    </ItemGroup>
+
+</Project>

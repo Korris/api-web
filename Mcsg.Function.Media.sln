@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Media", "MC-SG.Function.Media\Mcsg.Function.Media\Mcsg.Function.Media.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Media", "Mcsg.Function.Media\Mcsg.Function.Media.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "MC-SG.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{0594ABDF-D8D6-42FC-8A91-39A5A8017741}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{0594ABDF-D8D6-42FC-8A91-39A5A8017741}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "MC-SG.Lib.Common\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{8E5F8620-27CF-46BF-A3AA-3E7864723146}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{8E5F8620-27CF-46BF-A3AA-3E7864723146}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "MC-SG.Lib.Data\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "MC-SG.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "MC-SG.Lib.Model\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "Lib\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

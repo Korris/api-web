@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj" />
+        <ProjectReference Include="..\Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.xml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="ffmpeg.exe">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+</Project>

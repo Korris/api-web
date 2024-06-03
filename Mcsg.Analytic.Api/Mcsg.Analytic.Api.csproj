@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>False</GenerateDocumentationFile>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
+        <ProjectReference Include="..\Lib\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj" />
+    </ItemGroup>
+
+</Project>

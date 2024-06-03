@@ -3,43 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Admin.Api", "MC-SG.Admin.Api\Mcsg.Admin.Api\Mcsg.Admin.Api.csproj", "{D2D99E1E-912F-4E0C-A191-796A921EF706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Admin.Api", "Mcsg.Admin.Api\Mcsg.Admin.Api.csproj", "{D2D99E1E-912F-4E0C-A191-796A921EF706}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{A1152CA1-B444-4676-B59D-06093C823044}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "MC-SG.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{2A5DE71E-36DC-4943-97BB-C8AA1FB007F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{2A5DE71E-36DC-4943-97BB-C8AA1FB007F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "MC-SG.Lib.Common\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{63A43195-F5B8-48B1-8073-6A7D77FFB884}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{63A43195-F5B8-48B1-8073-6A7D77FFB884}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Web", "MC-SG.Lib.Common.Web\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj", "{8D319E3A-0BA5-4115-A81D-8675CBDAD5DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Web", "Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj", "{8D319E3A-0BA5-4115-A81D-8675CBDAD5DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "MC-SG.Lib.Data\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{354BBCC4-6583-4444-A136-E4D5430024C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{354BBCC4-6583-4444-A136-E4D5430024C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Analytic", "MC-SG.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj", "{54C9182A-D4D8-4499-9495-FD9547B8E7DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Analytic", "Lib\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj", "{54C9182A-D4D8-4499-9495-FD9547B8E7DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "MC-SG.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{4CD39EC9-A8E7-44D8-80C2-B4EA46F412BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{4CD39EC9-A8E7-44D8-80C2-B4EA46F412BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "MC-SG.Lib.Model\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{4E5BD5AA-B8EA-495B-A413-DA526ED1F09E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "Lib\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{4E5BD5AA-B8EA-495B-A413-DA526ED1F09E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Analytic.Api", "MC-SG.Analytic.Api\Mcsg.Analytic.Api\Mcsg.Analytic.Api.csproj", "{A514B65F-33A1-468B-B026-54A916E92ED4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Analytic.Api", "Mcsg.Analytic.Api\Mcsg.Analytic.Api.csproj", "{A514B65F-33A1-468B-B026-54A916E92ED4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Api", "MC-SG.Api\Mcsg.Api\Mcsg.Api.csproj", "{EEC2B46C-4B06-4F90-852A-AECECB5DA293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Social.Api", "Mcsg.Social.Api\Mcsg.Social.Api.csproj", "{EEC2B46C-4B06-4F90-852A-AECECB5DA293}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Job", "MC-SG.Function.Job\Mcsg.Function.Job\Mcsg.Function.Job.csproj", "{19732DD6-A7BD-4BF2-8D4E-6E2D1DB92F9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Job", "Mcsg.Function.Job\Mcsg.Function.Job.csproj", "{19732DD6-A7BD-4BF2-8D4E-6E2D1DB92F9B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Media", "MC-SG.Function.Media\Mcsg.Function.Media\Mcsg.Function.Media.csproj", "{BCF08E59-93BE-497F-98FD-3E7B974654C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Media", "Mcsg.Function.Media\Mcsg.Function.Media.csproj", "{BCF08E59-93BE-497F-98FD-3E7B974654C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Identity.Api", "MC-SG.Identity.Api\Mcsg.Identity.Api\Mcsg.Identity.Api.csproj", "{9F2DCF1D-99DC-4399-B321-31684EA8C706}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Identity.Api", "Mcsg.Identity.Api\Mcsg.Identity.Api.csproj", "{9F2DCF1D-99DC-4399-B321-31684EA8C706}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Media.Tool", "MC-SG.Media.Tool\Mcsg.Media.Tool\Mcsg.Media.Tool.csproj", "{61580022-0621-49F9-AC09-A671840A4A8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Media.Tool", "Mcsg.Media.Tool\Mcsg.Media.Tool.csproj", "{61580022-0621-49F9-AC09-A671840A4A8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Realtime.Api", "MC-SG.Realtime.Api\Mcsg.Realtime.Api\Mcsg.Realtime.Api.csproj", "{101440DB-92B2-469E-A7AE-113132AD0EA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Realtime.Api", "Mcsg.Realtime.Api\Mcsg.Realtime.Api.csproj", "{101440DB-92B2-469E-A7AE-113132AD0EA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Api", "MC-SG.Wallet.Api\Mcsg.Wallet.Api\Mcsg.Wallet.Api.csproj", "{79A698A8-4B3D-4C08-853C-0B84CC5FA734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Api", "Mcsg.Wallet.Api\Mcsg.Wallet.Api.csproj", "{79A698A8-4B3D-4C08-853C-0B84CC5FA734}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CAF3B9DA-3506-4360-9784-B3CB4461EAEC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Test", "MC-SG.Lib.Common\Mcsg.Lib.Common.Test\Mcsg.Lib.Common.Test.csproj", "{095A4B73-D34E-4B25-A0EA-D948180FEBA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Test", "Lib\Mcsg.Lib.Common.Test\Mcsg.Lib.Common.Test.csproj", "{095A4B73-D34E-4B25-A0EA-D948180FEBA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
