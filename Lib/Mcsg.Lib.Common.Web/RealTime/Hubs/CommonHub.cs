@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
-namespace MC_SG.Lib.Common.Web.RealTime.Hubs
+namespace Mcsg.Lib.Common.Web.RealTime.Hubs
 {
     public class CommonHub : Hub
     {

@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using MC_SG.Lib.Common.Web.Security;
+using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Identity.Api.DTOs.Response.SSO;
 using Mcsg.Identity.Api.Services.Interfaces;
 using Mcsg.Lib.Data.Domain.Entities;

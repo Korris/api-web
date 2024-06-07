@@ -1,4 +1,4 @@
-﻿using MC_SG.Lib.Common.Web.Security;
+﻿using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Identity.Api.DTOs.Response.SSO;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Exceptions;

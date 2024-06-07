@@ -1,8 +1,8 @@
-﻿using MC_SG.Lib.Common.Web.RealTime.Hubs;
+﻿using Mcsg.Lib.Common.Web.RealTime.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 
-namespace MC_SG.Lib.Common.Web.RealTime.Services
+namespace Mcsg.Lib.Common.Web.RealTime.Services
 {
     public interface ISignalRService
     {

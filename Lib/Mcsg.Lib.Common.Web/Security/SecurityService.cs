@@ -1,7 +1,7 @@
 ﻿using NETCore.Encrypt;
 using Newtonsoft.Json;
 
-namespace MC_SG.Lib.Common.Web.Security
+namespace Mcsg.Lib.Common.Web.Security
 {
     public class SecurityService : ISecurityService
     {

@@ -1,4 +1,4 @@
-﻿namespace MC_SG.Lib.Common.Web.Security
+﻿namespace Mcsg.Lib.Common.Web.Security
 {
     public interface ISecurityService
     {

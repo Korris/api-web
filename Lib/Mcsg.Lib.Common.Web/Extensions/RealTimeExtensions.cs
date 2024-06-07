@@ -1,10 +1,10 @@
-﻿using MC_SG.Lib.Common.Web.RealTime.Hubs;
-using MC_SG.Lib.Common.Web.RealTime.Services;
+﻿using Mcsg.Lib.Common.Web.RealTime.Hubs;
+using Mcsg.Lib.Common.Web.RealTime.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MC_SG.Lib.Common.Web.Extensions
+namespace Mcsg.Lib.Common.Web.Extensions
 {
     public static class RealTimeExtensions
     {

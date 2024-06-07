@@ -1,9 +1,9 @@
-﻿using MC_SG.Lib.Common.Web.Security;
+﻿using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Lib.Common.Web.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MC_SG.Lib.Common.Web
+namespace Mcsg.Lib.Common.Web
 {
     public static class DependencyInjection
     {
