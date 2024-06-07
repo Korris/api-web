@@ -29,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Common\Mcsg.Common.Core\Mcsg.Common.Core.csproj" />
         <ProjectReference Include="..\..\Lib\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj" />
     </ItemGroup>
 
