@@ -9,7 +9,7 @@ namespace Mcsg.Lib.Data.Domain.Entities
     {
         public EntityType EntityType { get; set; }
         public EntitySubType? SubType { get; set; }
-        public string IpAddress { get; set; }
+        public string? IpAddress { get; set; }
         public Guid EntityId { get; set; }
         public Guid UsedId { get; set; }
         public DateTime? CreatedDate { get; set; }

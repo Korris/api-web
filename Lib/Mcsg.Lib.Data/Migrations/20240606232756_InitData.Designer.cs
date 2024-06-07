@@ -9,18 +9,18 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Mcsg.Lib.Data.Migrations._202311
+namespace Mcsg.Lib.Data.Migrations
 {
     [DbContext(typeof(McsgDbContext))]
-    [Migration("20231129171046_AddMention")]
-    partial class AddMention
+    [Migration("20240607004219_InitData")]
+    partial class InitData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -68,203 +68,6 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasKey("Id");
 
                     b.ToTable("BackgroundMedias", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("93668a57-4ed0-4043-a9cc-02039571a8da"),
-                            ArtistName = "Luna",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5371),
-                            DurationSeconds = 62,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5371),
-                            Order = 0,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Tibet Zen Bell",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBe5WCn1AgyZ%2bDLXFiFkoAoVqDEXT6%2fBEepM0SvviUMhGevCG5haur%2b6%2bMf6Sv5s8ww%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("5f95ffe7-71e4-4c89-9c5a-25fcdb555c0c"),
-                            ArtistName = "Twinkle",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5377),
-                            DurationSeconds = 171,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5377),
-                            Order = 1,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Relaxing Music",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBf4rRaxJPHn79%2beriEk3iHplANMkwzmK%2bmzCukOvj5YPt%2f3g7Kxdf7zCIRlw1ggAaQ%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("026a0080-4de8-40d2-93f1-873a1912e6ee"),
-                            ArtistName = "Audio Chameleon",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5386),
-                            DurationSeconds = 175,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5386),
-                            Order = 3,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Emotional Inspiring Hopeful Piano",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBSZ4HmEt3fmIy%2f9dO4g7zm8LjJEYxuldCcOgtnRQPWhxxPbRDJ9FfEUqaJB87omgAw%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("7f32a80e-e473-4446-a928-d8a13fdc6bb4"),
-                            ArtistName = "Fx",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5389),
-                            DurationSeconds = 25,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5389),
-                            Order = 4,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Zen Transition",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBTgrO9tGOX67wchuT4rghZrlGVHXqs6x%2bod1Y18Hie2BQHSXUYY%2f8banbA3TSv2xFA%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("230e6b9d-765d-4eea-a331-3f7e2edb3927"),
-                            ArtistName = "Isakukageyama",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5391),
-                            DurationSeconds = 30,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5391),
-                            Order = 5,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Zen Japanese Chillout",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBYn8pgA%2fXOWV0UX8B%2bX%2f1fFGxZvZ6XninqIg%2bUVnuUQ3mflbub%2bx7pitHJBozZl9xw%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("d9740c4f-3c28-42a8-9d12-913a05cf66e7"),
-                            ArtistName = "Topflow",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5395),
-                            DurationSeconds = 120,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5395),
-                            Order = 6,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Emotional Inspiring Wedding Piano",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBT9GsBFxX2O7xsAKolnwlp2zohaeCE%2bRPRhYIvu7CGLvG0uaBVqYTD8p0hUhBl1t4Q%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("560ab2b4-5f68-4c9a-9d8b-bdc2469e1829"),
-                            ArtistName = "Game studio",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5400),
-                            DurationSeconds = 7,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5400),
-                            Order = 7,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Zen Ident",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBSkAHHW1nUzEdVvszykm9PYfOJ8daeY%2fHvicD%2bBbEPbS%2f5gcetEDGlVSGXZMobbnZQ%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("dce625bf-a7e1-4630-ac32-07bb877cdda5"),
-                            ArtistName = "Live Art",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5403),
-                            DurationSeconds = 242,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5403),
-                            Order = 8,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Motivational corporate",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBergzRanh%2fVjrAgrDUq%2fG20PfNaBQ3HWJhLsUJF5ibvCLh0dz6SoGKAJTEbqxzKvTQ%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("b562f597-32bf-46e2-8193-84f56480cb6c"),
-                            ArtistName = "Silverhoof",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5406),
-                            DurationSeconds = 470,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5406),
-                            Order = 9,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Zen",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBVABxTY%2bZOF3cgeCR1Dmq3AQTIYCDJr0Kq88Ehk%2bCgr4sbdqF1oiJ96J52IA8C7qeQ%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("49970cbe-5644-4a15-b57a-5f65da2e4f64"),
-                            ArtistName = "Audio Philetrax",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5408),
-                            DurationSeconds = 172,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5408),
-                            Order = 10,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Dramatic Uplifting Cinematic Piano Trailer",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBXr4gGR3SKn%2fxMcnqOa4GEsiLwogqleCgjn41%2bqlxix%2fLP0nf38wcrAimWXOJ8DVPA%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("641744f9-ef8d-4f24-8072-7fcbcd22d594"),
-                            ArtistName = "Upthemusic",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5413),
-                            DurationSeconds = 142,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5413),
-                            Order = 11,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Motivation Uplifting",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBVLAI9PsjS2OtnyqQHYNwlOeUqyLDXiMnqcK2pXh6xBh9Vs1feAl0yp9hx0FEm2SSg%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("9eca3180-bea8-4fd6-bcef-6f1383b5d15a"),
-                            ArtistName = "Music hunter",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5416),
-                            DurationSeconds = 924,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5416),
-                            Order = 12,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Zen",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBeLMpHV9AStRtNRLC1h6tf9J6QHdKXgWs4gfDXfoHcHcTnnZBIPf%2ftW74Eb48gAPLA%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("8a2f4457-31a8-4bd1-b089-6424916ecfdc"),
-                            ArtistName = "Yetiproduction",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5419),
-                            DurationSeconds = 119,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5419),
-                            Order = 13,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Inspiring Piano Motivation Cinematic Trailer",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBVLbsvkoYkePEeIbQni0GWm1Tss%2f0mDtIr%2bDj6P%2b0zgt51hRBOQeihzibJOyewO42A%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("34662348-cf76-4b7c-9ea6-747fc55f07f6"),
-                            ArtistName = "Lexpremium",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5422),
-                            DurationSeconds = 144,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5422),
-                            Order = 14,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Ambient Atmospheric Electronica",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBfNaG3vMj6TCthetecN24LkoHp4UibNof5rclnB7%2bF2O5VZDP2rfWMXhIzd8sS6OuA%3d%3d"
-                        },
-                        new
-                        {
-                            Id = new Guid("ddf6e105-d468-4c5c-bd52-4602cd98d000"),
-                            ArtistName = "Bestandbless",
-                            CreatedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5427),
-                            DurationSeconds = 149,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 11, 29, 17, 10, 46, 292, DateTimeKind.Utc).AddTicks(5427),
-                            Order = 15,
-                            Thumbnail = "fhRhp4yR4esQ24%2bXiThmBYQ6qfOOxWiqnGI7zQH29kO7yLbt1HzPsnLuWIasdLfBd5LMxgo4dSjFhCavUOSXnA%3d%3d",
-                            Title = "Coporate Motivation",
-                            Url = "fhRhp4yR4esQ24%2bXiThmBY2SyUf0iMGN6P6juT0JJtYN7PfQC3WlABHpJfEszJigWiIqWyMxVomJje3l%2bZj05Q%3d%3d"
-                        });
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.BackgroundMediaPost", b =>
@@ -305,6 +108,138 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasIndex("PostId");
 
                     b.ToTable("BackgroundMediaPosts", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.CrawComic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Author")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CrawStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalLastedUpdate")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Follow")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Rating")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalChapter")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.Property<string>("View")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CrawComics", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.CrawComicChapter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ExternalCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalLastedUpdate")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExternalLastedUpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SourceComic")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.Property<string>("View")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ViewNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CrawComicChapters", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Job", b =>
@@ -362,6 +297,12 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
@@ -371,18 +312,22 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Length")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("LocationType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UserMentionedId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Offset")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserMentionedId");
 
                     b.ToTable("Mentions", (string)null);
                 });
@@ -536,6 +481,15 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
                     b.Property<string>("HashId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -561,6 +515,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StatusReason")
+                        .HasColumnType("text");
+
                     b.Property<string>("ThumbnailUrl")
                         .HasColumnType("text");
 
@@ -578,10 +535,10 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HashId")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("HashId", "UserId", "Type", "Id")
+                        .IsUnique();
 
                     b.ToTable("Posts", (string)null);
                 });
@@ -626,6 +583,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("QuoteId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("ResourceId")
                         .HasColumnType("uuid");
 
@@ -636,9 +596,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("PostId");
-
                     b.HasIndex("ResourceId");
+
+                    b.HasIndex("PostId", "ParentId", "AuthorId");
 
                     b.ToTable("PostComments", (string)null);
                 });
@@ -681,7 +641,7 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("TargetId");
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("PostCommentReactions", (string)null);
                 });
@@ -692,6 +652,21 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -706,6 +681,50 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasIndex("UserId");
 
                     b.ToTable("PostFavorites", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HashId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostLinks", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostReaction", b =>
@@ -746,9 +765,52 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("TargetId");
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("PostReactions", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReasonType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostReports", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Resource", b =>
@@ -792,6 +854,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ShareUrl")
+                        .HasColumnType("text");
 
                     b.Property<double>("Size")
                         .HasColumnType("double precision");
@@ -858,29 +923,6 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4"),
-                            DisplayName = "Admin",
-                            Name = "Mcsg.Admin",
-                            NormalizedName = "MCSG.ADMIN"
-                        },
-                        new
-                        {
-                            Id = new Guid("53a787ef-f614-4425-95ed-c1905a917b85"),
-                            DisplayName = "User",
-                            Name = "Mcsg.User",
-                            NormalizedName = "MCSG.USER"
-                        },
-                        new
-                        {
-                            Id = new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5"),
-                            DisplayName = "System Admin",
-                            Name = "Mcsg.SysAdmin",
-                            NormalizedName = "MCSG.SYSADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Session", b =>
@@ -931,6 +973,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateOnly?>("PremiumDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("ProfileId")
                         .HasColumnType("text");
 
@@ -938,6 +983,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .HasColumnType("text");
 
                     b.Property<string>("Roles")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserAvatar")
                         .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
@@ -950,6 +998,42 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasKey("Id");
 
                     b.ToTable("Sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.SmartCountAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("SubType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId", "ActionType", "Date")
+                        .IsUnique();
+
+                    b.ToTable("SmartCountActions", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.SmartLookup", b =>
@@ -1019,7 +1103,25 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CreatorNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HashId")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnableComment")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsExclusive")
                         .HasColumnType("boolean");
 
                     b.Property<Guid?>("LastModifiedBy")
@@ -1027,6 +1129,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -1054,9 +1159,10 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("PostId", "HashId", "AuthorId")
+                        .IsUnique();
 
                     b.ToTable("SubPosts", (string)null);
                 });
@@ -1111,9 +1217,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("PostId");
-
                     b.HasIndex("ResourceId");
+
+                    b.HasIndex("PostId", "ParentId", "AuthorId");
 
                     b.ToTable("SubPostComments", (string)null);
                 });
@@ -1156,7 +1262,7 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("TargetId");
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("SubPostCommentReactions", (string)null);
                 });
@@ -1199,7 +1305,7 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("TargetId");
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("SubPostReactions", (string)null);
                 });
@@ -1242,28 +1348,6 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .IsUnique();
 
                     b.ToTable("SystemSettings", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("71fb8254-756b-4121-ac2f-01e87b25a673"),
-                            CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            IsActive = true,
-                            IsDelete = false,
-                            Key = "Global_Setting",
-                            LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            Value = "{\"Favicon\":\"\",\"Title\":\"\",\"Description\":\"\"}"
-                        },
-                        new
-                        {
-                            Id = new Guid("058ac52f-30ff-4708-a698-e10f612803da"),
-                            CreatedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            IsActive = true,
-                            IsDelete = false,
-                            Key = "Email_Setting",
-                            LastModifiedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            Value = "{\"Host\":\"\",\"Port\":0,\"Email\":\"\",\"Password\":\"IBZfY0Bry0MIPxfL1\\u002Biolw==\",\"DisplayName\":\"\"}"
-                        });
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.SystemSettingHistory", b =>
@@ -1358,6 +1442,21 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
 
@@ -1405,7 +1504,7 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("TagId");
+                    b.HasIndex("TagId", "PostId");
 
                     b.ToTable("TagPosts", (string)null);
                 });
@@ -1457,6 +1556,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.Property<int?>("Gender")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsActiveEarning")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
@@ -1498,6 +1600,9 @@ namespace Mcsg.Lib.Data.Migrations._202311
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<DateOnly?>("PremiumDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ProfileId")
                         .HasColumnType("text");
@@ -1543,48 +1648,43 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasIndex("ReferralCode");
 
                     b.ToTable("Users", (string)null);
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
-                            CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            Email = "admin@angelpj.com",
-                            EmailConfirmed = false,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@ANGELPJ.COM",
-                            NormalizedUserName = "ADMIN@ANGELPJ.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
-                            Status = 1,
-                            TwoFactorEnabled = false,
-                            UserName = "admin@angelpj.com"
-                        },
-                        new
-                        {
-                            Id = new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
-                            CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            Email = "sysadmin@angelpj.com",
-                            EmailConfirmed = false,
-                            IsDelete = false,
-                            LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SYSADMIN@ANGELPJ.COM",
-                            NormalizedUserName = "SYSADMIN@ANGELPJ.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKr7Nj0sDqfYailaVLg2J+hlUf2FE+Y87N4gqQEuVuoXgW2t8Xf+FErCIkoVEKszQg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "2c3a9e40-a16f-4b86-9e26-67a00fc939db",
-                            Status = 1,
-                            TwoFactorEnabled = false,
-                            UserName = "sysadmin@angelpj.com"
-                        });
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserExclusiveSubPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SubPostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubPostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserExclusiveSubPosts", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserFollow", b =>
@@ -1760,93 +1860,42 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.ToTable("UserSocials", (string)null);
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Wallet", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ViewHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IpAddress")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("CreatedBy")
+                    b.Property<int?>("SubType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UsedId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Credit")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wallets", (string)null);
-                });
+                    b.HasIndex("EntityId", "UsedId", "EntityType", "CreatedDate")
+                        .IsUnique();
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.WalletTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("DestinationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Detail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Hash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("SourceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("WalletId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DestinationId");
-
-                    b.HasIndex("SourceId");
-
-                    b.ToTable("WalletTransactions", (string)null);
+                    b.ToTable("ViewHistories", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1931,18 +1980,6 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"),
-                            RoleId = new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4")
-                        },
-                        new
-                        {
-                            UserId = new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"),
-                            RoleId = new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5")
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -1975,15 +2012,6 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.Post", null)
                         .WithMany()
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Mention", b =>
-                {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserMentionedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2059,6 +2087,15 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostLink", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
@@ -2070,6 +2107,21 @@ namespace Mcsg.Lib.Data.Migrations._202311
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.Post", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.PostReport", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2210,6 +2262,21 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserExclusiveSubPost", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.SubPost", null)
+                        .WithMany()
+                        .HasForeignKey("SubPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserFollow", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
@@ -2225,24 +2292,11 @@ namespace Mcsg.Lib.Data.Migrations._202311
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Wallet", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ViewHistory", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.WalletTransaction", b =>
-                {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Wallet", null)
-                        .WithMany()
-                        .HasForeignKey("DestinationId");
-
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Wallet", null)
-                        .WithMany()
-                        .HasForeignKey("SourceId");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

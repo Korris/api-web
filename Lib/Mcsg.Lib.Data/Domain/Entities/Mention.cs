@@ -13,6 +13,6 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public MentionEntityType EntityType { get; set; }
         public int Length { get; set; }
         public int Offset { get; set; }
-        public string Text { get; set; }
+        public string? Text { get; set; }
     }
 }

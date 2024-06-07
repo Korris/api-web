@@ -8,7 +8,7 @@ namespace Mcsg.Lib.Data.Domain.Entities
     {
         public Guid SystemSettingId { get; set; }
         public Guid UserId { get; set; }
-        public string OldValue { get; set; }
-        public string NewValue { get; set; }
+        public string? OldValue { get; set; }
+        public string? NewValue { get; set; }
     }
 }

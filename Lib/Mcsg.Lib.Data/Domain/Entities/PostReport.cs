@@ -8,6 +8,6 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public Guid PostId { get; set; }
         public Guid UserId { get; set; }
         public ReasonType ReasonType { get; set; }
-        public string ReasonText { get; set; }
+        public string? ReasonText { get; set; }
     }
 }

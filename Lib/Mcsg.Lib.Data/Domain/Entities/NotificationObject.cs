@@ -10,9 +10,9 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public NotificationEntityType EntityType { get; set; }
         public NotificationAction Action { get; set; }
         public Guid? EntityId { get; set; }
-        public string EntityHashId { get; set; }
+        public string? EntityHashId { get; set; }
         public Guid? LocationId { get; set; }
-        public string LocationHashId { get; set; }
+        public string? LocationHashId { get; set; }
         public Guid ActorId { get; set; }
     }
 }

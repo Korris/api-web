@@ -7,7 +7,7 @@ namespace Mcsg.Lib.Data.Domain.Entities
     public class Tag : AuditableEntity
     {
         public Guid? AuthorId { get; set; }
-        public string Title { get; set; }
-        public string Name { get; set; }
+        public string? Title { get; set; }
+        public string? Name { get; set; }
     }
 }

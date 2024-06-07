@@ -36,7 +36,7 @@ namespace Mcsg.Lib.Data.Repositories
         private static string EntityName => typeof(TEntity).Name;
         private string _tableName;
 
-        public string TableName
+        public string? TableName
         {
             get => _tableName;
             set => _tableName = value;

@@ -105,7 +105,7 @@ namespace Mcsg.Lib.Data
             builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles"));
 
             //Seed data
-            DataSeeder.Seed(builder);
+            //DataSeeder.Seed(builder);
         }
     }
 }
