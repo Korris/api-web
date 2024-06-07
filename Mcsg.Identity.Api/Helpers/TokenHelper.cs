@@ -43,7 +43,7 @@ namespace Mcsg.Identity.Api.Helpers
         {
             Dictionary<string, object> claims = new()
             {
-                { SecurityClaimTypes.SessionIdClaimName, sessionId }
+                { SecurityClaimTypes.SessionIdClaimName, sessionId.ToString() }
             };
 
             DateTime utcNow = DateTime.UtcNow;
