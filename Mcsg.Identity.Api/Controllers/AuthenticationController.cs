@@ -1,15 +1,21 @@
-﻿using Mcsg.Identity.Api.DTOs.Request;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers
 {
+    using DTOs.Request;
+    using Services.Interfaces;
+
     [ApiController]
     [Route("[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IAuthenticationService _authenticationService;
+        #region -- Methods --
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="authenticationService"></param>
         public AuthenticationController(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
@@ -76,6 +82,7 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _authenticationService.ResetPassword(request);
             return Ok(result);
         }
+
         [Authorize]
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordReq request)
@@ -90,6 +97,7 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _authenticationService.CreateNewUserPassword(request.Email, request.Phone, request.Otp, request.OtpToken, request.Password, request.ConfirmPassword);
             return Ok(result);
         }
+
         [Authorize]
         [HttpDelete("delete-account")]
         public async Task<IActionResult> DeleteAccount(DeleteUserReq request)
@@ -97,5 +105,13 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _authenticationService.DeleteAccount(request);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IAuthenticationService _authenticationService;
+
+        #endregion
     }
 }

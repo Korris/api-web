@@ -1,13 +1,14 @@
-﻿using Mcsg.Identity.Api.DTOs.Request;
-using Mcsg.Identity.Api.Services.Interface;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Enums;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers
 {
+    using DTOs.Request;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Enums;
+    using Services.Interface;
+    using Services.Interfaces;
+
     /// <summary>
     /// Use for user logged in
     /// </summary>
@@ -16,9 +17,14 @@ namespace Mcsg.Identity.Api.Controllers
     [Authorize]
     public class OtpController : ControllerBase
     {
-        private readonly IOtpService _otpService;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IUserService _userService;
+        #region -- Methods --
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="otpService"></param>
+        /// <param name="currentUserService"></param>
+        /// <param name="userService"></param>
         public OtpController(IOtpService otpService,
             ICurrentUserService currentUserService,
             IUserService userService)
@@ -60,5 +66,15 @@ namespace Mcsg.Identity.Api.Controllers
             }
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IOtpService _otpService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IUserService _userService;
+
+        #endregion
     }
 }
