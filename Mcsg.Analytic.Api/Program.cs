@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Mcsg.Analytic.Api;
@@ -37,6 +38,41 @@ public class Program
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString(_prefix);
+
+        // Update connection string
+        cs = st.SetDbParams(cs);
+
+        // Start logger
+        assembly!.StartLogger(st);
+
+        #region -- Load HTTP protocols --
+        if (!st.IsLocal && !string.IsNullOrWhiteSpace(st.Protocols))
+        {
+            var protocols = st.Protocols.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            builder.WebHost.ConfigureKestrel(p =>
+            {
+                foreach (var i in protocols)
+                {
+                    var arr = i.Split('_', StringSplitOptions.RemoveEmptyEntries);
+                    if (arr.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    var port = Convert.ToInt32(arr[1]);
+                    var protocol = HttpProtocols.Http1;
+
+                    if (nameof(HttpProtocols.Http2) == arr[0])
+                    {
+                        protocol = HttpProtocols.Http2;
+                    }
+
+                    p.ListenAnyIP(port, q => q.Protocols = protocol);
+                }
+            });
+        }
+        #endregion
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);

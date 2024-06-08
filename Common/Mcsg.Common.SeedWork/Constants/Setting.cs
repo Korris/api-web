@@ -28,7 +28,7 @@ public class Setting
     /// <summary>
     /// The prefix for common environment variables
     /// </summary>
-    public const string CommonPrefix = "Paw_Com";
+    public const string CommonPrefix = "Bumcheo_Com";
 
     /// <summary>
     /// Password for test
