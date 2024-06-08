@@ -2,12 +2,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Mcsg.Analytic.Api;
 
+using Common.Core.Extensions;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
 using Lib.Data.Analytic;
 using Services;
+using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
 /// Program
@@ -23,6 +25,18 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        // Get assembly name
+        var me = typeof(Program);
+        var assembly = me.Assembly.GetName().Name;
+
+        // Load settings from the environment
+        var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
+        st.Prefix = _prefix;
+
+        // Load connection string appsettings.json
+        var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
+        var cs = config.GetConnectionString(_prefix);
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);

@@ -2,6 +2,7 @@ using System.Reflection;
 
 namespace Mcsg.Identity.Api;
 
+using Common.Core.Extensions;
 using Helpers;
 using Lib.AzureBlobStorage;
 using Lib.Common;
@@ -17,6 +18,7 @@ using Services;
 using Services.Interface;
 using Services.Interfaces;
 using Services.SSO;
+using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
 /// Program
@@ -32,6 +34,18 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        // Get assembly name
+        var me = typeof(Program);
+        var assembly = me.Assembly.GetName().Name;
+
+        // Load settings from the environment
+        var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
+        st.Prefix = _prefix;
+
+        // Load connection string appsettings.json
+        var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
+        var cs = config.GetConnectionString(_prefix);
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
