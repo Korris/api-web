@@ -41,7 +41,7 @@ public class Program
 
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
-        var cs = config.GetConnectionString(_prefix);
+        var cs = config.GetConnectionString("McsgConnectionString");
 
         // Update connection string
         cs = st.SetDbParams(cs);
@@ -88,7 +88,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
-        builder.Services.AddDataLibrary(builder.Configuration);
+        builder.Services.AddDataLibrary(cs);
         builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());

@@ -37,7 +37,7 @@ public class Program
 
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
-        var cs = config.GetConnectionString(_prefix);
+        var cs = config.GetConnectionString("McsgConnectionString");
 
         // Update connection string
         cs = st.SetDbParams(cs);
@@ -81,7 +81,7 @@ public class Program
 
         builder.Services.AddAnalyticDbContext(builder.Configuration);
 
-        builder.Services.AddDataLibrary(builder.Configuration);
+        builder.Services.AddDataLibrary(cs);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

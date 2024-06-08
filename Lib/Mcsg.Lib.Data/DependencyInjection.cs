@@ -1,21 +1,21 @@
-﻿using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Data;
 
 namespace Mcsg.Lib.Data
 {
+    using Repositories;
+    using Repositories.Interface;
+
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDataLibrary(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDataLibrary(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<McsgDbContext>(options =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("McsgConnectionString"),
+                options.UseNpgsql(connectionString,
                     builder =>
                     {
                         builder.MigrationsAssembly(typeof(McsgDbContext).Assembly.FullName);
@@ -24,16 +24,6 @@ namespace Mcsg.Lib.Data
                     })
                 ;
             });
-            services.AddScoped<IDbConnection>((sp) => new NpgsqlConnection(configuration.GetConnectionString("McsgConnectionString")));
-
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddDataLibrary(this IServiceCollection services, string connectionString)
-        {
             services.AddScoped<IDbConnection>((sp) => new NpgsqlConnection(connectionString));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -41,6 +31,7 @@ namespace Mcsg.Lib.Data
 
             return services;
         }
+
         public static IApplicationBuilder EnableNpgsqlLegacyTime(this WebApplication applicationBuilder)
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
