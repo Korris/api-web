@@ -1,9 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Dapper;
-using Mcsg.Api.Constants;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.AzureBlobStorage;
 using Mcsg.Lib.AzureBlobStorage.Settings;
 using Mcsg.Lib.Common.Constants;
@@ -19,7 +19,7 @@ using Mcsg.Lib.Model.Enums;
 using Microsoft.Extensions.Options;
 using Resource = Mcsg.Lib.Data.Domain.Entities.Resource;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class FileService : IFileService
     {

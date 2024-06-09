@@ -1,7 +1,7 @@
-﻿using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Enums;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface IUserService
     {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Models;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Exceptions;
 using Mcsg.Lib.Common.Helpers;
@@ -14,7 +14,7 @@ using Mcsg.Lib.Data.Repositories.Interface;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public interface INotificationService
     {

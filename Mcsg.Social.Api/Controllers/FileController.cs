@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.Attributes;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.Attributes;
+using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mcsg.Api.Controllers
+namespace Mcsg.Social.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

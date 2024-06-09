@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Models;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Enums;
 using Mcsg.Lib.Common.Exceptions;
@@ -11,7 +11,7 @@ using Mcsg.Lib.Data.Repositories.Interface;
 using Mcsg.Lib.Model.Enums;
 using Mcsg.Lib.Model.Models;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public interface IPostLinkService
     {

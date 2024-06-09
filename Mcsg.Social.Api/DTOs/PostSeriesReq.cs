@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Data.Enums;
 using System.ComponentModel;
 
-namespace Mcsg.Api.DTOs
+namespace Mcsg.Social.Api.DTOs
 {
     public class PostSeriesReq
     {

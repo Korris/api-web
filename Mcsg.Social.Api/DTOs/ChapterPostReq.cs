@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.DTOs
+namespace Mcsg.Social.Api.DTOs
 {
     public class ChapterPostReq
     {

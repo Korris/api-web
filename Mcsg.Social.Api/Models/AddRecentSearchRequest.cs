@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Models
+﻿namespace Mcsg.Social.Api.Models
 {
     public class AddRecentSearchRequest : SmartLookupResponse
     {

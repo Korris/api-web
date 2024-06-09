@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Api.DTOs
+namespace Mcsg.Social.Api.DTOs
 {
     public class CommentLoadReq
     {

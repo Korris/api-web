@@ -1,6 +1,6 @@
-﻿using Mcsg.Api.Enums;
+﻿using Mcsg.Social.Api.Enums;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class PostSeriesResponse : PostResponse
     {

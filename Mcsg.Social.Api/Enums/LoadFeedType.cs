@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Enums
+﻿namespace Mcsg.Social.Api.Enums
 {
     public enum LoadFeedType
     {

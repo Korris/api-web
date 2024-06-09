@@ -1,6 +1,6 @@
-﻿using Mcsg.Api.Enums;
+﻿using Mcsg.Social.Api.Enums;
 
-namespace Mcsg.Api.Models.Earning
+namespace Mcsg.Social.Api.Models.Earning
 {
     public class EarningDataModel
     {

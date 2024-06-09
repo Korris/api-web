@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class FileService
     {

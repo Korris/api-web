@@ -1,6 +1,6 @@
 ﻿using Mcsg.Lib.Data.Domain.Entities;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface IJobService
     {

@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Models;
-using Mcsg.Api.Models.Tag;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Models.Tag;
 using Mcsg.Lib.Data.Entities.Common;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface ITagService
     {

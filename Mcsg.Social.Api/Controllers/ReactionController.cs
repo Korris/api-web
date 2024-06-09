@@ -1,5 +1,5 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

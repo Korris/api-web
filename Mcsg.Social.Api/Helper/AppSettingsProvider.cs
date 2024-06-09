@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Helper
+﻿namespace Mcsg.Social.Api.Helper
 {
     public class AppSettingsProvider
     {

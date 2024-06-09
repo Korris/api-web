@@ -1,6 +1,6 @@
 ﻿using Mcsg.Lib.Data.Entities.Common;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class CommentPagedResults<T> : PagedResults<T>
     {

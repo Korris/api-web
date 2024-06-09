@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Mappings;
+using Mcsg.Social.Api.Mappings;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class UserMentionResponse : IMapFrom<UserMentionModel>
     {

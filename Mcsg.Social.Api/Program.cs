@@ -4,7 +4,10 @@ using System.Reflection;
 
 namespace Mcsg.Social.Api;
 
+using Attributes;
 using Common.Core.Extensions;
+using Extensions;
+using Helper;
 using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -12,18 +15,15 @@ using Lib.Common.Interfaces;
 using Lib.Common.Models;
 using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
+using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
 using Lib.Data.Analytic;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Wallet;
-using Mcsg.Api.Attributes;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Helper;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services;
-using Mcsg.Api.Services.Interfaces;
-using Mcsg.Api.Validators;
-using Mcsg.Lib.Common.Web.Extensions.DependencyInjection;
+using Models;
+using Services;
+using Services.Interfaces;
+using Validators;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>

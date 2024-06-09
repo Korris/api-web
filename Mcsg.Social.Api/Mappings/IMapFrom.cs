@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Mcsg.Api.Mappings
+namespace Mcsg.Social.Api.Mappings
 {
     public interface IMapFrom<T>
     {

@@ -1,12 +1,12 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Models;
-using Mcsg.Api.Models.Earning;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Models.Earning;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Entities.Common;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface IPostService
     {

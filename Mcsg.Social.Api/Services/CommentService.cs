@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Models;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Helpers;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Entities.Common;
@@ -12,7 +12,7 @@ using Mcsg.Lib.Data.Repositories.Interface;
 using Mcsg.Lib.Model.Enums;
 using Microsoft.Extensions.Options;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public interface ICommentService
     {

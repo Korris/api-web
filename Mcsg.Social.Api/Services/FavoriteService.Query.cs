@@ -2,7 +2,7 @@
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class FavoriteService
     {

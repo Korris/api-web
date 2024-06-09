@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Models;
 using Mcsg.Lib.AzureBlobStorage;
 using Mcsg.Lib.Common.Distributor;
 using Newtonsoft.Json;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public class SyncDataDistributeService : BaseDistributor
     {

@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Common.Distributor;
 using Mcsg.Lib.Common.Helpers;
 using Mcsg.Lib.Common.Models;
@@ -9,7 +9,7 @@ using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class SmartLookupService : ISmartLookupService
     {

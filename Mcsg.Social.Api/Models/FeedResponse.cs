@@ -1,8 +1,8 @@
-﻿using Mcsg.Api.DTOs;
+﻿using Mcsg.Social.Api.DTOs;
 using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class FeedResponse : PostResponse
     {

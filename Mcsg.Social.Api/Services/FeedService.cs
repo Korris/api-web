@@ -1,10 +1,10 @@
 ﻿using Dapper;
-using Mcsg.Api.Constants;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Exceptions;
 using Mcsg.Lib.Common.Helpers;
@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Npgsql;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class FeedService : IFeedService
     {

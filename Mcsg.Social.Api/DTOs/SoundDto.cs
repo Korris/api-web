@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Mappings;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Mappings;
 using Mcsg.Lib.Data.Domain.Entities;
 
-namespace Mcsg.Api.DTOs
+namespace Mcsg.Social.Api.DTOs
 {
     public class SoundDto : IMapFrom<BackgroundMedia>
     {

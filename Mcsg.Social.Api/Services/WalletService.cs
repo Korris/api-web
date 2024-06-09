@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Models.Earning;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Models.Earning;
 using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Lib.Data.Wallet;
 using Mcsg.Lib.Data.Wallet.Enums;
 using Mcsg.Lib.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public interface IWalletService
     {

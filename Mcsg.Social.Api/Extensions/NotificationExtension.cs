@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.Constants;
-using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Data.Enums;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class NotificationExtension
     {

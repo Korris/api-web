@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Common.Extensions;
 using Mcsg.Lib.Common.Helpers;
 using Mcsg.Lib.Common.Web.Security;
@@ -14,7 +14,7 @@ using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class ReactService<T> : IReactService<T> where T : ReactionBase, new()
     {

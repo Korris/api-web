@@ -1,11 +1,11 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public class MetaDataService : IMetaDataService
     {

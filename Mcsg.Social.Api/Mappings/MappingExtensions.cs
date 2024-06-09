@@ -2,7 +2,7 @@
 using Mcsg.Lib.Common.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Api.Mappings
+namespace Mcsg.Social.Api.Mappings
 {
     public static class MappingExtensions
     {

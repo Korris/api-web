@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Extensions;
-using Mcsg.Api.Mappings;
+using Mcsg.Social.Api.Extensions;
+using Mcsg.Social.Api.Mappings;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class NotificationModel : IMapFrom<NotificationQueryResult>
     {

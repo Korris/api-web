@@ -1,6 +1,6 @@
-﻿using Mcsg.Api.Constants;
-using Mcsg.Api.DTOs;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Extensions;
 using Mcsg.Lib.Data.Domain.Entities;
@@ -8,7 +8,7 @@ using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Newtonsoft.Json;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public class JobService : IJobService
     {

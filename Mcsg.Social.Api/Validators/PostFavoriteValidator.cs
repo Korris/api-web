@@ -1,10 +1,10 @@
-﻿using Mcsg.Api.Constants;
+﻿using Mcsg.Social.Api.Constants;
 using Mcsg.Lib.Common.Exceptions;
 using Mcsg.Lib.Common.Interfaces;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Repositories;
 
-namespace Mcsg.Api.Validators
+namespace Mcsg.Social.Api.Validators
 {
     public class PostFavoriteValidator : IValidator<PostFavorite>
     {

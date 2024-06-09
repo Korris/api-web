@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions
 {
     public static class TimeExtension
     {

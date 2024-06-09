@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Mappings;
+using Mcsg.Social.Api.Mappings;
 
-namespace Mcsg.Api.Models.Earning
+namespace Mcsg.Social.Api.Models.Earning
 {
     public class ReportSeriesData : IMapFrom<ChapterTOCExtendResponse>
     {

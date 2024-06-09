@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.Constants;
-using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Extensions;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class ServiceCollectionExtensions
     {

@@ -1,6 +1,6 @@
-﻿using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Models;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface ILinkPreviewService
     {

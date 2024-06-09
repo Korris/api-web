@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Constants
+﻿namespace Mcsg.Social.Api.Constants
 {
     public static class NotificationType
     {

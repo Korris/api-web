@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Api.Models.Earning
+namespace Mcsg.Social.Api.Models.Earning
 {
     public class AffiliateCodeRequest
     {

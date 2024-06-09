@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Models.Tag
+﻿namespace Mcsg.Social.Api.Models.Tag
 {
     public class TagByPostResponse
     {

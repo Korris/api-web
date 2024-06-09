@@ -1,11 +1,11 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Models;
-using Mcsg.Api.Models.Earning;
-using Mcsg.Api.Services;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Models.Earning;
+using Mcsg.Social.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mcsg.Api.Controllers
+namespace Mcsg.Social.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

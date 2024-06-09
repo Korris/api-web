@@ -1,8 +1,8 @@
-﻿using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mcsg.Api.Controllers
+namespace Mcsg.Social.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]

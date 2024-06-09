@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services
 {
     public partial class SmartCountService
     {

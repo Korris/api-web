@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Reflection;
 
-namespace Mcsg.Api.Mappings
+namespace Mcsg.Social.Api.Mappings
 {
     public class MappingProfile : Profile
     {

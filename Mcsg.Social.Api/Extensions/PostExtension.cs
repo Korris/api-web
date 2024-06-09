@@ -1,10 +1,10 @@
-﻿using Mcsg.Api.Constants;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class PostExtension
     {

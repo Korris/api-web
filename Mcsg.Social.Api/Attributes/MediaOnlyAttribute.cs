@@ -1,10 +1,10 @@
-﻿using Mcsg.Api.Constants;
-using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
-namespace Mcsg.Api.Attributes
+namespace Mcsg.Social.Api.Attributes
 {
     public class MediaOnlyAttribute : ActionFilterAttribute
     {

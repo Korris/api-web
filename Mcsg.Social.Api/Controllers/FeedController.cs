@@ -1,5 +1,5 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +33,7 @@ namespace Mcsg.Identity.Api.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Api.Enums.LoadFeedType.ALL);
+            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.ALL);
             return Ok(result);
         }
         [HttpGet("display-setting")]
@@ -45,13 +45,13 @@ namespace Mcsg.Identity.Api.Controllers
         [HttpGet("trending")]
         public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Api.Enums.LoadFeedType.TRENDING);
+            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.TRENDING);
             return Ok(result);
         }
         [HttpGet("hot")]
         public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Api.Enums.LoadFeedType.HOT);
+            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.HOT);
             return Ok(result);
         }
         [HttpGet("list/{tagName}")]

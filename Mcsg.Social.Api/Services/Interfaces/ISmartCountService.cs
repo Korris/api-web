@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface ISmartCountService
     {

@@ -1,7 +1,7 @@
 ﻿using Dapper;
-using Mcsg.Api.Constants;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.AzureBlobStorage;
 using Mcsg.Lib.Common.Constants;
 using Mcsg.Lib.Common.Distributor;
@@ -14,7 +14,7 @@ using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class UserService : IUserService
     {

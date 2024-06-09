@@ -1,6 +1,6 @@
 ﻿using Mcsg.Lib.Data.Enums;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class SmartLookupService
     {

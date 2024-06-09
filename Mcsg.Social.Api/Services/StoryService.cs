@@ -1,7 +1,7 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Models;
-using Mcsg.Api.Services.Interfaces;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Models;
+using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Entities.Common;
@@ -9,7 +9,7 @@ using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Services
+namespace Mcsg.Social.Api.Services
 {
     public partial class StoryService : IStoryService
     {

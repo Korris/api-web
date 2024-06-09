@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Models.Earning
+﻿namespace Mcsg.Social.Api.Models.Earning
 {
     public class PerformanceChartEarningToDate
     {

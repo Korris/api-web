@@ -1,6 +1,6 @@
 ﻿using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class EarningExtension
     {

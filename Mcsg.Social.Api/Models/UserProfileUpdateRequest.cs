@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Api.Models
+namespace Mcsg.Social.Api.Models
 {
     public class UserProfileUpdateRequest
     {

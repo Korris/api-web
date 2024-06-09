@@ -1,9 +1,9 @@
-﻿using Mcsg.Api.DTOs;
-using Mcsg.Api.Enums;
-using Mcsg.Api.Models;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Enums;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Data.Entities.Common;
 
-namespace Mcsg.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Services.Interfaces
 {
     public interface IFeedService
     {

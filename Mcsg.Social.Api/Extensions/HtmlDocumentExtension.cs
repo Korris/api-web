@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Mcsg.Lib.Common.Helpers;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class HtmlDocumentExtension
     {

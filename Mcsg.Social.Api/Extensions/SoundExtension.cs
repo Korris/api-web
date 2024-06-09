@@ -1,7 +1,7 @@
-﻿using Mcsg.Api.Helper;
+﻿using Mcsg.Social.Api.Helper;
 using Mcsg.Lib.Common.Helpers;
 
-namespace Mcsg.Api.Extensions
+namespace Mcsg.Social.Api.Extensions
 {
     public static class SoundExtension
     {

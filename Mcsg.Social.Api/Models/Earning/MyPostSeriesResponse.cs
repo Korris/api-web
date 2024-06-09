@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Mcsg.Api.Mappings;
+using Mcsg.Social.Api.Mappings;
 using Mcsg.Lib.Model.Enums;
 
-namespace Mcsg.Api.Models.Earning
+namespace Mcsg.Social.Api.Models.Earning
 {
     public class MyPostSeriesQueryResult
     {

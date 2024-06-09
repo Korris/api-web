@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Services.Interfaces
 {
     public class ISubPostService
     {
