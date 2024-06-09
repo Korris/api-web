@@ -8,8 +8,8 @@ namespace Mcsg.Lib.Data.Wallet.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int No { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public float Price { get; set; }
         public float PricePerMonth { get; set; }
         public int LiveTimeDay { get; set; }

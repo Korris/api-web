@@ -8,14 +8,14 @@ namespace Mcsg.Lib.Data.Wallet.Entities
         public Guid UserId { get; set; }
 
         [MaxLength(255)]
-        public string ProfileName { get; set; }
+        public string? ProfileName { get; set; }
 
         [MaxLength(255)]
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [MaxLength(20)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
         public float Point { get; set; }
         public float RewardPoint { get; set; }
         public Guid WalletSettingId { get; set; }
@@ -25,6 +25,6 @@ namespace Mcsg.Lib.Data.Wallet.Entities
 
         public virtual ICollection<PaymentMethod> PaymentMethods { get; set; }
         public UserWalletStatus Status { get; set; }
-        public string SystemMessage { get; set; }
+        public string? SystemMessage { get; set; }
     }
 }

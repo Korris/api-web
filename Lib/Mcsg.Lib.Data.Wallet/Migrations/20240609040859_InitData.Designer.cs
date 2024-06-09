@@ -9,21 +9,152 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Mcsg.Lib.Data.Wallet.Migrations._202402
+namespace Mcsg.Lib.Data.Wallet.Migrations
 {
     [DbContext(typeof(WalletDbContext))]
-    [Migration("20240219171501_AddExternalIdToTransaction")]
-    partial class AddExternalIdToTransaction
+    [Migration("20240609040859_InitData")]
+    partial class InitData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningPeriod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FromDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("ToDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Order", "FromDate", "ToDate")
+                        .IsUnique();
+
+                    b.ToTable("EarningPeriods");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningSummary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EarningPeriodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PeriodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("TotalAmount")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EarningPeriodId");
+
+                    b.HasIndex("UserId", "PeriodId")
+                        .IsUnique();
+
+                    b.ToTable("EarningSummaries");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningSummaryDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("DataValue")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("EarningSummaryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("EarningValue")
+                        .HasColumnType("real");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EarningSummaryId");
+
+                    b.ToTable("EarningSummaryDetails");
+                });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.PaymentMethod", b =>
                 {
@@ -288,13 +419,22 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AffiliateUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CreatorUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -318,6 +458,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                     b.HasKey("Id");
 
                     b.HasIndex("WalletTransactionId");
+
+                    b.HasIndex("CreatorUserId", "CreatedDate");
 
                     b.ToTable("UserPurchaseTransactions");
                 });
@@ -350,6 +492,9 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
 
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Point")
                         .HasColumnType("real");
@@ -541,6 +686,9 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                     b.Property<string>("SystemMessage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SystemMethod")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -558,6 +706,9 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                     b.HasIndex("SourceUserWalletId");
 
                     b.HasIndex("UserPaymentMethodId");
+
+                    b.HasIndex("Id", "Status", "Type")
+                        .IsUnique();
 
                     b.ToTable("WalletTransactions");
                 });
@@ -607,6 +758,24 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                     b.HasIndex("TransactionId");
 
                     b.ToTable("WalletTransactionOtps");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningSummary", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Wallet.Entities.EarningPeriod", null)
+                        .WithMany("EarningSummaries")
+                        .HasForeignKey("EarningPeriodId");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningSummaryDetail", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Wallet.Entities.EarningSummary", "EarningSummary")
+                        .WithMany("SummaryDetails")
+                        .HasForeignKey("EarningSummaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EarningSummary");
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.PaymentMethod", b =>
@@ -702,6 +871,16 @@ namespace Mcsg.Lib.Data.Wallet.Migrations._202402
                         .IsRequired();
 
                     b.Navigation("WalletTransaction");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningPeriod", b =>
+                {
+                    b.Navigation("EarningSummaries");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.EarningSummary", b =>
+                {
+                    b.Navigation("SummaryDetails");
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Wallet.Entities.PaymentMethod", b =>

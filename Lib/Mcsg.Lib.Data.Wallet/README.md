@@ -1,5 +1,5 @@
 # Add migration
-Add-Migration Add-Earning-Summary -OutputDir "Migrations/202404" -Args "host=localhost;port=5432;database=mcsg;username=postgres;password=postgres"
+Add-Migration InitData -Args "host=localhost;port=5432;database=mcsg;username=postgres;password=P@SSnhucu6969"
 
 # Update migration local
 Update-Database -Args "host=localhost;port=5432;database=mcsg;username=postgres;password=postgres"

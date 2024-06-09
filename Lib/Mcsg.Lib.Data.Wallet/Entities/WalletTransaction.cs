@@ -6,7 +6,7 @@ namespace Mcsg.Lib.Data.Wallet.Entities
     public class WalletTransaction : BaseWalletEntity
     {
         [MaxLength(32)]
-        public string ReferenceNumber { get; set; }
+        public string? ReferenceNumber { get; set; }
         public Guid? SourceUserWalletId { get; set; }
         public virtual UserWallet SourceUserWallet { get; set; }
 
@@ -20,13 +20,13 @@ namespace Mcsg.Lib.Data.Wallet.Entities
         public float Amount { get; set; }
 
         [MaxLength(255)]
-        public string Content { get; set; }
-        public string SystemMessage { get; set; }
+        public string? Content { get; set; }
+        public string? SystemMessage { get; set; }
         public bool IsFromSystem { get; set; }
 
         public bool IsConfirmed { get; set; }
         public Guid? RelatedId { get; set; }
-        public string ExternalId { get; set; }
+        public string? ExternalId { get; set; }
 
         public virtual ICollection<WalletTransactionOtp> WalletTransactionOtps { get; set; }
         public virtual ICollection<UserPurchaseTransaction> UserPurchaseTransactions { get; set; }
