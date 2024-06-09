@@ -27,12 +27,12 @@ public class Setting : SeedWork.Constants.Setting
         {
             return new Dictionary<string, string>
             {
-                { "Cre", "Credential" },
-                { "Hea", "Health" },
-                { "Not", "Notification" },
-                { "Ser", "Services" },
-                { "Sho", "Shop" },
-                { "Soc", "Social" }
+                { "Adm", "Admin" },
+                { "Ana", "Analytic" },
+                { "Ide", "Identity" },
+                { "Rea", "Realtime" },
+                { "Soc", "Social" },
+                { "Wal", "Wallet" }
             };
         }
     }

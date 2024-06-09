@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OpenApi.Models;
 
 namespace Mcsg.Analytic.Api;
 
@@ -10,6 +11,7 @@ using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
 using Lib.Data.Analytic;
 using Services;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -97,11 +99,41 @@ public class Program
 
         var app = builder.Build();
 
+        #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment() || st.SwaggerEnabled)
         {
-            app.UseSwagger();
+            if (st.Environment == "local")
+            {
+                app.UseSwagger();
+            }
+            else
+            {
+                app.UseSwagger(p =>
+                {
+                    p.RouteTemplate = "swagger/{documentName}/swagger.json";
+                    p.PreSerializeFilters.Add((q, r) =>
+                    {
+                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}" }];
+                    });
+                });
+            }
+
             app.UseSwaggerUI();
         }
+        else
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        // Use CORS
+        var origins = st.Origins == null ? [] : st.Origins.Split(';');
+        if (origins.Length > 0)
+        {
+            app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
+        }
+        #endregion
+
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
