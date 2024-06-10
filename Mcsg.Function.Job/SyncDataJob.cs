@@ -1,8 +1,4 @@
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Common.Models;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job
 {
@@ -16,7 +12,7 @@ namespace Mcsg.Function.Job
             _logger = logger;
         }
 
-        [Function(nameof(SyncDataFunction))]
+        /*[Function(nameof(SyncDataFunction))]
         public async Task Run([QueueTrigger("syncdataqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             string logMessage = $"C# Queue trigger function processed: {data}";
@@ -54,6 +50,6 @@ namespace Mcsg.Function.Job
                         break;
                     }
             }
-        }
+        }*/
     }
 }

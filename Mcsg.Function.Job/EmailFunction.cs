@@ -1,9 +1,6 @@
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job
@@ -23,7 +20,7 @@ namespace Mcsg.Function.Job
             _logger = logger;
         }
 
-        [Function(nameof(EmailFunction))]
+        /*[Function(nameof(EmailFunction))]
         public async Task Run([QueueTrigger("emailqueue", Connection = "Function:AzureBlobStorageConnection")] Guid jobId)
         {
             string logMessage = $"C# Queue trigger function processed: {jobId}";
@@ -50,6 +47,6 @@ namespace Mcsg.Function.Job
                     throw;
                 }
             }
-        }
+        }*/
     }
 }

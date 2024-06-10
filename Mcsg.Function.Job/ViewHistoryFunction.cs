@@ -1,13 +1,7 @@
-using Dapper;
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Common.Models;
 using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job
@@ -34,7 +28,7 @@ namespace Mcsg.Function.Job
             _viewHistoryCountService = viewHistoryCountService;
         }
 
-        [Function(nameof(ViewHistoryFunction))]
+        /*[Function(nameof(ViewHistoryFunction))]
         public async Task Run([QueueTrigger("viewhistoryqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             string logMessage = $"C# Queue trigger function processed: {data}";
@@ -88,7 +82,7 @@ namespace Mcsg.Function.Job
             };
             await _viewHistoryCountService.RunQueue(smartLookupData);
 
-        }
+        }*/
 
         private string GetLastViewFromUser
         {

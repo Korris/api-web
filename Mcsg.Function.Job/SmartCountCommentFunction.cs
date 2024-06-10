@@ -1,11 +1,7 @@
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Common.Models;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job
@@ -34,7 +30,7 @@ namespace Mcsg.Function.Job
             _commentCountService = commentCountService;
         }
 
-        [Function(nameof(SmartCountCommentFunction))]
+        /*[Function(nameof(SmartCountCommentFunction))]
         public async Task Run([QueueTrigger("postcommentqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             string logMessage = $"C# Queue trigger function processed: {data}";
@@ -43,7 +39,6 @@ namespace Mcsg.Function.Job
             var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(data);
 
             await _commentCountService.RunQueue(smartLookupData);
-        }
-
+        }*/
     }
 }

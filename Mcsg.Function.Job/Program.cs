@@ -1,47 +1,194 @@
-using Mcsg.Function.Job.Constants;
-using Mcsg.Function.Job.Services;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.AzureBlobStorage.Settings;
-using Mcsg.Lib.Common.Mail;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data;
-using Mcsg.Lib.Data.Wallet;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
-var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
-    .ConfigureServices(services =>
+namespace Mcsg.Function.Job;
+
+using Common.Core.Extensions;
+using static Common.Core.Constants.Setting;
+using static Common.SeedWork.Constants.Setting;
+
+/// <summary>
+/// Program
+/// </summary>
+public class Program
+{
+    #region -- Methods --
+
+    /// <summary>
+    /// Main
+    /// </summary>
+    /// <param name="args">Arguments</param>
+    public static void Main(string[] args)
     {
-        string connectionString = Environment.GetEnvironmentVariable(FunctionConstant.DbConnectionString);
-        string walletConnectionString = Environment.GetEnvironmentVariable(FunctionConstant.WalletDbConnectionString);
-        services.AddDataLibrary(connectionString);
-        services.AddWalletDbContext(walletConnectionString);
+        var builder = WebApplication.CreateBuilder(args);
 
-        services.AddAzureBlobStorage(new AzureBlobStorageSettings
+        // Get assembly name
+        var me = typeof(Program);
+        var assembly = me.Assembly.GetName().Name;
+
+        // Load settings from the environment
+        var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
+        st.Prefix = _prefix;
+
+        // Load connection string appsettings.json
+        var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
+        var cs = config.GetConnectionString("McsgConnectionString");
+
+        // Update connection string
+        cs = st.SetDbParams(cs);
+
+        // Start logger
+        assembly!.StartLogger(st);
+
+        #region -- Load HTTP protocols --
+        if (!string.IsNullOrWhiteSpace(st.Protocols))
         {
-            StorageName = Environment.GetEnvironmentVariable(FunctionConstant.StorageName),
-            AccountKey = Environment.GetEnvironmentVariable(FunctionConstant.AccountKey)
-        });
-        services.Configure<SmtpSettings>(x =>
+            var protocols = st.Protocols.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+            builder.WebHost.ConfigureKestrel(p =>
+            {
+                foreach (var i in protocols)
+                {
+                    var arr = i.Split('_', StringSplitOptions.RemoveEmptyEntries);
+                    if (arr.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    var port = Convert.ToInt32(arr[1]);
+                    var protocol = HttpProtocols.Http1;
+
+                    if (nameof(HttpProtocols.Http2) == arr[0])
+                    {
+                        protocol = HttpProtocols.Http2;
+                    }
+
+                    p.ListenAnyIP(port, q => q.Protocols = protocol);
+                }
+            });
+        }
+        #endregion
+
+        #region -- Setup token --
+        // JWT
+        var key = Encoding.UTF8.GetBytes(st.Jwt.Signing);
+        builder.Services.AddAuthentication(p =>
         {
-            x.SmtpHost = Environment.GetEnvironmentVariable(FunctionConstant.EmailHost);
-            x.SmtpUser = Environment.GetEnvironmentVariable(FunctionConstant.EmailUser);
-            x.SmtpPass = Environment.GetEnvironmentVariable(FunctionConstant.EmailPass);
-            x.SmtpFrom = Environment.GetEnvironmentVariable(FunctionConstant.EmailFrom);
-            x.SmtpDisplayFrom = Environment.GetEnvironmentVariable(FunctionConstant.EmailDisplayFrom);
-            x.SmtpPort = int.Parse(Environment.GetEnvironmentVariable(FunctionConstant.EmailPort));
+            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(p =>
+        {
+            p.RequireHttpsMetadata = false;
+            p.SaveToken = true;
+            p.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
+            };
         });
 
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
-        services.AddSingleton<IEmailSender, SmtpSender>();
-        services.AddScoped<ISyncDataService, SyncDataService>();
-        services.AddScoped<ISmsService, SmsService>();
-        services.AddScoped<IExclusiveUnlockService, ExclusiveUnlockService>();
-        services.AddScoped<IPaymentService, PaymentService>();
-    })
-    .Build();
+        // Add policy
+        builder.Services.AddAuthorization(p =>
+        {
+            p.AddPolicy(Policy.AppAdmin, q => q.RequireRole(Role.SuperAdmin, Role.Admin));
+            p.AddPolicy(Policy.ClientAdmin, q => q.RequireRole(Role.SuperTenant, Role.Tenant));
+            p.AddPolicy(Policy.Admin, q => q.RequireRole(Role.SuperAdmin, Role.Admin, Role.SuperTenant, Role.Tenant));
+        });
 
-host.Run();
+        // Cookie name
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.Name = _prefix;
+        });
+        #endregion
+
+        #region -- Max request body --
+        var bodySize = 256 * 1024 * 1024; // 256MB
+        var bufferSize = 10 * 1024 * 1024; // 10MB
+        var lengthLimit = 128 * 1024 * 1024; // 128MB
+
+        builder.Services.Configure<IISServerOptions>(p =>
+        {
+            p.MaxRequestBodySize = bodySize;
+            p.MaxRequestBodyBufferSize = bufferSize;
+        });
+
+        builder.Services.Configure<KestrelServerOptions>(p =>
+        {
+            p.Limits.MaxRequestBodySize = bodySize;
+            p.Limits.MaxRequestBufferSize = bufferSize;
+        });
+
+        builder.Services.Configure<FormOptions>(p =>
+        {
+            p.MultipartBodyLengthLimit = lengthLimit;
+        });
+        #endregion
+
+        builder.Services.AddControllers();
+        //builder.Services.AddHostedService<HostedService>();
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment() || st.SwaggerEnabled)
+        {
+            if (st.Environment == "local")
+            {
+                app.UseSwagger();
+            }
+            else
+            {
+                app.UseSwagger(p =>
+                {
+                    p.RouteTemplate = "swagger/{documentName}/swagger.json";
+                    p.PreSerializeFilters.Add((q, r) =>
+                    {
+                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}" }];
+                    });
+                });
+            }
+
+            app.UseSwaggerUI();
+        }
+        else
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        // Use CORS
+        var origins = st.Origins == null ? [] : st.Origins.Split(';');
+        if (origins.Length > 0)
+        {
+            app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
+        }
+
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        app.Run();
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Variable prefix
+    /// </summary>
+    private static string _prefix = "Job";
+
+    #endregion
+}

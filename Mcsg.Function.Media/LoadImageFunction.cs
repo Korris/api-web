@@ -1,8 +1,4 @@
 using Mcsg.Function.Media.Services;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace Mcsg.Function.Media
 {
@@ -17,7 +13,7 @@ namespace Mcsg.Function.Media
             _logger = loggerFactory.CreateLogger<LoadImageFunction>();
         }
 
-        [Function("ImageViewer")]
+        /*[Function("ImageViewer")]
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "image")] HttpRequestData req)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
@@ -45,6 +41,6 @@ namespace Mcsg.Function.Media
             response.Headers.Add("Cache-Control", "public, max-age=43800");
 
             return response;
-        }
+        }*/
     }
 }

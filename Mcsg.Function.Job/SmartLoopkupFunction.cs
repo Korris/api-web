@@ -1,12 +1,6 @@
-using Dapper;
-using Mcsg.Lib.Common.Models;
 using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job
@@ -39,7 +33,7 @@ namespace Mcsg.Function.Job
             _tagPostRepository = tagPostRepository;
         }
 
-        [Function(nameof(SmartLookupFunction))]
+        /*[Function(nameof(SmartLookupFunction))]
         public async Task Run([QueueTrigger("smartlookupqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             string logMessage = $"C# Queue trigger function processed: {data}";
@@ -70,7 +64,7 @@ namespace Mcsg.Function.Job
                     }
                     break;
             }
-        }
+        }*/
 
         private string UpdateSmartLookupPeopleCommand
         {

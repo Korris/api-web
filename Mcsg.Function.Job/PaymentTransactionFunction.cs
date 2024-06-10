@@ -1,8 +1,4 @@
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Common.Models;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job
 {
@@ -16,7 +12,7 @@ namespace Mcsg.Function.Job
             _paymentService = paymentService;
         }
 
-        [Function(nameof(PaymentTransactionFunction))]
+        /*[Function(nameof(PaymentTransactionFunction))]
         public async Task Run([QueueTrigger("paymenttransqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             _logger.LogInformation($"C# Queue trigger function processed: {data}");
@@ -33,6 +29,6 @@ namespace Mcsg.Function.Job
                         break;
                     }
             }
-        }
+        }*/
     }
 }

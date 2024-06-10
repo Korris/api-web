@@ -1,11 +1,7 @@
 using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Common.Models;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job
@@ -34,7 +30,7 @@ namespace Mcsg.Function.Job
             _subPostReactionRepository = _unitOfWork.GetRepository<SubPostReaction>();
         }
 
-        [Function(nameof(SmartCountReactFunction))]
+        /*[Function(nameof(SmartCountReactFunction))]
         public async Task Run([QueueTrigger("postreactqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
         {
             string logMessage = $"C# Queue trigger function processed: {data}";
@@ -43,7 +39,6 @@ namespace Mcsg.Function.Job
             var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(data);
 
             await _reactionCountService.RunQueue(smartLookupData);
-        }
-
+        }*/
     }
 }

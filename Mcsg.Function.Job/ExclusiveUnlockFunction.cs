@@ -1,7 +1,4 @@
-using Mcsg.Function.Job.Constants;
 using Mcsg.Function.Job.Services;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 
 namespace Mcsg.Function.Job
 {
@@ -18,7 +15,7 @@ namespace Mcsg.Function.Job
             _exclusiveUnlockService = exclusiveUnlockService;
         }
 
-        [Function(nameof(ExclusiveUnlockFunction))]
+        /*[Function(nameof(ExclusiveUnlockFunction))]
         public async Task Run([TimerTrigger(FunctionConstant.ExclusiveUnlockCron)] TimerInfo myTimer)
         {
             _logger.LogInformation($"ExclusiveUnlockFunction trigger function executed at: {DateTime.Now}");
@@ -28,7 +25,6 @@ namespace Mcsg.Function.Job
                 _logger.LogInformation($"Next timer ExclusiveUnlockFunction schedule at: {myTimer.ScheduleStatus.Next}");
                 await _exclusiveUnlockService.Run();
             }
-        }
-
+        }*/
     }
 }
