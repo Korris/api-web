@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -8,6 +9,13 @@ using System.Text;
 namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
+using Extensions;
+using Interfaces;
+using Lib.Common.Mail;
+using Lib.Common.Models;
+using Lib.Data;
+using Lib.Data.Wallet;
+using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -37,6 +45,11 @@ public class Program
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
+
+        #region -- Load settings --
+        config.LoadSettings(st, "Queue:Notification");
+        config.LoadSettings(st.Email, "Notification:Email");
+        #endregion
 
         // Update connection string
         cs = st.SetDbParams(cs);
@@ -71,6 +84,44 @@ public class Program
                 }
             });
         }
+        #endregion
+
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // Notification sent via email (using SMTP)
+        builder.Services.AddNotification(p =>
+        {
+            p.Host = st.Email.Host;
+            p.Port = st.Email.Port;
+            p.UserName = st.Email.UserName;
+            p.Password = st.Email.Password;
+            p.SenderEmail = st.Email.SenderEmail;
+            p.SenderName = st.Email.SenderName;
+        });
+        builder.Services.Configure<SmtpSettings>(p =>
+        {
+            p.SmtpHost = st.Email.Host;
+            p.SmtpPort = st.Email.Port;
+            p.SmtpUser = st.Email.UserName;
+            p.SmtpPass = st.Email.Password;
+            p.SmtpFrom = st.Email.SenderEmail;
+            p.SmtpDisplayFrom = st.Email.SenderName;
+        });
+
+        // DbContext
+        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddWalletDbContext(builder.Configuration);
+
+        // Service
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
+        builder.Services.AddSingleton<IEmailSender, SmtpSender>();
+        builder.Services.AddScoped<ISyncDataService, SyncDataService>();
+        builder.Services.AddScoped<ISmsService, SmsService>();
+        builder.Services.AddScoped<IExclusiveUnlockService, ExclusiveUnlockService>();
+        builder.Services.AddScoped<IPaymentService, PaymentService>();
         #endregion
 
         #region -- Setup token --
