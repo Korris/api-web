@@ -1,60 +1,134 @@
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Entities = Mcsg.Lib.Data.Domain.Entities;
+using Dapper;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
-namespace Mcsg.Function.Job
+namespace Mcsg.Function.Job;
+
+using Common.Core.Dtos;
+using Common.Core.Extensions;
+using Interfaces;
+using Lib.Common.Models;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Enums;
+using Lib.Data.Repositories;
+using static Common.SeedWork.Constants.Information;
+
+/// <summary>
+/// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
+/// </summary>
+public class SmartLookupFunction : BackgroundService
 {
-    public class SmartLookupFunction
-    {
-        private readonly ILogger<SmartLookupFunction> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Entities.SmartLookup> _smartLookupRepository;
-        private readonly IRepository<Entities.Post> _postRepository;
-        private readonly IRepository<Entities.TagPost> _tagPostRepository;
-        private readonly IRepository<User> _userRepository;
-        private readonly IRepository<Entities.Tag> _tagRepository;
+    #region -- Overrides --
 
-        public SmartLookupFunction(
-            ILogger<SmartLookupFunction> logger,
-            IUnitOfWork unitOfWork,
-            IRepository<SmartLookup> smartLookupRepository,
-            IRepository<Post> postRepository,
-            IRepository<User> userRepository,
-            IRepository<Tag> tagRepository,
-            IRepository<Entities.TagPost> tagPostRepository)
+    /// <summary>
+    /// Execute async
+    /// </summary>
+    /// <param name="stoppingToken">Stopping token</param>
+    /// <returns>A System.Threading.Tasks.Task that represents the long running operations</returns>
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        stoppingToken.ThrowIfCancellationRequested();
+
+        var consumer = new EventingBasicConsumer(_channel);
+        consumer.Received += OnReceived;
+        consumer.Shutdown += OnShutdown;
+        consumer.Registered += OnRegistered;
+        consumer.Unregistered += OnUnregistered;
+        consumer.ConsumerCancelled += OnConsumerCancelled;
+
+        using (var scope = _ss.CreateScope())
         {
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _smartLookupRepository = smartLookupRepository;
-            _postRepository = postRepository;
-            _userRepository = userRepository;
-            _tagRepository = tagRepository;
-            _tagPostRepository = tagPostRepository;
+            var st = scope.ServiceProvider.GetRequiredService<ISetting>();
+
+            _channel.BasicConsume(st.NotificationQueueSmartLookup, false, consumer);
         }
 
-        /*[Function(nameof(SmartLookupFunction))]
-        public async Task Run([QueueTrigger("smartlookupqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
-        {
-            string logMessage = $"C# Queue trigger function processed: {data}";
-            _logger.LogInformation(logMessage);
+        return Task.CompletedTask;
+    }
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartLookupData>(data);
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public override void Dispose()
+    {
+        _channel.Close();
+        _connection.Close();
+        base.Dispose();
+    }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="ss">Service scope factory</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public SmartLookupFunction(IServiceScopeFactory ss)
+    {
+        $"Initialize {nameof(SmartLookupFunction)}".LogInfor();
+
+        _ss = ss ?? throw new ArgumentNullException(nameof(ss));
+
+        using (var scope = _ss.CreateScope())
+        {
+            var st = scope.ServiceProvider.GetRequiredService<ISetting>();
+
+            _connection = st.Queue.CreateConnection();
+            "_connection created".LogInfor();
+
+            _channel = _connection.CreateModel();
+            "_channel created".LogInfor();
+
+            _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
+            _channel.QueueDeclare(st.NotificationQueueSmartLookup, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueSmartLookup, st.NotificationExchange, st.NotificationQueueSmartLookup, null);
+            _channel.BasicQos(0, 1, false);
+
+            _connection.ConnectionShutdown += OnConnectionShutdown;
+
+            $"Finished {nameof(SmartLookupFunction)}".LogInfor();
+        }
+    }
+
+    /// <summary>
+    /// Handle message
+    /// </summary>
+    /// <param name="message">Message</param>
+    private async void HandleMessage(string message)
+    {
+        $"Consumer received {message}".LogInfor("JSON");
+
+        var msg = message.ToInstNull<QueueMessageDto>();
+        if (msg == null)
+        {
+            $"{I003} {message}".LogInfor();
+            return;
+        }
+
+        using (var scope = _ss.CreateScope())
+        {
+            var smartLookupRepository = scope.ServiceProvider.GetRequiredService<IRepository<SmartLookup>>();
+
+            var smartLookupData = JsonConvert.DeserializeObject<SmartLookupData>(msg.Payload);
 
             switch (smartLookupData.KeywordType)
             {
                 case LookupKeywordType.People:
-                    await _smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupPeopleCommand, new { Name = smartLookupData.ProfileName, KeywordType = (int)smartLookupData.KeywordType });
+                    await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupPeopleCommand, new { Name = smartLookupData.ProfileName, KeywordType = (int)smartLookupData.KeywordType });
                     break;
                 case LookupKeywordType.Tag:
                     if (smartLookupData.Tags.Any())
                     {
                         foreach (var tag in smartLookupData.Tags)
                         {
-                            var countTagPost = await _smartLookupRepository.Connection
+                            var countTagPost = await smartLookupRepository.Connection
                                 .QueryFirstOrDefaultAsync<long>(CountTagPostCommand, new { tag });
 
-                            await _smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupTagCommand, new
+                            await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupTagCommand, new
                             {
                                 value = countTagPost,
                                 tag,
@@ -64,13 +138,88 @@ namespace Mcsg.Function.Job
                     }
                     break;
             }
-        }*/
+        }
+    }
 
-        private string UpdateSmartLookupPeopleCommand
+    #endregion
+
+    #region -- Events --
+
+    /// <summary>
+    /// On connection shutdown
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnConnectionShutdown(object? sender, ShutdownEventArgs e)
+    {
+        $"Connection shutdown {e.ReplyText}".LogInfor();
+    }
+
+    /// <summary>
+    /// On received
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnReceived(object? sender, BasicDeliverEventArgs e)
+    {
+        // Received message
+        var content = Encoding.UTF8.GetString(e.Body.ToArray());
+
+        // Handle the received message
+        HandleMessage(content);
+
+        _channel.BasicAck(e.DeliveryTag, false);
+    }
+
+    /// <summary>
+    /// On shutdown
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnShutdown(object? sender, ShutdownEventArgs e)
+    {
+        $"Consumer shutdown {e.ReplyText}".LogInfor();
+    }
+
+    /// <summary>
+    /// On registered
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnRegistered(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer registered {e.ConsumerTags}".LogInfor();
+    }
+
+    /// <summary>
+    /// On unregistered
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnUnregistered(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer unregistered {e.ConsumerTags}".LogInfor();
+    }
+
+    /// <summary>
+    /// On consumer cancelled
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer cancelled {e.ConsumerTags}".LogInfor();
+    }
+
+    #endregion
+
+    #region -- Properties --
+
+    private string UpdateSmartLookupPeopleCommand
+    {
+        get
         {
-            get
-            {
-                return string.Format(@"UPDATE {0} AS s
+            return string.Format(@"UPDATE {0} AS s
                                     SET ""CountCriteria"" = c.count_value
                                     FROM (
                                         SELECT u.""ProfileName"", COUNT(p.""Id"") AS count_value
@@ -82,31 +231,51 @@ namespace Mcsg.Function.Job
                                     WHERE s.""Keyword"" = c.""ProfileName""
                                     AND s.""Keyword"" = @Name
                                     AND s.""KeywordType"" = @KeywordType;
-                                ", _smartLookupRepository.TableName, _postRepository.TableName, _userRepository.TableName);
-            }
-        }
-
-        private string UpdateSmartLookupTagCommand
-        {
-            get
-            {
-                return string.Format(@"UPDATE {0} AS s
-                                        SET ""CountCriteria"" = @value                             
-                                        WHERE s.""Keyword"" = @tag
-                                        AND s.""KeywordType"" = @KeywordType;"
-                    , _smartLookupRepository.TableName);
-            }
-        }
-
-        private string CountTagPostCommand
-        {
-            get
-            {
-                return @$"SELECT COUNT(tagpost.""PostId"") AS CountValue
-                        FROM {_tagRepository.TableName} tag 
-                        INNER JOIN {_tagPostRepository.TableName} tagpost ON tagpost.""TagId"" = tag.""Id""
-                        WHERE tag.""Name"" = @tag AND tagpost.""IsDelete"" = false";
-            }
+                                ", "public.\"SmartLookups\"", "public.\"Posts\"", "public.\"Users\"");
         }
     }
+
+    private string UpdateSmartLookupTagCommand
+    {
+        get
+        {
+            return string.Format(@"UPDATE {0} AS s
+                                        SET ""CountCriteria"" = @value
+                                        WHERE s.""Keyword"" = @tag
+                                        AND s.""KeywordType"" = @KeywordType;"
+                , "public.\"SmartLookups\"");
+        }
+    }
+
+    private string CountTagPostCommand
+    {
+        get
+        {
+            return @$"SELECT COUNT(tagpost.""PostId"") AS CountValue
+                        FROM {"public.\"Tags\""} tag 
+                        INNER JOIN {"public.\"TagPosts\""} tagpost ON tagpost.""TagId"" = tag.""Id""
+                        WHERE tag.""Name"" = @tag AND tagpost.""IsDelete"" = false";
+        }
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Service scope factory
+    /// </summary>
+    private readonly IServiceScopeFactory _ss;
+
+    /// <summary>
+    /// Connection
+    /// </summary>
+    private IConnection _connection;
+
+    /// <summary>
+    /// Channel
+    /// </summary>
+    private IModel _channel;
+
+    #endregion
 }
