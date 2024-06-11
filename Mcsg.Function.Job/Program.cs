@@ -184,7 +184,7 @@ public class Program
         #endregion
 
         builder.Services.AddControllers();
-        //builder.Services.AddHostedService<HostedService>();
+        builder.Services.AddHostedService<EmailFunction>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

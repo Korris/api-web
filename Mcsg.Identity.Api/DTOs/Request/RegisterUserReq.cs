@@ -2,6 +2,6 @@
 {
     public class RegisterUserReq : BaseUserReq
     {
-        public string ReferralCode { get; set; }
+        public string? ReferralCode { get; set; }
     }
 }

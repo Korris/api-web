@@ -1,31 +1,27 @@
-﻿using Mcsg.Function.Job.Constants;
-using Mcsg.Function.Job.Extensions;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Enums;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Minio;
+using Minio.DataModel.Args;
 using Newtonsoft.Json;
 using System.Text;
-using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface IEmailService
-    {
-        Task SendEmailAsync(Entities.Job job);
-    }
+    using Constants;
+    using Extensions;
+    using Interfaces;
+    using Lib.Common.Models;
+    using Lib.Data.Enums;
+    using Entities = Lib.Data.Domain.Entities;
 
     public class EmailService : IEmailService
     {
-        private readonly IAzureBlobStorageService _blobStorageService;
-        private readonly IAzureBlobStorageService _publicBlobStorageService;
-        private readonly IEmailSender _emailSender;
-        public EmailService(IAzureBlobStorageService blobStorageService,
-            IEmailSender emailSender)
+        public EmailService(IEmailSender emailSender, ISetting setting)
         {
             _emailSender = emailSender;
-            _blobStorageService = blobStorageService;
-            _publicBlobStorageService = new AzureBlobStorageService(Environment.GetEnvironmentVariable(FunctionConstant.PublicStorageConnection));
+            _setting = setting;
+
+            var minio = setting.Minio;
+            _mc = new MinioClient().WithEndpoint(minio.EndPoint).WithCredentials(minio.AccessKey, minio.SecrectKey).WithRegion(minio.Location).Build();
         }
 
         public async Task SendEmailAsync(Entities.Job job)
@@ -68,12 +64,74 @@ namespace Mcsg.Function.Job.Services
             await _emailSender.SendEmailAsync(email.To, email.Subject, email.Body);
         }
 
-
         private async Task<StringBuilder> DownloadEmailTemplateAsync(string templateName)
         {
-            await using var templateStream = await _publicBlobStorageService.DownloadAsync(templateName, "email-templates");
-            using StreamReader reader = new(templateStream);
-            return new StringBuilder(await reader.ReadToEndAsync());
+            var file = $"email-templates/" + templateName;
+            var ms = await GetObject(file);
+            return new StringBuilder(MemoryStreamToString(ms));
         }
+
+        /// <summary>
+        /// Get object
+        /// </summary>
+        /// <param name="objectName">Object name (include full path and file extension)</param>
+        /// <returns>Return the result</returns>
+        private async Task<MemoryStream> GetObject(string objectName)
+        {
+            var res = new MemoryStream();
+
+            if (string.IsNullOrWhiteSpace(objectName))
+            {
+                return res;
+            }
+
+            var minio = _setting.Minio;
+
+            var statArg = new StatObjectArgs().WithBucket(minio.BucketName).WithObject(objectName);
+            await _mc.StatObjectAsync(statArg);
+
+            var getArg = new GetObjectArgs().WithBucket(minio.BucketName).WithObject(objectName).WithCallbackStream(p => { p.CopyTo(res); });
+            await _mc.GetObjectAsync(getArg);
+
+            return res;
+        }
+
+        static string MemoryStreamToString(MemoryStream memoryStream)
+        {
+            const int bufferSize = 1024; // 1 KB buffer size
+            byte[] buffer = new byte[bufferSize];
+            StringBuilder stringBuilder = new StringBuilder();
+
+            // Ensure the position is at the beginning of the MemoryStream
+            memoryStream.Position = 0;
+
+            int bytesRead;
+            while ((bytesRead = memoryStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                // Convert the read bytes to a string and append to the StringBuilder
+                stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Email sender
+        /// </summary>
+        private readonly IEmailSender _emailSender;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        /// <summary>
+        /// Minio client
+        /// </summary>
+        private readonly IMinioClient _mc;
+
+        #endregion
     }
 }
