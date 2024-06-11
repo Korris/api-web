@@ -1,17 +1,16 @@
-﻿using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Wallet.Api.Models;
-using Newtonsoft.Json;
-
-namespace Mcsg.Wallet.Api.Services
+﻿namespace Mcsg.Wallet.Api.Services
 {
+    using Api.Interfaces;
+    using Common.Core.Dtos;
+    using Common.Core.Extensions;
+    using Lib.Common.Distributor;
+    using Models;
+
     public class SyncDataDistributeService : BaseDistributor
     {
-        private readonly IAzureBlobStorageQueueService _queueService;
-
         public SyncDataDistributeService(IServiceProvider serviceProvider)
         {
-            _queueService = serviceProvider.GetRequiredService<IAzureBlobStorageQueueService>();
+            _setting = serviceProvider.GetRequiredService<ISetting>();
         }
 
         public override Task<bool> IsAcceptable(DistributedItem item)
@@ -23,8 +22,17 @@ namespace Mcsg.Wallet.Api.Services
         public override async Task ApplyAction(DistributedItem item)
         {
             var distributeItem = item as SyncDataDistributeItem;
-            var queueData = JsonConvert.SerializeObject(distributeItem.Data);
-            await _queueService.Enqueue("syncdataqueue", queueData);
+            var msg = new QueueMessageDto(distributeItem.Data);
+            _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueSyncData, msg);
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

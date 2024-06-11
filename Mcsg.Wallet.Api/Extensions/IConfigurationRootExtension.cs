@@ -27,6 +27,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueSyncData))
+        {
+            setting.NotificationQueueSyncData = config[$"{prefix}:QueueSyncData"] + "";
+        }
     }
 
     #endregion

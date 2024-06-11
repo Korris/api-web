@@ -47,6 +47,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueueSms { get; set; }
 
     /// <summary>
+    /// Notification queue sync data
+    /// </summary>
+    public string NotificationQueueSyncData { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     public string NotificationRoutingKey { get; set; }

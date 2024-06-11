@@ -25,6 +25,11 @@ public interface ISetting : ISettingBase
     string NotificationQueueSms { get; set; }
 
     /// <summary>
+    /// Notification queue sync data
+    /// </summary>
+    string NotificationQueueSyncData { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }

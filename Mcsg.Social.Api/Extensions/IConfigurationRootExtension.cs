@@ -27,6 +27,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueSmartLookup = config[$"{prefix}:QueueSmartLookup"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueSyncData))
+        {
+            setting.NotificationQueueSyncData = config[$"{prefix}:QueueSyncData"] + "";
+        }
     }
 
     #endregion
