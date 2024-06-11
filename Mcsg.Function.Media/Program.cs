@@ -45,7 +45,7 @@ public class Program
         assembly!.StartLogger(st);
 
         #region -- Load HTTP protocols --
-        if (!string.IsNullOrWhiteSpace(st.Protocols))
+        if (!st.IsLocal && !string.IsNullOrWhiteSpace(st.Protocols))
         {
             var protocols = st.Protocols.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
@@ -141,6 +141,7 @@ public class Program
 
         var app = builder.Build();
 
+        #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment() || st.SwaggerEnabled)
         {
@@ -173,6 +174,7 @@ public class Program
         {
             app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
         }
+        #endregion
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
