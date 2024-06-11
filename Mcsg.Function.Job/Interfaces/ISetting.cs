@@ -26,6 +26,11 @@ public interface ISetting : ISettingBase
     string NotificationQueuePayment { get; set; }
 
     /// <summary>
+    /// Notification queue post comment
+    /// </summary>
+    string NotificationQueuePostComment { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }

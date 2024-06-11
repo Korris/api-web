@@ -1,17 +1,16 @@
-﻿using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Realtime.Api.Models;
-using Newtonsoft.Json;
-
-namespace Mcsg.Realtime.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services
 {
+    using Api.Interfaces;
+    using Common.Core.Dtos;
+    using Common.Core.Extensions;
+    using Lib.Common.Distributor;
+    using Models;
+
     public class SmartCountDistributeService : BaseDistributor
     {
-        private readonly IAzureBlobStorageQueueService _queueService;
-
         public SmartCountDistributeService(IServiceProvider serviceProvider)
         {
-            _queueService = serviceProvider.GetRequiredService<IAzureBlobStorageQueueService>();
+            _setting = serviceProvider.GetRequiredService<ISetting>();
         }
 
         public override Task<bool> IsAcceptable(DistributedItem item)
@@ -23,8 +22,17 @@ namespace Mcsg.Realtime.Api.Services
         public override async Task ApplyAction(DistributedItem item)
         {
             var distributeItem = item as SmartCountDistributeItem;
-            var queueData = JsonConvert.SerializeObject(distributeItem.Data);
-            await _queueService.Enqueue("postcommentqueue", queueData);
+            var msg = new QueueMessageDto(distributeItem.Data);
+            _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueuePostComment, msg);
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

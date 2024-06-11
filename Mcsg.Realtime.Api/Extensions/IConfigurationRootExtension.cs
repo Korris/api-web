@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Function.Job.Extensions;
+﻿namespace Mcsg.Realtime.Api.Extensions;
 
 /// <summary>
 /// IConfigurationRoot extension for using [this IConfigurationRoot] only
@@ -19,21 +19,9 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationExchange = config[$"{prefix}:Exchange"] + "";
         }
-        if (string.IsNullOrEmpty(setting.NotificationQueueEmail))
-        {
-            setting.NotificationQueueEmail = config[$"{prefix}:QueueEmail"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationQueuePayment))
-        {
-            setting.NotificationQueuePayment = config[$"{prefix}:QueuePayment"] + "";
-        }
         if (string.IsNullOrEmpty(setting.NotificationQueuePostComment))
         {
             setting.NotificationQueuePostComment = config[$"{prefix}:QueuePostComment"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationRoutingKey))
-        {
-            setting.NotificationRoutingKey = config[$"{prefix}:RoutingKey"] + "";
         }
     }
 

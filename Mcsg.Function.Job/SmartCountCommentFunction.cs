@@ -1,44 +1,209 @@
-using Mcsg.Function.Job.Services;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Entities = Mcsg.Lib.Data.Domain.Entities;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
-namespace Mcsg.Function.Job
+namespace Mcsg.Function.Job;
+
+using Common.Core.Dtos;
+using Common.Core.Extensions;
+using Interfaces;
+using Lib.Common.Models;
+using Lib.Data.Domain.Entities;
+using Services;
+using static Common.SeedWork.Constants.Information;
+
+/// <summary>
+/// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
+/// </summary>
+public class SmartCountCommentFunction : BackgroundService
 {
-    public class SmartCountCommentFunction
-    {
-        private readonly ILogger<SmartCountCommentFunction> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Entities.SmartCountAction> _smartCountActionRepository;
-        private readonly IRepository<Entities.PostComment> _postCommentRepository;
-        private readonly IRepository<Entities.SubPostComment> _subPostCommentRepository;
-        private readonly IRepository<User> _userRepository;
-        private readonly IRepository<Entities.Tag> _tagRepository;
-        private readonly ICountService<PostComment, SubPostComment> _commentCountService;
+    #region -- Overrides --
 
-        public SmartCountCommentFunction(
-            ILogger<SmartCountCommentFunction> logger,
-            ICountService<PostComment, SubPostComment> commentCountService,
-            IUnitOfWork unitOfWork)
+    /// <summary>
+    /// Execute async
+    /// </summary>
+    /// <param name="stoppingToken">Stopping token</param>
+    /// <returns>A System.Threading.Tasks.Task that represents the long running operations</returns>
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        stoppingToken.ThrowIfCancellationRequested();
+
+        var consumer = new EventingBasicConsumer(_channel);
+        consumer.Received += OnReceived;
+        consumer.Shutdown += OnShutdown;
+        consumer.Registered += OnRegistered;
+        consumer.Unregistered += OnUnregistered;
+        consumer.ConsumerCancelled += OnConsumerCancelled;
+
+        using (var scope = _ss.CreateScope())
         {
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _postCommentRepository = _unitOfWork.GetRepository<Entities.PostComment>();
-            _subPostCommentRepository = _unitOfWork.GetRepository<Entities.SubPostComment>();
-            _smartCountActionRepository = _unitOfWork.GetRepository<Entities.SmartCountAction>();
-            _commentCountService = commentCountService;
+            var st = scope.ServiceProvider.GetRequiredService<ISetting>();
+
+            _channel.BasicConsume(st.NotificationQueuePostComment, false, consumer);
         }
 
-        /*[Function(nameof(SmartCountCommentFunction))]
-        public async Task Run([QueueTrigger("postcommentqueue", Connection = "Function:AzureBlobStorageConnection")] string data)
-        {
-            string logMessage = $"C# Queue trigger function processed: {data}";
-            _logger.LogInformation(logMessage);
-
-            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(data);
-
-            await _commentCountService.RunQueue(smartLookupData);
-        }*/
+        return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public override void Dispose()
+    {
+        _channel.Close();
+        _connection.Close();
+        base.Dispose();
+    }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="ss">Service scope factory</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public SmartCountCommentFunction(IServiceScopeFactory ss)
+    {
+        $"Initialize {nameof(SmartCountCommentFunction)}".LogInfor();
+
+        _ss = ss ?? throw new ArgumentNullException(nameof(ss));
+
+        using (var scope = _ss.CreateScope())
+        {
+            var st = scope.ServiceProvider.GetRequiredService<ISetting>();
+
+            _connection = st.Queue.CreateConnection();
+            "_connection created".LogInfor();
+
+            _channel = _connection.CreateModel();
+            "_channel created".LogInfor();
+
+            _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
+            _channel.QueueDeclare(st.NotificationQueuePostComment, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueuePostComment, st.NotificationExchange, st.NotificationQueuePostComment, null);
+            _channel.BasicQos(0, 1, false);
+
+            _connection.ConnectionShutdown += OnConnectionShutdown;
+
+            $"Finished {nameof(SmartCountCommentFunction)}".LogInfor();
+        }
+    }
+
+    /// <summary>
+    /// Handle message
+    /// </summary>
+    /// <param name="message">Message</param>
+    private async void HandleMessage(string message)
+    {
+        $"Consumer received {message}".LogInfor("JSON");
+
+        var msg = message.ToInstNull<QueueMessageDto>();
+        if (msg == null)
+        {
+            $"{I003} {message}".LogInfor();
+            return;
+        }
+
+        using (var scope = _ss.CreateScope())
+        {
+            var commentCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostComment, SubPostComment>>();
+
+            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
+            await commentCountService.RunQueue(smartLookupData);
+        }
+    }
+
+    #endregion
+
+    #region -- Events --
+
+    /// <summary>
+    /// On connection shutdown
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnConnectionShutdown(object? sender, ShutdownEventArgs e)
+    {
+        $"Connection shutdown {e.ReplyText}".LogInfor();
+    }
+
+    /// <summary>
+    /// On received
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnReceived(object? sender, BasicDeliverEventArgs e)
+    {
+        // Received message
+        var content = Encoding.UTF8.GetString(e.Body.ToArray());
+
+        // Handle the received message
+        HandleMessage(content);
+
+        _channel.BasicAck(e.DeliveryTag, false);
+    }
+
+    /// <summary>
+    /// On shutdown
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnShutdown(object? sender, ShutdownEventArgs e)
+    {
+        $"Consumer shutdown {e.ReplyText}".LogInfor();
+    }
+
+    /// <summary>
+    /// On registered
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnRegistered(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer registered {e.ConsumerTags}".LogInfor();
+    }
+
+    /// <summary>
+    /// On unregistered
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnUnregistered(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer unregistered {e.ConsumerTags}".LogInfor();
+    }
+
+    /// <summary>
+    /// On consumer cancelled
+    /// </summary>
+    /// <param name="sender">Sender</param>
+    /// <param name="e">Event</param>
+    private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
+    {
+        $"Consumer cancelled {e.ConsumerTags}".LogInfor();
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Service scope factory
+    /// </summary>
+    private readonly IServiceScopeFactory _ss;
+
+    /// <summary>
+    /// Connection
+    /// </summary>
+    private IConnection _connection;
+
+    /// <summary>
+    /// Channel
+    /// </summary>
+    private IModel _channel;
+
+    #endregion
 }
