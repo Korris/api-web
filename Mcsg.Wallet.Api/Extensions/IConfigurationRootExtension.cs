@@ -23,6 +23,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueuePayment = config[$"{prefix}:QueuePayment"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueSms))
+        {
+            setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
+        }
     }
 
     #endregion

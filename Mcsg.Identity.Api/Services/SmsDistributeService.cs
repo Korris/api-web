@@ -1,23 +1,22 @@
-﻿using Mcsg.Identity.Api.Models;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-
-namespace Mcsg.Identity.Api.Services
+﻿namespace Mcsg.Identity.Api.Services
 {
+    using Api.Interfaces;
+    using Common.Core.Dtos;
+    using Common.Core.Extensions;
+    using Lib.Common.Distributor;
+    using Lib.Common.Extensions;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public class SmsDistributeService : BaseDistributor
     {
-        private readonly IRepository<Job> _jobRepository;
-        private readonly IAzureBlobStorageQueueService _queueService;
-
         public SmsDistributeService(IServiceProvider serviceProvider)
         {
             _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
-            _queueService = serviceProvider.GetRequiredService<IAzureBlobStorageQueueService>();
+            _setting = serviceProvider.GetRequiredService<ISetting>();
         }
 
         public override Task<bool> IsAcceptable(DistributedItem item)
@@ -37,7 +36,26 @@ namespace Mcsg.Identity.Api.Services
                 Status = JobStatus.Queued
             };
             await _jobRepository.InsertAsync(job);
-            await _queueService.Enqueue("smsqueue", $"{smsItem.Id}");
+
+            var msg = new QueueMessageDto
+            {
+                DevName = smsItem.Id.ToString()
+            };
+            _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueSms, msg);
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Job repository
+        /// </summary>
+        private readonly IRepository<Job> _jobRepository;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

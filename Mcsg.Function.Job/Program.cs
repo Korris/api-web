@@ -190,6 +190,7 @@ public class Program
         builder.Services.AddHostedService<SmartCountCommentFunction>();
         builder.Services.AddHostedService<SmartCountReactFunction>();
         builder.Services.AddHostedService<SmartLookupFunction>();
+        builder.Services.AddHostedService<SmsFunction>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

@@ -41,6 +41,11 @@ public interface ISetting : ISettingBase
     string NotificationQueueSmartLookup { get; set; }
 
     /// <summary>
+    /// Notification queue sms
+    /// </summary>
+    string NotificationQueueSms { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }

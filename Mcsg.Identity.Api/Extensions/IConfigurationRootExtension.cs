@@ -23,6 +23,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueEmail = config[$"{prefix}:QueueEmail"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueSms))
+        {
+            setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
+        }
     }
 
     #endregion

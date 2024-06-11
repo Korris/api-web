@@ -20,6 +20,11 @@ public interface ISetting : ISettingBase
     string NotificationQueueEmail { get; set; }
 
     /// <summary>
+    /// Notification queue sms
+    /// </summary>
+    string NotificationQueueSms { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }

@@ -39,6 +39,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueSmartLookup = config[$"{prefix}:QueueSmartLookup"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueSms))
+        {
+            setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
+        }
         if (string.IsNullOrEmpty(setting.NotificationRoutingKey))
         {
             setting.NotificationRoutingKey = config[$"{prefix}:RoutingKey"] + "";

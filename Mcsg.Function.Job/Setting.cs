@@ -42,6 +42,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueueSmartLookup { get; set; }
 
     /// <summary>
+    /// Notification queue sms
+    /// </summary>
+    public string NotificationQueueSms { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     public string NotificationRoutingKey { get; set; }
