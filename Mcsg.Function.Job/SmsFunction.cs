@@ -7,11 +7,11 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
+using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
-using Lib.Data.Repositories.Interface;
+using Lib.Data.Repositories;
 using Services;
 using static Common.SeedWork.Constants.Information;
-using Entities = Lib.Data.Domain.Entities;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
@@ -109,8 +109,7 @@ public class SmsFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            var jobRepository = unitOfWork.GetRepository<Entities.Job>();
+            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
             var jobId = new Guid(msg.DevName); // TODO
 
             var jobDb = await jobRepository.GetByIdAsync(jobId);
@@ -121,8 +120,8 @@ public class SmsFunction : BackgroundService
 
                 try
                 {
-                    var smsService = scope.ServiceProvider.GetRequiredService<ISmsService>();
-                    await smsService.SendSmsAsync(jobDb);
+                    var service = scope.ServiceProvider.GetRequiredService<ISmsService>();
+                    await service.SendSmsAsync(jobDb);
 
                     jobDb.Status = JobStatus.Success;
                     await jobRepository.UpdateAsync(jobDb);
