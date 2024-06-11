@@ -31,6 +31,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueSyncData = config[$"{prefix}:QueueSyncData"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueViewHistory))
+        {
+            setting.NotificationQueueViewHistory = config[$"{prefix}:QueueViewHistory"] + "";
+        }
     }
 
     #endregion

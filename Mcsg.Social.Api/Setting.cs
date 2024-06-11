@@ -31,6 +31,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueueSyncData { get; set; }
 
     /// <summary>
+    /// Notification queue view history
+    /// </summary>
+    public string NotificationQueueViewHistory { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     public string NotificationRoutingKey { get; set; }
@@ -53,6 +58,7 @@ public class Setting : SettingBase, ISetting
         NotificationQueuePostReact = string.Empty;
         NotificationQueueSmartLookup = string.Empty;
         NotificationQueueSyncData = string.Empty;
+        NotificationQueueViewHistory = string.Empty;
         NotificationRoutingKey = string.Empty;
     }
 

@@ -51,6 +51,11 @@ public interface ISetting : ISettingBase
     string NotificationQueueSyncData { get; set; }
 
     /// <summary>
+    /// Notification queue view history
+    /// </summary>
+    string NotificationQueueViewHistory { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }
