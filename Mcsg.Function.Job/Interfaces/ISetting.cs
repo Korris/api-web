@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Function.Job.Interfaces;
 
+using Common.SeedWork.Dtos;
 using Common.SeedWork.Interfaces;
 
 /// <summary>
@@ -20,6 +21,11 @@ public interface ISetting : ISettingBase
     string NotificationQueueEmail { get; set; }
 
     /// <summary>
+    /// Notification queue payment
+    /// </summary>
+    string NotificationQueuePayment { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }
@@ -28,6 +34,11 @@ public interface ISetting : ISettingBase
     /// Allow sending email
     /// </summary>
     bool AllowSendingEmail { get; set; }
+
+    /// <summary>
+    /// ZaloPay
+    /// </summary>
+    ZaloPayDto ZaloPay { get; }
 
     #endregion
 }

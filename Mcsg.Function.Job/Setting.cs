@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Function.Job;
 
 using Common.SeedWork;
+using Common.SeedWork.Dtos;
 using Interfaces;
 
 /// <summary>
@@ -21,6 +22,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueueEmail { get; set; }
 
     /// <summary>
+    /// Notification queue payment
+    /// </summary>
+    public string NotificationQueuePayment { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     public string NotificationRoutingKey { get; set; }
@@ -29,6 +35,11 @@ public class Setting : SettingBase, ISetting
     /// Allow sending email
     /// </summary>
     public bool AllowSendingEmail { get; set; }
+
+    /// <summary>
+    /// ZaloPay
+    /// </summary>
+    public ZaloPayDto ZaloPay { get; }
 
     #endregion
 
@@ -41,7 +52,9 @@ public class Setting : SettingBase, ISetting
     {
         NotificationExchange = string.Empty;
         NotificationQueueEmail = string.Empty;
+        NotificationQueuePayment = string.Empty;
         NotificationRoutingKey = string.Empty;
+        ZaloPay = new ZaloPayDto();
     }
 
     #endregion

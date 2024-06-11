@@ -80,9 +80,9 @@ public class EmailFunction : BackgroundService
             _channel = _connection.CreateModel();
             "_channel created".LogInfor();
 
-            _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Topic);
+            _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
             _channel.QueueDeclare(st.NotificationQueueEmail, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueueEmail, st.NotificationExchange, st.NotificationRoutingKey, null);
+            _channel.QueueBind(st.NotificationQueueEmail, st.NotificationExchange, st.NotificationQueueEmail, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;

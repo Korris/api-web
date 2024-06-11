@@ -9,7 +9,25 @@ public interface ISetting : ISettingBase
 {
     #region -- Properties --
 
-    //TODO
+    /// <summary>
+    /// Notification exchange
+    /// </summary>
+    string NotificationExchange { get; set; }
+
+    /// <summary>
+    /// Notification queue payment
+    /// </summary>
+    string NotificationQueuePayment { get; set; }
+
+    /// <summary>
+    /// Notification routing key
+    /// </summary>
+    string NotificationRoutingKey { get; set; }
+
+    /// <summary>
+    /// Allow sending email
+    /// </summary>
+    bool AllowSendingEmail { get; set; }
 
     #endregion
 }

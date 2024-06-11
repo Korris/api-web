@@ -1,34 +1,29 @@
 ﻿using HD.ZaloPay.Helper.Crypto;
-using Mcsg.Function.Job.Constants;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Models.RealTime;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface IPaymentService
-    {
-        Task ZPQueryOrderAsync(PaymentTransData data);
-    }
+    using Interfaces;
+    using Job.Constants;
+    using Lib.Common.Enums;
+    using Lib.Common.Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Lib.Common.Models.RealTime;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+
     public class PaymentService : IPaymentService
     {
-        private readonly WalletDbContext _walletDbContext;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<PaymentService> _logger;
-        public PaymentService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext, ILogger<PaymentService> logger)
+        public PaymentService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
         {
             _unitOfWork = unitOfWork;
             _walletDbContext = walletDbContext;
             _logger = logger;
+            _setting = setting;
         }
 
         public async Task ZPQueryOrderAsync(PaymentTransData data)
@@ -44,9 +39,9 @@ namespace Mcsg.Function.Job.Services
                     _logger.LogInformation($"PaymentService-ZPQueryOrderAsync-TransId: {transaction.Id} - appTransId: {appTransId}");
                     if (!string.IsNullOrEmpty(appTransId))
                     {
-                        var appId = Environment.GetEnvironmentVariable(FunctionConstant.ZaloPayAppId);
-                        var key1 = Environment.GetEnvironmentVariable(FunctionConstant.ZaloPayKey1);
-                        var url = Environment.GetEnvironmentVariable(FunctionConstant.ZaloPayUrl);
+                        var appId = _setting.ZaloPay.AppId;
+                        var key1 = _setting.ZaloPay.Key1;
+                        var url = _setting.ZaloPay.Url;
 
                         var param = new Dictionary<string, string>();
                         param.Add("app_id", appId);
@@ -131,5 +126,18 @@ namespace Mcsg.Function.Job.Services
                 return false;
             }
         }
+
+        #region -- Fields --
+
+        private readonly WalletDbContext _walletDbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<PaymentService> _logger;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

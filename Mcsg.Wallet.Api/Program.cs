@@ -6,6 +6,8 @@ using System.Text.Json.Serialization;
 namespace Mcsg.Wallet.Api;
 
 using Common.Core.Extensions;
+using Extensions;
+using Interfaces;
 using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -47,6 +49,10 @@ public class Program
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
 
+        #region -- Load settings --
+        config.LoadSettings(st, "Queue:Notification");
+        #endregion
+
         // Update connection string
         cs = st.SetDbParams(cs);
 
@@ -80,6 +86,11 @@ public class Program
                 }
             });
         }
+        #endregion
+
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));

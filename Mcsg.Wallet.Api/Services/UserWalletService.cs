@@ -1,19 +1,4 @@
 ﻿using HD.ZaloPay.Helper.Crypto;
-using Mcsg.Lib.Common.Web.RealTime.Services;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Entities;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Constants;
-using Mcsg.Wallet.Api.Helpers;
-using Mcsg.Wallet.Api.Models;
-using Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Request;
-using Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -21,6 +6,24 @@ using System.Data;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Api.Constants;
+    using Api.Helpers;
+    using Api.Interfaces;
+    using Api.Models._3rdClass.ZaloPay.Request;
+    using Api.Models._3rdClass.ZaloPay.Response;
+    using Common.Core.Dtos;
+    using Common.Core.Extensions;
+    using Lib.Common.Enums;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Lib.Common.Web.RealTime.Services;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Entities;
+    using Lib.Data.Wallet.Enums;
+    using Models;
+
     public interface IUserWalletService
     {
         Task<IEnumerable<UserWalletResp>> GetUserWalletAsync();
@@ -46,17 +49,6 @@ namespace Mcsg.Wallet.Api.Services
     }
     public class UserWalletService : IUserWalletService
     {
-        private readonly WalletDbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IConfiguration _configuration;
-        private readonly IBankService _bankService;
-        private readonly IZaloPayService _zaloPayService;
-        private readonly IOtpService _otpService;
-        private readonly ISystemService _systemService;
-        private readonly ZaloPaySetting _zaloPaySetting;
-        private readonly ISignalRService _signalRService;
-        private readonly IAzureBlobStorageQueueService _queueService;
-        private readonly ILogger<UserWalletService> _logger;
         public UserWalletService(WalletDbContext walletDbContext,
             ICurrentUserService currentUserService,
             IOtpService otpService,
@@ -78,7 +70,7 @@ namespace Mcsg.Wallet.Api.Services
             _signalRService = signalRService;
             _zaloPaySetting = zaloPaySettingOptions.Value;
             _dbContext = walletDbContext;
-            _queueService = serviceProvider.GetRequiredService<IAzureBlobStorageQueueService>();
+            _setting = serviceProvider.GetRequiredService<ISetting>();
             _logger = logger;
         }
 
@@ -678,8 +670,9 @@ namespace Mcsg.Wallet.Api.Services
                         UserId = userId.Value,
                         Status = TransactionStatus.PENDING
                     };
-                    var queueData = JsonConvert.SerializeObject(jobData);
-                    await _queueService.Enqueue("paymenttransqueue", queueData);
+
+                    var msg = new QueueMessageDto(jobData);
+                    _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueuePayment, msg);
 
                     var depositResp = new DepositResp()
                     {
@@ -888,6 +881,26 @@ namespace Mcsg.Wallet.Api.Services
 
             return $"https://api.vietqr.io/image/{bankAccountBin}-{bankAccount}-PSYZ8LO.jpg?accountName={bankAccountName}&amount={amount}&addInfo={refCode}";
         }
+        #endregion
+
+        #region -- Fields --
+
+        private readonly WalletDbContext _dbContext;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IConfiguration _configuration;
+        private readonly IBankService _bankService;
+        private readonly IZaloPayService _zaloPayService;
+        private readonly IOtpService _otpService;
+        private readonly ISystemService _systemService;
+        private readonly ZaloPaySetting _zaloPaySetting;
+        private readonly ISignalRService _signalRService;
+        private readonly ILogger<UserWalletService> _logger;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
         #endregion
     }
 }
