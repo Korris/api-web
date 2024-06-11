@@ -188,6 +188,7 @@ public class Program
         builder.Services.AddHostedService<ExclusiveUnlockFunction>();
         builder.Services.AddHostedService<PaymentTransactionFunction>();
         builder.Services.AddHostedService<SmartCountCommentFunction>();
+        builder.Services.AddHostedService<SmartCountReactFunction>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

@@ -32,6 +32,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueuePostComment { get; set; }
 
     /// <summary>
+    /// Notification queue post react
+    /// </summary>
+    public string NotificationQueuePostReact { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     public string NotificationRoutingKey { get; set; }
@@ -59,6 +64,7 @@ public class Setting : SettingBase, ISetting
         NotificationQueueEmail = string.Empty;
         NotificationQueuePayment = string.Empty;
         NotificationQueuePostComment = string.Empty;
+        NotificationQueuePostReact = string.Empty;
         NotificationRoutingKey = string.Empty;
         ZaloPay = new ZaloPayDto();
     }

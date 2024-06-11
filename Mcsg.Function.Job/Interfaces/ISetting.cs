@@ -31,6 +31,11 @@ public interface ISetting : ISettingBase
     string NotificationQueuePostComment { get; set; }
 
     /// <summary>
+    /// Notification queue post react
+    /// </summary>
+    string NotificationQueuePostReact { get; set; }
+
+    /// <summary>
     /// Notification routing key
     /// </summary>
     string NotificationRoutingKey { get; set; }
