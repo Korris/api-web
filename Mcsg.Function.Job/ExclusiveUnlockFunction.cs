@@ -1,30 +1,63 @@
-using Mcsg.Function.Job.Services;
+namespace Mcsg.Function.Job;
 
-namespace Mcsg.Function.Job
+using Common.Core.Extensions;
+using Services;
+
+/// <summary>
+/// ExclusiveUnlockFunction
+/// </summary>
+public class ExclusiveUnlockFunction : BackgroundService
 {
-    public class ExclusiveUnlockFunction
+    #region -- Overrides --
+
+    /// <summary>
+    /// Execute async
+    /// </summary>
+    /// <param name="stoppingToken">Stopping token</param>
+    /// <returns>A System.Threading.Tasks.Task that represents the long running operations</returns>
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly ILogger<SmartCountCommentFunction> _logger;
-        private readonly IExclusiveUnlockService _exclusiveUnlockService;
+        stoppingToken.ThrowIfCancellationRequested();
 
-        public ExclusiveUnlockFunction(
-            ILogger<SmartCountCommentFunction> logger,
-            IExclusiveUnlockService exclusiveUnlockService)
+        using (var scope = _ss.CreateScope())
         {
-            _logger = logger;
-            _exclusiveUnlockService = exclusiveUnlockService;
-        }
+            var exclusiveUnlockService = scope.ServiceProvider.GetRequiredService<IExclusiveUnlockService>();
 
-        /*[Function(nameof(ExclusiveUnlockFunction))]
-        public async Task Run([TimerTrigger(FunctionConstant.ExclusiveUnlockCron)] TimerInfo myTimer)
-        {
-            _logger.LogInformation($"ExclusiveUnlockFunction trigger function executed at: {DateTime.Now}");
-
-            if (myTimer.ScheduleStatus is not null)
+            while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation($"Next timer ExclusiveUnlockFunction schedule at: {myTimer.ScheduleStatus.Next}");
-                await _exclusiveUnlockService.Run();
+                $"Background Service is doing work.".LogInfor();
+
+                //TODO - The job runs every 5 hours and needs to get the configuration
+                await Task.Delay(TimeSpan.FromHours(5), stoppingToken);
+                await exclusiveUnlockService.Run();
             }
-        }*/
+        }
     }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="ss">Service scope factory</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public ExclusiveUnlockFunction(IServiceScopeFactory ss)
+    {
+        $"Initialize {nameof(ExclusiveUnlockFunction)}".LogInfor();
+
+        _ss = ss ?? throw new ArgumentNullException(nameof(ss));
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Service scope factory
+    /// </summary>
+    private readonly IServiceScopeFactory _ss;
+
+    #endregion
 }
