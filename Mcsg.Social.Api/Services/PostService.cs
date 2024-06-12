@@ -650,6 +650,7 @@ namespace Mcsg.Social.Api.Services
 	                              p.""Body"",
 	                              p.""IsMature"", 
 	                              p.""HashId"",
+                                  p.""Type"",
 	                              u.""ProfileName"",  
 	                              CASE 
 	                              WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
@@ -987,6 +988,7 @@ namespace Mcsg.Social.Api.Services
                 Id = x.Id,
                 IsMature = x.IsMature,
                 HashId = x.HashId,
+                Type = x.Type,
                 Chapters = MappingTopChapter(x.SubPostStr),
             }).ToList();
         }

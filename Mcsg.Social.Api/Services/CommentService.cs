@@ -20,6 +20,7 @@ namespace Mcsg.Social.Api.Services
         Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType);
+        Task<MostReactionCommentResponse> GetCommentWithMostReaction(string postHashId);
     }
     public partial class CommentService : ICommentService
     {
@@ -30,8 +31,9 @@ namespace Mcsg.Social.Api.Services
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Mention> _mentionRepository;
         private readonly FileSetting _fileSetting;
+        private IConfiguration _configuration;
         protected readonly IMapper _mapper;
-        public CommentService(IUnitOfWork unitOfWork, IOptionsMonitor<FileSetting> fileSetting, IMapper mapper)
+        public CommentService(IUnitOfWork unitOfWork, IOptionsMonitor<FileSetting> fileSetting, IMapper mapper, IConfiguration configuration)
         {
             _postCommentRepository = unitOfWork.GetRepository<PostComment>();
             _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
@@ -41,6 +43,7 @@ namespace Mcsg.Social.Api.Services
             _mentionRepository = unitOfWork.GetRepository<Mention>();
             _fileSetting = fileSetting.CurrentValue;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         public async Task<PagedResults<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -258,6 +261,32 @@ namespace Mcsg.Social.Api.Services
             response.Items = comments;
             response.TotalComments = totalComments;
             return response;
+        }
+        public async Task<MostReactionCommentResponse> GetCommentWithMostReaction(string postHashId)
+        {
+            if (string.IsNullOrWhiteSpace(postHashId))
+            {
+                return new MostReactionCommentResponse();
+            }
+
+            var query = $@"SELECT 
+                                    pc.""Id"", 
+                                    pc.""Body"",
+                                    u.""Avatar"",
+                                    u.""ProfileId"",
+                                    u.""ProfileName"" ,
+                                    COUNT(pcr.""Id"") AS max_reaction_count
+                            FROM ""Posts"" p 
+                            LEFT JOIN ""Users"" u ON p.""CreatedBy""= u.""Id""
+                            LEFT JOIN ""PostComments"" pc ON p.""Id""= pc.""PostId""
+                            LEFT JOIN ""PostCommentReactions"" pcr ON pc.""Id""= pcr.""TargetId""
+                            WHERE p.""HashId"" =@HashId
+                            GROUP BY pc.""Id"" ,u.""Avatar"",u.""ProfileName"" ,u.""ProfileId"" 
+                            ORDER BY max_reaction_count DESC, pc.""CreatedDate"" desc
+                            LIMIT 1";
+            var result = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<MostReactionCommentResponse>(query, new { HashId = postHashId });
+            result.Avatar = UrlHelper.GetPublicImageUrl(_configuration, result.Avatar);
+            return result;
         }
         public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType)
         {

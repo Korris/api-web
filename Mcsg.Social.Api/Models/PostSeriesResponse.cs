@@ -1,4 +1,5 @@
 ﻿using Mcsg.Social.Api.Enums;
+using Mcsg.Lib.Model.Enums;
 
 namespace Mcsg.Social.Api.Models
 {
@@ -67,6 +68,7 @@ namespace Mcsg.Social.Api.Models
         public int ReactionCount { get; set; }
         public bool IsMature { get; set; }
         public string HashId { get; set; }
+        public PostType Type { get; set; }
         public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
     }
 }
