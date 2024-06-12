@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -8,14 +7,15 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
-using Lib.Common.Models;
-using Mcsg.Function.Job.Services;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Enums;
+using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class SyncDataFunction : BackgroundService
+public class HostedEmail : BackgroundService
 {
     #region -- Overrides --
 
@@ -39,7 +39,7 @@ public class SyncDataFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueueSyncData, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueEmail, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -64,9 +64,9 @@ public class SyncDataFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SyncDataFunction(IServiceScopeFactory ss)
+    public HostedEmail(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(SyncDataFunction)}".LogInfor();
+        $"Initialize {nameof(HostedEmail)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -81,13 +81,13 @@ public class SyncDataFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueSyncData, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueueSyncData, st.NotificationExchange, st.NotificationQueueSyncData, null);
+            _channel.QueueDeclare(st.NotificationQueueEmail, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueEmail, st.NotificationExchange, st.NotificationQueueEmail, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(SyncDataFunction)}".LogInfor();
+            $"Finished {nameof(HostedEmail)}".LogInfor();
         }
     }
 
@@ -108,41 +108,31 @@ public class SyncDataFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var syncDataService = scope.ServiceProvider.GetRequiredService<ISyncDataService>();
+            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
+            var jobId = new Guid(msg.DevName); // TODO
 
-            var syncData = JsonConvert.DeserializeObject<SyncData>(msg.Payload);
-
-            switch (syncData.TargetDb)
+            var jobDb = await jobRepository.GetByIdAsync(jobId);
+            if (jobDb != null && jobDb.Status != JobStatus.Success)
             {
-                case SyncTargetDb.WALLETDB:
-                    {
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_INFO)
-                        {
-                            await syncDataService.SyncWalletUserInfoAsync(syncData);
-                        }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_REWARD)
-                        {
-                            await syncDataService.SyncWalletUserRewardAsync(syncData);
-                        }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_PREMIUM)
-                        {
-                            await syncDataService.SyncUserPremiumAsync(syncData);
-                        }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_CHAPTER)
-                        {
-                            await syncDataService.SyncUserBuyChapterAsync(syncData);
-                        }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_SERIES)
-                        {
-                            await syncDataService.SyncUserBuySeriesAsync(syncData);
-                        }
-                        break;
-                    }
+                jobDb.Status = JobStatus.Processing;
+                await jobRepository.UpdateAsync(jobDb);
 
-                default:
-                    {
-                        break;
-                    }
+                try
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<IEmailService>();
+                    await service.SendEmailAsync(jobDb);
+
+                    jobDb.Status = JobStatus.Success;
+                    await jobRepository.UpdateAsync(jobDb);
+                }
+                catch (Exception ex)
+                {
+                    jobDb.Status = JobStatus.Failed;
+                    jobDb.Error = $"{ex.Message} {ex.StackTrace}";
+                    await jobRepository.UpdateAsync(jobDb);
+
+                    throw;
+                }
             }
         }
     }

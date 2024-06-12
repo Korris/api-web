@@ -1,3 +1,4 @@
+using Dapper;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -10,13 +11,14 @@ using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
-using Services;
+using Lib.Data.Enums;
+using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class SmartCountCommentFunction : BackgroundService
+public class HostedViewHistory : BackgroundService
 {
     #region -- Overrides --
 
@@ -40,7 +42,7 @@ public class SmartCountCommentFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueuePostComment, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueViewHistory, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -65,9 +67,9 @@ public class SmartCountCommentFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SmartCountCommentFunction(IServiceScopeFactory ss)
+    public HostedViewHistory(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(SmartCountCommentFunction)}".LogInfor();
+        $"Initialize {nameof(HostedViewHistory)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -82,13 +84,13 @@ public class SmartCountCommentFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueuePostComment, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueuePostComment, st.NotificationExchange, st.NotificationQueuePostComment, null);
+            _channel.QueueDeclare(st.NotificationQueueViewHistory, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueViewHistory, st.NotificationExchange, st.NotificationQueueViewHistory, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(SmartCountCommentFunction)}".LogInfor();
+            $"Finished {nameof(HostedViewHistory)}".LogInfor();
         }
     }
 
@@ -109,10 +111,54 @@ public class SmartCountCommentFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var commentCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostComment, SubPostComment>>();
+            var viewHistoryRepository = scope.ServiceProvider.GetRequiredService<IRepository<ViewHistory>>();
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
-            await commentCountService.RunQueue(smartLookupData);
+            var viewHistory = JsonConvert.DeserializeObject<ViewHistoryData>(msg.Payload);
+
+            //Check user
+            try
+            {
+                var check = await viewHistoryRepository.Connection.QueryFirstOrDefaultAsync<Guid?>(GetLastViewFromUser, new
+                {
+                    viewHistory.EntityId,
+                    userid = viewHistory.UserId,
+                    viewHistory.EntityType,
+                    IpAddress = viewHistory.IdAddress
+                });
+
+                if (check != null)
+                {
+                    //Out
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            //Do save view history
+            ViewHistory history = new ViewHistory
+            {
+                EntityType = viewHistory.EntityType,
+                EntityId = viewHistory.EntityId,
+                CreatedDate = DateTime.UtcNow,
+                IpAddress = viewHistory.IdAddress,
+                SubType = viewHistory.SubType,
+                UsedId = viewHistory.UserId
+            };
+            await viewHistoryRepository.InsertAsync(history);
+
+            var smartLookupData = new SmartCountEntityData
+            {
+                ActionType = ActionType.VIEW,
+                EntityId = viewHistory.EntityId,
+                EntityType = viewHistory.EntityType,
+                SubType = viewHistory.SubType,
+                IsRemove = false,
+            };
+            var viewHistoryCountService = scope.ServiceProvider.GetRequiredService<ICountService<ViewHistory, ViewHistory>>();
+            await viewHistoryCountService.RunQueue(smartLookupData);
         }
     }
 
@@ -184,6 +230,21 @@ public class SmartCountCommentFunction : BackgroundService
     private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
     {
         $"Consumer cancelled {e.ConsumerTags}".LogInfor();
+    }
+
+    #endregion
+
+    #region -- Properties --
+
+    private string GetLastViewFromUser
+    {
+        get
+        {
+            return @"SELECT ""Id""
+                FROM ""ViewHistories""
+                WHERE ""EntityId"" = @EntityId AND ""UsedId"" = @userid	
+                AND ""EntityType"" = @EntityType AND ""IpAddress"" = @IpAddress ;";
+        }
     }
 
     #endregion

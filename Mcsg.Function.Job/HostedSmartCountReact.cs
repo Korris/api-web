@@ -9,12 +9,13 @@ using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Models;
+using Lib.Data.Domain.Entities;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class PaymentTransactionFunction : BackgroundService
+public class HostedSmartCountReact : BackgroundService
 {
     #region -- Overrides --
 
@@ -38,7 +39,7 @@ public class PaymentTransactionFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueuePayment, false, consumer);
+            _channel.BasicConsume(st.NotificationQueuePostReact, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -63,9 +64,9 @@ public class PaymentTransactionFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public PaymentTransactionFunction(IServiceScopeFactory ss)
+    public HostedSmartCountReact(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(PaymentTransactionFunction)}".LogInfor();
+        $"Initialize {nameof(HostedSmartCountReact)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -80,13 +81,13 @@ public class PaymentTransactionFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueuePayment, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueuePayment, st.NotificationExchange, st.NotificationQueuePayment, null);
+            _channel.QueueDeclare(st.NotificationQueuePostReact, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueuePostReact, st.NotificationExchange, st.NotificationQueuePostReact, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(PaymentTransactionFunction)}".LogInfor();
+            $"Finished {nameof(HostedSmartCountReact)}".LogInfor();
         }
     }
 
@@ -107,22 +108,10 @@ public class PaymentTransactionFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var paymentService = scope.ServiceProvider.GetRequiredService<IPaymentService>();
+            var reactionCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostReaction, SubPostReaction>>();
 
-            var paymentData = JsonConvert.DeserializeObject<PaymentTransData>(msg.Payload);
-            switch (paymentData.Type)
-            {
-                case PaymentTransType.ZALO_PAY:
-                    {
-                        await paymentService.ZPQueryOrderAsync(paymentData);
-                        break;
-                    }
-
-                default:
-                    {
-                        break;
-                    }
-            }
+            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
+            await reactionCountService.RunQueue(smartLookupData);
         }
     }
 

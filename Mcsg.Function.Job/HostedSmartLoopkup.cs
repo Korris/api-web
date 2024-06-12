@@ -1,3 +1,5 @@
+using Dapper;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,6 +9,7 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
+using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
@@ -15,7 +18,7 @@ using static Common.SeedWork.Constants.Information;
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class EmailFunction : BackgroundService
+public class HostedSmartLoopkup : BackgroundService
 {
     #region -- Overrides --
 
@@ -39,7 +42,7 @@ public class EmailFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueueEmail, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueSmartLookup, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -64,9 +67,9 @@ public class EmailFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public EmailFunction(IServiceScopeFactory ss)
+    public HostedSmartLoopkup(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(EmailFunction)}".LogInfor();
+        $"Initialize {nameof(HostedSmartLoopkup)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -81,13 +84,13 @@ public class EmailFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueEmail, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueueEmail, st.NotificationExchange, st.NotificationQueueEmail, null);
+            _channel.QueueDeclare(st.NotificationQueueSmartLookup, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueSmartLookup, st.NotificationExchange, st.NotificationQueueSmartLookup, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(EmailFunction)}".LogInfor();
+            $"Finished {nameof(HostedSmartLoopkup)}".LogInfor();
         }
     }
 
@@ -108,31 +111,32 @@ public class EmailFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
-            var jobId = new Guid(msg.DevName); // TODO
+            var smartLookupRepository = scope.ServiceProvider.GetRequiredService<IRepository<SmartLookup>>();
 
-            var jobDb = await jobRepository.GetByIdAsync(jobId);
-            if (jobDb != null && jobDb.Status != JobStatus.Success)
+            var smartLookupData = JsonConvert.DeserializeObject<SmartLookupData>(msg.Payload);
+
+            switch (smartLookupData.KeywordType)
             {
-                jobDb.Status = JobStatus.Processing;
-                await jobRepository.UpdateAsync(jobDb);
+                case LookupKeywordType.People:
+                    await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupPeopleCommand, new { Name = smartLookupData.ProfileName, KeywordType = (int)smartLookupData.KeywordType });
+                    break;
+                case LookupKeywordType.Tag:
+                    if (smartLookupData.Tags.Any())
+                    {
+                        foreach (var tag in smartLookupData.Tags)
+                        {
+                            var countTagPost = await smartLookupRepository.Connection
+                                .QueryFirstOrDefaultAsync<long>(CountTagPostCommand, new { tag });
 
-                try
-                {
-                    var service = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                    await service.SendEmailAsync(jobDb);
-
-                    jobDb.Status = JobStatus.Success;
-                    await jobRepository.UpdateAsync(jobDb);
-                }
-                catch (Exception ex)
-                {
-                    jobDb.Status = JobStatus.Failed;
-                    jobDb.Error = $"{ex.Message} {ex.StackTrace}";
-                    await jobRepository.UpdateAsync(jobDb);
-
-                    throw;
-                }
+                            await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupTagCommand, new
+                            {
+                                value = countTagPost,
+                                tag,
+                                KeywordType = (int)smartLookupData.KeywordType
+                            });
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -205,6 +209,53 @@ public class EmailFunction : BackgroundService
     private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
     {
         $"Consumer cancelled {e.ConsumerTags}".LogInfor();
+    }
+
+    #endregion
+
+    #region -- Properties --
+
+    private string UpdateSmartLookupPeopleCommand
+    {
+        get
+        {
+            return string.Format(@"UPDATE {0} AS s
+                                    SET ""CountCriteria"" = c.count_value
+                                    FROM (
+                                        SELECT u.""ProfileName"", COUNT(p.""Id"") AS count_value
+                                        FROM {1} p
+                                        INNER JOIN {2} u ON p.""UserId"" = u.""Id""
+                                        WHERE u.""ProfileName"" = @Name AND p.""IsDelete"" = false
+                                        GROUP BY u.""ProfileName""
+                                    ) AS c
+                                    WHERE s.""Keyword"" = c.""ProfileName""
+                                    AND s.""Keyword"" = @Name
+                                    AND s.""KeywordType"" = @KeywordType;
+                                ", "public.\"SmartLookups\"", "public.\"Posts\"", "public.\"Users\"");
+        }
+    }
+
+    private string UpdateSmartLookupTagCommand
+    {
+        get
+        {
+            return string.Format(@"UPDATE {0} AS s
+                                        SET ""CountCriteria"" = @value
+                                        WHERE s.""Keyword"" = @tag
+                                        AND s.""KeywordType"" = @KeywordType;"
+                , "public.\"SmartLookups\"");
+        }
+    }
+
+    private string CountTagPostCommand
+    {
+        get
+        {
+            return @$"SELECT COUNT(tagpost.""PostId"") AS CountValue
+                        FROM {"public.\"Tags\""} tag 
+                        INNER JOIN {"public.\"TagPosts\""} tagpost ON tagpost.""TagId"" = tag.""Id""
+                        WHERE tag.""Name"" = @tag AND tagpost.""IsDelete"" = false";
+        }
     }
 
     #endregion

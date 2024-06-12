@@ -1,5 +1,3 @@
-using Dapper;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -9,17 +7,15 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
-using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
-using Services;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class ViewHistoryFunction : BackgroundService
+public class HostedSms : BackgroundService
 {
     #region -- Overrides --
 
@@ -43,7 +39,7 @@ public class ViewHistoryFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueueViewHistory, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueSms, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -68,9 +64,9 @@ public class ViewHistoryFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public ViewHistoryFunction(IServiceScopeFactory ss)
+    public HostedSms(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(ViewHistoryFunction)}".LogInfor();
+        $"Initialize {nameof(HostedSms)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -85,13 +81,13 @@ public class ViewHistoryFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueViewHistory, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueueViewHistory, st.NotificationExchange, st.NotificationQueueViewHistory, null);
+            _channel.QueueDeclare(st.NotificationQueueSms, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueSms, st.NotificationExchange, st.NotificationQueueSms, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(ViewHistoryFunction)}".LogInfor();
+            $"Finished {nameof(HostedSms)}".LogInfor();
         }
     }
 
@@ -112,54 +108,32 @@ public class ViewHistoryFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var viewHistoryRepository = scope.ServiceProvider.GetRequiredService<IRepository<ViewHistory>>();
+            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
+            var jobId = new Guid(msg.DevName); // TODO
 
-            var viewHistory = JsonConvert.DeserializeObject<ViewHistoryData>(msg.Payload);
-
-            //Check user
-            try
+            var jobDb = await jobRepository.GetByIdAsync(jobId);
+            if (jobDb != null && jobDb.Status != JobStatus.Success)
             {
-                var check = await viewHistoryRepository.Connection.QueryFirstOrDefaultAsync<Guid?>(GetLastViewFromUser, new
-                {
-                    viewHistory.EntityId,
-                    userid = viewHistory.UserId,
-                    viewHistory.EntityType,
-                    IpAddress = viewHistory.IdAddress
-                });
+                jobDb.Status = JobStatus.Processing;
+                await jobRepository.UpdateAsync(jobDb);
 
-                if (check != null)
+                try
                 {
-                    //Out
-                    return;
+                    var service = scope.ServiceProvider.GetRequiredService<ISmsService>();
+                    await service.SendSmsAsync(jobDb);
+
+                    jobDb.Status = JobStatus.Success;
+                    await jobRepository.UpdateAsync(jobDb);
+                }
+                catch (Exception ex)
+                {
+                    jobDb.Status = JobStatus.Failed;
+                    jobDb.Error = $"{ex.Message} {ex.StackTrace}";
+                    await jobRepository.UpdateAsync(jobDb);
+
+                    throw;
                 }
             }
-            catch (Exception e)
-            {
-                throw;
-            }
-
-            //Do save view history
-            ViewHistory history = new ViewHistory
-            {
-                EntityType = viewHistory.EntityType,
-                EntityId = viewHistory.EntityId,
-                CreatedDate = DateTime.UtcNow,
-                IpAddress = viewHistory.IdAddress,
-                SubType = viewHistory.SubType,
-                UsedId = viewHistory.UserId
-            };
-            await viewHistoryRepository.InsertAsync(history);
-
-            var smartLookupData = new SmartCountEntityData
-            {
-                ActionType = ActionType.VIEW,
-                EntityId = viewHistory.EntityId,
-                EntityType = viewHistory.EntityType,
-                SubType = viewHistory.SubType,
-                IsRemove = false,
-            };
-            var viewHistoryCountService = scope.ServiceProvider.GetRequiredService<ICountService<ViewHistory, ViewHistory>>();
-            await viewHistoryCountService.RunQueue(smartLookupData);
         }
     }
 
@@ -231,21 +205,6 @@ public class ViewHistoryFunction : BackgroundService
     private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
     {
         $"Consumer cancelled {e.ConsumerTags}".LogInfor();
-    }
-
-    #endregion
-
-    #region -- Properties --
-
-    private string GetLastViewFromUser
-    {
-        get
-        {
-            return @"SELECT ""Id""
-                FROM ""ViewHistories""
-                WHERE ""EntityId"" = @EntityId AND ""UsedId"" = @userid	
-                AND ""EntityType"" = @EntityType AND ""IpAddress"" = @IpAddress ;";
-        }
     }
 
     #endregion

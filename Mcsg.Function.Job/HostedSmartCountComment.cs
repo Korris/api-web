@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,16 +8,14 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
+using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
-using Lib.Data.Repositories;
-using Services;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class SmsFunction : BackgroundService
+public class HostedSmartCountComment : BackgroundService
 {
     #region -- Overrides --
 
@@ -40,7 +39,7 @@ public class SmsFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueueSms, false, consumer);
+            _channel.BasicConsume(st.NotificationQueuePostComment, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -65,9 +64,9 @@ public class SmsFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SmsFunction(IServiceScopeFactory ss)
+    public HostedSmartCountComment(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(SmsFunction)}".LogInfor();
+        $"Initialize {nameof(HostedSmartCountComment)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -82,13 +81,13 @@ public class SmsFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueSms, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueueSms, st.NotificationExchange, st.NotificationQueueSms, null);
+            _channel.QueueDeclare(st.NotificationQueuePostComment, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueuePostComment, st.NotificationExchange, st.NotificationQueuePostComment, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(SmsFunction)}".LogInfor();
+            $"Finished {nameof(HostedSmartCountComment)}".LogInfor();
         }
     }
 
@@ -109,32 +108,10 @@ public class SmsFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
-            var jobId = new Guid(msg.DevName); // TODO
+            var commentCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostComment, SubPostComment>>();
 
-            var jobDb = await jobRepository.GetByIdAsync(jobId);
-            if (jobDb != null && jobDb.Status != JobStatus.Success)
-            {
-                jobDb.Status = JobStatus.Processing;
-                await jobRepository.UpdateAsync(jobDb);
-
-                try
-                {
-                    var service = scope.ServiceProvider.GetRequiredService<ISmsService>();
-                    await service.SendSmsAsync(jobDb);
-
-                    jobDb.Status = JobStatus.Success;
-                    await jobRepository.UpdateAsync(jobDb);
-                }
-                catch (Exception ex)
-                {
-                    jobDb.Status = JobStatus.Failed;
-                    jobDb.Error = $"{ex.Message} {ex.StackTrace}";
-                    await jobRepository.UpdateAsync(jobDb);
-
-                    throw;
-                }
-            }
+            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
+            await commentCountService.RunQueue(smartLookupData);
         }
     }
 

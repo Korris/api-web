@@ -4,9 +4,9 @@ using Common.Core.Extensions;
 using Interfaces;
 
 /// <summary>
-/// ExclusiveUnlockFunction
+/// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class ExclusiveUnlockFunction : BackgroundService
+public class HostedExclusiveUnlock : BackgroundService
 {
     #region -- Overrides --
 
@@ -43,9 +43,9 @@ public class ExclusiveUnlockFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public ExclusiveUnlockFunction(IServiceScopeFactory ss)
+    public HostedExclusiveUnlock(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(ExclusiveUnlockFunction)}".LogInfor();
+        $"Initialize {nameof(HostedExclusiveUnlock)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
     }

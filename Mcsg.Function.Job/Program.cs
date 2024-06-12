@@ -184,15 +184,15 @@ public class Program
         #endregion
 
         builder.Services.AddControllers();
-        builder.Services.AddHostedService<EmailFunction>();
-        builder.Services.AddHostedService<ExclusiveUnlockFunction>();
-        builder.Services.AddHostedService<PaymentTransactionFunction>();
-        builder.Services.AddHostedService<SmartCountCommentFunction>();
-        builder.Services.AddHostedService<SmartCountReactFunction>();
-        builder.Services.AddHostedService<SmartLookupFunction>();
-        builder.Services.AddHostedService<SmsFunction>();
-        builder.Services.AddHostedService<SyncDataFunction>();
-        builder.Services.AddHostedService<ViewHistoryFunction>();
+        builder.Services.AddHostedService<HostedEmail>();
+        builder.Services.AddHostedService<HostedExclusiveUnlock>();
+        builder.Services.AddHostedService<HostedPaymentTransaction>();
+        builder.Services.AddHostedService<HostedSmartCountComment>();
+        builder.Services.AddHostedService<HostedSmartCountReact>();
+        builder.Services.AddHostedService<HostedSmartLoopkup>();
+        builder.Services.AddHostedService<HostedSms>();
+        builder.Services.AddHostedService<HostedSyncData>();
+        builder.Services.AddHostedService<HostedViewHistory>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

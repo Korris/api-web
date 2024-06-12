@@ -9,14 +9,12 @@ using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Data.Domain.Entities;
-using Services;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class SmartCountReactFunction : BackgroundService
+public class HostedSyncData : BackgroundService
 {
     #region -- Overrides --
 
@@ -40,7 +38,7 @@ public class SmartCountReactFunction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueuePostReact, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueSyncData, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -65,9 +63,9 @@ public class SmartCountReactFunction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SmartCountReactFunction(IServiceScopeFactory ss)
+    public HostedSyncData(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(SmartCountReactFunction)}".LogInfor();
+        $"Initialize {nameof(HostedSyncData)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -82,13 +80,13 @@ public class SmartCountReactFunction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueuePostReact, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueuePostReact, st.NotificationExchange, st.NotificationQueuePostReact, null);
+            _channel.QueueDeclare(st.NotificationQueueSyncData, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueSyncData, st.NotificationExchange, st.NotificationQueueSyncData, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(SmartCountReactFunction)}".LogInfor();
+            $"Finished {nameof(HostedSyncData)}".LogInfor();
         }
     }
 
@@ -109,10 +107,42 @@ public class SmartCountReactFunction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var reactionCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostReaction, SubPostReaction>>();
+            var syncDataService = scope.ServiceProvider.GetRequiredService<ISyncDataService>();
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
-            await reactionCountService.RunQueue(smartLookupData);
+            var syncData = JsonConvert.DeserializeObject<SyncData>(msg.Payload);
+
+            switch (syncData.TargetDb)
+            {
+                case SyncTargetDb.WALLETDB:
+                    {
+                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_INFO)
+                        {
+                            await syncDataService.SyncWalletUserInfoAsync(syncData);
+                        }
+                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_REWARD)
+                        {
+                            await syncDataService.SyncWalletUserRewardAsync(syncData);
+                        }
+                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_PREMIUM)
+                        {
+                            await syncDataService.SyncUserPremiumAsync(syncData);
+                        }
+                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_CHAPTER)
+                        {
+                            await syncDataService.SyncUserBuyChapterAsync(syncData);
+                        }
+                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_SERIES)
+                        {
+                            await syncDataService.SyncUserBuySeriesAsync(syncData);
+                        }
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+            }
         }
     }
 
