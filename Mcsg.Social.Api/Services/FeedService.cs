@@ -185,6 +185,83 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
             }
         }
+
+        public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId)
+        {
+            var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
+            var query = $@"WITH SubPostsCount AS (
+                            SELECT ""PostId"", 
+                            COUNT(*) AS total_subposts 
+                            FROM ""SubPosts""
+                            GROUP BY ""PostId""
+                        )
+                        SELECT 
+                                    u.""ProfileName"" as Fullname,
+                                    u.""ProfileId"" ,u.""Avatar"" as UserAvatar, 
+                                    u.""Id"" as UserId,
+                                    p.""HashId"",
+                                    sp.""Id"",
+                                    sp.""CreatedDate"", 
+                                    sp.""Body"",
+                                    sp.""CreatedBy"",
+                                    r.""Url"" ,
+                                    r.""Type"" ,
+                                    r.""Height"" ,
+                                    r.""Width"" ,
+                                    r.""ShareUrl"",
+                                    r.""Type"",
+                                    r.""Name"" as ResourceName,
+                                    COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = sc.total_subposts)) AS PrevSubPostHashId,
+                       COALESCE(asp.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = 1)) AS NextSubPostHashId
+                                    FROM ""SubPosts"" sp
+                                    LEFT JOIN ""Users"" u 
+                                    ON u.""Id""  = sp.""UserId"" 
+                                    LEFT JOIN ""Posts"" p 
+                                    ON p.""Id""  = sp.""PostId"" 
+                                    LEFT JOIN ""Resources"" r 
+                                    ON r.""SubPostId"" = sp.""Id"" 
+                                    LEFT JOIN ""SubPosts"" psb 
+                                    ON sp.""PostId"" = psb.""PostId"" 
+                                    AND sp.""Order"" = psb.""Order"" + 1
+                                    LEFT JOIN ""SubPosts"" asp 
+                                    ON sp.""PostId"" = asp.""PostId"" 
+                                    AND sp.""Order"" = asp.""Order"" - 1
+                                    LEFT JOIN SubPostsCount sc
+                                    ON sp.""PostId"" = sc.""PostId""
+                                    WHERE sp.""HashId"" =@Id
+                                    AND sp.""IsDelete"" = false";
+
+            var data = await _postRepository.Connection.QueryFirstOrDefaultAsync<SubPostFeedResponse>(query, new
+            {
+                Id = hashId
+            });
+            if (data.ResourceType == ResourceType.VIDEO || data.ResourceType == ResourceType.AUDIO)
+            {
+                data.Url = UrlHelper.CreateCdnMediaUrl(data.ShareUrl, _configuration);
+            }
+            else
+            {
+                data.Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, data.ResourceName, data.Url);
+            }
+            data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, data.UserAvatar);
+            data.SubPosts.Add(new SubPostResponse
+            {
+                Files = new List<UploadFileResponse>()
+                {
+                    new UploadFileResponse()
+                    {
+                        HashId = hashId,
+                        Height = data.Height,
+                        Width = data.Width,
+                        Url = data.Url,
+                        Type = data.ResourceType,
+                        Name = data.ResourceName
+                    }
+                }
+            });
+            return data;
+        }
+
         public async Task<FeedResponse> GetFeedAsync(string hashId)
         {
             var query = string.Format(GetFeedQuery, _postRepository.TableName);
@@ -209,7 +286,6 @@ namespace Mcsg.Social.Api.Services
                             subpost.FileDbs.Add(uploadfiles);
                         }
                         dbFeed.SubPostDbs.Add(subpost);
-
                     }
                     if (meta != null)
                     {
@@ -712,44 +788,62 @@ namespace Mcsg.Social.Api.Services
                 itemResponse.SubPosts = new List<SubPostResponse>();
                 foreach (var subPostdb in item.SubPostDbs)
                 {
-                    var subPostResponse = new SubPostResponse()
+                    var fileDbs = subPostdb.FileDbs.FirstOrDefault();
+                    var url = "";
+                    if (fileDbs.Type == ResourceType.VIDEO || fileDbs.Type == ResourceType.AUDIO)
                     {
-                        Id = subPostdb.Id,
-                        HashId = subPostdb?.HashId,
-                        Title = subPostdb.Title,
-                        Name = subPostdb.Name,
-                        ThumbnailUrl = subPostdb.ThumbnailUrl,
-                        Permission = subPostdb.Permission,
-                        CreatedDate = subPostdb.CreatedDate,
-                        PublishDate = subPostdb.PublishDate,
-                        Status = subPostdb.Status,
-                        Body = subPostdb.Body
-                    };
-                    if (subPostdb.FileDbs != null)
-                    {
-                        hasResources = true;
-
-                        subPostResponse.Files = subPostdb.FileDbs.Select(x =>
-                        {
-                            var resource = new UploadFileResponse
-                            {
-                                HashId = x.HashId,
-                                Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, x.Name, x.Url),
-                                Name = x.Name,
-                                ShareUrl = x.ShareUrl,
-                                Type = x.Type,
-                                Status = x.Status,
-                                Width = x.Width,
-                                Height = x.Height,
-                            };
-                            if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
-                            {
-                                resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _configuration);
-                            }
-                            return resource;
-                        }).ToList();
+                        url = UrlHelper.CreateCdnMediaUrl(fileDbs.ShareUrl, _configuration);
                     }
-                    itemResponse.SubPosts.Add(subPostResponse);
+                    else
+                    {
+                        url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, fileDbs.Name, fileDbs.Url);
+                    }
+                    itemResponse.Resources.Add(new ResourceResponse
+                    {
+                        HashId = subPostdb.HashId,
+                        Type = fileDbs.Type,
+                        Width = fileDbs.Width,
+                        Height = fileDbs.Height,
+                        Url = url
+                    });
+                    /*var subPostResponse = new SubPostResponse()
+                     {
+                         Id = subPostdb.Id,
+                         HashId = subPostdb?.HashId,
+                         Title = subPostdb.Title,
+                         Name = subPostdb.Name,
+                         ThumbnailUrl = subPostdb.ThumbnailUrl,
+                         Permission = subPostdb.Permission,
+                         CreatedDate = subPostdb.CreatedDate,
+                         PublishDate = subPostdb.PublishDate,
+                         Status = subPostdb.Status,
+                         Body = subPostdb.Body
+                     };
+                     if (subPostdb.FileDbs != null)
+                     {
+                         hasResources = true;
+
+                         subPostResponse.Files = subPostdb.FileDbs.Select(x =>
+                         {
+                             var resource = new UploadFileResponse
+                             {
+                                 HashId = x.HashId,
+                                 Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, x.Name, x.Url),
+                                 Name = x.Name,
+                                 ShareUrl = x.ShareUrl,
+                                 Type = x.Type,
+                                 Status = x.Status,
+                                 Width = x.Width,
+                                 Height = x.Height,
+                             };
+                             if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
+                             {
+                                 resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _configuration);
+                             }
+                             return resource;
+                         }).ToList();
+                     }
+                     itemResponse.SubPosts.Add(subPostResponse);*/
                 }
             }
             if (item.MetaDataDb != null)
@@ -775,7 +869,7 @@ namespace Mcsg.Social.Api.Services
             // Will map later
             itemResponse.BackgroundSound = sound;
             #endregion
-
+            itemResponse.TotalResource = itemResponse.Resources.Count;
             return itemResponse;
         }
         private static string AddAdditionalFeedQuery(FeedLoadReq feedLoadReq, string query, LoadFeedType loadFeedType)

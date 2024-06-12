@@ -93,6 +93,36 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
+        private string GetCommentBySubPostQuery
+        {
+            get
+            {
+                return @$"SELECT com.""Id"", com.""PostId""
+		                        , comUser.""Id"" AS AuthorId
+								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
+								, comUser.""Avatar"" AS UserAvatar
+		                        , com.""Body"", com.""LastModifiedDate""
+		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+								, com.""GifId""
+		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
+								, repUser.""Avatar"" AS ReplyUserAvatar	
+		                        , rep.""Body"" AS ReplyBody, rep.""LastModifiedDate"" AS ReplyLastModifiedDate
+		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
+								, rep.""GifId"" AS ReplyGifId
+                                , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
+	                                    WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
+		                        FROM {_subPostCommentRepository.TableName} com
+		                        LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
+		                        LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+		                        LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
+		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
+		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                        WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
+                        ORDER BY com.""LastModifiedDate"" DESC
+                        LIMIT 1 ";
+            }
+        }
+
         private string GetCommentBySubPostInHomePageQuery
         {
             get

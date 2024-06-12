@@ -2,11 +2,11 @@
 {
     public partial class FeedService
     {
-		private string GetAllFeedsQuery
-		{
+        private string GetAllFeedsQuery
+        {
             get
             {
-				return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
+                return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
 						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
 						post.""CreatedDate"",
@@ -43,7 +43,7 @@
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -51,7 +51,7 @@
 							) sp ON sp.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL
 							(
-								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId""
 							 	FROM ""Resources"" 
 							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
@@ -98,8 +98,8 @@
 						SELECT COUNT(*) AS TotalItems FROM {0} p [AdditionalTotalQuery] WHERE p.""Type"" = @Type 
 						AND p.""IsDelete"" = false [AdditionalTotalCondition]
 						-- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false);";
-			}
-		}
+            }
+        }
         private string GetAllFeedsByTagQuery
         {
             get
@@ -320,10 +320,10 @@ LIMIT @PageSize
             }
         }
         private string GetFeedQuery
-		{
-			get
-			{
-				return @"SELECT 
+        {
+            get
+            {
+                return @"SELECT 
 						p.""Id"", 
 						p.""Title"", 
 						p.""Body"",
@@ -388,14 +388,14 @@ LIMIT @PageSize
 						pl.""Url"",
 						pl.""Type""
 						ORDER BY sp.""Order""";
-			}
-		}
+            }
+        }
 
         private string GetSingleFeedQuery
-		{
-			get
-			{
-				return @"SELECT 
+        {
+            get
+            {
+                return @"SELECT 
 						p.""Id"", 
 						p.""Title"", 
 						p.""Body"",
@@ -423,10 +423,10 @@ LIMIT @PageSize
 						p.""HashId"" = @HashId 
 							AND p.""Type"" = 0 
 							AND ""IsDelete"" = false";
-			}
-		}
+            }
+        }
 
-		private string GetAllFeedByKeyword
+        private string GetAllFeedByKeyword
         {
             get
             {

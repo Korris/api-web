@@ -14,7 +14,7 @@ namespace Mcsg.Social.Api.Models
         public MetaDataResponse MetaData { get; set; }
         public PostLinkResponse Link { get; set; }
         public int TotalResource { get; set; }
-        public List<ResourceResponse> Resources { get; set; }
+        public List<ResourceResponse> Resources { get; set; } = new List<ResourceResponse>();
         public SoundDto? BackgroundSound { get; set; }
     }
 

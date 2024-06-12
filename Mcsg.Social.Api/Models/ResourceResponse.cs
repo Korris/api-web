@@ -13,5 +13,7 @@ namespace Mcsg.Social.Api.Models
         public string HashId { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public string Body { get; set; }
+        public string SubpostHashId { get; set; }
     }
 }

@@ -29,8 +29,20 @@ namespace Mcsg.Social.Api.Models
         public List<UploadFileQueryDbResponse> FileDbs { get; set; }
     }
 
-    public class SubPostFeedResponse : SubPostResponse
+    public class SubPostFeedResponse : FeedResponse
     {
-
+        public string HashIdPost { get; set; }
+        /// <summary>
+        /// File Information
+        /// </summary>
+        public string Url { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string ResourceName { get; set; }
+        public string ShareUrl { get; set; }
+        ///
+        public ResourceType ResourceType { get; set; }
+        public string PrevSubPostHashId { get; set; }
+        public string NextSubPostHashId { get; set; }
     }
 }

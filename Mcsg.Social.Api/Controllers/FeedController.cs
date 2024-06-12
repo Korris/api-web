@@ -72,6 +72,14 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _feedService.GetFeedAsync(hashId);
             return Ok(result);
         }
+
+        [HttpGet("subpost/{hashId}")]
+        public async Task<IActionResult> GetFeedSubPost(string hashId)
+        {
+            var result = await _feedService.GetFeedSubPostAsync(hashId);
+            return Ok(result);
+        }
+
         [HttpDelete("{postId}")]
         [Authorize]
         public async Task<IActionResult> DeleteFeed(Guid postId)

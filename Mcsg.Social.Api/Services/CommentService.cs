@@ -118,7 +118,7 @@ namespace Mcsg.Social.Api.Services
         {
             PagedResults<CommentResponse> response;
 
-            var result = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<CommentQueryResult>(GetCommentBySubPostInHomePageQuery, new { PostId = postId });
+            var result = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<CommentQueryResult>(GetCommentBySubPostQuery, new { PostId = postId });
 
             if (result != null)
             {
