@@ -1,7 +1,7 @@
 namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
-using Services;
+using Interfaces;
 
 /// <summary>
 /// ExclusiveUnlockFunction

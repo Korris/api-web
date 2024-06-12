@@ -1,20 +1,23 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Models;
-using Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Request;
-using Mcsg.Wallet.Api.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers
 {
+    using Api.Interfaces;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+    using Models;
+    using Models._3rdClass.ZaloPay.Request;
+    using Services;
+
     [ApiController]
     [Route("[controller]")]
     //[Authorize]
     public class UserWalletController : ControllerBase
-    {//https://vietqr.io/paymentRequests/#operation/paymentLink
+    {
+        //https://vietqr.io/paymentRequests/#operation/paymentLink
         //https://vietqr.io/danh-sach-api/api-danh-sach-ma-ngan-hang
         private readonly IUserWalletService _userWalletService;
         private readonly IZaloPayService _zaloPayService;

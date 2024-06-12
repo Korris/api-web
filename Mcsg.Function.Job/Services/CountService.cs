@@ -1,21 +1,15 @@
 ﻿using Dapper;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-using Entities = Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface ICountService<TP, TS>
-        where TP : BaseEntity
-        where TS : BaseEntity, new()
-    {
-        Task RefreshAll(SmartCountEntityData smartLookupData);
-        Task RunQueue(SmartCountEntityData smartLookupData);
-    }
+    using Interfaces;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Domain.Entities.Common;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Entities = Lib.Data.Domain.Entities;
 
     public class CountService<TP, TS> : ICountService<TP, TS>
         where TP : BaseEntity

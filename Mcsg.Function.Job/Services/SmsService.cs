@@ -1,16 +1,13 @@
-﻿using Mcsg.Function.Job.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Entities = Mcsg.Lib.Data.Domain.Entities;
+﻿using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface ISmsService
-    {
-        Task SendSmsAsync(Entities.Job job);
-    }
+    using Extensions;
+    using Interfaces;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Entities = Lib.Data.Domain.Entities;
+
     public class SmsService : ISmsService
     {
         private readonly ILogger<SmsService> _logger;

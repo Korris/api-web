@@ -1,17 +1,14 @@
 ﻿using Dapper;
-using Mcsg.Lib.Data.Constants;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Data.Wallet;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface IExclusiveUnlockService
-    {
-        Task Run();
-    }
+    using Interfaces;
+    using Lib.Data.Constants;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Data.Wallet;
 
     public class ExclusiveUnlockService : IExclusiveUnlockService
     {

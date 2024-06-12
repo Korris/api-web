@@ -1,28 +1,21 @@
 ﻿using Dapper;
-using Mcsg.Function.Job.Constants;
-using Mcsg.Function.Job.Helpers;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Entities;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Lib.Model.Const;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job.Services
 {
-    public interface ISyncDataService
-    {
-        Task SyncWalletUserInfoAsync(SyncData data);
-        Task SyncWalletUserRewardAsync(SyncData data);
-        Task SyncUserPremiumAsync(SyncData data);
-        Task SyncUserBuyChapterAsync(SyncData data);
-        Task SyncUserBuySeriesAsync(SyncData data);
-    }
+    using Constants;
+    using Helpers;
+    using Interfaces;
+    using Lib.Common.Enums;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Entities;
+    using Lib.Data.Wallet.Enums;
+    using Lib.Model.Const;
 
     public partial class SyncDataService : ISyncDataService
     {
