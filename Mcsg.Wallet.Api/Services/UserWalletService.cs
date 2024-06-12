@@ -406,6 +406,12 @@ namespace Mcsg.Wallet.Api.Services
         public async Task<TransactionOtpInfoResp> DonateAsync(DonateReq req)
         {
             var userId = _currentUserService?.Session?.UserId;
+
+            if (userId.Equals(req.ToUserId))
+            {
+                throw new BadRequestException(ApiErrorCodes.USER_AS_THE_SAME_DONOR, ApiErrorMessage.USER_AS_THE_SAME_DONOR);
+            }
+
             var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
             var toUserWallet = await _dbContext.UserWallets.Where(x => x.UserId == req.ToUserId).FirstOrDefaultAsync();
             if (toUserWallet != null)

@@ -16,5 +16,6 @@
         public const string ZALO_PAY_CALLBACK_FAIL = "Zalo pay callback fail";
         public const string ZALO_PAY_MAC_NOT_EQUAL = "mac not equal";
         public const string ALREADY_PURCHARED = "already purchased";
+        public const string USER_AS_THE_SAME_DONOR = "User can not send donate to yourself";
     }
 }
