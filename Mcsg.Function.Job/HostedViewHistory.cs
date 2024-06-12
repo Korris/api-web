@@ -111,19 +111,18 @@ public class HostedViewHistory : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var viewHistoryRepository = scope.ServiceProvider.GetRequiredService<IRepository<ViewHistory>>();
-
-            var viewHistory = JsonConvert.DeserializeObject<ViewHistoryData>(msg.Payload);
+            var service = scope.ServiceProvider.GetRequiredService<IRepository<ViewHistory>>();
+            var payload = JsonConvert.DeserializeObject<ViewHistoryData>(msg.Payload);
 
             //Check user
             try
             {
-                var check = await viewHistoryRepository.Connection.QueryFirstOrDefaultAsync<Guid?>(GetLastViewFromUser, new
+                var check = await service.Connection.QueryFirstOrDefaultAsync<Guid?>(GetLastViewFromUser, new
                 {
-                    viewHistory.EntityId,
-                    userid = viewHistory.UserId,
-                    viewHistory.EntityType,
-                    IpAddress = viewHistory.IdAddress
+                    payload.EntityId,
+                    userid = payload.UserId,
+                    payload.EntityType,
+                    IpAddress = payload.IdAddress
                 });
 
                 if (check != null)
@@ -140,21 +139,21 @@ public class HostedViewHistory : BackgroundService
             //Do save view history
             ViewHistory history = new ViewHistory
             {
-                EntityType = viewHistory.EntityType,
-                EntityId = viewHistory.EntityId,
+                EntityType = payload.EntityType,
+                EntityId = payload.EntityId,
                 CreatedDate = DateTime.UtcNow,
-                IpAddress = viewHistory.IdAddress,
-                SubType = viewHistory.SubType,
-                UsedId = viewHistory.UserId
+                IpAddress = payload.IdAddress,
+                SubType = payload.SubType,
+                UsedId = payload.UserId
             };
-            await viewHistoryRepository.InsertAsync(history);
+            await service.InsertAsync(history);
 
             var smartLookupData = new SmartCountEntityData
             {
                 ActionType = ActionType.VIEW,
-                EntityId = viewHistory.EntityId,
-                EntityType = viewHistory.EntityType,
-                SubType = viewHistory.SubType,
+                EntityId = payload.EntityId,
+                EntityType = payload.EntityType,
+                SubType = payload.SubType,
                 IsRemove = false,
             };
             var viewHistoryCountService = scope.ServiceProvider.GetRequiredService<ICountService<ViewHistory, ViewHistory>>();

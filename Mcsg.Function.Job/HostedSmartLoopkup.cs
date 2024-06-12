@@ -111,28 +111,27 @@ public class HostedSmartLoopkup : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var smartLookupRepository = scope.ServiceProvider.GetRequiredService<IRepository<SmartLookup>>();
+            var service = scope.ServiceProvider.GetRequiredService<IRepository<SmartLookup>>();
+            var payload = JsonConvert.DeserializeObject<SmartLookupData>(msg.Payload);
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartLookupData>(msg.Payload);
-
-            switch (smartLookupData.KeywordType)
+            switch (payload.KeywordType)
             {
                 case LookupKeywordType.People:
-                    await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupPeopleCommand, new { Name = smartLookupData.ProfileName, KeywordType = (int)smartLookupData.KeywordType });
+                    await service.Connection.ExecuteAsync(UpdateSmartLookupPeopleCommand, new { Name = payload.ProfileName, KeywordType = (int)payload.KeywordType });
                     break;
                 case LookupKeywordType.Tag:
-                    if (smartLookupData.Tags.Any())
+                    if (payload.Tags.Any())
                     {
-                        foreach (var tag in smartLookupData.Tags)
+                        foreach (var tag in payload.Tags)
                         {
-                            var countTagPost = await smartLookupRepository.Connection
+                            var countTagPost = await service.Connection
                                 .QueryFirstOrDefaultAsync<long>(CountTagPostCommand, new { tag });
 
-                            await smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupTagCommand, new
+                            await service.Connection.ExecuteAsync(UpdateSmartLookupTagCommand, new
                             {
                                 value = countTagPost,
                                 tag,
-                                KeywordType = (int)smartLookupData.KeywordType
+                                KeywordType = (int)payload.KeywordType
                             });
                         }
                     }

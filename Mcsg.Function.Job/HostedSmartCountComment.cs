@@ -108,10 +108,10 @@ public class HostedSmartCountComment : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var commentCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostComment, SubPostComment>>();
+            var service = scope.ServiceProvider.GetRequiredService<ICountService<PostComment, SubPostComment>>();
+            var payload = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
-            await commentCountService.RunQueue(smartLookupData);
+            await service.RunQueue(payload);
         }
     }
 

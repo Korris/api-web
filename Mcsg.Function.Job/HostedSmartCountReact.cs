@@ -108,10 +108,10 @@ public class HostedSmartCountReact : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var reactionCountService = scope.ServiceProvider.GetRequiredService<ICountService<PostReaction, SubPostReaction>>();
+            var service = scope.ServiceProvider.GetRequiredService<ICountService<PostReaction, SubPostReaction>>();
+            var payload = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
 
-            var smartLookupData = JsonConvert.DeserializeObject<SmartCountEntityData>(msg.Payload);
-            await reactionCountService.RunQueue(smartLookupData);
+            await service.RunQueue(payload);
         }
     }
 

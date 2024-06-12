@@ -107,33 +107,32 @@ public class HostedSyncData : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var syncDataService = scope.ServiceProvider.GetRequiredService<ISyncDataService>();
+            var service = scope.ServiceProvider.GetRequiredService<ISyncDataService>();
+            var payload = JsonConvert.DeserializeObject<SyncData>(msg.Payload);
 
-            var syncData = JsonConvert.DeserializeObject<SyncData>(msg.Payload);
-
-            switch (syncData.TargetDb)
+            switch (payload.TargetDb)
             {
                 case SyncTargetDb.WALLETDB:
                     {
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_INFO)
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_INFO)
                         {
-                            await syncDataService.SyncWalletUserInfoAsync(syncData);
+                            await service.SyncWalletUserInfoAsync(payload);
                         }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_REWARD)
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_REWARD)
                         {
-                            await syncDataService.SyncWalletUserRewardAsync(syncData);
+                            await service.SyncWalletUserRewardAsync(payload);
                         }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_PREMIUM)
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_PREMIUM)
                         {
-                            await syncDataService.SyncUserPremiumAsync(syncData);
+                            await service.SyncUserPremiumAsync(payload);
                         }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_CHAPTER)
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_CHAPTER)
                         {
-                            await syncDataService.SyncUserBuyChapterAsync(syncData);
+                            await service.SyncUserBuyChapterAsync(payload);
                         }
-                        if (syncData.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_SERIES)
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_SERIES)
                         {
-                            await syncDataService.SyncUserBuySeriesAsync(syncData);
+                            await service.SyncUserBuySeriesAsync(payload);
                         }
                         break;
                     }

@@ -107,14 +107,14 @@ public class HostedPaymentTransaction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var paymentService = scope.ServiceProvider.GetRequiredService<IPaymentService>();
+            var service = scope.ServiceProvider.GetRequiredService<IPaymentService>();
+            var payload = JsonConvert.DeserializeObject<PaymentTransData>(msg.Payload);
 
-            var paymentData = JsonConvert.DeserializeObject<PaymentTransData>(msg.Payload);
-            switch (paymentData.Type)
+            switch (payload.Type)
             {
                 case PaymentTransType.ZALO_PAY:
                     {
-                        await paymentService.ZPQueryOrderAsync(paymentData);
+                        await service.ZPQueryOrderAsync(payload);
                         break;
                     }
 

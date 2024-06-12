@@ -21,7 +21,7 @@ public class HostedExclusiveUnlock : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var exclusiveUnlockService = scope.ServiceProvider.GetRequiredService<IExclusiveUnlockService>();
+            var service = scope.ServiceProvider.GetRequiredService<IExclusiveUnlockService>();
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -29,7 +29,7 @@ public class HostedExclusiveUnlock : BackgroundService
 
                 //TODO - The job runs every 5 hours and needs to get the configuration
                 await Task.Delay(TimeSpan.FromHours(5), stoppingToken);
-                await exclusiveUnlockService.Run();
+                await service.Run();
             }
         }
     }
