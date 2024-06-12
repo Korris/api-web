@@ -394,5 +394,22 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
+        public async Task<IEnumerable<string>> SearchTagsByName(SearchTagsReq request)
+        {
+            string keyword = request.Keyword;
+            if (keyword == null)
+            {
+                return null;
+            }
+            var query = string.Format(SearchTagsByNameQuery, _tagRepository.TableName);
+            var tagNames = await _tagRepository.Connection.QueryAsync<string>(query, new
+            {
+                ExactKeyword = keyword,
+                StartsWithKeyword = $"{keyword}%",
+                ContainsKeyword = $"%{keyword}%"
+            });
+
+            return tagNames;
+        }
     }
 }

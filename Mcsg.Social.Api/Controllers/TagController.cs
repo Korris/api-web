@@ -47,5 +47,13 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _tagService.SearchTagbyKeyword(input);
             return Ok(result);
         }
+
+        [HttpGet("search-tags")]
+        [Authorize]
+        public async Task<IActionResult> SearchTags([FromQuery] SearchTagsReq searchTagsReq)
+        {
+            var result = await _tagService.SearchTagsByName(searchTagsReq);
+            return Ok(result);
+        }
     }
 }

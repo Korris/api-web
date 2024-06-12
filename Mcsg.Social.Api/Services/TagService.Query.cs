@@ -133,5 +133,23 @@
                             ) q";
             }
         }
+
+        private string SearchTagsByNameQuery
+        {
+            get
+            {
+                return @"   SELECT ""Name"" 
+                            FROM {0} 
+                            WHERE ""Name"" ILIKE @ExactKeyword  
+                                OR ""Name"" ILIKE @StartsWithKeyword 
+                                OR ""Name"" ILIKE @ContainsKeyword 
+                            ORDER BY CASE 
+                                WHEN ""Name"" ILIKE @ExactKeyword THEN 0 
+                                WHEN ""Name"" ILIKE @StartsWithKeyword THEN 1 
+                                ELSE 2 
+                            END 
+                            LIMIT 4";
+            }
+        }
     }
 }
