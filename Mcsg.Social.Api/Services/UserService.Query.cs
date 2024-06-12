@@ -13,6 +13,24 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
+        private string GetSimilarProfileNamesMention
+        {
+            get
+            {
+                return $@"SELECT ""ProfileName"", ""Avatar"" FROM {_userRepository.TableName}
+                      WHERE ""ProfileName"" ILIKE @Name AND ""IsDelete"" = false LIMIT 10";
+            }
+        }
+
+        private string GetRandomProfileNames
+        {
+            get
+            {
+                return $@"SELECT ""ProfileName"", ""Avatar"" FROM {_userRepository.TableName}
+                      WHERE ""IsDelete"" = false ORDER BY RANDOM() LIMIT 10";
+            }
+        }
+
         private string CheckExistProfileName
         {
             get

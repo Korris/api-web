@@ -57,5 +57,12 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _userService.GetSimilarNameAsync(name);
             return Ok(result);
         }
+
+        [HttpGet("similar-name-mention")]
+        public async Task<IActionResult> GetSimilarProfileNamesMention(string name)
+        {
+            var result = await _userService.GetSimilarProfilesMentionAsync(name);
+            return Ok(result);
+        }
     }
 }

@@ -227,6 +227,19 @@ namespace Mcsg.Social.Api.Services
             return profiles.ToList();
         }
 
+        public async Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                var profileUsersRandom = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetRandomProfileNames, new { Name = name });
+                return profileUsersRandom.ToList();
+            }
+
+            name = "%" + name + "%";
+            var profiles = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetSimilarProfileNamesMention, new { Name = name });
+            return profiles.ToList();
+        }
+
         private async Task SyncWalletUserInfo(User user)
         {
             //sync wallet profilename
