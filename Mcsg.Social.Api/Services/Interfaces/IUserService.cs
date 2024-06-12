@@ -1,5 +1,7 @@
-﻿using Mcsg.Social.Api.Models;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
 using Mcsg.Lib.Common.Enums;
+using Mcsg.Lib.Data.Entities.Common;
 
 namespace Mcsg.Social.Api.Services.Interfaces
 {
@@ -14,5 +16,6 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<List<SimilarProfile>> GetSimilarNameAsync(string name);
         Task SyncWalletUserReward(Guid userId, float point, RewardType type);
         Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string name);
+        Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SearchUserReq input);
     }
 }

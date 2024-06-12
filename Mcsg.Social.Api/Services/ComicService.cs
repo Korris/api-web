@@ -88,6 +88,16 @@ namespace Mcsg.Social.Api.Services
         {
             return await _postService.GetChaptersListSimple(hashId);
         }
+        public async Task<PagedResults<PostBoxResposne>> GetComicByUserProfileName(PostByProFileNameInput request)
+        {
+            return await _postService.GetPostByUserProfileName(_type, request);
+        }
+
+        public async Task<PagedResults<PostBoxResposne>> GetComicByTagName(PostByTagNameInput request)
+        {
+            return await _postService.GetPostByTagName(_type, request);
+        }
+
         #endregion
 
         #region Modify data

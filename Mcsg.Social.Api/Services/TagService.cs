@@ -325,5 +325,74 @@ namespace Mcsg.Social.Api.Services
             return tag.ToLower();
         }
 
+        public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(SearchTagReq input)
+        {
+            PagedResults<TagSearchResponse> results;
+            if (string.IsNullOrWhiteSpace(input.Name))
+            {
+                return new PagedResults<TagSearchResponse>(0);
+            }
+            var keywords = input.Name.ToLower().Split(' ');
+            var query = $@"
+                                SELECT t.""Name"",COUNT( t.""Id"")   from ""Tags"" t 
+                                LEFT JOIN ""TagPosts"" tp  
+                                ON tp.""TagId""  = t.""Id"" 
+                                LEFT JOIN ""Posts"" p 
+                                ON p.""Id""  = tp.""PostId"" 
+                                WHERE t.""IsDelete"" = false 
+                                AND tp.""IsDelete"" = false 
+                                [QueryCondition]
+                                GROUP BY t.""Name"", t.""Id""
+                                ORDER BY Count DESC
+                                OFFSET @Offset
+                                LIMIT @PageSize;
+                                
+                                SELECT COUNT(*) AS TotalItems
+                                FROM (
+                                    SELECT distinct  t.""Id""
+                                    FROM ""Posts"" post
+                                    INNER JOIN ""TagPosts"" tagpost ON post.""Id"" = tagpost.""PostId"" 
+                                    INNER JOIN ""Tags"" t ON tagpost.""TagId"" = t.""Id"" 
+                                    WHERE  post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 
+                                    [QueryCondition]
+                                    ) q";
+
+            bool first = true;
+            var queryCondition = "";
+            foreach (var word in keywords)
+            {
+                if (first)
+                {
+                    queryCondition += $@"AND t.""Name"" ILIKE '%{word}%'";
+                    first = false;
+                }
+                else
+                {
+                    queryCondition += $@"OR t.""Name"" ILIKE '%{word}%'";
+                }
+            }
+            query = query.Replace("[QueryCondition]", queryCondition);
+            var offset = input.PageSize * (input.PageNumber - 1);
+            var multi = await _tagRepository.Connection.QueryMultipleAsync(query, new
+            {
+                Offset = offset,
+                PageSize = input.PageSize
+            });
+            var items = await multi.ReadAsync<TagSearchResponse>().ConfigureAwait(false);
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items.Any())
+            {
+                results = new PagedResults<TagSearchResponse>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = items;
+            }
+            else
+            {
+                results = new PagedResults<TagSearchResponse>(0);
+            }
+
+            return results;
+        }
+
     }
 }

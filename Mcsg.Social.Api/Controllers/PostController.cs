@@ -25,5 +25,12 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _postService.GetSeriesByTagByPage(postType, tagName, loadReq);
             return Ok(result);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateKeyWordForComicAndStoryToSmartLookup()
+        {
+            await _postService.UpdateKeyWordForComicAndStoryToSmartLookup();
+            return Ok();
+        }
     }
 }

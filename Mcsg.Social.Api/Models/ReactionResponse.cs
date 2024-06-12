@@ -17,5 +17,6 @@ namespace Mcsg.Social.Api.Models
         public int TotalReacts { get; set; }
         public ReactionType? CurrentUserReactType { get; set; }
         public List<ReactionResponse> Reactions { get; set; }
+        public ReactionType? MostReactionType { get; set; }
     }
 }

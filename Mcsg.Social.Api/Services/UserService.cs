@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Mcsg.Social.Api.Constants;
+using Mcsg.Social.Api.DTOs;
 using Mcsg.Social.Api.Models;
 using Mcsg.Social.Api.Services.Interfaces;
 using Mcsg.Lib.AzureBlobStorage;
@@ -11,6 +12,7 @@ using Mcsg.Lib.Common.Helpers;
 using Mcsg.Lib.Common.Models;
 using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Lib.Data.Domain.Entities;
+using Mcsg.Lib.Data.Entities.Common;
 using Mcsg.Lib.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -274,6 +276,67 @@ namespace Mcsg.Social.Api.Services
                     }
                 }
             });
+        }
+
+        public async Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SearchUserReq input)
+        {
+            PagedResults<UserSearchResponse> results;
+            if (string.IsNullOrWhiteSpace(input.ProfileName))
+            {
+                return new PagedResults<UserSearchResponse>(0);
+            }
+            var keywords = input.ProfileName.ToLower().Split(' ');
+            var query = $@"SELECT ""ProfileName"",
+                                  ""ProfileId"",
+                                  ""Avatar""
+                          FROM ""Users"" 
+                          [QueryCondition]
+                          OFFSET @Offset 
+                          LIMIT @PageSize;
+
+                          SELECT COUNT(*) AS TotalItems 
+                          FROM ""Users""
+                          [QueryCondition]";
+            bool first = true;
+            var queryCondition = "";
+            foreach (var word in keywords)
+            {
+                if (first)
+                {
+                    queryCondition += $@"WHERE LOWER(""ProfileName"") LIKE '%{word}%'";
+                    first = false;
+                }
+                else
+                {
+                    queryCondition += $@"OR LOWER(""ProfileName"") LIKE '%{word}%'";
+                }
+            }
+            queryCondition += @"AND ""IsDelete"" = false";
+            query = query.Replace("[QueryCondition]", queryCondition);
+            var offset = input.PageSize * (input.PageNumber - 1);
+            var multi = await _userRepository.Connection.QueryMultipleAsync(query, new
+            {
+                Offset = offset,
+                PageSize = input.PageSize
+            });
+            var items = await multi.ReadAsync<UserSearchResponse>().ConfigureAwait(false);
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items.Any())
+            {
+                results = new PagedResults<UserSearchResponse>(totalItems, input.PageNumber, input.PageSize);
+
+                foreach (var item in items)
+                {
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                }
+                results.Items = items;
+            }
+            else
+            {
+                results = new PagedResults<UserSearchResponse>(0);
+            }
+            return results;
         }
 
         public async Task<UserProfileAvatarResponse> GetUserAvatar(Guid userId)

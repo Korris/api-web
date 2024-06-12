@@ -128,5 +128,15 @@ namespace Mcsg.Social.Api.Services
         {
             return await _postService.GetChapters(hashId, request);
         }
+
+        public async Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(PostByProFileNameInput request)
+        {
+            return await _postService.GetPostByUserProfileName(_type, request);
+        }
+
+        public async Task<PagedResults<PostBoxResposne>> GetStoryByTagName(PostByTagNameInput request)
+        {
+            return await _postService.GetPostByTagName(_type, request);
+        }
     }
 }

@@ -54,4 +54,19 @@ namespace Mcsg.Social.Api.Models
         public int Count { get; set; }
         public float Amount { get; set; }
     }
+
+    public class PostBoxResposne
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public string ProfileName { get; set; }
+        public string[] Tags { get; set; }
+        public string ThumbnailUrl { get; set; }
+        public int CommentCount { get; set; }
+        public int ReactionCount { get; set; }
+        public bool IsMature { get; set; }
+        public string HashId { get; set; }
+        public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
+    }
 }

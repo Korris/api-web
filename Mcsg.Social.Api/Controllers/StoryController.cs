@@ -132,5 +132,19 @@ namespace Mcsg.Identity.Api.Controllers
             var result = await _storyService.GetMyStories(loadReq);
             return Ok(result);
         }
+
+        [HttpGet("search-by-profileName")]
+        public async Task<IActionResult> GetSearchComic([FromQuery] PostByProFileNameInput input)
+        {
+            var result = await _storyService.GetStoryByUserProfileName(input);
+            return Ok(result);
+        }
+
+        [HttpGet("search-by-tagName")]
+        public async Task<IActionResult> GetSearchComicByTagName([FromQuery] PostByTagNameInput input)
+        {
+            var result = await _storyService.GetStoryByTagName(input);
+            return Ok(result);
+        }
     }
 }

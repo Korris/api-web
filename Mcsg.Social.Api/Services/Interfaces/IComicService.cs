@@ -25,5 +25,7 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ChapterOrderSwapReq orders);
         Task<bool> DeleteChapter(string comicHashId, int order);
         Task<bool> Delete(Guid postId);
+        Task<PagedResults<PostBoxResposne>> GetComicByUserProfileName(PostByProFileNameInput request);
+        Task<PagedResults<PostBoxResposne>> GetComicByTagName(PostByTagNameInput request);
     }
 }

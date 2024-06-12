@@ -124,7 +124,10 @@ namespace Mcsg.Social.Api.Services
             };
             result.Reactions = reactionsDb.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type }).ToList();
             result.TotalReacts = reactionsDb.Select(x => x.Count).Sum();
-
+            if (result.TotalReacts > 0)
+            {
+                result.MostReactionType = reactionsDb.OrderByDescending(p => p.Count).FirstOrDefault().Type;
+            }
             return result;
         }
         public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, ReactionByTargetRequest request)

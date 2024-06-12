@@ -1,4 +1,5 @@
-﻿using Mcsg.Social.Api.Models;
+﻿using Mcsg.Social.Api.DTOs;
+using Mcsg.Social.Api.Models;
 using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,12 @@ namespace Mcsg.Social.Api.Controllers
     public class SmartLookupController : ControllerBase
     {
         private readonly ISmartLookupService _smartLookupService;
-        public SmartLookupController(ISmartLookupService smartLookupService)
+        private readonly IUserService _userService;
+
+        public SmartLookupController(ISmartLookupService smartLookupService, IUserService userService)
         {
             _smartLookupService = smartLookupService;
+            _userService = userService;
         }
 
         [HttpPost("search")]
@@ -44,6 +48,13 @@ namespace Mcsg.Social.Api.Controllers
         public async Task<IActionResult> AddRecentSearch([FromBody] AddRecentSearchRequest req)
         {
             var result = await _smartLookupService.AddRecentSearchAsync(req);
+            return Ok(result);
+        }
+
+        [HttpGet("user-list")]
+        public async Task<IActionResult> SearchUserByKeyWord([FromQuery] SearchUserReq input)
+        {
+            var result = await _userService.SearchUserbyKeyword(input);
             return Ok(result);
         }
     }

@@ -36,5 +36,8 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<List<RewardRespone>> CheckRewardsForPost(Guid currentUserId, PostType type);
         Task<List<MyPostSeriesResponse>> GetMyAllSeries();
         Task<bool> ReportPostAsync(ReportPostReq req);
+        Task UpdateKeyWordForComicAndStoryToSmartLookup();
+        Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input);
+        Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input);
     }
 }

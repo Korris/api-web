@@ -25,6 +25,7 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListStory(TopPostReq req);
         Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListStory(TopPostReq req);
         Task<PagedResults<PostSeriesTopResponse>> GetRelationStoriesAsync(RelationPostSeriesReq request);
-
+        Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(PostByProFileNameInput request);
+        Task<PagedResults<PostBoxResposne>> GetStoryByTagName(PostByTagNameInput request);
     }
 }

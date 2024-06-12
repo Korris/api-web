@@ -28,6 +28,7 @@ namespace Mcsg.Social.Api.Services
     public partial class PostService : IPostService
     {
         private readonly IRepository<Post> _postRepository;
+        private readonly IRepository<SmartLookup> _smartLookupRepository;
         private readonly IRepository<SubPost> _subPostRepository;
         private readonly IRepository<PostReport> _postReportRepository;
         private readonly IValidator<PostReport> _postReportValidator;
@@ -43,6 +44,7 @@ namespace Mcsg.Social.Api.Services
         private readonly IMapper _mapper;
         public PostService(IUnitOfWork unitOfWork,
             ITagService tagService,
+            IRepository<SmartLookup> smartLookupRepository,
             IUserService userService,
             IFileService fileService,
             IOptionsMonitor<FileSetting> fileSetting,
@@ -67,6 +69,7 @@ namespace Mcsg.Social.Api.Services
             _configuration = configuration;
             _mapper = mapper;
             _postReportValidator = postReportValidator;
+            _smartLookupRepository = smartLookupRepository;
         }
         public async Task<bool> Delete(Guid postId)
         {
@@ -502,6 +505,24 @@ namespace Mcsg.Social.Api.Services
             }
             return results;
         }
+
+        public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
+        {
+            var queryNameListPost = $@"SELECT ""Title"" FROM ""Posts"" where ""Type"" != {(int)PostType.FEED}  AND ""IsDelete"" = false ";
+            var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
+            var smartLookupInserts = new List<SmartLookup>();
+            foreach (var name in nameListPost)
+            {
+                smartLookupInserts.Add(new SmartLookup
+                {
+                    CountCriteria = 0,
+                    Keyword = name,
+                    KeywordType = LookupKeywordType.None
+                });
+            }
+            await _smartLookupRepository.InsertAsync(smartLookupInserts);
+        }
+
         public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, TopPostReq loadReq)
         {
             ValidateTotalItem(loadReq.PageSize);
@@ -563,6 +584,131 @@ namespace Mcsg.Social.Api.Services
             else
             {
                 results = new PagedResults<PostSeriesTopResponse>(0);
+            }
+            return results;
+        }
+
+        public async Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input)
+        {
+            ValidateTotalItem(input.PageSize);
+            PagedResults<PostBoxResposne> results;
+            var offset = input.PageSize * (input.PageNumber - 1);
+
+            var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+
+            var multi = await _postRepository
+                    .Connection.QueryMultipleAsync(query, new
+                    {
+                        PostType = (int)type,
+                        IsAccessPrivate = false,
+                        PageSize = input.PageSize,
+                        Offet = offset,
+                        PostStatus = (int)PostStatus.PUBLIC,
+                        TagName = input.TagName
+                    });
+            var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
+
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResults<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = MappingToPostBoxResponse(items);
+            }
+            else
+            {
+                results = new PagedResults<PostBoxResposne>(0);
+            }
+            return results;
+        }
+
+        public async Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input)
+        {
+            ValidateTotalItem(input.PageSize);
+            PagedResults<PostBoxResposne> results;
+            var offset = input.PageSize * (input.PageNumber - 1);
+
+            var queryCondition = "";
+            if (input.SearchBy == "ProfileName")
+            {
+                queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
+                                   AND p.""Type""=@PostType
+                                   AND p.""Status""=@PostStatus
+                                   AND p.""IsDelete""=false";
+            }
+            else
+            {
+                queryCondition = $@" WHERE p.""Title"" ILIKE '%{input.Keyword}%'
+                                     AND p.""Type""=@PostType
+                                     AND p.""Status""=@PostStatus
+                                     AND p.""IsDelete""=false";
+            }
+
+            var query = $@"SELECT p.""Id"",
+	                              p.""Title"",
+	                              p.""ThumbnailUrl"",
+	                              p.""Body"",
+	                              p.""IsMature"", 
+	                              p.""HashId"",
+	                              u.""ProfileName"",  
+	                              CASE 
+	                              WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
+	                              ELSE NULL 
+	                              END AS Tags,
+	                              COUNT(pc.""Id"") as CommentCount,
+	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
+	                              FROM ""Posts"" p
+	                              JOIN ""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
+	                              LEFT JOIN ""TagPosts"" tp on p.""Id""  = tp.""PostId"" 
+	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
+	                              LEFT JOIN ""PostComments"" pc on pc.""PostId""  = p.""Id"" 
+	                              LEFT JOIN LATERAL 
+										(
+											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedDate""
+											FROM ""SubPosts"" sp 
+											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
+											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
+											ORDER BY sp.""Order"" DESC
+											LIMIT 2
+										) sp ON sp.""PostId"" = p.""Id""	
+                                  [QueryCondition]
+                                  GROUP BY p.""Id"" ,u.""ProfileName"" 
+                                  ORDER BY p.""CreatedDate"" desc  
+                                  OFFSET @Offset
+                                  LIMIT @PageSize;
+
+                                  SELECT COUNT(*) AS TotalCount
+                                  FROM ""Posts"" p
+                                  JOIN ""Users"" u on p.""CreatedBy"" = u.""Id""
+                                  [QueryCondition]";
+
+            query = query.Replace("[QueryCondition]", queryCondition);
+            var multi = await _postRepository
+                    .Connection.QueryMultipleAsync(query, new
+                    {
+                        PostType = (int)type,
+                        IsAccessPrivate = false,
+                        PageSize = input.PageSize,
+                        Offset = offset,
+                        PostStatus = (int)PostStatus.PUBLIC,
+                        ProfileName = input.Keyword
+                    });
+            var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
+
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResults<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = MappingToPostBoxResponse(items);
+                foreach (var item in results.Items)
+                {
+                    item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
+                }
+            }
+            else
+            {
+                results = new PagedResults<PostBoxResposne>(0);
             }
             return results;
         }
@@ -823,6 +969,23 @@ namespace Mcsg.Social.Api.Services
                 Status = x.Status,
                 UserId = x.UserId,
                 //"AuthorName", "CoverUrl","CreatedDate", "IsMature", "Id", "Permission", "Status", "UserId"
+                HashId = x.HashId,
+                Chapters = MappingTopChapter(x.SubPostStr),
+            }).ToList();
+        }
+
+        private List<PostBoxResposne> MappingToPostBoxResponse(IEnumerable<PostSeriesTopQueryDbResponse> posts)
+        {
+            return posts.Select(x => new PostBoxResposne
+            {
+                ProfileName = x.ProfileName,
+                Title = x.Title,
+                CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
+                Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+                Tags = x.Tags,
+                ThumbnailUrl = x.ThumbnailUrl,
+                Id = x.Id,
+                IsMature = x.IsMature,
                 HashId = x.HashId,
                 Chapters = MappingTopChapter(x.SubPostStr),
             }).ToList();
