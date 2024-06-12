@@ -234,11 +234,19 @@ namespace Mcsg.Social.Api.Services
             if (string.IsNullOrWhiteSpace(name))
             {
                 var profileUsersRandom = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetRandomProfileNames, new { Name = name });
+                foreach (var item in profileUsersRandom)
+                {
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                }
                 return profileUsersRandom.ToList();
             }
 
             name = "%" + name + "%";
             var profiles = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetSimilarProfileNamesMention, new { Name = name });
+            foreach (var item in profiles)
+            {
+                item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+            }
             return profiles.ToList();
         }
 

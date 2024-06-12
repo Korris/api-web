@@ -17,7 +17,7 @@ namespace Mcsg.Social.Api.Services
         {
             get
             {
-                return $@"SELECT ""ProfileName"", ""Avatar"" FROM {_userRepository.TableName}
+                return $@"SELECT ""ProfileName"", ""Avatar"", ""UserName"", ""Id"" FROM {_userRepository.TableName}
                       WHERE ""ProfileName"" ILIKE @Name AND ""IsDelete"" = false LIMIT 10";
             }
         }
@@ -26,7 +26,7 @@ namespace Mcsg.Social.Api.Services
         {
             get
             {
-                return $@"SELECT ""ProfileName"", ""Avatar"" FROM {_userRepository.TableName}
+                return $@"SELECT ""ProfileName"", ""Avatar"", ""UserName"", ""Id"" FROM {_userRepository.TableName}
                       WHERE ""IsDelete"" = false ORDER BY RANDOM() LIMIT 10";
             }
         }
