@@ -8,32 +8,31 @@ namespace Mcsg.Social.Api.Services
         {
             get
             {
-                return @$"WITH RECURSIVE cte AS (
-	                               SELECT ""Id"", ""ParentId"", ""PostId""
-				                            , ""AuthorId"", ""LastModifiedDate""
-				                            , ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
-	                               FROM {_postCommentRepository.TableName}
-	                               WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
-	                               UNION ALL
-	                               SELECT post.""Id"", post.""ParentId"", post.""PostId""
-				                            , post.""AuthorId"", post.""LastModifiedDate""
-				                            , post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
-	                               FROM cte ct
-	                               JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
-	                            )
-	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""LastModifiedDate""
-				                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
-											, us.""Avatar"" AS UserAvatar
-				                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
-				                            , cte.CommentLevel
-											, cte.""QuoteId""
-	                            FROM cte
-	                            LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
-	                            LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+                return @$"      WITH RECURSIVE cte AS (
+                                    SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""LastModifiedDate"", ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
+                                    FROM {_postCommentRepository.TableName}
+                                    WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
+                                    UNION ALL
+                                    SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""LastModifiedDate"", post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
+                                    FROM cte ct
+                                    JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
+                                    )
+                                SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""LastModifiedDate"", cte.""AuthorId"", 
+                                        (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""Avatar"" AS UserAvatar
+                                        , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
+                                FROM cte
+                                LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
+                                LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
                                 WHERE cte.""IsDelete"" = false
-	                            ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
+                                ORDER BY
+                                    cte.CommentLevel,
+                                    CASE 
+                                        WHEN cte.CommentLevel = 1 THEN cte.""{{0}}""
+                                        ELSE NULL
+                                        END DESC; ";
             }
         }
+
         private string GetCommentOfSubPostQuery
         {
             get
