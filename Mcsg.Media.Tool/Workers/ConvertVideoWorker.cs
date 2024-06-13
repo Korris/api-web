@@ -1,21 +1,22 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Media.Tool.Features;
-using Mcsg.Media.Tool.Models;
-using Mcsg.Media.Tool.Workers;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Web;
 
 namespace Mcsg.Media.Tool.Actions
 {
+    using Common.Core.Interfaces;
+    using Features;
+    using Lib.Common.Constants;
+    using Lib.Common.Helpers;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Models;
+    using Workers;
+
     internal class ConvertVideoWorker : BaseWorker, IWorker
     {
         private const string TARGET = ".mp4";
-        public ConvertVideoWorker(IConfiguration configuration)
-            : base(configuration) { }
+        public ConvertVideoWorker(IConfiguration configuration, IStorageClient sc) : base(configuration, sc) { }
 
         public void Execute(Job jobInfo)
         {
@@ -26,9 +27,6 @@ namespace Mcsg.Media.Tool.Actions
             {
                 try
                 {
-                    // create clone ffmpeg
-                    var ffmpge = CloneFFmpeg();
-
                     // load resource
                     var resourceInfo = JsonConvert.DeserializeObject<Resource>(jobInfo.Data);
                     var url = CryptoHelper.Decrypt(HttpUtility.UrlDecode(resourceInfo.Url), EncryptKey);
@@ -46,8 +44,7 @@ namespace Mcsg.Media.Tool.Actions
                         //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
                         //string command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 28 -c:a aac -b:a 64k"; // optimizer
                         string command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
-                        RunFFmeg(ffmpge, orgfile, targetFile, command);
-                        DisposeClonedFFmpeg(ffmpge);
+                        RunFFmeg("ffmpeg", orgfile, targetFile, command);
 
                         //upload
                         var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
@@ -58,7 +55,11 @@ namespace Mcsg.Media.Tool.Actions
 
                         //correct resource table
                         var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, EncryptKey));
-                        var shareUrl = await BlobStorageService.CreateShareUrl(newUrl, MediaContainer);
+
+                        var objectName = $"{MediaContainer}/{newUrl}";
+                        var uri = await _sc.PresignedGetObject(objectName, _expiryInSeconds, null);
+                        var shareUrl = new Uri(uri);
+
                         await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE,
                             endCodenewUrl, shareUrl.GetShareUrlFromStorage(StorageAccountName));
                     }

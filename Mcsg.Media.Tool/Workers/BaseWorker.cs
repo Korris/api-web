@@ -1,29 +1,34 @@
-﻿using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Media.Tool.Models;
-using Mcsg.Media.Tool.Services;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Mcsg.Media.Tool.Workers
 {
+    using Common.Core.Interfaces;
+    using Common.Core.Storages;
+    using Common.SeedWork.Extensions;
+    using Models;
+    using Services;
+
     internal abstract class BaseWorker
     {
         protected List<WorkerPoolItem> Pools { get; }
         protected DbService DbService { get; }
         protected NotificationService NotiService { get; }
-        protected IAzureBlobStorageService BlobStorageService { get; }
         protected IConfiguration Configuration { get; }
         protected string StorageAccountName { get; }
         protected const string MediaContainer = "media";
 
-        public BaseWorker(IConfiguration configuration)
+        public BaseWorker(IConfiguration configuration, IStorageClient sc)
         {
             Configuration = configuration;
             DbService = new DbService(configuration["ConnectionStrings:DefaultConnection"]);
-            BlobStorageService = new AzureBlobStorageService(configuration["ConnectionStrings:StorageConnection"]);
             StorageAccountName = configuration["ConnectionStrings:StorageAccountName"];
             Pools = new List<WorkerPoolItem>();
             NotiService = new NotificationService(configuration);
+
+            sc.SetStrategy(new StorageMinio());
+            _sc = sc;
         }
 
         public void AddToPools(Guid id, Task task)
@@ -32,19 +37,6 @@ namespace Mcsg.Media.Tool.Workers
         }
 
         public int PoolSize => int.Parse(Configuration["AppSettings:PoolSize"]);
-
-        public string CloneFFmpeg()
-        {
-            var src = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg.exe");
-            var des = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"ffmpeg_{Guid.NewGuid()}.exe");
-            File.Copy(src, des);
-            return des;
-        }
-
-        public void DisposeClonedFFmpeg(string path)
-        {
-            File.Delete(path);
-        }
 
         public async Task<string> DownloadBlobAsync(string path, Guid resourceId)
         {
@@ -61,18 +53,20 @@ namespace Mcsg.Media.Tool.Workers
                 File.Delete(filePath);
             }
 
-            await BlobStorageService.DownloadAsync(path, MediaContainer, filePath);
+            var objectName = $"{MediaContainer}/{path}";
+            var fs = await _sc.GetObject(objectName);
+            fs.ToFile(filePath);
+
             return filePath;
         }
 
         public async Task UploadBlobAsync(string localFile, string remoteUri)
         {
-            FileStream fileStream = File.OpenRead(localFile);
+            var fileStream = File.OpenRead(localFile);
 
-            if (await BlobStorageService.IsExistAsync(remoteUri, MediaContainer))
-                await BlobStorageService.DeleteAsync(remoteUri, MediaContainer);
+            var objectName = $"{MediaContainer}/{remoteUri}";
+            await _sc.PutObject(fileStream, objectName, null);
 
-            await BlobStorageService.UploadAsync(remoteUri, fileStream, MediaContainer);
             fileStream.Close();
         }
 
@@ -89,6 +83,18 @@ namespace Mcsg.Media.Tool.Workers
                 CreateNoWindow = true,
                 RedirectStandardError = true,
             };
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var enviromentPath = Environment.GetEnvironmentVariable("PATH");
+                var paths = (enviromentPath + "").Split(';');
+
+                var filePath = paths.Select(p => Path.Combine(p, $"{exepath}.exe")).Where(p => File.Exists(p)).FirstOrDefault();
+                if (filePath != null)
+                {
+                    exepath = filePath;
+                }
+            }
 
             // Start the FFmpeg process.
             Process process = new()
@@ -122,5 +128,19 @@ namespace Mcsg.Media.Tool.Workers
             GC.SuppressFinalize(this);
             GC.Collect();
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        protected readonly IStorageClient _sc;
+
+        /// <summary>
+        /// 10 years
+        /// </summary>
+        protected readonly int _expiryInSeconds = 10 * 365 * 24 * 60 * 60; // 10 years
+
+        #endregion
     }
 }

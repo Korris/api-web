@@ -1,22 +1,26 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Media.Tool.Actions;
-using Mcsg.Media.Tool.Features;
-using Mcsg.Media.Tool.Workers;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Collections.Concurrent;
 
 namespace Mcsg.Media.Tool
 {
+    using Actions;
+    using Common.Core.Interfaces;
+    using Features;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Workers;
+
     internal class WorkDistributor
     {
         private IDictionary<JobType, IWorker> _workers;
         private readonly DbService _dbService;
         private readonly ConcurrentQueue<Job> _jobQueue = new();
 
-        public WorkDistributor(IConfiguration configuration)
+        public WorkDistributor(IConfiguration configuration, IStorageClient sc)
         {
             _dbService = new DbService(configuration["ConnectionStrings:DefaultConnection"]);
+            _sc = sc;
+
             LoadWorker(configuration);
             LoadActiveJobs();
             TrytoCleanupWorkerPool();
@@ -53,8 +57,8 @@ namespace Mcsg.Media.Tool
         {
             _workers = new Dictionary<JobType, IWorker>
             {
-                { JobType.ConvertVideo, new ConvertVideoWorker(configuration) },
-                { JobType.ConvertAudio, new ConvertAudioWorker(configuration) }
+                { JobType.ConvertVideo, new ConvertVideoWorker(configuration,_sc) },
+                { JobType.ConvertAudio, new ConvertAudioWorker(configuration,_sc) }
             };
         }
 
@@ -84,5 +88,14 @@ namespace Mcsg.Media.Tool
                 }
             });
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
+
+        #endregion
     }
 }
