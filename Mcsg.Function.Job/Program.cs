@@ -110,6 +110,16 @@ public class Program
             p.SmtpDisplayFrom = st.Email.SenderName;
         });
 
+        builder.Services.AddStorage(p =>
+        {
+            p.BucketName = st.Minio.BucketName;
+            p.Location = st.Minio.Location;
+            p.EndPoint = st.Minio.EndPoint;
+            p.PublicUrl = st.Minio.PublicUrl;
+            p.AccessKey = st.Minio.AccessKey;
+            p.SecrectKey = st.Minio.SecrectKey;
+        });
+
         // DbContext
         builder.Services.AddDataLibrary(cs);
         builder.Services.AddWalletDbContext(builder.Configuration);

@@ -17,6 +17,7 @@ using Dtos;
 using Extensions;
 using Interfaces;
 using static Dtos.ConnectionDto;
+using static SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting base
@@ -104,24 +105,24 @@ public class SettingBase : ISettingBase
     public DatabaseDto Db { get; }
 
     /// <summary>
-    /// Queue
-    /// </summary>
-    public QueueDto Queue { get; }
-
-    /// <summary>
     /// Email
     /// </summary>
     public NotificationDto Email { get; }
 
     /// <summary>
+    /// Queue
+    /// </summary>
+    public QueueDto Queue { get; }
+
+    /// <summary>
+    /// MinIO
+    /// </summary>
+    public MinioDto Minio { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     public string? Origins { get; set; }
-
-    /// <summary>
-    /// Minio
-    /// </summary>
-    public MinioDto Minio { get; set; }
 
     #endregion
 

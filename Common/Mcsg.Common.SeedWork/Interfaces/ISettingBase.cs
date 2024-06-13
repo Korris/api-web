@@ -15,6 +15,7 @@ namespace Mcsg.Common.SeedWork.Interfaces;
 
 using Dtos;
 using static Dtos.ConnectionDto;
+using static SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Interface setting base
@@ -76,7 +77,7 @@ public interface ISettingBase
     /// <summary>
     /// Is local mode
     /// </summary>
-    public bool IsLocal { get; }
+    bool IsLocal { get; }
 
     /// <summary>
     /// JSON Web Token
@@ -89,24 +90,24 @@ public interface ISettingBase
     DatabaseDto Db { get; }
 
     /// <summary>
-    /// Queue
-    /// </summary>
-    QueueDto Queue { get; }
-
-    /// <summary>
     /// Email
     /// </summary>
     NotificationDto Email { get; }
 
     /// <summary>
+    /// Queue
+    /// </summary>
+    QueueDto Queue { get; }
+
+    /// <summary>
+    /// MinIO
+    /// </summary>
+    MinioDto Minio { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     string? Origins { get; set; }
-
-    /// <summary>
-    /// Minio
-    /// </summary>
-    MinioDto Minio { get; set; }
 
     #endregion
 }

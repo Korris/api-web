@@ -11,6 +11,8 @@
  */
 #endregion
 
+using System.Text;
+
 namespace Mcsg.Common.SeedWork.Extensions;
 
 using Common.SeedWork.Enums;
@@ -48,6 +50,47 @@ public static class StreamExtension
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// Convert stream to string
+    /// </summary>
+    /// <param name="fs">Stream</param>
+    /// <returns>Return the result</returns>
+    public static string ToString(this Stream fs)
+    {
+        var bufferSize = 1024; // 1 KB buffer size
+        var buffer = new byte[bufferSize];
+        var stringBuilder = new StringBuilder();
+
+        // Ensure the position is at the beginning of the Stream
+        fs.Position = 0;
+
+        int bytesRead;
+        while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) > 0)
+        {
+            // Convert the read bytes to a string and append to the StringBuilder
+            stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+        }
+
+        return stringBuilder.ToString();
+    }
+
+    /// <summary>
+    /// Convert stream to file
+    /// </summary>
+    /// <param name="fs">Stream</param>
+    /// <param name="filePath">File path</param>
+    public static void ToFile(this Stream fs, string filePath)
+    {
+        // Ensure the Stream's position is at the beginning
+        fs.Position = 0;
+
+        // Write the Stream content to a file
+        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        {
+            fs.CopyTo(fileStream);
+        }
     }
 
     #endregion
