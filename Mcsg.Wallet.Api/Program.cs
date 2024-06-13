@@ -8,7 +8,6 @@ namespace Mcsg.Wallet.Api;
 using Common.Core.Extensions;
 using Extensions;
 using Interfaces;
-using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Models;
@@ -116,7 +115,6 @@ public class Program
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);
         builder.Services.AddCommonLibrary(builder.Configuration);
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
         builder.Services.AddSignalR(builder.Configuration);
 

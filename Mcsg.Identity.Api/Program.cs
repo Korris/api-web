@@ -8,7 +8,6 @@ using Common.Core.Extensions;
 using Extensions;
 using Helpers;
 using Interfaces;
-using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Models;
@@ -110,7 +109,6 @@ public class Program
         builder.Services.AddDataLibrary(cs);
         builder.Services.AddWalletDbContext(builder.Configuration);
 
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
 
         //Add Authentication & Authorization Setup
@@ -128,7 +126,6 @@ public class Program
         builder.Services.AddSSOService();
         builder.Services.AddScoped<IOtpService, OtpService>();
         builder.Services.AddScoped<IUserWalletService, UserWalletService>();
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
 
         var app = builder.Build();
 
