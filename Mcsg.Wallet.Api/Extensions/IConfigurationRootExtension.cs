@@ -19,6 +19,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationExchange = config[$"{prefix}:Exchange"] + "";
         }
+        if (string.IsNullOrEmpty(setting.NotificationQueueEmail))
+        {
+            setting.NotificationQueueEmail = config[$"{prefix}:QueueEmail"] + "";
+        }
         if (string.IsNullOrEmpty(setting.NotificationQueuePayment))
         {
             setting.NotificationQueuePayment = config[$"{prefix}:QueuePayment"] + "";

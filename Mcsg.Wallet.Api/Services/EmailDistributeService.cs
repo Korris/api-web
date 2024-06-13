@@ -1,23 +1,23 @@
-﻿using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Wallet.Api.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.Core.Dtos;
+    using Common.Core.Extensions;
+    using Interfaces;
+    using Lib.Common.Distributor;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public class EmailDistributeService : BaseDistributor
     {
-        private readonly IRepository<Job> _jobRepository;
-        private readonly IAzureBlobStorageQueueService _queueService;
-
         public EmailDistributeService(IServiceProvider serviceProvider)
         {
             _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
-            _queueService = serviceProvider.GetRequiredService<IAzureBlobStorageQueueService>();
+            _setting = serviceProvider.GetRequiredService<ISetting>();
         }
 
         public override Task<bool> IsAcceptable(DistributedItem item)
@@ -37,7 +37,26 @@ namespace Mcsg.Wallet.Api.Services
                 Status = JobStatus.Queued
             };
             await _jobRepository.InsertAsync(job);
-            await _queueService.Enqueue("emailqueue", $"{emailItem.Id}");
+
+            var msg = new QueueMessageDto
+            {
+                DevName = emailItem.Id.ToString()
+            };
+            _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueEmail, msg);
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Job repository
+        /// </summary>
+        private readonly IRepository<Job> _jobRepository;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

@@ -16,6 +16,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationExchange { get; set; }
 
     /// <summary>
+    /// Notification queue email
+    /// </summary>
+    public string NotificationQueueEmail { get; set; }
+
+    /// <summary>
     /// Notification queue payment
     /// </summary>
     public string NotificationQueuePayment { get; set; }
@@ -50,6 +55,7 @@ public class Setting : SettingBase, ISetting
     public Setting()
     {
         NotificationExchange = string.Empty;
+        NotificationQueueEmail = string.Empty;
         NotificationQueuePayment = string.Empty;
         NotificationQueueSms = string.Empty;
         NotificationQueueSyncData = string.Empty;

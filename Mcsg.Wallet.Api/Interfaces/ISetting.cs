@@ -15,6 +15,11 @@ public interface ISetting : ISettingBase
     string NotificationExchange { get; set; }
 
     /// <summary>
+    /// Notification queue email
+    /// </summary>
+    string NotificationQueueEmail { get; set; }
+
+    /// <summary>
     /// Notification queue payment
     /// </summary>
     string NotificationQueuePayment { get; set; }
