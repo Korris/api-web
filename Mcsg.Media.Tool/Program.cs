@@ -37,9 +37,10 @@ internal class Program
         var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = _prefix;
 
-        var cc = new ServiceCollection();
+        var services = new ServiceCollection();
 
-        cc.AddStorage(p =>
+        // Storage
+        services.AddStorage(p =>
         {
             p.BucketName = st.Minio.BucketName;
             p.Location = st.Minio.Location;
@@ -49,7 +50,7 @@ internal class Program
             p.SecrectKey = st.Minio.SecrectKey;
         });
 
-        var serviceProvider = cc.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();
         sc.SetStrategy(new StorageMinio());
 

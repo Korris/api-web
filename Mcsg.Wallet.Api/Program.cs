@@ -90,6 +90,10 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddWalletDbContext(builder.Configuration);
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
@@ -104,10 +108,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        builder.Services.AddDataLibrary(cs);
-        builder.Services.AddWalletDbContext(builder.Configuration);
-
 
         //Add Authentication & Authorization Setup
         builder.Services.AddBearerAuthentication(builder.Configuration);

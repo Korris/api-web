@@ -5,7 +5,9 @@ using System.Reflection;
 namespace Mcsg.Realtime.Api;
 
 using Common.Core.Extensions;
+using Extensions;
 using Hubs;
+using Interfaces;
 using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -45,6 +47,10 @@ public class Program
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
 
+        #region -- Load settings --
+        config.LoadSettings(st, "Queue:Notification");
+        #endregion
+
         // Update connection string
         cs = st.SetDbParams(cs);
 
@@ -80,6 +86,14 @@ public class Program
         }
         #endregion
 
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(cs);
+        #endregion
+
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
 
         // Add services to the container.
@@ -90,7 +104,6 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
-        builder.Services.AddDataLibrary(cs);
         builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());

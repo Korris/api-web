@@ -9,6 +9,7 @@ using Attributes;
 using Common.Core.Extensions;
 using Extensions;
 using Helper;
+using Interfaces;
 using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -55,6 +56,10 @@ public class Program
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
 
+        #region -- Load settings --
+        config.LoadSettings(st, "Queue:Notification");
+        #endregion
+
         // Update connection string
         cs = st.SetDbParams(cs);
 
@@ -90,6 +95,16 @@ public class Program
         }
         #endregion
 
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddWalletDbContext(builder.Configuration);
+        builder.Services.AddAnalyticDbContext(builder.Configuration);
+        #endregion
+
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<FileSetting>(builder.Configuration.GetSection("FileSettings"));
         builder.Services.Configure<RealTimeServiceSetting>(builder.Configuration.GetSection("RealTimeServiceSettings"));
@@ -104,10 +119,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        builder.Services.AddWalletDbContext(builder.Configuration);
-        builder.Services.AddAnalyticDbContext(builder.Configuration);
-        builder.Services.AddDataLibrary(cs);
 
         //Add Authentication & Authorization Setup
         builder.Services.AddBearerAuthentication(builder.Configuration);

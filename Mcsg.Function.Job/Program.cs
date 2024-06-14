@@ -110,6 +110,7 @@ public class Program
             p.SmtpDisplayFrom = st.Email.SenderName;
         });
 
+        // Storage
         builder.Services.AddStorage(p =>
         {
             p.BucketName = st.Minio.BucketName;
