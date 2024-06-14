@@ -101,12 +101,5 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.STORY);
             return Ok(result);
         }
-
-        [HttpGet("comment-most-reaction/{hashId}")]
-        public async Task<IActionResult> GetCommentWithMostReaction(string hashId)
-        {
-            var result = await _commentService.GetCommentWithMostReaction(hashId);
-            return Ok(result);
-        }
     }
 }

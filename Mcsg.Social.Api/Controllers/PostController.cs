@@ -32,5 +32,12 @@ namespace Mcsg.Social.Api.Controllers
             await _postService.UpdateKeyWordForComicAndStoryToSmartLookup();
             return Ok();
         }
+
+        [HttpGet("comment-most-reaction")]
+        public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] MostReactionCommentInput input)
+        {
+            var result = await _postService.GetCommentWithMostReaction(input);
+            return Ok(result);
+        }
     }
 }

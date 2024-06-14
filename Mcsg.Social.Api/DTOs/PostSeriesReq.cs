@@ -25,6 +25,10 @@ namespace Mcsg.Social.Api.DTOs
         public string? HashTag { get; set; }
         public bool IsFavorite { get; set; }
     }
+    public class MostReactionCommentInput : BasePageResultReq
+    {
+        public string HashPostId { get; set; }
+    }
     public class ChapterListReq : BasePageResultReq
     {
         [DefaultValue("Order")]

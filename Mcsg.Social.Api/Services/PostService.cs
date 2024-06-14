@@ -28,6 +28,7 @@ namespace Mcsg.Social.Api.Services
     public partial class PostService : IPostService
     {
         private readonly IRepository<Post> _postRepository;
+        private readonly IRepository<PostComment> _postCommentRepository;
         private readonly IRepository<SmartLookup> _smartLookupRepository;
         private readonly IRepository<SubPost> _subPostRepository;
         private readonly IRepository<PostReport> _postReportRepository;
@@ -53,7 +54,8 @@ namespace Mcsg.Social.Api.Services
             IConfiguration configuration,
             IMapper mapper,
             ISmartLookupService smartLookupService,
-            IValidator<PostReport> postReportValidator)
+            IValidator<PostReport> postReportValidator,
+            IRepository<PostComment> postCommentRepository)
         {
             _postRepository = unitOfWork.GetRepository<Post>();
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
@@ -70,6 +72,7 @@ namespace Mcsg.Social.Api.Services
             _mapper = mapper;
             _postReportValidator = postReportValidator;
             _smartLookupRepository = smartLookupRepository;
+            _postCommentRepository = postCommentRepository;
         }
         public async Task<bool> Delete(Guid postId)
         {
@@ -944,6 +947,66 @@ namespace Mcsg.Social.Api.Services
                 Size = resources.Size
             };
         }
+
+        public async Task<PagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input)
+        {
+            if (string.IsNullOrWhiteSpace(input.HashPostId))
+            {
+                return new PagedResults<MostReactionCommentResponse>(0);
+            }
+            PagedResults<MostReactionCommentResponse> results;
+            var offset = input.PageSize * (input.PageNumber - 1);
+
+            var query = $@"SELECT spc.""Body"", sp.""Title"" as ChapterName, p.""HashId"",sp.""Order"", u.""Avatar"",
+                                    u.""ProfileId"",
+                                    u.""ProfileName"" ,
+                                    COUNT(spcr.""Id"") AS max_reaction_count
+                        [QueryCondition]
+                        GROUP BY spc.""Body"",sp.""Title"",spc.""CreatedDate"",p.""HashId"",sp.""Order"" ,u.""Avatar"",u.""ProfileName"" ,u.""ProfileId"" 
+                        ORDER BY max_reaction_count desc,spc.""CreatedDate"" desc
+                        OFFSET @Offset
+                        LIMIT @PageSize;
+
+                        SELECT COUNT(*) as TotalItems
+                        [QueryCondition]";
+
+            var queryCondition = $@"
+                            FROM ""Posts"" p
+                            LEFT JOIN ""SubPosts"" sp on p.""Id"" = sp.""PostId"" 
+                            LEFT JOIN ""SubPostComments"" spc  on sp.""Id""  = spc.""PostId"" 
+                            LEFT JOIN ""SubPostCommentReactions"" spcr  on spc.""Id"" = spcr.""TargetId""
+                            LEFT JOIN ""Users"" u ON spc.""CreatedBy"" = u.""Id"" 
+                            WHERE p.""HashId"" =@HashId";
+
+            query = query.Replace("[QueryCondition]", queryCondition);
+            var multi = await _postRepository
+                   .Connection.QueryMultipleAsync(query, new
+                   {
+                       HashId = input.HashPostId,
+                       PageSize = input.PageSize,
+                       Offset = offset
+                   });
+
+            var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
+            foreach (var item in items)
+            {
+                item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+
+            }
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = items;
+            }
+            else
+            {
+                results = new PagedResults<MostReactionCommentResponse>(0);
+            }
+            return results;
+        }
+
         private List<PostSeriesTopResponse> MappingTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
         {
             return posts.Select(x => new PostSeriesTopResponse
