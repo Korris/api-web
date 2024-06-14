@@ -9,6 +9,7 @@ using System.Text;
 namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
 using Lib.Common.Mail;
@@ -52,7 +53,7 @@ public class Program
         #endregion
 
         // Update connection string
-        cs = st.SetDbParams(cs);
+        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -122,7 +123,7 @@ public class Program
         });
 
         // DbContext
-        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddDataLibrary(csDb);
         builder.Services.AddWalletDbContext(builder.Configuration);
 
         // Service

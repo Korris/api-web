@@ -14,7 +14,6 @@
 namespace Mcsg.Common.SeedWork;
 
 using Dtos;
-using Extensions;
 using Interfaces;
 using static Dtos.ConnectionDto;
 using static SeedWork.Dtos.StorageDto;
@@ -144,25 +143,6 @@ public class SettingBase : ISettingBase
         Queue = new QueueDto();
         Email = new NotificationDto();
         Minio = new MinioDto();
-    }
-
-    /// <summary>
-    /// Set database parameters {DbServer} {DbPort} {DbName} {DbUser} {DbPassword}
-    /// </summary>
-    /// <param name="cs">Connection string</param>
-    /// <returns>Return the connection string</returns>
-    public string SetDbParams(string? cs)
-    {
-        var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "{DbServer}", Db.Host },
-            { "{DbPort}", Db.Port.ToString() },
-            { "{DbName}", Db.Name },
-            { "{DbUser}", Db.UserName },
-            { "{DbPassword}", Db.Password }
-        };
-
-        return cs.SetPlaceholder(dic);
     }
 
     #endregion

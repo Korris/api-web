@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 namespace Mcsg.Wallet.Api;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
 using Lib.Common;
@@ -53,7 +54,7 @@ public class Program
         #endregion
 
         // Update connection string
-        cs = st.SetDbParams(cs);
+        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -92,7 +93,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddDataLibrary(csDb);
         builder.Services.AddWalletDbContext(builder.Configuration);
         #endregion
 

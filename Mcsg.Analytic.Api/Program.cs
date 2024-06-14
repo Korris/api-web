@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 namespace Mcsg.Analytic.Api;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Extensions;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Web.Extensions.DependencyInjection;
@@ -42,7 +43,7 @@ public class Program
         var cs = config.GetConnectionString("McsgConnectionString");
 
         // Update connection string
-        cs = st.SetDbParams(cs);
+        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -83,7 +84,7 @@ public class Program
 
         builder.Services.AddAnalyticDbContext(builder.Configuration);
 
-        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddDataLibrary(csDb);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

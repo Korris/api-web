@@ -17,6 +17,8 @@ using System.Text.RegularExpressions;
 
 namespace Mcsg.Common.SeedWork.Extensions;
 
+using static Dtos.ConnectionDto;
+
 /// <summary>
 /// String extension for using [this string] only
 /// </summary>
@@ -385,6 +387,28 @@ public static class StringExtension
         var byteCount = Encoding.UTF8.GetByteCount(s);
 
         return byteCount <= max;
+    }
+
+    /// <summary>
+    /// Set database parameters {DbServer} {DbPort} {DbName} {DbUser} {DbPassword}
+    /// </summary>
+    /// <param name="cs">Connection string</param>
+    /// <param name="db">Database setting</param>
+    /// <returns>Return the connection string</returns>
+    public static string SetDbParams(this string? cs, DatabaseDto db)
+    {
+        ArgumentNullException.ThrowIfNull(db, nameof(db));
+
+        var dic = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "{DbServer}", db.Host },
+            { "{DbPort}", db.Port.ToString() },
+            { "{DbName}", db.Name },
+            { "{DbUser}", db.UserName },
+            { "{DbPassword}", db.Password }
+        };
+
+        return cs.SetPlaceholder(dic);
     }
 
     #endregion

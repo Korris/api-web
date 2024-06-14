@@ -8,6 +8,7 @@ using System.Text;
 namespace Mcsg.Function.Media;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Extensions;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -39,7 +40,7 @@ public class Program
         var cs = config.GetConnectionString("McsgConnectionString");
 
         // Update connection string
-        cs = st.SetDbParams(cs);
+        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         assembly!.StartLogger(st);

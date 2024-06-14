@@ -5,6 +5,7 @@ using System.Reflection;
 namespace Mcsg.Realtime.Api;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Extensions;
 using Extensions;
 using Hubs;
 using Interfaces;
@@ -52,7 +53,7 @@ public class Program
         #endregion
 
         // Update connection string
-        cs = st.SetDbParams(cs);
+        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -91,7 +92,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDataLibrary(cs);
+        builder.Services.AddDataLibrary(csDb);
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
