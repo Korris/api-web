@@ -6,6 +6,7 @@ namespace Mcsg.Media.Tool;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Core.Storages;
+using Common.SeedWork.Extensions;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -36,6 +37,12 @@ internal class Program
         // Load settings from the environment
         var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = _prefix;
+
+        // Load connection string appsettings.xml
+        var cs = configuration["ConnectionStrings:DefaultConnection"];
+
+        // Update connection string
+        configuration["ConnectionStrings:DefaultConnection"] = cs.SetDbParams(st.Db);
 
         var services = new ServiceCollection();
 
