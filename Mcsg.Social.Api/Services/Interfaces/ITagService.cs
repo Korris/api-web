@@ -15,6 +15,6 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<List<TagView>> GetTagsByPostIdAsync(Guid postId);
         Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId);
         Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(SearchTagReq input);
-        Task<IEnumerable<string>> SearchTagsByName(SearchTagsReq request);
+        Task<IEnumerable<TagSearchResponse>> SearchTagsByName(SearchTagsReq request);
     }
 }

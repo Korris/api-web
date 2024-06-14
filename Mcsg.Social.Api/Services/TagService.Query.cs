@@ -138,11 +138,18 @@
         {
             get
             {
-                return @"   SELECT ""Name"" 
-                            FROM {0} 
-                            WHERE ""Name"" ILIKE @ExactKeyword  
+                return @"   SELECT  t.""Name"", t.""Id"" , COUNT( t.""Id"") 
+                            FROM {0} t
+                            LEFT JOIN ""TagPosts"" tp  
+                            ON tp.""TagId""  = t.""Id"" 
+                            LEFT JOIN ""Posts"" p 
+                            ON p.""Id""  = tp.""PostId"" 
+                            WHERE t.""IsDelete"" = false 
+                            AND tp.""IsDelete"" = false 
+                            AND ""Name"" ILIKE @ExactKeyword  
                                 OR ""Name"" ILIKE @StartsWithKeyword 
                                 OR ""Name"" ILIKE @ContainsKeyword 
+                            GROUP BY t.""Name"", t.""Id""
                             ORDER BY CASE 
                                 WHEN ""Name"" ILIKE @ExactKeyword THEN 0 
                                 WHEN ""Name"" ILIKE @StartsWithKeyword THEN 1 
@@ -151,5 +158,24 @@
                             LIMIT 4";
             }
         }
+
+        private string SearchTagsRandomQuery
+        {
+            get
+            {
+                return @"   SELECT t.""Name"", t.""Id"" , COUNT( t.""Id"") 
+                            FROM {0} t
+                            LEFT JOIN ""TagPosts"" tp  
+                            ON tp.""TagId""  = t.""Id"" 
+                            LEFT JOIN ""Posts"" p 
+                            ON p.""Id""  = tp.""PostId"" 
+                            WHERE t.""IsDelete"" = false 
+                            AND tp.""IsDelete"" = false 
+                            GROUP BY t.""Name"", t.""Id""
+                            ORDER BY RANDOM()
+                            LIMIT 4";
+            }
+        }
+
     }
 }

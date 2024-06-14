@@ -394,19 +394,14 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
-        public async Task<IEnumerable<string>> SearchTagsByName(SearchTagsReq request)
+        public async Task<IEnumerable<TagSearchResponse>> SearchTagsByName(SearchTagsReq request)
         {
-            string keyword = request.Keyword;
-            if (keyword == null)
+            var query = string.Format(string.IsNullOrWhiteSpace(request.Keyword) ? SearchTagsRandomQuery : SearchTagsByNameQuery, _tagRepository.TableName);
+            var tagNames = await _tagRepository.Connection.QueryAsync<TagSearchResponse>(query, new
             {
-                return null;
-            }
-            var query = string.Format(SearchTagsByNameQuery, _tagRepository.TableName);
-            var tagNames = await _tagRepository.Connection.QueryAsync<string>(query, new
-            {
-                ExactKeyword = keyword,
-                StartsWithKeyword = $"{keyword}%",
-                ContainsKeyword = $"%{keyword}%"
+                ExactKeyword = request.Keyword,
+                StartsWithKeyword = $"{request.Keyword}%",
+                ContainsKeyword = $"%{request.Keyword}%"
             });
 
             return tagNames;
