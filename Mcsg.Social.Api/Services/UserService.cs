@@ -1,30 +1,31 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Interfaces;
+    using Common.Core.Storages;
+    using Constants;
+    using DTOs;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Distributor;
+    using Lib.Common.Enums;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+    using Models;
+
     public partial class UserService : IUserService
     {
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<SmartLookup> _smartLookupRepository;
         private readonly ICurrentUserService _currentUserService;
         private IConfiguration _configuration;
-        private readonly IAzureBlobStorageService _azureBlobStorageService;
         private readonly DistributeManager _distributeManager;
         private readonly ILogger<UserService> _logger;
 
@@ -33,15 +34,17 @@ namespace Mcsg.Social.Api.Services
             IConfiguration configuration,
             IRepository<SmartLookup> smartLookupRepository,
             DistributeManager distributeManager,
-            ILogger<UserService> logger)
+            ILogger<UserService> logger, IStorageClient sc)
         {
             _userRepository = userRepository;
             _currentUserService = currentUserService;
             _configuration = configuration;
-            _azureBlobStorageService = new AzureBlobStorageService(configuration["AzureBlobStoragePublic"]);
             _logger = logger;
             _smartLookupRepository = smartLookupRepository;
             _distributeManager = distributeManager;
+
+            sc.SetStrategy(new StorageMinio());
+            _sc = sc;
         }
 
         public async Task<UserProfileResponse> GetCurrentUserAsync()
@@ -79,8 +82,9 @@ namespace Mcsg.Social.Api.Services
             {
                 var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
 
-                var isExistFile = await _azureBlobStorageService.IsExistAsync(userAvatarUpdateRequest.Avatar.FileName, BlobStorageDefinition.CONST_BLOB_STORAGE_CONTAINER_NAME);
-                if (isExistFile)
+                var objectName = $"{BlobStorageDefinition.ImageContainer}/{userAvatarUpdateRequest.Avatar.FileName}";
+                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                if (isExistFile != null)
                 {
                     fileName = GenerateNewFileName(userAvatarUpdateRequest.Avatar.FileName);
                 }
@@ -97,7 +101,8 @@ namespace Mcsg.Social.Api.Services
                     newFormFile = ImageHelper.ResizeImage(imageContent, 180, 180);
                 }
 
-                await _azureBlobStorageService.UploadAsync(fileName, newFormFile, BlobStorageDefinition.CONST_BLOB_STORAGE_CONTAINER_NAME);
+                objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
+                await _sc.PutObject(newFormFile, objectName, null);
                 newFormFile.Close();
 
                 await _userRepository.UpdateAsync(user);
@@ -124,8 +129,9 @@ namespace Mcsg.Social.Api.Services
             try
             {
                 var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
-                var isExistFile = await _azureBlobStorageService.IsExistAsync(userCoverPhotoUpdateRequest.CoverPhoto.FileName, BlobStorageDefinition.CONST_BLOB_STORAGE_CONTAINER_NAME);
-                if (isExistFile)
+                var objectName = $"{BlobStorageDefinition.ImageContainer}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
+                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                if (isExistFile != null)
                 {
                     fileName = GenerateNewFileName(userCoverPhotoUpdateRequest.CoverPhoto.FileName);
                 }
@@ -134,7 +140,8 @@ namespace Mcsg.Social.Api.Services
                     fileName = userCoverPhotoUpdateRequest.CoverPhoto.FileName;
                 }
                 user.CoverPhoto = fileName;
-                await _azureBlobStorageService.UploadAsync(fileName, userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), BlobStorageDefinition.CONST_BLOB_STORAGE_CONTAINER_NAME);
+                objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
+                await _sc.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
                 await _userRepository.UpdateAsync(user);
 
             }
@@ -372,5 +379,19 @@ namespace Mcsg.Social.Api.Services
                 ProfileName = profileName
             };
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
+
+        /// <summary>
+        /// 7 days
+        /// </summary>
+        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
+
+        #endregion
     }
 }

@@ -1,26 +1,26 @@
-﻿using Azure.Storage.Blobs;
-using Dapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.AzureBlobStorage.Settings;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
+﻿using Dapper;
 using Microsoft.Extensions.Options;
-using Resource = Mcsg.Lib.Data.Domain.Entities.Resource;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using Common.Core.Interfaces;
+    using Common.Core.Storages;
+    using Constants;
+    using DTOs;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+
     public partial class FileService : IFileService
     {
         private readonly ICurrentUserService _currentUserService;
@@ -28,28 +28,29 @@ namespace Mcsg.Social.Api.Services
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Resource> _resourceRepository;
         private readonly IRepository<SubPost> _subPostRepository;
-        private readonly IAzureBlobStorageService _blobStorageService;
         private readonly FileSetting _fileSetting;
-        private readonly AzureBlobStorageSettings _azureBlobStorageSettings;
         private readonly IConfiguration _configuration;
+
         public FileService(ICurrentUserService currentUserService
             , IUnitOfWork unitOfWork
-            , IAzureBlobStorageService blobStorageService
             , IOptionsMonitor<FileSetting> fileSetting
-            , IOptionsMonitor<AzureBlobStorageSettings> azureBlobStorageSettings
             , IConfiguration configuration
             , IJobService jobService
+            , ISetting setting
+            , IStorageClient sc
             )
         {
-            _azureBlobStorageSettings = azureBlobStorageSettings.CurrentValue;
             _configuration = configuration;
             _currentUserService = currentUserService;
             _userRepository = unitOfWork.GetRepository<User>();
             _resourceRepository = unitOfWork.GetRepository<Resource>();
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
-            _blobStorageService = blobStorageService;
             _fileSetting = fileSetting.CurrentValue;
             _jobService = jobService;
+            _setting = setting;
+
+            sc.SetStrategy(new StorageMinio());
+            _sc = sc;
         }
 
         public async Task<UploadFileResponse> UploadImageAsync(IFormFile file)
@@ -85,6 +86,8 @@ namespace Mcsg.Social.Api.Services
             string tempBlobName = "";
             string fileTitle = file.FileName;
             int imgWidth = 0, imgHeight = 0;
+            var objectName = "";
+
             if (file.IsImage() && !file.IsGifAnimated())
             {
                 hashFileName = hashFileName.ToJpg();
@@ -96,7 +99,8 @@ namespace Mcsg.Social.Api.Services
                 imgHeight = compressedImage.Height;
                 using (var stream = compressedImage.Image.OpenReadStream())
                 {
-                    var uri = await _blobStorageService.UploadAsync(tempBlobName, stream, BlobStorageDefinition.MediaContainer);
+                    objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    await _sc.PutObject(stream, objectName, null);
                 }
             }
             else
@@ -112,10 +116,15 @@ namespace Mcsg.Social.Api.Services
                 tempBlobName = hashFileName.GetTempBlobName(user.UserName);
                 using (var stream = file.OpenReadStream())
                 {
-                    var uri = await _blobStorageService.UploadAsync(tempBlobName, stream, BlobStorageDefinition.MediaContainer);
+                    objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    await _sc.PutObject(stream, objectName, null);
                 }
             }
-            var shareUrl = await _blobStorageService.CreateShareUrl(tempBlobName, BlobStorageDefinition.MediaContainer);
+
+            objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+            var uri = await _sc.PresignedGetObject(objectName, _expiryInSeconds, null);
+            var shareUrl = new Uri(uri);
+
             // Insert to resource with type is temp
             var resource = new Resource()
             {
@@ -124,7 +133,7 @@ namespace Mcsg.Social.Api.Services
                 Title = Path.GetFileNameWithoutExtension(fileTitle),
                 Name = hashFileName,
                 Url = UrlHelper.CreateMediaUrl(tempBlobName, _fileSetting.MediaEncryptKey),
-                ShareUrl = shareUrl.GetShareUrlFromStorage(_azureBlobStorageSettings.StorageName),
+                ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName),
                 Type = file.IsImageType() ? ResourceType.IMAGE : ResourceType.VIDEO,
                 CreatedBy = currentUser.UserId,
                 Width = imgWidth,
@@ -233,30 +242,32 @@ namespace Mcsg.Social.Api.Services
 
                 foreach (var resource in resourceList)
                 {
+                    if (resource == null)
+                    {
+                        continue;
+                    }
+
                     var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
 
+                    #region -- Copy file from temp target --
                     string tempBlobName = resource.Name.GetTempBlobName(userName);
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                    // Get a reference to the temp blob
-                    BlobClient tempBlob = _blobStorageService.GetBlobClient(tempBlobName, BlobStorageDefinition.MediaContainer);
-                    // Get a reference to the target blob
-                    BlobClient targetBlob = _blobStorageService.GetBlobClient(targetBlobName, BlobStorageDefinition.MediaContainer);
+                    tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
 
-                    var isExistTempFile = await tempBlob.ExistsAsync();
-                    var isExistTargetFile = await targetBlob.ExistsAsync();
+                    targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
 
-                    if (isExistTempFile && !isExistTargetFile)
+                    if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        var copyInfo = await targetBlob.StartCopyFromUriAsync(tempBlob.Uri);
-                        copyInfo.WaitForCompletion();
+                        await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
 
-                        if (copyInfo.HasCompleted)
-                        {
-                            resource.Size = copyInfo.Value;
-                            await tempBlob.DeleteAsync();
-                        }
+                        resource.Size = isExistTempFile!.Size;
+                        await _sc.RemoveObject(tempBlobName, null);
                     }
+                    #endregion
+
                     var subPostId = resource.SubPostId ?? postId;
                     if (addSubPost)
                     {
@@ -280,8 +291,11 @@ namespace Mcsg.Social.Api.Services
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
-                    var shareUrl = await _blobStorageService.CreateShareUrl(targetBlobName, BlobStorageDefinition.MediaContainer);
-                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_azureBlobStorageSettings.StorageName);
+
+                    var uri = await _sc.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
+                    var shareUrl = new Uri(uri);
+
+                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
@@ -307,30 +321,32 @@ namespace Mcsg.Social.Api.Services
 
                 foreach (var resource in resourceList)
                 {
+                    if (resource == null)
+                    {
+                        continue;
+                    }
+
                     var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
 
+                    #region -- Copy file from temp target --
                     string tempBlobName = resource.Name.GetTempBlobName(userName);
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                    // Get a reference to the temp blob
-                    BlobClient tempBlob = _blobStorageService.GetBlobClient(tempBlobName, BlobStorageDefinition.MediaContainer);
-                    // Get a reference to the target blob
-                    BlobClient targetBlob = _blobStorageService.GetBlobClient(targetBlobName, BlobStorageDefinition.MediaContainer);
+                    tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
 
-                    var isExistTempFile = await tempBlob.ExistsAsync();
-                    var isExistTargetFile = await targetBlob.ExistsAsync();
+                    targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
 
-                    if (isExistTempFile && !isExistTargetFile)
+                    if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        var copyInfo = await targetBlob.StartCopyFromUriAsync(tempBlob.Uri);
-                        copyInfo.WaitForCompletion();
+                        await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
 
-                        if (copyInfo.HasCompleted)
-                        {
-                            resource.Size = copyInfo.Value;
-                            await tempBlob.DeleteAsync();
-                        }
+                        resource.Size = isExistTempFile!.Size;
+                        await _sc.RemoveObject(tempBlobName, null);
                     }
+                    #endregion
+
                     var subPostId = resource.SubPostId ?? postId;
                     if (addSubPost)
                     {
@@ -354,8 +370,11 @@ namespace Mcsg.Social.Api.Services
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
-                    var shareUrl = await _blobStorageService.CreateShareUrl(targetBlobName, BlobStorageDefinition.MediaContainer);
-                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_azureBlobStorageSettings.StorageName);
+
+                    var uri = await _sc.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
+                    var shareUrl = new Uri(uri);
+
+                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
@@ -389,15 +408,19 @@ namespace Mcsg.Social.Api.Services
                     string tempBlobName = resource.Name.GetTempBlobName(userName);
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                    // Get a reference to the temp blob
-                    BlobClient tempBlob = _blobStorageService.GetBlobClient(tempBlobName, BlobStorageDefinition.MediaContainer);
-                    // Get a reference to the target blob
-                    BlobClient targetBlob = _blobStorageService.GetBlobClient(targetBlobName, BlobStorageDefinition.MediaContainer);
+                    tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
+                    if (isExistTempFile != null)
+                    {
+                        await _sc.RemoveObject(tempBlobName, null);
+                    }
 
-                    var isExistTempFile = await tempBlob.ExistsAsync();
-                    var isExistTargetFile = await targetBlob.ExistsAsync();
-                    if (isExistTempFile) await tempBlob.DeleteAsync();
-                    if (isExistTargetFile) await targetBlob.DeleteAsync();
+                    targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
+                    if (isExistTargetFile != null)
+                    {
+                        await _sc.RemoveObject(targetBlobName, null);
+                    }
                 }
             }
         }
@@ -475,5 +498,23 @@ namespace Mcsg.Social.Api.Services
             return subPosts;
         }
 
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
+
+        /// <summary>
+        /// 7 days
+        /// </summary>
+        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
+
+        #endregion
     }
 }

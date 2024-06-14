@@ -11,7 +11,6 @@ using Common.SeedWork.Extensions;
 using Extensions;
 using Helper;
 using Interfaces;
-using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
@@ -102,6 +101,17 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
+        // Storage
+        builder.Services.AddStorage(p =>
+        {
+            p.BucketName = st.Minio.BucketName;
+            p.Location = st.Minio.Location;
+            p.EndPoint = st.Minio.EndPoint;
+            p.PublicUrl = st.Minio.PublicUrl;
+            p.AccessKey = st.Minio.AccessKey;
+            p.SecrectKey = st.Minio.SecrectKey;
+        });
+
         // DbContext
         builder.Services.AddDataLibrary(csDb);
         builder.Services.AddAnalyticDbContext(csDbAnalytic);
@@ -129,7 +139,6 @@ public class Program
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);
         builder.Services.AddCommonLibrary(builder.Configuration);
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddFileUploadLimit(builder.Configuration);
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

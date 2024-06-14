@@ -1,10 +1,10 @@
-﻿using Mcsg.Lib.Common.Constants;
-
-namespace Mcsg.Lib.Common.Extensions
+﻿namespace Mcsg.Lib.Common.Extensions
 {
+    using Constants;
+
     public static class BlobExtensions
     {
-        public static string GetTempBlobName(this string fileName, string parentFolder)
+        public static string GetTempBlobName(this string? fileName, string parentFolder)
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
@@ -17,7 +17,8 @@ namespace Mcsg.Lib.Common.Extensions
 
             return String.Format("{0}/{1}/{2}", parentFolder, FileLocations.Temp, fileName);
         }
-        public static string GetMediaBlobName(this string fileName, string parentFolder)
+
+        public static string GetMediaBlobName(this string? fileName, string parentFolder)
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {

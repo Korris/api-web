@@ -1,21 +1,19 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Interfaces;
+    using Lib.Common.Distributor;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+
     public partial class SmartCountService : ISmartCountService
     {
         private readonly IRepository<SmartCountAction> _smartCountActionRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAzureBlobStorageQueueService _queueService;
         private readonly DistributeManager _distributeManager;
 
         public SmartCountService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider, DistributeManager distributeManager)
