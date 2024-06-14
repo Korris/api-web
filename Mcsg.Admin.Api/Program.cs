@@ -14,6 +14,7 @@ using Lib.Common.Models;
 using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
+using Lib.Common.Web.RealTime.Services;
 using Lib.Data;
 using Lib.Data.Wallet;
 using Services;
@@ -113,6 +114,7 @@ public class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IPostService, PostService>();
         builder.Services.AddScoped<ISystemSettingService, SystemSettingService>();
+        builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddScoped<ITransactionService, TransactionService>();
         builder.Services.AddScoped<IValidator<CreateAdminReq>, CreateAdminValidator>();
 

@@ -1,18 +1,15 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Web.Extensions;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.Data;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Mcsg.Lib.Common.Web.Middlewares
 {
+    using Constants;
+    using Exceptions;
+    using Extensions;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+
     public class SessionAuthorizationMiddleware
     {
         private readonly RequestDelegate _next;
