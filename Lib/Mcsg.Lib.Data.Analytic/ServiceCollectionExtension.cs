@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
-using System.Data;
 
 namespace Mcsg.Lib.Data.Analytic
 {
@@ -20,8 +18,6 @@ namespace Mcsg.Lib.Data.Analytic
                     })
                 ;
             });
-
-            services.AddScoped<IDbConnection>((sp) => new NpgsqlConnection(connectionString));
         }
     }
 }
