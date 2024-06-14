@@ -73,7 +73,7 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles"));
 
         //Seed data
-        DataSeeder.Seed(builder);
+        //DataSeeder.Seed(builder);
     }
 
     #endregion
