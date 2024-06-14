@@ -137,9 +137,9 @@ namespace Mcsg.Media.Tool.Workers
         protected readonly IStorageClient _sc;
 
         /// <summary>
-        /// 10 years
+        /// 7 days
         /// </summary>
-        protected readonly int _expiryInSeconds = 10 * 365 * 24 * 60 * 60; // 10 years
+        protected readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }
