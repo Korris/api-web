@@ -352,6 +352,7 @@ LIMIT @PageSize
 						spr.""Name"",
 						spr.""Width"",
 						spr.""Height"",
+						spr.""Order"",
 						md.""Id"", 
 						md.""Title"",
 						md.""Description"",

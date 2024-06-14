@@ -1,4 +1,5 @@
-﻿using Mcsg.Lib.Data.Enums;
+﻿using Mcsg.Lib.Data.Domain.Entities;
+using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Model.Enums;
 
 namespace Mcsg.Social.Api.Models
@@ -23,6 +24,11 @@ namespace Mcsg.Social.Api.Models
         public string ThumbnailUrl { get; set; }
         public List<UploadFileResponse> Files { get; set; } = new List<UploadFileResponse>();
         public string Body { get; set; }
+    }
+    public class SubPostResponseItem
+    {
+        public string HashId { get; set; }
+        public IEnumerable<Resource> Resources { get; set; }
     }
     public class SubPostQueryDbResponse : SubPostResponse
     {

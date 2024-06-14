@@ -205,11 +205,10 @@ namespace Mcsg.Social.Api.Services
                                     sp.""Body"",
                                     sp.""CreatedBy"",
                                     r.""Url"" ,
-                                    r.""Type"" ,
                                     r.""Height"" ,
                                     r.""Width"" ,
                                     r.""ShareUrl"",
-                                    r.""Type"",
+                                    r.""Type"" as ResourceType,
                                     r.""Name"" as ResourceName,
                                     COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = sc.total_subposts)) AS PrevSubPostHashId,
                        COALESCE(asp.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = 1)) AS NextSubPostHashId
@@ -804,46 +803,48 @@ namespace Mcsg.Social.Api.Services
                         Type = fileDbs.Type,
                         Width = fileDbs.Width,
                         Height = fileDbs.Height,
-                        Url = url
+                        Url = url,
+                        Order = fileDbs.Order
                     });
-                    /*var subPostResponse = new SubPostResponse()
-                     {
-                         Id = subPostdb.Id,
-                         HashId = subPostdb?.HashId,
-                         Title = subPostdb.Title,
-                         Name = subPostdb.Name,
-                         ThumbnailUrl = subPostdb.ThumbnailUrl,
-                         Permission = subPostdb.Permission,
-                         CreatedDate = subPostdb.CreatedDate,
-                         PublishDate = subPostdb.PublishDate,
-                         Status = subPostdb.Status,
-                         Body = subPostdb.Body
-                     };
-                     if (subPostdb.FileDbs != null)
-                     {
-                         hasResources = true;
+                    var subPostResponse = new SubPostResponse()
+                    {
+                        Id = subPostdb.Id,
+                        HashId = subPostdb?.HashId,
+                        Title = subPostdb.Title,
+                        Name = subPostdb.Name,
+                        ThumbnailUrl = subPostdb.ThumbnailUrl,
+                        Permission = subPostdb.Permission,
+                        CreatedDate = subPostdb.CreatedDate,
+                        PublishDate = subPostdb.PublishDate,
+                        Status = subPostdb.Status,
+                        Body = subPostdb.Body
+                    };
+                    if (subPostdb.FileDbs != null)
+                    {
+                        hasResources = true;
 
-                         subPostResponse.Files = subPostdb.FileDbs.Select(x =>
-                         {
-                             var resource = new UploadFileResponse
-                             {
-                                 HashId = x.HashId,
-                                 Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, x.Name, x.Url),
-                                 Name = x.Name,
-                                 ShareUrl = x.ShareUrl,
-                                 Type = x.Type,
-                                 Status = x.Status,
-                                 Width = x.Width,
-                                 Height = x.Height,
-                             };
-                             if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
-                             {
-                                 resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _configuration);
-                             }
-                             return resource;
-                         }).ToList();
-                     }
-                     itemResponse.SubPosts.Add(subPostResponse);*/
+                        subPostResponse.Files = subPostdb.FileDbs.Select(x =>
+                        {
+                            var resource = new UploadFileResponse
+                            {
+                                HashId = subPostdb.HashId,
+                                Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, x.Name, x.Url),
+                                Name = x.Name,
+                                ShareUrl = x.ShareUrl,
+                                Type = x.Type,
+                                Status = x.Status,
+                                Width = x.Width,
+                                Height = x.Height,
+                                Order = x.Order
+                            };
+                            if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
+                            {
+                                resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _configuration);
+                            }
+                            return resource;
+                        }).ToList();
+                    }
+                    itemResponse.SubPosts.Add(subPostResponse);
                 }
             }
             if (item.MetaDataDb != null)

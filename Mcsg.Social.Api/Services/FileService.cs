@@ -150,17 +150,18 @@ namespace Mcsg.Social.Api.Services
             var subPosts = new List<SubPostResponse>();
 
             // Complete resource files
-            var resources = await CompleteFilesAsync(resourceRequest, userId, userName, userAvatar, postId, true);
+            var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userName, userAvatar, postId, true);
 
             // Map to response for feed service
             foreach (var resource in resources)
             {
+                var subPostHasHId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
                 subPosts.Add(new SubPostResponse
                 {
                     Status = PostStatus.PUBLIC,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
-                                                HashId = resource.HashId ,
+                                                HashId = subPostHasHId?.HashId,
                                                 Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration),// UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resource.Name, resource.Url),
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
@@ -217,7 +218,81 @@ namespace Mcsg.Social.Api.Services
 
             return files;
         }
+        private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
+        {
+            var response = new List<Resource>();
+            var subPostResponses = new List<SubPostResponse>();
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            }
+            var hashIds = resourceRequest.Select(x => x.HashId).ToList();
+            if (hashIds != null && hashIds.Any())
+            {
+                var resourceList = await _resourceRepository.Connection.QueryAsync<Resource>(GetListResourceQuery, new { HashIds = hashIds });
 
+                foreach (var resource in resourceList)
+                {
+                    var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
+
+                    string tempBlobName = resource.Name.GetTempBlobName(userName);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+
+                    // Get a reference to the temp blob
+                    BlobClient tempBlob = _blobStorageService.GetBlobClient(tempBlobName, BlobStorageDefinition.MediaContainer);
+                    // Get a reference to the target blob
+                    BlobClient targetBlob = _blobStorageService.GetBlobClient(targetBlobName, BlobStorageDefinition.MediaContainer);
+
+                    var isExistTempFile = await tempBlob.ExistsAsync();
+                    var isExistTargetFile = await targetBlob.ExistsAsync();
+
+                    if (isExistTempFile && !isExistTargetFile)
+                    {
+                        var copyInfo = await targetBlob.StartCopyFromUriAsync(tempBlob.Uri);
+                        copyInfo.WaitForCompletion();
+
+                        if (copyInfo.HasCompleted)
+                        {
+                            resource.Size = copyInfo.Value;
+                            await tempBlob.DeleteAsync();
+                        }
+                    }
+                    var subPostId = resource.SubPostId ?? postId;
+                    if (addSubPost)
+                    {
+                        var subPost = new SubPost()
+                        {
+                            Title = resource.Title,
+                            PostId = postId,
+                            UserId = userId,
+                            Body = resourceReq.Body,
+                            CreatedBy = resource.CreatedBy,
+                            Status = PostStatus.PUBLIC,
+                            Order = resourceReq.Order,
+                            Permission = PostPermission.PUBLIC,
+                            PublishDate = DateTime.UtcNow,
+                            HashId = StringGenerator.GetRandomString(SystemConfig.SubPostHashLength),
+                            IsExclusive = false
+                        };
+                        subPostId = await _subPostRepository.InsertEntityAsync(subPost);
+                        subPostResponses.Add(new SubPostResponse { HashId = subPost.HashId, Id = subPostId });
+                    }
+
+                    resource.Type = resource.Name.GetResourceType();
+                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
+                    var shareUrl = await _blobStorageService.CreateShareUrl(targetBlobName, BlobStorageDefinition.MediaContainer);
+                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_azureBlobStorageSettings.StorageName);
+                    resource.SubPostId = subPostId;
+                    resource.Order = resourceReq.Order;
+
+                    await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
+                    await _resourceRepository.UpdateAsync(resource);
+                    response.Add(resource);
+                }
+                response = response.OrderBy(x => x.Order).ToList();
+            }
+            return Tuple.Create(response, subPostResponses);
+        }
         private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
         {
             var response = new List<Resource>();
