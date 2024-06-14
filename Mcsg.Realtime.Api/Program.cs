@@ -9,7 +9,6 @@ using Common.SeedWork.Extensions;
 using Extensions;
 using Hubs;
 using Interfaces;
-using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Models;
@@ -105,7 +104,6 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 

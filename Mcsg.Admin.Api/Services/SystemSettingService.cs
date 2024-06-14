@@ -1,21 +1,23 @@
 ﻿using Dapper;
-using Mcsg.Admin.Api.Constants;
-using Mcsg.Admin.Api.DTOs.Settings;
-using Mcsg.Admin.Api.Services.Interface;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Constants;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using System.Text.Json;
 using ComnonConstant = Mcsg.Lib.Common.Constants.ErrorCodes;
 
 namespace Mcsg.Admin.Api.Services
 {
+    using Common.Core.Interfaces;
+    using Common.Core.Storages;
+    using Constants;
+    using DTOs.Settings;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Constants;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Services.Interface;
+
     public partial class SystemSettingService : ISystemSettingService
     {
         private readonly ICurrentUserService _currentUserService;
@@ -23,20 +25,22 @@ namespace Mcsg.Admin.Api.Services
         private readonly IRepository<SystemSetting> _systemSettingRepo;
         private readonly IRepository<SystemSettingHistory> _systemSettingHistoryRepo;
         private readonly ILogger<SystemSettingService> _logger;
-        private readonly IAzureBlobStorageService _azureBlobStorageService;
         private readonly IConfiguration _configuration;
 
         public SystemSettingService(IUnitOfWork unitOfWork
             , ILogger<SystemSettingService> logger
             , ICurrentUserService currentUserService
-            , IAzureBlobStorageService azureBlobStorageService
-            , IConfiguration configuration)
+            , IConfiguration configuration
+            , IStorageClient sc)
         {
             _configuration = configuration;
+
+            sc.SetStrategy(new StorageMinio());
+            _sc = sc;
+
             _unitOfWork = unitOfWork;
             _currentUserService = currentUserService;
             _logger = logger;
-            _azureBlobStorageService = azureBlobStorageService;
             _systemSettingRepo = unitOfWork.GetRepository<SystemSetting>();
 
             _systemSettingHistoryRepo = unitOfWork.GetRepository<SystemSettingHistory>();
@@ -92,12 +96,13 @@ namespace Mcsg.Admin.Api.Services
 
             try
             {
-                var isExistFile = await _azureBlobStorageService.IsExistAsync(request.Favicon.FileName, SystemSettings.CONST_BLOB_STORAGE_CONTAINER_NAME);
-                if (isExistFile)
+                var objectName = $"{SystemSettings.CONST_BLOB_STORAGE_CONTAINER_NAME}/{request.Favicon.FileName}";
+                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                if (isExistFile != null)
                 {
-                    await _azureBlobStorageService.DeleteAsync(request.Favicon.FileName, SystemSettings.CONST_BLOB_STORAGE_CONTAINER_NAME);
+                    await _sc.RemoveObject(objectName, null);
                 }
-                await _azureBlobStorageService.UploadAsync(request.Favicon.FileName, request.Favicon.OpenReadStream(), SystemSettings.CONST_BLOB_STORAGE_CONTAINER_NAME);
+                await _sc.PutObject(request.Favicon.OpenReadStream(), objectName, null);
 
                 await _systemSettingRepo.UpdateAsync(systemSetting);
                 if (systemSettingHistory.OldValue != newValue)
@@ -198,5 +203,19 @@ namespace Mcsg.Admin.Api.Services
 
             return result;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
+
+        /// <summary>
+        /// 7 days
+        /// </summary>
+        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
+
+        #endregion
     }
 }

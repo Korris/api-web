@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj" />
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
     </ItemGroup>
 

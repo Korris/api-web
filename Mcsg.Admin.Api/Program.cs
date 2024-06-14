@@ -8,7 +8,6 @@ using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using DTOs.Users;
 using Interfaces;
-using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
@@ -116,7 +115,6 @@ public class Program
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);
         builder.Services.AddCommonLibrary(builder.Configuration);
-        builder.Services.AddAzureBlobStorage(builder.Configuration);
 
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

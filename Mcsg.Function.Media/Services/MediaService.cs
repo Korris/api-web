@@ -1,6 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using Mcsg.Function.Media.Constants;
-using Mcsg.Lib.AzureBlobStorage;
+﻿using Mcsg.Function.Media.Constants;
 using Mcsg.Lib.Common.Helpers;
 
 namespace Mcsg.Function.Media.Services
@@ -10,20 +8,15 @@ namespace Mcsg.Function.Media.Services
         Task<Stream> ServeVideoAsync(string hashUri);
         Task<Stream> ServeImageAsync(string url);
         Task<Stream> ServePublicImageAsync(string name);
-        BlobClient GetClient(string hashUri);
         string GetRealUri(string hashUri);
     }
 
     public class MediaService : IMediaService
     {
-        private readonly IAzureBlobStorageService _blobStorageService;
-        private readonly IAzureBlobStorageService _publicBlobStorageService;
         private readonly string _encryptKey;
 
-        public MediaService(IAzureBlobStorageService blobStorageService)
+        public MediaService()
         {
-            _blobStorageService = blobStorageService;
-            _publicBlobStorageService = new AzureBlobStorageService(Environment.GetEnvironmentVariable("Function:PublicStorageConnection"));
             _encryptKey = Environment.GetEnvironmentVariable("Function:MediaEncryptKey");
         }
 

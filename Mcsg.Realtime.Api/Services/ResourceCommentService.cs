@@ -1,17 +1,18 @@
-﻿using Azure.Storage.Blobs;
-using Dapper;
-using Mcsg.Lib.AzureBlobStorage;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Realtime.Api.DTOs;
+﻿using Dapper;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Interfaces;
+    using Common.Core.Storages;
+    using Lib.Common.Constants;
+    using Lib.Common.Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Realtime.Api.DTOs;
+
     public interface IResourceCommentService
     {
         Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType);
@@ -19,15 +20,16 @@ namespace Mcsg.Realtime.Api.Services
     public partial class ResourceCommentService : IResourceCommentService
     {
         private readonly IRepository<Resource> _resourceRepository;
-        private readonly IAzureBlobStorageService _blobStorageService;
         private IConfiguration _configuration;
         public ResourceCommentService(IUnitOfWork unitOfWork
-            , IAzureBlobStorageService blobStorageService
-            , IConfiguration configuration)
+            , IConfiguration configuration
+            , IStorageClient sc)
         {
             _resourceRepository = unitOfWork.GetRepository<Resource>();
-            _blobStorageService = blobStorageService;
             _configuration = configuration;
+
+            sc.SetStrategy(new StorageMinio());
+            _sc = sc;
         }
         public async Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType)
         {
@@ -41,41 +43,50 @@ namespace Mcsg.Realtime.Api.Services
 
             if (resource != null)
             {
+                #region -- Copy file from temp target --
                 string tempBlobName = resource.Name.GetTempBlobName(userName);
                 string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                // Get a reference to the temp blob
-                BlobClient tempBlob = _blobStorageService.GetBlobClient(tempBlobName, BlobStorageDefinition.MediaContainer);
-                // Get a reference to the target blob
-                BlobClient targetBlob = _blobStorageService.GetBlobClient(targetBlobName, BlobStorageDefinition.MediaContainer);
+                tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
 
-                var isExistTempFile = await tempBlob.ExistsAsync();
-                var isExistTargetFile = await targetBlob.ExistsAsync();
+                targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
 
-                if (isExistTempFile && !isExistTargetFile)
+                if (isExistTempFile != null && isExistTargetFile == null)
                 {
-                    var copyInfo = await targetBlob.StartCopyFromUriAsync(tempBlob.Uri);
-                    copyInfo.WaitForCompletion();
+                    await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
 
-                    if (copyInfo.HasCompleted)
-                    {
-                        resource.Size = copyInfo.Value;
-                        await tempBlob.DeleteAsync();
-                    }
+                    resource.Size = isExistTempFile!.Size;
+                    await _sc.RemoveObject(tempBlobName, null);
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _configuration["FileSettings:MediaEncryptKey"]);
                     //resource.SubPostId = Guid.Empty;
                     await _resourceRepository.UpdateAsync(resource);
                 }
+                #endregion
 
                 response.HashId = resource.HashId;
                 response.Url = UrlHelper.GetMediaPath(_configuration["FileSettings:MediaUrl"], resource.Name, resource.Url);
                 response.Id = resource.Id;
             }
 
-
             return response;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
+
+        /// <summary>
+        /// 7 days
+        /// </summary>
+        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
+
+        #endregion
     }
 }
