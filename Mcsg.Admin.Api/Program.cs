@@ -7,6 +7,7 @@ namespace Mcsg.Admin.Api;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using DTOs.Users;
+using Interfaces;
 using Lib.AzureBlobStorage;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -53,6 +54,7 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
+        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -86,6 +88,15 @@ public class Program
         }
         #endregion
 
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddWalletDbContext(csDbWallet);
+        #endregion
+
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
 
         // Add services to the container.
@@ -95,9 +106,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(builder.Configuration);
 
         builder.Services.AddIdentity();
         builder.Services.AddSignalR();

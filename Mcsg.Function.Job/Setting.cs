@@ -3,6 +3,7 @@
 using Common.SeedWork;
 using Common.SeedWork.Dtos;
 using Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Setting
@@ -10,6 +11,11 @@ using Interfaces;
 public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
+
+    /// <summary>
+    /// Database Wallet
+    /// </summary>
+    public DatabaseDto DbWallet { get; }
 
     /// <summary>
     /// Notification exchange
@@ -80,11 +86,16 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+        DbWallet = new DatabaseDto();
         NotificationExchange = string.Empty;
         NotificationQueueEmail = string.Empty;
-        NotificationQueueSmartLookup = string.Empty;
+        NotificationQueuePayment = string.Empty;
         NotificationQueuePostComment = string.Empty;
         NotificationQueuePostReact = string.Empty;
+        NotificationQueueSmartLookup = string.Empty;
+        NotificationQueueSms = string.Empty;
+        NotificationQueueSyncData = string.Empty;
+        NotificationQueueViewHistory = string.Empty;
         NotificationRoutingKey = string.Empty;
         ZaloPay = new ZaloPayDto();
     }

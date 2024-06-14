@@ -2,6 +2,7 @@
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Setting
@@ -10,7 +11,10 @@ public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
 
-    //TODO
+    /// <summary>
+    /// Database Analytic
+    /// </summary>
+    public DatabaseDto DbAnalytic { get; }
 
     #endregion
 
@@ -21,6 +25,7 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+        DbAnalytic = new DatabaseDto();
     }
 
     #endregion

@@ -54,6 +54,7 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
+        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -91,6 +92,10 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
+        // DbContext
+        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddWalletDbContext(csDbWallet);
+
         // Notification sent via email (using SMTP)
         builder.Services.AddNotification(p =>
         {
@@ -121,10 +126,6 @@ public class Program
             p.AccessKey = st.Minio.AccessKey;
             p.SecrectKey = st.Minio.SecrectKey;
         });
-
-        // DbContext
-        builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(builder.Configuration);
 
         // Service
         builder.Services.AddScoped<IEmailService, EmailService>();

@@ -58,6 +58,7 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
+        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -94,6 +95,10 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddWalletDbContext(csDbWallet);
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
@@ -106,9 +111,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(builder.Configuration);
 
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
 

@@ -63,6 +63,8 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
+        var csDbAnalytic = cs.SetDbParams(st.DbAnalytic);
+        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -102,8 +104,8 @@ public class Program
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(builder.Configuration);
-        builder.Services.AddAnalyticDbContext(builder.Configuration);
+        builder.Services.AddAnalyticDbContext(csDbAnalytic);
+        builder.Services.AddWalletDbContext(csDbWallet);
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));

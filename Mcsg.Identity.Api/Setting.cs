@@ -2,6 +2,7 @@
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Setting
@@ -9,6 +10,11 @@ using Interfaces;
 public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
+
+    /// <summary>
+    /// Database Wallet
+    /// </summary>
+    public DatabaseDto DbWallet { get; }
 
     /// <summary>
     /// Notification exchange
@@ -44,6 +50,7 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+        DbWallet = new DatabaseDto();
         NotificationExchange = string.Empty;
         NotificationQueueEmail = string.Empty;
         NotificationQueueSms = string.Empty;

@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Analytic.Api.Interfaces;
 
 using Common.SeedWork.Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Interface setting
@@ -9,7 +10,10 @@ public interface ISetting : ISettingBase
 {
     #region -- Properties --
 
-    //TODO
+    /// <summary>
+    /// Database Analytic
+    /// </summary>
+    DatabaseDto DbAnalytic { get; }
 
     #endregion
 }

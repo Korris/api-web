@@ -6,6 +6,7 @@ namespace Mcsg.Analytic.Api;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
+using Interfaces;
 using Lib.Common;
 using Lib.Common.Constants;
 using Lib.Common.Web.Extensions.DependencyInjection;
@@ -44,6 +45,7 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
+        var csDbAnalytic = cs.SetDbParams(st.DbAnalytic);
 
         // Start logger
         assembly!.StartLogger(st);
@@ -77,14 +79,19 @@ public class Program
         }
         #endregion
 
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddAnalyticDbContext(csDbAnalytic);
+        #endregion
+
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers();
         builder.Services.AddCommonLibrary(builder.Configuration);
-
-        builder.Services.AddAnalyticDbContext(builder.Configuration);
-
-        builder.Services.AddDataLibrary(csDb);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

@@ -2,6 +2,7 @@
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Setting
@@ -10,7 +11,10 @@ public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
 
-    //TODO
+    /// <summary>
+    /// Database Wallet
+    /// </summary>
+    public DatabaseDto DbWallet { get; }
 
     #endregion
 
@@ -21,6 +25,7 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+        DbWallet = new DatabaseDto();
     }
 
     #endregion

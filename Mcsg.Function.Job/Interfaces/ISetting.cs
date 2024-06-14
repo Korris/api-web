@@ -2,6 +2,7 @@
 
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Interfaces;
+using static Mcsg.Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Interface setting
@@ -9,6 +10,11 @@ using Common.SeedWork.Interfaces;
 public interface ISetting : ISettingBase
 {
     #region -- Properties --
+
+    /// <summary>
+    /// Database Wallet
+    /// </summary>
+    DatabaseDto DbWallet { get; }
 
     /// <summary>
     /// Notification exchange

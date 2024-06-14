@@ -20,10 +20,4 @@
         <ProjectReference Include="..\Lib\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Update="web.config">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
 </Project>

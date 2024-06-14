@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.SeedWork.Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Interface setting
@@ -8,6 +9,16 @@ using Common.SeedWork.Interfaces;
 public interface ISetting : ISettingBase
 {
     #region -- Properties --
+
+    /// <summary>
+    /// Database Analytic
+    /// </summary>
+    DatabaseDto DbAnalytic { get; }
+
+    /// <summary>
+    /// Database Wallet
+    /// </summary>
+    DatabaseDto DbWallet { get; }
 
     /// <summary>
     /// Notification exchange
