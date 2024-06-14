@@ -3,7 +3,7 @@ using Mcsg.Social.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mcsg.Identity.Api.Controllers
+namespace Mcsg.Social.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
