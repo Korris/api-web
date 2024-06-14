@@ -10,7 +10,7 @@ namespace Mcsg.Lib.Data.Wallet
         {
             services.AddDbContext<WalletDbContext>(o =>
             {
-                o.UseSqlServer(connectionString,
+                o.UseNpgsql(connectionString,
                     options => options.EnableRetryOnFailure());
             });
         }
@@ -19,7 +19,7 @@ namespace Mcsg.Lib.Data.Wallet
         {
             services.AddDbContext<WalletDbContext>(o =>
             {
-                o.UseSqlServer(configuration.GetConnectionString("WalletDbConnectionString"),
+                o.UseNpgsql(configuration.GetConnectionString("WalletDbConnectionString"),
                     options => options.EnableRetryOnFailure());
             });
         }

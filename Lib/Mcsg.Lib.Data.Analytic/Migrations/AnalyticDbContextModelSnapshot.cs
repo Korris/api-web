@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Mcsg.Lib.Data.Analytic.Migrations._202403
+namespace Mcsg.Lib.Data.Analytic.Migrations
 {
     [DbContext(typeof(AnalyticDbContext))]
     partial class AnalyticDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace Mcsg.Lib.Data.Analytic.Migrations._202403
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.16")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

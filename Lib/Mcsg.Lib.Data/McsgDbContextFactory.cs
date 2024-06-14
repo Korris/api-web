@@ -1,11 +1,18 @@
-﻿using Mcsg.Lib.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Cecce.Lib.Data;
+namespace Mcsg.Lib.Data;
 
+/// <summary>
+/// McsgDbContextFactory
+/// </summary>
 public class McsgDbContextFactory : IDesignTimeDbContextFactory<McsgDbContext>
 {
+    /// <summary>
+    /// CreateDbContext
+    /// </summary>
+    /// <param name="args">Arguments</param>
+    /// <returns>Return the result</returns>
     public McsgDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<McsgDbContext>();

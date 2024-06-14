@@ -9,55 +9,29 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Mcsg.Lib.Data.Analytic.Migrations._202403
+namespace Mcsg.Lib.Data.Analytic.Migrations
 {
     [DbContext(typeof(AnalyticDbContext))]
-    [Migration("20240315055153_Add-subpost-mapping")]
-    partial class Addsubpostmapping
+    [Migration("20240614040052_InitData")]
+    partial class InitData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.16")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Mcsg.Lib.Data.Analytic.Entities.SubPostMapping", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("PostType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id", "PostId", "UserId", "CreatedDate")
-                        .IsUnique();
-
-                    b.ToTable("SubPostMappingss", (string)null);
-                });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Analytic.Entities.UserViewPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuthorId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("BrowserAgent")
@@ -95,7 +69,7 @@ namespace Mcsg.Lib.Data.Analytic.Migrations._202403
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId", "SubPostId", "UserId", "UserHashString", "CreatedDate")
+                    b.HasIndex("PostId", "SubPostId", "AuthorId", "UserId", "UserHashString", "CreatedDate")
                         .IsUnique();
 
                     b.ToTable("UserViewPosts", (string)null);

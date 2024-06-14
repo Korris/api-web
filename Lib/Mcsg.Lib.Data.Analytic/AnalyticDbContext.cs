@@ -1,28 +1,47 @@
-﻿using Mcsg.Lib.Data.Analytic.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Lib.Data.Analytic
+namespace Mcsg.Lib.Data.Analytic;
+
+using Entities;
+
+/// <summary>
+/// AnalyticDbContext
+/// </summary>
+public class AnalyticDbContext : DbContext
 {
-    public class AnalyticDbContext : DbContext
+    #region -- Overrides --
+
+    /// <summary>
+    /// On model creating
+    /// </summary>
+    /// <param name="builder">Builder</param>
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        public DbSet<UserViewPost> UserViewPosts { get; set; }
-        public AnalyticDbContext(DbContextOptions<AnalyticDbContext> dbContext)
-        : base(dbContext)
+        base.OnModelCreating(builder);
+
+        builder.Entity<UserViewPost>(entity =>
         {
-
-        }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-
-            builder.Entity<UserViewPost>(entity =>
-            {
-                entity.ToTable("UserViewPosts");
-                entity.Property(x => x.PostId).IsRequired();
-                entity.HasIndex(x => new { x.PostId, x.SubPostId, x.AuthorId, x.UserId, x.UserHashString, x.CreatedDate }).IsUnique();
-            });
-
-        }
+            entity.ToTable("UserViewPosts");
+            entity.Property(x => x.PostId).IsRequired();
+            entity.HasIndex(x => new { x.PostId, x.SubPostId, x.AuthorId, x.UserId, x.UserHashString, x.CreatedDate }).IsUnique();
+        });
     }
+
+    #endregion
+
+    #region -- Properties --
+
+    public DbSet<UserViewPost> UserViewPosts { get; set; }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="options">Options</param>
+    public AnalyticDbContext(DbContextOptions<AnalyticDbContext> options) : base(options) { }
+
+    #endregion
 }
