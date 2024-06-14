@@ -11,10 +11,11 @@
  */
 #endregion
 
-namespace Mcsg.Common.Core.Storages;
-
 using Minio;
+using Minio.DataModel;
 using Minio.DataModel.Args;
+
+namespace Mcsg.Common.Core.Storages;
 
 /// <summary>
 /// Storage MinIO
@@ -84,7 +85,7 @@ public class StorageMinio : StorageStrategy
     /// <param name="objectName">Object name</param>
     /// <param name="expiry">Expiry in seconds</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
-    /// <returns></returns>
+    /// <returns>Return the result</returns>
     public override async Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName)
     {
         ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
@@ -96,8 +97,89 @@ public class StorageMinio : StorageStrategy
 
         var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
 
-        var putArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
-        return await mc.PresignedGetObjectAsync(putArg);
+        var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
+        return await mc.PresignedGetObjectAsync(presignedArg);
+    }
+
+    /// <summary>
+    /// Copy a source object into a new destination object
+    /// </summary>
+    /// <param name="srcObjectName">Source object name</param>
+    /// <param name="dstObjectName">Destination object name</param>
+    /// <param name="srcBucketName">Source bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="dstBucketName">Destination bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public override async Task<bool> CopyObject(string srcObjectName, string dstObjectName, string? srcBucketName, string? dstBucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
+
+        if (string.IsNullOrWhiteSpace(srcBucketName))
+        {
+            srcBucketName = _auth.BucketName;
+        }
+        if (string.IsNullOrWhiteSpace(dstBucketName))
+        {
+            dstBucketName = _auth.BucketName;
+        }
+
+        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
+
+        var copySrcArg = new CopySourceObjectArgs().WithBucket(srcBucketName).WithObject(srcObjectName);
+        var copyArg = new CopyObjectArgs().WithBucket(dstBucketName).WithObject(dstObjectName).WithCopyObjectSource(copySrcArg);
+        await mc.CopyObjectAsync(copyArg);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tests the object's existence and returns metadata about existing objects
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public override async Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
+
+        if (string.IsNullOrWhiteSpace(bucketName))
+        {
+            bucketName = _auth.BucketName;
+        }
+
+        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
+
+        try
+        {
+            var statArg = new StatObjectArgs().WithBucket(bucketName).WithObject(objectName);
+            return await mc.StatObjectAsync(statArg);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Removes an object with given name in specific bucket
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public override async Task<bool> RemoveObject(string objectName, string? bucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
+
+        if (string.IsNullOrWhiteSpace(bucketName))
+        {
+            bucketName = _auth.BucketName;
+        }
+
+        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
+
+        var statArg = new RemoveObjectArgs().WithBucket(bucketName).WithObject(objectName);
+        await mc.RemoveObjectAsync(statArg);
+
+        return true;
     }
 
     #endregion

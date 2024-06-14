@@ -12,6 +12,7 @@
 #endregion
 
 using Microsoft.Extensions.Options;
+using Minio.DataModel;
 
 namespace Mcsg.Common.Core.Storages;
 
@@ -74,6 +75,47 @@ public class StorageClient : IStorageClient
         ArgumentNullException.ThrowIfNull(_strategy, nameof(_strategy));
 
         return _strategy.PresignedGetObject(objectName, expiry, bucketName);
+    }
+
+    /// <summary>
+    /// Copy a source object into a new destination object
+    /// </summary>
+    /// <param name="srcObjectName">Source object name</param>
+    /// <param name="dstObjectName">Destination object name</param>
+    /// <param name="srcBucketName">Source bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="dstBucketName">Destination bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public Task CopyObject(string srcObjectName, string dstObjectName, string? srcBucketName, string? dstBucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_strategy, nameof(_strategy));
+
+        return _strategy.CopyObject(srcObjectName, dstObjectName, srcBucketName, dstBucketName);
+    }
+
+    /// <summary>
+    /// Tests the object's existence and returns metadata about existing objects
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_strategy, nameof(_strategy));
+
+        return _strategy.StatObjectAsync(objectName, bucketName);
+    }
+
+    /// <summary>
+    /// Removes an object with given name in specific bucket
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public Task<bool> RemoveObject(string objectName, string? bucketName)
+    {
+        ArgumentNullException.ThrowIfNull(_strategy, nameof(_strategy));
+
+        return _strategy.RemoveObject(objectName, bucketName);
     }
 
     #endregion

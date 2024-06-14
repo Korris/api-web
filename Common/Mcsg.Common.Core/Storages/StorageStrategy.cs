@@ -11,6 +11,8 @@
  */
 #endregion
 
+using Minio.DataModel;
+
 namespace Mcsg.Common.Core.Storages;
 
 using Interfaces;
@@ -63,6 +65,41 @@ public class StorageStrategy : IStorageStrategy
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns></returns>
     public virtual Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Copy a source object into a new destination object
+    /// </summary>
+    /// <param name="srcObjectName">Source object name</param>
+    /// <param name="dstObjectName">Destination object name</param>
+    /// <param name="srcBucketName">Source bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="dstBucketName">Destination bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task CopyObject(string srcObjectName, string dstObjectName, string? srcBucketName, string? dstBucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Tests the object's existence and returns metadata about existing objects
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Removes an object with given name in specific bucket
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task<bool> RemoveObject(string objectName, string? bucketName)
     {
         throw new NotImplementedException();
     }

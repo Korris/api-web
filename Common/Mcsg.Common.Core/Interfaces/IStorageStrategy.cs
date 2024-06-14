@@ -11,6 +11,8 @@
  */
 #endregion
 
+using Minio.DataModel;
+
 namespace Mcsg.Common.Core.Interfaces;
 
 using static SeedWork.Dtos.StorageDto;
@@ -54,6 +56,32 @@ public interface IStorageStrategy
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns></returns>
     Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName);
+
+    /// <summary>
+    /// Copy object
+    /// </summary>
+    /// <param name="srcObjectName">Source object name</param>
+    /// <param name="dstObjectName">Destination object name</param>
+    /// <param name="srcBucketName">Source bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="dstBucketName">Destination bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task CopyObject(string srcObjectName, string dstObjectName, string? srcBucketName, string? dstBucketName);
+
+    /// <summary>
+    /// Tests the object's existence and returns metadata about existing objects
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName);
+
+    /// <summary>
+    /// Removes an object with given name in specific bucket
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task<bool> RemoveObject(string objectName, string? bucketName);
 
     #endregion
 }
