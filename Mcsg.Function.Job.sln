@@ -5,8 +5,6 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Job", "Mcsg.Function.Job\Mcsg.Function.Job.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.AzureBlobStorage", "Lib\Mcsg.Lib.AzureBlobStorage\Mcsg.Lib.AzureBlobStorage.csproj", "{0594ABDF-D8D6-42FC-8A91-39A5A8017741}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{8E5F8620-27CF-46BF-A3AA-3E7864723146}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Web", "Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj", "{4DDAB599-ECC1-4AE8-8CEE-9208D485F55A}"
@@ -16,6 +14,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Model", "Lib\Mcsg.Lib.Model\Mcsg.Lib.Model.csproj", "{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.SeedWork", "Common\Mcsg.Common.SeedWork\Mcsg.Common.SeedWork.csproj", "{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.Core", "Common\Mcsg.Common.Core\Mcsg.Common.Core.csproj", "{3F7B1589-1029-4EAF-B486-09B801B62687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +29,6 @@ Global
 		{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0594ABDF-D8D6-42FC-8A91-39A5A8017741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0594ABDF-D8D6-42FC-8A91-39A5A8017741}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0594ABDF-D8D6-42FC-8A91-39A5A8017741}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0594ABDF-D8D6-42FC-8A91-39A5A8017741}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +49,14 @@ Global
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C678C9A-1EEB-4C70-BEBC-7E091167B21C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F7B1589-1029-4EAF-B486-09B801B62687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F7B1589-1029-4EAF-B486-09B801B62687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F7B1589-1029-4EAF-B486-09B801B62687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F7B1589-1029-4EAF-B486-09B801B62687}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
