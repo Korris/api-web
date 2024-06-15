@@ -96,19 +96,22 @@ namespace Mcsg.Social.Api.Services
             IEnumerable<SmartLookupResponse> result = null;
             if (keyword.Length > 0)
             {
+                var decodedKeyWord = Uri.UnescapeDataString(keyword);
                 string whereCondition;
-                keyword = keyword.Replace("'", "''");
-                if (keyword[0] == '#')
+                decodedKeyWord = decodedKeyWord.Replace("'", "''");
+
+                if (decodedKeyWord[0] == '#')
                 {
-                    whereCondition = @$"Where ""Keyword"" ILIKE '%{keyword.Substring(1, keyword.Length - 1)}%' AND ""KeywordType""={(int)LookupKeywordType.Tag}";
+                    whereCondition = @$"Where ""Keyword"" ILIKE '%{decodedKeyWord.Substring(1, decodedKeyWord.Length - 1)}%' AND ""KeywordType""={(int)LookupKeywordType.Tag}";
                 }
                 else
                 {
-                    whereCondition = @$"Where ""Keyword"" ILIKE '%{keyword}%'";
+                    whereCondition = @$"Where ""Keyword"" ILIKE '%{decodedKeyWord}%'";
                 }
 
                 string query = string.Format(GetSmartLookupQuery, whereCondition);
                 result = await _smartLookupRepository.Connection.QueryAsync<SmartLookupResponse>(query);
+
                 if (result != null && result.Count() > 0)
                 {
                     foreach (var item in result)
@@ -119,7 +122,6 @@ namespace Mcsg.Social.Api.Services
             }
 
             return result;
-
         }
 
         public async Task<IEnumerable<RecentSearchResponse>> GetRecentListAsync()
