@@ -91,6 +91,17 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
+        // Storage
+        builder.Services.AddStorage(p =>
+        {
+            p.BucketName = st.Minio.BucketName;
+            p.Location = st.Minio.Location;
+            p.EndPoint = st.Minio.EndPoint;
+            p.PublicUrl = st.Minio.PublicUrl;
+            p.AccessKey = st.Minio.AccessKey;
+            p.SecrectKey = st.Minio.SecrectKey;
+        });
+
         // DbContext
         builder.Services.AddDataLibrary(csDb);
         builder.Services.AddWalletDbContext(csDbWallet);
