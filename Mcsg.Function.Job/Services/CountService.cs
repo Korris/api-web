@@ -88,13 +88,22 @@ namespace Mcsg.Function.Job.Services
                     {
                         SubPostId = smartLookupData.EntityId
                     });
+
+                if (post == null)
+                {
+                    return;
+                }
+
                 postId = post.Id;
                 var smartCountActions = await _smartCountActionRepository.GetByPredicateAsync(x => x.EntityId == postId);
                 if (smartCountActions.Any())
                 {
                     var smartCountAction = smartCountActions.FirstOrDefault();
-                    smartCountAction.Count++;
-                    await _smartCountActionRepository.UpdateAsync(smartCountAction);
+                    if (smartCountAction != null)
+                    {
+                        smartCountAction.Count++;
+                        await _smartCountActionRepository.UpdateAsync(smartCountAction);
+                    }
                 }
                 else
                 {
@@ -129,6 +138,12 @@ namespace Mcsg.Function.Job.Services
                     {
                         PostId = smartLookupData.EntityId
                     });
+
+                if (post == null)
+                {
+                    return;
+                }
+
                 countOfPost = await GetCountFromPost(smartLookupData.EntityId, todayDate);
                 await _smartCountActionRepository.InsertAsync(new SmartCountAction
                 {
