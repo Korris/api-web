@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Common.Core.Storages;
     using Constants;
@@ -95,10 +96,10 @@ namespace Mcsg.Social.Api.Services
 
                 user.Avatar = fileName;
 
-                MemoryStream newFormFile = null;
+                Stream newFormFile = null;
                 using (var imageContent = userAvatarUpdateRequest.Avatar.OpenReadStream())
                 {
-                    newFormFile = ImageHelper.ResizeImage(imageContent, 180, 180);
+                    newFormFile = imageContent.ResizeImage(180, 180);
                 }
 
                 objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";

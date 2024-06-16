@@ -75,6 +75,9 @@ public class StorageMinio : StorageStrategy
 
         var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
 
+        // Ensure the position is at the beginning of the Stream
+        fs.Position = 0;
+
         var putArg = new PutObjectArgs().WithBucket(bucketName).WithObject(objectName).WithStreamData(fs).WithObjectSize(fs.Length);
         await mc.PutObjectAsync(putArg);
     }
