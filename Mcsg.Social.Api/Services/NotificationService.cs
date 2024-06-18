@@ -1,21 +1,23 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using DTOs;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public interface INotificationService
     {
         Task<NotificationModel> GetNotificationAsync(Guid id);
@@ -49,6 +51,7 @@ namespace Mcsg.Social.Api.Services
             , IRepository<PostReaction> postReacRepository
             , IRepository<SubPostReaction> subPostReacRepository
             , IRepository<PostCommentReaction> postCommentRepository
+            , ISetting setting
             , IRepository<SubPostCommentReaction> subPostCommentRepository)
         {
             _currentUserService = currentUserService;
@@ -62,6 +65,7 @@ namespace Mcsg.Social.Api.Services
             _postReacRepository = postReacRepository;
             _subPostReacRepository = subPostReacRepository;
             _postCommentRepository = postCommentRepository;
+            _setting = setting;
             _subPostCommentRepository = subPostCommentRepository;
         }
 
@@ -97,7 +101,7 @@ namespace Mcsg.Social.Api.Services
                 var resDto = _mapper.Map<List<NotificationModel>>(items);
                 foreach (var item in resDto)
                 {
-                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
                 }
                 var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
                 response.Items = resDto;
@@ -134,7 +138,7 @@ namespace Mcsg.Social.Api.Services
                 var resDto = _mapper.Map<List<NotificationModel>>(items);
                 foreach (var item in resDto)
                 {
-                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
                 }
                 var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
                 response.Items = resDto;
@@ -232,5 +236,14 @@ namespace Mcsg.Social.Api.Services
                 return false;
             }
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

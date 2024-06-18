@@ -1,30 +1,32 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Const;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using Constants;
+    using DTOs;
+    using Enums;
+    using Extensions;
+    using Lib.Common.Constants;
+    using Lib.Common.Enums;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Interfaces;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Const;
+    using Lib.Model.Enums;
+    using Models;
+    using Models.Earning;
+    using Services.Interfaces;
+
     public partial class PostService : IPostService
     {
         private readonly IRepository<Post> _postRepository;
@@ -53,6 +55,7 @@ namespace Mcsg.Social.Api.Services
             IViewHistoryService viewHistoryService,
             IConfiguration configuration,
             IMapper mapper,
+            ISetting setting,
             ISmartLookupService smartLookupService,
             IValidator<PostReport> postReportValidator,
             IRepository<PostComment> postCommentRepository)
@@ -70,6 +73,7 @@ namespace Mcsg.Social.Api.Services
             _smartLookupService = smartLookupService;
             _configuration = configuration;
             _mapper = mapper;
+            _setting = setting;
             _postReportValidator = postReportValidator;
             _smartLookupRepository = smartLookupRepository;
             _postCommentRepository = postCommentRepository;
@@ -827,7 +831,7 @@ namespace Mcsg.Social.Api.Services
                 CreatedDate = item.CreatedDate,
                 ProfileId = item.ProfileId,
                 ProfileName = item.ProfileName,
-                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, item.UserAvatar),
+                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar),
                 Type = item.Type,
                 IsMature = item.IsMature,
                 IsCompleted = item.IsCompleted,
@@ -939,7 +943,7 @@ namespace Mcsg.Social.Api.Services
                 HashId = resources.HashId,
                 Order = resources.Order,
                 Name = resources.Name,
-                Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resources.Name, resources.Url),
+                Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resources.Name, resources.Url),
                 Height = resources.Height,
                 Width = resources.Width,
                 Type = resources.Type,
@@ -990,7 +994,7 @@ namespace Mcsg.Social.Api.Services
             var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
             foreach (var item in items)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
 
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
@@ -1013,7 +1017,7 @@ namespace Mcsg.Social.Api.Services
             {
                 ProfileId = x.ProfileId,
                 ProfileName = x.ProfileName,
-                UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, x.UserAvatar),
+                UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, x.UserAvatar),
                 Title = x.Title,
                 ViewCount = x.ViewCount ?? 0,
                 CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
@@ -1062,7 +1066,7 @@ namespace Mcsg.Social.Api.Services
             {
                 ProfileId = x.ProfileId,
                 ProfileName = x.ProfileName,
-                UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, x.UserAvatar),
+                UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, x.UserAvatar),
                 Title = x.Title,
                 ViewCount = x.ViewCount ?? 0,
                 CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
@@ -1568,6 +1572,15 @@ namespace Mcsg.Social.Api.Services
             var iResult = await _postReportRepository.InsertAsync(postReport);
             return iResult > 0;
         }
+        #endregion
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
         #endregion
     }
 }

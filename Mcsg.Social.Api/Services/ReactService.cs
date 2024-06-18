@@ -1,21 +1,23 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using DTOs;
+    using Extensions;
+    using Lib.Common.Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Domain.Entities.Common;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+    using Services.Interfaces;
+
     public partial class ReactService<T> : IReactService<T> where T : ReactionBase, new()
     {
         private readonly IRepository<T> _reactRepository;
@@ -27,12 +29,14 @@ namespace Mcsg.Social.Api.Services
             ICurrentUserService currentUserService,
             INotificationService notificationService,
             IConfiguration configuration,
+            ISetting setting,
             ISmartCountService smartCountService)
         {
             _reactRepository = unitOfWork.GetRepository<T>();
             _currentUserService = currentUserService;
             _notificationService = notificationService;
             _smartCountService = smartCountService;
+            _setting = setting;
             _configuration = configuration;
         }
         public async Task<bool> AddReaction(Guid targetId, ReactionType type)
@@ -152,7 +156,7 @@ namespace Mcsg.Social.Api.Services
                 var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
                 foreach (var item in items)
                 {
-                    item.AuthorAvatar = UrlHelper.GetPublicImageUrl(_configuration, item.AuthorAvatar);
+                    item.AuthorAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.AuthorAvatar);
                 }
                 var response = new PagedResults<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
                 response.Items = items;
@@ -272,5 +276,14 @@ namespace Mcsg.Social.Api.Services
 
             }
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

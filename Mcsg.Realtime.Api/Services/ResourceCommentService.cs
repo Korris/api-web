@@ -2,6 +2,7 @@
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Api.Interfaces;
     using Common.Core.Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Extensions;
@@ -22,10 +23,12 @@ namespace Mcsg.Realtime.Api.Services
         private IConfiguration _configuration;
         public ResourceCommentService(IUnitOfWork unitOfWork
             , IConfiguration configuration
+            , ISetting setting
             , IStorageClient sc)
         {
             _resourceRepository = unitOfWork.GetRepository<Resource>();
             _configuration = configuration;
+            _setting = setting;
             _sc = sc;
         }
         public async Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType)
@@ -65,7 +68,7 @@ namespace Mcsg.Realtime.Api.Services
                 #endregion
 
                 response.HashId = resource.HashId;
-                response.Url = UrlHelper.GetMediaPath(_configuration["FileSettings:MediaUrl"], resource.Name, resource.Url);
+                response.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url);
                 response.Id = resource.Id;
             }
 
@@ -75,14 +78,14 @@ namespace Mcsg.Realtime.Api.Services
         #region -- Fields --
 
         /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        /// <summary>
         /// Storage client
         /// </summary>
         private readonly IStorageClient _sc;
-
-        /// <summary>
-        /// 7 days
-        /// </summary>
-        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }

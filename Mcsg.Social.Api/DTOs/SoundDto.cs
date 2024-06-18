@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Mappings;
-using Mcsg.Lib.Data.Domain.Entities;
 
 namespace Mcsg.Social.Api.DTOs
 {
+    using Extensions;
+    using Lib.Data.Domain.Entities;
+    using Mappings;
+
     public class SoundDto : IMapFrom<BackgroundMedia>
     {
         public Guid Id { get; set; }
@@ -19,8 +20,8 @@ namespace Mcsg.Social.Api.DTOs
             profile.CreateMap<BackgroundMedia, SoundDto>()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opt => opt.MapFrom(s => s.Title))
-                .ForMember(d => d.Url, opt => opt.MapFrom(s => s.Url.ToAudioPath()))
-                .ForMember(d => d.Thumbnail, opt => opt.MapFrom(s => s.Thumbnail.ToImagePath()))
+                .ForMember(d => d.Url, opt => opt.MapFrom(s => s.Url.ToAudioPath("\\TODO")))
+                .ForMember(d => d.Thumbnail, opt => opt.MapFrom(s => s.Thumbnail.ToImagePath("\\TODO")))
                 .ForMember(d => d.ArtistName, opt => opt.MapFrom(s => s.ArtistName))
                 .ForMember(d => d.Duration, opt => opt.MapFrom(s => s.DurationSeconds.ToDuration()))
                 .ForMember(d => d.Order, opt => opt.MapFrom(s => s.Order))

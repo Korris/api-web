@@ -1,19 +1,20 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Model.Enums;
-using Mcsg.Realtime.Api.Constants;
-using Mcsg.Realtime.Api.DTOs;
-using PostTypes = Mcsg.Realtime.Api.Constants.PostTypes;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Constants;
+    using DTOs;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Model.Enums;
+
     public interface ICommentService
     {
         Task<PostCommentResp> PostComment(PostCommentReq req);
@@ -49,6 +50,7 @@ namespace Mcsg.Realtime.Api.Services
             IMentionService mentionService,
             ISmartCountService smartCountService,
             IMapper mapper,
+            ISetting setting,
             IConfiguration configuration)
         {
             _currentUserService = currentUserService;
@@ -63,6 +65,7 @@ namespace Mcsg.Realtime.Api.Services
             _mentionService = mentionService;
             _smartCountService = smartCountService;
             _mapper = mapper;
+            _setting = setting;
             _configuration = configuration;
         }
 
@@ -84,9 +87,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.ProfileNameClaimName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserAvatarClaimName)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_configuration, userAvatar) : "";
-
-
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
@@ -153,7 +154,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.ProfileNameClaimName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserAvatarClaimName)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_configuration, userAvatar) : "";
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
@@ -437,5 +438,14 @@ namespace Mcsg.Realtime.Api.Services
             }
             return true;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using DTOs;
+    using Extensions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Services.Interfaces;
+
     public partial class SoundService : ISoundService
     {
         private readonly ICurrentUserService _currentUserService;
@@ -21,12 +23,14 @@ namespace Mcsg.Social.Api.Services
         private readonly IMapper _mapper;
         public SoundService(ICurrentUserService currentUserService
             , IUnitOfWork unitOfWork
+            , ISetting setting
             , IMapper mapper)
         {
             _currentUserService = currentUserService;
             _postRepository = unitOfWork.GetRepository<Post>();
             _bgMediaRepository = unitOfWork.GetRepository<BackgroundMedia>();
             _bgMediaPostRepository = unitOfWork.GetRepository<BackgroundMediaPost>();
+            _setting = setting;
             _mapper = mapper;
         }
 
@@ -74,8 +78,8 @@ namespace Mcsg.Social.Api.Services
                 foreach (var item in items)
                 {
                     item.Duration = item.DurationSeconds.ToDuration();
-                    item.Url = item.Url.ToAudioPath();
-                    item.Thumbnail = item.Thumbnail.ToImagePath();
+                    item.Url = item.Url.ToAudioPath(_setting.Minio.MediaApiUrl);
+                    item.Thumbnail = item.Thumbnail.ToImagePath(_setting.Minio.MediaApiUrl);
                 }
                 var response = new PagedResults<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);
                 response.Items = items;
@@ -156,5 +160,14 @@ namespace Mcsg.Social.Api.Services
                                                     new { PostId = postId });
             return result > 0;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

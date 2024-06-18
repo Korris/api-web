@@ -1,16 +1,18 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using Lib.Common.Distributor;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Models;
+    using Services.Interfaces;
+
     public partial class SmartLookupService : ISmartLookupService
     {
         private readonly DistributeManager _distributeManager;
@@ -29,6 +31,7 @@ namespace Mcsg.Social.Api.Services
             IRepository<SmartLookupUser> smartLookupUserRepository,
             IRepository<SmartLookup> smartLookupRepository,
             IRepository<User> userRepository,
+            ISetting setting,
             IConfiguration configuration)
         {
             _distributeManager = distributeManager;
@@ -38,6 +41,7 @@ namespace Mcsg.Social.Api.Services
             _smartLookupUserRepository = smartLookupUserRepository;
             _smartLookupRepository = smartLookupRepository;
             _userRepository = userRepository;
+            _setting = setting;
             _configuration = configuration;
         }
         public async Task CalculateSmartLookupWhenDeletePostAsync(Guid postId)
@@ -116,7 +120,7 @@ namespace Mcsg.Social.Api.Services
                 {
                     foreach (var item in result)
                     {
-                        item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                        item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
                     }
                 }
             }
@@ -173,5 +177,14 @@ namespace Mcsg.Social.Api.Services
             }
             return true;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

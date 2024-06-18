@@ -118,9 +118,8 @@ namespace Mcsg.Social.Api.Services
                 }
             }
 
-            objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-            var uri = await _sc.Strategy.PresignedGetObject(objectName, _expiryInSeconds, null);
-            var shareUrl = new Uri(uri);
+            var shareUrl = await _sc.Strategy.PresignedGetObject(objectName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
+            shareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
 
             // Insert to resource with type is temp
             var resource = new Resource()
@@ -130,7 +129,7 @@ namespace Mcsg.Social.Api.Services
                 Title = Path.GetFileNameWithoutExtension(fileTitle),
                 Name = hashFileName,
                 Url = UrlHelper.CreateMediaUrl(tempBlobName, _fileSetting.MediaEncryptKey),
-                ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName),
+                ShareUrl = shareUrl,
                 Type = file.IsImageType() ? ResourceType.IMAGE : ResourceType.VIDEO,
                 CreatedBy = currentUser.UserId,
                 Width = imgWidth,
@@ -143,7 +142,7 @@ namespace Mcsg.Social.Api.Services
             return new UploadFileResponse()
             {
                 HashId = hashId,
-                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration), // UrlHelper.GetMediaPath(_fileSetting.MediaUrl, hashFileName, resource.Url),
+                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl), // UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, hashFileName, resource.Url),
                 Width = imgWidth,
                 Height = imgHeight,
                 Type = resource.Type,
@@ -168,7 +167,7 @@ namespace Mcsg.Social.Api.Services
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 HashId = subPostHasHId?.HashId,
-                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration),// UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resource.Name, resource.Url),
+                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl),// UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url),
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
                                                 Width = resource.Width,
@@ -198,7 +197,7 @@ namespace Mcsg.Social.Api.Services
                 {
                     HashId = resource.HashId,
                     Order = resource.Order,
-                    Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resource.Name, resource.Url)
+                    Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url)
                 });
             }
 
@@ -218,7 +217,7 @@ namespace Mcsg.Social.Api.Services
                 {
                     HashId = resource.HashId,
                     Order = resource.Order,
-                    Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resource.Name, resource.Url)
+                    Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url)
                 });
             }
 
@@ -289,10 +288,8 @@ namespace Mcsg.Social.Api.Services
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
 
-                    var uri = await _sc.Strategy.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
-                    var shareUrl = new Uri(uri);
-
-                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
+                    var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
+                    resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
@@ -368,10 +365,8 @@ namespace Mcsg.Social.Api.Services
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
 
-                    var uri = await _sc.Strategy.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
-                    var shareUrl = new Uri(uri);
-
-                    resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
+                    var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
+                    resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
@@ -478,7 +473,7 @@ namespace Mcsg.Social.Api.Services
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 HashId = resource.HashId ,
-                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration),// UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resource.Name, resource.Url),
+                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl),// UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url),
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
                                                 Width = resource.Width,
@@ -506,11 +501,6 @@ namespace Mcsg.Social.Api.Services
         /// Storage client
         /// </summary>
         private readonly IStorageClient _sc;
-
-        /// <summary>
-        /// 7 days
-        /// </summary>
-        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }

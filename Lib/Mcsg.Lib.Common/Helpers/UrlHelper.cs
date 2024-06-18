@@ -1,9 +1,9 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Microsoft.Extensions.Configuration;
-using System.Web;
+﻿using System.Web;
 
 namespace Mcsg.Lib.Common.Helpers
 {
+    using Lib.Common.Constants;
+
     public static class UrlHelper
     {
         public static string GetAbsolutePath(string url, string relativePath)
@@ -40,6 +40,7 @@ namespace Mcsg.Lib.Common.Helpers
 
             return resultUri.AbsoluteUri;
         }
+
         public static string GetMediaPath(string baseUrl, string name, string url)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -61,36 +62,30 @@ namespace Mcsg.Lib.Common.Helpers
             {
                 mediaPath = string.Format(MediaConfig.VideoUrlPath, url);
             }
-            Uri baseUri = new Uri(baseUrl);
-            Uri mediaUri = new Uri(baseUri, mediaPath);
-            return mediaUri.AbsoluteUri;
+
+            return $"{baseUrl}/{mediaPath}";
         }
+
         public static string CreateMediaUrl(string text, string encryptKey)
         {
             return HttpUtility.UrlEncode(CryptoHelper.Encrypt(text, encryptKey));
         }
 
-        public static string GetPublicImageUrl(IConfiguration configuration, string mediaName)
+        public static string GetPublicImageUrl(string mediaApiUrl, string mediaName)
         {
             if (string.IsNullOrWhiteSpace(mediaName))
+            {
                 return string.Empty;
-            return string.Format(Path.Combine(configuration["FileSettings:MediaUrl"], MediaConfig.PublicImageUrlPath), mediaName);
+            }
+
+            var url = string.Format(MediaConfig.PublicImageUrlPath, mediaName);
+            return $"{mediaApiUrl}/{url}";
         }
 
-        public static string GetStorageDomain(string accountStorageName)
+        public static string CreateCdnMediaUrl(string url, string mediaCdnUrl)
         {
-            return $"https://{accountStorageName}.blob.core.windows.net/";
+            mediaCdnUrl = ""; //TODO - Do not use for now; will improve later
+            return $"{mediaCdnUrl}{url}";
         }
-
-        public static string GetShareUrlFromStorage(this Uri originalUrl, string accountStorageName)
-        {
-            return originalUrl.ToString().Replace(GetStorageDomain(accountStorageName), "");
-        }
-
-        public static string CreateCdnMediaUrl(string url, IConfiguration configuration)
-        {
-            return Path.Combine(configuration["FileSettings:MediaCDNUrl"], url);
-        }
-
     }
 }

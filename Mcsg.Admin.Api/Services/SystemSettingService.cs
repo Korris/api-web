@@ -7,6 +7,7 @@ namespace Mcsg.Admin.Api.Services
     using Common.Core.Interfaces;
     using Constants;
     using DTOs.Settings;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
@@ -30,9 +31,11 @@ namespace Mcsg.Admin.Api.Services
             , ILogger<SystemSettingService> logger
             , ICurrentUserService currentUserService
             , IConfiguration configuration
+            , ISetting setting
             , IStorageClient sc)
         {
             _configuration = configuration;
+            _setting = setting;
             _sc = sc;
 
             _unitOfWork = unitOfWork;
@@ -55,7 +58,7 @@ namespace Mcsg.Admin.Api.Services
                 value.Id = systemSetting.Id;
             }
             if (!string.IsNullOrEmpty(value.Favicon))
-                value.Favicon = string.Format(Path.Combine(_configuration["MediaUrl"], MediaConfig.PublicImageUrlPath), value.Favicon);
+                value.Favicon = string.Format(Path.Combine(_setting.Minio.MediaApiUrl, MediaConfig.PublicImageUrlPath), value.Favicon);
             return value;
         }
 
@@ -204,14 +207,14 @@ namespace Mcsg.Admin.Api.Services
         #region -- Fields --
 
         /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        /// <summary>
         /// Storage client
         /// </summary>
         private readonly IStorageClient _sc;
-
-        /// <summary>
-        /// 7 days
-        /// </summary>
-        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }

@@ -1,8 +1,7 @@
-﻿using Mcsg.Social.Api.Helper;
-using Mcsg.Lib.Common.Helpers;
-
-namespace Mcsg.Social.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions
 {
+    using Lib.Common.Helpers;
+
     public static class SoundExtension
     {
         public static string ToDuration(this int value)
@@ -10,22 +9,21 @@ namespace Mcsg.Social.Api.Extensions
             TimeSpan ts = TimeSpan.FromSeconds(value);
             return $"{ts.Minutes:D2}:{ts.Seconds:D2}";
         }
-        public static string ToMediaPath(this string url, string fileName)
+        public static string ToMediaPath(this string url, string fileName, string mediaApiUrl)
         {
-            var baseMediaUrl = AppSettingsProvider.Configuration["FileSettings:MediaUrl"];
-            return UrlHelper.GetMediaPath(baseMediaUrl, fileName, url);
+            return UrlHelper.GetMediaPath(mediaApiUrl, fileName, url);
         }
-        public static string ToAudioPath(this string url)
+        public static string ToAudioPath(this string url, string mediaApiUrl)
         {
-            return url.ToMediaPath(".mp3");
+            return url.ToMediaPath(".mp3", mediaApiUrl);
         }
-        public static string ToImagePath(this string url)
+        public static string ToImagePath(this string url, string mediaApiUrl)
         {
-            return url.ToMediaPath(".jpg");
+            return url.ToMediaPath(".jpg", mediaApiUrl);
         }
-        public static string ToPublicImageUrl(this string fileName)
+        public static string ToPublicImageUrl(this string fileName, string mediaApiUrl)
         {
-            return UrlHelper.GetPublicImageUrl(AppSettingsProvider.Configuration, fileName);
+            return UrlHelper.GetPublicImageUrl(mediaApiUrl, fileName);
         }
     }
 }

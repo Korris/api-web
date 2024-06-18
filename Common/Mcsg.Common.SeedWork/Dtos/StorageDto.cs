@@ -81,6 +81,11 @@ public abstract class StorageDto
         /// </summary>
         public string SecrectKey { get; set; } = default!;
 
+        /// <summary>
+        /// Maximum expiry in seconds (7 days)
+        /// </summary>
+        public int MaxExpiryInSeconds { get; set; } = 7 * 24 * 60 * 60; // 7 days
+
         #endregion
     }
 

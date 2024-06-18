@@ -1,17 +1,18 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using DTOs;
+    using Enums;
+    using Interfaces;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+
     public partial class ComicService : IComicService
     {
 
@@ -25,6 +26,7 @@ namespace Mcsg.Social.Api.Services
             IPostService postService, IUnitOfWork unitOfWork,
             IFileService fileService,
             ICurrentUserService currentUserService,
+            ISetting setting,
             IConfiguration configuration)
         {
             _postService = postService;
@@ -32,6 +34,7 @@ namespace Mcsg.Social.Api.Services
             _fileService = fileService;
             _currentUserService = currentUserService;
             _type = PostType.COMIC;
+            _setting = setting;
             _configuration = configuration;
         }
 
@@ -110,7 +113,7 @@ namespace Mcsg.Social.Api.Services
             var currentUserId = _currentUserService.Session.UserId;
             var currentUserName = _currentUserService.Session.UserName;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
-            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, currentUserAvatar);
+            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
             _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -131,7 +134,7 @@ namespace Mcsg.Social.Api.Services
             var currentUserId = _currentUserService.Session.UserId;
             var currentUserName = _currentUserService.Session.UserName;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
-            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, currentUserAvatar);
+            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
             _postService.VerifyBasicInfo(chapterPostReq.Title);
 
             var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, chapterPostReq);
@@ -164,6 +167,15 @@ namespace Mcsg.Social.Api.Services
         {
             return await _postService.SwapChapterOrder(comicHashId, orders);
         }
+        #endregion
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
         #endregion
     }
 }

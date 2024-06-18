@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Constants;
@@ -34,6 +35,7 @@ namespace Mcsg.Social.Api.Services
             IConfiguration configuration,
             IRepository<SmartLookup> smartLookupRepository,
             DistributeManager distributeManager,
+            ISetting setting,
             ILogger<UserService> logger, IStorageClient sc)
         {
             _userRepository = userRepository;
@@ -42,6 +44,7 @@ namespace Mcsg.Social.Api.Services
             _logger = logger;
             _smartLookupRepository = smartLookupRepository;
             _distributeManager = distributeManager;
+            _setting = setting;
             _sc = sc;
         }
 
@@ -111,7 +114,7 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
             }
 
-            return new UserAvatarUpdateResponse() { Avatar = UrlHelper.GetPublicImageUrl(_configuration, fileName) };
+            return new UserAvatarUpdateResponse() { Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
         }
 
         public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest)
@@ -149,7 +152,7 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
             }
 
-            return new UserCoverPhotoUpdateResponse() { CoverPhoto = UrlHelper.GetPublicImageUrl(_configuration, fileName) };
+            return new UserCoverPhotoUpdateResponse() { CoverPhoto = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
         }
 
         /// <summary>
@@ -197,7 +200,7 @@ namespace Mcsg.Social.Api.Services
             return new UserProfileResponse
             {
                 Id = user.Id,
-                AvatarUrl = UrlHelper.GetPublicImageUrl(_configuration, user.Avatar),
+                AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.Avatar),
                 Email = user.Email,
                 JoinDate = user.CreatedDate,
                 ProfileName = user.ProfileName,
@@ -207,7 +210,7 @@ namespace Mcsg.Social.Api.Services
                 DateOfBirth = user.DateOfBirth,
                 Gender = user.Gender,
                 PhoneNumber = user.PhoneNumber,
-                CoverPhotoUrl = UrlHelper.GetPublicImageUrl(_configuration, user.CoverPhoto),
+                CoverPhotoUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.CoverPhoto),
                 Location = user.Location,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
                 EmailConfirmed = user.EmailConfirmed,
@@ -241,7 +244,7 @@ namespace Mcsg.Social.Api.Services
                 var profileUsersRandom = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetRandomProfileNames, new { Name = name });
                 foreach (var item in profileUsersRandom)
                 {
-                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
                 }
                 return profileUsersRandom.ToList();
             }
@@ -250,7 +253,7 @@ namespace Mcsg.Social.Api.Services
             var profiles = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetSimilarProfileNamesMention, new { Name = name });
             foreach (var item in profiles)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
             }
             return profiles.ToList();
         }
@@ -341,7 +344,7 @@ namespace Mcsg.Social.Api.Services
 
                 foreach (var item in items)
                 {
-                    item.Avatar = UrlHelper.GetPublicImageUrl(_configuration, item.Avatar);
+                    item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
                 }
                 results.Items = items;
             }
@@ -358,7 +361,7 @@ namespace Mcsg.Social.Api.Services
             var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserAvatarById, new { UserId = userId });
             return new UserProfileAvatarResponse
             {
-                AvatarUrl = UrlHelper.GetPublicImageUrl(_configuration, user.Avatar),
+                AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.Avatar),
                 ProfileId = user.ProfileId,
                 ProfileName = user.ProfileName
             };
@@ -372,7 +375,7 @@ namespace Mcsg.Social.Api.Services
 
             return new UserProfileAvatarResponse
             {
-                AvatarUrl = UrlHelper.GetPublicImageUrl(_configuration, avatar),
+                AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, avatar),
                 ProfileId = profileId,
                 ProfileName = profileName
             };
@@ -381,14 +384,14 @@ namespace Mcsg.Social.Api.Services
         #region -- Fields --
 
         /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        /// <summary>
         /// Storage client
         /// </summary>
         private readonly IStorageClient _sc;
-
-        /// <summary>
-        /// 7 days
-        /// </summary>
-        private readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }

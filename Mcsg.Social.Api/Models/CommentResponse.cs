@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Mappings;
 
 namespace Mcsg.Social.Api.Models
 {
+    using Extensions;
+    using Mappings;
+
     public class CommentResponse : IMapFrom<CommentQueryModel>
     {
         public Guid Id { get; set; }
@@ -25,7 +26,7 @@ namespace Mcsg.Social.Api.Models
                 .ForMember(d => d.PostId, opt => opt.MapFrom(s => s.PostId))
                 .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
                 .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
-                .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
+                .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl("\\TODO")))
                 .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
                 .ForMember(d => d.LastModifiedDate, opt => opt.MapFrom(s => s.LastModifiedDate))
                 .ForMember(d => d.ResourceUrl, opt => opt.Ignore())

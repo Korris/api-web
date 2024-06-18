@@ -1,26 +1,28 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Npgsql;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using Constants;
+    using DTOs;
+    using Enums;
+    using Extensions;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+    using Services.Interfaces;
+
     public partial class FeedService : IFeedService
     {
         private readonly IRepository<Post> _postRepository;
@@ -53,7 +55,8 @@ namespace Mcsg.Social.Api.Services
             IPostLinkService postLinkService,
             ISoundService soundService,
             IConfiguration configuration,
-            IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig)
+            IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
+            ISetting setting)
         {
             _postRepository = unitOfWork.GetRepository<Post>();
             _unitOfWork = unitOfWork;
@@ -70,7 +73,7 @@ namespace Mcsg.Social.Api.Services
             _configuration = configuration;
             _feedDisplayConfig = feedDisplayConfig.CurrentValue;
             _postLinkService = postLinkService;
-
+            _setting = setting;
         }
 
         #region Load data
@@ -236,13 +239,13 @@ namespace Mcsg.Social.Api.Services
             });
             if (data.ResourceType == ResourceType.VIDEO || data.ResourceType == ResourceType.AUDIO)
             {
-                data.Url = UrlHelper.CreateCdnMediaUrl(data.ShareUrl, _configuration);
+                data.Url = UrlHelper.CreateCdnMediaUrl(data.ShareUrl, _setting.Minio.MediaCdnUrl);
             }
             else
             {
-                data.Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, data.ResourceName, data.Url);
+                data.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, data.ResourceName, data.Url);
             }
-            data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, data.UserAvatar);
+            data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, data.UserAvatar);
             data.SubPosts.Add(new SubPostResponse
             {
                 Files = new List<UploadFileResponse>()
@@ -382,7 +385,7 @@ namespace Mcsg.Social.Api.Services
             var currentProfileName = _currentUserService.Session.ProfileName;
             var currentUserName = _currentUserService.Session.UserName;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
-            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, currentUserAvatar);
+            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
             var profileId = _currentUserService.Session.ProfileId;
             var hashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
@@ -504,7 +507,7 @@ namespace Mcsg.Social.Api.Services
 
                         if (resource.Type == ResourceType.AUDIO || resource.Type == ResourceType.VIDEO)
                         {
-                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration);
+                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl);
                         }
                         resourceResponse.Add(resource);
                     }
@@ -520,7 +523,7 @@ namespace Mcsg.Social.Api.Services
             var currentProfileName = _currentUserService.Session.ProfileName;
             var currentUserName = _currentUserService.Session.UserName;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
-            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, currentUserAvatar);
+            var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
             // GetSingleFeedQuery
             var profileId = _currentUserService.Session.ProfileId;
@@ -658,7 +661,7 @@ namespace Mcsg.Social.Api.Services
 
                         if (resource.Type == ResourceType.AUDIO || resource.Type == ResourceType.VIDEO)
                         {
-                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _configuration);
+                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl);
                         }
                         resourceResponse.Add(resource);
                     }
@@ -694,7 +697,7 @@ namespace Mcsg.Social.Api.Services
                 TotalResource = item.TotalResource,
                 Type = item.Type,
                 Status = item.Status,
-                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, item.UserAvatar),
+                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar),
                 Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
                 CustomNote = item.CustomNote
             };
@@ -710,11 +713,11 @@ namespace Mcsg.Social.Api.Services
                     {
                         if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
                         {
-                            resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _configuration);
+                            resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
                         }
                         else
                         {
-                            resourceResponse.Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, resourceResponse.Name, resourceResponse.Url);
+                            resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
                         }
                         itemResponse.Resources.Add(resourceResponse);
                     }
@@ -774,7 +777,7 @@ namespace Mcsg.Social.Api.Services
                 ProfileId = item.ProfileId,
                 Type = item.Type,
                 Status = item.Status,
-                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_configuration, item.UserAvatar),
+                UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar),
                 Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
                 Body = System.Web.HttpUtility.HtmlDecode(item.Body),
                 CustomNote = item.CustomNote
@@ -791,11 +794,11 @@ namespace Mcsg.Social.Api.Services
                     var url = "";
                     if (fileDbs.Type == ResourceType.VIDEO || fileDbs.Type == ResourceType.AUDIO)
                     {
-                        url = UrlHelper.CreateCdnMediaUrl(fileDbs.ShareUrl, _configuration);
+                        url = UrlHelper.CreateCdnMediaUrl(fileDbs.ShareUrl, _setting.Minio.MediaCdnUrl);
                     }
                     else
                     {
-                        url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, fileDbs.Name, fileDbs.Url);
+                        url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, fileDbs.Name, fileDbs.Url);
                     }
                     itemResponse.Resources.Add(new ResourceResponse
                     {
@@ -828,7 +831,7 @@ namespace Mcsg.Social.Api.Services
                             var resource = new UploadFileResponse
                             {
                                 HashId = subPostdb.HashId,
-                                Url = UrlHelper.GetMediaPath(_fileSetting.MediaUrl, x.Name, x.Url),
+                                Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, x.Name, x.Url),
                                 Name = x.Name,
                                 ShareUrl = x.ShareUrl,
                                 Type = x.Type,
@@ -839,7 +842,7 @@ namespace Mcsg.Social.Api.Services
                             };
                             if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
                             {
-                                resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _configuration);
+                                resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _setting.Minio.MediaCdnUrl);
                             }
                             return resource;
                         }).ToList();
@@ -917,6 +920,15 @@ namespace Mcsg.Social.Api.Services
                 throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
             }
         }
+        #endregion
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
         #endregion
     }
 }

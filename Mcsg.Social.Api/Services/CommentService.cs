@@ -1,19 +1,21 @@
 ﻿using AutoMapper;
 using Dapper;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using DTOs;
+    using Enums;
+    using Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Models;
+
     public interface ICommentService
     {
         Task<PagedResults<CommentResponse>> GetLatestPostCommentInAsync(Guid postId);
@@ -32,7 +34,7 @@ namespace Mcsg.Social.Api.Services
         private readonly FileSetting _fileSetting;
         private IConfiguration _configuration;
         protected readonly IMapper _mapper;
-        public CommentService(IUnitOfWork unitOfWork, IOptionsMonitor<FileSetting> fileSetting, IMapper mapper, IConfiguration configuration)
+        public CommentService(IUnitOfWork unitOfWork, IOptionsMonitor<FileSetting> fileSetting, IMapper mapper, ISetting setting, IConfiguration configuration)
         {
             _postCommentRepository = unitOfWork.GetRepository<PostComment>();
             _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
@@ -42,6 +44,7 @@ namespace Mcsg.Social.Api.Services
             _mentionRepository = unitOfWork.GetRepository<Mention>();
             _fileSetting = fileSetting.CurrentValue;
             _mapper = mapper;
+            _setting = setting;
             _configuration = configuration;
         }
 
@@ -59,12 +62,12 @@ namespace Mcsg.Social.Api.Services
                     Id = result.Id,
                     AuthorId = result.AuthorId,
                     AuthorName = result.AuthorName,
-                    UserAvatar = result.UserAvatar.ToPublicImageUrl(),
+                    UserAvatar = result.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                     Body = result.Body,
                     PostId = result.PostId,
                     LastModifiedDate = result.LastModifiedDate,
                     ResourceHashId = result.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, result.ResourceName, result.ResourceUrl) : "",
+                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, result.ResourceName, result.ResourceUrl) : "",
                     GifId = result.GifId
                 };
 
@@ -81,11 +84,11 @@ namespace Mcsg.Social.Api.Services
                         Id = result.ReplyId,
                         AuthorId = result.AuthorId,
                         AuthorName = result.ReplyAuthorName,
-                        UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
+                        UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                         Body = result.ReplyBody,
                         LastModifiedDate = result.ReplyLastModifiedDate,
                         ResourceHashId = result.ReplyResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, result.ReplyResourceName, result.ReplyResourceUrl) : "",
+                        ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, result.ReplyResourceName, result.ReplyResourceUrl) : "",
                         ParentId = commentData.Id,
                         GifId = result.ReplyGifId,
                         QuoteId = result?.ReplyQuoteId == Guid.Empty ? null : result.ReplyQuoteId
@@ -127,12 +130,12 @@ namespace Mcsg.Social.Api.Services
                     Id = result.Id,
                     AuthorId = result.AuthorId,
                     AuthorName = result.AuthorName,
-                    UserAvatar = result.UserAvatar.ToPublicImageUrl(),
+                    UserAvatar = result.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                     Body = result.Body,
                     PostId = result.PostId,
                     LastModifiedDate = result.LastModifiedDate,
                     ResourceHashId = result.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, result.ResourceName, result.ResourceUrl) : "",
+                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, result.ResourceName, result.ResourceUrl) : "",
                     GifId = result.GifId
                 };
 
@@ -149,11 +152,11 @@ namespace Mcsg.Social.Api.Services
                         Id = result.ReplyId,
                         AuthorId = result.AuthorId,
                         AuthorName = result.ReplyAuthorName,
-                        UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
+                        UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                         Body = result.ReplyBody,
                         LastModifiedDate = result.ReplyLastModifiedDate,
                         ResourceHashId = result.ReplyResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, result.ReplyResourceName, result.ReplyResourceUrl) : "",
+                        ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, result.ReplyResourceName, result.ReplyResourceUrl) : "",
                         ParentId = commentData.Id,
                         GifId = result.ReplyGifId
                     };
@@ -210,11 +213,11 @@ namespace Mcsg.Social.Api.Services
                         PostId = comModel.PostId,
                         AuthorId = comModel.AuthorId,
                         AuthorName = comModel.AuthorName,
-                        UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
+                        UserAvatar = comModel.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                         Body = comModel.Body,
                         LastModifiedDate = comModel.LastModifiedDate,
                         ResourceHashId = comModel.ResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, comModel.ResourceName, comModel.ResourceUrl) : "",
+                        ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, comModel.ResourceName, comModel.ResourceUrl) : "",
                         GifId = comModel.GifId
                     };
 
@@ -232,11 +235,11 @@ namespace Mcsg.Social.Api.Services
                             Id = repModel.Id,
                             AuthorId = repModel.AuthorId,
                             AuthorName = repModel.AuthorName,
-                            UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
+                            UserAvatar = repModel.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                             Body = repModel.Body,
                             LastModifiedDate = repModel.LastModifiedDate,
                             ResourceHashId = repModel.ResourceHashId,
-                            ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, repModel.ResourceName, repModel.ResourceUrl) : "",
+                            ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, repModel.ResourceName, repModel.ResourceUrl) : "",
                             ParentId = comment.Id,
                             GifId = repModel.GifId,
                             QuoteId = repModel.QuoteId
@@ -307,11 +310,11 @@ namespace Mcsg.Social.Api.Services
                         PostId = comModel.PostId,
                         AuthorId = comModel.AuthorId,
                         AuthorName = comModel.AuthorName,
-                        UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
+                        UserAvatar = comModel.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                         Body = comModel.Body,
                         LastModifiedDate = comModel.LastModifiedDate,
                         ResourceHashId = comModel.ResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, comModel.ResourceName, comModel.ResourceUrl) : "",
+                        ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, comModel.ResourceName, comModel.ResourceUrl) : "",
                         GifId = comModel.GifId
                     };
 
@@ -329,11 +332,11 @@ namespace Mcsg.Social.Api.Services
                             Id = repModel.Id,
                             AuthorId = repModel.AuthorId,
                             AuthorName = repModel.AuthorName,
-                            UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
+                            UserAvatar = repModel.UserAvatar.ToPublicImageUrl(_setting.Minio.MediaApiUrl),
                             Body = repModel.Body,
                             LastModifiedDate = repModel.LastModifiedDate,
                             ResourceHashId = repModel.ResourceHashId,
-                            ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, repModel.ResourceName, repModel.ResourceUrl) : "",
+                            ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, repModel.ResourceName, repModel.ResourceUrl) : "",
                             ParentId = comment.Id,
                             GifId = repModel.GifId
                         };
@@ -357,5 +360,14 @@ namespace Mcsg.Social.Api.Services
             response.TotalComments = totalComments;
             return response;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }
