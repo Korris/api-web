@@ -9,6 +9,8 @@ namespace Mcsg.Function.Media;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
+using Interfaces;
+using Lib.Data;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -74,6 +76,25 @@ public class Program
         }
         #endregion
 
+        #region -- Setup DI --
+        // Setting
+        builder.Services.AddSingleton<ISetting>(st!);
+
+        // DbContext
+        builder.Services.AddDataLibrary(csDb);
+
+        // Storage
+        builder.Services.AddStorage(p =>
+        {
+            p.BucketName = st.Minio.BucketName;
+            p.Location = st.Minio.Location;
+            p.EndPoint = st.Minio.EndPoint;
+            p.PublicUrl = st.Minio.PublicUrl;
+            p.AccessKey = st.Minio.AccessKey;
+            p.SecrectKey = st.Minio.SecrectKey;
+        });
+        #endregion
+
         #region -- Setup token --
         // JWT
         var key = Encoding.UTF8.GetBytes(st.Jwt.Signing);
@@ -134,7 +155,6 @@ public class Program
         #endregion
 
         builder.Services.AddControllers();
-        //builder.Services.AddHostedService<HostedService>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
