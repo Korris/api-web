@@ -153,7 +153,7 @@ public static class StringExtension
             {
                 var parts = trimmedLine.Split(equality);
                 var keys = parts[0].Split(splitter);
-                var value = parts[1].Trim();
+                var value = trimmedLine.Replace($"{parts[0]}{equality}", "");
                 var currentLevel = res;
 
                 for (int i = 0; i < keys.Length - 1; i++)

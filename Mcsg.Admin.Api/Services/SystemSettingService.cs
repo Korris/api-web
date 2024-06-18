@@ -5,7 +5,6 @@ using ComnonConstant = Mcsg.Lib.Common.Constants.ErrorCodes;
 namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Constants;
     using DTOs.Settings;
     using Lib.Common.Constants;
@@ -34,8 +33,6 @@ namespace Mcsg.Admin.Api.Services
             , IStorageClient sc)
         {
             _configuration = configuration;
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
 
             _unitOfWork = unitOfWork;
@@ -97,12 +94,12 @@ namespace Mcsg.Admin.Api.Services
             try
             {
                 var objectName = $"{SystemSettings.CONST_BLOB_STORAGE_CONTAINER_NAME}/{request.Favicon.FileName}";
-                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
                 if (isExistFile != null)
                 {
-                    await _sc.RemoveObject(objectName, null);
+                    await _sc.Strategy.RemoveObject(objectName, null);
                 }
-                await _sc.PutObject(request.Favicon.OpenReadStream(), objectName, null);
+                await _sc.Strategy.PutObject(request.Favicon.OpenReadStream(), objectName, null);
 
                 await _systemSettingRepo.UpdateAsync(systemSetting);
                 if (systemSettingHistory.OldValue != newValue)

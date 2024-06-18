@@ -5,7 +5,6 @@ using System.Text;
 namespace Mcsg.Function.Job.Services
 {
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Common.SeedWork.Extensions;
     using Constants;
     using Extensions;
@@ -19,8 +18,6 @@ namespace Mcsg.Function.Job.Services
         public EmailService(IEmailSender emailSender, IStorageClient sc)
         {
             _emailSender = emailSender;
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
         }
 
@@ -67,7 +64,7 @@ namespace Mcsg.Function.Job.Services
         private async Task<StringBuilder> DownloadEmailTemplateAsync(string templateName)
         {
             var file = $"email-templates/" + templateName;
-            var ms = await _sc.GetObject(file, null);
+            var ms = await _sc.Strategy.GetObject(file, null);
             return new StringBuilder(StreamExtension.ToString(ms));
         }
 

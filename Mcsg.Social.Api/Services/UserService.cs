@@ -5,7 +5,6 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Constants;
     using DTOs;
     using Interfaces;
@@ -43,8 +42,6 @@ namespace Mcsg.Social.Api.Services
             _logger = logger;
             _smartLookupRepository = smartLookupRepository;
             _distributeManager = distributeManager;
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
         }
 
@@ -84,7 +81,7 @@ namespace Mcsg.Social.Api.Services
                 var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
 
                 var objectName = $"{BlobStorageDefinition.ImageContainer}/{userAvatarUpdateRequest.Avatar.FileName}";
-                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
                 if (isExistFile != null)
                 {
                     fileName = GenerateNewFileName(userAvatarUpdateRequest.Avatar.FileName);
@@ -103,7 +100,7 @@ namespace Mcsg.Social.Api.Services
                 }
 
                 objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
-                await _sc.PutObject(newFormFile, objectName, null);
+                await _sc.Strategy.PutObject(newFormFile, objectName, null);
                 newFormFile.Close();
 
                 await _userRepository.UpdateAsync(user);
@@ -131,7 +128,7 @@ namespace Mcsg.Social.Api.Services
             {
                 var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
                 var objectName = $"{BlobStorageDefinition.ImageContainer}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
-                var isExistFile = await _sc.StatObjectAsync(objectName, null);
+                var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
                 if (isExistFile != null)
                 {
                     fileName = GenerateNewFileName(userCoverPhotoUpdateRequest.CoverPhoto.FileName);
@@ -142,7 +139,7 @@ namespace Mcsg.Social.Api.Services
                 }
                 user.CoverPhoto = fileName;
                 objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
-                await _sc.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
+                await _sc.Strategy.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
                 await _userRepository.UpdateAsync(user);
 
             }

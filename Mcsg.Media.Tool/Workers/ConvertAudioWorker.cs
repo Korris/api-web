@@ -52,7 +52,7 @@ namespace Mcsg.Media.Tool.Workers
                         var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, EncryptKey));
 
                         var objectName = $"{MediaContainer}/{newUrl}";
-                        var uri = await _sc.PresignedGetObject(objectName, _expiryInSeconds, null);
+                        var uri = await _sc.Strategy.PresignedGetObject(objectName, _expiryInSeconds, null);
                         var shareUrl = new Uri(uri);
 
                         await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE,

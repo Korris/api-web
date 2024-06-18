@@ -40,6 +40,15 @@ public interface IStorageStrategy
     Task<Stream> GetObject(string objectName, string? bucketName);
 
     /// <summary>
+    /// Download object
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="fileName">File name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task DownloadObject(string objectName, string fileName, string? bucketName);
+
+    /// <summary>
     /// Put object
     /// </summary>
     /// <param name="fs">Stream</param>
@@ -82,6 +91,23 @@ public interface IStorageStrategy
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
     Task<bool> RemoveObject(string objectName, string? bucketName);
+
+    /// <summary>
+    /// Get public URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <returns>Return the public URL</returns>
+    Task<string> GetPublicUrl(string objectName, string? bucketNamePublic);
+
+    #endregion
+
+    #region -- Properties --
+
+    /// <summary>
+    /// Bucket name public
+    /// </summary>
+    string? BucketNamePublic { get; }
 
     #endregion
 }

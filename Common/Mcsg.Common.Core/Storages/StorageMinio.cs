@@ -32,8 +32,6 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task<Stream> GetObject(string objectName, string? bucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         var res = new MemoryStream();
 
         if (string.IsNullOrWhiteSpace(objectName))
@@ -43,18 +41,31 @@ public class StorageMinio : StorageStrategy
 
         if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketName = _auth.BucketName;
+            bucketName = _auth?.BucketName;
         }
 
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
-
-        var statArg = new StatObjectArgs().WithBucket(bucketName).WithObject(objectName);
-        await mc.StatObjectAsync(statArg);
-
         var getArg = new GetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithCallbackStream(p => { p.CopyTo(res); });
-        await mc.GetObjectAsync(getArg);
+        await Mc.GetObjectAsync(getArg);
 
         return res;
+    }
+
+    /// <summary>
+    /// Download object
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="fileName">File name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public override async Task DownloadObject(string objectName, string fileName, string? bucketName)
+    {
+        if (string.IsNullOrWhiteSpace(bucketName))
+        {
+            bucketName = _auth?.BucketName;
+        }
+
+        var getArg = new GetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithFile(fileName);
+        await Mc.GetObjectAsync(getArg);
     }
 
     /// <summary>
@@ -66,20 +77,16 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task PutObject(Stream fs, string objectName, string? bucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketName = _auth.BucketName;
+            bucketName = _auth?.BucketName;
         }
-
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
 
         // Ensure the position is at the beginning of the Stream
         fs.Position = 0;
 
         var putArg = new PutObjectArgs().WithBucket(bucketName).WithObject(objectName).WithStreamData(fs).WithObjectSize(fs.Length);
-        await mc.PutObjectAsync(putArg);
+        await Mc.PutObjectAsync(putArg);
     }
 
     /// <summary>
@@ -91,17 +98,26 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketName = _auth.BucketName;
+            bucketName = _auth?.BucketName;
         }
 
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
+        try
+        {
+            var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
+            var uri = await Mc.PresignedGetObjectAsync(presignedArg);
 
-        var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
-        return await mc.PresignedGetObjectAsync(presignedArg);
+            // Remove endpoint and bucket name
+            uri = uri.Replace(Mc.Config.Endpoint + "/", "");
+            uri = uri.Replace(bucketName + "/", "");
+
+            return uri;
+        }
+        catch
+        {
+            return "";
+        }
     }
 
     /// <summary>
@@ -114,22 +130,18 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task<bool> CopyObject(string srcObjectName, string dstObjectName, string? srcBucketName, string? dstBucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         if (string.IsNullOrWhiteSpace(srcBucketName))
         {
-            srcBucketName = _auth.BucketName;
+            srcBucketName = _auth?.BucketName;
         }
         if (string.IsNullOrWhiteSpace(dstBucketName))
         {
-            dstBucketName = _auth.BucketName;
+            dstBucketName = _auth?.BucketName;
         }
-
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
 
         var copySrcArg = new CopySourceObjectArgs().WithBucket(srcBucketName).WithObject(srcObjectName);
         var copyArg = new CopyObjectArgs().WithBucket(dstBucketName).WithObject(dstObjectName).WithCopyObjectSource(copySrcArg);
-        await mc.CopyObjectAsync(copyArg);
+        await Mc.CopyObjectAsync(copyArg);
 
         return true;
     }
@@ -142,19 +154,15 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketName = _auth.BucketName;
+            bucketName = _auth?.BucketName;
         }
-
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
 
         try
         {
             var statArg = new StatObjectArgs().WithBucket(bucketName).WithObject(objectName);
-            return await mc.StatObjectAsync(statArg);
+            return await Mc.StatObjectAsync(statArg);
         }
         catch
         {
@@ -170,20 +178,74 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the result</returns>
     public override async Task<bool> RemoveObject(string objectName, string? bucketName)
     {
-        ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
-
         if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketName = _auth.BucketName;
+            bucketName = _auth?.BucketName;
         }
 
-        var mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location).Build();
-
         var statArg = new RemoveObjectArgs().WithBucket(bucketName).WithObject(objectName);
-        await mc.RemoveObjectAsync(statArg);
+        await Mc.RemoveObjectAsync(statArg);
 
         return true;
     }
+
+    /// <summary>
+    /// Get public URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <returns>Return the public URL</returns>
+    public override async Task<string> GetPublicUrl(string objectName, string? bucketNamePublic)
+    {
+        if (string.IsNullOrWhiteSpace(bucketNamePublic))
+        {
+            bucketNamePublic = BucketNamePublic;
+        }
+
+        var uri = await PresignedGetObject(objectName, 1, bucketNamePublic);
+        var arr = uri.Split('?');
+        return arr.Length > 0 ? arr[0] : "";
+    }
+
+    #endregion
+
+    #region -- Properties --
+
+    /// <summary>
+    /// MinIO client
+    /// </summary>
+    /// <returns></returns>
+    private IMinioClient Mc
+    {
+        get
+        {
+            if (_mc != null)
+            {
+                return _mc;
+            }
+
+            ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
+
+            _mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location);
+            if (_auth.WithSSL)
+            {
+                _mc.WithSSL();
+            }
+
+            _mc = _mc.Build();
+
+            return _mc;
+        }
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// MinIO client
+    /// </summary>
+    private IMinioClient? _mc;
 
     #endregion
 }

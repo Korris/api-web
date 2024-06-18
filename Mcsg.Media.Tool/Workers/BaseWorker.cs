@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Common.SeedWork.Extensions;
     using Models;
     using Services;
@@ -26,8 +25,6 @@ namespace Mcsg.Media.Tool.Workers
             StorageAccountName = configuration["ConnectionStrings:StorageAccountName"];
             Pools = new List<WorkerPoolItem>();
             NotiService = new NotificationService(configuration);
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
         }
 
@@ -54,7 +51,7 @@ namespace Mcsg.Media.Tool.Workers
             }
 
             var objectName = $"{MediaContainer}/{path}";
-            var fs = await _sc.GetObject(objectName);
+            var fs = await _sc.Strategy.GetObject(objectName, null);
             fs.ToFile(filePath);
 
             return filePath;
@@ -65,7 +62,7 @@ namespace Mcsg.Media.Tool.Workers
             var fileStream = File.OpenRead(localFile);
 
             var objectName = $"{MediaContainer}/{remoteUri}";
-            await _sc.PutObject(fileStream, objectName, null);
+            await _sc.Strategy.PutObject(fileStream, objectName, null);
 
             fileStream.Close();
         }

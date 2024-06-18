@@ -46,6 +46,18 @@ public class StorageStrategy : IStorageStrategy
     }
 
     /// <summary>
+    /// Download object
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="fileName">File name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task DownloadObject(string objectName, string fileName, string? bucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// Put object
     /// </summary>
     /// <param name="fs">Stream</param>
@@ -103,6 +115,22 @@ public class StorageStrategy : IStorageStrategy
     {
         throw new NotImplementedException();
     }
+
+    /// <summary>
+    /// Get public URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <returns>Return the public URL</returns>
+    public virtual Task<string> GetPublicUrl(string objectName, string? bucketNamePublic)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Bucket name public
+    /// </summary>
+    public string? BucketNamePublic => _auth?.BucketName + "-public";
 
     #endregion
 

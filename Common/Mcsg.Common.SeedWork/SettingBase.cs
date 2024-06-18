@@ -134,7 +134,7 @@ public class SettingBase : ISettingBase
     {
         Prefix = string.Empty;
         Environment = string.Empty;
-        SiteName = "Mcsg";
+        SiteName = "Bumcheo";
         MobileUserAgent = string.Empty;
         Domain = string.Empty;
 

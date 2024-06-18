@@ -3,7 +3,6 @@
 namespace Mcsg.Realtime.Api.Services
 {
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Lib.Common.Constants;
     using Lib.Common.Extensions;
     using Lib.Common.Helpers;
@@ -27,8 +26,6 @@ namespace Mcsg.Realtime.Api.Services
         {
             _resourceRepository = unitOfWork.GetRepository<Resource>();
             _configuration = configuration;
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
         }
         public async Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType)
@@ -48,17 +45,17 @@ namespace Mcsg.Realtime.Api.Services
                 string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
                 tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
+                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
 
                 targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
+                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
                 {
-                    await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
+                    await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
 
                     resource.Size = isExistTempFile!.Size;
-                    await _sc.RemoveObject(tempBlobName, null);
+                    await _sc.Strategy.RemoveObject(tempBlobName, null);
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _configuration["FileSettings:MediaEncryptKey"]);

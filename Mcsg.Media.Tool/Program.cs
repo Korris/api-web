@@ -5,7 +5,6 @@ namespace Mcsg.Media.Tool;
 
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Core.Storages;
 using Common.SeedWork.Extensions;
 using static Common.SeedWork.Constants.Setting;
 
@@ -59,7 +58,6 @@ internal class Program
 
         var serviceProvider = services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();
-        sc.SetStrategy(new StorageMinio());
 
         await new WorkDistributor(configuration, sc).Run();
         Console.ReadLine();

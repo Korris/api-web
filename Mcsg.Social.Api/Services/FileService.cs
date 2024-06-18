@@ -5,7 +5,6 @@ namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
     using Common.Core.Interfaces;
-    using Common.Core.Storages;
     using Constants;
     using DTOs;
     using Interfaces;
@@ -48,8 +47,6 @@ namespace Mcsg.Social.Api.Services
             _fileSetting = fileSetting.CurrentValue;
             _jobService = jobService;
             _setting = setting;
-
-            sc.SetStrategy(new StorageMinio());
             _sc = sc;
         }
 
@@ -100,7 +97,7 @@ namespace Mcsg.Social.Api.Services
                 using (var stream = compressedImage.Image.OpenReadStream())
                 {
                     objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    await _sc.PutObject(stream, objectName, null);
+                    await _sc.Strategy.PutObject(stream, objectName, null);
                 }
             }
             else
@@ -117,12 +114,12 @@ namespace Mcsg.Social.Api.Services
                 using (var stream = file.OpenReadStream())
                 {
                     objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    await _sc.PutObject(stream, objectName, null);
+                    await _sc.Strategy.PutObject(stream, objectName, null);
                 }
             }
 
             objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-            var uri = await _sc.PresignedGetObject(objectName, _expiryInSeconds, null);
+            var uri = await _sc.Strategy.PresignedGetObject(objectName, _expiryInSeconds, null);
             var shareUrl = new Uri(uri);
 
             // Insert to resource with type is temp
@@ -254,17 +251,17 @@ namespace Mcsg.Social.Api.Services
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
                     tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
 
                     targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
 
                     if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
+                        await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
 
                         resource.Size = isExistTempFile!.Size;
-                        await _sc.RemoveObject(tempBlobName, null);
+                        await _sc.Strategy.RemoveObject(tempBlobName, null);
                     }
                     #endregion
 
@@ -292,7 +289,7 @@ namespace Mcsg.Social.Api.Services
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
 
-                    var uri = await _sc.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
+                    var uri = await _sc.Strategy.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
                     var shareUrl = new Uri(uri);
 
                     resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
@@ -333,17 +330,17 @@ namespace Mcsg.Social.Api.Services
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
                     tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
 
                     targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
 
                     if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        await _sc.CopyObject(tempBlobName, targetBlobName, null, null);
+                        await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
 
                         resource.Size = isExistTempFile!.Size;
-                        await _sc.RemoveObject(tempBlobName, null);
+                        await _sc.Strategy.RemoveObject(tempBlobName, null);
                     }
                     #endregion
 
@@ -371,7 +368,7 @@ namespace Mcsg.Social.Api.Services
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
 
-                    var uri = await _sc.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
+                    var uri = await _sc.Strategy.PresignedGetObject(targetBlobName, _expiryInSeconds, null);
                     var shareUrl = new Uri(uri);
 
                     resource.ShareUrl = shareUrl.GetShareUrlFromStorage(_setting.Minio.BucketName);
@@ -409,17 +406,17 @@ namespace Mcsg.Social.Api.Services
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
                     tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    var isExistTempFile = await _sc.StatObjectAsync(tempBlobName, null);
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
                     if (isExistTempFile != null)
                     {
-                        await _sc.RemoveObject(tempBlobName, null);
+                        await _sc.Strategy.RemoveObject(tempBlobName, null);
                     }
 
                     targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                    var isExistTargetFile = await _sc.StatObjectAsync(targetBlobName, null);
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
                     if (isExistTargetFile != null)
                     {
-                        await _sc.RemoveObject(targetBlobName, null);
+                        await _sc.Strategy.RemoveObject(targetBlobName, null);
                     }
                 }
             }

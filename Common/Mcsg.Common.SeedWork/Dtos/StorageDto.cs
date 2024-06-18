@@ -26,9 +26,29 @@ public abstract class StorageDto
     public string EndPoint { get; set; } = default!;
 
     /// <summary>
+    /// With SSL
+    /// </summary>
+    public bool WithSSL { get; set; } = true;
+
+    /// <summary>
     /// Public URL
     /// </summary>
     public string PublicUrl { get; set; } = default!;
+
+    /// <summary>
+    /// Media encrypt key
+    /// </summary>
+    public string MediaEncryptKey { get; set; } = default!;
+
+    /// <summary>
+    /// Media API URL
+    /// </summary>
+    public string MediaApiUrl { get; set; } = default!;
+
+    /// <summary>
+    /// Media CDN URL
+    /// </summary>
+    public string MediaCdnUrl { get; set; } = default!;
 
     #endregion
 
