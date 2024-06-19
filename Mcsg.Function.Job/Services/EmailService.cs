@@ -15,9 +15,10 @@ namespace Mcsg.Function.Job.Services
 
     public class EmailService : IEmailService
     {
-        public EmailService(IEmailSender emailSender, IStorageClient sc)
+        public EmailService(IEmailSender emailSender, ISetting setting, IStorageClient sc)
         {
             _emailSender = emailSender;
+            _setting = setting;
             _sc = sc;
         }
 
@@ -30,28 +31,28 @@ namespace Mcsg.Function.Job.Services
             {
                 case JobType.VerifyByEmailOtp:
                     template = await DownloadEmailTemplateAsync("verify-email-otp.html");
-                    email.Subject = FunctionConstant.OtpEmailTitle;
+                    email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
                     email.Body = template.RenderEmailOtpBody(email);
 
                     break;
                 case JobType.ResetByEmailOtp:
                     template = await DownloadEmailTemplateAsync("reset-email-otp.html");
-                    email.Subject = FunctionConstant.OtpEmailTitle;
+                    email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
                     email.Body = template.RenderEmailOtpBody(email);
                     break;
                 case JobType.ConfirmEmailOtp:
                     template = await DownloadEmailTemplateAsync("common-email-otp.html");
-                    email.Subject = FunctionConstant.OtpEmailTitle;
+                    email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
                     email.Body = template.RenderEmailOtpBody(email);
                     break;
                 case JobType.WithDrawNoti:
                     template = await DownloadEmailTemplateAsync("withdraw-noti.html");
-                    email.Subject = FunctionConstant.WithdrawEmailTitle;
+                    email.Subject = _setting.Information + FunctionConstant.WithdrawEmailTitle;
                     email.Body = template.RenderEmailNotiAction(email);
                     break;
                 case JobType.DepositNoti:
                     template = await DownloadEmailTemplateAsync("deposit-noti.html");
-                    email.Subject = FunctionConstant.DepositEmailTitle;
+                    email.Subject = _setting.Information + FunctionConstant.DepositEmailTitle;
                     email.Body = template.RenderEmailNotiAction(email);
                     break;
                 default:
@@ -74,6 +75,11 @@ namespace Mcsg.Function.Job.Services
         /// Email sender
         /// </summary>
         private readonly IEmailSender _emailSender;
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
 
         /// <summary>
         /// Storage client
