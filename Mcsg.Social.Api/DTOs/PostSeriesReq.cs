@@ -29,6 +29,11 @@ namespace Mcsg.Social.Api.DTOs
     {
         public string HashPostId { get; set; }
     }
+    public class ReplyByCommentInput : BasePageResultReq
+    {
+        public Guid CommentId { get; set; }
+        public bool IsSubPost { get; set; }
+    }
     public class ChapterListReq : BasePageResultReq
     {
         [DefaultValue("Order")]

@@ -13,6 +13,7 @@ using Mcsg.Lib.Data.Entities.Common;
 using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
+using System.Text.RegularExpressions;
 
 namespace Mcsg.Social.Api.Services
 {
@@ -44,33 +45,30 @@ namespace Mcsg.Social.Api.Services
         }
         public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags)
         {
-            //Find all tag in
+            // Validate tags
+            tags = tags.Select(ValidateTag).ToList(); // Use Select for cleaner transformation
+
+            // Find all tags associated with the post
             var query = string.Format(GetAllTagsByNameQuery, _tagRepository.TableName);
+            var tagsDb = await _tagRepository.Connection
+                .QueryAsync<TagView>(query, new { TagNames = tags, PostId = postId });
 
-            //Validate tags
-            tags.ForEach(t => { t = ValidateTag(t); });
+            // Find tags that need to be created
+            var listTagNeedToCreate = tags.Except(tagsDb.Select(x => x.Name)).ToList();
 
-            //Find all tag with post (TagPost)
-            var tagsDb = await _tagRepository
-                    .Connection.QueryAsync<TagView>(query, new
-                    {
-                        TagNames = tags,
-                        PostId = postId
-                    });
+            // Add new tags (if any) and get their IDs
+            List<Guid> listTagAddToPost = listTagNeedToCreate.Count > 0
+                ? await AddNewTags(listTagNeedToCreate)
+                : new List<Guid>();
 
-            //Update
-            var listTagNotAdd = tags.Except(tagsDb.Select(x => x.Name)).ToList();
-            if (listTagNotAdd.Count > 0)
-            {
-                var listNewTagId = await AddNewTags(listTagNotAdd);
+            // Add existing tags (not already associated with the post)
+            listTagAddToPost.AddRange(
+                tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList()
+            );
+            await AddTagsToPost(postId, listTagAddToPost);
 
-                listNewTagId.AddRange(tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList());
-
-                await AddTagsToPost(postId, listNewTagId);
-
-                //Publish to calculate smart lookup for tag
-                await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
-            }
+            // Publish for smart lookup calculation
+            await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
 
             return tags;
         }
@@ -318,10 +316,19 @@ namespace Mcsg.Social.Api.Services
 
         private string ValidateTag(string tag)
         {
+            tag = (tag + "").TrimStart('#');
+
             if (tag.Length > SystemConfig.PostTagMaxLength)
             {
                 throw new ArgumentException(ErrorCodes.PortalTagNameNotValidLength, string.Format(ErrorMessage.TagNameNotValidLength, tag));
             }
+
+            // Hash tag without any special character, except underscore, number and character
+            if (!Regex.IsMatch(tag, @"^[a-zA-Z0-9_]+$"))
+            {
+                throw new ArgumentException(ErrorCodes.PortalTagNameNotValid, string.Format(ErrorMessage.TagNameNotValid, tag));
+            }
+
             return tag.ToLower();
         }
 

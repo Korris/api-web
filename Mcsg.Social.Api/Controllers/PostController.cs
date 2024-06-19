@@ -33,10 +33,24 @@ namespace Mcsg.Social.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("comment-most-reaction")]
-        public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] MostReactionCommentInput input)
+        [HttpGet("latest-posts-by-type")]
+        public async Task<IActionResult> GetLatestPostsByType()
         {
-            var result = await _postService.GetCommentWithMostReaction(input);
+            var result = await _postService.GetLatestPostsByType();
+            return Ok(result);
+        }
+
+        [HttpGet("latest-posts-by-tag")]
+        public async Task<IActionResult> GetLatestPostsByTag([FromQuery] string tagName)
+        {
+            var result = await _postService.GetLatestPostsByTag(tagName);
+            return Ok(result);
+        }
+
+        [HttpPost("get-random-ids")]
+        public async Task<IActionResult> GetPostRandomIds([FromBody] GetPostRandomIdsReq request)
+        {
+            var result = await _postService.GetPostRandomIdsAsync(request);
             return Ok(result);
         }
     }

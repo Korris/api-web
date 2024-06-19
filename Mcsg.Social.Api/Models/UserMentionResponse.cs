@@ -7,6 +7,7 @@ namespace Mcsg.Social.Api.Models
     {
         public Guid UserId { get; set; }
         public string ProfileName { get; set; }
+        public string ProfileId { get; set; }
         public int Length { get; set; }
         public int Offset { get; set; }
         public void Mapping(Profile profile)

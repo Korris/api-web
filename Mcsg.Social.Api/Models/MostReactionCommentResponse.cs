@@ -1,13 +1,25 @@
 ﻿namespace Mcsg.Social.Api.Models
 {
-    public class MostReactionCommentResponse
+    public class MostReactionCommentResponse : BasicCommentResponse
     {
+        public int? Order { get; set; }
+        public int ReplyCount { get; set; }
+        public List<BasicCommentResponse> ReplyData { get; set; }
+    }
+
+    public class BasicCommentResponse
+    {
+        public Guid AuthorId { get; set; }
+        public Guid Id { get; set; }
         public string Body { get; set; }
-        public string ChapterName { get; set; }
-        public string HashId { get; set; }
-        public string Order { get; set; }
-        public string Avatar { get; set; }
+        public string Title { get; set; }
+        public string UserAvatar { get; set; }
         public string ProfileId { get; set; }
-        public string ProfileName { get; set; }
+        public string AuthorName { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string ResourceName { get; set; }
+        public string ResourceUrl { get; set; }
+        public string ResourceHashId { get; set; }
+        public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
     }
 }

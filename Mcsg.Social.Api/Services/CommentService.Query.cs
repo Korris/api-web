@@ -4,6 +4,100 @@ namespace Mcsg.Social.Api.Services
 {
     public partial class CommentService
     {
+        private string GetReplyByCommentIdQuery = @"SELECT 
+												pc.""CreatedBy"" as AuthorId,
+												pc.""Body"",
+												pc.""Id"",
+												pc.""CreatedDate"",
+												u.""Avatar"" as UserAvatar,
+											    u.""ProfileName"" as AuthorName,
+												u.""ProfileId"",
+												r.""Name"" as ResourceName,
+												r.""Url"" as ResourceUrl,
+												r.""HashId"" as ResourceHashId
+											   FROM {0} pc
+											   LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
+											   LEFT JOIN ""Users"" u on pc.""CreatedBy"" = u.""Id""
+											   WHERE pc.""ParentId"" = @CommentId
+											   AND pc.""IsDelete"" = false";
+        private string GetCommentWithMostReactionQuery = $@"
+												SELECT 
+													pc.""CreatedBy"" as AuthorId,
+													pc.""Id"",
+													pc.""Body"",
+													pc.""CreatedDate"",
+													p.""Title"",
+													NULL as Order,
+													u.""Avatar"" as UserAvatar,
+													u.""ProfileName"" as AuthorName,
+													u.""ProfileId"",
+													COUNT(reply.*) as ReplyCount, 
+													r.""Name"" as ResourceName,
+													r.""Url"" as ResourceUrl,
+													r.""HashId"" as ResourceHashId,
+													COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
+												FROM ""PostComments""  pc
+												LEFT JOIN ""PostComments"" reply on reply.""ParentId"" = pc.""Id""
+												LEFT JOIN ""Users"" u on pc.""CreatedBy"" = u.""Id""
+												LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+												LEFT JOIN ""Posts"" p on pc.""PostId"" = p.""Id""												
+												LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
+												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
+												AND p.""IsDelete"" = false
+												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												UNION
+												SELECT 
+													spc.""CreatedBy"" as AuthorId,
+													spc.""Id"",
+													spc.""Body"",
+													spc.""CreatedDate"",
+													sp.""Title"",
+													sp.""Order"",
+													u.""Avatar"",
+													u.""ProfileName"",
+													u.""ProfileId"",
+													COUNT(reply.*) ReplyCount,
+													r.""Name"" as ResourceName,
+													r.""Url"" as ResourceUrl,
+													r.""HashId"" as ResourceHashId,
+													COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
+												FROM ""SubPostComments"" spc
+												LEFT JOIN ""SubPostComments"" reply on reply.""ParentId"" = spc.""Id""
+												LEFT JOIN ""Users"" u on spc.""CreatedBy"" = u.""Id""
+												LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+												LEFT JOIN ""SubPosts""  sp ON spc.""PostId"" = sp.""Id""
+												LEFT JOIN ""Resources"" r on spc.""ResourceId"" = r.""Id""
+												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""Posts""  WHERE ""HashId"" =@HashId) 
+												AND spc.""ParentId"" is null
+												AND spc.""IsDelete"" = false
+												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												ORDER BY reaction_count desc,
+												""CreatedDate"" desc
+												OFFSET @Offset
+												LIMIT @PageSize;
+
+												SELECT
+													(SELECT COUNT(*)
+													 FROM ""PostComments""  pc
+													 JOIN ""Posts"" p ON pc.""PostId""= p.""Id"" 
+													 WHERE p.""HashId"" = @HashId and ""ParentId"" is null ) 
+													+
+													(SELECT COUNT(*)
+													 FROM ""SubPostComments"" spc
+													 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
+													 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
+													 WHERE p.""HashId"" = @HashId and ""ParentId"" is null) AS total_comment_count";
+        private string GetTotalCommentQuery => $@"SELECT 
+														(SELECT COUNT(*)
+														 FROM ""PostComments""  pc
+														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
+														 WHERE p.""HashId"" = @HashId) 
+														+
+														(SELECT COUNT(*)
+														 FROM ""SubPostComments"" spc
+														 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
+														 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
+														 WHERE p.""HashId"" = @HashId) AS total_comment_count";
         private string GetCommentOfPostQuery
         {
             get

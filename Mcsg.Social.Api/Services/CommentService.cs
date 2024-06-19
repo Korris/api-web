@@ -22,6 +22,8 @@ namespace Mcsg.Social.Api.Services
         Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType);
+        Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input);
+        Task<List<BasicCommentResponse>> GetReplyByCommentId(ReplyByCommentInput input);
     }
     public partial class CommentService : ICommentService
     {
@@ -183,6 +185,82 @@ namespace Mcsg.Social.Api.Services
             }
             return response;
         }
+
+        public async Task<List<BasicCommentResponse>> GetReplyByCommentId(ReplyByCommentInput input)
+        {
+            List<BasicCommentResponse> results;
+
+            var query = string.Format(GetReplyByCommentIdQuery, input.IsSubPost ? _subPostCommentRepository.TableName : _postCommentRepository.TableName);
+            var items = await _postCommentRepository.Connection.QueryAsync<BasicCommentResponse>(query, new { CommentId = input.CommentId });
+            if (items != null && items.Count() > 0)
+            {
+                var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
+                foreach (var item in items)
+                {
+                    item.UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar);
+                    item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, item.ResourceName, item.ResourceUrl) : "";
+                    if (mentions != null && mentions.Any())
+                    {
+                        var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
+                        item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
+                    }
+                }
+                results = items.ToList();
+                return results;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input)
+        {
+            if (string.IsNullOrWhiteSpace(input.HashPostId))
+            {
+                return new CommentPagedResults<MostReactionCommentResponse>(0);
+            }
+            CommentPagedResults<MostReactionCommentResponse> results;
+            var offset = input.PageSize * (input.PageNumber - 1);
+            var query = GetCommentWithMostReactionQuery;
+
+            var multi = await _postCommentRepository
+               .Connection.QueryMultipleAsync(query, new
+               {
+                   HashId = input.HashPostId,
+                   PageSize = input.PageSize,
+                   Offset = offset
+               });
+            var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
+
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
+
+                foreach (var item in items)
+                {
+                    item.UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar);
+                    item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, item.ResourceName, item.ResourceUrl) : "";
+
+                    if (mentions != null && mentions.Any())
+                    {
+                        var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
+                        item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
+                    }
+                }
+                results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = items;
+                results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = input.HashPostId });
+            }
+            else
+            {
+                results = new CommentPagedResults<MostReactionCommentResponse>(0);
+            }
+            return results;
+        }
+
         public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request)
         {
             if (string.IsNullOrWhiteSpace(request.OrderBy))

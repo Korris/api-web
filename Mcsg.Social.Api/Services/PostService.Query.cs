@@ -4,6 +4,17 @@ namespace Mcsg.Social.Api.Services
 {
     public partial class PostService
     {
+        private string GetTotalCommentQuery => $@"SELECT 
+														(SELECT COUNT(*)
+														 FROM ""PostComments""  pc
+														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
+														 WHERE p.""HashId"" = @HashId) 
+														+
+														(SELECT COUNT(*)
+														 FROM ""SubPostComments"" spc
+														 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
+														 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
+														 WHERE p.""HashId"" = @HashId) AS total_comment_count";
         private string GetSeriesQuery
         {
             get
@@ -914,8 +925,89 @@ sp.""IsEnableComment""
 					WHERE ""TargetId"" = @SubPostId;";
             }
         }
-        #endregion
 
+        private string GetLatestPostsByTypeQuery
+        {
+            get
+            {
+                return $@"
+                     WITH latest_posts AS (
+                           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
+                           FROM (
+               SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+               ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS type_rank
+                FROM ""Posts""
+                WHERE ""Type"" IN (0, 1, 2)
+				AND ""IsDelete"" = false
+				AND ""Status"" = {(int)PostStatus.PUBLIC}
+            ) AS ranked_posts
+            WHERE (""Type"" = 0 AND type_rank <= @feed)
+               OR (""Type"" = 1 AND type_rank <= @story)
+               OR (""Type"" = 2 AND type_rank <= @comic)
+        ),
+        grouped_posts AS (
+           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+                  (ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) - 1) % 20 + 1 AS group_number,
+                  RANDOM() AS random_order
+           FROM latest_posts
+        )
+        SELECT ""Id"", ""Type"", ""CreatedDate"", group_number, ""HashId""
+        FROM grouped_posts
+        ORDER BY group_number, random_order;
+
+		[GetTotalCount]";
+            }
+        }
+
+        private string GetLatestPostsByTagQuery
+        {
+            get
+            {
+                return $@"
+                     WITH latest_posts AS (
+                           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
+                           FROM (
+               SELECT p.""Id"", p.""Type"", p.""CreatedDate"", p.""HashId"",
+               ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedDate"" DESC) AS type_rank
+                FROM ""Posts"" p
+				LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""				
+				LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+                WHERE ""Type"" IN (0, 1, 2)
+				AND t.""Name"" ILIKE @ExactKeyword  
+				AND p.""IsDelete"" = false
+				AND p.""Status"" = {(int)PostStatus.PUBLIC}
+            ) AS ranked_posts
+            WHERE (""Type"" = 0 AND type_rank <= @feed)
+               OR (""Type"" = 1 AND type_rank <= @story)
+               OR (""Type"" = 2 AND type_rank <= @comic)
+        ),
+        grouped_posts AS (
+           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+                  (ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) - 1) % 20 + 1 AS group_number,
+                  RANDOM() AS random_order
+           FROM latest_posts
+        )
+        SELECT ""Id"", ""Type"", ""CreatedDate"", group_number, ""HashId""
+        FROM grouped_posts
+        ORDER BY group_number, random_order;
+		
+		[GetTotalCount]
+		";
+            }
+        }
+        #endregion
+        private string GetCountPostByTypeQuery => $@"SELECT COUNT(*) 
+												   FROM ""Posts""
+												   WHERE ""IsDelete"" = false 
+												   AND ""Status"" = {(int)PostStatus.PUBLIC}";
+
+        private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
+												   FROM ""Posts"" p
+												   LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""
+												   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+												   WHERE p.""IsDelete"" = false 
+												   AND p.""Status"" = {(int)PostStatus.PUBLIC}
+												   AND t.""Name"" ILIKE @ExactKeyword";
         private string PremiumWhereQuery
         {
             get
@@ -942,5 +1034,25 @@ sp.""IsEnableComment""
             }
         }
         #endregion
+
+        private string GetPostRandomIdsQuery
+        {
+            get
+            {
+                return @"
+                        WITH newtable 
+                        AS
+                        (
+                        SELECT * FROM ""Posts"" p
+                            WHERE p.""IsDelete"" = false
+                            ORDER BY RANDOM()
+                            LIMIT @numOfItemNeedFilter
+                        )
+                        SELECT ""Id"" FROM newtable nt
+                        WHERE NOT nt.""Id"" = ANY(@postRandomIds)
+                        LIMIT @numOfItem
+                 ";
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace Mcsg.Social.Api.Models
         public ChaptersExclusiveData TotalChapters { get; set; }
         public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
         public string SeriesStatus { get; set; }
+        public int TotalComment { get; set; }
 
     }
     public class PostSeriesQueryDbResponse : PostSeriesResponse

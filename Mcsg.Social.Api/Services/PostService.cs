@@ -228,6 +228,7 @@ namespace Mcsg.Social.Api.Services
             {
                 throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
             }
+            dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
             return MappingFeedRespone(dbPost);
         }
         public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
@@ -846,7 +847,8 @@ namespace Mcsg.Social.Api.Services
                 FreeChapters = new ChaptersExclusiveData() { Count = freeChapters, Amount = freeChapters * GlobalSystemConfig.ChapterPrice },
                 ExclusiveChapters = new ChaptersExclusiveData() { Count = exclusiveChapters, Amount = exclusiveChapters * GlobalSystemConfig.ChapterPrice },
                 EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * GlobalSystemConfig.ChapterPrice },
-                SeriesStatus = item.ToSeriesStatus()
+                SeriesStatus = item.ToSeriesStatus(),
+                TotalComment = item.TotalComment,
             };
 
             return itemResponse;
@@ -932,6 +934,82 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
+        public async Task<ListIdForHomePage> GetLatestPostsByType()
+        {
+            try
+            {
+                //TODO - Will get the percent from config later
+                // Get from DB
+                var value = 200;
+                var feedPercent = .6f;
+                var storyPercent = .1f;
+                var comicPercent = .3f;
+
+                // Conver to amount
+                var feed = (int)Math.Round(value * feedPercent, 0);
+                var story = (int)Math.Round(value * storyPercent, 0);
+                var comic = (int)Math.Round(value * comicPercent, 0);
+                var param = new
+                {
+                    feed,
+                    story,
+                    comic
+                };
+
+                var query = GetLatestPostsByTypeQuery;
+                query = query.Replace("[GetTotalCount]", GetCountPostByTypeQuery);
+
+                var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, param);
+
+                var listposts = await multi.ReadAsync<LatestPostsResponse>().ConfigureAwait(false);
+                var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+                return new ListIdForHomePage() { TotalItems = totalItems, LatestPostsResponses = listposts.ToList() };
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+            }
+        }
+
+        public async Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag)
+        {
+            try
+            {
+                //TODO - Will get the percent from config later
+                // Get from DB
+                var value = 200;
+                var feedPercent = .6f;
+                var storyPercent = .1f;
+                var comicPercent = .3f;
+
+                // Conver to amount
+                var feed = (int)Math.Round(value * feedPercent, 0);
+                var story = (int)Math.Round(value * storyPercent, 0);
+                var comic = (int)Math.Round(value * comicPercent, 0);
+
+                var param = new
+                {
+                    feed,
+                    story,
+                    comic,
+                    ExactKeyword = nameTag
+                };
+
+                var query = GetLatestPostsByTagQuery;
+                query = query.Replace("[GetTotalCount]", GetCountPostByTagQuery);
+                var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, param);
+                var listposts = await multi.ReadAsync<LatestPostsResponse>().ConfigureAwait(false);
+                var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+                return new ListIdForHomePage() { TotalItems = totalItems, LatestPostsResponses = listposts.ToList() };
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+            }
+        }
+
+
         public UploadFileResponse MappingFile(Resource resources)
         {
             if (resources == null || resources.Id == Guid.Empty)
@@ -951,66 +1029,6 @@ namespace Mcsg.Social.Api.Services
                 Size = resources.Size
             };
         }
-
-        public async Task<PagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input)
-        {
-            if (string.IsNullOrWhiteSpace(input.HashPostId))
-            {
-                return new PagedResults<MostReactionCommentResponse>(0);
-            }
-            PagedResults<MostReactionCommentResponse> results;
-            var offset = input.PageSize * (input.PageNumber - 1);
-
-            var query = $@"SELECT spc.""Body"", sp.""Title"" as ChapterName, p.""HashId"",sp.""Order"", u.""Avatar"",
-                                    u.""ProfileId"",
-                                    u.""ProfileName"" ,
-                                    COUNT(spcr.""Id"") AS max_reaction_count
-                        [QueryCondition]
-                        GROUP BY spc.""Body"",sp.""Title"",spc.""CreatedDate"",p.""HashId"",sp.""Order"" ,u.""Avatar"",u.""ProfileName"" ,u.""ProfileId"" 
-                        ORDER BY max_reaction_count desc,spc.""CreatedDate"" desc
-                        OFFSET @Offset
-                        LIMIT @PageSize;
-
-                        SELECT COUNT(*) as TotalItems
-                        [QueryCondition]";
-
-            var queryCondition = $@"
-                            FROM ""Posts"" p
-                            LEFT JOIN ""SubPosts"" sp on p.""Id"" = sp.""PostId"" 
-                            LEFT JOIN ""SubPostComments"" spc  on sp.""Id""  = spc.""PostId"" 
-                            LEFT JOIN ""SubPostCommentReactions"" spcr  on spc.""Id"" = spcr.""TargetId""
-                            LEFT JOIN ""Users"" u ON spc.""CreatedBy"" = u.""Id"" 
-                            WHERE p.""HashId"" =@HashId";
-
-            query = query.Replace("[QueryCondition]", queryCondition);
-            var multi = await _postRepository
-                   .Connection.QueryMultipleAsync(query, new
-                   {
-                       HashId = input.HashPostId,
-                       PageSize = input.PageSize,
-                       Offset = offset
-                   });
-
-            var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
-            foreach (var item in items)
-            {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
-
-            }
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-
-            if (items != null && items.Count() > 0)
-            {
-                results = new PagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
-                results.Items = items;
-            }
-            else
-            {
-                results = new PagedResults<MostReactionCommentResponse>(0);
-            }
-            return results;
-        }
-
         private List<PostSeriesTopResponse> MappingTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
         {
             return posts.Select(x => new PostSeriesTopResponse
@@ -1548,6 +1566,35 @@ namespace Mcsg.Social.Api.Services
             }
             return rewards;
 
+        }
+
+        public async Task<IEnumerable<Guid>> GetPostRandomIdsAsync(GetPostRandomIdsReq req)
+        {
+            try
+            {
+                var numOfItem = 10;
+                var numOfItemNeedFilter = numOfItem * 2;
+                List<Guid> randomIds = new List<Guid>();
+
+                if (req.NumOfItem != 0)
+                {
+                    numOfItem = req.NumOfItem;
+                }
+
+                if (req.PostRandomIds != null)
+                {
+                    numOfItemNeedFilter += req.PostRandomIds.Count;
+                    randomIds = req.PostRandomIds;
+                }
+
+                var response = await _postRepository.Connection.QueryAsync<Guid>(GetPostRandomIdsQuery, new { numOfItemNeedFilter = numOfItemNeedFilter, numOfItem = numOfItem, postRandomIds = randomIds.ToList() });
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+            }
         }
         #endregion
 

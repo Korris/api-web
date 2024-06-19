@@ -39,6 +39,8 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task UpdateKeyWordForComicAndStoryToSmartLookup();
         Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input);
         Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input);
-        Task<PagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input);
+        Task<IEnumerable<Guid>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
+        Task<ListIdForHomePage> GetLatestPostsByType();
+        Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     }
 }

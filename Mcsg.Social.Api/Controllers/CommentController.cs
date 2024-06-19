@@ -101,5 +101,19 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.STORY);
             return Ok(result);
         }
+
+        [HttpGet("comment-most-reaction")]
+        public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] MostReactionCommentInput input)
+        {
+            var result = await _commentService.GetCommentWithMostReaction(input);
+            return Ok(result);
+        }
+
+        [HttpGet("reply-by-comment")]
+        public async Task<IActionResult> GetReplyByCommentId([FromQuery] ReplyByCommentInput input)
+        {
+            var result = await _commentService.GetReplyByCommentId(input);
+            return Ok(result);
+        }
     }
 }
