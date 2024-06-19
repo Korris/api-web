@@ -5,8 +5,8 @@ namespace Mcsg.Social.Api.DTOs
 {
     public class ChapterPostReq
     {
-        public string Title { get; set; }
-        public string Name { get; set; }
+        public string? Title { get; set; }
+        public string? Name { get; set; }
         #region Setting
         public bool IsPublicNow { get; set; }
         public PostPermission Permission { get; set; }
