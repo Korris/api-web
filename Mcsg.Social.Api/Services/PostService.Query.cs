@@ -1095,6 +1095,7 @@ ORDER BY group_number, random_row_num;
                 return @"
                 SELECT 
                     p.""Id"",
+					p.""HashId"",
                     p.""ThumbnailUrl"",
 					p.""Type"",
                     p.""Body"",
@@ -1119,7 +1120,9 @@ ORDER BY group_number, random_row_num;
 					WHERE ""IsDelete"" = false
                 ) sp ON p.""Id"" = sp.""PostId"" AND sp.rn <= 2 
                 WHERE p.""HashId"" = ANY(@HashIds)
-                GROUP BY  p.""Id"",
+                GROUP BY  
+					      p.""HashId"",
+						  p.""Id"",
 						  p.""ThumbnailUrl"",
 						  p.""Body"",
 						  p.""Title"",

@@ -1042,6 +1042,7 @@ namespace Mcsg.Social.Api.Services
                         Chapters = chapters,
                         ChapterCount = res.ChapterCount,
                         Type = res.Type,
+                        HashId = res.HashId,
                     };
 
                     listPostDetails.Add(postDetails);

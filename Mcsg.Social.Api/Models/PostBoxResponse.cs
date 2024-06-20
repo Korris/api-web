@@ -15,6 +15,7 @@ namespace Mcsg.Social.Api.Models
 
     public class PostBox
     {
+        public string HashId { get; set; }
         public Guid Id { get; set; }
         public string ThumbnailUrl { get; set; }
         public string Body { get; set; }
