@@ -20,5 +20,6 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<bool> ReportFeedAsync(ReportPostReq req);
         FeedResponse MappingFeedInListRespone(FeedsListQueryDbResponse item);
         Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId);
+        Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds);
     }
 }

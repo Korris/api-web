@@ -42,5 +42,6 @@ namespace Mcsg.Social.Api.Services.Interfaces
         Task<IEnumerable<Guid>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
         Task<ListIdForHomePage> GetLatestPostsByType();
         Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
+        Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
     }
 }

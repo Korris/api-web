@@ -392,6 +392,52 @@ LIMIT @PageSize
             }
         }
 
+        private string GetFeedBoxQuery
+        {
+            get
+            {
+                return @"SELECT 
+						p.""Id"", 
+						p.""Type"",
+						p.""Body"",
+						p.""HashId"", 
+						p.""UserId"",
+						p.""ThumbnailUrl"", 
+						u.""Avatar"" AS UserAvatar,
+						u.""ProfileName"" as FullName, 
+						u.""ProfileId"",
+						p.""CreatedDate"",
+						sp.""Total"" as TotalResources,
+						to_jsonb(array_agg(sp.*)) AS ""SubPosts"",
+						to_jsonb(array_agg(spr.*)) AS ""Resources""
+						FROM ""Posts"" p
+						LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
+						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
+						LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
+						LEFT JOIN LATERAL 
+							(
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" 
+								FROM ""SubPosts"" sp 
+								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
+								GROUP BY ""Id"", ""PostId""
+								ORDER BY ""Order""
+							) sp ON sp.""PostId"" = p.""Id""
+						LEFT JOIN LATERAL
+							(
+								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+							 	FROM ""Resources"" 
+							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
+								LIMIT 1
+							) spr ON spr.""SubPostId"" = sp.""Id""
+							
+						WHERE 
+						p.""HashId"" = ANY(@HashIds) AND p.""IsDelete"" = false 
+						GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
+						p.""UserId"",u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""CreatedDate"",TotalResources
+						";
+            }
+        }
+
         private string GetSingleFeedQuery
         {
             get

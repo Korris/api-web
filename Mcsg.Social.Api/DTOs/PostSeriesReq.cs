@@ -27,7 +27,9 @@ namespace Mcsg.Social.Api.DTOs
     }
     public class MostReactionCommentInput : BasePageResultReq
     {
-        public string HashPostId { get; set; }
+        public string? HashPostId { get; set; }
+        public bool IsGetTotalPostComment { get; set; }
+
     }
     public class ReplyByCommentInput : BasePageResultReq
     {

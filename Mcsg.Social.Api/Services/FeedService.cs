@@ -327,6 +327,47 @@ namespace Mcsg.Social.Api.Services
 
             return MappingFeedRespone(dbFeed, sound);
         }
+
+        public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
+        {
+            var param = new { HashIds = hashIds.Split(',').ToList() };
+            var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
+
+            if (result != null && result.Any())
+            {
+                var listFeedDetails = new List<FeedBoxResponse>();
+
+                foreach (var res in result)
+                {
+                    var feedDetails = new FeedBoxResponse
+                    {
+                        ThumbnailUrl = res.ThumbnailUrl,
+                        Body = res.Body,
+                        CreatedDate = res.CreatedDate,
+                        HashId = res.HashId,
+                        Id = res.Id,
+                        ProfileId = res.ProfileId,
+                        UserId = res.UserId,
+                        MetaData = res.MetaData,
+                        TotalResources = res.TotalResources,
+                        UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar),
+                        FullName = res.FullName,
+                        SubPosts = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<SubPostResponse>>(res.SubPosts.ToString()) : new List<SubPostResponse>(),
+                        Resources = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
+                        Type = res.Type,
+                    };
+
+                    listFeedDetails.Add(feedDetails);
+                }
+
+                return listFeedDetails;
+            }
+            else
+            {
+                return new List<FeedBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+            }
+        }
+
         public async Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string keyWord, SearchKeywordReq feedLoadReq)
         {
             try

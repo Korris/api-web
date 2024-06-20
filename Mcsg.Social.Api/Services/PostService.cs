@@ -953,7 +953,10 @@ namespace Mcsg.Social.Api.Services
                 {
                     feed,
                     story,
-                    comic
+                    comic,
+                    feedPercent,
+                    storyPercent,
+                    comicPercent
                 };
 
                 var query = GetLatestPostsByTypeQuery;
@@ -993,6 +996,9 @@ namespace Mcsg.Social.Api.Services
                     feed,
                     story,
                     comic,
+                    feedPercent,
+                    storyPercent,
+                    comicPercent,
                     ExactKeyword = nameTag
                 };
 
@@ -1009,6 +1015,45 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
+        public async Task<List<PostBoxResponse>> GetPostDetails(string hashIds)
+        {
+            var param = new { HashIds = hashIds.Split(',').ToList() };
+            var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
+
+            if (result != null && result.Any())
+            {
+                var listPostDetails = new List<PostBoxResponse>();
+
+                foreach (var res in result)
+                {
+                    var chapters = JsonConvert.DeserializeObject<List<SubPostDto>>(res.SubPosts.ToString());
+                    chapters.Reverse();
+                    var postDetails = new PostBoxResponse
+                    {
+                        Id = res.Id,
+                        IsMature = res.IsMature,
+                        ThumbnailUrl = res.ThumbnailUrl,
+                        Body = res.Body,
+                        Title = res.Title,
+                        AuthorId = res.AuthorId,
+                        AuthorName = res.AuthorName,
+                        ViewCount = res.ViewCount,
+                        Tags = JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()),
+                        Chapters = chapters,
+                        ChapterCount = res.ChapterCount,
+                        Type = res.Type,
+                    };
+
+                    listPostDetails.Add(postDetails);
+                }
+
+                return listPostDetails;
+            }
+            else
+            {
+                return new List<PostBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+            }
+        }
 
         public UploadFileResponse MappingFile(Resource resources)
         {

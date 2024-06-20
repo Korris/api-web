@@ -102,5 +102,12 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _feedService.ReportFeedAsync(request);
             return Ok(result);
         }
+
+        [HttpGet("get-feed-by-list-id")]
+        public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
+        {
+            var result = await _feedService.GetFeedsByIds(hashIds);
+            return Ok(result);
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Mcsg.Social.Api.DTOs;
+﻿using Mcsg.Lib.Model.Enums;
+using Mcsg.Social.Api.DTOs;
 using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
@@ -51,6 +51,13 @@ namespace Mcsg.Social.Api.Controllers
         public async Task<IActionResult> GetPostRandomIds([FromBody] GetPostRandomIdsReq request)
         {
             var result = await _postService.GetPostRandomIdsAsync(request);
+            return Ok(result);
+        }
+
+        [HttpGet("get-post-by-list-id")]
+        public async Task<IActionResult> GetPostDetails([FromQuery] string hashIds)
+        {
+            var result = await _postService.GetPostDetails(hashIds);
             return Ok(result);
         }
     }

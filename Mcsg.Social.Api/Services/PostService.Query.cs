@@ -931,31 +931,47 @@ sp.""IsEnableComment""
             get
             {
                 return $@"
-                     WITH latest_posts AS (
-                           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
-                           FROM (
-               SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
-               ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS type_rank
-                FROM ""Posts""
-                WHERE ""Type"" IN (0, 1, 2)
-				AND ""IsDelete"" = false
-				AND ""Status"" = {(int)PostStatus.PUBLIC}
-            ) AS ranked_posts
-            WHERE (""Type"" = 0 AND type_rank <= @feed)
-               OR (""Type"" = 1 AND type_rank <= @story)
-               OR (""Type"" = 2 AND type_rank <= @comic)
-        ),
-        grouped_posts AS (
-           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
-                  (ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) - 1) % 20 + 1 AS group_number,
-                  RANDOM() AS random_order
-           FROM latest_posts
-        )
-        SELECT ""Id"", ""Type"", ""CreatedDate"", group_number, ""HashId""
-        FROM grouped_posts
-        ORDER BY group_number, random_order;
+                      WITH ranked_posts AS (
+          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+              ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS type_rank
+          FROM ""Posts""
+          WHERE ""Type"" IN (0, 1, 2)
+          AND ""IsDelete"" = false
+          AND ""Status"" = {(int)PostStatus.PUBLIC}
+         ),
+         limited_posts AS (
+          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
+          FROM ranked_posts
+          WHERE (""Type"" = 0 AND type_rank <= @feed)
+             OR (""Type"" = 1 AND type_rank <= @story)
+             OR (""Type"" = 2 AND type_rank <= @comic)
+         ),
+         numbered_posts AS (
+          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+              ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS num
+          FROM limited_posts
+         ),
+         grouped_posts AS (
+          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+              CEILING(CAST(num AS FLOAT) / 
+              CASE
+               WHEN ""Type"" = 0 THEN @feedPercent *10
+               WHEN ""Type"" = 1 THEN @storyPercent *10
+               WHEN ""Type"" = 2 THEN @comicPercent *10
+              END) AS group_number
+          FROM numbered_posts
+         ),
+         final_grouped_posts AS (
+          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number,
+              ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY RANDOM())  AS random_row_num
+          FROM grouped_posts
+         )
+         SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number
+         FROM final_grouped_posts
+         WHERE random_row_num <= 10
+         ORDER BY group_number, random_row_num;
 
-		[GetTotalCount]";
+          [GetTotalCount]";
             }
         }
 
@@ -964,32 +980,50 @@ sp.""IsEnableComment""
             get
             {
                 return $@"
-                     WITH latest_posts AS (
-                           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
-                           FROM (
-               SELECT p.""Id"", p.""Type"", p.""CreatedDate"", p.""HashId"",
-               ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedDate"" DESC) AS type_rank
-                FROM ""Posts"" p
-				LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""				
-				LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
-                WHERE ""Type"" IN (0, 1, 2)
-				AND t.""Name"" ILIKE @ExactKeyword  
-				AND p.""IsDelete"" = false
-				AND p.""Status"" = {(int)PostStatus.PUBLIC}
-            ) AS ranked_posts
-            WHERE (""Type"" = 0 AND type_rank <= @feed)
+                     WITH ranked_posts AS (
+    SELECT p.""Id"", p.""Type"", p.""CreatedDate"", p.""HashId"",
+           ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedDate"" DESC) AS type_rank
+    FROM ""Posts"" p
+LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""				
+LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+    WHERE ""Type"" IN (0, 1, 2)
+    AND t.""Name"" ILIKE @ExactKeyword   
+    AND p.""IsDelete"" = false
+    AND p.""Status"" = 1
+),
+limited_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
+    FROM ranked_posts
+     WHERE (""Type"" = 0 AND type_rank <= @feed)
                OR (""Type"" = 1 AND type_rank <= @story)
                OR (""Type"" = 2 AND type_rank <= @comic)
-        ),
-        grouped_posts AS (
-           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
-                  (ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) - 1) % 20 + 1 AS group_number,
-                  RANDOM() AS random_order
-           FROM latest_posts
-        )
-        SELECT ""Id"", ""Type"", ""CreatedDate"", group_number, ""HashId""
-        FROM grouped_posts
-        ORDER BY group_number, random_order;
+),
+numbered_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+           ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS num
+    FROM limited_posts
+),
+grouped_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+           CEIL(num / CASE
+          WHEN ""Type"" = 0 THEN @feedPercent *10
+               WHEN ""Type"" = 1 THEN @storyPercent *10
+               WHEN ""Type"" = 2 THEN @comicPercent *10
+           END) AS group_number
+    FROM numbered_posts
+),
+final_grouped_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number,
+           ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY RANDOM()) AS random_row_num
+    FROM grouped_posts
+)
+SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number
+FROM final_grouped_posts
+WHERE random_row_num <= 10
+ORDER BY group_number, random_row_num;
+
+
+;
 		
 		[GetTotalCount]
 		";
@@ -1052,6 +1086,47 @@ sp.""IsEnableComment""
                         WHERE NOT nt.""Id"" = ANY(@postRandomIds)
                         LIMIT @numOfItem
                  ";
+            }
+        }
+        private string GetPostDetailsQuery
+        {
+            get
+            {
+                return @"
+                SELECT 
+                    p.""Id"",
+                    p.""ThumbnailUrl"",
+					p.""Type"",
+                    p.""Body"",
+                    p.""Title"",
+                    p.""AuthorId"",
+                    p.""AuthorName"",
+                    p.""ViewCount"",
+					p.""IsMature"",
+					p.""CreatedDate"",
+                    to_jsonb(array_agg(distinct (sp.*)))AS ""SubPosts"",
+				     to_json(array_agg(distinct (t.""Name""))) AS ""Tags""
+                FROM ""Posts"" p
+                LEFT JOIN ""TagPosts"" tp ON p.""Id"" = tp.""PostId""
+                LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id""
+                LEFT JOIN (
+                    SELECT ""PostId"",
+                           ""Title"",
+                           ""Order"",
+                           ""CreatedDate"",
+                           ROW_NUMBER() OVER (PARTITION BY ""PostId"" ORDER BY ""Order"" desc) AS rn
+                    FROM ""SubPosts""
+					WHERE ""IsDelete"" = false
+                ) sp ON p.""Id"" = sp.""PostId"" AND sp.rn <= 2 
+                WHERE p.""HashId"" = ANY(@HashIds)
+                GROUP BY  p.""Id"",
+						  p.""ThumbnailUrl"",
+						  p.""Body"",
+						  p.""Title"",
+						  p.""AuthorId"",
+						  p.""AuthorName"",
+						  p.""ViewCount""
+            ";
             }
         }
     }
