@@ -424,7 +424,7 @@ LIMIT @PageSize
 							) sp ON sp.""PostId"" = p.""Id""
 						LEFT JOIN LATERAL
 							(
-								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",sp.""HashId"",""Width"",""Height"",sp.""Order""
 							 	FROM ""Resources"" 
 							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1

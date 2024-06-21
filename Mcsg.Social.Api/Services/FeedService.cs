@@ -327,7 +327,46 @@ namespace Mcsg.Social.Api.Services
 
             return MappingFeedRespone(dbFeed, sound);
         }
-
+        public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res)
+        {
+            var itemResponse = new FeedBoxResponse()
+            {
+                ThumbnailUrl = res.ThumbnailUrl,
+                Body = System.Web.HttpUtility.HtmlDecode(res.Body),
+                CreatedDate = res.CreatedDate,
+                HashId = res.HashId,
+                Id = res.Id,
+                ProfileId = res.ProfileId,
+                UserId = res.UserId,
+                MetaData = res.MetaData,
+                TotalResources = res.TotalResources,
+                UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar),
+                FullName = res.FullName,
+                Resources = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
+                Type = res.Type,
+            };
+            if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
+            {
+                itemResponse.Resources = new List<ResourceResponse>();
+                var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources);
+                foreach (var resourceResponse in resourceResponses)
+                {
+                    if (resourceResponse != null)
+                    {
+                        if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
+                        {
+                            resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
+                        }
+                        else
+                        {
+                            resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
+                        }
+                        itemResponse.Resources.Add(resourceResponse);
+                    }
+                }
+            }
+            return itemResponse;
+        }
         public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
         {
             var param = new { HashIds = hashIds.Split(',').ToList() };
@@ -339,25 +378,7 @@ namespace Mcsg.Social.Api.Services
 
                 foreach (var res in result)
                 {
-                    var feedDetails = new FeedBoxResponse
-                    {
-                        ThumbnailUrl = res.ThumbnailUrl,
-                        Body = System.Web.HttpUtility.HtmlDecode(res.Body),
-                        CreatedDate = res.CreatedDate,
-                        HashId = res.HashId,
-                        Id = res.Id,
-                        ProfileId = res.ProfileId,
-                        UserId = res.UserId,
-                        MetaData = res.MetaData,
-                        TotalResources = res.TotalResources,
-                        UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar),
-                        FullName = res.FullName,
-                        SubPosts = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<SubPostResponse>>(res.SubPosts.ToString()) : new List<SubPostResponse>(),
-                        Resources = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
-                        Type = res.Type,
-                    };
-
-                    listFeedDetails.Add(feedDetails);
+                    listFeedDetails.Add(MappingFeedBoxResponse(res));
                 }
 
                 return listFeedDetails;
