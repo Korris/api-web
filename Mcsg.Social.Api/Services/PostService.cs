@@ -1026,8 +1026,11 @@ namespace Mcsg.Social.Api.Services
 
                 foreach (var res in result)
                 {
-                    var chapters = JsonConvert.DeserializeObject<List<SubPostDto>>(res.SubPosts.ToString());
-                    chapters.Reverse();
+                    var chapters = res.SubPosts != null ? JsonConvert.DeserializeObject<List<SubPostDto>>(res.SubPosts.ToString()) : new List<SubPostDto>();
+                    if (chapters != null && chapters.Count > 0)
+                    {
+                        chapters.Reverse();
+                    }
                     var postDetails = new PostBoxResponse
                     {
                         Id = res.Id,
@@ -1038,7 +1041,7 @@ namespace Mcsg.Social.Api.Services
                         AuthorId = res.AuthorId,
                         AuthorName = res.AuthorName,
                         ViewCount = res.ViewCount,
-                        Tags = JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()),
+                        Tags = res.Tags != null ? JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()) : new List<string>(),
                         Chapters = chapters,
                         ChapterCount = res.ChapterCount,
                         Type = res.Type,

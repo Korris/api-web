@@ -342,7 +342,7 @@ namespace Mcsg.Social.Api.Services
                     var feedDetails = new FeedBoxResponse
                     {
                         ThumbnailUrl = res.ThumbnailUrl,
-                        Body = res.Body,
+                        Body = System.Web.HttpUtility.HtmlDecode(res.Body),
                         CreatedDate = res.CreatedDate,
                         HashId = res.HashId,
                         Id = res.Id,
