@@ -110,11 +110,11 @@ namespace Mcsg.Social.Api.Services
             var rewards = await CheckRewardsForPost(currentUserId, type);
 
             var hashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
-            var safePlainString = "";
-            if (!string.IsNullOrEmpty(comicPostReq.Summary))
-            {
-                safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
-            }
+            //var safePlainString = "";
+            //if (!string.IsNullOrEmpty(comicPostReq.Summary))
+            //{
+            //    safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
+            //}
 
             var post = new Post()
             {
@@ -124,7 +124,7 @@ namespace Mcsg.Social.Api.Services
                 UserId = currentUserId,
                 AuthorId = comicPostReq.IsCurrentUserIsAuthor ? currentUserId : null,
                 AuthorName = comicPostReq.IsCurrentUserIsAuthor ? currentFullName : comicPostReq.AuthorName,
-                Body = safePlainString,
+                Body = comicPostReq.Summary,
                 ThumbnailUrl = comicPostReq.ThumbnailUrl,
                 CoverUrl = comicPostReq.CoverUrl,
                 IsMature = comicPostReq.IsMature,
@@ -756,14 +756,12 @@ namespace Mcsg.Social.Api.Services
             {
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
             }
-            var safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
 
             post.Title = comicPostReq.Title;
-
             post.HashId = hashId;
             post.AuthorId = comicPostReq.IsCurrentUserIsAuthor ? currentUserId : null;
             post.AuthorName = comicPostReq.IsCurrentUserIsAuthor ? currentFullName : comicPostReq.AuthorName;
-            post.Body = safePlainString;
+            post.Body = comicPostReq.Summary;
             post.ThumbnailUrl = comicPostReq.ThumbnailUrl;
             post.CoverUrl = comicPostReq.CoverUrl;
             post.IsMature = comicPostReq.IsMature;
@@ -839,7 +837,7 @@ namespace Mcsg.Social.Api.Services
                 Permission = item.Permission,
                 Status = item.Status,
                 Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
-                Body = System.Web.HttpUtility.HtmlDecode(item.Body),
+                Body = item.Body,
                 Chapters = item.Chapters,
                 ChapterCount = totalChapters,
                 ViewCount = item.ViewCount + totalChapterView,
