@@ -6,6 +6,7 @@ namespace Mcsg.Social.Api.Models
     {
         public List<SubPostResponse>? SubPosts { get; set; } = new List<SubPostResponse>();
         public List<ResourceResponse>? Resources { get; set; } = new List<ResourceResponse>();
+        public MetaDataResponse? MetaData { get; set; }
 
     }
 
@@ -13,6 +14,7 @@ namespace Mcsg.Social.Api.Models
     {
         public string? SubPosts { get; set; }
         public string? Resources { get; set; }
+        public string? MetaDatas { get; set; }
     }
 
     public class FeedBox
@@ -27,7 +29,6 @@ namespace Mcsg.Social.Api.Models
         public string? ProfileId { get; set; }
         public string? ThumbnailUrl { get; set; }
         public int TotalResources { get; set; }
-        public MetaDataResponse? MetaData { get; set; }
         public PostType Type { get; set; }
     }
 }

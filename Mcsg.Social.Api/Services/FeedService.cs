@@ -338,30 +338,33 @@ namespace Mcsg.Social.Api.Services
                 Id = res.Id,
                 ProfileId = res.ProfileId,
                 UserId = res.UserId,
-                MetaData = res.MetaData,
+                MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataResponse>(res.MetaDatas) : null,
                 TotalResources = res.TotalResources,
-                UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar),
+                UserAvatar = res.UserAvatar != null ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar) : null,
                 FullName = res.FullName,
-                Resources = res.TotalResources > 0 ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
+                Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
                 Type = res.Type,
             };
             if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
             {
                 itemResponse.Resources = new List<ResourceResponse>();
                 var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources);
-                foreach (var resourceResponse in resourceResponses)
+                if (resourceResponses != null && resourceResponses.Any())
                 {
-                    if (resourceResponse != null)
+                    foreach (var resourceResponse in resourceResponses)
                     {
-                        if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
+                        if (resourceResponse != null)
                         {
-                            resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
+                            if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
+                            {
+                                resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
+                            }
+                            else
+                            {
+                                resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
+                            }
+                            itemResponse.Resources.Add(resourceResponse);
                         }
-                        else
-                        {
-                            resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
-                        }
-                        itemResponse.Resources.Add(resourceResponse);
                     }
                 }
             }

@@ -409,7 +409,12 @@ LIMIT @PageSize
 						p.""CreatedDate"",
 						sp.""Total"" as TotalResources,
 						to_jsonb(array_agg(sp.*)) AS ""SubPosts"",
-						to_jsonb(array_agg(spr.*)) AS ""Resources""
+						to_jsonb(array_agg(spr.*)) AS ""Resources"",
+						jsonb_build_object('Description', md.""Description"",
+										   'Title', md.""Title"",
+										   'Url', md.""Url"",
+										   'Domain', md.""Domain""
+											) AS ""MetaDatas""						
 						FROM ""Posts"" p
 						LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
 						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
@@ -433,7 +438,11 @@ LIMIT @PageSize
 						WHERE 
 						p.""HashId"" = ANY(@HashIds) AND p.""IsDelete"" = false 
 						GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
-						p.""UserId"",u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""CreatedDate"",TotalResources
+								p.""UserId"",u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""CreatedDate"",TotalResources,
+								md.""Description"",
+								md.""Title"",
+								md.""Url"",
+								md.""Domain""
 						";
             }
         }
