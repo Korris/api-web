@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Social.Api", "Mcsg.Soc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Job", "Mcsg.Function.Job\Mcsg.Function.Job.csproj", "{19732DD6-A7BD-4BF2-8D4E-6E2D1DB92F9B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Media", "Mcsg.Function.Media\Mcsg.Function.Media.csproj", "{BCF08E59-93BE-497F-98FD-3E7B974654C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Media.Api", "Mcsg.Media.Api\Mcsg.Media.Api.csproj", "{BCF08E59-93BE-497F-98FD-3E7B974654C8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Identity.Api", "Mcsg.Identity.Api\Mcsg.Identity.Api.csproj", "{9F2DCF1D-99DC-4399-B321-31684EA8C706}"
 EndProject

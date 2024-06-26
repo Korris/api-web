@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Mcsg.Function.Media.Controllers;
+namespace Mcsg.Media.Api.Controllers;
 
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;

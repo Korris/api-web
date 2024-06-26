@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace Mcsg.Function.Media;
+namespace Mcsg.Media.Api;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;

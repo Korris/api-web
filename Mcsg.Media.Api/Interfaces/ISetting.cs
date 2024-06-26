@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Function.Media.Interfaces;
+﻿namespace Mcsg.Media.Api.Interfaces;
 
 using Common.SeedWork.Interfaces;
 
