@@ -198,7 +198,7 @@ namespace Mcsg.Social.Api.Services
                 foreach (var item in items)
                 {
                     item.UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar);
-                    item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? UrlHelper.GetMediaPath(_fileSetting.MediaUrl, item.ResourceName, item.ResourceUrl) : "";
+                    item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, item.ResourceName, item.ResourceUrl) : "";
                     if (mentions != null && mentions.Any())
                     {
                         var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();

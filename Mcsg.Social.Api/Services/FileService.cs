@@ -128,7 +128,7 @@ namespace Mcsg.Social.Api.Services
                 HashId = hashId,
                 Title = Path.GetFileNameWithoutExtension(fileTitle),
                 Name = hashFileName,
-                Url = UrlHelper.CreateMediaUrl(tempBlobName, _fileSetting.MediaEncryptKey),
+                Url = UrlHelper.CreateMediaUrl(tempBlobName, _setting.Minio.MediaEncryptKey),
                 ShareUrl = shareUrl,
                 Type = file.IsImageType() ? ResourceType.IMAGE : ResourceType.VIDEO,
                 CreatedBy = currentUser.UserId,
@@ -286,7 +286,7 @@ namespace Mcsg.Social.Api.Services
                     }
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
+                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
 
                     var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
                     resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
@@ -363,7 +363,7 @@ namespace Mcsg.Social.Api.Services
                     }
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _fileSetting.MediaEncryptKey);
+                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
 
                     var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
                     resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
