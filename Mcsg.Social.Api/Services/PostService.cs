@@ -424,7 +424,7 @@ namespace Mcsg.Social.Api.Services
 
                 var offset = request.PageSize * (request.PageNumber - 1);
 
-                string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false ";
+                string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
                 var tags = await _tagService.GetTagsByPostIdAsync(post.Id);
                 var tagIds = new List<Guid>();
                 if (tags != null && tags.Any())
@@ -457,7 +457,8 @@ namespace Mcsg.Social.Api.Services
                             LastWeek = (DateTime.UtcNow.AddDays(-7)),
                             PostStatus = (int)PostStatus.PUBLIC,
                             TagIds = tagIds,
-                            AuthorId = post.CreatedBy.Value
+                            AuthorId = post.CreatedBy.Value,
+                            HashId = request.HashId
                         });
 
                 var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
