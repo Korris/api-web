@@ -227,7 +227,7 @@ public class StorageMinio : StorageStrategy
             ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
 
             _mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location);
-            if (_auth.WithSSL)
+            if (_auth.PublicUrl.Contains("https"))
             {
                 _mc.WithSSL();
             }
