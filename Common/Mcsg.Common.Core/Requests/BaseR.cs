@@ -75,25 +75,13 @@ public abstract class BaseR : IRequest<SingleResponse>
     /// Current UserName logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public string? CurrentUserName
-    {
-        get
-        {
-            return _hc?.User.Identity?.Name;
-        }
-    }
+    public string? CurrentUserName => _hc?.User.Identity?.Name;
 
     /// <summary>
     /// Current UserId logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public ulong? CurrentUserId
-    {
-        get
-        {
-            return Payload?.RootElement.GetProperty("id").GetUInt64();
-        }
-    }
+    public ulong? CurrentUserId => Payload?.RootElement.GetProperty("id").GetUInt64();
 
     /// <summary>
     /// The folder name is stored in MinIO
@@ -187,13 +175,7 @@ public abstract class BaseR : IRequest<SingleResponse>
     /// Action time
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public DateTime ActionTime
-    {
-        get
-        {
-            return DateTime.UtcNow.AddMinutes(-TimezoneOffset);
-        }
-    }
+    public DateTime ActionTime => DateTime.UtcNow.AddMinutes(-TimezoneOffset);
 
     /// <summary>
     /// Timezone
