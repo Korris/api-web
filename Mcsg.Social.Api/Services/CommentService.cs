@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Extensions;
     using DTOs;
     using Enums;
     using Extensions;
@@ -216,6 +217,9 @@ namespace Mcsg.Social.Api.Services
 
         public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input)
         {
+            var methodName = $"{typeof(CommentService).FullName}.{nameof(GetCommentWithMostReaction)}";
+            $"{methodName} ->Begin".LogInfor();
+
             if (string.IsNullOrWhiteSpace(input.HashPostId))
             {
                 return new CommentPagedResults<MostReactionCommentResponse>(0);
@@ -232,13 +236,14 @@ namespace Mcsg.Social.Api.Services
                    Offset = offset
                });
             var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
-
+            $"{methodName} ->items".LogInfor();
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             if (items != null && items.Count() > 0)
             {
                 var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
 
+                $"{methodName} ->foreach".LogInfor();
                 foreach (var item in items)
                 {
                     item.UserAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar);
@@ -250,14 +255,21 @@ namespace Mcsg.Social.Api.Services
                         item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                     }
                 }
+                $"{methodName} -|foreach".LogInfor();
+
                 results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
                 results.Items = items;
+                $"{methodName} ->results".LogInfor();
                 results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = input.HashPostId });
+                $"{methodName} ->results.TotalComments={results.TotalComments}".LogInfor();
             }
             else
             {
                 results = new CommentPagedResults<MostReactionCommentResponse>(0);
             }
+
+            $"{methodName} -|End".LogInfor();
+
             return results;
         }
 
