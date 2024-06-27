@@ -6,6 +6,7 @@ namespace Mcsg.Media.Api.Controllers;
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
+using Lib.Common.Constants;
 using Lib.Common.Helpers;
 
 /// <summary>
@@ -53,6 +54,7 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
+        objectName = $"{BlobStorageDefinition.MediaContainer}/{objectName}";
         var ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {

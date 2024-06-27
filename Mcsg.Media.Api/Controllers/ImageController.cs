@@ -60,6 +60,7 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
+            objectName = $"{BlobStorageDefinition.MediaContainer}/{objectName}";
             ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         }
 
