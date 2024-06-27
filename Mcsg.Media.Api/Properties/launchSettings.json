@@ -14,7 +14,7 @@
             "dotnetRunMessages": true,
             "launchBrowser": true,
             "launchUrl": "swagger",
-            "applicationUrl": "http://localhost:54304",
+            "applicationUrl": "http://localhost:54304;http://ntata.debug:54304",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
