@@ -1,22 +1,21 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Web;
 
-namespace Mcsg.Media.Tool.Actions
+namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Interfaces;
-    using Features;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Helpers;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Models;
-    using Workers;
 
     internal class ConvertVideoWorker : BaseWorker, IWorker
     {
         private const string TARGET = ".mp4";
-        public ConvertVideoWorker(IConfiguration configuration, IStorageClient sc) : base(configuration, sc) { }
+
+        public ConvertVideoWorker(ISetting setting, IStorageClient sc) : base(setting, sc) { }
 
         public void Execute(Job jobInfo)
         {
@@ -29,7 +28,7 @@ namespace Mcsg.Media.Tool.Actions
                 {
                     // load resource
                     var resourceInfo = JsonConvert.DeserializeObject<Resource>(jobInfo.Data);
-                    var url = CryptoHelper.Decrypt(HttpUtility.UrlDecode(resourceInfo.Url), EncryptKey);
+                    var url = CryptoHelper.Decrypt(HttpUtility.UrlDecode(resourceInfo.Url), _setting.Minio.MediaEncryptKey);
                     var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
 
                     var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
@@ -54,10 +53,10 @@ namespace Mcsg.Media.Tool.Actions
                         await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
                         //correct resource table
-                        var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, EncryptKey));
+                        var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, _setting.Minio.MediaEncryptKey));
 
                         var objectName = $"{MediaContainer}/{newUrl}";
-                        var shareUrl = await _sc.Strategy.PresignedGetObject(objectName, _expiryInSeconds, null);
+                        var shareUrl = await _sc.Strategy.PresignedGetObject(objectName, _setting.Minio.MaxExpiryInSeconds, null);
 
                         await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE, endCodenewUrl, shareUrl);
                     }
@@ -91,7 +90,7 @@ namespace Mcsg.Media.Tool.Actions
                             TargetType = NotificationTargetType.Feed
                         };
 
-                        await NotiService.AddVideoNotificationAsync(notiReq);
+                        await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Realtime);
                     }
                 }
                 catch (Exception ex)

@@ -1,20 +1,16 @@
-﻿using Mcsg.Lib.Common.Helpers;
-using Mcsg.Media.Tool.Models;
-using Microsoft.Extensions.Configuration;
-
-namespace Mcsg.Media.Tool.Services
+﻿namespace Mcsg.Media.Tool.Services
 {
+    using Lib.Common.Helpers;
+    using Models;
+
     public class NotificationService
     {
-        private readonly IConfiguration _configuration;
-        public NotificationService(IConfiguration configuration)
+        public NotificationService()
         {
-            _configuration = configuration;
         }
 
-        public async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req)
+        public async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req, string baseUrl)
         {
-            var baseUrl = _configuration["RealTimeServiceSettings:BaseUrl"];
             var urlBuilder = new System.Text.StringBuilder();
             urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");
 

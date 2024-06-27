@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Lib.Model.Enums;
-using Mcsg.Lib.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Api.Interfaces;
+    using Constants;
+    using Extensions;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Extensions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+    using Lib.Model.Enums;
+    using Lib.Model.Models;
+    using Models.Earning;
+
     public interface IAffiliateService
     {
         Task<EarningDataModel> GetSaleAffiliateAsync(Guid userId, DateTime? date = null);
@@ -29,17 +31,20 @@ namespace Mcsg.Social.Api.Services
         private IConfiguration _configuration;
         private readonly ILogger<WalletService> _logger;
         private readonly IMapper _mapper;
+
         public AffiliateService(WalletDbContext walletDbContext
             , ICurrentUserService currentUserService
             , IConfiguration configuration
             , ILogger<WalletService> logger
-            , IMapper mapper)
+            , IMapper mapper
+            , ISetting setting)
         {
             _walletDbContext = walletDbContext;
             _currentUserService = currentUserService;
             _configuration = configuration;
             _logger = logger;
             _mapper = mapper;
+            _setting = setting;
         }
         public async Task<EarningDataModel> GetSaleAffiliateAsync(Guid userId, DateTime? date = null)
         {
@@ -96,7 +101,7 @@ namespace Mcsg.Social.Api.Services
                 EntityType = (AffiliateEntityType)Enum.Parse(typeof(AffiliateEntityType), req.Type, true)
             };
 
-            affiliateCode = data.ToAffiliateCode(_configuration);
+            affiliateCode = data.ToAffiliateCode(_setting.Minio.MediaEncryptKey);
 
             return affiliateCode;
         }
@@ -276,5 +281,14 @@ namespace Mcsg.Social.Api.Services
 
             return monthData;
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

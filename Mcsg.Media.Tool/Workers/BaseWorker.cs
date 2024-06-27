@@ -1,39 +1,30 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
+    using Interfaces;
     using Models;
     using Services;
 
     internal abstract class BaseWorker
     {
-        protected List<WorkerPoolItem> Pools { get; }
-        protected DbService DbService { get; }
-        protected NotificationService NotiService { get; }
-        protected IConfiguration Configuration { get; }
-        protected string StorageAccountName { get; }
-        protected const string MediaContainer = "media";
-
-        public BaseWorker(IConfiguration configuration, IStorageClient sc)
+        public BaseWorker(ISetting setting, IStorageClient sc)
         {
-            Configuration = configuration;
-            DbService = new DbService(configuration["ConnectionStrings:DefaultConnection"]);
-            StorageAccountName = configuration["ConnectionStrings:StorageAccountName"];
-            Pools = new List<WorkerPoolItem>();
-            NotiService = new NotificationService(configuration);
+            _setting = setting;
             _sc = sc;
+
+            DbService = new DbService(setting.DefaultConnection);
+            Pools = new List<WorkerPoolItem>();
+            NotiService = new NotificationService();
         }
 
         public void AddToPools(Guid id, Task task)
         {
             Pools.Add(new WorkerPoolItem { Id = id, Task = task });
         }
-
-        public int PoolSize => int.Parse(Configuration["AppSettings:PoolSize"]);
 
         public async Task<string> DownloadBlobAsync(string path, Guid resourceId)
         {
@@ -66,8 +57,6 @@ namespace Mcsg.Media.Tool.Workers
 
             fileStream.Close();
         }
-
-        public string EncryptKey => Configuration["AppSettings:EncryptKey"];
 
         public void RunFFmeg(string exepath, string input, string output, string command)
         {
@@ -111,7 +100,7 @@ namespace Mcsg.Media.Tool.Workers
 
         public bool HasAvailableSlot()
         {
-            return Pools.Count() < PoolSize;
+            return Pools.Count() < _setting.PoolSize;
         }
 
         public void CleanupPool()
@@ -129,14 +118,22 @@ namespace Mcsg.Media.Tool.Workers
         #region -- Fields --
 
         /// <summary>
+        /// Setting
+        /// </summary>
+        protected readonly ISetting _setting;
+
+        /// <summary>
         /// Storage client
         /// </summary>
         protected readonly IStorageClient _sc;
 
-        /// <summary>
-        /// 7 days
-        /// </summary>
-        protected readonly int _expiryInSeconds = 7 * 24 * 60 * 60; // 7 days
+        protected List<WorkerPoolItem> Pools { get; }
+
+        protected DbService DbService { get; }
+
+        protected NotificationService NotiService { get; }
+
+        protected const string MediaContainer = "media";
 
         #endregion
     }

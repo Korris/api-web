@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace Mcsg.Media.Tool
 {
-    using Actions;
     using Common.Core.Interfaces;
-    using Features;
+    using Interfaces;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Workers;
@@ -16,12 +14,12 @@ namespace Mcsg.Media.Tool
         private readonly DbService _dbService;
         private readonly ConcurrentQueue<Job> _jobQueue = new();
 
-        public WorkDistributor(IConfiguration configuration, IStorageClient sc)
+        public WorkDistributor(ISetting setting, IStorageClient sc)
         {
-            _dbService = new DbService(configuration["ConnectionStrings:DefaultConnection"]);
+            _dbService = new DbService(setting.DefaultConnection);
             _sc = sc;
 
-            LoadWorker(configuration);
+            LoadWorker(setting);
             LoadActiveJobs();
             TrytoCleanupWorkerPool();
         }
@@ -53,12 +51,12 @@ namespace Mcsg.Media.Tool
             }
         }
 
-        private void LoadWorker(IConfiguration configuration)
+        private void LoadWorker(ISetting setting)
         {
             _workers = new Dictionary<JobType, IWorker>
             {
-                { JobType.ConvertVideo, new ConvertVideoWorker(configuration,_sc) },
-                { JobType.ConvertAudio, new ConvertAudioWorker(configuration,_sc) }
+                { JobType.ConvertVideo, new ConvertVideoWorker(setting, _sc) },
+                { JobType.ConvertAudio, new ConvertAudioWorker(setting, _sc) }
             };
         }
 

@@ -61,7 +61,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempBlobName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _configuration["FileSettings:MediaEncryptKey"]);
+                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
                     //resource.SubPostId = Guid.Empty;
                     await _resourceRepository.UpdateAsync(resource);
                 }

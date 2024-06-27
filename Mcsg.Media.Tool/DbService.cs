@@ -1,12 +1,13 @@
 ﻿using Dapper;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Media.Tool.Models;
 using Npgsql;
 using System.Collections.Concurrent;
 
 namespace Mcsg.Media.Tool
 {
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Models;
+
     internal class DbService
     {
         private readonly string _connectionString;

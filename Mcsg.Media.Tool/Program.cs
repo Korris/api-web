@@ -23,25 +23,17 @@ internal class Program
     {
         var configurationBuilder = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddXmlFile("appsettings.xml", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .AddCommandLine(args);
-
-        IConfiguration configuration = configurationBuilder.Build();
-
-        string appName = configuration["AppSettings:AppName"];
-        string appVersion = configuration["AppSettings:AppVersion"];
-        Console.WriteLine($"{appName} - v{appVersion}");
 
         // Load settings from the environment
         var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = _prefix;
 
-        // Load connection string appsettings.xml
-        var cs = configuration["ConnectionStrings:DefaultConnection"];
-
         // Update connection string
-        configuration["ConnectionStrings:DefaultConnection"] = cs.SetDbParams(st.Db);
+        st.DefaultConnection = st.DefaultConnection.SetDbParams(st.Db);
+
+        Console.WriteLine($"{st.AppName} - v{st.AppVersion}");
 
         var services = new ServiceCollection();
 
@@ -59,7 +51,7 @@ internal class Program
         var serviceProvider = services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();
 
-        await new WorkDistributor(configuration, sc).Run();
+        await new WorkDistributor(st, sc!).Run();
         Console.ReadLine();
     }
 

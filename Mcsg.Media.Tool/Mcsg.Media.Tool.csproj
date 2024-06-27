@@ -13,13 +13,4 @@
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Update="appsettings.xml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="ffmpeg.exe">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
 </Project>

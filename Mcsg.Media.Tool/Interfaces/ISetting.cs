@@ -15,5 +15,25 @@ public interface ISetting : ISettingBase
     /// </summary>
     ApiDto Api { get; }
 
+    /// <summary>
+    /// AppName
+    /// </summary>
+    string AppName { get; }
+
+    /// <summary>
+    /// AppVersion
+    /// </summary>
+    string AppVersion { get; }
+
+    /// <summary>
+    /// PoolSize
+    /// </summary>
+    int PoolSize { get; }
+
+    /// <summary>
+    /// Default connection
+    /// </summary>
+    string DefaultConnection { get; set; }
+
     #endregion
 }

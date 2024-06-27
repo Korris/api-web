@@ -16,6 +16,26 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public ApiDto Api { get; }
 
+    /// <summary>
+    /// AppName
+    /// </summary>
+    public string AppName { get; }
+
+    /// <summary>
+    /// AppVersion
+    /// </summary>
+    public string AppVersion { get; }
+
+    /// <summary>
+    /// PoolSize
+    /// </summary>
+    public int PoolSize { get; }
+
+    /// <summary>
+    /// Default connection
+    /// </summary>
+    public string DefaultConnection { get; set; }
+
     #endregion
 
     #region -- Methods --
@@ -26,6 +46,10 @@ public class Setting : SettingBase, ISetting
     public Setting()
     {
         Api = new ApiDto();
+        AppName = "Mcsg.Media.Tool";
+        AppVersion = "1.0.0";
+        PoolSize = 5;
+        DefaultConnection = "Server={DbServer};Database={DbName};Port={DbPort};User Id={DbUser};Password={DbPassword};";
     }
 
     #endregion

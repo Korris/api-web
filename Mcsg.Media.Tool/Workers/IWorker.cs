@@ -1,6 +1,6 @@
 ﻿using Mcsg.Lib.Data.Domain.Entities;
 
-namespace Mcsg.Media.Tool.Features
+namespace Mcsg.Media.Tool.Workers
 {
     internal interface IWorker
     {
