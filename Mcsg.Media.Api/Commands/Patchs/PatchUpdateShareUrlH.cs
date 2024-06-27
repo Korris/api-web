@@ -49,8 +49,17 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
                 continue;
             }
 
+            var mediaContainer = $"{BlobStorageDefinition.MediaContainer}/";
             url = CryptoHelper.Decrypt(url, _setting.Minio.MediaEncryptKey);
-            resource.ShareUrl = $"{BlobStorageDefinition.MediaContainer}/{url}";
+
+            // Remove duplicates
+            if (url.Contains(mediaContainer))
+            {
+                url = url.Replace(mediaContainer, "");
+                resource.Url = UrlHelper.CreateMediaUrl(url, _setting.Minio.MediaEncryptKey);
+            }
+
+            resource.ShareUrl = $"{mediaContainer}{url}";
         }
 
         await _context.SaveChangesAsync();
