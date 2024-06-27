@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Dapper;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
@@ -41,13 +40,12 @@ namespace Mcsg.Social.Api.Services
         private readonly IRepository<PostCommentReaction> _postCommentRepository;
         private readonly IRepository<SubPostCommentReaction> _subPostCommentRepository;
         private readonly IMapper _mapper;
-        private readonly RealTimeServiceSetting _realTimeServiceSetting;
         private IConfiguration _configuration;
+
         public NotificationService(ICurrentUserService currentUserService
             , IUnitOfWork unitOfWork
             , IMapper mapper
             , IConfiguration configuration
-            , IOptionsMonitor<RealTimeServiceSetting> realTimeServiceSetting
             , IRepository<PostReaction> postReacRepository
             , IRepository<SubPostReaction> subPostReacRepository
             , IRepository<PostCommentReaction> postCommentRepository
@@ -60,7 +58,6 @@ namespace Mcsg.Social.Api.Services
             _userRepository = unitOfWork.GetRepository<User>();
             _postRepository = unitOfWork.GetRepository<Post>();
             _mapper = mapper;
-            _realTimeServiceSetting = realTimeServiceSetting.CurrentValue;
             _configuration = configuration;
             _postReacRepository = postReacRepository;
             _subPostReacRepository = subPostReacRepository;
@@ -185,7 +182,7 @@ namespace Mcsg.Social.Api.Services
                 throw new NotFoundException(ErrorCodes.QueryEmpty, ErrorCodes.QueryEmpty);
             }
 
-            notification.Status = Lib.Data.Enums.NotificationStatus.Read;
+            notification.Status = NotificationStatus.Read;
             notification.LastModifiedDate = DateTime.UtcNow;
             notification.LastModifiedBy = currentUser.UserId;
 
@@ -194,7 +191,7 @@ namespace Mcsg.Social.Api.Services
 
         public async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req)
         {
-            var baseUrl = _realTimeServiceSetting.BaseUrl;
+            var baseUrl = _setting.Api.Realtime;
             var urlBuilder = new System.Text.StringBuilder();
             urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");
 
@@ -216,7 +213,7 @@ namespace Mcsg.Social.Api.Services
         }
         public async Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req)
         {
-            var baseUrl = _realTimeServiceSetting.BaseUrl;
+            var baseUrl = _setting.Api.Realtime;
             var urlBuilder = new System.Text.StringBuilder();
             urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/reaction");
 

@@ -1,45 +1,48 @@
 ﻿using HD.ZaloPay.Helper.Crypto;
-using Mcsg.Lib.Common.Web.RealTime.Services;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Models.RealTime;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Constants;
-using Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Request;
-using Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Constants;
+    using Lib.Common.Extensions;
+    using Lib.Common.Helpers;
+    using Lib.Common.Models;
+    using Lib.Common.Models.RealTime;
+    using Lib.Common.Web.RealTime.Services;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+    using Mcsg.Wallet.Api.Interfaces;
+    using Models._3rdClass.ZaloPay.Request;
+    using Models._3rdClass.ZaloPay.Response;
+
     public interface IZaloPayService
     {
         Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status);
         Task<CreateOrderResponse> CreateOrderAsync(Guid transactionId, string content, float amount, Guid? userId, string redirectUrl);
         Task<QueryZalopayPayResponse> QueryOrderAsync(Guid transactionId);
     }
+
     public class ZaloPayService : IZaloPayService
     {
         private readonly ZaloPaySetting _zaloPaySetting;
         private readonly ISignalRService _signalRService;
         private readonly WalletDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IConfiguration _configuration;
+
         public ZaloPayService(WalletDbContext walletDbContext,
             ICurrentUserService currentUserService,
             ISignalRService signalRService,
             IOptions<ZaloPaySetting> zaloPaySettingOptions,
-            IConfiguration configuration)
+            ISetting setting)
         {
             _dbContext = walletDbContext;
             _currentUserService = currentUserService;
             _signalRService = signalRService;
             _zaloPaySetting = zaloPaySettingOptions.Value;
-            _configuration = configuration;
+            _setting = setting;
         }
 
         public async Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status)
@@ -172,7 +175,7 @@ namespace Mcsg.Wallet.Api.Services
 
         private async Task<bool> AddTransactionUpdateNotificationAsync(RealTimeTransactionUpdateReq req)
         {
-            var baseUrl = _configuration["RealTimeServiceSettings:BaseUrl"];
+            var baseUrl = _setting.Api.Realtime;
             if (string.IsNullOrEmpty(baseUrl))
             {
                 return false;
@@ -193,5 +196,14 @@ namespace Mcsg.Wallet.Api.Services
                 return false;
             }
         }
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
+        #endregion
     }
 }

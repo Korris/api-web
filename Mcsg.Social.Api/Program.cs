@@ -120,7 +120,6 @@ public class Program
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<FileSetting>(builder.Configuration.GetSection("FileSettings"));
-        builder.Services.Configure<RealTimeServiceSetting>(builder.Configuration.GetSection("RealTimeServiceSettings"));
         builder.Services.Configure<FeedDisplayConfig>(builder.Configuration.GetSection("FeedDisplayConfigs"));
 
         AppSettingsProvider.Configuration = builder.Configuration;
