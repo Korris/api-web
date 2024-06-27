@@ -54,11 +54,9 @@ namespace Mcsg.Media.Tool.Workers
 
                         //correct resource table
                         var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, _setting.Minio.MediaEncryptKey));
-
                         var objectName = $"{MediaContainer}/{newUrl}";
-                        var shareUrl = await _sc.Strategy.PresignedGetObject(objectName, _setting.Minio.MaxExpiryInSeconds, null);
 
-                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE, endCodenewUrl, shareUrl);
+                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE, endCodenewUrl, objectName);
                     }
 
                     //clean up resource

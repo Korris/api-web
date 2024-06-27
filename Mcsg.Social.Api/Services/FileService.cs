@@ -118,9 +118,6 @@ namespace Mcsg.Social.Api.Services
                 }
             }
 
-            var shareUrl = await _sc.Strategy.PresignedGetObject(objectName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
-            shareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
-
             // Insert to resource with type is temp
             var resource = new Resource()
             {
@@ -129,7 +126,7 @@ namespace Mcsg.Social.Api.Services
                 Title = Path.GetFileNameWithoutExtension(fileTitle),
                 Name = hashFileName,
                 Url = UrlHelper.CreateMediaUrl(tempBlobName, _setting.Minio.MediaEncryptKey),
-                ShareUrl = shareUrl,
+                ShareUrl = objectName,
                 Type = file.IsImageType() ? ResourceType.IMAGE : ResourceType.VIDEO,
                 CreatedBy = currentUser.UserId,
                 Width = imgWidth,
@@ -249,18 +246,18 @@ namespace Mcsg.Social.Api.Services
                     string tempBlobName = resource.Name.GetTempBlobName(userName);
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                    tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
+                    var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                    targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
+                    var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                     if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
+                        await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
 
                         resource.Size = isExistTempFile!.Size;
-                        await _sc.Strategy.RemoveObject(tempBlobName, null);
+                        await _sc.Strategy.RemoveObject(tempObjectName, null);
                     }
                     #endregion
 
@@ -287,9 +284,7 @@ namespace Mcsg.Social.Api.Services
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
-
-                    var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
-                    resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
+                    resource.ShareUrl = targetObjectName;
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
@@ -326,18 +321,18 @@ namespace Mcsg.Social.Api.Services
                     string tempBlobName = resource.Name.GetTempBlobName(userName);
                     string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                    tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
+                    var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                    targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
+                    var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                     if (isExistTempFile != null && isExistTargetFile == null)
                     {
-                        await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
+                        await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
 
                         resource.Size = isExistTempFile!.Size;
-                        await _sc.Strategy.RemoveObject(tempBlobName, null);
+                        await _sc.Strategy.RemoveObject(tempObjectName, null);
                     }
                     #endregion
 
@@ -364,9 +359,7 @@ namespace Mcsg.Social.Api.Services
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
-
-                    var shareUrl = await _sc.Strategy.PresignedGetObject(targetBlobName, _setting.Minio.MaxExpiryInSeconds, null); //TODO - Needs improvement: no expiry
-                    resource.ShareUrl = $"{_setting.Minio.PublicUrl}/{_setting.Minio.BucketName}/{shareUrl}";
+                    resource.ShareUrl = targetObjectName;
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 

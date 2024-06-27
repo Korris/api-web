@@ -106,17 +106,11 @@ public class StorageMinio : StorageStrategy
         try
         {
             var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
-            var uri = await Mc.PresignedGetObjectAsync(presignedArg);
-
-            // Remove endpoint and bucket name
-            uri = uri.Replace(Mc.Config.Endpoint + "/", "");
-            uri = uri.Replace(bucketName + "/", "");
-
-            return uri;
+            return await Mc.PresignedGetObjectAsync(presignedArg);
         }
         catch
         {
-            return "";
+            return Mc.Config.Endpoint;
         }
     }
 
