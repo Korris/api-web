@@ -5,6 +5,7 @@ namespace Mcsg.Social.Api.Models
     public class UploadFileResponse
     {
         public string HashId { get; set; }
+        public string SubPostHashId { get; set; }
         public string Url { get; set; }
         public string ShareUrl { get; set; }
         public string Name { get; set; }

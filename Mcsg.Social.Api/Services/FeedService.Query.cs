@@ -51,9 +51,9 @@
 							) sp ON sp.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL
 							(
-								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId""
-							 	FROM ""Resources"" 
-							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
+								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",r.""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId"" AS SubPostHashId 
+								FROM ""Resources"" r
+								WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
 							WHERE 

@@ -584,6 +584,7 @@ namespace Mcsg.Social.Api.Services
                         {
                             Name = file?.Name ?? "",
                             HashId = file?.HashId,
+                            SubPostHashId = file?.SubPostHashId,
                             Status = file.Status,
                             Type = file.Type,
                             Url = file?.Url ?? "",

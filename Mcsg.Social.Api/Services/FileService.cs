@@ -159,7 +159,7 @@ namespace Mcsg.Social.Api.Services
             // Map to response for feed service
             foreach (var resource in resources)
             {
-                var subPostHasHId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
+                var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
                 var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
 
                 subPosts.Add(new SubPostResponse
@@ -167,7 +167,8 @@ namespace Mcsg.Social.Api.Services
                     Status = PostStatus.PUBLIC,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
-                                                HashId = subPostHasHId?.HashId,
+                                                SubPostHashId = subPostHashId?.HashId,
+                                                HashId = resource?.HashId,
                                                 Url = shareUrl,
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
