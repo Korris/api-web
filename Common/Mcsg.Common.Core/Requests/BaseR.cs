@@ -13,6 +13,7 @@
 
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -65,6 +66,39 @@ public abstract class BaseR : IRequest<SingleResponse>
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// Get absolute URI
+    /// </summary>
+    public string GetAbsoluteUri(string domain)
+    {
+        if (_hc == null)
+        {
+            return string.Empty;
+        }
+
+        var request = _hc.Request;
+        if (string.IsNullOrWhiteSpace(domain))
+        {
+            return request.GetDisplayUrl();
+        }
+
+        string? rewriteUrl;
+
+        var key = "X-Original-URL";
+        if (request.Headers.ContainsKey(key))
+        {
+            rewriteUrl = request.Headers[key].ToString();
+        }
+        else
+        {
+            var path = request.Path.ToUriComponent();
+            var query = request.QueryString.ToUriComponent();
+            rewriteUrl = string.Concat(path, query);
+        }
+
+        return domain + rewriteUrl;
     }
 
     #endregion

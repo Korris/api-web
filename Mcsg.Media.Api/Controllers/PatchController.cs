@@ -4,7 +4,6 @@ using System.Net;
 
 namespace Mcsg.Media.Api.Controllers;
 
-using Common.Core.Controllers;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
@@ -13,7 +12,9 @@ using static Common.SeedWork.Constants.Setting;
 /// <summary>
 /// Patch controller
 /// </summary>
-public class PatchController : BaseController
+[ApiController]
+[Route("[controller]")]
+public class PatchController : ControllerBase
 {
     #region -- Methods --
 
@@ -22,10 +23,10 @@ public class PatchController : BaseController
     /// </summary>
     /// <param name="mediator">Mediator</param>
     /// <param name="setting">Setting</param>
-    public PatchController(IMediator mediator, ISetting setting) : base(mediator)
+    public PatchController(IMediator mediator, ISetting setting)
     {
+        _mediator = mediator;
         _setting = setting;
-        DomainName = _setting.Domain;
     }
 
     /// <summary>
@@ -45,7 +46,7 @@ public class PatchController : BaseController
         request.DetectMobileCall(_setting.MobileUserAgent);
 
         var response = await _mediator.Send(request);
-        response.ReturnUrl = AbsoluteUri;
+        response.ReturnUrl = request.GetAbsoluteUri(_setting.Domain);
 
         return Ok(response);
     }
@@ -53,6 +54,11 @@ public class PatchController : BaseController
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     /// <summary>
     /// Setting
