@@ -47,18 +47,18 @@ namespace Mcsg.Realtime.Api.Services
                 string tempBlobName = resource.Name.GetTempBlobName(userName);
                 string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
+                var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
+                var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
                 {
-                    await _sc.Strategy.CopyObject(tempBlobName, targetBlobName, null, null);
+                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
 
                     resource.Size = isExistTempFile!.Size;
-                    await _sc.Strategy.RemoveObject(tempBlobName, null);
+                    await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
