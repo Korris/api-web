@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
+using Common.Core.Dtos;
 using Common.SeedWork.Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
 
@@ -49,6 +50,11 @@ public interface ISetting : ISettingBase
     /// Allow sending email
     /// </summary>
     bool AllowSendingEmail { get; set; }
+
+    /// <summary>
+    /// API
+    /// </summary>
+    ApiDto Api { get; }
 
     #endregion
 }

@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Media.Tool.Interfaces;
 
+using Common.Core.Dtos;
 using Common.SeedWork.Interfaces;
 
 /// <summary>
@@ -9,7 +10,10 @@ public interface ISetting : ISettingBase
 {
     #region -- Properties --
 
-    //TODO
+    /// <summary>
+    /// API
+    /// </summary>
+    ApiDto Api { get; }
 
     #endregion
 }

@@ -11,7 +11,7 @@
  */
 #endregion
 
-namespace Mcsg.Common.SeedWork.Dtos;
+namespace Mcsg.Common.Core.Dtos;
 
 /// <summary>
 /// API data transfer object
@@ -21,34 +21,39 @@ public class ApiDto
     #region -- Properties --
 
     /// <summary>
-    /// Credential
+    /// Admin
     /// </summary>
-    public string Credential { get; set; } = default!;
+    public string Admin { get; set; } = default!;
 
     /// <summary>
-    /// Health
+    /// Analytic
     /// </summary>
-    public string Health { get; set; } = default!;
+    public string Analytic { get; set; } = default!;
 
     /// <summary>
-    /// Notification
+    /// Identity
     /// </summary>
-    public string Notification { get; set; } = default!;
+    public string Identity { get; set; } = default!;
 
     /// <summary>
-    /// Services
+    /// Media
     /// </summary>
-    public string Services { get; set; } = default!;
+    public string Media { get; set; } = default!;
 
     /// <summary>
-    /// Shop
+    /// Realtime
     /// </summary>
-    public string Shop { get; set; } = default!;
+    public string Realtime { get; set; } = default!;
 
     /// <summary>
     /// Social
     /// </summary>
     public string Social { get; set; } = default!;
+
+    /// <summary>
+    /// Wallet
+    /// </summary>
+    public string Wallet { get; set; } = default!;
 
     #endregion
 }

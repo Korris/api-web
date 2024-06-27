@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Media.Tool;
 
+using Common.Core.Dtos;
 using Common.SeedWork;
 using Interfaces;
 
@@ -10,7 +11,10 @@ public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
 
-    //TODO
+    /// <summary>
+    /// API
+    /// </summary>
+    public ApiDto Api { get; }
 
     #endregion
 
@@ -21,6 +25,7 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+        Api = new ApiDto();
     }
 
     #endregion
