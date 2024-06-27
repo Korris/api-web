@@ -6,6 +6,7 @@ using Npgsql;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Interfaces;
     using Constants;
     using DTOs;
     using Enums;
@@ -56,7 +57,8 @@ namespace Mcsg.Social.Api.Services
             ISoundService soundService,
             IConfiguration configuration,
             IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
-            ISetting setting)
+            ISetting setting,
+            IStorageClient sc)
         {
             _postRepository = unitOfWork.GetRepository<Post>();
             _unitOfWork = unitOfWork;
@@ -74,6 +76,7 @@ namespace Mcsg.Social.Api.Services
             _feedDisplayConfig = feedDisplayConfig.CurrentValue;
             _postLinkService = postLinkService;
             _setting = setting;
+            _sc = sc;
         }
 
         #region Load data
@@ -239,7 +242,7 @@ namespace Mcsg.Social.Api.Services
             });
             if (data.ResourceType == ResourceType.VIDEO || data.ResourceType == ResourceType.AUDIO)
             {
-                data.Url = UrlHelper.CreateCdnMediaUrl(data.ShareUrl, _setting.Minio.MediaCdnUrl);
+                data.Url = await _sc.Strategy.PresignedGetObject(data.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
             }
             else
             {
@@ -357,7 +360,7 @@ namespace Mcsg.Social.Api.Services
                         {
                             if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
                             {
-                                resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
+                                resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                             }
                             else
                             {
@@ -572,7 +575,7 @@ namespace Mcsg.Social.Api.Services
 
                         if (resource.Type == ResourceType.AUDIO || resource.Type == ResourceType.VIDEO)
                         {
-                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl);
+                            resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
                         }
                         resourceResponse.Add(resource);
                     }
@@ -726,7 +729,7 @@ namespace Mcsg.Social.Api.Services
 
                         if (resource.Type == ResourceType.AUDIO || resource.Type == ResourceType.VIDEO)
                         {
-                            resource.Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl);
+                            resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
                         }
                         resourceResponse.Add(resource);
                     }
@@ -778,7 +781,7 @@ namespace Mcsg.Social.Api.Services
                     {
                         if (resourceResponse.Type == ResourceType.VIDEO || resourceResponse.Type == ResourceType.AUDIO)
                         {
-                            resourceResponse.Url = UrlHelper.CreateCdnMediaUrl(resourceResponse.ShareUrl, _setting.Minio.MediaCdnUrl);
+                            resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                         }
                         else
                         {
@@ -859,7 +862,7 @@ namespace Mcsg.Social.Api.Services
                     var url = "";
                     if (fileDbs.Type == ResourceType.VIDEO || fileDbs.Type == ResourceType.AUDIO)
                     {
-                        url = UrlHelper.CreateCdnMediaUrl(fileDbs.ShareUrl, _setting.Minio.MediaCdnUrl);
+                        url = _sc.Strategy.PresignedGetObject(fileDbs.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                     }
                     else
                     {
@@ -907,7 +910,7 @@ namespace Mcsg.Social.Api.Services
                             };
                             if (x.Type == ResourceType.AUDIO || x.Type == ResourceType.VIDEO)
                             {
-                                resource.Url = UrlHelper.CreateCdnMediaUrl(x.ShareUrl, _setting.Minio.MediaCdnUrl);
+                                resource.Url = _sc.Strategy.PresignedGetObject(x.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                             }
                             return resource;
                         }).ToList();
@@ -993,6 +996,11 @@ namespace Mcsg.Social.Api.Services
         /// Setting
         /// </summary>
         private readonly ISetting _setting;
+
+        /// <summary>
+        /// Storage client
+        /// </summary>
+        private readonly IStorageClient _sc;
 
         #endregion
     }

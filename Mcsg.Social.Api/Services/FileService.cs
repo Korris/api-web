@@ -136,10 +136,12 @@ namespace Mcsg.Social.Api.Services
 
             await _resourceRepository.InsertAsync(resource);
 
+            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+
             return new UploadFileResponse()
             {
                 HashId = hashId,
-                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl), // UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, hashFileName, resource.Url),
+                Url = shareUrl,
                 Width = imgWidth,
                 Height = imgHeight,
                 Type = resource.Type,
@@ -158,13 +160,15 @@ namespace Mcsg.Social.Api.Services
             foreach (var resource in resources)
             {
                 var subPostHasHId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
+                var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+
                 subPosts.Add(new SubPostResponse
                 {
                     Status = PostStatus.PUBLIC,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 HashId = subPostHasHId?.HashId,
-                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl),// UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url),
+                                                Url = shareUrl,
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
                                                 Width = resource.Width,
@@ -460,13 +464,15 @@ namespace Mcsg.Social.Api.Services
 
             foreach (var resource in resourcesResult)
             {
+                var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+
                 subPosts.Add(new SubPostResponse
                 {
                     Status = PostStatus.PUBLIC,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 HashId = resource.HashId ,
-                                                Url = UrlHelper.CreateCdnMediaUrl(resource.ShareUrl, _setting.Minio.MediaCdnUrl),// UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url),
+                                                Url = shareUrl,
                                                 ShareUrl = resource.ShareUrl,
                                                 Height = resource.Height,
                                                 Width = resource.Width,

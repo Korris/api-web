@@ -81,11 +81,5 @@ namespace Mcsg.Lib.Common.Helpers
             var url = string.Format(MediaConfig.PublicImageUrlPath, mediaName);
             return $"{mediaApiUrl}/{url}";
         }
-
-        public static string CreateCdnMediaUrl(string url, string mediaCdnUrl)
-        {
-            mediaCdnUrl = ""; //TODO - Do not use for now; will improve later
-            return $"{mediaCdnUrl}{url}";
-        }
     }
 }
