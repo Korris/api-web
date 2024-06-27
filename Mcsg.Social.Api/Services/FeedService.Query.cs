@@ -396,54 +396,103 @@ LIMIT @PageSize
         {
             get
             {
-                return @"SELECT 
+                return @"
+					SELECT 
 						p.""Id"", 
 						p.""Type"",
 						p.""Body"",
-						p.""HashId"", 
+						p.""HashId"",
 						p.""UserId"",
-						p.""ThumbnailUrl"", 
-						u.""Avatar"" AS UserAvatar,
-						u.""ProfileName"" as FullName, 
+						p.""ThumbnailUrl"",
+						u.""Avatar"" AS ""UserAvatar"",
+						u.""ProfileName"" AS ""FullName"",
 						u.""ProfileId"",
 						p.""CreatedDate"",
-						sp.""Total"" as TotalResources,
-						to_jsonb(array_agg(sp.*)) AS ""SubPosts"",
-						to_jsonb(array_agg(spr.*)) AS ""Resources"",
-						jsonb_build_object('Description', md.""Description"",
-										   'Title', md.""Title"",
-										   'Url', md.""Url"",
-										   'Domain', md.""Domain""
-											) AS ""MetaDatas""						
-						FROM ""Posts"" p
-						LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
-						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
-						LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
-						LEFT JOIN LATERAL 
-							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" 
-								FROM ""SubPosts"" sp 
-								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
-								GROUP BY ""Id"", ""PostId""
-								ORDER BY ""Order""
-							) sp ON sp.""PostId"" = p.""Id""
-						LEFT JOIN LATERAL
-							(
-								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",sp.""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM ""Resources"" 
-							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
-								LIMIT 1
-							) spr ON spr.""SubPostId"" = sp.""Id""
-							
-						WHERE 
-						p.""HashId"" = ANY(@HashIds) AND p.""IsDelete"" = false 
-						GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
-								p.""UserId"",u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""CreatedDate"",TotalResources,
-								md.""Description"",
-								md.""Title"",
-								md.""Url"",
-								md.""Domain""
-						";
+						sp.""Total"" AS ""TotalResources"",
+						to_jsonb(ARRAY_AGG(sp.*)) AS ""SubPosts"",
+						to_jsonb(ARRAY_AGG(spr.*)) AS ""Resources"",
+						jsonb_build_object(
+							'Description', md.""Description"",
+							'Title', md.""Title"",
+							'Url', md.""Url"",
+							'Domain', md.""Domain""
+						) AS ""MetaDatas"",
+						CASE 
+							WHEN pl.""Url"" IS NULL AND pl.""Type"" IS NULL AND pl.""HashId"" IS NULL THEN NULL
+							ELSE jsonb_build_object(
+								'HashId', pl.""HashId"",
+								'Url', pl.""Url"",
+								'Type', pl.""Type""
+							)
+						END AS ""Link""
+					FROM
+						""Posts"" p
+					LEFT JOIN 
+						""Users"" u ON p.""UserId"" = u.""Id""
+					LEFT JOIN 
+						""MetaDatas"" md ON md.""PostId"" = p.""Id""
+					LEFT JOIN 
+						""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = FALSE
+					LEFT JOIN LATERAL (
+						SELECT
+							sp.""Id"",
+							sp.""HashId"",
+							sp.""PostId"",
+							sp.""Order"",
+							COUNT(*) OVER() AS ""Total""
+						FROM
+							""SubPosts"" sp
+						WHERE
+							sp.""PostId"" = p.""Id""
+							AND sp.""IsDelete"" = FALSE
+						GROUP BY
+							sp.""Id"",
+							sp.""PostId""
+						ORDER BY
+							sp.""Order""
+					) sp ON sp.""PostId"" = p.""Id""
+					LEFT JOIN LATERAL (
+						SELECT
+							spr.""SubPostId"",
+							spr.""Type"",
+							spr.""Status"",
+							spr.""ShareUrl"",
+							spr.""Url"",
+							spr.""Name"",
+							spr.""HashId"",
+							spr.""Width"",
+							spr.""Height"",
+							spr.""Order""
+						FROM
+							""Resources"" spr
+						WHERE
+							spr.""SubPostId"" = sp.""Id""
+							AND spr.""IsDelete"" = FALSE
+							LIMIT 1
+					) spr ON spr.""SubPostId"" = sp.""Id""
+					WHERE
+						p.""HashId"" = ANY(@HashIds)
+						AND p.""IsDelete"" = FALSE
+					GROUP BY
+						p.""Id"",
+						p.""Type"",
+						p.""Body"",
+						p.""HashId"",
+						p.""UserId"",
+						p.""ThumbnailUrl"",
+						u.""Avatar"",
+						u.""ProfileName"",
+						u.""ProfileId"",
+						p.""CreatedDate"",
+						""TotalResources"",
+						md.""Description"",
+						md.""Title"",
+						md.""Url"",
+						md.""Domain"",
+						pl.""HashId"",
+						pl.""Url"",
+						pl.""Type"";
+				";
             }
         }
 

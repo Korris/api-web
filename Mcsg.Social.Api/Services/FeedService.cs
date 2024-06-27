@@ -348,6 +348,7 @@ namespace Mcsg.Social.Api.Services
                 Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
                 Type = res.Type,
             };
+            var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
             if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
             {
                 itemResponse.Resources = new List<ResourceResponse>();
@@ -370,6 +371,25 @@ namespace Mcsg.Social.Api.Services
                         }
                     }
                 }
+            }
+            else if (link is not null)
+            {
+                itemResponse.Link = new PostLinkResponse
+                {
+                    HashId = link.HashId,
+                    Url = link.Url,
+                    Type = link.Type.ToDisplay()
+                };
+                itemResponse.Resources = new List<ResourceResponse>()
+                {
+                    new ResourceResponse()
+                    {
+                        HashId = link.HashId,
+                        Url = link.Url,
+                        ShareUrl = link.Url,
+                        Type = link.Type.ToResourceType(),
+                }
+                     };
             }
             return itemResponse;
         }
