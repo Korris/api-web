@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Mcsg.Media.Api;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
+using Extensions;
 using Interfaces;
 using Lib.Data;
 using static Common.Core.Constants.Setting;
@@ -81,7 +83,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
 
         // Storage
         builder.Services.AddStorage(p =>
@@ -92,6 +94,14 @@ public class Program
             p.PublicUrl = st.Minio.PublicUrl;
             p.AccessKey = st.Minio.AccessKey;
             p.SecrectKey = st.Minio.SecrectKey;
+        });
+
+        // MediatR
+        builder.Services.AddMediatR(p =>
+        {
+            p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiPatch();
         });
         #endregion
 
