@@ -19,17 +19,17 @@ namespace Mcsg.Common.SeedWork.Enums;
 public enum UserType
 {
     /// <summary>
-    /// For pet owners
+    /// Guest
     /// </summary>
-    Individual = 1,
+    Guest,
 
     /// <summary>
-    /// For clinic, spa, ...
+    /// Free
     /// </summary>
-    Enterprise,
+    Free,
 
     /// <summary>
-    /// Administrator
+    /// Premium
     /// </summary>
-    Administrator
+    Premium
 }

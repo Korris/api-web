@@ -1,18 +1,20 @@
 ﻿using Dapper;
-using Mcsg.Analytic.Api.Models.DTOs;
-using Mcsg.Analytic.Api.Models.Request;
-using Mcsg.Analytic.Api.Models.Response;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Data.Analytic;
-using Mcsg.Lib.Data.Analytic.Entities;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Analytic.Api.Services
 {
+    using Common.SeedWork.Enums;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Data.Analytic;
+    using Lib.Data.Analytic.Entities;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Models.DTOs;
+    using Models.Request;
+    using Models.Response;
+
     public interface ITrackingService
     {
         Task<SubPostView> GetSubPostView(Guid SubPostId);
@@ -58,7 +60,7 @@ namespace Mcsg.Analytic.Api.Services
                 authorId = postAndUserId.AuthorId;
                 var dateNow = DateOnly.FromDateTime(timeNow);
                 req.UserId = postAndUserId.UserId;
-                req.UserType = postAndUserId != null && postAndUserId.PremiumDate >= dateNow ? Lib.Model.Enums.UserType.PREMIUM : Lib.Model.Enums.UserType.FREE;
+                req.UserType = postAndUserId != null && postAndUserId.PremiumDate >= dateNow ? UserType.Premium : UserType.Free;
                 req.PostType = postAndUserId.PostType;
             }
             else
@@ -77,7 +79,7 @@ namespace Mcsg.Analytic.Api.Services
                 if (postId == null)
                     throw new NotFoundException(ErrorCodes.InvalidSession);
                 authorId = postId.UserId;
-                req.UserType = Lib.Model.Enums.UserType.GUEST;
+                req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
                 req.PostType = postId?.PostType ?? Lib.Model.Enums.PostType.FEED;
             }
@@ -175,7 +177,7 @@ namespace Mcsg.Analytic.Api.Services
                 //IP ADDRESS
                 var ipAddress = $"{rnd.Next(1, 255)}.{rnd.Next(1, 255)}.{rnd.Next(1, 255)}.{rnd.Next(1, 255)}";
 
-                req.UserType = Lib.Model.Enums.UserType.GUEST;
+                req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
                 req.PostType = postId?.PostType ?? Lib.Model.Enums.PostType.FEED;
 

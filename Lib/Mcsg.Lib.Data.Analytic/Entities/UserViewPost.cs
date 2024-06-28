@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Analytic.Entities.Base;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Lib.Data.Analytic.Entities
+﻿namespace Mcsg.Lib.Data.Analytic.Entities
 {
+    using Common.SeedWork.Enums;
+    using Lib.Data.Analytic.Entities.Base;
+    using Lib.Model.Enums;
+
     public class UserViewPost : TrackingEntity
     {
         public PostType PostType { get; set; } //Feed, comic or story

@@ -1,12 +1,13 @@
-﻿using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Lib.Data.Analytic;
-using Mcsg.Lib.Model.Enums;
-using Mcsg.Lib.Model.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.SeedWork.Enums;
+    using Extensions;
+    using Lib.Data.Analytic;
+    using Lib.Model.Models;
+    using Models.Earning;
+
     public interface IUserViewService
     {
         Task<EarningDataModel> GetGuestsViewAsync(Guid userId, DateTime? date = null);
@@ -28,7 +29,7 @@ namespace Mcsg.Social.Api.Services
         {
             var query = _dbAnalystContext.UserViewPosts.
                 Where(x => x.AuthorId == userId
-                && (x.UserType == Lib.Model.Enums.UserType.GUEST || x.UserType == Lib.Model.Enums.UserType.FREE));
+                && (x.UserType == UserType.Guest || x.UserType == UserType.Free));
 
             if (date != null && date.HasValue)
             {
@@ -52,7 +53,7 @@ namespace Mcsg.Social.Api.Services
         public async Task<EarningDataModel> GetPremiumViewAsync(Guid userId, DateTime? date = null)
         {
             var query = _dbAnalystContext.UserViewPosts.
-                Where(x => x.AuthorId == userId && (x.UserType == Lib.Model.Enums.UserType.PREMIUM));
+                Where(x => x.AuthorId == userId && (x.UserType == UserType.Premium));
 
             if (date != null && date.HasValue)
             {
@@ -125,7 +126,7 @@ namespace Mcsg.Social.Api.Services
                 {
                     Year = v.CreatedDate.Year,
                     Month = v.CreatedDate.Month,
-                    UserType = v.UserType == UserType.PREMIUM ? 0 : 1
+                    UserType = v.UserType == UserType.Premium ? 0 : 1
                 })
                 .Select(g => new
                 {
@@ -178,7 +179,7 @@ namespace Mcsg.Social.Api.Services
                     Year = v.CreatedDate.Year,
                     Month = v.CreatedDate.Month,
                     Day = v.CreatedDate.Day,
-                    UserType = v.UserType == UserType.PREMIUM ? 0 : 1
+                    UserType = v.UserType == UserType.Premium ? 0 : 1
                 })
                 .Select(g => new
                 {

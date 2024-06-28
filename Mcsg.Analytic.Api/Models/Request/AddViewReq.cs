@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Analytic.Api.Models.Request
+﻿namespace Mcsg.Analytic.Api.Models.Request
 {
+    using Common.SeedWork.Enums;
+
     public class AddViewReqSimple
     {
         public Guid SubPostId { get; set; }
