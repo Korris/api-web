@@ -23,6 +23,7 @@ namespace Mcsg.Wallet.Api.Services
     using Lib.Data.Wallet.Entities;
     using Lib.Data.Wallet.Enums;
     using Models;
+    using static Common.Core.Constants.Setting;
 
     public class UserWalletService : IUserWalletService
     {
@@ -515,7 +516,7 @@ namespace Mcsg.Wallet.Api.Services
                 })
                 .ToList();
             result.CurrencyTypes = _bankService.GetCurrencyTypeRatios();
-            result.MinPointCanWithDraw = SystemConfig.MinimumPointCanWithDraw;
+            result.MinPointCanWithDraw = Default.MinimumPointCanWithDraw;
             result.MaxPointCanWithDraw = userWallet.Point;
             return result;
         }
@@ -533,7 +534,7 @@ namespace Mcsg.Wallet.Api.Services
             {
                 throw new BadRequestException("Amount over", "");
             }
-            if (req.Amount < SystemConfig.MinimumPointCanWithDraw)
+            if (req.Amount < Default.MinimumPointCanWithDraw)
             {
                 throw new BadRequestException("MinimumPointCanWithDraw", "");
             }
@@ -568,8 +569,8 @@ namespace Mcsg.Wallet.Api.Services
             var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
             result.DepositMethods = _bankService.GetDepositMethods();
             result.CurrencyTypes = _bankService.GetCurrencyTypeRatios();
-            result.MinPointCanDeposit = SystemConfig.MinimumPointCanDeposit;
-            result.MaxPointCanDeposit = 999999;
+            result.MinPointCanDeposit = Default.MinimumPointCanDeposit;
+            result.MaxPointCanDeposit = Default.MaximumPointCanDeposit;
             return result;
         }
         public async Task<DepositResp> DepositAsync(DepositReq req)
@@ -581,9 +582,9 @@ namespace Mcsg.Wallet.Api.Services
                 throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
             }
 
-            if (req.PointAmount < SystemConfig.MinimumPointCanDeposit)
+            if (req.PointAmount < Default.MinimumPointCanDeposit)
             {
-                throw new BadRequestException(ApiErrorCodes.MINIMUM_CAN_DEPOSIT, ApiErrorMessage.MINIMUM_CAN_DEPOSIT + SystemConfig.MinimumPointCanDeposit.ToString());
+                throw new BadRequestException(ApiErrorCodes.MINIMUM_CAN_DEPOSIT, ApiErrorMessage.MINIMUM_CAN_DEPOSIT + Default.MinimumPointCanDeposit.ToString());
             }
 
             var transaction = CreateTransaction(
@@ -829,7 +830,7 @@ namespace Mcsg.Wallet.Api.Services
                 IsFromSystem = false,
                 Content = content,
                 SystemMessage = systemMessage,
-                ReferenceNumber = StringHelper.GetRandomString(SystemConfig.ReferenceNumberLength).ToLower(),
+                ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
                 ModifiedDate = DateTime.UtcNow,
                 SourceUserWalletId = sourceId,
                 Status = TransactionStatus.PENDING,

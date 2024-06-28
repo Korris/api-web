@@ -67,7 +67,7 @@ namespace Mcsg.Function.Job.Services
                     IsFromSystem = true,
                     Content = RewardContent(reward.Type),
                     SystemMessage = RewardContent(reward.Type),
-                    ReferenceNumber = StringHelper.GetRandomString(SystemConfig.ReferenceNumberLength).ToLower(),
+                    ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
                     ModifiedDate = DateTime.UtcNow,
                     DestinationUserWalletId = userWallet.Id,
                     Status = TransactionStatus.SUCCESS,
