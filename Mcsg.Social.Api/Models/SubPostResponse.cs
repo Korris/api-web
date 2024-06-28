@@ -19,6 +19,11 @@
         public string CreatorNote { get; set; }
         public bool IsExclusive { get; set; }
     }
+    public class SubPostIds
+    {
+        public string? SubPostHashId { get; set; }
+        public Guid SubPostId { get; set; }
+    }
     public class SubPostResponse : SubPostBasic
     {
         public string ThumbnailUrl { get; set; }

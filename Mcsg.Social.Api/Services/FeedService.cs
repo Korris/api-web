@@ -746,7 +746,8 @@ namespace Mcsg.Social.Api.Services
                             Width = file.Width,
                             ShareUrl = file.ShareUrl,
                             Height = file.Height,
-                            Order = file.Order
+                            Order = file.Order,
+                            SubPostHashId = subPost.HashId,
                         };
 
                         if (resource.Type == ResourceType.AUDIO || resource.Type == ResourceType.VIDEO)

@@ -302,6 +302,83 @@ namespace Mcsg.Social.Api.Services
             }
             return Tuple.Create(response, subPostResponses);
         }
+        private async Task<IEnumerable<Resource>> CompleteFilesAsyncNew(List<ResourcePostReq> resourceRequest, List<Resource> resourceAdded, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
+        {
+            var response = new List<Resource>();
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            }
+            var hashIds = resourceRequest.Select(x => x.HashId).ToList();
+            if (hashIds != null && hashIds.Any())
+            {
+                var resourceList = await _resourceRepository.Connection.QueryAsync<Resource>(GetListResourceQuery, new { HashIds = hashIds });
+
+                foreach (var resource in resourceList)
+                {
+                    if (resource == null)
+                    {
+                        continue;
+                    }
+
+                    var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
+
+                    #region -- Copy file from temp target --
+                    string tempBlobName = resource.Name.GetTempBlobName(userName);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+
+                    var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                    var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+
+                    var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                    var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+
+                    if (isExistTempFile != null && isExistTargetFile == null)
+                    {
+                        await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+
+                        resource.Size = isExistTempFile!.Size;
+                        await _sc.Strategy.RemoveObject(tempObjectName, null);
+                    }
+                    #endregion
+
+                    var subPostId = resource.SubPostId ?? postId;
+                    if (addSubPost)
+                    {
+                        var subPost = new SubPost()
+                        {
+                            Title = resource.Title,
+                            PostId = postId,
+                            UserId = userId,
+                            Body = resourceReq.Body,
+                            CreatedBy = resource.CreatedBy,
+                            Status = PostStatus.PUBLIC,
+                            Order = resourceReq.Order,
+                            Permission = PostPermission.PUBLIC,
+                            PublishDate = DateTime.UtcNow,
+                            HashId = StringGenerator.GetRandomString(SystemConfig.SubPostHashLength),
+                            IsExclusive = false
+                        };
+
+                        subPostId = await _subPostRepository.InsertEntityAsync(subPost);
+                    }
+
+                    resource.Type = resource.Name.GetResourceType();
+                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
+                    resource.ShareUrl = targetObjectName;
+                    resource.SubPostId = subPostId;
+                    resource.Order = resourceReq.Order;
+
+                    await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
+                    await _resourceRepository.UpdateAsync(resource);
+
+                    response.Add(resource);
+                }
+                response = response.OrderBy(x => x.Order).ToList();
+            }
+            return response;
+        }
+
         private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
         {
             var response = new List<Resource>();
@@ -422,8 +499,9 @@ namespace Mcsg.Social.Api.Services
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
-
+            /// resource current in post
             var resourcesDb = await _resourceRepository.Connection.QueryAsync<Resource>(GetResourcesByPostIdQuery, new { PostId = postId });
+            var subPostDB = await _subPostRepository.Connection.QueryAsync<SubPost>(GetSubPostByPostIdQuery, new { PostId = postId });
             //Update
             var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
             var resourceRequestHashId = resourceRequest.Select(x => x.HashId).ToList();
@@ -432,7 +510,7 @@ namespace Mcsg.Social.Api.Services
             var listResourceAddded = resourcesDb.Where(x => resourceRequestHashId.Contains(x.HashId)).ToList();
 
             // Complete resource files
-            var listResourcesNew = await CompleteFilesAsync(listResourceNotAdd, userId, userName, userAvatar, postId, true);
+            var listResourcesNew = await CompleteFilesAsyncNew(listResourceNotAdd, listResourceAddded, userId, userName, userAvatar, postId, true);
 
             //Remove
             var listRemove = resourcesDb.Where(x => !resourceRequestHashId.Contains(x.HashId)).ToList();
@@ -456,6 +534,9 @@ namespace Mcsg.Social.Api.Services
                 {
                     resourceAdded.Order = resourceReq.Order;
                     await _resourceRepository.UpdateAsync(resourceAdded);
+                    var subPostUpdate = subPostDB.FirstOrDefault(p => p.Id == resourceAdded.SubPostId);
+                    subPostUpdate.Order = resourceReq.Order;
+                    await _subPostRepository.UpdateAsync(subPostUpdate);
                 }
             }
 
@@ -463,16 +544,23 @@ namespace Mcsg.Social.Api.Services
             var resourcesResult = listResourceAddded.Concat(listResourcesNew);
             resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
             var subPosts = new List<SubPostResponse>();
-
+            var subpostAndResourceHashId = await _resourceRepository.Connection.QueryAsync<SubPostIds>($@"SELECT  sp.""HashId"" as SubPostHashId, sp.""Id"" as SubPostId from ""SubPosts"" sp
+                                                                                                         LEFT JOIN ""Resources"" r on sp.""Id"" = r.""SubPostId""
+                                                                                                         LEFT JOIN ""Posts"" p  on sp.""PostId""= p.""Id""
+                                                                                                         WHERE p.""Id""=@PostId
+                                                                                                         AND r.""IsDelete"" = false
+                                                                                                         AND sp.""IsDelete"" = false", new { PostId = postId });
             foreach (var resource in resourcesResult)
             {
                 var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
-
+                var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
                 subPosts.Add(new SubPostResponse
                 {
+                    HashId = subPostData?.SubPostHashId ?? "",
                     Status = PostStatus.PUBLIC,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
+                                                SubPostHashId = subPostData?.SubPostHashId ?? "",
                                                 HashId = resource.HashId ,
                                                 Url = shareUrl,
                                                 ShareUrl = resource.ShareUrl,
