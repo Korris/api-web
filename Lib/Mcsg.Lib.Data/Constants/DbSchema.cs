@@ -3,7 +3,7 @@
 public class DbSchema
 {
     public const string Default = "public.";
-    public const string Identity = "identity.";
-    public const string IdentityTables = "Users";
+    public const string Identity = "identity";
+    public const string IdentityTables = "Users;UserNameHistories";
     public const string SystemSettingHistories_Table = "SystemSettingHistories";
 }

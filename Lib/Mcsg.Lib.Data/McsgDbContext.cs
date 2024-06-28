@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Lib.Data;
 
+using Constants;
 using Domain.Entities;
 using Domain.Entities.Configurations;
 
@@ -27,7 +28,7 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<User>(entity =>
         {
             entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
-            entity.ToTable("Users", "identity");
+            entity.ToTable("Users", DbSchema.Identity);
             entity.Property(e => e.FirstName)
             .IsRequired(false)
             .HasMaxLength(256);
@@ -97,6 +98,7 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     public DbSet<Session> Sessions { get; set; }
     public DbSet<UserOtp> UserOtps { get; set; }
+    public DbSet<UserNameHistory> UserNameHistories { get; set; }
     public DbSet<UserSocial> UserSocials { get; set; }
     public DbSet<Job> Jobs { get; set; }
     public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }

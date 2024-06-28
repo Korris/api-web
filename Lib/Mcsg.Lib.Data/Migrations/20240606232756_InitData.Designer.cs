@@ -1647,7 +1647,7 @@ namespace Mcsg.Lib.Data.Migrations
 
                     b.HasIndex("ReferralCode");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserExclusiveSubPost", b =>
@@ -1722,6 +1722,39 @@ namespace Mcsg.Lib.Data.Migrations
                     b.HasIndex("UserFollowingId");
 
                     b.ToTable("UserFollows", (string)null);
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserNameHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserNameHistories", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.UserOtp", b =>

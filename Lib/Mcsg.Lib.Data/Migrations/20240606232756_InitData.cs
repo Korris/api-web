@@ -12,6 +12,9 @@ namespace Mcsg.Lib.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "identity");
+
             migrationBuilder.CreateTable(
                 name: "BackgroundMedias",
                 columns: table => new
@@ -276,6 +279,25 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserNameHistories",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserNameHistories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserOtps",
                 columns: table => new
                 {
@@ -318,6 +340,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Users",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -436,6 +459,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Notifications_Users_ReceiverId",
                         column: x => x.ReceiverId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -475,6 +499,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Posts_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -496,6 +521,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SmartLookupUsers_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -528,6 +554,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SystemSettingHistories_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -553,6 +580,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Tags_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -573,6 +601,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserClaims_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -597,12 +626,14 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserFollows_Users_UserFollowerId",
                         column: x => x.UserFollowerId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserFollows_Users_UserFollowingId",
                         column: x => x.UserFollowingId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -623,6 +654,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserLogins_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -647,6 +679,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -667,6 +700,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserTokens_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -691,6 +725,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_ViewHistories_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -751,6 +786,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_PostFavorites_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -810,6 +846,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_PostReactions_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -842,6 +879,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_PostReports_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -887,6 +925,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SubPosts_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -917,6 +956,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_TagFavorites_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -988,6 +1028,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_Resources_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -1019,6 +1060,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SubPostReactions_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1049,6 +1091,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserExclusiveSubPosts_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1091,6 +1134,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_PostComments_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1132,6 +1176,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SubPostComments_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1164,6 +1209,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_PostCommentReactions_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1196,6 +1242,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_SubPostCommentReactions_Users_AuthorId",
                         column: x => x.AuthorId,
+                        principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1466,16 +1513,19 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
+                schema: "identity",
                 table: "Users",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ReferralCode",
+                schema: "identity",
                 table: "Users",
                 column: "ReferralCode");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
+                schema: "identity",
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
@@ -1574,6 +1624,10 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "UserLogins");
 
             migrationBuilder.DropTable(
+                name: "UserNameHistories",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
                 name: "UserOtps");
 
             migrationBuilder.DropTable(
@@ -1622,7 +1676,8 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Users",
+                schema: "identity");
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Mcsg.Identity.Api.Services
     using Lib.Common.Exceptions;
     using Lib.Common.Web;
     using Lib.Common.Web.Security;
+    using Lib.Data;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
@@ -57,6 +58,7 @@ namespace Mcsg.Identity.Api.Services
             , SSOServiceResolver serviceAccessor
             , IRepository<SmartLookup> smartLookupRepository
             , IUserWalletService userWalletService
+            , McsgDbContext context
             , ISetting setting)
         {
             _userManager = userManager;
@@ -76,6 +78,7 @@ namespace Mcsg.Identity.Api.Services
             _configuration = configuration;
             _smartLookupRepository = smartLookupRepository;
             _userWalletService = userWalletService;
+            _context = context;
             _setting = setting;
         }
 
@@ -769,6 +772,11 @@ namespace Mcsg.Identity.Api.Services
         #endregion
 
         #region -- Fields --
+
+        /// <summary>
+        /// DB context
+        /// </summary>
+        private readonly McsgDbContext _context;
 
         /// <summary>
         /// Setting

@@ -11,6 +11,7 @@ using static Dapper.SqlMapper;
 
 namespace Mcsg.Lib.Data.Repositories
 {
+    using Common.SeedWork.Extensions;
     using Constants;
     using Entities.Common;
     using Extensions;
@@ -28,14 +29,14 @@ namespace Mcsg.Lib.Data.Repositories
 
             // Determine the table to be used
             var table = ((TableAttribute)typeof(TEntity).GetCustomAttribute(typeof(TableAttribute)))?.Name;
-            table = table == null ? $"{EntityName}s" : table;
+            table = table == null ? EntityName.ToPlural() : table;
 
             // Determine the schema to be used
             var dbSchema = DbSchema.Default;
             var tables = DbSchema.IdentityTables.Split(';');
             if (tables.Contains(table))
             {
-                dbSchema = DbSchema.Identity;
+                dbSchema = $"{DbSchema.Identity}.";
             }
 
             _tableName = $"{dbSchema}\"{table}\"";
