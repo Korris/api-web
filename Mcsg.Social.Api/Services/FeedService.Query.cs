@@ -462,7 +462,8 @@ LIMIT @PageSize
 							spr.""HashId"",
 							spr.""Width"",
 							spr.""Height"",
-							spr.""Order""
+							spr.""Order"",
+							sp.""HashId"" as SubPostHashId
 						FROM
 							""Resources"" spr
 						WHERE
