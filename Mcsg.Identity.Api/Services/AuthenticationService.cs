@@ -1,18 +1,4 @@
 ﻿using Dapper;
-using Mcsg.Identity.Api.Constants;
-using Mcsg.Identity.Api.DTOs.Request;
-using Mcsg.Identity.Api.DTOs.Response;
-using Mcsg.Identity.Api.Services.Interface;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Web;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +7,22 @@ using static Mcsg.Identity.Api.Services.SSO.SSORegister;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Api.Interfaces;
+    using Constants;
+    using DTOs.Request;
+    using DTOs.Response;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Web;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Enums;
+    using Services.Interface;
+
     public partial class AuthenticationService : IAuthenticationService
     {
         private readonly ApplicationUserManager _userManager;
@@ -55,7 +57,7 @@ namespace Mcsg.Identity.Api.Services
             , SSOServiceResolver serviceAccessor
             , IRepository<SmartLookup> smartLookupRepository
             , IUserWalletService userWalletService
-            )
+            , ISetting setting)
         {
             _userManager = userManager;
             _userRepository = unitOfWork.GetRepository<User>();
@@ -74,6 +76,7 @@ namespace Mcsg.Identity.Api.Services
             _configuration = configuration;
             _smartLookupRepository = smartLookupRepository;
             _userWalletService = userWalletService;
+            _setting = setting;
         }
 
         public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
@@ -128,6 +131,11 @@ namespace Mcsg.Identity.Api.Services
                     var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.VerifyEmail);
                     response.Token = userOtp.Token;
                     response.IsEmail = true;
+
+                    if (_setting.DevMode)
+                    {
+                        response.Code = userOtp.Code;
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(user.PhoneNumber) && string.IsNullOrEmpty(user.Email))
@@ -136,6 +144,11 @@ namespace Mcsg.Identity.Api.Services
                     var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.VerifyPhone);
                     response.Token = userOtp.Token;
                     response.IsPhone = true;
+
+                    if (_setting.DevMode)
+                    {
+                        response.Code = userOtp.Code;
+                    }
                 }
 
                 return response;
@@ -753,6 +766,15 @@ namespace Mcsg.Identity.Api.Services
             return true;
 
         }
+        #endregion
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Setting
+        /// </summary>
+        private readonly ISetting _setting;
+
         #endregion
     }
 }
