@@ -27,7 +27,7 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<User>(entity =>
         {
             entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
-            entity.ToTable("Users");
+            entity.ToTable("Users", "identity");
             entity.Property(e => e.FirstName)
             .IsRequired(false)
             .HasMaxLength(256);

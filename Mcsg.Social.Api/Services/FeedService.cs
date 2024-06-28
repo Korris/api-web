@@ -219,7 +219,7 @@ namespace Mcsg.Social.Api.Services
                                     COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = sc.total_subposts)) AS PrevSubPostHashId,
                        COALESCE(asp.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = 1)) AS NextSubPostHashId
                                     FROM ""SubPosts"" sp
-                                    LEFT JOIN ""Users"" u 
+                                    LEFT JOIN identity.""Users"" u 
                                     ON u.""Id""  = sp.""UserId"" 
                                     LEFT JOIN ""Posts"" p 
                                     ON p.""Id""  = sp.""PostId"" 
@@ -977,7 +977,7 @@ namespace Mcsg.Social.Api.Services
             }
             else
             {
-                var additionalTotalQuery = @"INNER JOIN ""Users"" u ON u.""Id"" = p.""UserId"" ";
+                var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
                 var additionalTotalCondition = @$"AND u.""ProfileName"" = '{feedLoadReq.ProfileName}'";
                 var additionalCondition = @$"AND u.""ProfileName"" = '{feedLoadReq.ProfileName}'";
 

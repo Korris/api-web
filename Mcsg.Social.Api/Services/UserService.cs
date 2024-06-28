@@ -305,13 +305,13 @@ namespace Mcsg.Social.Api.Services
             var query = $@"SELECT ""ProfileName"",
                                   ""ProfileId"",
                                   ""Avatar""
-                          FROM ""Users"" 
+                          FROM identity.""Users"" 
                           [QueryCondition]
                           OFFSET @Offset 
                           LIMIT @PageSize;
 
                           SELECT COUNT(*) AS TotalItems 
-                          FROM ""Users""
+                          FROM identity.""Users""
                           [QueryCondition]";
             bool first = true;
             var queryCondition = "";

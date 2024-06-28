@@ -44,7 +44,7 @@ u.""ProfileName"",
  p.""ExternalCode"", 
  p.""ExternalResource""
 	FROM {0} p 
-LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
+LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
 LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
 LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 	WHERE [HashId] [TitleSearch] [FromDate] [ToDate] [PostType] 

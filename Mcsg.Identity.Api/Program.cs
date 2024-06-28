@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -97,8 +98,12 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(csDbWallet);
+        builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+        builder.Services.AddDbContext<WalletDbContext>(p => p.UseNpgsql(csDbWallet!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+
+        // DbContext
+        builder.Services.AddDataLibrary(csDb); // TODO - will remove later
+        builder.Services.AddWalletDbContext(csDbWallet); // TODO - will remove later
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));

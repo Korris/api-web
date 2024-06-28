@@ -668,7 +668,7 @@ namespace Mcsg.Social.Api.Services
 	                              COUNT(pc.""Id"") as CommentCount,
 	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
 	                              FROM ""Posts"" p
-	                              JOIN ""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
+	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
 	                              LEFT JOIN ""TagPosts"" tp on p.""Id""  = tp.""PostId"" 
 	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
 	                              LEFT JOIN ""PostComments"" pc on pc.""PostId""  = p.""Id"" 
@@ -689,7 +689,7 @@ namespace Mcsg.Social.Api.Services
 
                                   SELECT COUNT(*) AS TotalCount
                                   FROM ""Posts"" p
-                                  JOIN ""Users"" u on p.""CreatedBy"" = u.""Id""
+                                  JOIN identity.""Users"" u on p.""CreatedBy"" = u.""Id""
                                   [QueryCondition]";
 
             query = query.Replace("[QueryCondition]", queryCondition);

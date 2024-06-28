@@ -9,7 +9,7 @@
                 return @"UPDATE ""Sessions""
                                     SET ""PremiumDate"" = @PremiumDate
                                     WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateTimeNow;
-                        UPDATE ""Users""
+                        UPDATE identity.""Users""
                                     SET ""PremiumDate"" = @PremiumDate
                                     WHERE ""Id"" = @UserId;";
             }

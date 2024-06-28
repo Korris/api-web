@@ -38,7 +38,7 @@
 							pl.""Url"" AS ""LinkUrl"",
 							pl.""Type"" AS ""LinkType""
 							FROM ""Posts"" p
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""						
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
@@ -140,7 +140,7 @@
 								LIMIT @PageSize
 								OFFSET @Offet
 							) p
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""						
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
@@ -251,7 +251,7 @@ LIMIT @PageSize
 								LIMIT @PageSize
 								OFFSET @Offet
 							) p
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""						
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
@@ -363,7 +363,7 @@ LIMIT @PageSize
 						pl.""Url"",
 						pl.""Type""
 						FROM ""Posts"" p
-						LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
+						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
@@ -428,7 +428,7 @@ LIMIT @PageSize
 					FROM
 						""Posts"" p
 					LEFT JOIN 
-						""Users"" u ON p.""UserId"" = u.""Id""
+						identity.""Users"" u ON p.""UserId"" = u.""Id""
 					LEFT JOIN 
 						""MetaDatas"" md ON md.""PostId"" = p.""Id""
 					LEFT JOIN 
@@ -572,7 +572,7 @@ LIMIT @PageSize
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
 										SELECT qpost.* FROM ""Posts"" qpost
-										INNER JOIN ""Users"" users ON qpost.""UserId"" = users.""Id"" 
+										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
@@ -581,7 +581,7 @@ LIMIT @PageSize
 								LIMIT @PageSize
 								OFFSET @Offet
 							) p
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""						
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
@@ -639,7 +639,7 @@ LIMIT @PageSize
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
 										SELECT qpost.* FROM ""Posts"" qpost
-										INNER JOIN ""Users"" users ON qpost.""UserId"" = users.""Id"" 
+										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )

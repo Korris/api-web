@@ -53,7 +53,7 @@ namespace Mcsg.Social.Api.Services
 						sp.""CreatorNote"",
 						sp.""IsEnableComment""
 						FROM ""Posts"" p
-						LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""
+						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""SubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false [WithPermission]  [Not-load-chapter]	
@@ -150,7 +150,7 @@ SUM(""CommentCount"") as ""TotalSubPostComment"",
 								[SelectPostIdsQuery]  
 							) postid 
 							 ON postid.""Id"" = p.""Id""
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""		
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""		
 							[JoinSubPostSubQuery]	
 --Post view
 LEFT JOIN LATERAL (
@@ -567,7 +567,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""LastModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
 								 FROM ""Posts"" qpost1		
-							 	INNER JOIN ""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
+							 	INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
 								WHERE  user1.""ProfileName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false 								
 															
@@ -584,7 +584,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @"SELECT qpost1.""Id""
 								 FROM ""Posts"" qpost1
-							 	INNER JOIN ""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
+							 	INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
 								WHERE  user1.""ProfileName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false
 								GROUP BY qpost1.""Id""";
@@ -617,7 +617,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
 					FROM public.""SubPosts"" sp
 					INNER JOIN ""Posts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
-INNER JOIN ""Users"" u ON u.""Id"" = sp.""CreatedBy""
+INNER JOIN identity.""Users"" u ON u.""Id"" = sp.""CreatedBy""
 					LEFT JOIN ""Resources"" rs ON sp.""Id"" = rs.""SubPostId"" AND rs.""IsDelete"" = false
 LEFT JOIN LATERAL 
 							(
@@ -780,7 +780,7 @@ LIMIT 1
 								[SelectPostIdsQuery] 
 							) postid 
 							 ON postid.""Id"" = p.""Id""
-							LEFT JOIN ""Users"" u ON p.""UserId"" = u.""Id""		
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""		
 							LEFT JOIN LATERAL 
 							(
 								SELECT ""Id"",""PostId"",""CreatedDate"",""Title"",""Order"", count(*) OVER() AS ""Total"" 

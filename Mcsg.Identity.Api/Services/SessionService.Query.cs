@@ -18,7 +18,7 @@
             {
                 return @$"SELECT r.""Name"" FROM ""UserRoles"" ur 
                          INNER JOIN ""Roles"" r ON ur.""RoleId"" = r.""Id"" 
-                         INNER JOIN ""Users"" u ON u.""Id"" = ur.""UserId""
+                         INNER JOIN identity.""Users"" u ON u.""Id"" = ur.""UserId""
                          WHERE u.""Id"" = @userId";
             }
         }

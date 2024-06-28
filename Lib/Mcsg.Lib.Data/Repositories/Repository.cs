@@ -1,7 +1,4 @@
 ﻿using Dapper;
-using Mcsg.Lib.Data.Constants;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -14,6 +11,10 @@ using static Dapper.SqlMapper;
 
 namespace Mcsg.Lib.Data.Repositories
 {
+    using Constants;
+    using Entities.Common;
+    using Extensions;
+
     public partial class Repository<TEntity> : IRepository<TEntity>
     {
         private readonly IConfiguration _configuration;
@@ -25,12 +26,19 @@ namespace Mcsg.Lib.Data.Repositories
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             Connection = connection;
 
-            var tableAtt = ((TableAttribute)typeof(TEntity).GetCustomAttribute(typeof(TableAttribute)))?.Name;
-            if (tableAtt == null)
-                _tableName = $"{DbSchema.Default}\"{EntityName}s\"";
-            else
-                _tableName = $"{DbSchema.Default}\"{tableAtt}\"";
+            // Determine the table to be used
+            var table = ((TableAttribute)typeof(TEntity).GetCustomAttribute(typeof(TableAttribute)))?.Name;
+            table = table == null ? $"{EntityName}s" : table;
 
+            // Determine the schema to be used
+            var dbSchema = DbSchema.Default;
+            var tables = DbSchema.IdentityTables.Split(';');
+            if (tables.Contains(table))
+            {
+                dbSchema = DbSchema.Identity;
+            }
+
+            _tableName = $"{dbSchema}\"{table}\"";
         }
 
         private static string EntityName => typeof(TEntity).Name;

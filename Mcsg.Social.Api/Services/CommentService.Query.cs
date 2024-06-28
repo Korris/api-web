@@ -17,7 +17,7 @@ namespace Mcsg.Social.Api.Services
 												r.""HashId"" as ResourceHashId
 											   FROM {0} pc
 											   LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
-											   LEFT JOIN ""Users"" u on pc.""CreatedBy"" = u.""Id""
+											   LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
 											   WHERE pc.""ParentId"" = @CommentId
 											   AND pc.""IsDelete"" = false";
         private string GetCommentWithMostReactionQuery = $@"
@@ -39,7 +39,7 @@ namespace Mcsg.Social.Api.Services
 													COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
 												FROM ""PostComments""  pc
 												LEFT JOIN ""PostComments"" reply on reply.""ParentId"" = pc.""Id""
-												LEFT JOIN ""Users"" u on pc.""CreatedBy"" = u.""Id""
+												LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
 												LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
 												LEFT JOIN ""Posts"" p on pc.""PostId"" = p.""Id""												
 												LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
@@ -65,7 +65,7 @@ namespace Mcsg.Social.Api.Services
 													COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
 												FROM ""SubPostComments"" spc
 												LEFT JOIN ""SubPostComments"" reply on reply.""ParentId"" = spc.""Id""
-												LEFT JOIN ""Users"" u on spc.""CreatedBy"" = u.""Id""
+												LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
 												LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
 												LEFT JOIN ""SubPosts""  sp ON spc.""PostId"" = sp.""Id""
 												LEFT JOIN ""Resources"" r on spc.""ResourceId"" = r.""Id""
@@ -277,7 +277,7 @@ namespace Mcsg.Social.Api.Services
 						, (CASE WHEN use.""ProfileName"" IS NULL THEN use.""UserName"" ELSE use.""ProfileName"" END) AS ProfileName
 						, men.""Length"", men.""Offset"", men.""Text""
 						FROM public.""Mentions"" men 
-						LEFT JOIN public.""Users"" use ON men.""EntityId"" = use.""Id"" 
+						LEFT JOIN identity.""Users"" use ON men.""EntityId"" = use.""Id"" 
 														AND men.""EntityType"" = {(int)MentionEntityType.User}
 						WHERE men.""EntityType"" = {(int)MentionEntityType.User} 
 								AND men.""LocationId"" = ANY(@LocationIds) AND men.""IsDelete"" = false";

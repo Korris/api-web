@@ -55,7 +55,7 @@
                             , (CASE WHEN u.""ProfileName"" IS NULL THEN u.""UserName""  ELSE u.""ProfileName"" END) AS ""AuthorName""
                             , u.""Avatar"" AS ""AuthorAvatar""
                             FROM {0} r
-                            LEFT JOIN public.""Users"" u ON r.""AuthorId"" = u.""Id""
+                            LEFT JOIN identity.""Users"" u ON r.""AuthorId"" = u.""Id""
                             WHERE r.""TargetId"" = @TargetId AND r.""IsDelete"" = false
                             AND r.""Type"" = (CASE WHEN @Type IS NULL THEN r.""Type"" ELSE @Type END)
                             ORDER BY r.""LastModifiedDate"" DESC 
