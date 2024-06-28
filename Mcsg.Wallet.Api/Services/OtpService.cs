@@ -1,18 +1,19 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Entities;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.SeedWork.Extensions;
+    using Lib.Common.Constants;
+    using Lib.Common.Distributor;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Models;
+    using Lib.Data.Enums;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Entities;
+    using Lib.Data.Wallet.Enums;
+    using Models;
+
     public interface IOtpService
     {
         Task<TransactionOtpInfoResp> CreateAsync(WalletTransaction transaction, TransactionOtpType type, string otpToken = "");
@@ -45,8 +46,8 @@ namespace Mcsg.Wallet.Api.Services
         public async Task<TransactionOtpInfoResp> CreateAsync(WalletTransaction transaction, TransactionOtpType type, string otpToken = "")
         {
             var id = Guid.NewGuid();
-            var token = StringGenerator.GetRandomString(_otpSetting.OtpTokenLength);
-            var otpCode = StringGenerator.GenerateOtp(_otpSetting.OtpLength);
+            var token = _otpSetting.OtpTokenLength.GetRandomString();
+            var otpCode = _otpSetting.OtpLength.GenerateOtp();
 
             if (!string.IsNullOrEmpty(otpToken))
             {

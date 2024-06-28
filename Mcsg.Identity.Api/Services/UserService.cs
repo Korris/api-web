@@ -1,14 +1,15 @@
 ﻿using Dapper;
-using Mcsg.Identity.Api.Services.Interface;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Common.SeedWork.Extensions;
+    using Interface;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+
     public partial class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
@@ -43,7 +44,7 @@ namespace Mcsg.Identity.Api.Services
             var referralCode = string.Empty;
             do
             {
-                referralCode = StringGenerator.GetRandomString(8);
+                referralCode = 8.GetRandomString();
             } while (_userManager.Users.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
 
             return referralCode;

@@ -6,6 +6,7 @@ namespace Mcsg.Social.Api.Services
     using Api.Interfaces;
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.SeedWork.Extensions;
     using Constants;
     using DTOs;
     using Interfaces;
@@ -78,7 +79,7 @@ namespace Mcsg.Social.Api.Services
             }
 
             // Upload to temp folder
-            string hashId = StringGenerator.GetRandomString(ResourcesDefinition.HashLength);
+            string hashId = ResourcesDefinition.HashLength.GetRandomString();
             string hashFileName = file.GetHashName(hashId);
             string tempBlobName = "";
             string fileTitle = file.FileName;
@@ -280,7 +281,7 @@ namespace Mcsg.Social.Api.Services
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
-                            HashId = StringGenerator.GetRandomString(SystemConfig.SubPostHashLength),
+                            HashId = SystemConfig.SubPostHashLength.GetRandomString(),
                             IsExclusive = false
                         };
                         subPostId = await _subPostRepository.InsertEntityAsync(subPost);
@@ -355,7 +356,7 @@ namespace Mcsg.Social.Api.Services
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
-                            HashId = StringGenerator.GetRandomString(SystemConfig.SubPostHashLength),
+                            HashId = SystemConfig.SubPostHashLength.GetRandomString(),
                             IsExclusive = false
                         };
 

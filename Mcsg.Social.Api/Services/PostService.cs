@@ -7,6 +7,7 @@ namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
     using Common.Core.Enums;
+    using Common.SeedWork.Extensions;
     using Constants;
     using DTOs;
     using Enums;
@@ -109,7 +110,7 @@ namespace Mcsg.Social.Api.Services
             //Check first post
             var rewards = await CheckRewardsForPost(currentUserId, type);
 
-            var hashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
+            var hashId = SystemConfig.PostHashLength.GetRandomString();
             //var safePlainString = "";
             //if (!string.IsNullOrEmpty(comicPostReq.Summary))
             //{
@@ -1358,7 +1359,7 @@ namespace Mcsg.Social.Api.Services
                 //CreatorNote = chapterPostReq.CreatorNote,
                 IsEnableComment = chapterPostReq.IsEnableComment,
                 ViewCount = 0,
-                HashId = StringGenerator.GetRandomString(SystemConfig.SubPostHashLength),
+                HashId = SystemConfig.SubPostHashLength.GetRandomString(),
                 IsExclusive = false, //BCW-37
             };
             post.LastModifiedDate = DateTime.UtcNow;

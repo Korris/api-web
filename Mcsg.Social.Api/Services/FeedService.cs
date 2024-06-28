@@ -8,6 +8,7 @@ namespace Mcsg.Social.Api.Services
     using Api.Interfaces;
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.SeedWork.Extensions;
     using Constants;
     using DTOs;
     using Enums;
@@ -476,7 +477,7 @@ namespace Mcsg.Social.Api.Services
             var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
             var profileId = _currentUserService.Session.ProfileId;
-            var hashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
+            var hashId = SystemConfig.PostHashLength.GetRandomString();
             if (string.IsNullOrEmpty(feedPostReq.Content))
             {
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
@@ -563,7 +564,7 @@ namespace Mcsg.Social.Api.Services
                 //Regenerate hash when dupplicate. Code == "23505"
                 if (ex.TableName == $"{nameof(Post)}s")
                 {
-                    post.HashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
+                    post.HashId = SystemConfig.PostHashLength.GetRandomString();
                     await _postRepository.InsertAsync(post);
                 }
                 else
@@ -718,7 +719,7 @@ namespace Mcsg.Social.Api.Services
                 //Regenerate hash when dupplicate. Code == "23505"
                 if (ex.TableName == $"{nameof(Post)}s")
                 {
-                    post.HashId = StringGenerator.GetRandomString(SystemConfig.PostHashLength);
+                    post.HashId = SystemConfig.PostHashLength.GetRandomString();
                     await _postRepository.UpdateAsync(post);
                 }
                 else

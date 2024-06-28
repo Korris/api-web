@@ -1,13 +1,14 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace Mcsg.Lib.Common.Extensions
 {
+    using Constants;
+    using Mcsg.Common.SeedWork.Extensions;
+    using Models;
+
     public static class FileExtensions
     {
         public static string GetFileLocation(this IFormFile file)
@@ -66,7 +67,7 @@ namespace Mcsg.Lib.Common.Extensions
             {
                 throw new FormatException(ErrorMessage.InvalidFile);
             }
-            hashId = !string.IsNullOrWhiteSpace(hashId) ? hashId : StringGenerator.GetRandomString(ResourcesDefinition.HashLength);
+            hashId = !string.IsNullOrWhiteSpace(hashId) ? hashId : ResourcesDefinition.HashLength.GetRandomString();
             string extension = Path.GetExtension(file.FileName);
             return hashId + extension;
         }

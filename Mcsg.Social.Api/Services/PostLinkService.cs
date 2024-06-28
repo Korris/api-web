@@ -3,6 +3,7 @@
 namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
+    using Common.SeedWork.Extensions;
     using Extensions;
     using Lib.Common.Constants;
     using Lib.Common.Enums;
@@ -59,7 +60,7 @@ namespace Mcsg.Social.Api.Services
                         await _postLinkRepository.Connection.ExecuteAsync(RemoveAllLinkOfPostQuery, new { PostId = postId });
                         var postLink = new PostLink()
                         {
-                            HashId = StringGenerator.GetRandomString(ResourcesDefinition.HashLength),
+                            HashId = ResourcesDefinition.HashLength.GetRandomString(),
                             PostId = postId,
                             Url = lastLink.Value,
                             Type = youtubeLinks.Contains(lastLink.Value) ? PostLinkType.Youtube : PostLinkType.Video,

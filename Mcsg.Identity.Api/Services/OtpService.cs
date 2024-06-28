@@ -1,19 +1,20 @@
 ﻿using Dapper;
-using Mcsg.Identity.Api.Models;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Common.SeedWork.Extensions;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Distributor;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public partial class OtpService : IOtpService
     {
         private readonly IRepository<UserOtp> _userOtpRepository;
@@ -31,8 +32,8 @@ namespace Mcsg.Identity.Api.Services
         public async Task<UserOtp> CreateAsync(Guid userId, string to, UserOtpType type, string otpToken = "")
         {
             var id = Guid.NewGuid();
-            var token = StringGenerator.GetRandomString(_otpSetting.OtpTokenLength);
-            var otpCode = StringGenerator.GenerateOtp(_otpSetting.OtpLength);
+            var token = _otpSetting.OtpTokenLength.GetRandomString();
+            var otpCode = _otpSetting.OtpLength.GenerateOtp();
             if (!string.IsNullOrEmpty(otpToken))
             {
                 token = otpToken;
