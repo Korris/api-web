@@ -896,7 +896,9 @@ namespace Mcsg.Social.Api.Services
                         Width = fileDbs.Width,
                         Height = fileDbs.Height,
                         Url = url,
-                        Order = fileDbs.Order
+                        Order = fileDbs.Order,
+                        SubPostHashId = subPostdb.HashId,
+
                     });
                     var subPostResponse = new SubPostResponse()
                     {
