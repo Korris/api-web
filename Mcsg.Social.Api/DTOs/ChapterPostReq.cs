@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.DTOs
+﻿namespace Mcsg.Social.Api.DTOs
 {
+    using Common.Core.Enums;
+    using Lib.Data.Enums;
+
     public class ChapterPostReq
     {
         public string? Title { get; set; }

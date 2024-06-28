@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Admin.Api.DTOs.Posts
+﻿namespace Mcsg.Admin.Api.DTOs.Posts
 {
+    using Common.Core.Enums;
+
     public class PostListReq : GetByPageReq
     {
         public string HashId { get; set; }

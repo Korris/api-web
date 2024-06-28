@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Services.Interfaces
 {
+    using Common.Core.Enums;
+    using Lib.Data.Enums;
+
     public interface ISmartCountService
     {
         Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Constants;
     using DTOs;
@@ -17,7 +18,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
     using Models;
 
     public partial class FileService : IFileService

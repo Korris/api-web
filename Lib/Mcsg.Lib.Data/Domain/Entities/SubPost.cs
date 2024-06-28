@@ -1,10 +1,11 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Lib.Data.Domain.Entities.Common;
+    using Lib.Data.Enums;
+    using Mcsg.Common.Core.Enums;
+
     [Table("SubPosts")]
     public class SubPost : AuditableHasPrivateEntity
     {

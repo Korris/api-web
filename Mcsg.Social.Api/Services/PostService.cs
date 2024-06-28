@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Enums;
     using Constants;
     using DTOs;
     using Enums;
@@ -21,7 +22,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
     using Models;
     using Models.Earning;
     using Services.Interfaces;

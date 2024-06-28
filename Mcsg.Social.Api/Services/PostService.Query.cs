@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+
     public partial class PostService
     {
         private string GetTotalCommentQuery => $@"SELECT 

@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Admin.Api.DTOs.SubPosts
+﻿namespace Mcsg.Admin.Api.DTOs.SubPosts
 {
+    using Common.Core.Enums;
+    using Lib.Data.Enums;
+
     public class SubPostResponse
     {
         public Guid Id { get; set; }

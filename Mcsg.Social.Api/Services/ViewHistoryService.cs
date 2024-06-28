@@ -1,11 +1,11 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+    using Lib.Common.Distributor;
+    using Lib.Common.Models;
+    using Models;
+    using Services.Interfaces;
+
     public partial class ViewHistoryService : IViewHistoryService
     {
         private readonly DistributeManager _distributeManager;

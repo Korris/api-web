@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Enums;
     using DTOs;
     using Enums;
     using Interfaces;
@@ -10,7 +11,6 @@
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
     using Models;
 
     public partial class ComicService : IComicService

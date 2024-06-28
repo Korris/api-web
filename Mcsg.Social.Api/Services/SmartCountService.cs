@@ -7,7 +7,7 @@
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
+    using Common.Core.Enums;
     using Models;
 
     public partial class SmartCountService : ISmartCountService

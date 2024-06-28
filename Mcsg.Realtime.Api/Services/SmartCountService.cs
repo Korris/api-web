@@ -1,14 +1,14 @@
-﻿using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-using Mcsg.Realtime.Api.Models;
-
-namespace Mcsg.Realtime.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Enums;
+    using Lib.Common.Distributor;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public interface ISmartCountService
     {
         Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType);

@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Admin.Api.DTOs.Users
+﻿namespace Mcsg.Admin.Api.DTOs.Users
 {
+    using Common.Core.Enums;
+
     public class UserStatusReq
     {
         public UserStatus Status { get; set; }

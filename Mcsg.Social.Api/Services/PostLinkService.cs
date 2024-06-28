@@ -1,18 +1,19 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-using Mcsg.Lib.Model.Models;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+    using Extensions;
+    using Lib.Common.Constants;
+    using Lib.Common.Enums;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Helpers;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Model.Models;
+    using Models;
+
     public interface IPostLinkService
     {
         Task<PostLinkResponse> AddLinkAsync(Guid postId, string content);

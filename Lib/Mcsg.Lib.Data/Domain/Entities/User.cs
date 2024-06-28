@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Model.Enums;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Mcsg.Common.Core.Enums;
+
     public class User : IdentityUser<Guid>
     {
         public string? ProfileName { get; set; }

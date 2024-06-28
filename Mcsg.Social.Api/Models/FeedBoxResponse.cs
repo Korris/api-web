@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models
 {
+    using Common.Core.Enums;
+
     public class FeedBoxResponse : FeedBox
     {
         public List<SubPostResponse>? SubPosts { get; set; } = new List<SubPostResponse>();

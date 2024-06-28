@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Analytic.Api.Services
 {
+    using Common.Core.Enums;
     using Common.SeedWork.Enums;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -81,7 +82,7 @@ namespace Mcsg.Analytic.Api.Services
                 authorId = postId.UserId;
                 req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
-                req.PostType = postId?.PostType ?? Lib.Model.Enums.PostType.FEED;
+                req.PostType = postId?.PostType ?? PostType.FEED;
             }
 
             var entity = new UserViewPost
@@ -179,7 +180,7 @@ namespace Mcsg.Analytic.Api.Services
 
                 req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
-                req.PostType = postId?.PostType ?? Lib.Model.Enums.PostType.FEED;
+                req.PostType = postId?.PostType ?? PostType.FEED;
 
                 var entity = new UserViewPost
                 {

@@ -1,9 +1,9 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models
 {
+    using Common.Core.Enums;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+
     public class SubPostBasic
     {
         public Guid Id { get; set; }

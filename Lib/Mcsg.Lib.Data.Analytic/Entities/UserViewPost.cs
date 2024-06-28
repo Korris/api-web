@@ -2,7 +2,7 @@
 {
     using Common.SeedWork.Enums;
     using Lib.Data.Analytic.Entities.Base;
-    using Lib.Model.Enums;
+    using Mcsg.Common.Core.Enums;
 
     public class UserViewPost : TrackingEntity
     {

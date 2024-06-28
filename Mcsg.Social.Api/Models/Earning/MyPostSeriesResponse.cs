@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Mappings;
-using Mcsg.Lib.Model.Enums;
 
 namespace Mcsg.Social.Api.Models.Earning
 {
+    using Common.Core.Enums;
+    using Mappings;
+
     public class MyPostSeriesQueryResult
     {
         public string HashId { get; set; }

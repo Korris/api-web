@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Lib.Common.Models
+﻿namespace Mcsg.Lib.Common.Models
 {
+    using Data.Enums;
+    using Mcsg.Common.Core.Enums;
+
     public class SmartCountEntityData
     {
         public Guid EntityId { get; set; }

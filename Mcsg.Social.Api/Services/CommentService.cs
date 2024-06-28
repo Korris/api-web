@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Enums;
     using Common.Core.Extensions;
     using DTOs;
     using Enums;
@@ -14,7 +15,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
     using Models;
 
     public interface ICommentService

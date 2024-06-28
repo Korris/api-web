@@ -1,9 +1,7 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+
     public partial class FavoriteService
     {
         private string GetFavoriteTagQuery
@@ -85,11 +83,11 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-		private string GetFavoritePostByUserQuery
-		{
-			get
-			{
-				return @$"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
+        private string GetFavoritePostByUserQuery
+        {
+            get
+            {
+                return @$"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
 						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
 						post.""CreatedDate"",
@@ -186,7 +184,7 @@ namespace Mcsg.Social.Api.Services
                         INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
                         WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false ;
                         ";
-			}
-		}
-	}
+            }
+        }
+    }
 }

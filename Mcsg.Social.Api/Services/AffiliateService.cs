@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Enums;
     using Constants;
     using Extensions;
     using Lib.Common.Exceptions;
@@ -11,7 +12,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Common.Web.Security;
     using Lib.Data.Wallet;
     using Lib.Data.Wallet.Enums;
-    using Lib.Model.Enums;
     using Lib.Model.Models;
     using Models.Earning;
 

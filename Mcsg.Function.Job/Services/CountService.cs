@@ -2,13 +2,13 @@
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Enums;
     using Interfaces;
     using Lib.Common.Models;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Domain.Entities.Common;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
     using Entities = Lib.Data.Domain.Entities;
 
     public class CountService<TP, TS> : ICountService<TP, TS>

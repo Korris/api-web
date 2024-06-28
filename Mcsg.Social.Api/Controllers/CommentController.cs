@@ -1,10 +1,11 @@
 ﻿using Mcsg.Social.Api.DTOs;
 using Mcsg.Social.Api.Services;
-using Mcsg.Lib.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using Common.Core.Enums;
+
     [ApiController]
     [Route("[controller]")]
     public class CommentController : ControllerBase

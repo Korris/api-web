@@ -1,12 +1,13 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Model.Enums;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using Common.Core.Enums;
+    using DTOs;
+    using Enums;
+    using Services.Interfaces;
+
     [Route("[controller]")]
     [ApiController]
     public class ProfileController : ControllerBase

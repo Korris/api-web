@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Lib.Model.Enums
+﻿namespace Mcsg.Common.Core.Enums;
+
+public enum PostType
 {
-    public enum PostType
-    {
-        FEED = 0,
-        STORY = 1,
-        COMIC = 2
-    }
+    FEED = 0,
+    STORY = 1,
+    COMIC = 2
 }

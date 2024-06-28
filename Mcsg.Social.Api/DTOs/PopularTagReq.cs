@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Model.Enums;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Mcsg.Social.Api.DTOs
 {
+    using Common.Core.Enums;
+
     public class PopularTagReq
     {
         [DefaultValue(null)]

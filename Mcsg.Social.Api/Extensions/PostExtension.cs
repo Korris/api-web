@@ -1,11 +1,11 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions
 {
+    using Common.Core.Enums;
+    using Constants;
+    using Enums;
+    using Lib.Data.Enums;
+    using Models;
+
     public static class PostExtension
     {
         public static string ToPostSeriesStatus(this PostSeriesSelectedType type)

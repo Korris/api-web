@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Lib.Common.Models
+﻿namespace Mcsg.Lib.Common.Models
 {
+    using Mcsg.Common.Core.Enums;
+
     public class ViewHistoryData
     {
         public Guid UserId { get; set; }

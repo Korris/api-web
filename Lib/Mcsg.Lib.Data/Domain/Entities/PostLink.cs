@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Lib.Data.Domain.Entities
+﻿namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Lib.Data.Domain.Entities.Common;
+    using Mcsg.Common.Core.Enums;
+
     public class PostLink : AuditableEntity
     {
         public Guid PostId { get; set; }

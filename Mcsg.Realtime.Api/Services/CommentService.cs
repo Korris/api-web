@@ -3,6 +3,7 @@ using Dapper;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Enums;
     using Constants;
     using DTOs;
     using Interfaces;
@@ -13,7 +14,6 @@ namespace Mcsg.Realtime.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
-    using Lib.Model.Enums;
 
     public interface ICommentService
     {

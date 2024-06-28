@@ -14,7 +14,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Enums;
+    using Common.Core.Enums;
     using Models;
     using Services.Interfaces;
 

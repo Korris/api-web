@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Lib.Model.Models
+﻿namespace Mcsg.Lib.Model.Models
 {
+    using Common.Core.Enums;
+
     public class AffiliateData
     {
         public Guid AffiliateUserId { get; set; }

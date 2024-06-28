@@ -1,8 +1,8 @@
-﻿using Mcsg.Social.Api.Enums;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models
 {
+    using Common.Core.Enums;
+    using Enums;
+
     public class PostSeriesResponse : PostResponse
     {
         public int? ViewCount { get; set; }

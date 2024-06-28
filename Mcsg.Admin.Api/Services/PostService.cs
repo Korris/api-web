@@ -1,19 +1,20 @@
 ﻿using Dapper;
-using Mcsg.Admin.Api.DTOs.Posts;
-using Mcsg.Admin.Api.DTOs.Users;
-using Mcsg.Admin.Api.Services.Interface;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Constants;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Model.Enums;
 
 namespace Mcsg.Admin.Api.Services
 {
+    using Common.Core.Enums;
+    using DTOs.Posts;
+    using DTOs.Users;
+    using Interface;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Interfaces;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Constants;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+
     public partial class PostService : IPostService
     {
         private readonly IRepository<Post> _postRepo;

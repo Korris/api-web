@@ -1,13 +1,13 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Services.Interfaces
 {
+    using Common.Core.Enums;
+    using DTOs;
+    using Enums;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Models;
+    using Models.Earning;
+
     public interface IPostService
     {
         Task<bool> Delete(Guid postId);

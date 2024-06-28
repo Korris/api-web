@@ -1,20 +1,20 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Model.Enums;
-using MetaData = Mcsg.Lib.Data.Domain.Entities.MetaData;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+    using DTOs;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Interfaces;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+    using Services.Interfaces;
+
     public partial class FavoriteService : IFavoriteService
     {
         private readonly IRepository<TagFavorite> _tagFavoriteRepository;

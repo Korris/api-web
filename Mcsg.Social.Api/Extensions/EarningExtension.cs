@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Model.Enums;
-
-namespace Mcsg.Social.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions
 {
+    using Common.Core.Enums;
+
     public static class EarningExtension
     {
         public static string ToDisplay(this PostType value)
