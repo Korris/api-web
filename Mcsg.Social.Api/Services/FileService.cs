@@ -356,7 +356,7 @@ namespace Mcsg.Social.Api.Services
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
-                            HashId = IntExtension.GetRandomString(SystemConfig.SubPostHashLength),
+                            HashId = SystemConfig.SubPostHashLength.GetRandomString(),
                             IsExclusive = false
                         };
 
