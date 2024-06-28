@@ -21,11 +21,11 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Const;
     using Lib.Model.Enums;
     using Models;
     using Models.Earning;
     using Services.Interfaces;
+    using static Common.Core.Constants.Setting;
 
     public partial class PostService : IPostService
     {
@@ -842,10 +842,10 @@ namespace Mcsg.Social.Api.Services
                 Chapters = item.Chapters,
                 ChapterCount = totalChapters,
                 ViewCount = item.ViewCount + totalChapterView,
-                TotalChapters = new ChaptersExclusiveData() { Count = totalChapters, Amount = totalChapters * GlobalSystemConfig.ChapterPrice },
-                FreeChapters = new ChaptersExclusiveData() { Count = freeChapters, Amount = freeChapters * GlobalSystemConfig.ChapterPrice },
-                ExclusiveChapters = new ChaptersExclusiveData() { Count = exclusiveChapters, Amount = exclusiveChapters * GlobalSystemConfig.ChapterPrice },
-                EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * GlobalSystemConfig.ChapterPrice },
+                TotalChapters = new ChaptersExclusiveData() { Count = totalChapters, Amount = totalChapters * Default.ChapterPrice },
+                FreeChapters = new ChaptersExclusiveData() { Count = freeChapters, Amount = freeChapters * Default.ChapterPrice },
+                ExclusiveChapters = new ChaptersExclusiveData() { Count = exclusiveChapters, Amount = exclusiveChapters * Default.ChapterPrice },
+                EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
                 SeriesStatus = item.ToSeriesStatus(),
                 TotalComment = item.TotalComment,
             };

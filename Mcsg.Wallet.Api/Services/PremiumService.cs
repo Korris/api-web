@@ -1,23 +1,24 @@
 ﻿using Dapper;
-using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Entities;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Lib.Model.Const;
-using Mcsg.Wallet.Api.Constants;
-using Mcsg.Wallet.Api.Helpers;
-using Mcsg.Wallet.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Constants;
+    using Helpers;
+    using Lib.Common.Distributor;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Extensions;
+    using Lib.Common.Models;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Entities;
+    using Lib.Data.Wallet.Enums;
+    using Models;
+    using static Common.Core.Constants.Setting;
+
     public interface IPremiumService
     {
         Task<IEnumerable<PremiumPackageResponse>> GetPremiumPackage();
@@ -255,7 +256,7 @@ namespace Mcsg.Wallet.Api.Services
                 throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
             }
 
-            if ((userWallet.Point + userWallet.RewardPoint) < GlobalSystemConfig.ChapterPrice)
+            if ((userWallet.Point + userWallet.RewardPoint) < Default.ChapterPrice)
             {
                 throw new BadRequestException(ApiErrorCodes.BALANCE_NOT_ENOUGH, ApiErrorMessage.BALANCE_NOT_ENOUGH);
             }
@@ -270,7 +271,7 @@ namespace Mcsg.Wallet.Api.Services
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = _currentUserService?.Session?.UserId,
                 Id = Guid.NewGuid(),
-                Amount = GlobalSystemConfig.ChapterPrice,
+                Amount = Default.ChapterPrice,
                 IsFromSystem = false,
                 Content = "BUY CHAPTER ID: " + req.ChapterId,
                 SystemMessage = "BUY CHAPTER ID: " + req.ChapterId,
@@ -338,7 +339,7 @@ namespace Mcsg.Wallet.Api.Services
             result.Item = new ItemSeletedResp
             {
                 Name = "Buy chapter",
-                Price = GlobalSystemConfig.ChapterPrice
+                Price = Default.ChapterPrice
             };
             return result;
         }
@@ -357,7 +358,7 @@ namespace Mcsg.Wallet.Api.Services
                 throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
             }
 
-            if ((userWallet.Point + userWallet.RewardPoint) < GlobalSystemConfig.ChapterPrice)
+            if ((userWallet.Point + userWallet.RewardPoint) < Default.ChapterPrice)
             {
                 throw new BadRequestException(ApiErrorCodes.BALANCE_NOT_ENOUGH, ApiErrorMessage.BALANCE_NOT_ENOUGH);
             }

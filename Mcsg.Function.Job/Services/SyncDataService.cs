@@ -15,7 +15,7 @@ namespace Mcsg.Function.Job.Services
     using Lib.Data.Wallet;
     using Lib.Data.Wallet.Entities;
     using Lib.Data.Wallet.Enums;
-    using Lib.Model.Const;
+    using static Common.Core.Constants.Setting;
 
     public partial class SyncDataService : ISyncDataService
     {
@@ -347,7 +347,7 @@ namespace Mcsg.Function.Job.Services
                             return;//đã mua trước đó
                         }
                         // Amount need to spend for not bought chapters.
-                        var estimateAmount = notBoughtChapters.Count() * GlobalSystemConfig.ChapterPrice;
+                        var estimateAmount = notBoughtChapters.Count() * Default.ChapterPrice;
 
                         if ((userWallet.Point + userWallet.RewardPoint) < estimateAmount)
                         {

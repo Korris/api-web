@@ -38,52 +38,6 @@ public class Setting : SeedWork.Constants.Setting
     }
 
     /// <summary>
-    /// Developer name
-    /// </summary>
-    public class DevName
-    {
-        /// <summary>
-        /// ComBreed
-        /// </summary>
-        public const string ComBreed = "CBR";
-
-        /// <summary>
-        /// ComPet
-        /// </summary>
-        public const string ComPet = "CPT";
-
-        /// <summary>
-        /// ComUser
-        /// </summary>
-        public const string ComUser = "CUS";
-
-        /// <summary>
-        /// CreMenu
-        /// </summary>
-        public const string CreMenu = "CMN";
-
-        /// <summary>
-        /// NotDevice
-        /// </summary>
-        public const string NotDevice = "NDV";
-
-        /// <summary>
-        /// SerEnterprise
-        /// </summary>
-        public const string SerEnterprise = "SET";
-
-        /// <summary>
-        /// SerLocation
-        /// </summary>
-        public const string SerLocation = "SLC";
-
-        /// <summary>
-        /// SocHashtag
-        /// </summary>
-        public const string SocHashtag = "SHT";
-    }
-
-    /// <summary>
     /// The folder name is stored in MinIO
     /// </summary>
     public class FolderMinIO
@@ -100,14 +54,14 @@ public class Setting : SeedWork.Constants.Setting
     public class Default
     {
         /// <summary>
-        /// Enterprise thumbnail
+        /// Reference number length
         /// </summary>
-        public const string EnterpriseThumbnail = "users/UA000001/Enterprises/default.png";
+        public const int ReferenceNumberLength = 12;
 
         /// <summary>
-        /// Service thumbnail
+        /// Chapter price
         /// </summary>
-        public const string ServiceThumbnail = "users/UA000001/Services/default.png";
+        public const float ChapterPrice = 2000;
     }
 
     /// <summary>
@@ -119,30 +73,5 @@ public class Setting : SeedWork.Constants.Setting
         /// Background
         /// </summary>
         public const string Background = "Background";
-
-        /// <summary>
-        /// Posts
-        /// </summary>
-        public const string Posts = "Posts";
-
-        /// <summary>
-        /// Moments
-        /// </summary>
-        public const string Moments = "Moments";
-
-        /// <summary>
-        /// Files
-        /// </summary>
-        public const string Files = "Files";
-
-        /// <summary>
-        /// Comments
-        /// </summary>
-        public const string Comments = "Comments";
-
-        /// <summary>
-        /// CommentSubs
-        /// </summary>
-        public const string CommentSubs = "CommentSubs";
     }
 }
