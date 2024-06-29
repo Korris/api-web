@@ -230,7 +230,7 @@ public class HostedSmartLoopkup : BackgroundService
                                     WHERE s.""Keyword"" = c.""ProfileName""
                                     AND s.""Keyword"" = @Name
                                     AND s.""KeywordType"" = @KeywordType;
-                                ", "public.\"SmartLookups\"", "public.\"Posts\"", "public.\"Users\"");
+                                ", "public.\"SmartLookups\"", "public.\"Posts\"", "identity.\"Users\"");
         }
     }
 
