@@ -197,6 +197,11 @@ namespace Mcsg.Social.Api.Services
 
         private UserProfileResponse CreateUserRespone(User user)
         {
+            if (user == null)
+            {
+                return new UserProfileResponse();
+            }
+
             return new UserProfileResponse
             {
                 Id = user.Id,

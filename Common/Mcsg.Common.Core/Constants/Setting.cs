@@ -77,6 +77,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Maximum point can deposit
         /// </summary>
         public const float MaximumPointCanDeposit = 999999;
+
+        /// <summary>
+        /// Free username length
+        /// </summary>
+        public const int FreeUserNameLength = 16;
     }
 
     /// <summary>

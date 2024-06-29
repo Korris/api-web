@@ -24,21 +24,6 @@ namespace Mcsg.Identity.Api.Services
             _userManager = userManager;
         }
 
-        public async Task<string> GenerateProfileName(string email, string phone)
-        {
-            string profileName = string.Empty;
-            if (!string.IsNullOrEmpty(email))
-            {
-                profileName = email.Split('@')[0];
-            }
-            else if (!string.IsNullOrEmpty(phone))
-            {
-                var totalUser = await _userManager.Users.Select(x => x.Id).CountAsync() + 1;
-                profileName = $"user-{totalUser}";
-            }
-            return profileName;
-        }
-
         public string GenerateReferralCode()
         {
             var referralCode = string.Empty;
@@ -48,20 +33,6 @@ namespace Mcsg.Identity.Api.Services
             } while (_userManager.Users.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
 
             return referralCode;
-        }
-
-        public string GenerateUserName(string email, string phone)
-        {
-            string userName = string.Empty;
-            if (!string.IsNullOrEmpty(email))
-            {
-                userName = email;
-            }
-            else if (!string.IsNullOrEmpty(phone))
-            {
-                userName = phone;
-            }
-            return userName;
         }
 
         public async Task<bool> ConfirmEmailAsync(string email)

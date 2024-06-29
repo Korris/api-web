@@ -20,6 +20,7 @@ namespace Mcsg.Identity.Api.Services
     using Lib.Data;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
+    using Lib.Data.Interfaces;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Services.Interface;
@@ -59,7 +60,8 @@ namespace Mcsg.Identity.Api.Services
             , IRepository<SmartLookup> smartLookupRepository
             , IUserWalletService userWalletService
             , McsgDbContext context
-            , ISetting setting)
+            , ISetting setting,
+            IUserNameUniquenessChecker uniquenessChecker)
         {
             _userManager = userManager;
             _userRepository = unitOfWork.GetRepository<User>();
@@ -80,6 +82,7 @@ namespace Mcsg.Identity.Api.Services
             _userWalletService = userWalletService;
             _context = context;
             _setting = setting;
+            _uniquenessChecker = uniquenessChecker;
         }
 
         public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
@@ -96,15 +99,16 @@ namespace Mcsg.Identity.Api.Services
                 user = new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = _userService.GenerateUserName(request.Email, request.Phone),
                     Email = request.Email ?? "",
                     PhoneNumber = request.Phone ?? "",
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
-                    ProfileName = await _userService.GenerateProfileName(request.Email, request.Phone),
                     ReferralCode = _userService.GenerateReferralCode()
                 };
-                user.ProfileId = user.ProfileName.Replace(" ", "-");
+
+                user.UserName = await GenerateUserName(user.Id);
+                user.ProfileName = user.UserName + "ProfileName"; //TODO will use for display name
+                user.ProfileId = user.UserName + "ProfileId"; //TODO will not be used
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
@@ -138,6 +142,7 @@ namespace Mcsg.Identity.Api.Services
                     if (_setting.DevMode)
                     {
                         response.Code = userOtp.Code;
+                        response.UserName = user.UserName;
                     }
                 }
 
@@ -151,6 +156,7 @@ namespace Mcsg.Identity.Api.Services
                     if (_setting.DevMode)
                     {
                         response.Code = userOtp.Code;
+                        response.UserName = user.UserName;
                     }
                 }
 
@@ -527,8 +533,6 @@ namespace Mcsg.Identity.Api.Services
                     //  Case 2 : Can GET email in social token => register
                     var user = new User
                     {
-                        UserName = _userService.GenerateUserName(socialEmail, string.Empty),
-                        ProfileName = await _userService.GenerateProfileName(socialEmail, string.Empty),
                         Email = socialEmail,
                         PhoneNumber = string.Empty,
                         EmailConfirmed = true,
@@ -537,7 +541,10 @@ namespace Mcsg.Identity.Api.Services
                         ActivedDate = DateTime.UtcNow,
                     };
 
-                    user.ProfileId = user.ProfileName.Replace(" ", "-");
+                    user.UserName = await GenerateUserName(user.Id);
+                    user.ProfileName = user.UserName + "ProfileName"; //TODO will use for display name
+                    user.ProfileId = user.UserName + "ProfileId"; //TODO will not be used
+
                     var createResult = await _userManager.CreateAsync(user);
                     if (!createResult.Succeeded)
                     {
@@ -715,12 +722,29 @@ namespace Mcsg.Identity.Api.Services
             }
             return accountExisted;
         }
-        public async Task<User> GetUserByEmailOrPhoneNumber(string email, string phoneNumber)
+
+        public async Task<User?> GetUserByEmailOrPhoneNumber(string email, string phoneNumber)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(x =>
-            ((!string.IsNullOrEmpty(x.Email) && x.Email == email)
-            || (!string.IsNullOrEmpty(x.PhoneNumber) && x.PhoneNumber == phoneNumber)) && !x.IsDelete);
+            var qUserAvailable = _context.Users.Where(p => !p.IsDelete);
+
+            // Find by UserName
+            var qUser = from a in qUserAvailable
+                        join b in _context.UserNameHistories on a.Id equals b.UserId
+                        where !string.IsNullOrEmpty(b.UserName) && b.UserName == email
+                        select a;
+
+            var user = await qUser.FirstOrDefaultAsync();
+
+            // Find by Email or PhoneNumber
+            if (user == null)
+            {
+                user = await qUserAvailable.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && p.Email == email)
+                    || (!string.IsNullOrEmpty(p.PhoneNumber) && p.PhoneNumber == phoneNumber));
+            }
+
+            return user;
         }
+
         private async Task<User> GetUserByEmailOrPhone(UserOtpType type, string email, string phoneNumber)
         {
             if (type == UserOtpType.VerifyEmail || type == UserOtpType.ResetByEmail)
@@ -769,6 +793,15 @@ namespace Mcsg.Identity.Api.Services
             return true;
 
         }
+
+        private async Task<string?> GenerateUserName(Guid userId)
+        {
+            var ett = UserNameHistory.Create(_uniquenessChecker, userId);
+            await _context.UserNameHistories.AddAsync(ett);
+            await _context.SaveChangesAsync();
+            return ett.UserName;
+        }
+
         #endregion
 
         #region -- Fields --
@@ -782,6 +815,11 @@ namespace Mcsg.Identity.Api.Services
         /// Setting
         /// </summary>
         private readonly ISetting _setting;
+
+        /// <summary>
+        /// Uniqueness checker
+        /// </summary>
+        private readonly IUserNameUniquenessChecker _uniquenessChecker;
 
         #endregion
     }

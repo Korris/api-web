@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Lib.Data;
 
+using Common.SeedWork.Extensions;
 using Constants;
 using Domain.Entities;
 using Domain.Entities.Configurations;
@@ -91,6 +92,42 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
     /// </summary>
     /// <param name="options">Options</param>
     public McsgDbContext(DbContextOptions<McsgDbContext> options) : base(options) { }
+
+    /// <summary>
+    /// Make serial number
+    /// </summary>
+    /// <param name="q">Queryable</param>
+    /// <param name="sOrderBy">Selector for OrderBy statement</param>
+    /// <param name="sSelect">Selector for Select statement</param>
+    /// <param name="prefix">Prefix</param>
+    /// <returns>Return the result</returns>
+    public string MakeNo<T>(IQueryable<T> q, Func<T, Guid> sOrderBy, Func<T, string> sSelect, string prefix)
+    {
+        // Prefix
+        if (string.IsNullOrWhiteSpace(prefix))
+        {
+            prefix = "UN";
+        }
+        else
+        {
+            prefix = prefix.Trim();
+        }
+        var ym = DateTime.Now.ToString("yyyyMM");
+        prefix += ym + "-{0:0000#}";
+
+        // First
+        var m = q.OrderBy(sOrderBy).Select(sSelect).LastOrDefault();
+        if (m == null)
+        {
+            return string.Format(prefix, 1);
+        }
+
+        // Next
+        var arr = m.Split('-').LastOrDefault();
+        var num = arr == null ? "0" : arr.ToNumber();
+        var seq = Convert.ToUInt32(num) + 1;
+        return string.Format(prefix, seq);
+    }
 
     #endregion
 

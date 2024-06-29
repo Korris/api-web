@@ -2,7 +2,7 @@
 
 using Lib.Data.Domain.Entities.Common;
 
-public class UserNameHistory : AuditableEntity
+public partial class UserNameHistory : AuditableEntity
 {
     public Guid UserId { get; set; }
     public string? UserName { get; set; }

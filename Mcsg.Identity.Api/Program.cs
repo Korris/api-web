@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace Mcsg.Identity.Api;
 
+using Checkers;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -17,6 +18,7 @@ using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
+using Lib.Data.Interfaces;
 using Lib.Data.Wallet;
 using Models;
 using Services;
@@ -100,6 +102,9 @@ public class Program
         // DbContext
         builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
         builder.Services.AddDbContext<WalletDbContext>(p => p.UseNpgsql(csDbWallet!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+
+        // Checker
+        builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
 
         // DbContext
         builder.Services.AddDataLibrary(csDb); // TODO - will remove later
