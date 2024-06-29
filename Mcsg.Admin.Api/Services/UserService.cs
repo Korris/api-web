@@ -73,7 +73,7 @@ namespace Mcsg.Admin.Api.Services
                 }
 
 
-                var query = string.Format(GetAllUsersQuery, _userRepo.TableName, DbSchema.Default, request.OrderBy, strOrderBy, request.SearchName);
+                var query = string.Format(GetAllUsersQuery, _userRepo.TableName, DbSchema.Identity, request.OrderBy, strOrderBy, request.SearchName);
 
                 if (request.FromDate != null)
                 {

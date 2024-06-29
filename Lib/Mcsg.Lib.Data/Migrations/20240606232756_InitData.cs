@@ -183,6 +183,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Roles",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -414,6 +415,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -428,6 +430,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_RoleClaims_Roles_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "identity",
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -587,6 +590,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserClaims",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -641,6 +645,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserLogins",
+                schema: "identity",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -662,6 +667,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserRoles",
+                schema: "identity",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -673,6 +679,7 @@ namespace Mcsg.Lib.Data.Migrations
                     table.ForeignKey(
                         name: "FK_UserRoles_Roles_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "identity",
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -687,6 +694,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserTokens",
+                schema: "identity",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1363,11 +1371,13 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
+                schema: "identity",
                 table: "RoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
+                schema: "identity",
                 table: "Roles",
                 column: "NormalizedName",
                 unique: true);
@@ -1478,6 +1488,7 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
+                schema: "identity",
                 table: "UserClaims",
                 column: "UserId");
 
@@ -1503,11 +1514,13 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
+                schema: "identity",
                 table: "UserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
+                schema: "identity",
                 table: "UserRoles",
                 column: "RoleId");
 
@@ -1582,7 +1595,8 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "PostReports");
 
             migrationBuilder.DropTable(
-                name: "RoleClaims");
+                name: "RoleClaims",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "Sessions");
@@ -1612,7 +1626,8 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "TagPosts");
 
             migrationBuilder.DropTable(
-                name: "UserClaims");
+                name: "UserClaims",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserExclusiveSubPosts");
@@ -1621,7 +1636,8 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "UserFollows");
 
             migrationBuilder.DropTable(
-                name: "UserLogins");
+                name: "UserLogins",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserNameHistories",
@@ -1634,13 +1650,15 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "UserRefreshTokens");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "UserRoles",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserSocials");
 
             migrationBuilder.DropTable(
-                name: "UserTokens");
+                name: "UserTokens",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "ViewHistories");
@@ -1664,7 +1682,8 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Roles",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "Resources");

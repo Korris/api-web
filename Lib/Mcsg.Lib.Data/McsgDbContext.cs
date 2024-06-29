@@ -51,28 +51,28 @@ public class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
         builder.Entity<IdentityUserClaim<Guid>>(entity =>
         {
-            entity.ToTable("UserClaims");
+            entity.ToTable("UserClaims", DbSchema.Identity);
         });
 
         builder.Entity<IdentityUserLogin<Guid>>(entity =>
         {
-            entity.ToTable("UserLogins");
+            entity.ToTable("UserLogins", DbSchema.Identity);
         });
 
-        builder.Entity<IdentityUserToken<Guid>>(entity => entity.ToTable("UserTokens"));
+        builder.Entity<IdentityUserToken<Guid>>(entity => entity.ToTable("UserTokens", DbSchema.Identity));
 
         builder.Entity<Role>(entity =>
         {
             entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
-            entity.ToTable("Roles");
+            entity.ToTable("Roles", DbSchema.Identity);
         });
 
         builder.Entity<IdentityRoleClaim<Guid>>(entity =>
         {
-            entity.ToTable("RoleClaims");
+            entity.ToTable("RoleClaims", DbSchema.Identity);
         });
 
-        builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles"));
+        builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles", DbSchema.Identity));
 
         //Seed data
         //DataSeeder.Seed(builder);

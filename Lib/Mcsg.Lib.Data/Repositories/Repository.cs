@@ -28,7 +28,7 @@ namespace Mcsg.Lib.Data.Repositories
             Connection = connection;
 
             // Determine the table to be used
-            var table = ((TableAttribute)typeof(TEntity).GetCustomAttribute(typeof(TableAttribute)))?.Name;
+            var table = ((TableAttribute?)typeof(TEntity).GetCustomAttribute(typeof(TableAttribute)))?.Name;
             table = table == null ? EntityName.ToPlural() : table;
 
             // Determine the schema to be used
