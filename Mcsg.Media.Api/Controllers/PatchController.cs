@@ -51,6 +51,28 @@ public class PatchController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Update the UserName in the Users table
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPost("UpdateUserName")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdateUserName([FromBody] PatchUpdateUserNameR request)
+    {
+        if (request.Otp != CommonPrefix)
+        {
+            return Unauthorized();
+        }
+
+        request.Analyze(HttpContext);
+        request.DetectMobileCall(_setting.MobileUserAgent);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = request.GetAbsoluteUri(_setting.Domain);
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

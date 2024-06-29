@@ -32,6 +32,7 @@ public static class DiPatchExtension
     public static void AddPatchCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<PatchUpdateShareUrlR, SingleResponse>, PatchUpdateShareUrlH>(ServiceLifetime.Scoped);
+        p.AddBehavior<IRequestHandler<PatchUpdateUserNameR, SingleResponse>, PatchUpdateUserNameH>(ServiceLifetime.Scoped);
     }
 
     /// <summary>

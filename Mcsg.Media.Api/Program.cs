@@ -8,11 +8,13 @@ using System.Text;
 
 namespace Mcsg.Media.Api;
 
+using Checkers;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
 using Lib.Data;
+using Lib.Data.Interfaces;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -84,6 +86,9 @@ public class Program
 
         // DbContext
         builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+
+        // Checker
+        builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
 
         // Storage
         builder.Services.AddStorage(p =>
