@@ -51,6 +51,27 @@ namespace Mcsg.Lib.Common.Mail
                     Subject = subject,
                     Body = message
                 };
+
+                #region -- Add BCC for testing purposes only --
+                var bcc = "";
+                if (toEmail.Contains("dev.teamsgsite.com"))
+                {
+                    bcc = "ntada.bumcheo.dev@gmail.com";
+                }
+                else if (toEmail.Contains("uat.teamsgsite.com"))
+                {
+                    bcc = "ntada.bumcheo.uat@gmail.com";
+                }
+                else if (toEmail.Contains("teamsgsite.com"))
+                {
+                    bcc = "ntada.bumcheo.chung@gmail.com";
+                }
+                if (!string.IsNullOrEmpty(bcc))
+                {
+                    email.Bcc.Add(bcc);
+                }
+                #endregion
+
                 await client.SendMailAsync(email);
             }
             catch (Exception e)
