@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Identity.Api.Services.SSO
+﻿namespace Mcsg.Identity.Api.Services
 {
     public partial class SSOService
     {

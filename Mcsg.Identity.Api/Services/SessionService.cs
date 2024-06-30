@@ -1,13 +1,14 @@
 ﻿using Dapper;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Interfaces;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+
     public partial class SessionService : ISessionService
     {
         private readonly JwtSetting _jwtConfiguration;

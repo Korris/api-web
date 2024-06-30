@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Identity.Api.Services.Interface
+﻿namespace Mcsg.Identity.Api.Interfaces
 {
     public interface IUserService
     {

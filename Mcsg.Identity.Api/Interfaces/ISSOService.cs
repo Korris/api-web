@@ -1,8 +1,8 @@
-﻿using Mcsg.Identity.Api.DTOs.Response.SSO;
-using Mcsg.Lib.Data.Domain.Entities;
-
-namespace Mcsg.Identity.Api.Services.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces
 {
+    using DTOs.Response;
+    using Lib.Data.Domain.Entities;
+
     public interface ISSOService
     {
         Task<UserSocial> GetUserSocialBySocialId(string socialType, string socialId);

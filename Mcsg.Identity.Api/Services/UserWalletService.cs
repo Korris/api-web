@@ -1,14 +1,15 @@
-﻿using Mcsg.Identity.Api.Constants;
-using Mcsg.Identity.Api.Helpers;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Constants;
+    using Helpers;
+    using Interfaces;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Entities;
+
     public class UserWalletService : IUserWalletService
     {
         private readonly WalletDbContext _walletDbContext;

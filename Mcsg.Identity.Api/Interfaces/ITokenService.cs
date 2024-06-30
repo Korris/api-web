@@ -1,9 +1,9 @@
-﻿using Mcsg.Identity.Api.DTOs;
-using Mcsg.Identity.Api.DTOs.Response;
-using Mcsg.Lib.Data.Domain.Entities;
-
-namespace Mcsg.Identity.Api.Services.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces
 {
+    using DTOs;
+    using DTOs.Response;
+    using Lib.Data.Domain.Entities;
+
     public interface ITokenService
     {
         TokenResponse GenerateAccessToken(Guid sessionId);

@@ -1,8 +1,8 @@
-﻿using Mcsg.Identity.Api.Constants;
-using Mcsg.Identity.Api.Services.Interfaces;
-
-namespace Mcsg.Identity.Api.Services.SSO
+﻿namespace Mcsg.Identity.Api.Services
 {
+    using Constants;
+    using Interfaces;
+
     public static class SSORegister
     {
         public delegate ISSOService SSOServiceResolver(string socialCode);

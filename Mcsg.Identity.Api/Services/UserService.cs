@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Identity.Api.Services
 {
     using Common.SeedWork.Extensions;
-    using Interface;
+    using Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Identity.Api.Controllers
 {
     using DTOs.Request;
-    using Services.Interfaces;
+    using Interfaces;
 
     [ApiController]
     [Route("[controller]")]

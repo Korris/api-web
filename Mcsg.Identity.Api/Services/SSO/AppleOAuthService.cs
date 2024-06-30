@@ -1,14 +1,15 @@
-﻿using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Identity.Api.DTOs.Response.SSO;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
-namespace Mcsg.Identity.Api.Services.SSO
+namespace Mcsg.Identity.Api.Services
 {
+    using DTOs.Response;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Repositories.Interface;
+
     public class AppleOAuthService : SSOService
     {
         public AppleOAuthService(ILogger<AppleOAuthService> logger

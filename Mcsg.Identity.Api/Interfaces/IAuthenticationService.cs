@@ -1,9 +1,9 @@
-﻿using Mcsg.Identity.Api.DTOs.Request;
-using Mcsg.Identity.Api.DTOs.Response;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Identity.Api.Services.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces
 {
+    using DTOs.Request;
+    using DTOs.Response;
+    using Lib.Data.Enums;
+
     public interface IAuthenticationService
     {
         Task<VerifyUserResponse> RegisterUser(RegisterUserReq request);

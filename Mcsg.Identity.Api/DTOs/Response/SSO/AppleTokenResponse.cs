@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Mcsg.Identity.Api.DTOs.Response.SSO
+namespace Mcsg.Identity.Api.DTOs.Response
 {
     public class AppleTokenResponse
     {

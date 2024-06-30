@@ -1,8 +1,4 @@
-﻿using Mcsg.Identity.Api.DTOs.Response;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Models;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -10,6 +6,11 @@ using System.Text;
 
 namespace Mcsg.Identity.Api.Helpers
 {
+    using DTOs.Response;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Models;
+
     public static class TokenHelper
     {
         public static string GenerateToken(int length = 64)

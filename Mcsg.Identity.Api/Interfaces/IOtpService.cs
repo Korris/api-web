@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Identity.Api.Services.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces
 {
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+
     public interface IOtpService
     {
         Task<UserOtp> GetAsync(string otpToken, UserOtpType otpType);

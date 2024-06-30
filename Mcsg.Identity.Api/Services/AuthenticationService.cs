@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using static Mcsg.Identity.Api.Services.SSO.SSORegister;
 
 namespace Mcsg.Identity.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using Constants;
     using DTOs.Request;
@@ -23,7 +21,7 @@ namespace Mcsg.Identity.Api.Services
     using Lib.Data.Interfaces;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Services.Interface;
+    using static SSORegister;
 
     public partial class AuthenticationService : IAuthenticationService
     {

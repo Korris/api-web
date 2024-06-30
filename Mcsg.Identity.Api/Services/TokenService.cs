@@ -1,20 +1,21 @@
 ﻿using Dapper;
-using Mcsg.Identity.Api.DTOs;
-using Mcsg.Identity.Api.DTOs.Response;
-using Mcsg.Identity.Api.Helpers;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services
 {
+    using DTOs;
+    using DTOs.Response;
+    using Helpers;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Extensions;
+    using Lib.Common.Models;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+
     public partial class TokenService : ITokenService
     {
         private readonly JwtSetting _jwtConfiguration;

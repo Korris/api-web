@@ -1,14 +1,15 @@
 ﻿using Dapper;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Identity.Api.DTOs.Response.SSO;
-using Mcsg.Identity.Api.Services.Interfaces;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using Newtonsoft.Json;
 
-namespace Mcsg.Identity.Api.Services.SSO
+namespace Mcsg.Identity.Api.Services
 {
+    using DTOs.Response;
+    using Interfaces;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+
     public abstract partial class SSOService : ISSOService
     {
         protected JsonSerializerSettings serializerSettings = new();

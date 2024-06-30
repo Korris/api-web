@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Mcsg.Identity.Api.Helpers
 {
+    using Lib.Common.Constants;
+
     public class LocalizeIdentityErrorDescriber : IdentityErrorDescriber
     {
         public override IdentityError DuplicateEmail(string email)

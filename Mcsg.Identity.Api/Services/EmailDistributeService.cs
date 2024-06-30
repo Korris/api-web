@@ -2,9 +2,9 @@
 
 namespace Mcsg.Identity.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Dtos;
     using Common.Core.Extensions;
+    using Interfaces;
     using Lib.Common.Distributor;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
