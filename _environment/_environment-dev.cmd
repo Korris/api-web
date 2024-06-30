@@ -1,4 +1,4 @@
-setx Bumcheo_Com_Environment "dev"
+setx Bumcheo_Com_Environment "local"
 setx Bumcheo_Com_SiteName "Bumcheo-Dev"
 setx Bumcheo_Com_Domain "https://localhost:44304"
 setx Bumcheo_Com_Jwt_Signing "WD:VYGQJ-BN6B7-PYW9T-MHH9K-4JRC6_VS:VHF9H-NXBBB-638P6-6JHCY-88JWH"
