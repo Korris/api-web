@@ -249,7 +249,7 @@ namespace Mcsg.Social.Api.Services
             return profiles.ToList();
         }
 
-        public async Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string name)
+        public async Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

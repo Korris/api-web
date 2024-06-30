@@ -16,7 +16,7 @@ namespace Mcsg.Social.Api.Interfaces
         Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest);
         Task<List<SimilarProfile>> GetSimilarNameAsync(string name);
         Task SyncWalletUserReward(Guid userId, float point, RewardType type);
-        Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string name);
+        Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name);
         Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SearchUserReq input);
     }
 }
