@@ -6,6 +6,7 @@ using System.Reflection;
 namespace Mcsg.Social.Api;
 
 using Attributes;
+using Checkers;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -20,6 +21,7 @@ using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
 using Lib.Data.Analytic;
 using Lib.Data.Domain.Entities;
+using Lib.Data.Interfaces;
 using Lib.Data.Wallet;
 using Models;
 using Services;
@@ -101,6 +103,9 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
+        // Checker
+        builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
+
         // Storage
         builder.Services.AddStorage(p =>
         {
@@ -116,6 +121,14 @@ public class Program
         builder.Services.AddDataLibrary(csDb);
         builder.Services.AddAnalyticDbContext(csDbAnalytic);
         builder.Services.AddWalletDbContext(csDbWallet);
+
+        // MediatR
+        builder.Services.AddMediatR(p =>
+        {
+            p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiPatch();
+        });
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
