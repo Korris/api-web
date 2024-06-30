@@ -95,6 +95,8 @@ public class Program
         }
         #endregion
 
+        _mediaApiUrl = st.Minio.MediaApiUrl;
+
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
@@ -249,6 +251,11 @@ public class Program
     /// Variable prefix
     /// </summary>
     private static string _prefix = "Soc";
+
+    /// <summary>
+    /// Media API URL
+    /// </summary>
+    public static string _mediaApiUrl = default!;
 
     #endregion
 }

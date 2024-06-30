@@ -77,8 +77,8 @@ namespace Mcsg.Social.Api.Services
                 foreach (var item in items)
                 {
                     item.Duration = item.DurationSeconds.ToDuration();
-                    item.Url = item.Url.ToAudioPath(_setting.Minio.MediaApiUrl);
-                    item.Thumbnail = item.Thumbnail.ToImagePath(_setting.Minio.MediaApiUrl);
+                    item.Url = item.Url.ToAudioPath();
+                    item.Thumbnail = item.Thumbnail.ToImagePath();
                 }
                 var response = new PagedResults<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);
                 response.Items = items;
