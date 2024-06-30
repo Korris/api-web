@@ -130,7 +130,7 @@ namespace Mcsg.Social.Api.Services
                 CoverUrl = comicPostReq.CoverUrl,
                 IsMature = comicPostReq.IsMature,
                 Permission = comicPostReq.Permission,
-                Status = PostStatus.PUBLIC,
+                Status = PostStatus.Public,
                 CreatedBy = currentUserId,
                 //TODO FAKE DATA
                 ViewCount = 0
@@ -225,7 +225,7 @@ namespace Mcsg.Social.Api.Services
             {
                 //await _viewHistoryService.QueueAddView(currentUserId ?? Guid.Empty, dbPost.Id, EntityType.POST, "", (EntitySubType)(dbPost.Type));
             }
-            if (dbPost.Status == PostStatus.INACTIVE || (dbPost.Status == PostStatus.DRAFT && dbPost.UserId != currentUserId))
+            if (dbPost.Status == PostStatus.Inactive || (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId))
             {
                 throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
             }
@@ -342,7 +342,7 @@ namespace Mcsg.Social.Api.Services
                     PageSize = 10,
                     Offet = 0,
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                    PostStatus = (int)PostStatus.PUBLIC
+                    PostStatus = (int)PostStatus.Public
                 });
             result = new PostSeriesAllTopResponse();// MappingTopSeries(dbFeed);
             var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.HIT).ToList();
@@ -388,7 +388,7 @@ namespace Mcsg.Social.Api.Services
                         PageSize = request.PageSize,
                         Offet = offset,
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                        PostStatus = (int)PostStatus.PUBLIC,
+                        PostStatus = (int)PostStatus.Public,
                         TagName = request.HashTag,
                         UserId = currentUserId
                     });
@@ -456,7 +456,7 @@ namespace Mcsg.Social.Api.Services
                             PageSize = request.PageSize,
                             Offet = offset,
                             LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                            PostStatus = (int)PostStatus.PUBLIC,
+                            PostStatus = (int)PostStatus.Public,
                             TagIds = tagIds,
                             AuthorId = post.CreatedBy.Value,
                             HashId = request.HashId
@@ -498,7 +498,7 @@ namespace Mcsg.Social.Api.Services
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
                         PageSize = loadReq.PageSize,
                         Offet = offset,
-                        PostStatus = (int)PostStatus.PUBLIC
+                        PostStatus = (int)PostStatus.Public
                     });
             var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -518,7 +518,7 @@ namespace Mcsg.Social.Api.Services
 
         public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
         {
-            var queryNameListPost = $@"SELECT ""Title"" FROM ""Posts"" where ""Type"" != {(int)PostType.FEED}  AND ""IsDelete"" = false ";
+            var queryNameListPost = $@"SELECT ""Title"" FROM ""Posts"" where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
             var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
             var smartLookupInserts = new List<SmartLookup>();
             foreach (var name in nameListPost)
@@ -547,7 +547,7 @@ namespace Mcsg.Social.Api.Services
                         IsAccessPrivate = false,
                         PageSize = loadReq.PageSize,
                         Offet = offset,
-                        PostStatus = (int)PostStatus.PUBLIC,
+                        PostStatus = (int)PostStatus.Public,
                         TagName = tagName
                     });
             var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -579,7 +579,7 @@ namespace Mcsg.Social.Api.Services
                         IsAccessPrivate = false,
                         PageSize = loadReq.PageSize,
                         Offet = offset,
-                        PostStatus = (int)PostStatus.PUBLIC,
+                        PostStatus = (int)PostStatus.Public,
                         ProfileName = profileName
                     });
             var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -613,7 +613,7 @@ namespace Mcsg.Social.Api.Services
                         IsAccessPrivate = false,
                         PageSize = input.PageSize,
                         Offet = offset,
-                        PostStatus = (int)PostStatus.PUBLIC,
+                        PostStatus = (int)PostStatus.Public,
                         TagName = input.TagName
                     });
             var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -701,7 +701,7 @@ namespace Mcsg.Social.Api.Services
                         IsAccessPrivate = false,
                         PageSize = input.PageSize,
                         Offset = offset,
-                        PostStatus = (int)PostStatus.PUBLIC,
+                        PostStatus = (int)PostStatus.Public,
                         ProfileName = input.Keyword
                     });
             var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -735,7 +735,7 @@ namespace Mcsg.Social.Api.Services
                         PostType = (int)type,
                         IsAccessPrivate = false,
                         PageSize = number,
-                        PostStatus = (int)PostStatus.PUBLIC
+                        PostStatus = (int)PostStatus.Public
                     });
 
             return MappingTopSeries(items);
@@ -768,7 +768,7 @@ namespace Mcsg.Social.Api.Services
             post.CoverUrl = comicPostReq.CoverUrl;
             post.IsMature = comicPostReq.IsMature;
             post.Permission = comicPostReq.Permission;
-            post.Status = comicPostReq.IsSaveAndPublish ? PostStatus.PUBLIC : PostStatus.DRAFT;
+            post.Status = comicPostReq.IsSaveAndPublish ? PostStatus.Public : PostStatus.Draft;
             post.IsCompleted = comicPostReq.IsCompleted;
 
             var result = new PostSeriesResponse
@@ -1352,7 +1352,7 @@ namespace Mcsg.Social.Api.Services
                 Order = newOrder,
                 Name = string.IsNullOrEmpty(chapterPostReq.Name) ? newOrder.ToString() : chapterPostReq.Name,
                 PostId = post.Id,
-                Status = PostStatus.PUBLIC,
+                Status = PostStatus.Public,
                 PublishDate = chapterPostReq.IsPublicNow ? DateTime.UtcNow : TimeZoneInfo.ConvertTimeToUtc(chapterPostReq.PublishDate ?? DateTime.Now),
                 Title = chapterPostReq.Title,
                 UserId = currentUserId ?? Guid.Empty,
@@ -1596,10 +1596,10 @@ namespace Mcsg.Social.Api.Services
                 RewardType rewardType = RewardType.FIRST_FEED;
                 switch (type)
                 {
-                    case PostType.STORY:
+                    case PostType.Story:
                         rewardType = RewardType.FIRST_STORY;
                         break;
-                    case PostType.COMIC:
+                    case PostType.Comic:
                         rewardType = RewardType.FIRST_COMIC;
                         break;
                     default:

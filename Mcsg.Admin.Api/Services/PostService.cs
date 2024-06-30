@@ -159,8 +159,8 @@ namespace Mcsg.Admin.Api.Services
             {
                 return isResult; // do nothing
             }
-            if (post.Status == PostStatus.PUBLIC)
-                post.Status = PostStatus.INACTIVE;
+            if (post.Status == PostStatus.Public)
+                post.Status = PostStatus.Inactive;
             post.StatusReason = request.Reason;
             post.LastModifiedBy = _currentUserService?.Session?.UserId;
             post.LastModifiedDate = DateTime.UtcNow;

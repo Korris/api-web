@@ -553,7 +553,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return $@" SELECT ""HashId"", ""Title"", ""Type"", ""Status""
 								FROM {_postRepository.TableName}							 	
-								WHERE ""CreatedBy"" = @UserId AND ""IsDelete"" = false AND ""Type"" IN ({(int)PostType.STORY}, {(int)PostType.COMIC}) 
+								WHERE ""CreatedBy"" = @UserId AND ""IsDelete"" = false AND ""Type"" IN ({(int)PostType.Story}, {(int)PostType.Comic}) 
 								ORDER BY ""CreatedDate"" DESC;";
             }
         }
@@ -937,7 +937,7 @@ sp.""IsEnableComment""
           FROM ""Posts""
           WHERE ""Type"" IN (0, 1, 2)
           AND ""IsDelete"" = false
-          AND ""Status"" = {(int)PostStatus.PUBLIC}
+          AND ""Status"" = {(int)PostStatus.Public}
          ),
          limited_posts AS (
           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId""
@@ -1033,14 +1033,14 @@ ORDER BY group_number, random_row_num;
         private string GetCountPostByTypeQuery => $@"SELECT COUNT(*) 
 												   FROM ""Posts""
 												   WHERE ""IsDelete"" = false 
-												   AND ""Status"" = {(int)PostStatus.PUBLIC}";
+												   AND ""Status"" = {(int)PostStatus.Public}";
 
         private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
 												   FROM ""Posts"" p
 												   LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""
 												   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
 												   WHERE p.""IsDelete"" = false 
-												   AND p.""Status"" = {(int)PostStatus.PUBLIC}
+												   AND p.""Status"" = {(int)PostStatus.Public}
 												   AND t.""Name"" ILIKE @ExactKeyword";
         private string PremiumWhereQuery
         {

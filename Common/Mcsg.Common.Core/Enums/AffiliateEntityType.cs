@@ -1,12 +1,42 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// AffiliateEntity type
+/// </summary>
 public enum AffiliateEntityType
 {
-    ComicSerie = 0,
-    ComicChapter = 1,
-    StorySerie = 2,
-    StoryChapter = 3,
-    FeedSerie = 4,
-    FeedChapter = 5,
-    PremiumUser = 6
+    /// <summary>
+    /// ComicSerie
+    /// </summary>
+    ComicSerie,
+
+    /// <summary>
+    /// ComicChapter
+    /// </summary>
+    ComicChapter,
+
+    /// <summary>
+    /// StorySerie
+    /// </summary>
+    StorySerie,
+
+    /// <summary>
+    /// StoryChapter
+    /// </summary>
+    StoryChapter,
+
+    /// <summary>
+    /// FeedSerie
+    /// </summary>
+    FeedSerie,
+
+    /// <summary>
+    /// FeedChapter
+    /// </summary>
+    FeedChapter,
+
+    /// <summary>
+    /// PremiumUser
+    /// </summary>
+    PremiumUser
 }

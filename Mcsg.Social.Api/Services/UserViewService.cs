@@ -2,10 +2,10 @@
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Dtos;
     using Common.SeedWork.Enums;
     using Extensions;
     using Lib.Data.Analytic;
-    using Lib.Model.Models;
     using Models.Earning;
 
     public interface IUserViewService
@@ -13,7 +13,7 @@ namespace Mcsg.Social.Api.Services
         Task<EarningDataModel> GetGuestsViewAsync(Guid userId, DateTime? date = null);
         Task<EarningDataModel> GetPremiumViewAsync(Guid userId, DateTime? date = null);
         Task<int> GetViewByChapterAsync(Guid chapterId, DateTime? date = null);
-        Task<List<ChapterViewData>> GetViewByChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
+        Task<List<ChapterViewDto>> GetViewByChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
         Task<List<PerformanceChartTotalViewData>> GetTotalViewChartByYear(Guid userId, int year);
         Task<List<PerformanceChartTotalViewData>> GetTotalViewChartByMonth(Guid userId, int month);
     }
@@ -93,7 +93,7 @@ namespace Mcsg.Social.Api.Services
             return viewCount;
         }
 
-        public async Task<List<ChapterViewData>> GetViewByChaptersAsync(List<Guid> chapterIds, DateTime? date = null)
+        public async Task<List<ChapterViewDto>> GetViewByChaptersAsync(List<Guid> chapterIds, DateTime? date = null)
         {
             var query = _dbAnalystContext.UserViewPosts.
                 Where(x => chapterIds.Contains(x.SubPostId));
@@ -107,7 +107,7 @@ namespace Mcsg.Social.Api.Services
             }
 
             var viewChapters = await query.GroupBy(x => x.SubPostId)
-                                        .Select(n => new ChapterViewData
+                                        .Select(n => new ChapterViewDto
                                         {
                                             ChapterId = n.Key,
                                             Views = n.Count()

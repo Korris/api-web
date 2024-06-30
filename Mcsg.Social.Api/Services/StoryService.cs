@@ -24,7 +24,7 @@
         {
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
             _postService = postService;
-            _type = PostType.STORY;
+            _type = PostType.Story;
             _currentUserService = currentUserService;
         }
         public async Task<PostSeriesResponse> PostStory(PostSeriesReq comicPostReq)

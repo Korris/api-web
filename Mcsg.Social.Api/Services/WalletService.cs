@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Lib.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Dtos;
+    using Extensions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+    using Models.Earning;
+
     public interface IWalletService
     {
         Task<int> GetTotalPurchaseOfChapterAsync(Guid chapterId, DateTime? date = null);
-        Task<List<ChapterPurchaseData>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
+        Task<List<ChapterPurchaseDto>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
         Task<UserPurchaseData> GetRevenueSaleChapterOfUserAsync(Guid userId, DateTime? date = null);
         Task<List<RevenueChartData>> GetRevenueSaleChapterByYearAsync(Guid userId, int year);
         Task<List<RevenueChartData>> GetRevenueSaleChapterByMonthAsync(Guid userId, int month);
@@ -56,7 +57,7 @@ namespace Mcsg.Social.Api.Services
             var transactions = await query.CountAsync();
             return transactions;
         }
-        public async Task<List<ChapterPurchaseData>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null)
+        public async Task<List<ChapterPurchaseDto>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null)
         {
             var query = _walletDbContext.WalletTransactions
                 .Where(x => x.Type == TransactionType.BUY_CHAPTER
@@ -72,7 +73,7 @@ namespace Mcsg.Social.Api.Services
                 query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
             }
             var chapterPurchases = await query.GroupBy(x => x.RelatedId)
-                                        .Select(n => new ChapterPurchaseData
+                                        .Select(n => new ChapterPurchaseDto
                                         {
                                             ChapterId = n.Key.Value,
                                             Purchases = n.Count()

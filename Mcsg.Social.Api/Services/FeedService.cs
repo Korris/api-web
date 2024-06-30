@@ -114,12 +114,12 @@ namespace Mcsg.Social.Api.Services
                 var multi = await _postRepository
                         .Connection.QueryMultipleAsync(query, new
                         {
-                            Type = (int)PostType.FEED,
+                            Type = (int)PostType.Feed,
                             IsAccessPrivate = false,
                             PageSize = feedLoadReq.PageSize,
                             Offet = offset,
                             Date = date,
-                            Status = PostStatus.PUBLIC,
+                            Status = PostStatus.Public,
                             DateOnly = DateOnly.FromDateTime(date)
                         });
                 var items = await multi.ReadAsync<FeedsListQueryDbResponse>().ConfigureAwait(false);
@@ -162,7 +162,7 @@ namespace Mcsg.Social.Api.Services
                 var multi = await _postRepository
                         .Connection.QueryMultipleAsync(query, new
                         {
-                            PostType = (int)PostType.FEED,
+                            PostType = (int)PostType.Feed,
                             IsAccessPrivate = false,
                             PageSize = feedLoadReq.PageSize,
                             Offet = offset,
@@ -324,7 +324,7 @@ namespace Mcsg.Social.Api.Services
             {
                 //await _viewHistoryService.QueueAddView(currentUserId??Guid.Empty, dbFeed.Id, EntityType.POST, "", EntitySubType.SUB1);
             }
-            if (dbFeed.Status == PostStatus.INACTIVE || (dbFeed.Status == PostStatus.DRAFT && dbFeed.UserId != currentUserId))
+            if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != currentUserId))
             {
                 throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
             }
@@ -432,7 +432,7 @@ namespace Mcsg.Social.Api.Services
                 var multi = await _postRepository
                         .Connection.QueryMultipleAsync(query, new
                         {
-                            PostType = (int)PostType.FEED,
+                            PostType = (int)PostType.Feed,
                             IsAccessPrivate = false,
                             PageSize = feedLoadReq.PageSize,
                             Offet = offset
@@ -483,20 +483,20 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
             }
             //Check first post
-            var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.FEED);
+            var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
 
             string cleanHtml = HtmlHelper.CleanHtml(feedPostReq.Content);
             var safePlainString = System.Web.HttpUtility.HtmlEncode(cleanHtml);
             var post = new Post()
             {
                 Title = feedPostReq.Title,
-                Type = PostType.FEED,
+                Type = PostType.Feed,
                 HashId = hashId,
                 UserId = currentUserId,
                 Body = safePlainString,
                 ThumbnailUrl = feedPostReq.ThumbnailUrl,
                 AuthorName = currentProfileName,
-                Status = PostStatus.PUBLIC,
+                Status = PostStatus.Public,
                 CreatedBy = currentUserId,
                 CustomNote = feedPostReq.CustomNote
             };
@@ -508,7 +508,7 @@ namespace Mcsg.Social.Api.Services
                 UserId = currentUserId,
                 ThumbnailUrl = post.ThumbnailUrl,
                 CreatedDate = DateTime.UtcNow,
-                Status = PostStatus.PUBLIC,
+                Status = PostStatus.Public,
                 Body = cleanHtml,
                 FullName = currentProfileName,
                 AuthorName = currentProfileName,
@@ -622,7 +622,7 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
             }
             //Check first post
-            var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.FEED);
+            var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
 
 
             var query = string.Format(GetSingleFeedQuery, _postRepository.TableName);
@@ -653,7 +653,7 @@ namespace Mcsg.Social.Api.Services
                 UserId = currentUserId,
                 ThumbnailUrl = post.ThumbnailUrl,
                 CreatedDate = DateTime.UtcNow,
-                Status = PostStatus.PUBLIC,
+                Status = PostStatus.Public,
                 Body = cleanHtml,
                 FullName = currentProfileName,
                 AuthorName = currentProfileName,

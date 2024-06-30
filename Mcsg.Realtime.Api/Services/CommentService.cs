@@ -230,7 +230,7 @@ namespace Mcsg.Realtime.Api.Services
 
             await _postCommentRepository.InsertAsync(comment);
             //PING COUNT
-            await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.POST);
+            await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.Post);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
 
@@ -263,7 +263,7 @@ namespace Mcsg.Realtime.Api.Services
             };
             await _subPostCommentRepository.InsertAsync(comment);
             //PING COUNT
-            await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.SUBPOST);
+            await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.SubPost);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
 
@@ -383,7 +383,7 @@ namespace Mcsg.Realtime.Api.Services
                         });
 
             //PING COUNT
-            await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.POST);
+            await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.Post);
             return new PostCommentResp
             {
                 PostId = comment.PostId,
@@ -416,7 +416,7 @@ namespace Mcsg.Realtime.Api.Services
                             });
 
             //PING COUNT
-            await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.SUBPOST);
+            await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.SubPost);
             return new PostCommentResp
             {
                 PostId = comment.PostId,

@@ -1,8 +1,22 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// User status
+/// </summary>
 public enum UserStatus
 {
+    /// <summary>
+    /// Active
+    /// </summary>
     Active = 1,
-    Suspended = 2,
-    Banned = 3
+
+    /// <summary>
+    /// Suspended
+    /// </summary>
+    Suspended,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Banned
 }

@@ -33,7 +33,7 @@
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
             _fileService = fileService;
             _currentUserService = currentUserService;
-            _type = PostType.COMIC;
+            _type = PostType.Comic;
             _setting = setting;
             _configuration = configuration;
         }

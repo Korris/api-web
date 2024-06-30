@@ -45,7 +45,7 @@ namespace Mcsg.Social.Api.Controllers
         [HttpGet("sub-post")]
         public async Task<IActionResult> GetSubPostComments([FromQuery] CommentLoadReq request)
         {
-            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.FEED);
+            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
             return Ok(result);
         }
         #endregion
@@ -73,7 +73,7 @@ namespace Mcsg.Social.Api.Controllers
         [HttpGet("sub-feed")]
         public async Task<IActionResult> GetSubFeedComments([FromQuery] CommentLoadReq request)
         {
-            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.FEED);
+            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
             return Ok(result);
         }
 
@@ -86,7 +86,7 @@ namespace Mcsg.Social.Api.Controllers
         [HttpGet("comic-chapter")]
         public async Task<IActionResult> GetComicChapterComments([FromQuery] CommentLoadReq request)
         {
-            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.COMIC);
+            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Comic);
             return Ok(result);
         }
 
@@ -99,7 +99,7 @@ namespace Mcsg.Social.Api.Controllers
         [HttpGet("story-chapter")]
         public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentLoadReq request)
         {
-            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.STORY);
+            var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Story);
             return Ok(result);
         }
 

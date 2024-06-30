@@ -165,7 +165,7 @@ namespace Mcsg.Social.Api.Services
 
                 subPosts.Add(new SubPostResponse
                 {
-                    Status = PostStatus.PUBLIC,
+                    Status = PostStatus.Public,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 SubPostHashId = subPostHashId?.HashId,
@@ -277,7 +277,7 @@ namespace Mcsg.Social.Api.Services
                             UserId = userId,
                             Body = resourceReq.Body,
                             CreatedBy = resource.CreatedBy,
-                            Status = PostStatus.PUBLIC,
+                            Status = PostStatus.Public,
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
@@ -352,7 +352,7 @@ namespace Mcsg.Social.Api.Services
                             UserId = userId,
                             Body = resourceReq.Body,
                             CreatedBy = resource.CreatedBy,
-                            Status = PostStatus.PUBLIC,
+                            Status = PostStatus.Public,
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
@@ -429,7 +429,7 @@ namespace Mcsg.Social.Api.Services
                             UserId = userId,
                             Body = resourceReq.Body,
                             CreatedBy = resource.CreatedBy,
-                            Status = PostStatus.PUBLIC,
+                            Status = PostStatus.Public,
                             Order = resourceReq.Order,
                             Permission = PostPermission.PUBLIC,
                             PublishDate = DateTime.UtcNow,
@@ -557,7 +557,7 @@ namespace Mcsg.Social.Api.Services
                 subPosts.Add(new SubPostResponse
                 {
                     HashId = subPostData?.SubPostHashId ?? "",
-                    Status = PostStatus.PUBLIC,
+                    Status = PostStatus.Public,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
                                             {
                                                 SubPostHashId = subPostData?.SubPostHashId ?? "",

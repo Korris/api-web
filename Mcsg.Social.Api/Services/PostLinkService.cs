@@ -2,6 +2,7 @@
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Dtos;
     using Common.Core.Enums;
     using Common.SeedWork.Extensions;
     using Extensions;
@@ -12,7 +13,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Lib.Model.Models;
     using Models;
 
     public interface IPostLinkService
@@ -43,11 +43,11 @@ namespace Mcsg.Social.Api.Services
                 // Get lasted link
                 if (links.Any())
                 {
-                    var linkIndexs = new List<IntString>();
+                    var linkIndexs = new List<IntStringDto>();
                     foreach (var link in links)
                     {
                         int indexLink = content.IndexOf(link);
-                        linkIndexs.Add(new IntString()
+                        linkIndexs.Add(new IntStringDto()
                         {
                             Key = indexLink,
                             Value = link

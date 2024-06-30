@@ -1,8 +1,22 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Post type
+/// </summary>
 public enum PostType
 {
-    FEED = 0,
-    STORY = 1,
-    COMIC = 2
+    /// <summary>
+    /// Feed
+    /// </summary>
+    Feed,
+
+    /// <summary>
+    /// Story
+    /// </summary>
+    Story,
+
+    /// <summary>
+    /// Comic
+    /// </summary>
+    Comic
 }

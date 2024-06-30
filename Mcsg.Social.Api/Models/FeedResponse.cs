@@ -8,7 +8,7 @@
     {
         public FeedResponse()
         {
-            Type = PostType.FEED;
+            Type = PostType.Feed;
         }
         public string FullName { get; set; }
         public MetaDataResponse MetaData { get; set; }

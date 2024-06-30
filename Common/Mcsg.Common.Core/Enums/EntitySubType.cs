@@ -1,27 +1,27 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// Entity type
+/// EntitySub type
 /// </summary>
-public enum EntityType
+public enum EntitySubType
 {
     /// <summary>
-    /// Post
+    /// Can be Feed
     /// </summary>
-    Post,
+    Sub1,
 
     /// <summary>
-    /// SubPost
+    /// Can be Comic
     /// </summary>
-    SubPost,
+    Sub2,
 
     /// <summary>
-    /// Tag
+    /// Can be Story
     /// </summary>
-    Tag,
+    Sub3,
 
     /// <summary>
-    /// User
+    /// ?
     /// </summary>
-    User
+    Sub4
 }

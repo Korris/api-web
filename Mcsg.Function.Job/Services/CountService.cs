@@ -34,11 +34,11 @@ namespace Mcsg.Function.Job.Services
             if (smartLookupData.IsRemove)
             {
                 //Remove by comment id
-                if (smartLookupData.EntityType == EntityType.SUBPOST)
+                if (smartLookupData.EntityType == EntityType.SubPost)
                 {
                     smartLookupData.EntityId = (await _subPostCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
                 }
-                if (smartLookupData.EntityType == EntityType.POST)
+                if (smartLookupData.EntityType == EntityType.Post)
                 {
                     smartLookupData.EntityId = (await _postCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
                 }
@@ -79,7 +79,7 @@ namespace Mcsg.Function.Job.Services
             var todayDateTime = DateTime.UtcNow;
             var todayDate = DateOnly.FromDateTime(todayDateTime);
 
-            if (smartLookupData.EntityType == EntityType.SUBPOST)
+            if (smartLookupData.EntityType == EntityType.SubPost)
             {
                 countOfSubPost = await GetCountFromSubPost(smartLookupData.EntityId, todayDate);
 
@@ -114,7 +114,7 @@ namespace Mcsg.Function.Job.Services
                         EntityId = postId,
                         Count = countOfPost,
                         LastModifiedDate = todayDateTime,
-                        EntityType = EntityType.POST,
+                        EntityType = EntityType.Post,
                         SubType = (EntitySubType)post.Type,
                         Date = todayDate
                     });
@@ -126,12 +126,12 @@ namespace Mcsg.Function.Job.Services
                     EntityId = smartLookupData.EntityId,
                     Count = countOfSubPost,
                     LastModifiedDate = todayDateTime,
-                    EntityType = EntityType.SUBPOST,
+                    EntityType = EntityType.SubPost,
                     Date = todayDate
                 });
 
             }
-            if (smartLookupData.EntityType == EntityType.POST)
+            if (smartLookupData.EntityType == EntityType.Post)
             {
                 var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<Post>(GetPostBasicByPostId,
                     new

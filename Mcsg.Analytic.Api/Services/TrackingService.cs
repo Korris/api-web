@@ -82,7 +82,7 @@ namespace Mcsg.Analytic.Api.Services
                 authorId = postId.UserId;
                 req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
-                req.PostType = postId?.PostType ?? PostType.FEED;
+                req.PostType = postId?.PostType ?? PostType.Feed;
             }
 
             var entity = new UserViewPost
@@ -180,7 +180,7 @@ namespace Mcsg.Analytic.Api.Services
 
                 req.UserType = UserType.Guest;
                 req.PostId = postId?.PostId ?? Guid.Empty;
-                req.PostType = postId?.PostType ?? PostType.FEED;
+                req.PostType = postId?.PostType ?? PostType.Feed;
 
                 var entity = new UserViewPost
                 {

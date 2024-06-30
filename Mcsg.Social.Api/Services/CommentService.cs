@@ -360,7 +360,7 @@ namespace Mcsg.Social.Api.Services
             var query = GetCommentOfSubPostQuery;
             var postId = request.PostId;
 
-            if (postType == PostType.FEED)
+            if (postType == PostType.Feed)
             {
                 var totalSubPost = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<SubPostCountModel>(CountSubPostOfPostQuery, new { PostId = request.PostId });
 

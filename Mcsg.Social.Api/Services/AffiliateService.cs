@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services
 {
     using Api.Interfaces;
+    using Common.Core.Dtos;
     using Common.Core.Enums;
     using Constants;
     using Extensions;
@@ -12,7 +13,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Common.Web.Security;
     using Lib.Data.Wallet;
     using Lib.Data.Wallet.Enums;
-    using Lib.Model.Models;
     using Models.Earning;
 
     public interface IAffiliateService
@@ -94,7 +94,7 @@ namespace Mcsg.Social.Api.Services
             }
 
             string affiliateCode = "";
-            var data = new AffiliateData()
+            var data = new AffiliateDto()
             {
                 AffiliateUserId = userId,
                 EntityHashId = req.HashId,

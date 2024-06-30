@@ -1,12 +1,13 @@
 ﻿using Mcsg.Lib.Common.Helpers;
-using Mcsg.Lib.Model.Models;
 using Newtonsoft.Json;
 
 namespace Mcsg.Lib.Common.Extensions
 {
+    using Mcsg.Common.Core.Dtos;
+
     public static class AffiliateExtension
     {
-        public static string ToAffiliateCode(this AffiliateData data, string encryptKey)
+        public static string ToAffiliateCode(this AffiliateDto data, string encryptKey)
         {
             if (data == null)
             {
@@ -21,14 +22,14 @@ namespace Mcsg.Lib.Common.Extensions
             return str;
         }
 
-        public static AffiliateData ToAffiliateData(this string code, string encryptKey)
+        public static AffiliateDto ToAffiliateData(this string code, string encryptKey)
         {
             if (string.IsNullOrEmpty(encryptKey) || string.IsNullOrEmpty(code))
             {
                 return null;
             }
             var decryptCode = CryptoHelper.Decrypt(code, encryptKey);
-            var data = JsonConvert.DeserializeObject<AffiliateData>(decryptCode);
+            var data = JsonConvert.DeserializeObject<AffiliateDto>(decryptCode);
             return data;
         }
     }

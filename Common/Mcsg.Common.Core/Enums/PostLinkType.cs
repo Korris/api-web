@@ -1,12 +1,42 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// PostLink type
+/// </summary>
 public enum PostLinkType
 {
-    Other = 0,
-    Youtube = 1,
-    Vimeo = 2,
-    Video = 3,
-    Facebook = 4,
-    Twitter = 5,
-    Instagram = 6
+    /// <summary>
+    /// Other
+    /// </summary>
+    Other,
+
+    /// <summary>
+    /// Youtube
+    /// </summary>
+    Youtube,
+
+    /// <summary>
+    /// Vimeo
+    /// </summary>
+    Vimeo,
+
+    /// <summary>
+    /// Video
+    /// </summary>
+    Video,
+
+    /// <summary>
+    /// Facebook
+    /// </summary>
+    Facebook,
+
+    /// <summary>
+    /// Twitter
+    /// </summary>
+    Twitter,
+
+    /// <summary>
+    /// Instagram
+    /// </summary>
+    Instagram
 }

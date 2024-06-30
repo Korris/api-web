@@ -245,13 +245,13 @@ namespace Mcsg.Social.Api.Services
                 case
                var cls when cls == typeof(PostReaction):
                     {
-                        await _smartCountService.QueueAddReactionCount(targetId, EntityType.POST);
+                        await _smartCountService.QueueAddReactionCount(targetId, EntityType.Post);
                         break;
                     }
                 case
                 var cls when cls == typeof(SubPostReaction):
                     {
-                        await _smartCountService.QueueAddReactionCount(targetId, EntityType.SUBPOST);
+                        await _smartCountService.QueueAddReactionCount(targetId, EntityType.SubPost);
                         break;
                     }
 
@@ -264,13 +264,13 @@ namespace Mcsg.Social.Api.Services
                 case
                var cls when cls == typeof(PostReaction):
                     {
-                        await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.POST);
+                        await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.Post);
                         break;
                     }
                 case
                 var cls when cls == typeof(SubPostReaction):
                     {
-                        await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.SUBPOST);
+                        await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.SubPost);
                         break;
                     }
 

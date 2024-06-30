@@ -142,7 +142,7 @@
 							) spr ON spr.""SubPostId"" = sp.""Id""
 							WHERE 
 								pf.""UserId"" = @UserId
-								AND p.""IsDelete"" = false AND p.""Type"" = @Type AND p.""Status"" = {(int)PostStatus.PUBLIC}
+								AND p.""IsDelete"" = false AND p.""Type"" = @Type AND p.""Status"" = {(int)PostStatus.Public}
 							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
 							u.""Avatar"",u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"",

@@ -167,7 +167,7 @@ namespace Mcsg.Social.Api.Services
                             .Connection.QueryMultipleAsync(GetFavoritePostByUserQuery, new
                             {
                                 @UserId = userId,
-                                Type = (int)PostType.FEED,
+                                Type = (int)PostType.Feed,
                                 PageSize = req.PageSize,
                                 Offet = offset,
                             });
