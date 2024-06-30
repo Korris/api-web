@@ -1,11 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
-    using DTOs;
     using Interfaces;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Lib.Data.Enums;
     using Models;
+    using Requests;
 
     public partial class PostReactService : IPostReactService
     {

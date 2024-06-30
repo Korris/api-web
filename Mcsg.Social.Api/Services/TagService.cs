@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Social.Api.Services
 {
     using Constants;
-    using DTOs;
     using Extensions;
     using Interfaces;
     using Lib.Common.Constants;
@@ -17,6 +16,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
     using Models.Tag;
+    using Requests;
 
     public partial class TagService : ITagService
     {

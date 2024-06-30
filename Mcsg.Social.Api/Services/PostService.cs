@@ -8,7 +8,6 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Enums;
     using Common.SeedWork.Extensions;
     using Constants;
-    using DTOs;
     using Enums;
     using Extensions;
     using Interfaces;
@@ -25,6 +24,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
     using Models.Earning;
+    using Requests;
     using static Common.Core.Constants.Setting;
 
     public partial class PostService : IPostService

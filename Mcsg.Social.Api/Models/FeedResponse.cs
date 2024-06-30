@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Models
 {
     using Common.Core.Enums;
-    using DTOs;
     using Lib.Data.Enums;
+    using Requests;
 
     public class FeedResponse : PostResponse
     {

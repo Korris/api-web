@@ -3,7 +3,6 @@
 namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
-    using DTOs;
     using Extensions;
     using Interfaces;
     using Lib.Common.Extensions;
@@ -16,6 +15,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public partial class ReactService<T> : IReactService<T> where T : ReactionBase, new()
     {

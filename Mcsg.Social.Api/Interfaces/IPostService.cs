@@ -1,12 +1,12 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
     using Common.Core.Enums;
-    using DTOs;
     using Enums;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Models;
     using Models.Earning;
+    using Requests;
 
     public interface IPostService
     {

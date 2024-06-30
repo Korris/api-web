@@ -1,11 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
-    using DTOs;
     using Interfaces;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public class MetaDataService : IMetaDataService
     {

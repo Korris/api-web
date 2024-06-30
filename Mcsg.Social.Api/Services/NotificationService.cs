@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
-    using DTOs;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -16,6 +15,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public partial class NotificationService : INotificationService
     {

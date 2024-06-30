@@ -3,13 +3,13 @@
 namespace Mcsg.Social.Api.Services
 {
     using Constants;
-    using DTOs;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Extensions;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
+    using Requests;
 
     public class JobService : IJobService
     {

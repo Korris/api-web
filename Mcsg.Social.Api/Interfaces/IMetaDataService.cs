@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
-    using DTOs;
     using Models;
+    using Requests;
 
     public interface IMetaDataService
     {

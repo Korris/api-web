@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
-    using DTOs;
     using Interfaces;
+    using Requests;
 
     [ApiController]
     [Route("[controller]")]

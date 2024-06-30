@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
-    using DTOs;
     using Enums;
     using Interfaces;
     using Lib.Common.Web.Security;
@@ -10,6 +9,7 @@
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public partial class StoryService : IStoryService
     {

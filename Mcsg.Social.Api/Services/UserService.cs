@@ -6,7 +6,6 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Constants;
-    using DTOs;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Distributor;
@@ -19,6 +18,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Models;
+    using Requests;
 
     public partial class UserService : IUserService
     {

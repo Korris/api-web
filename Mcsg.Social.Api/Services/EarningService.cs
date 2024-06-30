@@ -3,7 +3,6 @@
 namespace Mcsg.Social.Api.Services
 {
     using Constants;
-    using DTOs;
     using Extensions;
     using Interfaces;
     using Lib.Common.Extensions;
@@ -13,6 +12,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Models;
     using Models.Earning;
+    using Requests;
 
     public partial class EarningService : IEarningService
     {

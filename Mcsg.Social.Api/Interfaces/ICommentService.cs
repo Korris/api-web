@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
     using Common.Core.Enums;
-    using DTOs;
     using Lib.Data.Entities.Common;
     using Models;
+    using Requests;
 
     public interface ICommentService
     {

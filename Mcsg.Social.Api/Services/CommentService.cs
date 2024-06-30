@@ -6,7 +6,6 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
     using Common.Core.Extensions;
-    using DTOs;
     using Enums;
     using Extensions;
     using Interfaces;
@@ -16,6 +15,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public partial class CommentService : ICommentService
     {

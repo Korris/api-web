@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
-    using DTOs;
     using Lib.Data.Entities.Common;
     using Models;
     using Models.Tag;
+    using Requests;
 
     public interface ITagService
     {

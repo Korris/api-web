@@ -9,7 +9,6 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
     using Constants;
-    using DTOs;
     using Enums;
     using Extensions;
     using Interfaces;
@@ -23,6 +22,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
+    using Requests;
 
     public partial class FeedService : IFeedService
     {

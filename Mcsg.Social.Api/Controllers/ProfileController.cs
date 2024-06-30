@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers
 {
     using Common.Core.Enums;
-    using DTOs;
     using Enums;
     using Interfaces;
+    using Requests;
 
     [Route("[controller]")]
     [ApiController]

@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
-    using DTOs;
     using Lib.Data.Entities.Common;
     using Lib.Data.Enums;
     using Models;
+    using Requests;
 
     public interface IPostReactService
     {

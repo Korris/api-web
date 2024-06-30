@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
-    using DTOs;
     using Lib.Data.Entities.Common;
     using Models;
+    using Requests;
 
     public interface IComicService
     {
