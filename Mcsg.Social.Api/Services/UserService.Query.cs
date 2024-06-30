@@ -29,22 +29,6 @@
             }
         }
 
-        private string GetUserProfileByName
-        {
-            get
-            {
-                return @$"SELECT ""Id"",
-""ProfileName"",
-""Avatar"",
-""CreatedDate"",
-""FirstName"",
-""LastName"",
-""CoverPhoto"",
-""Location"",
-""ProfileId"" FROM {_userRepository.TableName}
-                     WHERE ""ProfileName"" = @ProfileName AND ""IsDelete"" = false";
-            }
-        }
         private string GetUserAvatarById
         {
             get

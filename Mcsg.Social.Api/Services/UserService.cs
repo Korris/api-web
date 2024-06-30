@@ -67,7 +67,7 @@ namespace Mcsg.Social.Api.Services
         }
         public async Task<UserProfileResponse> GetUserByUserNameAsync(string profileName)
         {
-            var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserProfileByName, new { ProfileName = profileName });
+            var user = await _context.Users.FirstOrDefaultAsync(p => p.ProfileName == profileName);
             return CreateUserRespone(user);
         }
 
@@ -202,7 +202,7 @@ namespace Mcsg.Social.Api.Services
             return CreateUserRespone(user);
         }
 
-        private UserProfileResponse CreateUserRespone(User user)
+        private UserProfileResponse CreateUserRespone(User? user)
         {
             if (user == null)
             {
