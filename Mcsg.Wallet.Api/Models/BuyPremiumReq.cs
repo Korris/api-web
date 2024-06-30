@@ -7,7 +7,7 @@ namespace Mcsg.Wallet.Api.Models
     {
         public int PremiumPackageNo { get; set; }
         [DefaultValue(PayMethods.POINT)]
-        public string PayMethodName { get; set; }
-        public string AffiliateCode { get; set; }
+        public string? PayMethodName { get; set; }
+        public string? AffiliateCode { get; set; }
     }
 }
