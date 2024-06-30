@@ -1,10 +1,10 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Tag;
-using Mcsg.Lib.Data.Entities.Common;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Lib.Data.Entities.Common;
+    using Models;
+    using Models.Tag;
+
     public interface ITagService
     {
         Task<List<string>> AddTagsToPost(Guid postId, List<string> tags);

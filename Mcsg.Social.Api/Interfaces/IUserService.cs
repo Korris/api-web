@@ -1,10 +1,11 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Enums;
-using Mcsg.Lib.Data.Entities.Common;
+﻿using Mcsg.Lib.Common.Enums;
 
-namespace Mcsg.Social.Api.Services.Interfaces
+namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Lib.Data.Entities.Common;
+    using Models;
+
     public interface IUserService
     {
         Task<UserProfileResponse> GetCurrentUserAsync();

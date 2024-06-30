@@ -1,10 +1,11 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using Interfaces;
+    using Models;
+
     [Route("[controller]")]
     [ApiController]
     [Authorize]

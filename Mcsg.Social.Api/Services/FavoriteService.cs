@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
     using DTOs;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Interfaces;
@@ -13,7 +14,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
-    using Services.Interfaces;
 
     public partial class FavoriteService : IFavoriteService
     {

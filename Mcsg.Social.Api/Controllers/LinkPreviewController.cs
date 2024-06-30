@@ -1,9 +1,10 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using Interfaces;
+    using Models;
+
     [ApiController]
     [Route("[controller]")]
     public class LinkPreviewController : ControllerBase

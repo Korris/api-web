@@ -1,8 +1,8 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Models;
+
     public interface IFileService
     {
         Task<UploadFileResponse> UploadImageAsync(IFormFile file);

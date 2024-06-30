@@ -6,7 +6,7 @@ namespace Mcsg.Social.Api.Controllers
     using Common.Core.Enums;
     using DTOs;
     using Enums;
-    using Services.Interfaces;
+    using Interfaces;
 
     [Route("[controller]")]
     [ApiController]

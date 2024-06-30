@@ -1,10 +1,11 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using DTOs;
+    using Interfaces;
+
     [ApiController]
     [Route("[controller]")]
     public class NotificationController : ControllerBase

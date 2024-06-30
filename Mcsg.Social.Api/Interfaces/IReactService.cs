@@ -1,11 +1,11 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Lib.Data.Domain.Entities.Common;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Models;
+
     public interface IReactService<T> where T : ReactionBase, new()
     {
         Task<bool> AddReaction(Guid targetId, ReactionType type);

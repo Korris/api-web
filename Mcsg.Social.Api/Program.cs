@@ -24,7 +24,6 @@ using Lib.Data.Domain.Entities;
 using Lib.Data.Wallet;
 using Models;
 using Services;
-using Services.Interfaces;
 using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;

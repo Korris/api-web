@@ -1,13 +1,12 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Enums;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Data.Entities.Common;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Enums;
+    using Lib.Data.Entities.Common;
+    using Models;
+
     public interface IFeedService
     {
-
         Task<PagedResults<FeedResponse>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType);
         Task<PagedResults<FeedResponse>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq);
         Task<FeedResponse> GetFeedAsync(string hashId);

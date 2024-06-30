@@ -1,10 +1,11 @@
-﻿using Mcsg.Social.Api.Attributes;
-using Mcsg.Social.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using Attributes;
+    using Interfaces;
+
     [ApiController]
     [Route("[controller]")]
     public class FileController : ControllerBase

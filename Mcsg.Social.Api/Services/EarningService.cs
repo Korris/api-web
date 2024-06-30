@@ -1,29 +1,19 @@
 ﻿using AutoMapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Repositories;
 
 namespace Mcsg.Social.Api.Services
 {
-    public interface IEarningService
-    {
-        Task<bool> CheckUserEarningStatusAsync();
-        Task EnableEarningAsync(EnableEarningModeRequest req);
-        Task<EarningDashboardResponse> GetDataDashboardAsync();
-        Task<List<MyPostSeriesResponse>> GetMyComicStoryListAsync();
-        Task<PagedResults<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ChapterListReq loadReq);
-        string GetAffiliateCode(AffiliateCodeRequest req);
-        RevenueCalculateResponse CalculateRevenueOfMonth(RevenueCalculateReq data);
-        Task<PerformanceChartResponse> GetPerformanceChart(Guid userId);
-    }
+    using Constants;
+    using DTOs;
+    using Extensions;
+    using Interfaces;
+    using Lib.Common.Extensions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Repositories;
+    using Models;
+    using Models.Earning;
+
     public partial class EarningService : IEarningService
     {
         private readonly IRepository<User> _userRepository;

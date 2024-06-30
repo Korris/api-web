@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using DTOs;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
@@ -17,16 +17,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
 
-    public interface INotificationService
-    {
-        Task<NotificationModel> GetNotificationAsync(Guid id);
-        Task<bool> ReadNotificationAsync(Guid id);
-        Task<bool> ReadAllNotificationAsync();
-        Task<PagedResults<NotificationModel>> GetNotificationByReceiverAsync(NotificationReq request);
-        Task<PagedResults<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationReq request);
-        Task<bool> AddVideoNotificationAsync(VideoNotificationReq req);
-        Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req);
-    }
     public partial class NotificationService : INotificationService
     {
         private readonly ICurrentUserService _currentUserService;

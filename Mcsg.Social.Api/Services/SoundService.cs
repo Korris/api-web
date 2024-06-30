@@ -3,16 +3,15 @@ using Dapper;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using DTOs;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Services.Interfaces;
 
     public partial class SoundService : ISoundService
     {

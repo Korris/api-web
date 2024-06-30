@@ -1,22 +1,23 @@
 ﻿using Dapper;
-using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Tag;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
 using System.Text.RegularExpressions;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Constants;
+    using DTOs;
+    using Extensions;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+    using Models.Tag;
+
     public partial class TagService : ITagService
     {
         private readonly IRepository<Tag> _tagRepository;

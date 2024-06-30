@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
     using Interfaces;
     using Lib.Common.Distributor;
     using Lib.Common.Models;
@@ -7,7 +8,6 @@
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Common.Core.Enums;
     using Models;
 
     public partial class SmartCountService : ISmartCountService

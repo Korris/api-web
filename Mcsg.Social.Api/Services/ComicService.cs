@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using DTOs;
     using Enums;
@@ -15,7 +14,6 @@
 
     public partial class ComicService : IComicService
     {
-
         private readonly IPostService _postService;
         private readonly PostType _type;
         private readonly ICurrentUserService _currentUserService;

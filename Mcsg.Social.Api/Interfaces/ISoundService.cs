@@ -1,8 +1,8 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Lib.Data.Entities.Common;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Lib.Data.Entities.Common;
+
     public interface ISoundService
     {
         Task<PagedResults<SoundDto>> GetAllSoundAsync(BackgroundMediaLoadReq req);

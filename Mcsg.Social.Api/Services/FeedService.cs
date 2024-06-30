@@ -5,7 +5,6 @@ using Npgsql;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
@@ -13,6 +12,7 @@ namespace Mcsg.Social.Api.Services
     using DTOs;
     using Enums;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
@@ -23,7 +23,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
-    using Services.Interfaces;
 
     public partial class FeedService : IFeedService
     {

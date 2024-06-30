@@ -1,15 +1,16 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Constants;
+    using DTOs;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Lib.Common.Extensions;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+
     public class JobService : IJobService
     {
         private readonly IRepository<Job> _jobRepository;

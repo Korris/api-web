@@ -1,9 +1,9 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Data.Entities.Common;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using DTOs;
+    using Lib.Data.Entities.Common;
+    using Models;
+
     public interface IStoryService
     {
         Task<PostSeriesResponse> PostStory(PostSeriesReq comicPostReq);

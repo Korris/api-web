@@ -2,9 +2,10 @@
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
+    using Common.Core.Enums;
     using DTOs;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Extensions;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
@@ -14,9 +15,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Common.Core.Enums;
     using Models;
-    using Services.Interfaces;
 
     public partial class ReactService<T> : IReactService<T> where T : ReactionBase, new()
     {

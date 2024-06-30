@@ -6,6 +6,7 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Enums;
     using Common.SeedWork.Extensions;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Enums;
     using Lib.Common.Exceptions;
@@ -15,11 +16,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
 
-    public interface IPostLinkService
-    {
-        Task<PostLinkResponse> AddLinkAsync(Guid postId, string content);
-        Task<bool> RemoveLinkAsync(Guid postId);
-    }
     public partial class PostLinkService : IPostLinkService
     {
         private readonly IUnitOfWork _unitOfWork;

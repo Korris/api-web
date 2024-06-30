@@ -1,11 +1,12 @@
 ﻿using HtmlAgilityPack;
-using Mcsg.Social.Api.Extensions;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Common.Constants;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Extensions;
+    using Interfaces;
+    using Lib.Common.Constants;
+    using Models;
+
     public class LinkPreviewService : ILinkPreviewService
     {
         private readonly ILogger<LinkPreviewService> _logger;

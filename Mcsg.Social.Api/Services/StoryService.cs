@@ -3,13 +3,13 @@
     using Common.Core.Enums;
     using DTOs;
     using Enums;
+    using Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
-    using Services.Interfaces;
 
     public partial class StoryService : IStoryService
     {

@@ -1,8 +1,8 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
+    using Lib.Data.Enums;
+    using Models;
+
     public interface ISubPostCommentReactService
     {
         Task<bool> AddReaction(Guid commentSubPostId, ReactionType type);

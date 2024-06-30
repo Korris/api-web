@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Social.Api.Services.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces
 {
     using Common.Core.Enums;
     using DTOs;

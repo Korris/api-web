@@ -4,12 +4,12 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using Common.Core.Extensions;
     using DTOs;
     using Enums;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Helpers;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
@@ -17,15 +17,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
 
-    public interface ICommentService
-    {
-        Task<PagedResults<CommentResponse>> GetLatestPostCommentInAsync(Guid postId);
-        Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
-        Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request);
-        Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType);
-        Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input);
-        Task<List<BasicCommentResponse>> GetReplyByCommentId(ReplyByCommentInput input);
-    }
     public partial class CommentService : ICommentService
     {
         private readonly IRepository<PostComment> _postCommentRepository;

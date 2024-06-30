@@ -1,12 +1,12 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using DTOs;
+    using Interfaces;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
+    using Models;
+
     public partial class PostReactService : IPostReactService
     {
         private readonly IReactService<PostReaction> _reactService;

@@ -1,10 +1,10 @@
-﻿using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Interfaces;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Models;
+
     public partial class SubPostCommentReactService : ISubPostCommentReactService
     {
         private readonly IReactService<SubPostCommentReaction> _reactService;

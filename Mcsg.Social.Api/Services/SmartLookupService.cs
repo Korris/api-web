@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
+    using Interfaces;
     using Lib.Common.Distributor;
     using Lib.Common.Helpers;
     using Lib.Common.Models;
@@ -11,7 +11,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Models;
-    using Services.Interfaces;
 
     public partial class SmartLookupService : ISmartLookupService
     {

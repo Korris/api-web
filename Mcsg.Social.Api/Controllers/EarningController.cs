@@ -1,12 +1,13 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Models.Earning;
-using Mcsg.Social.Api.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using DTOs;
+    using Interfaces;
+    using Models;
+    using Models.Earning;
+
     [ApiController]
     [Route("[controller]")]
     public class EarningController : ControllerBase

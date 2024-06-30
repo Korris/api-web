@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Dtos;
     using Common.Core.Enums;
     using Constants;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Exceptions;
     using Lib.Common.Extensions;
     using Lib.Common.Web.Security;
@@ -15,15 +15,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Wallet.Enums;
     using Models.Earning;
 
-    public interface IAffiliateService
-    {
-        Task<EarningDataModel> GetSaleAffiliateAsync(Guid userId, DateTime? date = null);
-        string GetAffiliateCode(Guid userId, AffiliateCodeRequest req);
-        Task<List<RevenueChartData>> GetRevenueAffiliateByYearAsync(Guid userId, int year);
-        Task<List<RevenueChartData>> GetRevenueAffiliateByMonthAsync(Guid userId, int month);
-        Task<List<CountChartData>> GetNumberOfAffiliateByYearAsync(Guid userId, int year);
-        Task<List<CountChartData>> GetNumberOfAffiliateByMonthAsync(Guid userId, int month);
-    }
     public class AffiliateService : IAffiliateService
     {
         private readonly WalletDbContext _walletDbContext;

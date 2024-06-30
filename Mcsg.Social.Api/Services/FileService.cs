@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;

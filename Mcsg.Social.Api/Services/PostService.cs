@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Enums;
     using Common.SeedWork.Extensions;
     using Constants;
     using DTOs;
     using Enums;
     using Extensions;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Enums;
     using Lib.Common.Exceptions;
@@ -25,7 +25,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
     using Models.Earning;
-    using Services.Interfaces;
     using static Common.Core.Constants.Setting;
 
     public partial class PostService : IPostService

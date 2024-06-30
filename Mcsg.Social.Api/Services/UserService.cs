@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Constants;

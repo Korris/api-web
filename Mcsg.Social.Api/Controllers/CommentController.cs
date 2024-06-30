@@ -1,10 +1,10 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
     using Common.Core.Enums;
+    using DTOs;
+    using Interfaces;
 
     [ApiController]
     [Route("[controller]")]

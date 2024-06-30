@@ -1,11 +1,12 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers
 {
+    using DTOs;
+    using Interfaces;
+    using Models;
+
     [ApiController]
     [Route("[controller]")]
     public class SmartLookupController : ControllerBase

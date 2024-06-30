@@ -1,12 +1,12 @@
-﻿using Mcsg.Social.Api.DTOs;
-using Mcsg.Social.Api.Models;
-using Mcsg.Social.Api.Services.Interfaces;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using DTOs;
+    using Interfaces;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Models;
+
     public class MetaDataService : IMetaDataService
     {
         private readonly ILogger<LinkPreviewService> _logger;
