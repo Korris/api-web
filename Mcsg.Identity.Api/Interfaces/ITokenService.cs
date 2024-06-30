@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces
 {
-    using DTOs;
-    using DTOs.Response;
+    using Common.Core.Dtos;
     using Lib.Data.Domain.Entities;
+    using Response;
 
     public interface ITokenService
     {

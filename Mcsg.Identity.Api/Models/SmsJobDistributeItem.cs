@@ -1,9 +1,9 @@
-﻿using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Identity.Api.Models
+﻿namespace Mcsg.Identity.Api.Models
 {
+    using Lib.Common.Distributor;
+    using Lib.Common.Models;
+    using Lib.Data.Enums;
+
     public class SmsJobDistributeItem : DistributedItem
     {
         public SmsJobDistributeItem()

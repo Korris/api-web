@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces
 {
-    using DTOs.Request;
-    using DTOs.Response;
     using Lib.Data.Enums;
+    using Requests;
+    using Response;
 
     public interface IAuthenticationService
     {

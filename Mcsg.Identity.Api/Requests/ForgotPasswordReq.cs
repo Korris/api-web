@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Identity.Api.DTOs.Request
+﻿namespace Mcsg.Identity.Api.Requests
 {
     public class ForgotPasswordReq : BaseUserReq
     {
-
     }
 }

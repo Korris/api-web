@@ -4,8 +4,7 @@ using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services
 {
-    using DTOs;
-    using DTOs.Response;
+    using Common.Core.Dtos;
     using Helpers;
     using Interfaces;
     using Lib.Common.Constants;
@@ -15,6 +14,7 @@ namespace Mcsg.Identity.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
+    using Response;
 
     public partial class TokenService : ITokenService
     {

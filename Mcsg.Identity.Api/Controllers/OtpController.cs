@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers
 {
-    using DTOs.Request;
     using Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Enums;
+    using Requests;
 
     /// <summary>
     /// Use for user logged in

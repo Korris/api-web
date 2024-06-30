@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers
 {
-    using DTOs.Request;
     using Interfaces;
+    using Requests;
 
     [ApiController]
     [Route("[controller]")]

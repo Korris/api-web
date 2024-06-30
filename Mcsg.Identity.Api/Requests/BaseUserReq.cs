@@ -1,7 +1,7 @@
-﻿using Mcsg.Identity.Api.Attributes;
-
-namespace Mcsg.Identity.Api.DTOs.Request
+﻿namespace Mcsg.Identity.Api.Requests
 {
+    using Attributes;
+
     public class BaseUserReq
     {
         [RequireEmailOrPhone]

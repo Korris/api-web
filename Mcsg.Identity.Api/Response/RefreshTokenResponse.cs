@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Identity.Api.DTOs.Response
+﻿namespace Mcsg.Identity.Api.Response
 {
     public class RefreshTokenResponse
     {

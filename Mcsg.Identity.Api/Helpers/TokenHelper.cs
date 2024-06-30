@@ -6,10 +6,10 @@ using System.Text;
 
 namespace Mcsg.Identity.Api.Helpers
 {
-    using DTOs.Response;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Models;
+    using Response;
 
     public static class TokenHelper
     {

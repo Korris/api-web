@@ -4,11 +4,11 @@ using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services
 {
-    using DTOs.Response;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Web.Security;
     using Lib.Data.Repositories.Interface;
+    using Response;
 
     public class GoogleOAuthService : SSOService
     {

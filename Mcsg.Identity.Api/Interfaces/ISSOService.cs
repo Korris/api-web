@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces
 {
-    using DTOs.Response;
     using Lib.Data.Domain.Entities;
+    using Response;
 
     public interface ISSOService
     {

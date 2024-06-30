@@ -8,8 +8,6 @@ namespace Mcsg.Identity.Api.Services
 {
     using Common.Core.Enums;
     using Constants;
-    using DTOs.Request;
-    using DTOs.Response;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -21,6 +19,8 @@ namespace Mcsg.Identity.Api.Services
     using Lib.Data.Interfaces;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
+    using Requests;
+    using Response;
     using static SSORegister;
 
     public partial class AuthenticationService : IAuthenticationService

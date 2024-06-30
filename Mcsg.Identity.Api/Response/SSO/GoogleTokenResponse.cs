@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Mcsg.Identity.Api.DTOs.Response
+namespace Mcsg.Identity.Api.Response
 {
     public class GoogleTokenResponse
     {

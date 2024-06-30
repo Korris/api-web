@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Identity.Api.DTOs.Request
+﻿namespace Mcsg.Identity.Api.Requests
 {
+    using Lib.Data.Enums;
+
     public class VerifyRegisterOtpReq : BaseUserReq
     {
         public UserOtpType Type { get; set; }

@@ -1,8 +1,9 @@
-﻿using Mcsg.Identity.Api.DTOs.Request;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Mcsg.Identity.Api.Attributes
 {
+    using Requests;
+
     public class RequireEmailOrPhoneAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
