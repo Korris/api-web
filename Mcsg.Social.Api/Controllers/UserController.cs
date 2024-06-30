@@ -25,11 +25,12 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpPut("profile")]
-        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest userProfileUpdateRequest)
+        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest req)
         {
-            var result = await _userService.UpdateUserProfile(userProfileUpdateRequest);
+            var result = await _userService.UpdateUserProfile(req);
             return Ok(result);
         }
+
         [AllowAnonymous]
         [HttpGet("avatar/{userId}")]
         public async Task<IActionResult> GetUserAvatar(Guid userId)

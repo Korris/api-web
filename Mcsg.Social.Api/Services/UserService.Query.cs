@@ -1,6 +1,4 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
     public partial class UserService
     {
@@ -31,15 +29,6 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        private string CheckExistProfileName
-        {
-            get
-            {
-                return @$"SELECT ""Id"" FROM {_userRepository.TableName}
-                     WHERE ""ProfileName"" ilike @Name AND ""IsDelete"" = false";
-            }
-        }
-
         private string GetUserProfileByName
         {
             get
@@ -65,16 +54,6 @@ namespace Mcsg.Social.Api.Services
 ""Avatar"",
 ""ProfileId"" FROM {_userRepository.TableName}
                      WHERE ""Id"" = @UserId AND ""IsDelete"" = false";
-            }
-        }
-
-        private string UpdateSmartLookupProfileName
-        {
-            get
-            {
-                return $@"UPDATE {_smartLookupRepository.TableName} 
-                          SET ""Keyword"" = @newKeyword
-                          WHERE ""Keyword"" = @oldKeyword AND ""KeywordType"" = {LookupKeywordType.People.GetHashCode()}";
             }
         }
     }

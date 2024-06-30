@@ -14,8 +14,10 @@ namespace Mcsg.Social.Api.Services
     using Lib.Common.Helpers;
     using Lib.Common.Models;
     using Lib.Common.Web.Security;
+    using Lib.Data;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
+    using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Models;
     using Requests;
@@ -34,6 +36,7 @@ namespace Mcsg.Social.Api.Services
             IConfiguration configuration,
             IRepository<SmartLookup> smartLookupRepository,
             DistributeManager distributeManager,
+            McsgDbContext context,
             ISetting setting,
             ILogger<UserService> logger, IStorageClient sc)
         {
@@ -43,6 +46,7 @@ namespace Mcsg.Social.Api.Services
             _logger = logger;
             _smartLookupRepository = smartLookupRepository;
             _distributeManager = distributeManager;
+            _context = context;
             _setting = setting;
             _sc = sc;
         }
@@ -158,39 +162,43 @@ namespace Mcsg.Social.Api.Services
         /// Only change email or phone number.
         /// Change both of them --> map to case change email and don't change the phone number.
         /// </summary>
-        /// <param name="userProfileUpdateRequest"></param>
+        /// <param name="req"></param>
         /// <returns></returns>
-        public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest userProfileUpdateRequest)
+        public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest req)
         {
-            var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
-            var profileName = userProfileUpdateRequest.ProfileName?.Trim();
+            var profileName = req.ProfileName?.Trim();
             if (string.IsNullOrWhiteSpace(profileName))
-                throw new BadRequestException(ApiErrorCode.PROFILE_NAME_NOT_EMPTY, ApiErrorMessage.PROFILE_NAME_NOT_EMPTY);
-
-            if (!string.Equals(user.ProfileName, profileName))
             {
-                var profiles = await _userRepository.Connection.QueryAsync<SimilarProfile>(CheckExistProfileName, new { Name = profileName });
-                if (profiles.Any())
-                {
-                    throw new BadRequestException(ApiErrorCode.EXISTING_PROFILE_NAME, ApiErrorMessage.EXISTING_PROFILE_NAME);
-                }
-
-                await _smartLookupRepository.Connection.ExecuteAsync(UpdateSmartLookupProfileName, new
-                {
-                    newKeyword = profileName,
-                    oldKeyword = user.ProfileName,
-                });
-                user.ProfileName = profileName;
-                user.ProfileId = profileName.Replace(" ", "-");
-
+                throw new BadRequestException(ApiErrorCode.PROFILE_NAME_NOT_EMPTY, ApiErrorMessage.PROFILE_NAME_NOT_EMPTY);
             }
 
-            user.DateOfBirth = userProfileUpdateRequest.DateOfBirth;
-            user.Gender = userProfileUpdateRequest.Gender != null ? (int)userProfileUpdateRequest.Gender : null;
-            user.Location = userProfileUpdateRequest.Location;
-            user.PhoneNumber = userProfileUpdateRequest.PhoneNumber;
-            await _userRepository.UpdateAsync(user);
+            var user = await _context.Users.FindAsync(_currentUserService.Session.UserId);
+            if (user == null)
+            {
+                throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+            }
+
+            if (user.ProfileName != profileName)
+            {
+                var smartLookup = await _context.SmartLookups.FirstOrDefaultAsync(p => p.Keyword == user.ProfileName && p.KeywordType == LookupKeywordType.People);
+                if (smartLookup != null)
+                {
+                    smartLookup.Keyword = profileName;
+                }
+
+                user.ProfileName = profileName;
+                user.ProfileId = profileName.Replace(" ", "-");
+            }
+
+            user.DateOfBirth = req.DateOfBirth;
+            user.Gender = req.Gender != null ? (int)req.Gender : null;
+            user.Location = req.Location;
+            user.PhoneNumber = req.PhoneNumber;
+
+            await _context.SaveChangesAsync();
+
             await SyncWalletUserInfo(user);
+
             return CreateUserRespone(user);
         }
 
@@ -386,6 +394,11 @@ namespace Mcsg.Social.Api.Services
         }
 
         #region -- Fields --
+
+        /// <summary>
+        /// DB Context
+        /// </summary>
+        private readonly McsgDbContext _context;
 
         /// <summary>
         /// Setting

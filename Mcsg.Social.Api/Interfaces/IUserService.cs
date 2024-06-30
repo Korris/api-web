@@ -10,7 +10,7 @@ namespace Mcsg.Social.Api.Interfaces
     {
         Task<UserProfileResponse> GetCurrentUserAsync();
         Task<UserProfileResponse> GetUserByUserNameAsync(string profileName);
-        Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest userProfileUpdateRequest);
+        Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest req);
         Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateRequest userAvatarUpdateRequest);
         Task<UserProfileAvatarResponse> GetUserAvatar(Guid userId);
         Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest);

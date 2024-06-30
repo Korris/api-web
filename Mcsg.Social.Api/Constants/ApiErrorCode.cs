@@ -32,6 +32,7 @@
         public const string INVALID_FILE_TYPE = "ERR_API_300003";
         public const string EXISTING_PROFILE_NAME = "ERR_API_300004";
         public const string PROFILE_NAME_NOT_EMPTY = "ERR_API_300005";
+        public const string NOT_FOUND = "ERR_API_300006";
 
         // Affiliate
         public const string INVALID_AFFILIATE_ENTITY_TYPE = "ERR_API_300006";

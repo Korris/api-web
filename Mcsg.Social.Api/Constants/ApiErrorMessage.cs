@@ -33,6 +33,7 @@
         public const string INVALID_COVER_PHOTO_FILE_TYPE = "Cover photo should be image";
         public const string EXISTING_PROFILE_NAME = "Profile name already exists in the system";
         public const string PROFILE_NAME_NOT_EMPTY = "Profile name is empty";
+        public const string NOT_FOUND = "Not found";
 
         // Affiliate
         public const string INVALID_AFFILIATE_ENTITY_TYPE = "Invalid Affiliate Type request";
