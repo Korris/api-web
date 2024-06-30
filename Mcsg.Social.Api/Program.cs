@@ -9,7 +9,6 @@ using Attributes;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
-using Helper;
 using Interfaces;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -120,8 +119,6 @@ public class Program
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<FileSetting>(builder.Configuration.GetSection("FileSettings"));
         builder.Services.Configure<FeedDisplayConfig>(builder.Configuration.GetSection("FeedDisplayConfigs"));
-
-        AppSettingsProvider.Configuration = builder.Configuration;
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);

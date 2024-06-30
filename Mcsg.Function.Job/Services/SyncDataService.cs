@@ -4,8 +4,9 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Extensions;
+    using Common.SeedWork.Extensions;
     using Constants;
-    using Helpers;
     using Interfaces;
     using Lib.Common.Enums;
     using Lib.Common.Models;
@@ -21,10 +22,11 @@ namespace Mcsg.Function.Job.Services
     {
         private readonly WalletDbContext _walletDbContext;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Lib.Data.Domain.Entities.User> _userRepository;
-        private readonly IRepository<Lib.Data.Domain.Entities.Post> _postRepository;
-        private readonly IRepository<Lib.Data.Domain.Entities.SubPost> _subPostRepository;
-        private readonly IRepository<Lib.Data.Domain.Entities.UserExclusiveSubPost> _userExclusiveSubPostRepository;
+        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Post> _postRepository;
+        private readonly IRepository<SubPost> _subPostRepository;
+        private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
+
         public SyncDataService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
         {
             _unitOfWork = unitOfWork;
@@ -67,7 +69,7 @@ namespace Mcsg.Function.Job.Services
                     IsFromSystem = true,
                     Content = RewardContent(reward.Type),
                     SystemMessage = RewardContent(reward.Type),
-                    ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
+                    ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                     ModifiedDate = DateTime.UtcNow,
                     DestinationUserWalletId = userWallet.Id,
                     Status = TransactionStatus.SUCCESS,

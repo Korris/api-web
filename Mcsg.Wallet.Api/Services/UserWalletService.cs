@@ -7,12 +7,12 @@ using System.Data;
 namespace Mcsg.Wallet.Api.Services
 {
     using Api.Constants;
-    using Api.Helpers;
     using Api.Interfaces;
     using Api.Models._3rdClass.ZaloPay.Request;
     using Api.Models._3rdClass.ZaloPay.Response;
     using Common.Core.Dtos;
     using Common.Core.Extensions;
+    using Common.SeedWork.Extensions;
     using Lib.Common.Enums;
     using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
@@ -89,7 +89,7 @@ namespace Mcsg.Wallet.Api.Services
                 {
                     WalletAddress = x.Address,
                     ProfileName = x.ProfileName,
-                    Email = string.IsNullOrWhiteSpace(x.Email) ? x.ProfileName : StringHelper.MaskDigits(x.Email, 3, 3)
+                    Email = string.IsNullOrWhiteSpace(x.Email) ? x.ProfileName : x.Email.MaskDigits(3, 3)
                 }).FirstOrDefaultAsync();
 
             if (data == null)
@@ -830,7 +830,7 @@ namespace Mcsg.Wallet.Api.Services
                 IsFromSystem = false,
                 Content = content,
                 SystemMessage = systemMessage,
-                ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
+                ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                 ModifiedDate = DateTime.UtcNow,
                 SourceUserWalletId = sourceId,
                 Status = TransactionStatus.PENDING,

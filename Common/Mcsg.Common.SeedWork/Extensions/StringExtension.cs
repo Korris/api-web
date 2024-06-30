@@ -411,5 +411,28 @@ public static class StringExtension
         return cs.SetPlaceholder(dic);
     }
 
+    /// <summary>
+    /// Mask digits
+    /// </summary>
+    /// <param name="s">String data</param>
+    /// <param name="first">First</param>
+    /// <param name="last">Last</param>
+    /// <returns>Return the result</returns>
+    public static string MaskDigits(this string s, int first, int last)
+    {
+        // Take first 6 characters
+        var firstPart = s.Substring(0, first);
+
+        // Take last 4 characters
+        int len = s.Length;
+        string lastPart = s.Substring(len - last, last);
+
+        // Take the middle part (****)
+        int middlePartLenght = len - (firstPart.Length + lastPart.Length);
+        string middlePart = new String('*', middlePartLenght);
+
+        return firstPart + middlePart + lastPart;
+    }
+
     #endregion
 }

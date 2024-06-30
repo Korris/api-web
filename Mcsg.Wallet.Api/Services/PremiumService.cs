@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.SeedWork.Extensions;
     using Constants;
-    using Helpers;
     using Lib.Common.Distributor;
     using Lib.Common.Exceptions;
     using Lib.Common.Extensions;
@@ -110,7 +110,7 @@ namespace Mcsg.Wallet.Api.Services
                 IsFromSystem = false,
                 Content = "BUY PACKAGE: " + package.Name,
                 SystemMessage = "BUY PACKAGE: " + package.No,
-                ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
+                ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                 ModifiedDate = now,
                 SourceUserWalletId = userWallet.Id,
                 Status = TransactionStatus.PENDING,
@@ -275,7 +275,7 @@ namespace Mcsg.Wallet.Api.Services
                 IsFromSystem = false,
                 Content = "BUY CHAPTER ID: " + req.ChapterId,
                 SystemMessage = "BUY CHAPTER ID: " + req.ChapterId,
-                ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
+                ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                 ModifiedDate = DateTime.UtcNow,
                 SourceUserWalletId = userWallet.Id,
                 RelatedId = req.ChapterId,
@@ -371,7 +371,7 @@ namespace Mcsg.Wallet.Api.Services
                 IsFromSystem = false,
                 Content = "BUY SERIES ID: " + req.SerieId,
                 SystemMessage = "BUY SERIES ID: " + req.SerieId,
-                ReferenceNumber = StringHelper.GetRandomString(Default.ReferenceNumberLength).ToLower(),
+                ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                 ModifiedDate = DateTime.UtcNow,
                 SourceUserWalletId = userWallet.Id,
                 RelatedId = req.SerieId,
