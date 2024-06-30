@@ -1,6 +1,5 @@
-﻿namespace Mcsg.Identity.Api.Requests
+﻿namespace Mcsg.Identity.Api.Requests;
+
+public class ForgotPasswordReq : BaseUserReq
 {
-    public class ForgotPasswordReq : BaseUserReq
-    {
-    }
 }

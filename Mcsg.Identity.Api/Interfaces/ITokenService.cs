@@ -1,18 +1,17 @@
-﻿namespace Mcsg.Identity.Api.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces;
+
+using Common.Core.Dtos;
+using Lib.Data.Domain.Entities;
+using Response;
+
+public interface ITokenService
 {
-    using Common.Core.Dtos;
-    using Lib.Data.Domain.Entities;
-    using Response;
+    TokenResponse GenerateAccessToken(Guid sessionId);
 
-    public interface ITokenService
-    {
-        TokenResponse GenerateAccessToken(Guid sessionId);
+    Task<RefreshTokenDto> AddUserRefreshTokenAsync(User user);
 
-        Task<RefreshTokenDto> AddUserRefreshTokenAsync(User user);
+    Task<Guid> IsValidRefreshTokenAsync(string refreshToken);
 
-        Task<Guid> IsValidRefreshTokenAsync(string refreshToken);
-
-        Guid GetSessionIdFromToken(string accessToken);
-        Task<bool> DeleteRefreshTokenAsync(Guid userId);
-    }
+    Guid GetSessionIdFromToken(string accessToken);
+    Task<bool> DeleteRefreshTokenAsync(Guid userId);
 }

@@ -2,59 +2,58 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Identity.Api.Services
+namespace Mcsg.Identity.Api.Services;
+
+using Common.SeedWork.Extensions;
+using Interfaces;
+using Lib.Common.Web.Security;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Repositories;
+
+public partial class UserService : IUserService
 {
-    using Common.SeedWork.Extensions;
-    using Interfaces;
-    using Lib.Common.Web.Security;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Repositories;
-
-    public partial class UserService : IUserService
+    private readonly UserManager<User> _userManager;
+    private readonly IRepository<User> _userRepository;
+    private readonly ICurrentUserService _currentUserService;
+    public UserService(UserManager<User> userManager,
+        IRepository<User> userRepository,
+        ICurrentUserService currentUserService)
     {
-        private readonly UserManager<User> _userManager;
-        private readonly IRepository<User> _userRepository;
-        private readonly ICurrentUserService _currentUserService;
-        public UserService(UserManager<User> userManager,
-            IRepository<User> userRepository,
-            ICurrentUserService currentUserService)
+        _currentUserService = currentUserService;
+        _userRepository = userRepository;
+        _userManager = userManager;
+    }
+
+    public string GenerateReferralCode()
+    {
+        var referralCode = string.Empty;
+        do
         {
-            _currentUserService = currentUserService;
-            _userRepository = userRepository;
-            _userManager = userManager;
-        }
+            referralCode = 8.GetRandomString();
+        } while (_userManager.Users.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
 
-        public string GenerateReferralCode()
+        return referralCode;
+    }
+
+    public async Task<bool> ConfirmEmailAsync(string email)
+    {
+        var iResult = await _userRepository.Connection.ExecuteAsync(UpdateEmailConfirmedCommand, new
         {
-            var referralCode = string.Empty;
-            do
-            {
-                referralCode = 8.GetRandomString();
-            } while (_userManager.Users.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
+            email,
+            id = _currentUserService.Session.UserId
+        });
 
-            return referralCode;
-        }
+        return iResult > 0;
+    }
 
-        public async Task<bool> ConfirmEmailAsync(string email)
+    public async Task<bool> ConfirmPhoneNumberAsync(string phone)
+    {
+        var iResult = await _userRepository.Connection.ExecuteAsync(UpdatePhoneNumberConfirmedCommand, new
         {
-            var iResult = await _userRepository.Connection.ExecuteAsync(UpdateEmailConfirmedCommand, new
-            {
-                email,
-                id = _currentUserService.Session.UserId
-            });
+            phone,
+            id = _currentUserService.Session.UserId
+        });
 
-            return iResult > 0;
-        }
-
-        public async Task<bool> ConfirmPhoneNumberAsync(string phone)
-        {
-            var iResult = await _userRepository.Connection.ExecuteAsync(UpdatePhoneNumberConfirmedCommand, new
-            {
-                phone,
-                id = _currentUserService.Session.UserId
-            });
-
-            return iResult > 0;
-        }
+        return iResult > 0;
     }
 }

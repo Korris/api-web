@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Identity.Api.Interfaces
+﻿namespace Mcsg.Identity.Api.Interfaces;
+
+public interface IUserService
 {
-    public interface IUserService
-    {
-        string GenerateReferralCode();
-        Task<bool> ConfirmEmailAsync(string email);
-        Task<bool> ConfirmPhoneNumberAsync(string phone);
-    }
+    string GenerateReferralCode();
+    Task<bool> ConfirmEmailAsync(string email);
+    Task<bool> ConfirmPhoneNumberAsync(string phone);
 }

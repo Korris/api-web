@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Identity.Api.Requests
-{
-    using Lib.Data.Enums;
+﻿namespace Mcsg.Identity.Api.Requests;
 
-    public class CreateOtpReq : BaseUserReq
-    {
-        public UserOtpType Type { get; set; }
-    }
+using Lib.Data.Enums;
+
+public class CreateOtpReq : BaseUserReq
+{
+    public UserOtpType Type { get; set; }
 }

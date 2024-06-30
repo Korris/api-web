@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Identity.Api.Constants
+﻿namespace Mcsg.Identity.Api.Constants;
+
+public class ApiMessages
 {
-    public class ApiMessages
-    {
-        public const string REWARD_FOR_NEW_USER = "Msg_Wallet_Reward_NewUser";
-        public const string MobileConfirmed = "Tài khoản đã xác nhận số điện thoại trước đó";
-    }
+    public const string REWARD_FOR_NEW_USER = "Msg_Wallet_Reward_NewUser";
+    public const string MobileConfirmed = "Tài khoản đã xác nhận số điện thoại trước đó";
 }

@@ -1,28 +1,27 @@
-﻿namespace Mcsg.Identity.Api.Services
+﻿namespace Mcsg.Identity.Api.Services;
+
+using Constants;
+using Interfaces;
+
+public static class SSORegister
 {
-    using Constants;
-    using Interfaces;
-
-    public static class SSORegister
+    public delegate ISSOService SSOServiceResolver(string socialCode);
+    public static IServiceCollection AddSSOService(this IServiceCollection services)
     {
-        public delegate ISSOService SSOServiceResolver(string socialCode);
-        public static IServiceCollection AddSSOService(this IServiceCollection services)
-        {
-            services.AddScoped<FacebookOAuthService>();
-            services.AddScoped<GoogleOAuthService>();
-            services.AddScoped<AppleOAuthService>();
+        services.AddScoped<FacebookOAuthService>();
+        services.AddScoped<GoogleOAuthService>();
+        services.AddScoped<AppleOAuthService>();
 
-            services.AddScoped<SSOServiceResolver>(serviceProvider => key =>
+        services.AddScoped<SSOServiceResolver>(serviceProvider => key =>
+        {
+            return key switch
             {
-                return key switch
-                {
-                    SocialMediaConstants.Facebook.MediaCode => serviceProvider.GetService<FacebookOAuthService>(),
-                    SocialMediaConstants.Google.MediaCode => serviceProvider.GetService<GoogleOAuthService>(),
-                    SocialMediaConstants.Apple.MediaCode => serviceProvider.GetService<AppleOAuthService>(),
-                    _ => null
-                };
-            });
-            return services;
-        }
+                SocialMediaConstants.Facebook.MediaCode => serviceProvider.GetService<FacebookOAuthService>(),
+                SocialMediaConstants.Google.MediaCode => serviceProvider.GetService<GoogleOAuthService>(),
+                SocialMediaConstants.Apple.MediaCode => serviceProvider.GetService<AppleOAuthService>(),
+                _ => null
+            };
+        });
+        return services;
     }
 }

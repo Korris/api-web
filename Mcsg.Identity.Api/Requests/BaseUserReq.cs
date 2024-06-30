@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Identity.Api.Requests
+﻿namespace Mcsg.Identity.Api.Requests;
+
+using Attributes;
+
+public class BaseUserReq
 {
-    using Attributes;
+    [RequireEmailOrPhone]
+    public string? Email { get; set; }
 
-    public class BaseUserReq
-    {
-        [RequireEmailOrPhone]
-        public string? Email { get; set; }
-
-        [RequireEmailOrPhone]
-        public string? Phone { get; set; }
-    }
+    [RequireEmailOrPhone]
+    public string? Phone { get; set; }
 }

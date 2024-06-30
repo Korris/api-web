@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Identity.Api.Requests
-{
-    using Lib.Data.Enums;
+﻿namespace Mcsg.Identity.Api.Requests;
 
-    public class ResetPasswordReq : BaseUserReq
-    {
-        public UserOtpType Type { get; set; }
-        public string Password { get; set; }
-        public string RetypePassword { get; set; }
-        public string OtpToken { get; set; }
-        public string OtpCode { get; set; }
-    }
+using Lib.Data.Enums;
+
+public class ResetPasswordReq : BaseUserReq
+{
+    public UserOtpType Type { get; set; }
+    public string Password { get; set; }
+    public string RetypePassword { get; set; }
+    public string OtpToken { get; set; }
+    public string OtpCode { get; set; }
 }

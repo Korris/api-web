@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Identity.Api.Requests
+﻿namespace Mcsg.Identity.Api.Requests;
+
+public class LoginUserReq : BaseUserReq
 {
-    public class LoginUserReq : BaseUserReq
-    {
-        public string Password { get; set; }
-    }
+    public string Password { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Identity.Api.Requests
+namespace Mcsg.Identity.Api.Requests;
+
+public class RefreshTokenReq
 {
-    public class RefreshTokenReq
-    {
-        [Required]
-        public string RefreshToken { get; set; }
-    }
+    [Required]
+    public string RefreshToken { get; set; }
 }

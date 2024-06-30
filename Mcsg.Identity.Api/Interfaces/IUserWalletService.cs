@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Identity.Api.Interfaces
-{
-    using Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Identity.Api.Interfaces;
 
-    public interface IUserWalletService
-    {
-        Task InitUserWalletAsync(User user);
-    }
+using Lib.Data.Domain.Entities;
+
+public interface IUserWalletService
+{
+    Task InitUserWalletAsync(User user);
 }

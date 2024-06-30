@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Identity.Api.Requests
+﻿namespace Mcsg.Identity.Api.Requests;
+
+public class RegisterUserReq : BaseUserReq
 {
-    public class RegisterUserReq : BaseUserReq
-    {
-        public string? ReferralCode { get; set; }
-    }
+    public string? ReferralCode { get; set; }
 }

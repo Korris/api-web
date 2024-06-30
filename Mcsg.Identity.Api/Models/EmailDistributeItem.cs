@@ -1,18 +1,17 @@
-﻿namespace Mcsg.Identity.Api.Models
+﻿namespace Mcsg.Identity.Api.Models;
+
+using Lib.Common.Distributor;
+using Lib.Common.Models;
+using Lib.Data.Enums;
+
+public class EmailJobDistributeItem : DistributedItem
 {
-    using Lib.Common.Distributor;
-    using Lib.Common.Models;
-    using Lib.Data.Enums;
-
-    public class EmailJobDistributeItem : DistributedItem
+    public EmailJobDistributeItem()
     {
-        public EmailJobDistributeItem()
-        {
-            Id = Guid.NewGuid();
-            Email = new Email();
-        }
-
-        public Email Email { get; set; }
-        public JobType JobType { get; set; }
+        Id = Guid.NewGuid();
+        Email = new Email();
     }
+
+    public Email Email { get; set; }
+    public JobType JobType { get; set; }
 }
