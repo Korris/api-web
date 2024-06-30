@@ -2,8 +2,8 @@
 
 namespace Mcsg.Identity.Api.Services
 {
+    using Common.SeedWork.Extensions;
     using Constants;
-    using Helpers;
     using Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
@@ -58,13 +58,13 @@ namespace Mcsg.Identity.Api.Services
 
         private async Task<string> GennerateWalletAddress()
         {
-            string address = StringHelper.GetRandomString(SystemConfig.WalletAddressLength).ToLower();
+            string address = SystemConfig.WalletAddressLength.GetRandomString().ToLower();
             while (true)
             {
                 var isExisted = await _walletDbContext.UserWallets.AnyAsync(x => x.Address == address);
                 if (isExisted)
                 {
-                    address = StringHelper.GetRandomString(SystemConfig.WalletAddressLength).ToLower();
+                    address = SystemConfig.WalletAddressLength.GetRandomString().ToLower();
                 }
                 else
                 {
@@ -76,13 +76,13 @@ namespace Mcsg.Identity.Api.Services
 
         private async Task<string> GennerateWalletTransactionNumber()
         {
-            string number = StringHelper.GetRandomString(SystemConfig.WalletTransactionLength).ToLower();
+            string number = SystemConfig.WalletTransactionLength.GetRandomString().ToLower();
             while (true)
             {
                 var isExisted = await _walletDbContext.WalletTransactions.AnyAsync(x => x.ReferenceNumber == number);
                 if (isExisted)
                 {
-                    number = StringHelper.GetRandomString(SystemConfig.WalletTransactionLength).ToLower();
+                    number = SystemConfig.WalletTransactionLength.GetRandomString().ToLower();
                 }
                 else
                 {
