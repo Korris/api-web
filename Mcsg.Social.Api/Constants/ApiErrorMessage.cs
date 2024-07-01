@@ -35,6 +35,7 @@
         public const string PROFILE_NAME_NOT_EMPTY = "Profile name is empty";
         public const string NOT_FOUND = "Not found";
         public const string DUPLICATE_USERNAME = "Duplicate username";
+        public const string NEED_PREMIUM_TO_EDIT = "You need to upgrade to a premium account to edit username";
 
         // Affiliate
         public const string INVALID_AFFILIATE_ENTITY_TYPE = "Invalid Affiliate Type request";

@@ -4,7 +4,7 @@ namespace Mcsg.Lib.Data.Domain.Entities
 {
     using Mcsg.Common.Core.Enums;
 
-    public class User : IdentityUser<Guid>
+    public partial class User : IdentityUser<Guid>
     {
         public string? ProfileName { get; set; }
         public string? FirstName { get; set; }
