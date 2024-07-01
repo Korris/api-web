@@ -4,5 +4,6 @@
     {
         // List of image MIME types
         public static string[] Images = { "image/jpeg", "image/png", "image/gif" };
+        public static string ImageContentTypeForIphone = "application/octet-stream";
     }
 }
