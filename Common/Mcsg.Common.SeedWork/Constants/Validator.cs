@@ -14,7 +14,7 @@
 namespace Mcsg.Common.SeedWork.Constants;
 
 /// <summary>
-/// Constants
+/// Validator
 /// </summary>
 public class Validator
 {
@@ -49,24 +49,45 @@ public class Validator
     public const string EmailAddress = "is not a valid email address";
 
     /// <summary>
+    /// PhoneNumber message
+    /// </summary>
+    public const string PhoneNumber = "is not a valid phone number";
+
+    /// <summary>
     /// Equal message
     /// </summary>
     public const string Equal = "does not match";
 
     /// <summary>
-    /// User name
+    /// User name free
     /// </summary>
-    public class UserName
+    public class UserNameFree
     {
         /// <summary>
         /// Minimum length
         /// </summary>
-        public const ushort Min = 4;
+        public const ushort Min = 15;
 
         /// <summary>
         /// Maximum length
         /// </summary>
-        public const ushort Max = 256;
+        public const ushort Max = 30;
+    }
+
+    /// <summary>
+    /// User name Premium
+    /// </summary>
+    public class UserNamePremium
+    {
+        /// <summary>
+        /// Minimum length
+        /// </summary>
+        public const ushort Min = 5;
+
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 15;
     }
 
     /// <summary>

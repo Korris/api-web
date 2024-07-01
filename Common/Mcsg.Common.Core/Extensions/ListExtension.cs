@@ -36,5 +36,17 @@ public static class ListExtension
         return o.Select(p => new DicDto { Key = isCamelCase ? p.PropertyName.ToCamelCase() : p.PropertyName, Value = p.ErrorMessage }).ToList();
     }
 
+    /// <summary>
+    /// Convert to value
+    /// </summary>
+    /// <param name="o">Encapsulates an error from the identity subsystem</param>
+    /// <param name="isCamelCase">Is camelCase</param>
+    /// <returns>Return the result</returns>
+    public static string ToValue(this List<ValidationFailure> o, bool isCamelCase = true)
+    {
+        var t = o.ToDic(isCamelCase).Select(p => p.Value).ToList();
+        return string.Join(" | ", t);
+    }
+
     #endregion
 }

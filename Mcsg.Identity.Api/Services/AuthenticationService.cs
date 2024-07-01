@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Mcsg.Identity.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Constants;
 using Interfaces;
 using Lib.Common.Constants;
@@ -21,6 +22,8 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
 using Response;
+using Validators;
+using static Common.SeedWork.Constants.Message;
 using static SSORegister;
 
 public partial class AuthenticationService : IAuthenticationService
@@ -85,6 +88,13 @@ public partial class AuthenticationService : IAuthenticationService
 
     public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
     {
+        var vr = new AuthenticationRegisterUserV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
         VerifyUserResponse response = new();
         if (IsAccountExisted(request.Email, request.Phone, out string code, out string message))
         {
@@ -169,6 +179,13 @@ public partial class AuthenticationService : IAuthenticationService
     }
     public async Task<TokenResponse> LoginUser(LoginUserReq request)
     {
+        var vr = new AuthenticationLoginUserV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
         var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
