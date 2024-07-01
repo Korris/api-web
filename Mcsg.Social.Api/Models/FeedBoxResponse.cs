@@ -39,5 +39,6 @@
         public int TotalResources { get; set; }
         public PostType Type { get; set; }
         public string? Link { get; set; }
+        public string? CustomNote { get; set; }
     }
 }
