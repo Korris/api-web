@@ -199,6 +199,7 @@ namespace Mcsg.Social.Api.Services
                             SELECT ""PostId"", 
                             COUNT(*) AS total_subposts 
                             FROM ""SubPosts""
+                            WHERE ""IsDelete"" = false
                             GROUP BY ""PostId""
                         )
                         SELECT 
