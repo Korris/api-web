@@ -8,6 +8,7 @@ namespace Mcsg.Social.Api.Models
     {
         [Required]
         public string? ProfileName { get; set; }
+        public string? UserName { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public GenderEnum? Gender { get; set; }
         public string? Location { get; set; }

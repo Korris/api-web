@@ -34,11 +34,12 @@ namespace Mcsg.Social.Api.Services
         public UserService(IRepository<User> userRepository,
             ICurrentUserService currentUserService,
             IConfiguration configuration,
+            ILogger<UserService> logger,
             IRepository<SmartLookup> smartLookupRepository,
             DistributeManager distributeManager,
             McsgDbContext context,
             ISetting setting,
-            ILogger<UserService> logger, IStorageClient sc)
+            IStorageClient sc)
         {
             _userRepository = userRepository;
             _currentUserService = currentUserService;
@@ -188,6 +189,30 @@ namespace Mcsg.Social.Api.Services
 
                 user.ProfileName = profileName;
                 user.ProfileId = profileName.Replace(" ", "-");
+            }
+
+            var userName = req.UserName?.Trim();
+            if (!string.IsNullOrWhiteSpace(userName))
+            {
+                var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == userName);
+                if (userNameHistory == null)
+                {
+                    userNameHistory = new UserNameHistory
+                    {
+                        UserId = user.Id,
+                        UserName = userName,
+                        CreatedBy = user.Id
+                    };
+
+                    await _context.UserNameHistories.AddAsync(userNameHistory);
+                }
+                else if (userNameHistory.UserId != user.Id)
+                {
+                    throw new BadRequestException(ApiErrorCode.DUPLICATE_USERNAME, ApiErrorMessage.DUPLICATE_USERNAME);
+                }
+
+                user.UserName = userName;
+                user.NormalizedUserName = userName.ToUpper();
             }
 
             user.DateOfBirth = req.DateOfBirth;
