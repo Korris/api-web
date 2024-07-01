@@ -89,10 +89,6 @@ namespace Mcsg.Lib.Common.Extensions
             {
                 throw new FormatException(ErrorMessage.InvalidFile);
             }
-            if (file.FileName.ToLower().EndsWith(FileExt.ImageIphoneExtension))
-            {
-                return file.ContentType == FileTypes.ImageContentTypeForIphone;
-            }
             // Check if the content type is in the allowed list
             return Array.Exists(FileTypes.Images, type => type.Equals(file.ContentType, StringComparison.OrdinalIgnoreCase));
         }
