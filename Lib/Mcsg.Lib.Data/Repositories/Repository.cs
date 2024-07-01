@@ -265,7 +265,7 @@ namespace Mcsg.Lib.Data.Repositories
         private string GetUpdateQuery(string primaryKey)
         {
             var entityType = typeof(TEntity);
-            var properties = entityType.GetProperties();
+            var properties = entityType.GetProperties().Where(p => !p.CustomAttributes.Any() || p.CustomAttributes.Any(q => q.AttributeType.Name != "NotMappedAttribute"));
             var setClauses = properties
                                .Where(p => !p.Name.Equals(primaryKey, StringComparison.OrdinalIgnoreCase))
                                .Select(p => $"\"{p.Name}\" = @{p.Name}");
