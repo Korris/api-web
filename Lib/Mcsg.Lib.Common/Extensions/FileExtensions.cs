@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ImageMagick;
+using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -148,20 +149,28 @@ namespace Mcsg.Lib.Common.Extensions
             {
                 using (var stream = file.OpenReadStream())
                 {
-                    using (var image = SixLabors.ImageSharp.Image.Load(stream))
+                    using (var magickImage = new MagickImage(stream))
                     {
-                        var output = new MemoryStream();
-                        image.Save(output, new JpegEncoder { Quality = quality });
-                        output.Seek(0, SeekOrigin.Begin);
-
-                        // Create a new FormFile based on the compressed image
-                        var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName.ToJpg());
-                        return new CompressImage()
+                        using (var memoryStream = new MemoryStream())
                         {
-                            Image = compressedFile,
-                            Width = image.Width,
-                            Height = image.Height
-                        };
+                            magickImage.Format = MagickFormat.Jpeg;
+                            magickImage.Quality = quality;
+                            magickImage.Write(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            using (var image = SixLabors.ImageSharp.Image.Load(memoryStream))
+                            {
+                                var output = new MemoryStream();
+                                image.Save(output, new JpegEncoder { Quality = quality });
+                                output.Seek(0, SeekOrigin.Begin);
+                                var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName.ToJpg());
+                                return new CompressImage()
+                                {
+                                    Image = compressedFile,
+                                    Width = image.Width,
+                                    Height = image.Height
+                                };
+                            }
+                        }
                     }
                 }
             }
