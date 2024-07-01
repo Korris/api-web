@@ -211,7 +211,8 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 user.LastLoginDate = DateTime.UtcNow;
             }
-            await _userRepository.UpdateAsync(user);
+
+            await _context.SaveChangesAsync();
 
             return response;
         }
