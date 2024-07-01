@@ -519,6 +519,7 @@ namespace Mcsg.Social.Api.Services
             };
             try
             {
+                await _postRepository.InsertAsync(post);
                 if (feedPostReq.MetaData != null)
                 {
                     feedPostReq.MetaData.Description = System.Web.HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
@@ -556,7 +557,6 @@ namespace Mcsg.Social.Api.Services
                         result.Link = new PostLinkResponse();
                     }
                 }
-                await _postRepository.InsertAsync(post);
             }
             catch (PostgresException ex)
             {
