@@ -6,6 +6,7 @@ using Npgsql;
 namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
+    using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
     using Constants;
@@ -23,6 +24,8 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories.Interface;
     using Models;
     using Requests;
+    using Validators;
+    using static Common.SeedWork.Constants.Message;
 
     public partial class FeedService : IFeedService
     {
@@ -481,6 +484,13 @@ namespace Mcsg.Social.Api.Services
         #region Modify data
         public async Task<FeedResponse> PostFeedAsync(FeedPostReq feedPostReq)
         {
+            var vr = new FeedFeedPostV().Validate(feedPostReq);
+            if (!vr.IsValid)
+            {
+                var t = vr.Errors.ToValue();
+                throw new BadRequestException(M000, t);
+            }
+
             var currentUserId = _currentUserService.Session.UserId;
             var currentProfileName = _currentUserService.Session.ProfileName;
             var currentUserName = _currentUserService.Session.UserName;

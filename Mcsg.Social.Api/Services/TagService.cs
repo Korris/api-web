@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.SeedWork.Constants;
     using Constants;
     using Extensions;
     using Interfaces;
@@ -44,11 +45,9 @@ namespace Mcsg.Social.Api.Services
             _postRepository = postRepository;
             _configuration = configuration;
         }
+
         public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags)
         {
-            // Validate tags
-            tags = tags.Select(ValidateTag).ToList(); // Use Select for cleaner transformation
-
             // Find all tags associated with the post
             var query = string.Format(GetAllTagsByNameQuery, _tagRepository.TableName);
             var tagsDb = await _tagRepository.Connection
@@ -325,7 +324,7 @@ namespace Mcsg.Social.Api.Services
             }
 
             // Hash tag without any special character, except underscore, number and character
-            if (!Regex.IsMatch(tag, @"^[a-zA-Z0-9_]+$"))
+            if (!Regex.IsMatch(tag, Regular.Tag))
             {
                 throw new ArgumentException(ErrorCodes.PortalTagNameNotValid, string.Format(ErrorMessage.TagNameNotValid, tag));
             }

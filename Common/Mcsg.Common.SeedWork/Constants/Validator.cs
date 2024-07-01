@@ -54,6 +54,11 @@ public class Validator
     public const string PhoneNumber = "is not a valid phone number";
 
     /// <summary>
+    /// Tag
+    /// </summary>
+    public const string Tag = "Invalid hashtag format. Hashtags must start with #, contain no spaces or special characters, and be longer than 1 character";
+
+    /// <summary>
     /// Equal message
     /// </summary>
     public const string Equal = "does not match";

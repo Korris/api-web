@@ -27,4 +27,9 @@ public class Regular
     /// \d{8}$: Followed by exactly 8 digits, and $ denotes the end of the string
     /// </summary>
     public const string PhoneNumber = "^(0[23578]|09|03)\\d{8}$";
+
+    /// <summary>
+    /// Tag
+    /// </summary>
+    public const string Tag = @"^[a-zA-Z0-9]+$";
 }
