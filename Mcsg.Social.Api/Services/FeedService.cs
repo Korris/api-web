@@ -216,7 +216,7 @@ namespace Mcsg.Social.Api.Services
                                     r.""ShareUrl"",
                                     r.""Type"" as ResourceType,
                                     r.""Name"" as ResourceName,
-                                    COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = sc.total_subposts)) AS PrevSubPostHashId,
+    COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = sc.total_subposts)) AS PrevSubPostHashId,
                        COALESCE(asp.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps WHERE ps.""PostId"" = sp.""PostId"" AND ps.""Order"" = 1)) AS NextSubPostHashId
                                     FROM ""SubPosts"" sp
                                     LEFT JOIN identity.""Users"" u 
@@ -228,9 +228,11 @@ namespace Mcsg.Social.Api.Services
                                     LEFT JOIN ""SubPosts"" psb 
                                     ON sp.""PostId"" = psb.""PostId"" 
                                     AND sp.""Order"" = psb.""Order"" + 1
+                                    AND psb.""IsDelete"" = false
                                     LEFT JOIN ""SubPosts"" asp 
                                     ON sp.""PostId"" = asp.""PostId"" 
                                     AND sp.""Order"" = asp.""Order"" - 1
+                                    AND asp.""IsDelete"" = false
                                     LEFT JOIN SubPostsCount sc
                                     ON sp.""PostId"" = sc.""PostId""
                                     WHERE sp.""HashId"" =@Id
