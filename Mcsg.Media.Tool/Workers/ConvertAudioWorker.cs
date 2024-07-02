@@ -5,7 +5,6 @@ namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Interfaces;
     using Interfaces;
-    using Lib.Common.Helpers;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
 
@@ -26,7 +25,7 @@ namespace Mcsg.Media.Tool.Workers
                 {
                     // load resource
                     var resourceInfo = JsonConvert.DeserializeObject<Resource>(jobInfo.Data);
-                    var url = CryptoHelper.Decrypt(HttpUtility.UrlDecode(resourceInfo.Url), _setting.Minio.MediaEncryptKey);
+                    var url = HttpUtility.UrlDecode(resourceInfo.Url);
                     var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
 
                     var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
@@ -49,7 +48,7 @@ namespace Mcsg.Media.Tool.Workers
                         await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
                         //correct resource table
-                        var endCodenewUrl = HttpUtility.UrlEncode(CryptoHelper.Encrypt(newUrl, _setting.Minio.MediaEncryptKey));
+                        var endCodenewUrl = HttpUtility.UrlEncode(newUrl);
                         var objectName = $"{MediaContainer}/{newUrl}";
 
                         await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE, endCodenewUrl, objectName);

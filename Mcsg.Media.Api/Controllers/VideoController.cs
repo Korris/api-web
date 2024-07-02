@@ -7,7 +7,6 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Helpers;
 
 /// <summary>
 /// Video controller
@@ -48,7 +47,7 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        var objectName = CryptoHelper.Decrypt(v, _setting.Minio.MediaEncryptKey);
+        var objectName = v;
         if (string.IsNullOrWhiteSpace(objectName))
         {
             return NoContent();

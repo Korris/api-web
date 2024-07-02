@@ -8,7 +8,6 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Helpers;
 
 /// <summary>
 /// Image controller
@@ -54,7 +53,7 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
-            objectName = CryptoHelper.Decrypt(i, _setting.Minio.MediaEncryptKey);
+            objectName = i;
             if (string.IsNullOrWhiteSpace(objectName))
             {
                 return NoContent();

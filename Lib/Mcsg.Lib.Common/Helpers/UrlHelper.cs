@@ -68,7 +68,7 @@ namespace Mcsg.Lib.Common.Helpers
 
         public static string CreateMediaUrl(string text, string encryptKey)
         {
-            return HttpUtility.UrlEncode(CryptoHelper.Encrypt(text, encryptKey));
+            return HttpUtility.UrlEncode(text);
         }
 
         public static string GetPublicImageUrl(string mediaApiUrl, string mediaName)
