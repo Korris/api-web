@@ -40,6 +40,8 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
         var res = new SingleResponse();
 
         var resources = await _context.Resources.Where(p => p.ShareUrl == null).ToListAsync(cancellationToken);
+        var users = await _context.Users.Select(p => new { p.Id, p.Email, p.ProfileId }).ToListAsync(cancellationToken);
+        var dicUsers = users.ToDictionary(p => p.Id, q => q.Email);
 
         foreach (var resource in resources)
         {
@@ -52,6 +54,16 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
             var mediaContainer = $"{BlobStorageDefinition.MediaContainer}/";
             url = CryptoHelper.Decrypt(url, _setting.Minio.MediaEncryptKey);
 
+            var arr = url.Split('/');
+            if (arr.Length == 3)
+            {
+                var userFolder = arr[0];
+                if (resource.AuthorId != null)
+                {
+                    userFolder = dicUsers.GetValueOrDefault(resource.AuthorId.Value);
+                }
+                url = $"{userFolder}/{arr[1]}/{arr[2]}";
+            }
             // Remove duplicates
             if (url.Contains(mediaContainer))
             {
