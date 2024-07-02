@@ -19,6 +19,12 @@ namespace Mcsg.Common.SeedWork.Constants;
 public class Regular
 {
     /// <summary>
+    /// RegexMessage message
+    /// </summary>
+    public const string RegexMessage = "Profile name can only contain letters, numbers, dots, underscores, and hyphens";
+
+    /// <summary>
+    /// <summary>
     /// Vietnamese phone numbers typically have the following formats:<br/>
     /// Mobile numbers: start with 09, 03, 07, 08, or 05 followed by 8 digits<br/>
     /// Landline numbers: start with 02 followed by 9 digits<br/>
@@ -32,4 +38,10 @@ public class Regular
     /// Tag
     /// </summary>
     public const string Tag = @"^[a-zA-Z0-9]+$";
+
+    /// <summary>
+    /// Regular expression for validating profile names.<br/>
+    /// Allows characters A-Z, a-z, numbers, dots, underscores, and hyphens.<br/>
+    /// </summary>
+    public const string ProfileName = @"^[\p{L}A-Za-z0-9._\- ]+$";
 }

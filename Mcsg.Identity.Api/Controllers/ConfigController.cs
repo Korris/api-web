@@ -54,7 +54,8 @@ public class ConfigController : ControllerBase
             ProfileName = new
             {
                 Validator.ProfileName.Min,
-                Validator.ProfileName.Max
+                Validator.ProfileName.Max,
+                Regex = Regular.ProfileName
             },
             UserNameFree = new
             {
