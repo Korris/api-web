@@ -100,6 +100,15 @@ public interface IStorageStrategy
     /// <returns>Return the public URL</returns>
     Task<string> GetPublicUrl(string objectName, string? bucketNamePublic);
 
+    /// <summary>
+    /// Move folder
+    /// </summary>
+    /// <param name="srcFolder">Source folder</param>
+    /// <param name="dstFolder">Destination folder</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task<int> MoveFolder(string srcFolder, string dstFolder, string? bucketName);
+
     #endregion
 
     #region -- Properties --

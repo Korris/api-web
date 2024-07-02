@@ -128,6 +128,18 @@ public class StorageStrategy : IStorageStrategy
     }
 
     /// <summary>
+    /// Move folder
+    /// </summary>
+    /// <param name="srcFolder">Source folder</param>
+    /// <param name="dstFolder">Destination folder</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task<int> MoveFolder(string srcFolder, string dstFolder, string? bucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// Bucket name public
     /// </summary>
     public string? BucketNamePublic => _auth?.BucketName + "-public";

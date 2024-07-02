@@ -201,6 +201,48 @@ public class StorageMinio : StorageStrategy
         return arr.Length > 0 ? arr[0] : "";
     }
 
+    /// <summary>
+    /// Move folder
+    /// </summary>
+    /// <param name="srcFolder">Source folder</param>
+    /// <param name="dstFolder">Destination folder</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public override async Task<int> MoveFolder(string srcFolder, string dstFolder, string? bucketName)
+    {
+        var res = 0;
+
+        if (string.IsNullOrWhiteSpace(bucketName))
+        {
+            bucketName = _auth?.BucketName;
+        }
+
+        // List objects in the source folder
+        var objectsList = new List<string>();
+        var getObjectsArgs = new ListObjectsArgs().WithBucket(bucketName).WithPrefix(srcFolder).WithRecursive(true);
+        await foreach (var i in Mc.ListObjectsEnumAsync(getObjectsArgs))
+        {
+            objectsList.Add(i.Key);
+        }
+
+        // Copy each object to the destination folder and delete the original
+        foreach (string obj in objectsList)
+        {
+            var destObj = obj.Replace(srcFolder, dstFolder);
+
+            var copySourceArgs = new CopySourceObjectArgs().WithBucket(bucketName).WithObject(obj);
+            var copyObjectArgs = new CopyObjectArgs().WithBucket(bucketName).WithObject(destObj).WithCopyObjectSource(copySourceArgs);
+            await Mc.CopyObjectAsync(copyObjectArgs);
+
+            var removeObjectArgs = new RemoveObjectArgs().WithBucket(bucketName).WithObject(obj);
+            await Mc.RemoveObjectAsync(removeObjectArgs);
+
+            res++;
+        }
+
+        return res;
+    }
+
     #endregion
 
     #region -- Properties --
