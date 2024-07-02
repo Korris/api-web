@@ -269,6 +269,7 @@ namespace Mcsg.Social.Api.Services
                 ProfileId = user.ProfileId,
                 PremiumDate = user.PremiumDate,
                 LastLoginDate = user.LastLoginDate,
+                IsPremium = user.IsPremium
             };
         }
 

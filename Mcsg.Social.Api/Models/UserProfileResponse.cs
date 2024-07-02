@@ -27,5 +27,6 @@
         public bool PhoneNumberConfirmed { get; set; }
         public string ProfileId { get; set; }
         public DateOnly? PremiumDate { get; set; }
+        public bool IsPremium { get; set; }
     }
 }
