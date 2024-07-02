@@ -73,6 +73,28 @@ public class PatchController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Move the folder in MinIO to match the user who owns it
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPost("MoveFolder")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> MoveFolder([FromBody] PatchMoveFolderR request)
+    {
+        if (request.Otp != CommonPrefix)
+        {
+            return Unauthorized();
+        }
+
+        request.Analyze(HttpContext);
+        request.DetectMobileCall(_setting.MobileUserAgent);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = request.GetAbsoluteUri(_setting.Domain);
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

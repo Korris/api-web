@@ -33,6 +33,7 @@ public static class DiPatchExtension
     {
         p.AddBehavior<IRequestHandler<PatchUpdateShareUrlR, SingleResponse>, PatchUpdateShareUrlH>(ServiceLifetime.Scoped);
         p.AddBehavior<IRequestHandler<PatchUpdateUserNameR, SingleResponse>, PatchUpdateUserNameH>(ServiceLifetime.Scoped);
+        p.AddBehavior<IRequestHandler<PatchMoveFolderR, SingleResponse>, PatchMoveFolderH>(ServiceLifetime.Scoped);
     }
 
     /// <summary>
