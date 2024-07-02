@@ -5,12 +5,12 @@ namespace Mcsg.Social.Api.Requests
 {
     public class PostSeriesReq
     {
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public string? Summary { get; set; }
-        public string ThumbnailUrl { get; set; }
-        public string CoverUrl { get; set; }
+        public string? ThumbnailUrl { get; set; }
+        public string? CoverUrl { get; set; }
         public bool IsCurrentUserIsAuthor { get; set; }
-        public string AuthorName { get; set; } = string.Empty;
+        public string? AuthorName { get; set; } = string.Empty;
         public bool IsMature { get; set; } = false;
         public PostPermission Permission { get; set; }
         public List<string> Tags { get; set; }
@@ -39,6 +39,6 @@ namespace Mcsg.Social.Api.Requests
     public class ChapterListReq : BasePageResultReq
     {
         [DefaultValue("Order")]
-        public string OrderBy { get; set; }
+        public string? OrderBy { get; set; }
     }
 }

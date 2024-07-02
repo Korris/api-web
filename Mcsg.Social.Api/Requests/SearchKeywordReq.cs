@@ -9,6 +9,6 @@ namespace Mcsg.Social.Api.Requests
         [DefaultValue(10)]
         public int PageSize { get; set; }
         [DefaultValue("CreatedDate")]
-        public string OrderBy { get; set; }
+        public string? OrderBy { get; set; }
     }
 }

@@ -24,7 +24,7 @@ public class PatchUpdateUserNameR : BaseR
     /// <summary>
     /// OTP
     /// </summary>
-    public string Otp { get; set; }
+    public string? Otp { get; set; }
 
     #endregion
 }

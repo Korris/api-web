@@ -2,6 +2,6 @@
 {
     public class SearchTagsReq
     {
-        public string Keyword { get; set; }
+        public string? Keyword { get; set; }
     }
 }

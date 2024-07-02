@@ -2,6 +2,6 @@
 {
     public class SearchUserReq : BasePageResultReq
     {
-        public string ProfileName { get; set; }
+        public string? ProfileName { get; set; }
     }
 }

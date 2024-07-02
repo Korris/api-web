@@ -6,6 +6,6 @@ namespace Mcsg.Social.Api.Requests
     {
         public Guid PostId { get; set; }
         public ReasonType ReasonType { get; set; }
-        public string ReasonText { get; set; }
+        public string? ReasonText { get; set; }
     }
 }

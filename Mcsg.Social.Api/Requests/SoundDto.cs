@@ -9,11 +9,11 @@ namespace Mcsg.Social.Api.Requests
     public class SoundDto : IMapFrom<BackgroundMedia>
     {
         public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Thumbnail { get; set; }
-        public string ArtistName { get; set; }
-        public string Duration { get; set; }
+        public string? Title { get; set; }
+        public string? Url { get; set; }
+        public string? Thumbnail { get; set; }
+        public string? ArtistName { get; set; }
+        public string? Duration { get; set; }
         public int Order { get; set; }
         public void Mapping(Profile profile)
         {

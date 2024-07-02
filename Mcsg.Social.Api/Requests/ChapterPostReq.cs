@@ -22,7 +22,7 @@
     }
     public class ChapterStoryReq : ChapterPostReq
     {
-        public string Body { get; set; }
+        public string? Body { get; set; }
     }
     public class ChapterOrderSwapReq
     {
