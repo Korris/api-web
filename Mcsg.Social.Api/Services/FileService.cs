@@ -13,6 +13,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Common.Extensions;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
+    using Lib.Data;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
@@ -35,6 +36,7 @@ namespace Mcsg.Social.Api.Services
             , IOptionsMonitor<FileSetting> fileSetting
             , IConfiguration configuration
             , IJobService jobService
+            , McsgDbContext context
             , ISetting setting
             , IStorageClient sc
             )
@@ -46,6 +48,7 @@ namespace Mcsg.Social.Api.Services
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
             _fileSetting = fileSetting.CurrentValue;
             _jobService = jobService;
+            _context = context;
             _setting = setting;
             _sc = sc;
         }
@@ -71,7 +74,7 @@ namespace Mcsg.Social.Api.Services
             }
 
             var currentUser = await _currentUserService.GetCurrentUserAsync();
-            var user = await _userRepository.GetByIdAsync(currentUser.UserId.Value, "UserName".ToPg());
+            var user = await _context.Users.FindAsync(currentUser.UserId);
             if (user == null)
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
@@ -584,6 +587,11 @@ namespace Mcsg.Social.Api.Services
         }
 
         #region -- Fields --
+
+        /// <summary>
+        /// DB Context
+        /// </summary>
+        private readonly McsgDbContext _context;
 
         /// <summary>
         /// Setting
