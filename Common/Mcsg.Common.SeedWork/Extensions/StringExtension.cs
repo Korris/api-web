@@ -434,5 +434,14 @@ public static class StringExtension
         return firstPart + middlePart + lastPart;
     }
 
+    /// <summary>
+    /// Trims the whitespace from both ends of the string.  Whitespace is defined by char.IsWhiteSpace
+    /// </summary>
+    /// <param name="s">String data</param>
+    /// <returns>Return the result</returns>
+    public static string Triz(this string? s)
+    {
+        return (s + "").Trim();
+    }
     #endregion
 }
