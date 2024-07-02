@@ -52,8 +52,8 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
         {
             user.UserName = await GenerateUserName(user.Id);
             user.NormalizedUserName = user.UserName!.ToUpper();
-            user.ProfileName = user.UserName + "ProfileName"; //TODO will use for display name
-            user.ProfileId = user.UserName + "ProfileId"; //TODO will not be used
+            user.ProfileName = user.UserName;
+            user.ProfileId = user.UserName;
         }
 
         await _context.SaveChangesAsync();

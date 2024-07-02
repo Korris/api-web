@@ -6,7 +6,11 @@ namespace Mcsg.Lib.Data.Domain.Entities
 
     public partial class User : IdentityUser<Guid>
     {
+        /// <summary>
+        /// Use for display name
+        /// </summary>
         public string? ProfileName { get; set; }
+
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -26,7 +30,12 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public string? StatusReason { get; set; }
         public string? CoverPhoto { get; set; }
         public string? Location { get; set; }
+
+        /// <summary>
+        /// Store the first username
+        /// </summary>
         public string? ProfileId { get; set; }
+
         public DateOnly? PremiumDate { get; set; }
         public bool IsActiveEarning { get; set; }
 

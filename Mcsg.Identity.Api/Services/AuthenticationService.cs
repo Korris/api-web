@@ -115,8 +115,8 @@ public partial class AuthenticationService : IAuthenticationService
             };
 
             user.UserName = await GenerateUserName(user.Id);
-            user.ProfileName = user.UserName + "ProfileName"; //TODO will use for display name
-            user.ProfileId = user.UserName + "ProfileId"; //TODO will not be used
+            user.ProfileName = user.UserName;
+            user.ProfileId = user.UserName;
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -558,8 +558,8 @@ public partial class AuthenticationService : IAuthenticationService
                 };
 
                 user.UserName = await GenerateUserName(user.Id);
-                user.ProfileName = user.UserName + "ProfileName"; //TODO will use for display name
-                user.ProfileId = user.UserName + "ProfileId"; //TODO will not be used
+                user.ProfileName = user.UserName;
+                user.ProfileId = user.UserName;
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
