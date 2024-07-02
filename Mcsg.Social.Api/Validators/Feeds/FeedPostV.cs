@@ -22,8 +22,7 @@ public class FeedPostV : AbstractValidator<FeedPostR>
         RuleForEach(post => post.Tags).Must(Valid).WithMessage(Tag);
 
         var t = "Tags";
-        RuleFor(post => post.Tags).NotEmpty().WithMessage($"{t} {NotEmpty}")
-            .Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
+        RuleFor(post => post.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
 
     /// <summary>
