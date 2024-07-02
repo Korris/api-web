@@ -5,6 +5,7 @@ namespace Mcsg.Social.Api.Controllers
 {
     using Interfaces;
     using Models;
+    using Requests;
 
     [Route("[controller]")]
     [ApiController]
@@ -25,7 +26,7 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpPut("profile")]
-        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateRequest req)
+        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR req)
         {
             var result = await _userService.UpdateUserProfile(req);
             return Ok(result);

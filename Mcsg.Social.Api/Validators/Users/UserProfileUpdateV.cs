@@ -2,20 +2,20 @@
 
 namespace Mcsg.Social.Api.Validators;
 
-using Models;
+using Requests;
 using static Common.SeedWork.Constants.Validator;
 
 /// <summary>
 /// Validator
 /// </summary>
-public class UserUserProfileUpdateV : AbstractValidator<UserProfileUpdateRequest>
+public class UserProfileUpdateV : AbstractValidator<UserProfileUpdateR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public UserUserProfileUpdateV()
+    public UserProfileUpdateV()
     {
         var t = nameof(ProfileName);
         RuleFor(p => p.ProfileName).NotEmpty().WithMessage($"{t} {NotEmpty}")

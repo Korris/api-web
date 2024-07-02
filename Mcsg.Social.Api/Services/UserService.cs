@@ -168,9 +168,9 @@ namespace Mcsg.Social.Api.Services
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest req)
+        public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateR req)
         {
-            var vr = new UserUserProfileUpdateV().Validate(req);
+            var vr = new UserProfileUpdateV().Validate(req);
             if (!vr.IsValid)
             {
                 var t = vr.Errors.ToValue();
