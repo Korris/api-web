@@ -242,27 +242,27 @@ namespace Mcsg.Lib.Data.Repositories
 
         #region Private method
 
-        private static IEnumerable<PropertyInfo> GetInsertColumns1()
+        private static IEnumerable<PropertyInfo> GetInsertColumnsNotMapped()
         {
             var t = typeof(TEntity);
-            return t.GetProperties().Where(p => !p.CustomAttributes.Any() || p.CustomAttributes.Any(q => q.AttributeType.Name != "NotMappedAttribute"));
+            return t.GetProperties().Where(p => !p.CustomAttributes.Any() || !p.CustomAttributes.Any(q => q.AttributeType.Name == "NotMappedAttribute"));
         }
 
         private static string GetInsertColumns()
         {
-            var properties = GetInsertColumns1();
+            var properties = GetInsertColumnsNotMapped();
             return "\"" + string.Join("\", \"", properties.Select(p => p.Name)) + "\"";
         }
 
         private static string GetInsertValues()
         {
-            var properties = GetInsertColumns1();
+            var properties = GetInsertColumnsNotMapped();
             return string.Join(", ", properties.Select(p => "@" + p.Name));
         }
 
         private string GetUpdateQuery(string primaryKey)
         {
-            var properties = GetInsertColumns1();
+            var properties = GetInsertColumnsNotMapped();
             var setClauses = properties
                                .Where(p => !p.Name.Equals(primaryKey, StringComparison.OrdinalIgnoreCase))
                                .Select(p => $"\"{p.Name}\" = @{p.Name}");
