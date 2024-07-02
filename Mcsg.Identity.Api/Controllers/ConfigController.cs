@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text;
 
 namespace Mcsg.Identity.Api.Controllers;
 
@@ -67,6 +68,15 @@ public class ConfigController : ControllerBase
             }
         };
         res.SetSuccess(nameof(validators), validators);
+
+        try
+        {
+            var file = "config/validators.json";
+            var ms = await _sc.Strategy.GetObject(file, null);
+            var jsonFile = new StringBuilder(StreamExtension.ToString(ms)).ToString();
+            res.SetSuccess(nameof(jsonFile), jsonFile);
+        }
+        catch { }
 
         return Ok(res.Data);
     }

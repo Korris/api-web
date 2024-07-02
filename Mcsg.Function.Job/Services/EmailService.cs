@@ -64,7 +64,7 @@ namespace Mcsg.Function.Job.Services
 
         private async Task<StringBuilder> DownloadEmailTemplateAsync(string templateName)
         {
-            var file = $"email-templates/" + templateName;
+            var file = $"email-templates/{templateName}";
             var ms = await _sc.Strategy.GetObject(file, null);
             return new StringBuilder(StreamExtension.ToString(ms));
         }
