@@ -96,6 +96,22 @@ public class Validator
     }
 
     /// <summary>
+    /// Profile name
+    /// </summary>
+    public class ProfileName
+    {
+        /// <summary>
+        /// Minimum length
+        /// </summary>
+        public const ushort Min = 5;
+
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 50;
+    }
+
+    /// <summary>
     /// Email
     /// </summary>
     public class Email

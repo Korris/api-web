@@ -106,6 +106,17 @@ public class Program
         // DbContext
         builder.Services.AddDataLibrary(csDb); // TODO - will remove later
         builder.Services.AddWalletDbContext(csDbWallet); // TODO - will remove later
+
+        // Storage
+        builder.Services.AddStorage(p =>
+        {
+            p.BucketName = st.Minio.BucketName;
+            p.Location = st.Minio.Location;
+            p.EndPoint = st.Minio.EndPoint;
+            p.PublicUrl = st.Minio.PublicUrl;
+            p.AccessKey = st.Minio.AccessKey;
+            p.SecrectKey = st.Minio.SecrectKey;
+        });
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));

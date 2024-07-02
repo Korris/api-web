@@ -3,6 +3,8 @@ using System.Net;
 
 namespace Mcsg.Identity.Api.Controllers;
 
+using Common.Core.Interfaces;
+using Common.SeedWork.Constants;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -20,9 +22,11 @@ public class ConfigController : ControllerBase
     /// Initialize
     /// </summary>
     /// <param name="setting">Setting</param>
-    public ConfigController(ISetting setting)
+    /// <param name="sc">Storage client</param>
+    public ConfigController(ISetting setting, IStorageClient sc)
     {
         _setting = setting;
+        _sc = sc;
     }
 
     /// <summary>
@@ -31,7 +35,7 @@ public class ConfigController : ControllerBase
     /// <returns>Return the result</returns>
     [HttpGet]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
         var res = new MultipleResponse();
 
@@ -41,6 +45,28 @@ public class ConfigController : ControllerBase
         res.SetSuccess(nameof(s.Environment).ToCamelCase(), s.Environment);
         res.SetSuccess(nameof(s.IsProduction).ToCamelCase(), s.IsProduction);
         res.SetSuccess(nameof(DateTime.UtcNow).ToCamelCase(), DateTime.UtcNow.ToString("yyyy/MM/dd HH:mm:ss"));
+
+        res.SetSuccess(nameof(s.Api).ToCamelCase(), s.Api);
+
+        var validators = new
+        {
+            ProfileName = new
+            {
+                Validator.ProfileName.Min,
+                Validator.ProfileName.Max
+            },
+            UserNameFree = new
+            {
+                Validator.UserNameFree.Min,
+                Validator.UserNameFree.Max
+            },
+            UserNamePremium = new
+            {
+                Validator.UserNamePremium.Min,
+                Validator.UserNamePremium.Max
+            }
+        };
+        res.SetSuccess(nameof(validators), validators);
 
         return Ok(res.Data);
     }
@@ -53,6 +79,11 @@ public class ConfigController : ControllerBase
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
 
     #endregion
 }

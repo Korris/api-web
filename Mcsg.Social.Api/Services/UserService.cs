@@ -22,6 +22,8 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Repositories;
     using Models;
     using Requests;
+    using Validators;
+    using static Common.SeedWork.Constants.Message;
 
     public partial class UserService : IUserService
     {
@@ -168,6 +170,13 @@ namespace Mcsg.Social.Api.Services
         /// <returns></returns>
         public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateRequest req)
         {
+            var vr = new UserUserProfileUpdateV().Validate(req);
+            if (!vr.IsValid)
+            {
+                var t = vr.Errors.ToValue();
+                throw new BadRequestException(M000, t);
+            }
+
             var profileName = req.ProfileName?.Trim();
             if (string.IsNullOrWhiteSpace(profileName))
             {
