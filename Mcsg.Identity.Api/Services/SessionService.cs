@@ -38,8 +38,7 @@ public partial class SessionService : ISessionService
             PremiumDate = user.PremiumDate,
             UserAvatar = user.Avatar,
             ProfileId = user.ProfileId,
-            Roles = string.Join(",", roles),
-
+            Roles = string.Join(",", roles)
         };
         await _sessionRepository.InsertAsync(session);
         return session;

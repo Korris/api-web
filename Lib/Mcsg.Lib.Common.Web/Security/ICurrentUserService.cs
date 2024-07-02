@@ -1,9 +1,8 @@
-﻿using Mcsg.Lib.Common.Security.Models;
-using Mcsg.Lib.Data.Domain.Entities;
-using System.Threading.Tasks;
-
-namespace Mcsg.Lib.Common.Web.Security
+﻿namespace Mcsg.Lib.Common.Web.Security
 {
+    using Data.Domain.Entities;
+    using Lib.Common.Security.Models;
+
     public interface ICurrentUserService
     {
         Task<CurrentUserModel> GetCurrentUserAsync();

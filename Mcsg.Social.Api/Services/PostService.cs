@@ -234,7 +234,7 @@ namespace Mcsg.Social.Api.Services
         public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
         {
             var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
-            var userIsPremium = _currentUserService?.Session?.IsPremium() ?? false;
+            var userIsPremium = _currentUserService?.Session?.IsPremium ?? false;
             var currentUserId = _currentUserService?.Session?.UserId;
 
             ChapterResponse subpost = null;

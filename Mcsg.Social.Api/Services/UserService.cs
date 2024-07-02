@@ -5,7 +5,7 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
-    using Common.SeedWork.Enums;
+    using Common.SeedWork.Constants;
     using Constants;
     using Interfaces;
     using Lib.Common.Constants;
@@ -207,7 +207,7 @@ namespace Mcsg.Social.Api.Services
                 var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == userName);
                 if (userNameHistory == null)
                 {
-                    if (user.Type != UserType.Premium)
+                    if (!user.IsPremium && userName.Length <= Validator.UserNamePremium.Max)
                     {
                         throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_EDIT, ApiErrorMessage.NEED_PREMIUM_TO_EDIT);
                     }

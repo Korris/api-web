@@ -71,7 +71,7 @@ public class Validator
         /// <summary>
         /// Minimum length
         /// </summary>
-        public const ushort Min = 15;
+        public const ushort Min = 16;
 
         /// <summary>
         /// Maximum length
@@ -87,12 +87,12 @@ public class Validator
         /// <summary>
         /// Minimum length
         /// </summary>
-        public const ushort Min = 5;
+        public const ushort Min = 6;
 
         /// <summary>
         /// Maximum length
         /// </summary>
-        public const ushort Max = 15;
+        public const ushort Max = 14;
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class Validator
         /// <summary>
         /// Minimum length
         /// </summary>
-        public const ushort Min = 5;
+        public const ushort Min = 6;
 
         /// <summary>
         /// Maximum length

@@ -1,14 +1,12 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Security.Models;
-using Mcsg.Lib.Common.Web.Extensions;
-using Mcsg.Lib.Data.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Mcsg.Lib.Common.Web.Security
 {
+    using Data.Domain.Entities;
+    using Lib.Common.Constants;
+    using Lib.Common.Security.Models;
+    using Lib.Common.Web.Extensions;
+
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

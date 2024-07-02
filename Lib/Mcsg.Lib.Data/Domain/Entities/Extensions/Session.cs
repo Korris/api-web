@@ -4,7 +4,7 @@ namespace Mcsg.Lib.Data.Domain.Entities;
 
 using Mcsg.Common.SeedWork.Dtos;
 
-public partial class User
+public partial class Session
 {
     #region -- Methods --
 

@@ -1,10 +1,11 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Common;
+
     [Table("Sessions")]
-    public class Session : AuditableEntity
+    public partial class Session : AuditableEntity
     {
         public string? LoginProvider { get; set; }
         public DateTime LoginDateUtc { get; set; }
@@ -21,10 +22,5 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public string? Claims { get; set; }
         public DateTime LastActionDateUtc { get; set; }
         public DateOnly? PremiumDate { get; set; }
-
-        public bool IsPremium()
-        {
-            return (PremiumDate != null && PremiumDate > DateOnly.FromDateTime(DateTime.UtcNow));
-        }
     }
 }

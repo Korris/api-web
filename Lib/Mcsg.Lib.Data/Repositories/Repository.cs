@@ -242,30 +242,27 @@ namespace Mcsg.Lib.Data.Repositories
 
         #region Private method
 
+        private static IEnumerable<PropertyInfo> GetInsertColumns1()
+        {
+            var t = typeof(TEntity);
+            return t.GetProperties().Where(p => !p.CustomAttributes.Any() || p.CustomAttributes.Any(q => q.AttributeType.Name != "NotMappedAttribute"));
+        }
+
         private static string GetInsertColumns()
         {
-            var entityType = typeof(TEntity);
-            var properties = entityType.GetProperties();
-
-            var columns = "\"" + string.Join("\", \"", properties.Select(p => p.Name)) + "\"";
-
-            return columns;
+            var properties = GetInsertColumns1();
+            return "\"" + string.Join("\", \"", properties.Select(p => p.Name)) + "\"";
         }
 
         private static string GetInsertValues()
         {
-            var entityType = typeof(TEntity);
-            var properties = entityType.GetProperties();
-
-            var values = string.Join(", ", properties.Select(p => "@" + p.Name));
-
-            return values;
+            var properties = GetInsertColumns1();
+            return string.Join(", ", properties.Select(p => "@" + p.Name));
         }
 
         private string GetUpdateQuery(string primaryKey)
         {
-            var entityType = typeof(TEntity);
-            var properties = entityType.GetProperties().Where(p => !p.CustomAttributes.Any() || p.CustomAttributes.Any(q => q.AttributeType.Name != "NotMappedAttribute"));
+            var properties = GetInsertColumns1();
             var setClauses = properties
                                .Where(p => !p.Name.Equals(primaryKey, StringComparison.OrdinalIgnoreCase))
                                .Select(p => $"\"{p.Name}\" = @{p.Name}");
