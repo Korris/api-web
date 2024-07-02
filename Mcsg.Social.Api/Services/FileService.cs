@@ -110,7 +110,8 @@ namespace Mcsg.Social.Api.Services
                     imgWidth = ratio.Width;
                 }
 
-                tempBlobName = hashFileName.GetTempBlobName(user.UserName);
+                var userFolder = (user.Email ?? user.ProfileId) + "";
+                tempBlobName = hashFileName.GetTempBlobName(userFolder);
                 using (var stream = file.OpenReadStream())
                 {
                     objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
