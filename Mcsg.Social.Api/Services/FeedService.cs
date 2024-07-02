@@ -491,13 +491,14 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(M000, t);
             }
 
-            var currentUserId = _currentUserService.Session.UserId;
-            var currentProfileName = _currentUserService.Session.ProfileName;
-            var currentUserName = _currentUserService.Session.UserName;
-            var currentUserAvatar = _currentUserService.Session.UserAvatar;
+            var ss = _currentUserService.Session;
+            var currentUserId = ss.UserId;
+            var currentProfileName = ss.ProfileName;
+            var profileId = ss.ProfileId;
+            var userFolder = ss.UserFolder;
+            var currentUserAvatar = ss.UserAvatar;
             var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
-            var profileId = _currentUserService.Session.ProfileId;
             var hashId = SystemConfig.PostHashLength.GetRandomString();
             if (string.IsNullOrEmpty(req.Content))
             {
@@ -553,7 +554,7 @@ namespace Mcsg.Social.Api.Services
                 }
                 if (req.Files != null && req.Files.Count > 0)
                 {
-                    result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, currentUserName, currentUserAvatarUrl, post.Id, post.HashId));
+                    result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
                     result.TotalResource = result.SubPosts?.Count ?? 0;
                 }
 
@@ -630,14 +631,16 @@ namespace Mcsg.Social.Api.Services
         }
         public async Task<FeedResponse> UpdateFeedAsync(string hashId, UpdateFeedPostReq feedPostReq)
         {
-            var currentUserId = _currentUserService.Session.UserId;
-            var currentProfileName = _currentUserService.Session.ProfileName;
-            var currentUserName = _currentUserService.Session.UserName;
-            var currentUserAvatar = _currentUserService.Session.UserAvatar;
+            var ss = _currentUserService.Session;
+            var currentUserId = ss.UserId;
+            var currentUserName = ss.UserName;
+            var currentProfileName = ss.ProfileName;
+            var profileId = ss.ProfileId;
+            var userFolder = ss.UserFolder;
+            var currentUserAvatar = ss.UserAvatar;
             var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
             // GetSingleFeedQuery
-            var profileId = _currentUserService.Session.ProfileId;
             if (string.IsNullOrEmpty(feedPostReq.Content))
             {
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
@@ -703,7 +706,7 @@ namespace Mcsg.Social.Api.Services
                 // Add file to feed
                 if (feedPostReq.Files != null && feedPostReq.Files.Count > 0)
                 {
-                    result.SubPosts = (await _fileService.UpdateFeedFilesAsync(feedPostReq.Files, currentUserId, currentUserName, currentUserAvatarUrl, post.Id, post.HashId));
+                    result.SubPosts = (await _fileService.UpdateFeedFilesAsync(feedPostReq.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
                     result.TotalResource = result.SubPosts?.Count ?? 0;
                 }
                 else

@@ -106,10 +106,11 @@
         {
             return await _postService.PostSeries(_type, comicPostReq);
         }
+
         public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ChapterComicReq chapterPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
-            var currentUserName = _currentUserService.Session.UserName;
+            var userFolder = _currentUserService.Session.UserFolder;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
             var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
 
@@ -121,16 +122,16 @@
             var result = _postService.MappingChapterResponse(subPost);
             if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
             {
-                result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, currentUserName, currentUserAvatarUrl, subPost.Id);
+                result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, subPost.Id);
             }
 
             return result;
-
         }
+
         public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ChapterComicReq chapterPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
-            var currentUserName = _currentUserService.Session.UserName;
+            var userFolder = _currentUserService.Session.UserFolder;
             var currentUserAvatar = _currentUserService.Session.UserAvatar;
             var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
             _postService.VerifyBasicInfo(chapterPostReq.Title);
@@ -143,7 +144,7 @@
             var result = _postService.MappingChapterResponse(subPost);
             if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
             {
-                result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, currentUserName, currentUserAvatarUrl, subPost.Id);
+                result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, subPost.Id);
             }
 
             return result;

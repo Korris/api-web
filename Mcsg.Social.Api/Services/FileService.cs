@@ -89,7 +89,7 @@ namespace Mcsg.Social.Api.Services
             {
                 hashFileName = hashFileName.ToJpg();
                 fileTitle = fileTitle.ToJpg();
-                tempBlobName = hashFileName.GetTempBlobName(user.UserName);
+                tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
 
                 var compressedImage = file.CompressAndConvertToJpeg(_fileSetting.ImageDownQuality);
                 imgWidth = compressedImage.Width;
@@ -110,8 +110,7 @@ namespace Mcsg.Social.Api.Services
                     imgWidth = ratio.Width;
                 }
 
-                var userFolder = (user.Email ?? user.ProfileId) + "";
-                tempBlobName = hashFileName.GetTempBlobName(userFolder);
+                tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
                 using (var stream = file.OpenReadStream())
                 {
                     objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
@@ -150,12 +149,12 @@ namespace Mcsg.Social.Api.Services
             };
         }
 
-        public async Task<List<SubPostResponse>> ProcessFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, string postHashId)
+        public async Task<List<SubPostResponse>> ProcessFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
         {
             var subPosts = new List<SubPostResponse>();
 
             // Complete resource files
-            var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userName, userAvatar, postId, true);
+            var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userFolder, userAvatar, postId, true);
 
             // Map to response for feed service
             foreach (var resource in resources)
@@ -186,12 +185,13 @@ namespace Mcsg.Social.Api.Services
             }
             return subPosts;
         }
-        public async Task<List<UploadFileResponse>> ProcessComicFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid subPostId)
+
+        public async Task<List<UploadFileResponse>> ProcessComicFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
         {
             var files = new List<UploadFileResponse>();
 
             // Complete resource files
-            var resources = await CompleteFilesAsync(resourceRequest, userId, userName, userAvatar, subPostId, false);
+            var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
 
             // Map to response for comic service
             foreach (var resource in resources)
@@ -206,12 +206,13 @@ namespace Mcsg.Social.Api.Services
 
             return files;
         }
-        public async Task<List<UploadFileResponse>> ProcessComicFilesUpdateAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid subPostId)
+
+        public async Task<List<UploadFileResponse>> ProcessComicFilesUpdateAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
         {
             var files = new List<UploadFileResponse>();
 
             // Complete resource files
-            var resources = await CompleteFilesAsync(resourceRequest, userId, userName, userAvatar, subPostId, false);
+            var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
 
             // Map to response for comic service
             foreach (var resource in resources)
@@ -226,11 +227,12 @@ namespace Mcsg.Social.Api.Services
 
             return files;
         }
-        private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
+
+        private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
         {
             var response = new List<Resource>();
             var subPostResponses = new List<SubPostResponse>();
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userFolder))
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
@@ -249,8 +251,8 @@ namespace Mcsg.Social.Api.Services
                     var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
 
                     #region -- Copy file from temp target --
-                    string tempBlobName = resource.Name.GetTempBlobName(userName);
-                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+                    string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                     var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
                     var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -294,7 +296,7 @@ namespace Mcsg.Social.Api.Services
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
-                    await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
+                    await _jobService.CreateConvertJob(resource, userFolder, userAvatar, targetBlobName);
                     await _resourceRepository.UpdateAsync(resource);
                     response.Add(resource);
                 }
@@ -302,10 +304,11 @@ namespace Mcsg.Social.Api.Services
             }
             return Tuple.Create(response, subPostResponses);
         }
-        private async Task<IEnumerable<Resource>> CompleteFilesAsyncNew(List<ResourcePostReq> resourceRequest, List<Resource> resourceAdded, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
+
+        private async Task<IEnumerable<Resource>> CompleteFilesAsyncNew(List<ResourcePostReq> resourceRequest, List<Resource> resourceAdded, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
         {
             var response = new List<Resource>();
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userFolder))
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
@@ -324,8 +327,8 @@ namespace Mcsg.Social.Api.Services
                     var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
 
                     #region -- Copy file from temp target --
-                    string tempBlobName = resource.Name.GetTempBlobName(userName);
-                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+                    string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                     var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
                     var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -379,10 +382,10 @@ namespace Mcsg.Social.Api.Services
             return response;
         }
 
-        private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, bool addSubPost)
+        private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
         {
             var response = new List<Resource>();
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userFolder))
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
@@ -401,8 +404,8 @@ namespace Mcsg.Social.Api.Services
                     var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resource.HashId);
 
                     #region -- Copy file from temp target --
-                    string tempBlobName = resource.Name.GetTempBlobName(userName);
-                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+                    string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                     var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
                     var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -446,7 +449,7 @@ namespace Mcsg.Social.Api.Services
                     resource.SubPostId = subPostId;
                     resource.Order = resourceReq.Order;
 
-                    await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
+                    await _jobService.CreateConvertJob(resource, userFolder, userAvatar, targetBlobName);
                     await _resourceRepository.UpdateAsync(resource);
 
                     response.Add(resource);
@@ -455,9 +458,10 @@ namespace Mcsg.Social.Api.Services
             }
             return response;
         }
-        public async Task RemoveFileAsync(Guid postId, string userName)
+
+        public async Task RemoveFileAsync(Guid postId, string userFolder)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userFolder))
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
@@ -473,8 +477,8 @@ namespace Mcsg.Social.Api.Services
                                 });
                 foreach (var resource in resourcesDb)
                 {
-                    string tempBlobName = resource.Name.GetTempBlobName(userName);
-                    string targetBlobName = resource.Name.GetMediaBlobName(userName);
+                    string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                    string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                     tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
                     var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
@@ -493,9 +497,9 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<List<SubPostResponse>> UpdateFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userAvatar, Guid postId, string postHashId)
+        public async Task<List<SubPostResponse>> UpdateFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
         {
-            if (string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userFolder))
             {
                 throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
             }
@@ -510,7 +514,7 @@ namespace Mcsg.Social.Api.Services
             var listResourceAddded = resourcesDb.Where(x => resourceRequestHashId.Contains(x.HashId)).ToList();
 
             // Complete resource files
-            var listResourcesNew = await CompleteFilesAsyncNew(listResourceNotAdd, listResourceAddded, userId, userName, userAvatar, postId, true);
+            var listResourcesNew = await CompleteFilesAsyncNew(listResourceNotAdd, listResourceAddded, userId, userName, userFolder, userAvatar, postId, true);
 
             //Remove
             var listRemove = resourcesDb.Where(x => !resourceRequestHashId.Contains(x.HashId)).ToList();

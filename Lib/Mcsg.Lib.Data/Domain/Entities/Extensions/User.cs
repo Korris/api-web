@@ -48,6 +48,12 @@ public partial class User
     [NotMapped]
     public bool IsPremium => PremiumDate != null && PremiumDate > DateOnly.FromDateTime(DateTime.UtcNow);
 
+    /// <summary>
+    /// UserFolder on MinIO
+    /// </summary>
+    [NotMapped]
+    public string UserFolder => (Email ?? ProfileId) + "";
+
     #endregion
 
     #region -- Classes --
