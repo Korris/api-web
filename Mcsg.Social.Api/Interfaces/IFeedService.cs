@@ -12,7 +12,7 @@
         Task<FeedResponse> GetFeedAsync(string hashId);
         Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string tagName, SearchKeywordReq feedLoadReq);
         FeedDisplayConfig GetFeedDisplayConfig();
-        Task<FeedResponse> PostFeedAsync(FeedPostReq feedPostReq);
+        Task<FeedResponse> PostFeedAsync(FeedPostR req);
         Task<FeedResponse> UpdateFeedAsync(string hashId, UpdateFeedPostReq feedPostReq);
         Task<bool> DeleteFeedAsync(Guid postId);
 

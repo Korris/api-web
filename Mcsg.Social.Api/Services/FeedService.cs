@@ -482,9 +482,9 @@ namespace Mcsg.Social.Api.Services
         #endregion
 
         #region Modify data
-        public async Task<FeedResponse> PostFeedAsync(FeedPostReq feedPostReq)
+        public async Task<FeedResponse> PostFeedAsync(FeedPostR req)
         {
-            var vr = new FeedFeedPostV().Validate(feedPostReq);
+            var vr = new FeedPostV().Validate(req);
             if (!vr.IsValid)
             {
                 var t = vr.Errors.ToValue();
@@ -499,32 +499,32 @@ namespace Mcsg.Social.Api.Services
 
             var profileId = _currentUserService.Session.ProfileId;
             var hashId = SystemConfig.PostHashLength.GetRandomString();
-            if (string.IsNullOrEmpty(feedPostReq.Content))
+            if (string.IsNullOrEmpty(req.Content))
             {
                 throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
             }
             //Check first post
             var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
 
-            string cleanHtml = HtmlHelper.CleanHtml(feedPostReq.Content);
+            string cleanHtml = HtmlHelper.CleanHtml(req.Content);
             var safePlainString = System.Web.HttpUtility.HtmlEncode(cleanHtml);
             var post = new Post()
             {
-                Title = feedPostReq.Title,
+                Title = req.Title,
                 Type = PostType.Feed,
                 HashId = hashId,
                 UserId = currentUserId,
                 Body = safePlainString,
-                ThumbnailUrl = feedPostReq.ThumbnailUrl,
+                ThumbnailUrl = req.ThumbnailUrl,
                 AuthorName = currentProfileName,
                 Status = PostStatus.Public,
                 CreatedBy = currentUserId,
-                CustomNote = feedPostReq.CustomNote
+                CustomNote = req.CustomNote
             };
             var result = new FeedPostResponse
             {
                 Id = post.Id,
-                Title = feedPostReq.Title,
+                Title = req.Title,
                 HashId = hashId,
                 UserId = currentUserId,
                 ThumbnailUrl = post.ThumbnailUrl,
@@ -542,24 +542,24 @@ namespace Mcsg.Social.Api.Services
             try
             {
                 await _postRepository.InsertAsync(post);
-                if (feedPostReq.MetaData != null)
+                if (req.MetaData != null)
                 {
-                    feedPostReq.MetaData.Description = System.Web.HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
-                    result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(feedPostReq.MetaData, post.Id);
+                    req.MetaData.Description = System.Web.HttpUtility.HtmlEncode(req.MetaData.Description);
+                    result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
                 }
-                if (feedPostReq.Tags != null && feedPostReq.Tags.Count > 0)
+                if (req.Tags != null && req.Tags.Count > 0)
                 {
-                    result.Tags = (await _tagService.AddTagsToPost(post.Id, feedPostReq.Tags)).ToArray();
+                    result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags)).ToArray();
                 }
-                if (feedPostReq.Files != null && feedPostReq.Files.Count > 0)
+                if (req.Files != null && req.Files.Count > 0)
                 {
-                    result.SubPosts = (await _fileService.ProcessFeedFilesAsync(feedPostReq.Files, currentUserId, currentUserName, currentUserAvatarUrl, post.Id, post.HashId));
+                    result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, currentUserName, currentUserAvatarUrl, post.Id, post.HashId));
                     result.TotalResource = result.SubPosts?.Count ?? 0;
                 }
 
-                if (feedPostReq.SoundId != null && feedPostReq.SoundId != Guid.Empty)
+                if (req.SoundId != null && req.SoundId != Guid.Empty)
                 {
-                    await _soundService.AddSoundAsync(post.Id, feedPostReq.SoundId.Value);
+                    await _soundService.AddSoundAsync(post.Id, req.SoundId.Value);
                 }
                 else
                 {
@@ -567,9 +567,9 @@ namespace Mcsg.Social.Api.Services
                 }
 
                 // Detech video link content feed
-                if (feedPostReq.Files == null || feedPostReq.Files.Count == 0)
+                if (req.Files == null || req.Files.Count == 0)
                 {
-                    result.Link = await _postLinkService.AddLinkAsync(post.Id, feedPostReq.Content);
+                    result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
                 }
                 else
                 {

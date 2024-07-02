@@ -12,18 +12,21 @@ namespace Mcsg.Social.Api.Controllers
     {
         private readonly IFeedService _feedService;
         private readonly IPostReactService _postReactService;
+
         public FeedController(IFeedService feedService, IPostReactService postReactService)
         {
             _feedService = feedService;
             _postReactService = postReactService;
         }
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> PostFeed(FeedPostReq request)
+        public async Task<IActionResult> PostFeed(FeedPostR req)
         {
-            var result = await _feedService.PostFeedAsync(request);
+            var result = await _feedService.PostFeedAsync(req);
             return Ok(result);
         }
+
         [HttpPut("{hashId}")]
         [Authorize]
         public async Task<IActionResult> UpdateFeed(string hashId, UpdateFeedPostReq request)

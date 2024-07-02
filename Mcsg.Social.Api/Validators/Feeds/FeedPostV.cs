@@ -10,14 +10,14 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class FeedFeedPostV : AbstractValidator<FeedPostReq>
+public class FeedPostV : AbstractValidator<FeedPostR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public FeedFeedPostV()
+    public FeedPostV()
     {
         RuleForEach(post => post.Tags).Must(Valid).WithMessage(Tag);
 

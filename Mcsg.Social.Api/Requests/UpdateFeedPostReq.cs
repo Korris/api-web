@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests
 {
-    public class UpdateFeedPostReq : FeedPostReq
+    public class UpdateFeedPostReq : FeedPostR
     {
     }
 }
