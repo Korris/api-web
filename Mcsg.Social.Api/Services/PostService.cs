@@ -1045,6 +1045,8 @@ namespace Mcsg.Social.Api.Services
                         ChapterCount = res.ChapterCount,
                         Type = res.Type,
                         HashId = res.HashId,
+                        CreatedDate = res.CreatedDate,
+
                     };
 
                     listPostDetails.Add(postDetails);

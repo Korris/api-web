@@ -26,6 +26,7 @@
         public bool IsMature { get; set; }
         public int ChapterCount { get; set; }
         public PostType Type { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 
     public class SubPostDto

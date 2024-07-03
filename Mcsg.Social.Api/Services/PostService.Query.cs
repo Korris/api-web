@@ -963,13 +963,13 @@ sp.""IsEnableComment""
          ),
          final_grouped_posts AS (
           SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number,
-              ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY RANDOM())  AS random_row_num
+              ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY ""CreatedDate"" DESC) AS row_num
           FROM grouped_posts
          )
          SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number
          FROM final_grouped_posts
-         WHERE random_row_num <= 10
-         ORDER BY group_number, random_row_num;
+         WHERE row_num <= 10
+         ORDER BY group_number, row_num;
 
           [GetTotalCount]";
             }
