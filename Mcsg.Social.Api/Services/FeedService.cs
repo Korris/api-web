@@ -762,6 +762,7 @@ namespace Mcsg.Social.Api.Services
                     {
                         var resource = new ResourceResponse()
                         {
+                            Body = subPost.Body,
                             Name = file?.Name ?? "",
                             HashId = file?.HashId,
                             Status = file.Status,

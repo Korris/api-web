@@ -537,13 +537,15 @@ namespace Mcsg.Social.Api.Services
             foreach (var resourceAdded in listResourceAddded)
             {
                 var resourceReq = resourceRequest.FirstOrDefault(x => x.HashId == resourceAdded.HashId);
-                if (resourceReq != null && resourceReq.Order != resourceAdded.Order)
+                var subPostByResource = subPostDB.FirstOrDefault(p => p.Id == resourceAdded.SubPostId);
+
+                if (resourceReq != null && subPostByResource != null && ((resourceReq.Order != resourceAdded.Order) || subPostByResource.Body != resourceReq.Body))
                 {
                     resourceAdded.Order = resourceReq.Order;
                     await _resourceRepository.UpdateAsync(resourceAdded);
-                    var subPostUpdate = subPostDB.FirstOrDefault(p => p.Id == resourceAdded.SubPostId);
-                    subPostUpdate.Order = resourceReq.Order;
-                    await _subPostRepository.UpdateAsync(subPostUpdate);
+                    subPostByResource.Order = resourceReq.Order;
+                    subPostByResource.Body = resourceReq.Body;
+                    await _subPostRepository.UpdateAsync(subPostByResource);
                 }
             }
 
@@ -557,12 +559,13 @@ namespace Mcsg.Social.Api.Services
                                                                                                          WHERE p.""Id""=@PostId
                                                                                                          AND r.""IsDelete"" = false
                                                                                                          AND sp.""IsDelete"" = false", new { PostId = postId });
-            foreach (var resource in resourcesResult)
+            foreach (var resource in resourcesResult.OrderBy(p => p.Order))
             {
                 var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
                 var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
                 subPosts.Add(new SubPostResponse
                 {
+                    Body = resourceRequest.FirstOrDefault(p => p.Order == resource.Order).Body,
                     HashId = subPostData?.SubPostHashId ?? "",
                     Status = PostStatus.Public,
                     Files = new List<UploadFileResponse> { new UploadFileResponse()
