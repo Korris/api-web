@@ -45,6 +45,7 @@ namespace Mcsg.Social.Api.Services
 												LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
+												AND pc.""IsDelete"" = false
 												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												UNION
 												SELECT 
