@@ -37,7 +37,7 @@ public class Regular
     /// <summary>
     /// Tag
     /// </summary>
-    public const string Tag = @"^[a-zA-Z0-9]+$";
+    public const string Tag = @"^[a-zA-Z0-9_]+$";
 
     /// <summary>
     /// Regular expression for validating profile names.<br/>
