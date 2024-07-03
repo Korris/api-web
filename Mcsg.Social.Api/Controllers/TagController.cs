@@ -50,7 +50,8 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpGet("search-tags")]
-        [Authorize]
+        //[Authorize]
+        /// Todo Open Authorize after test
         public async Task<IActionResult> SearchTags([FromQuery] SearchTagsReq searchTagsReq)
         {
             var result = await _tagService.SearchTagsByName(searchTagsReq);
