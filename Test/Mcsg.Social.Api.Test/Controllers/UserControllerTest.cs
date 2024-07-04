@@ -1,7 +1,7 @@
-﻿using Mcsg.Social.Api.Requests;
-using Mcsg.Social.Api.Validators;
+﻿namespace Mcsg.Social.Api.Test.Controllers;
 
-namespace Mcsg.Social.Api.Test.Controllers;
+using Requests;
+using Validators;
 
 public class UserControllerTest
 {
@@ -11,71 +11,65 @@ public class UserControllerTest
         //TODO
     }
 
-    [Test]
-    public void UpdateUserProfile_01_ValidationFailed()
+    #region -- UpdateUserProfile --
+    /// <summary>
+    /// Test case empty
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="expected"></param>
+    [TestCase(null, false)]
+    [TestCase("", false)]
+    public void UpdateUserProfile_01_ValidationFailed(string? profileName, bool expected)
     {
-        var req = new UserProfileUpdateR { ProfileName = "abc" };
-        var vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new UserProfileUpdateR { ProfileName = "" };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new UserProfileUpdateR { ProfileName = null };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
+        UpdateUserProfile_01(profileName, expected);
     }
 
-    [Test]
-    public void UpdateUserProfile_02_ValidationFailed()
+    /// <summary>
+    /// Test length
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="expected"></param>
+    [TestCase("$$$%%@#", false)]
+    [TestCase("xxxxx", false)]
+    [TestCase("abc", false)]
+    [TestCase("abc   ", false)]
+    [TestCase("a very long profile name that exceeds fifty characters in length", false)]
+    public void UpdateUserProfile_02_ValidationFailed(string? profileName, bool expected)
     {
-        var req = new UserProfileUpdateR { ProfileName = "$$$%%@#" };
-        var vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new UserProfileUpdateR { ProfileName = "xxxxx" };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new UserProfileUpdateR { ProfileName = "abc   " };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new UserProfileUpdateR { ProfileName = "a very long profile name that exceeds fifty characters in length" };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
+        UpdateUserProfile_01(profileName, expected);
     }
 
-    [Test]
-    public void UpdateUserProfile_01_ValidationPassed()
+    /// <summary>
+    /// Happy case
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="expected"></param>
+    [TestCase("__333x", true)]
+    [TestCase("tpaaa fsfadsf", true)]
+    [TestCase("  Tuấn Kiệt  ", true)]
+    [TestCase("TuanKi et123", true)]
+    public void UpdateUserProfile_01_ValidationPassed(string? profileName, bool expected)
     {
-        var req = new UserProfileUpdateR { ProfileName = "__333x" };
-        var vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
-
-        req = new UserProfileUpdateR { ProfileName = "tpaaa fsfadsf" };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
-
-        req = new UserProfileUpdateR { ProfileName = "  Tuấn Kiệt  " };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
-
-        req = new UserProfileUpdateR { ProfileName = "TuanKi et123" };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
+        UpdateUserProfile_01(profileName, expected);
     }
 
-    [Test]
-    public void UpdateUserProfile_02_ValidationPassed()
+    /// <summary>
+    /// Happy case
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="expected"></param>
+    [TestCase("Valid_Profile-Name.2024  ", true)]
+    [TestCase("a very long profile Kiệt that exceeds fifty   ", true)]
+    public void UpdateUserProfile_02_ValidationPassed(string? profileName, bool expected)
     {
-        var req = new UserProfileUpdateR { ProfileName = "Valid_Profile-Name.2024  " };
-        var vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
-
-        req = new UserProfileUpdateR { ProfileName = "a very long profile Kiệt that exceeds fifty   " };
-        vr = new UserProfileUpdateV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(true));
+        UpdateUserProfile_01(profileName, expected);
     }
+
+    private void UpdateUserProfile_01(string? profileName, bool expected)
+    {
+        var req = new UserProfileUpdateR { ProfileName = profileName };
+        var vr = new UserProfileUpdateV().Validate(req);
+        Assert.That(vr.IsValid, Is.EqualTo(expected));
+    }
+    #endregion
 }

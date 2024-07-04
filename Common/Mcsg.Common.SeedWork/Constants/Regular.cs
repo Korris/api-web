@@ -24,7 +24,6 @@ public class Regular
     public const string RegexMessage = "Profile name can only contain letters, numbers, dots, underscores, and hyphens";
 
     /// <summary>
-    /// <summary>
     /// Vietnamese phone numbers typically have the following formats:<br/>
     /// Mobile numbers: start with 09, 03, 07, 08, or 05 followed by 8 digits<br/>
     /// Landline numbers: start with 02 followed by 9 digits<br/>

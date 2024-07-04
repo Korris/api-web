@@ -15,7 +15,11 @@ public class FeedControllerTest
     /// <summary>
     /// Test case empty
     /// </summary>
-    public void PostFeed_01_ValidationFailed()
+    /// <param name="tag"></param>
+    /// <param name="expected"></param>
+    [TestCase(null, false)]
+    [TestCase("", false)]
+    public void PostFeed_01_ValidationFailed(string? tag, bool expected)
     {
         var req = new FeedPostR { Tags = null };
         var vr = new FeedPostV().Validate(req);
@@ -25,13 +29,7 @@ public class FeedControllerTest
         vr = new FeedPostV().Validate(req);
         Assert.That(vr.IsValid, Is.EqualTo(false));
 
-        req = new FeedPostR { Tags = [null] };
-        vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new FeedPostR { Tags = [""] };
-        vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
+        PostFeed_01(tag, expected);
     }
 
     /// <summary>
@@ -50,9 +48,7 @@ public class FeedControllerTest
     [TestCase("______", false)]
     public void PostFeed_02_ValidationFailed(string tag, bool expected)
     {
-        var req = new FeedPostR { Tags = [tag] };
-        var vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(expected));
+        PostFeed_01(tag, expected);
     }
 
     /// <summary>
@@ -62,9 +58,7 @@ public class FeedControllerTest
     [TestCase("toan_9A23434343434343434343434__6969696966969_", false)]
     public void PostFeed_03_ValidationFailed(string tag, bool expected)
     {
-        var req = new FeedPostR { Tags = [tag] };
-        var vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(expected));
+        PostFeed_01(tag, expected);
     }
 
     /// <summary>
@@ -84,6 +78,11 @@ public class FeedControllerTest
     [TestCase("TrinhNgocMinh", true)]
     [TestCase("trịnh_ngọc_minh", true)]
     public void PostFeed_01_ValidationPassed(string tag, bool expected)
+    {
+        PostFeed_01(tag, expected);
+    }
+
+    private void PostFeed_01(string? tag, bool expected)
     {
         var req = new FeedPostR { Tags = [tag] };
         var vr = new FeedPostV().Validate(req);
