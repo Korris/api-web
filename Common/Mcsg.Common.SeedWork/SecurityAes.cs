@@ -17,6 +17,8 @@ using System.Web;
 
 namespace Mcsg.Common.SeedWork;
 
+using Extensions;
+
 /// <summary>
 /// Security Advanced Encryption Standard
 /// </summary>
@@ -109,6 +111,100 @@ public class SecurityAes(string passphrase)
         using StreamReader srDecrypt = new(csDecrypt);
 
         return srDecrypt.ReadToEnd();
+    }
+
+    /// <summary>
+    /// Encrypt
+    /// </summary>
+    /// <param name="plainText">Plain text</param>
+    /// <returns>Return the result</returns>
+    public static string Encrypt(string plainText)
+    {
+        var keyS = 16.GetRandomString();
+        var ivS = 16.GetRandomString();
+        var keyB = Encoding.UTF8.GetBytes(keyS);
+        var ivB = Encoding.UTF8.GetBytes(ivS);
+
+        using (var aes = Aes.Create())
+        {
+            aes.Padding = PaddingMode.PKCS7;
+            aes.Mode = CipherMode.CBC;
+            aes.FeedbackSize = 128;
+
+            var encryptor = aes.CreateEncryptor(keyB, ivB);
+
+            using (var ms = new MemoryStream())
+            {
+                using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                {
+                    var bytes = Encoding.ASCII.GetBytes(plainText);
+                    cs.Write(bytes, 0, bytes.Length);
+                    cs.FlushFinalBlock();
+
+                    return Convert.ToBase64String(ms.ToArray()) + keyS + ivS;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Decrypt
+    /// </summary>
+    /// <param name="cipherText">Cipher text</param>
+    /// <returns>Return the result</returns>
+    public static string? Decrypt(string? cipherText)
+    {
+        if (string.IsNullOrWhiteSpace(cipherText))
+        {
+            return null;
+        }
+
+        var ivS = cipherText.Substring(cipherText.Length - 16, 16);
+        var ivB = Encoding.UTF8.GetBytes(ivS);
+
+        var keyS = cipherText.Substring(cipherText.Length - 32, 16);
+        var keyB = Encoding.UTF8.GetBytes(keyS);
+
+        var data = cipherText.Substring(0, cipherText.Length - 32);
+        var encrypted = Convert.FromBase64String(data);
+
+        return DecryptStringFromBytes(encrypted, keyB, ivB);
+    }
+
+    /// <summary>
+    /// Decrypt string from bytes
+    /// </summary>
+    /// <param name="encrypted">Encrypted</param>
+    /// <param name="key">Key</param>
+    /// <param name="iv">IV</param>
+    /// <returns>Return the result</returns>
+    private static string DecryptStringFromBytes(byte[] encrypted, byte[] key, byte[] iv)
+    {
+        var res = string.Empty;
+
+        using (Aes aes = Aes.Create())
+        {
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            aes.FeedbackSize = 128;
+            aes.Key = key;
+            aes.IV = iv;
+
+            var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+            using (var ms = new MemoryStream(encrypted))
+            {
+                using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                {
+                    using (var sr = new StreamReader(cs))
+                    {
+                        res = sr.ReadToEnd();
+                    }
+                }
+            }
+        }
+
+        return res;
     }
 
     #endregion
