@@ -112,6 +112,22 @@ public class Validator
     }
 
     /// <summary>
+    /// Hashtag
+    /// </summary>
+    public class Hashtag
+    {
+        /// <summary>
+        /// Minimum length
+        /// </summary>
+        public const ushort Min = 1;
+
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 34;
+    }
+
+    /// <summary>
     /// Email
     /// </summary>
     public class Email

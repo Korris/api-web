@@ -20,8 +20,6 @@ public class FeedPostV : AbstractValidator<FeedPostR>
     public FeedPostV()
     {
         RuleForEach(post => post.Tags).Must(Valid).WithMessage(Tag);
-
-        var t = "Tags";
         RuleFor(post => post.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
 
@@ -33,10 +31,10 @@ public class FeedPostV : AbstractValidator<FeedPostR>
     private bool Valid(string tag)
     {
         return !string.IsNullOrWhiteSpace(tag) &&
-               tag.StartsWith("#") &&
-               tag.Length > 1 &&
-               !tag.Contains(" ") &&
-               Regex.IsMatch(tag.Substring(1), Regular.Tag);
+               tag.Length > Hashtag.Min &&
+               tag.Length < Hashtag.Max &&
+               !tag.Contains(' ') &&
+               Regex.IsMatch(tag, Regular.Tag);
     }
 
     /// <summary>
