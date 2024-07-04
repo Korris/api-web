@@ -1618,28 +1618,58 @@ namespace Mcsg.Social.Api.Services
 
         }
 
-        public async Task<IEnumerable<Guid>> GetPostRandomIdsAsync(GetPostRandomIdsReq req)
+        public async Task<IEnumerable<string>> GetSubPostRandomIdsAsync(GetPostRandomIdsReq input)
         {
             try
             {
-                var numOfItem = 10;
-                var numOfItemNeedFilter = numOfItem * 2;
-                List<Guid> randomIds = new List<Guid>();
-
-                if (req.NumOfItem != 0)
+                var query = $@"SELECT sp.""HashId""
+                               FROM ""SubPosts"" sp
+                               JOIN ""Posts"" p ON sp.""PostId"" = p.""Id""
+                               JOIN ""Resources"" r on sp.""Id"" = r.""SubPostId""
+                               WHERE p.""IsDelete"" = false
+	                           AND sp.""IsDelete"" = false
+	                           [QueryByType]
+	                           [IgnoreQuery]
+                               AND sp.""Order"" = (
+                                                    SELECT MIN(sp_inner.""Order"")
+                                                    FROM ""SubPosts"" sp_inner
+                                                    WHERE sp_inner.""PostId"" = sp.""PostId""
+		                                            AND sp_inner.""IsDelete"" = false
+                                                    )
+                               ORDER BY RANDOM()
+                               LIMIT @PageSize";
+                query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
+                query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
+                return await _postReportRepository.Connection.QueryAsync<string>(query, new
                 {
-                    numOfItem = req.NumOfItem;
-                }
+                    PostRandomIds = input.PostRandomIds?.ToList(),
+                    PageSize = input.AmountItem
+                });
 
-                if (req.PostRandomIds != null)
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetPostRandomIdsAsync(GetPostRandomIdsReq input)
+        {
+            try
+            {
+                var query = @$"SELECT ""HashId"" From ""Posts"" 
+                                WHERE ""IsDelete"" = false
+                                [QueryByType]
+                                [IgnoreQuery]
+                                ORDER BY RANDOM()
+                                LIMIT @PageSize";
+                query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND ""Type"" = {(int)PostType.Feed}");
+                query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT ""HashId"" = ANY(@PostRandomIds)");
+                return await _postReportRepository.Connection.QueryAsync<string>(query, new
                 {
-                    numOfItemNeedFilter += req.PostRandomIds.Count;
-                    randomIds = req.PostRandomIds;
-                }
-
-                var response = await _postRepository.Connection.QueryAsync<Guid>(GetPostRandomIdsQuery, new { numOfItemNeedFilter = numOfItemNeedFilter, numOfItem = numOfItem, postRandomIds = randomIds.ToList() });
-
-                return response;
+                    PostRandomIds = input.PostRandomIds?.ToList(),
+                    PageSize = input.AmountItem
+                });
             }
             catch (Exception ex)
             {

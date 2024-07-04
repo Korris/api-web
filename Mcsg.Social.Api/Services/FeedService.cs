@@ -204,6 +204,17 @@ namespace Mcsg.Social.Api.Services
                             FROM ""SubPosts""
                             WHERE ""IsDelete"" = false
                             GROUP BY ""PostId""
+                        ),
+                        ResourceCount AS (
+                            SELECT p.""Id"" AS ""PostId"",
+                            COUNT(r.""Id"") AS TotalResource
+                            FROM ""Posts"" p
+                            LEFT JOIN ""SubPosts"" sp
+                            ON p.""Id"" = sp.""PostId""
+                            AND sp.""IsDelete"" = false
+                            LEFT JOIN ""Resources"" r
+                            ON sp.""Id"" = r.""SubPostId""
+                            GROUP BY p.""Id""
                         )
                         SELECT 
                                     u.""ProfileName"" as Fullname,
@@ -229,7 +240,8 @@ namespace Mcsg.Social.Api.Services
                                                               WHERE ps.""PostId"" = sp.""PostId"" 
                                                               AND ps.""Order"" = 1
                                                               AND ps.""IsDelete"" = false)) 
-                                    AS NextSubPostHashId
+                                    AS NextSubPostHashId,
+                                    rc.TotalResource
                                     FROM ""SubPosts"" sp
                                     LEFT JOIN identity.""Users"" u 
                                     ON u.""Id""  = sp.""UserId"" 
@@ -247,6 +259,8 @@ namespace Mcsg.Social.Api.Services
                                     AND asp.""IsDelete"" = false
                                     LEFT JOIN SubPostsCount sc
                                     ON sp.""PostId"" = sc.""PostId""
+                                    LEFT JOIN ResourceCount rc
+                                    ON sp.""PostId"" = rc.""PostId""
                                     WHERE sp.""HashId"" =@Id
                                     AND sp.""IsDelete"" = false";
 
@@ -254,6 +268,16 @@ namespace Mcsg.Social.Api.Services
             {
                 Id = hashId
             });
+            /// if only 1 Resource when click popup will show data of this Post instead of SubPost
+            if (data.TotalResource == 1)
+            {
+                var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from ""Posts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
+                data.Id = postData.Id;
+                data.Body = postData.Body;
+                data.HashId = postData.HashId;
+                data.Body = System.Web.HttpUtility.HtmlDecode(data.Body);
+
+            }
             if (data.ResourceType == ResourceType.VIDEO || data.ResourceType == ResourceType.AUDIO)
             {
                 data.Url = await _sc.Strategy.PresignedGetObject(data.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
@@ -382,7 +406,24 @@ namespace Mcsg.Social.Api.Services
                             {
                                 resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
                             }
+
                             itemResponse.Resources.Add(resourceResponse);
+                            itemResponse.SubPosts.Add(new SubPostResponse
+                            {
+                                Files = new List<UploadFileResponse>()
+                                {
+                                    new UploadFileResponse()
+                                    {
+                                        SubPostHashId = resourceResponse.SubPostHashId,
+                                        HashId = resourceResponse.HashId,
+                                        Height = resourceResponse.Height,
+                                        Width = resourceResponse.Width,
+                                        Url = resourceResponse.Url,
+                                        Type = resourceResponse.Type,
+                                        Name = resourceResponse.Name
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -406,6 +447,7 @@ namespace Mcsg.Social.Api.Services
                 }
                      };
             }
+
             return itemResponse;
         }
         public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)

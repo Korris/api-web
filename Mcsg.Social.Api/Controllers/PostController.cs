@@ -55,6 +55,13 @@ namespace Mcsg.Social.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPost("get-subpost-random-ids")]
+        public async Task<IActionResult> GetSubPostRandomIdsAsync([FromBody] GetPostRandomIdsReq request)
+        {
+            var result = await _postService.GetSubPostRandomIdsAsync(request);
+            return Ok(result);
+        }
+
         [HttpGet("get-post-by-list-id")]
         public async Task<IActionResult> GetPostDetails([FromQuery] string hashIds)
         {

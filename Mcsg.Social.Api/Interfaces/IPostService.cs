@@ -39,9 +39,10 @@
         Task UpdateKeyWordForComicAndStoryToSmartLookup();
         Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input);
         Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input);
-        Task<IEnumerable<Guid>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
+        Task<IEnumerable<string>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
         Task<ListIdForHomePage> GetLatestPostsByType();
         Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
         Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
+        Task<IEnumerable<string>> GetSubPostRandomIdsAsync(GetPostRandomIdsReq input);
     }
 }
