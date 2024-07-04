@@ -35,7 +35,7 @@ public class Regular
     public const string PhoneNumber = "^(0[23578]|09|03)\\d{8}$";
 
     /// <summary>
-    /// This regex allows letters, diacritics, digits, and underscores, but no spaces.
+    /// This regex allows letters, diacritics, digits, and underscores, but no spaces.<br/>
     /// It requires at least one letter or digit, and can contain underscores.
     /// </summary>
     public const string Tag = @"^(?=.*[\p{L}\p{M}0-9])[ \p{L}\p{M}0-9_]+$";
