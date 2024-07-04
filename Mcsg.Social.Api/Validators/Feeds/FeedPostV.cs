@@ -44,7 +44,12 @@ public class FeedPostV : AbstractValidator<FeedPostR>
     /// <returns>Return the result</returns>
     private bool NoDuplicate(List<string>? tags)
     {
-        return tags == null ? false : tags.Distinct().Count() == tags.Count;
+        if (tags == null)
+        {
+            return false;
+        }
+
+        return tags.Distinct().Count() == tags.Count && tags.Count > 0;
     }
 
     #endregion
