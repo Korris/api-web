@@ -1,10 +1,10 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions
 {
+    using Constants;
+    using Lib.Common.Constants;
+    using Lib.Data.Enums;
+    using Models;
+
     public static class NotificationExtension
     {
         public static string ToMessage(this NotificationQueryResult noti)

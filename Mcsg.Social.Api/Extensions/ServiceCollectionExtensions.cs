@@ -1,10 +1,11 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.Models;
-using Mcsg.Lib.Common.Extensions;
-using Microsoft.AspNetCore.Http.Features;
+﻿using Microsoft.AspNetCore.Http.Features;
 
 namespace Mcsg.Social.Api.Extensions
 {
+    using Constants;
+    using Lib.Common.Extensions;
+    using Models;
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddFileUploadLimit(this IServiceCollection services, IConfiguration configuration)

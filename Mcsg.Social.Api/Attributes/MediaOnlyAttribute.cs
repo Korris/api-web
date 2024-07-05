@@ -1,11 +1,12 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Social.Api.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Attributes
 {
+    using Constants;
+    using Models;
+
     public class MediaOnlyAttribute : ActionFilterAttribute
     {
         private string[] mediaExtension;
