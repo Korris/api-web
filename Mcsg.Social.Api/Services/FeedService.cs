@@ -37,7 +37,6 @@ namespace Mcsg.Social.Api.Services
         private readonly ISmartCountService _smartCountService;
         private readonly IViewHistoryService _viewHistoryService;
 
-        private readonly FileSetting _fileSetting;
         private readonly ICurrentUserService _currentUserService;
         private readonly IMetaDataService _metaDataService;
         private readonly ISmartLookupService _smartLookupService;
@@ -49,9 +48,7 @@ namespace Mcsg.Social.Api.Services
         public FeedService(IUnitOfWork unitOfWork,
             ITagService tagService,
             IPostService postService,
-            IFileService fileService,
             ISmartCountService smartCountService,
-            IOptionsMonitor<FileSetting> fileSetting,
             IMetaDataService metaDataService,
             ICurrentUserService currentUserService,
             ISmartLookupService smartLookupService,
@@ -67,10 +64,8 @@ namespace Mcsg.Social.Api.Services
             _unitOfWork = unitOfWork;
             _tagService = tagService;
             _postService = postService;
-            _fileService = fileService;
             _smartCountService = smartCountService;
             _viewHistoryService = viewHistoryService;
-            _fileSetting = fileSetting.CurrentValue;
             _metaDataService = metaDataService;
             _currentUserService = currentUserService;
             _smartLookupService = smartLookupService;

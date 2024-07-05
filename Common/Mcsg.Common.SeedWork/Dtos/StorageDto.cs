@@ -45,6 +45,26 @@ public abstract class StorageDto
     /// </summary>
     public string MediaCdnUrl { get; set; } = default!;
 
+    /// <summary>
+    /// Upload multipart body length limit (MB)
+    /// </summary>
+    public int UploadMultipartBodyLengthLimit { get; set; } = 128;
+
+    /// <summary>
+    /// Upload value length limit (MB)
+    /// </summary>
+    public int UploadValueLengthLimit { get; set; } = 4;
+
+    /// <summary>
+    /// Media extension allow
+    /// </summary>
+    public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, webm, heic, webp, mov";
+
+    /// <summary>
+    /// Image down quality
+    /// </summary>
+    public int ImageDownQuality { get; set; } = 75;
+
     #endregion
 
     #region -- Classes --

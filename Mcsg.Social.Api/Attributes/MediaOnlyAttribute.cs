@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Attributes
 {
     using Constants;
-    using Models;
 
     public class MediaOnlyAttribute : ActionFilterAttribute
     {
         private string[] mediaExtension;
-        public MediaOnlyAttribute(IOptionsMonitor<FileSetting> configuration)
+
+        public MediaOnlyAttribute()
         {
-            var extensions = configuration.CurrentValue.MediaExtensionAllow;
+            var extensions = Program._mediaExtensionAllow;
             mediaExtension = !string.IsNullOrWhiteSpace(extensions) ? extensions.Split(',', StringSplitOptions.RemoveEmptyEntries) : new string[0];
             mediaExtension = mediaExtension.Select(x => x.Trim().ToLower()).ToArray();
         }

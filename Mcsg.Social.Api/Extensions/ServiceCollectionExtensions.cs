@@ -4,16 +4,14 @@ namespace Mcsg.Social.Api.Extensions
 {
     using Constants;
     using Lib.Common.Extensions;
-    using Models;
+    using static Common.SeedWork.Dtos.StorageDto;
 
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddFileUploadLimit(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddFileUploadLimit(this IServiceCollection services, MinioDto minio)
         {
-            var setting = configuration.GetSection("FileSettings").Get<FileSetting>();
-
-            var valueLengthLimit = (int)((double)((setting != null && setting.UploadValueLengthLimit > 0) ? setting.UploadValueLengthLimit : SystemConfig.DefaultValueLengthLimit)).FromMegabytes();
-            var multipartBodyLengthLimit = (int)((double)((setting != null && setting.UploadMultipartBodyLengthLimit > 0) ? setting.UploadMultipartBodyLengthLimit : SystemConfig.DefaultMultipartBodyLengthLimit)).FromMegabytes();
+            var valueLengthLimit = (int)((double)((minio != null && minio.UploadValueLengthLimit > 0) ? minio.UploadValueLengthLimit : SystemConfig.DefaultValueLengthLimit)).FromMegabytes();
+            var multipartBodyLengthLimit = (int)((double)((minio != null && minio.UploadMultipartBodyLengthLimit > 0) ? minio.UploadMultipartBodyLengthLimit : SystemConfig.DefaultMultipartBodyLengthLimit)).FromMegabytes();
             services.Configure<FormOptions>(x =>
             {
                 x.ValueLengthLimit = valueLengthLimit;

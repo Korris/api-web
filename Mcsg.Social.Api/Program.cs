@@ -98,6 +98,7 @@ public class Program
         #endregion
 
         _mediaApiUrl = st.Minio.MediaApiUrl;
+        _mediaExtensionAllow = st.Minio.MediaExtensionAllow;
 
         #region -- Setup DI --
         // Setting
@@ -132,7 +133,6 @@ public class Program
         #endregion
 
         builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
-        builder.Services.Configure<FileSetting>(builder.Configuration.GetSection("FileSettings"));
         builder.Services.Configure<FeedDisplayConfig>(builder.Configuration.GetSection("FeedDisplayConfigs"));
 
         // Add services to the container.
@@ -149,7 +149,7 @@ public class Program
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);
         builder.Services.AddCommonLibrary(builder.Configuration);
-        builder.Services.AddFileUploadLimit(builder.Configuration);
+        builder.Services.AddFileUploadLimit(st.Minio);
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -269,6 +269,11 @@ public class Program
     /// Media API URL
     /// </summary>
     public static string _mediaApiUrl = default!;
+
+    /// <summary>
+    /// Media extension allow
+    /// </summary>
+    public static string _mediaExtensionAllow = default!;
 
     #endregion
 }

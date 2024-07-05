@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Dapper;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Services
 {
@@ -25,10 +24,10 @@ namespace Mcsg.Social.Api.Services
         private readonly IRepository<Resource> _resourceRepository;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Mention> _mentionRepository;
-        private readonly FileSetting _fileSetting;
         private IConfiguration _configuration;
         protected readonly IMapper _mapper;
-        public CommentService(IUnitOfWork unitOfWork, IOptionsMonitor<FileSetting> fileSetting, IMapper mapper, ISetting setting, IConfiguration configuration)
+
+        public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration)
         {
             _postCommentRepository = unitOfWork.GetRepository<PostComment>();
             _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
@@ -36,7 +35,6 @@ namespace Mcsg.Social.Api.Services
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
             _userRepository = unitOfWork.GetRepository<User>();
             _mentionRepository = unitOfWork.GetRepository<Mention>();
-            _fileSetting = fileSetting.CurrentValue;
             _mapper = mapper;
             _setting = setting;
             _configuration = configuration;

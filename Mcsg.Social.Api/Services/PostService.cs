@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Dapper;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
@@ -39,7 +38,6 @@ namespace Mcsg.Social.Api.Services
         private readonly ITagService _tagService;
         private readonly IUserService _userService;
         private readonly IFileService _fileService;
-        private readonly FileSetting _fileSetting;
         private readonly ICurrentUserService _currentUserService;
         private readonly ISmartLookupService _smartLookupService;
         private readonly IViewHistoryService _viewHistoryService;
@@ -50,7 +48,6 @@ namespace Mcsg.Social.Api.Services
             IRepository<SmartLookup> smartLookupRepository,
             IUserService userService,
             IFileService fileService,
-            IOptionsMonitor<FileSetting> fileSetting,
             ICurrentUserService currentUserService,
             IViewHistoryService viewHistoryService,
             IConfiguration configuration,
@@ -67,7 +64,6 @@ namespace Mcsg.Social.Api.Services
             _tagService = tagService;
             _userService = userService;
             _fileService = fileService;
-            _fileSetting = fileSetting.CurrentValue;
             _currentUserService = currentUserService;
             _viewHistoryService = viewHistoryService;
             _smartLookupService = smartLookupService;

@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Social.Api.Services
 {
@@ -28,12 +27,10 @@ namespace Mcsg.Social.Api.Services
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Resource> _resourceRepository;
         private readonly IRepository<SubPost> _subPostRepository;
-        private readonly FileSetting _fileSetting;
         private readonly IConfiguration _configuration;
 
         public FileService(ICurrentUserService currentUserService
             , IUnitOfWork unitOfWork
-            , IOptionsMonitor<FileSetting> fileSetting
             , IConfiguration configuration
             , IJobService jobService
             , McsgDbContext context
@@ -46,7 +43,6 @@ namespace Mcsg.Social.Api.Services
             _userRepository = unitOfWork.GetRepository<User>();
             _resourceRepository = unitOfWork.GetRepository<Resource>();
             _subPostRepository = unitOfWork.GetRepository<SubPost>();
-            _fileSetting = fileSetting.CurrentValue;
             _jobService = jobService;
             _context = context;
             _setting = setting;
@@ -94,7 +90,7 @@ namespace Mcsg.Social.Api.Services
                 fileTitle = fileTitle.ToJpg();
                 tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
 
-                var compressedImage = file.CompressAndConvertToJpeg(_fileSetting.ImageDownQuality);
+                var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
                 imgWidth = compressedImage.Width;
                 imgHeight = compressedImage.Height;
                 using (var stream = compressedImage.Image.OpenReadStream())
