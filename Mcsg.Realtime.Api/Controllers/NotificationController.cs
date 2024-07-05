@@ -1,10 +1,11 @@
-﻿using Mcsg.Lib.Common.Models.RealTime;
-using Mcsg.Realtime.Api.DTOs;
-using Mcsg.Realtime.Api.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Realtime.Api.Controllers
 {
+    using Lib.Common.Models.RealTime;
+    using Requests;
+    using Services;
+
     [ApiController]
     [Route("[controller]")]
     public class NotificationController : ControllerBase

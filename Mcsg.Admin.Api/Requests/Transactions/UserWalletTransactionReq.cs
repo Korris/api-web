@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
-
-namespace Mcsg.Admin.Api.DTOs.Transactions
+﻿namespace Mcsg.Admin.Api.Requests
 {
+    using Lib.Data.Wallet.Enums;
+
     public class UserWalletTransactionReq : GetByPageReq
     {
         public List<TransactionType>? Types { get; set; }

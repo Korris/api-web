@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Admin.Api.DTOs.Users
+﻿namespace Mcsg.Admin.Api.Dtos
 {
     public class UserRespone
     {

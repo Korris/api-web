@@ -1,11 +1,12 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Realtime.Api.DTOs;
-using Mcsg.Realtime.Api.Services;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Hubs
 {
+    using Lib.Common.Constants;
+    using Requests;
+    using Services;
+
     public class CommentHub : Hub
     {
         private readonly ICommentService _commentService;

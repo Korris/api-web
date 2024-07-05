@@ -1,8 +1,9 @@
-﻿using Mcsg.Admin.Api.DTOs.Posts;
-using Mcsg.Lib.Data.Entities.Common;
-
-namespace Mcsg.Admin.Api.Services.Interface
+﻿namespace Mcsg.Admin.Api.Services.Interface
 {
+    using Dtos;
+    using Lib.Data.Entities.Common;
+    using Requests;
+
     public interface IPostService
     {
         Task<PagedResults<PostBasicResponse>> GetListAsync(PostListReq request);

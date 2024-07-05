@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Admin.Api.DTOs.PaymentMenthods
+namespace Mcsg.Admin.Api.Dtos
 {
+    using Lib.Data.Wallet.Enums;
+
     public class PaymentMethodResp
     {
         public Guid Id { get; set; }

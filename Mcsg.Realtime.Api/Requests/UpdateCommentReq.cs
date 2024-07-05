@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Realtime.Api.DTOs
+﻿namespace Mcsg.Realtime.Api.Requests
 {
     public class UpdateCommentReq : PostCommentReq
     {

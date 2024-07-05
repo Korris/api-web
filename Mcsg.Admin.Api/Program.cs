@@ -6,7 +6,6 @@ namespace Mcsg.Admin.Api;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
-using DTOs.Users;
 using Interfaces;
 using Lib.Common;
 using Lib.Common.Constants;
@@ -18,6 +17,7 @@ using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Common.Web.RealTime.Services;
 using Lib.Data;
 using Lib.Data.Wallet;
+using Requests;
 using Services;
 using Services.Interface;
 using Validators;

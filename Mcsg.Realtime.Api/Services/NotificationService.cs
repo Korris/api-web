@@ -1,20 +1,21 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Models.RealTime;
+﻿using Mcsg.Lib.Common.Models.RealTime;
 using Mcsg.Lib.Common.Web.Security;
 using Mcsg.Lib.Data.Domain.Entities;
 using Mcsg.Lib.Data.Enums;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
 using Mcsg.Realtime.Api.Constants;
-using Mcsg.Realtime.Api.DTOs;
-using Mcsg.Realtime.Api.DTOs.Mention;
-using Mcsg.Realtime.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Npgsql;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Dtos;
+    using Hubs;
+    using Lib.Common.Constants;
+    using Requests;
+
     public interface INotificationService
     {
         Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment);

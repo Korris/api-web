@@ -1,14 +1,15 @@
-﻿using Mcsg.Admin.Api.Constants;
-using Mcsg.Admin.Api.DTOs.Users;
-using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Interfaces;
-using Mcsg.Lib.Common.Mail;
-using Mcsg.Lib.Data.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Mcsg.Admin.Api.Validators
 {
+    using Constants;
+    using Lib.Common.Constants;
+    using Lib.Common.Exceptions;
+    using Lib.Common.Interfaces;
+    using Lib.Common.Mail;
+    using Lib.Data.Domain.Entities;
+    using Requests;
+
     public class CreateAdminValidator : IValidator<CreateAdminReq>
     {
         private readonly UserManager<User> _userManager;

@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Realtime.Api.DTOs.Mention
+﻿namespace Mcsg.Realtime.Api.Requests
 {
+    using Lib.Data.Enums;
+
     public class MentionNotificationReq
     {
         public Guid LocationId { get; set; }

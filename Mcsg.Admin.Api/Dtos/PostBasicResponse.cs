@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Admin.Api.DTOs.Posts
+﻿namespace Mcsg.Admin.Api.Dtos
 {
     using Common.Core.Enums;
     using Lib.Data.Enums;
-    using SubPosts;
 
     public class PostBasicResponse
     {

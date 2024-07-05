@@ -1,8 +1,7 @@
-﻿using Mcsg.Admin.Api.DTOs.PaymentMenthods;
-using Mcsg.Lib.Data.Wallet.Enums;
-
-namespace Mcsg.Admin.Api.DTOs.Transactions
+﻿namespace Mcsg.Admin.Api.Dtos
 {
+    using Lib.Data.Wallet.Enums;
+
     public class UserWalletTransactionItemResp
     {
         public Guid Id { get; set; }

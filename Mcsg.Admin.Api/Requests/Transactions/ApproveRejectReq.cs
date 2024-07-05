@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Admin.Api.DTOs.Transactions
+﻿namespace Mcsg.Admin.Api.Requests
 {
     public class ApproveReq
     {

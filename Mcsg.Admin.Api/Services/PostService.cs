@@ -3,8 +3,7 @@
 namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Enums;
-    using DTOs.Posts;
-    using DTOs.Users;
+    using Dtos;
     using Interface;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -14,6 +13,7 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
+    using Requests;
 
     public partial class PostService : IPostService
     {

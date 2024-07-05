@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Realtime.Api.DTOs
+﻿namespace Mcsg.Realtime.Api.Requests
 {
+    using Lib.Data.Enums;
+
     public class VideoNotificationReq
     {
         public Guid Id { get; set; }

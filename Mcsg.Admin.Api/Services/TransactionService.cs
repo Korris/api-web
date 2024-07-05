@@ -3,7 +3,7 @@
 namespace Mcsg.Admin.Api.Services
 {
     using Constants;
-    using DTOs.Transactions;
+    using Dtos;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
     using Lib.Common.Models;
@@ -14,6 +14,7 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Data.Wallet;
     using Lib.Data.Wallet.Entities;
     using Lib.Data.Wallet.Enums;
+    using Requests;
     using Services.Interface;
 
     public partial class TransactionService : ITransactionService

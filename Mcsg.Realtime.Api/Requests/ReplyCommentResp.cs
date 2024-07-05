@@ -1,7 +1,7 @@
-﻿using Mcsg.Realtime.Api.DTOs.Mention;
-
-namespace Mcsg.Realtime.Api.DTOs
+﻿namespace Mcsg.Realtime.Api.Requests
 {
+    using Dtos;
+
     public class ReplyCommentResp
     {
         public Guid Id { get; set; }

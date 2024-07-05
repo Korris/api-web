@@ -6,7 +6,7 @@ namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Interfaces;
     using Constants;
-    using DTOs.Settings;
+    using Dtos;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -16,6 +16,7 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
+    using Requests;
     using Services.Interface;
 
     public partial class SystemSettingService : ISystemSettingService

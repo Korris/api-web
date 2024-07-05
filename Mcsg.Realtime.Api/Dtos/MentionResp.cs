@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Realtime.Api.DTOs.Mention
+﻿namespace Mcsg.Realtime.Api.Dtos
 {
     public class MentionResp
     {

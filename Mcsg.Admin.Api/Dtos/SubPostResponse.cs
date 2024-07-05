@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Admin.Api.DTOs.SubPosts
+﻿namespace Mcsg.Admin.Api.Dtos
 {
     using Common.Core.Enums;
     using Lib.Data.Enums;

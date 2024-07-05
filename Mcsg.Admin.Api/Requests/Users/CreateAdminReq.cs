@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Admin.Api.DTOs.Users
+namespace Mcsg.Admin.Api.Requests
 {
     public class CreateAdminReq
     {

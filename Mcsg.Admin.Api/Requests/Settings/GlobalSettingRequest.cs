@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Admin.Api.DTOs.Settings
+﻿namespace Mcsg.Admin.Api.Requests
 {
     public class GlobalSettingRequest
     {

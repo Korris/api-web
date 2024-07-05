@@ -1,11 +1,12 @@
-﻿using Mcsg.Admin.Api.DTOs.Settings;
-using Mcsg.Admin.Api.Services.Interface;
-using Mcsg.Lib.Common.Constants;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Admin.Api.Controllers
 {
+    using Lib.Common.Constants;
+    using Requests;
+    using Services.Interface;
+
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = RoleNames.SysAdmin)]

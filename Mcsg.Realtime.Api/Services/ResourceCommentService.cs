@@ -2,8 +2,8 @@
 
 namespace Mcsg.Realtime.Api.Services
 {
-    using Api.Interfaces;
     using Common.Core.Interfaces;
+    using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Extensions;
     using Lib.Common.Helpers;
@@ -11,7 +11,7 @@ namespace Mcsg.Realtime.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Realtime.Api.DTOs;
+    using Requests;
 
     public interface IResourceCommentService
     {

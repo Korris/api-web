@@ -1,8 +1,9 @@
-﻿using Mcsg.Admin.Api.DTOs.Transactions;
-using Mcsg.Lib.Common.Models;
-
-namespace Mcsg.Admin.Api.Services.Interface
+﻿namespace Mcsg.Admin.Api.Services.Interface
 {
+    using Dtos;
+    using Lib.Common.Models;
+    using Requests;
+
     public interface ITransactionService
     {
         Task<PaginatedList<UserWalletTransactionItemResp>> GetListAsync(UserWalletTransactionReq request);

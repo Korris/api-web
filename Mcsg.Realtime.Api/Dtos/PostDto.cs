@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Realtime.Api.DTOs
+﻿namespace Mcsg.Realtime.Api.Dtos
 {
     public class PostDto
     {

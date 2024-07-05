@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
-
-namespace Mcsg.Realtime.Api.DTOs
+﻿namespace Mcsg.Realtime.Api.Requests
 {
+    using Lib.Data.Wallet.Enums;
+
     public class TransactionUpdateNotiReq
     {
         public PaymentMethodType PaymentType { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Admin.Api.DTOs
+namespace Mcsg.Admin.Api.Requests
 {
     public class GetByPageReq
     {

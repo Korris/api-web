@@ -1,13 +1,14 @@
 ﻿using Dapper;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Realtime.Api.DTOs;
-using Mcsg.Realtime.Api.DTOs.Mention;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Dtos;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
+    using Requests;
+
     public interface IMentionService
     {
         Task<MentionResp> AddMention(Guid locationId, MentionLocationType locationType, Guid entityId, MentionEntityType entityType, int length, int offset, string text);

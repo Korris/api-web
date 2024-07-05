@@ -4,7 +4,7 @@ using Dapper;
 namespace Mcsg.Realtime.Api.Services
 {
     using Constants;
-    using DTOs;
+    using Dtos;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Exceptions;
@@ -13,6 +13,7 @@ namespace Mcsg.Realtime.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
+    using Requests;
 
     public interface IReplyService
     {

@@ -1,7 +1,8 @@
-﻿using Mcsg.Admin.Api.DTOs.Settings;
-
-namespace Mcsg.Admin.Api.Services.Interface
+﻿namespace Mcsg.Admin.Api.Services.Interface
 {
+    using Dtos;
+    using Requests;
+
     public interface ISystemSettingService
     {
         Task<GlobalSettingRespone> GetGlobalSettingAsync();

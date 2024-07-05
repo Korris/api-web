@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Realtime.Api.Constants;
-using Mcsg.Realtime.Api.Mappings;
 
-namespace Mcsg.Realtime.Api.DTOs
+namespace Mcsg.Realtime.Api.Requests
 {
+    using Constants;
+    using Lib.Data.Enums;
+    using Mappings;
+
     public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>, IMapFrom<ReplyCommentResp>
     {
         public bool IsReply { get; set; }
