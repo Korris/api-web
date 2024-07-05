@@ -9,7 +9,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class LinkPreviewController : ControllerBase
     {
-        private readonly ILinkPreviewService _linkPreviewService;
+        #region -- Methods --
+
         public LinkPreviewController(ILinkPreviewService linkPreviewService)
         {
             _linkPreviewService = linkPreviewService;
@@ -20,5 +21,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = _linkPreviewService.GetMetaDataByUrl(url);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly ILinkPreviewService _linkPreviewService;
+
+        #endregion
     }
 }

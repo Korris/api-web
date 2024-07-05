@@ -10,7 +10,7 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class FileController : ControllerBase
     {
-        private readonly IFileService _fileService;
+        #region -- Methods --
 
         public FileController(IFileService fileService)
         {
@@ -36,5 +36,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _fileService.UploadImageAsync(file);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IFileService _fileService;
+
+        #endregion
     }
 }

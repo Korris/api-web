@@ -10,7 +10,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class NotificationController : ControllerBase
     {
-        private readonly INotificationService _notificationService;
+        #region -- Methods --
+
         public NotificationController(INotificationService notificationService)
         {
             _notificationService = notificationService;
@@ -18,7 +19,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpGet("list")]
         [Authorize]
-        public async Task<IActionResult> GetNotificationByReceiver([FromQuery] NotificationReq request)
+        public async Task<IActionResult> GetNotificationByReceiver([FromQuery] NotificationR request)
         {
             var result = await _notificationService.GetNotificationByReceiverAsync(request);
             return Ok(result);
@@ -26,7 +27,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpGet("unread")]
         [Authorize]
-        public async Task<IActionResult> GetUnReadNotificationByReceiver([FromQuery] NotificationReq request)
+        public async Task<IActionResult> GetUnReadNotificationByReceiver([FromQuery] NotificationR request)
         {
             var result = await _notificationService.GetUnReadNotificationByReceiverAsync(request);
             return Ok(result);
@@ -34,7 +35,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpPut("read")]
         [Authorize]
-        public async Task<IActionResult> ReadNotificationByReceiver([FromBody] UpdateNotificationReq request)
+        public async Task<IActionResult> ReadNotificationByReceiver([FromBody] NotificationUpdateR request)
         {
             var result = await _notificationService.ReadNotificationAsync(request.NotificationId);
             return Ok(result);
@@ -47,5 +48,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _notificationService.ReadAllNotificationAsync();
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly INotificationService _notificationService;
+
+        #endregion
     }
 }

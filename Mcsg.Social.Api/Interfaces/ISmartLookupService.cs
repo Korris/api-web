@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces
 {
     using Models;
+    using Requests;
 
     public interface ISmartLookupService
     {
@@ -10,6 +11,6 @@
         Task<IEnumerable<SmartLookupResponse>> SearchAsync(string keyword);
         Task<IEnumerable<RecentSearchResponse>> GetRecentListAsync();
         Task<bool> DeleteRecentSearchAsync(Guid id);
-        Task<bool> AddRecentSearchAsync(AddRecentSearchRequest res);
+        Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res);
     }
 }

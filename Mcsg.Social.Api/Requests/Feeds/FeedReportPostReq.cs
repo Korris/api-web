@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests
 {
+    using Lib.Data.Enums;
+
     public class FeedReportPostReq
     {
         public Guid PostId { get; set; }

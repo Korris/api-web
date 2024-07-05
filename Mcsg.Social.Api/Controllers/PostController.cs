@@ -10,7 +10,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class PostController : ControllerBase
     {
-        private readonly IPostService _postService;
+        #region -- Methods --
+
         public PostController(IPostService postService)
         {
             _postService = postService;
@@ -49,14 +50,14 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpPost("get-random-ids")]
-        public async Task<IActionResult> GetPostRandomIds([FromBody] GetPostRandomIdsReq request)
+        public async Task<IActionResult> GetPostRandomIds([FromBody] PostRandomIdsR request)
         {
             var result = await _postService.GetPostRandomIdsAsync(request);
             return Ok(result);
         }
 
         [HttpPost("get-subpost-random-ids")]
-        public async Task<IActionResult> GetSubPostRandomIdsAsync([FromBody] GetPostRandomIdsReq request)
+        public async Task<IActionResult> GetSubPostRandomIdsAsync([FromBody] PostRandomIdsR request)
         {
             var result = await _postService.GetSubPostRandomIdsAsync(request);
             return Ok(result);
@@ -68,5 +69,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _postService.GetPostDetails(hashIds);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IPostService _postService;
+
+        #endregion
     }
 }

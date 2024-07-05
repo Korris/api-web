@@ -130,7 +130,7 @@ namespace Mcsg.Social.Api.Services
             return tags;
         }
 
-        public async Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestReq tagSuggestReq)
+        public async Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestR tagSuggestReq)
         {
             string tagSearch = string.IsNullOrWhiteSpace(tagSuggestReq.Text) ? "" : ValidateTag(tagSuggestReq.Text);
 
@@ -143,7 +143,7 @@ namespace Mcsg.Social.Api.Services
             return tagsDb;
         }
 
-        public async Task<PagedResults<PopularTagResponse>> GetPopularTags(PopularTagReq popularTagReq)
+        public async Task<PagedResults<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
         {
             var query = GetPopularTagsQuery;
             if (popularTagReq.PostType == null)
@@ -172,7 +172,7 @@ namespace Mcsg.Social.Api.Services
 
         }
 
-        public async Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TodayTrendingTagReq todayTrendingTagReq)
+        public async Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq)
         {
             int.TryParse(_configuration["TodayTrending:FetchDataTimes"], out var getdataTimes);
             int.TryParse(_configuration["TodayTrending:Days"], out var days);
@@ -332,7 +332,7 @@ namespace Mcsg.Social.Api.Services
             return tag.ToLower();
         }
 
-        public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(SearchTagReq input)
+        public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input)
         {
             PagedResults<TagSearchResponse> results;
             if (string.IsNullOrWhiteSpace(input.Name))
@@ -401,7 +401,7 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
-        public async Task<IEnumerable<TagSearchResponse>> SearchTagsByName(SearchTagsReq request)
+        public async Task<IEnumerable<TagSearchResponse>> SearchTagsByName(TagSearchKeywordR request)
         {
             var query = string.Format(string.IsNullOrWhiteSpace(request.Keyword) ? SearchTagsRandomQuery : SearchTagsByNameQuery, _tagRepository.TableName);
             var tagNames = await _tagRepository.Connection.QueryAsync<TagSearchResponse>(query, new

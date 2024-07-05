@@ -10,8 +10,8 @@
         Task<PostSeriesResponse> GetStory(string hashId, bool isLoadChapters);
         Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
         Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR storyPostReq);
-        Task<ChapterResponse> PostChapterToStory(string comicHashId, ChapterStoryReq chapterPostReq);
-        Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, ChapterStoryReq chapterPostReq);
+        Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq);
+        Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StoryChapterR chapterPostReq);
         Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
         Task<bool> DeleteChapter(string comicHashId, int order);
         Task<bool> Delete(Guid postId);

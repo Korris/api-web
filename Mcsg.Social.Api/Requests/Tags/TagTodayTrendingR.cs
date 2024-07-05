@@ -2,11 +2,15 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class NotificationReq
+    using Common.Core.Enums;
+
+    public class TagTodayTrendingR
     {
+        [DefaultValue(null)]
+        public PostType? PostType { get; set; }
         [DefaultValue(1)]
         public int PageNumber { get; set; }
-        [DefaultValue(10)]
+        [DefaultValue(6)]
         public int PageSize { get; set; }
     }
 }

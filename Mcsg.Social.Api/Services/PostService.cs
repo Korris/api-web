@@ -1328,7 +1328,7 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
-        public async Task<SubPost> SubPostChapterToSeries(string comicHashId, ChapterPostReq chapterPostReq)
+        public async Task<SubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
         {
             var currentUserId = _currentUserService?.Session?.UserId;
             if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1369,7 +1369,7 @@ namespace Mcsg.Social.Api.Services
 
             return newChapter;
         }
-        public async Task<SubPost> SubPostUpdateChapterToSeries(string postHashId, int order, ChapterPostReq chapterPostReq)
+        public async Task<SubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
         {
             var currentUserId = _currentUserService?.Session?.UserId;
             if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1618,7 +1618,7 @@ namespace Mcsg.Social.Api.Services
 
         }
 
-        public async Task<IEnumerable<string>> GetSubPostRandomIdsAsync(GetPostRandomIdsReq input)
+        public async Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input)
         {
             try
             {
@@ -1653,7 +1653,7 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<IEnumerable<string>> GetPostRandomIdsAsync(GetPostRandomIdsReq input)
+        public async Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR input)
         {
             try
             {

@@ -37,7 +37,7 @@
             return await _postService.GetSeries(hashId, isLoadChapters);
         }
 
-        public async Task<ChapterResponse> PostChapterToStory(string comicHashId, ChapterStoryReq chapterPostReq)
+        public async Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq)
         {
             _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -52,7 +52,7 @@
             return result;
 
         }
-        public async Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, ChapterStoryReq chapterPostReq)
+        public async Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StoryChapterR chapterPostReq)
         {
             _postService.VerifyBasicInfo(chapterPostReq.Title);
 

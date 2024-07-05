@@ -75,7 +75,7 @@ namespace Mcsg.Social.Api.Services
             return CreateUserRespone(user);
         }
 
-        public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateRequest userAvatarUpdateRequest)
+        public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest)
         {
             if (userAvatarUpdateRequest?.Avatar == null)
                 throw new BadRequestException(ApiErrorCode.INVALID_AVATAR_IMAGE, ApiErrorMessage.INVALID_AVATAR_IMAGE);
@@ -124,7 +124,7 @@ namespace Mcsg.Social.Api.Services
             return new UserAvatarUpdateResponse() { Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
         }
 
-        public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest)
+        public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR userCoverPhotoUpdateRequest)
         {
             if (userCoverPhotoUpdateRequest?.CoverPhoto == null)
                 throw new BadRequestException(ApiErrorCode.INVALID_COVER_PHOTO_IMAGE, ApiErrorMessage.INVALID_COVER_PHOTO_IMAGE);
@@ -347,7 +347,7 @@ namespace Mcsg.Social.Api.Services
             });
         }
 
-        public async Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SearchUserReq input)
+        public async Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input)
         {
             PagedResults<UserSearchResponse> results;
             if (string.IsNullOrWhiteSpace(input.ProfileName))

@@ -5,10 +5,10 @@
 
     public interface ISoundService
     {
-        Task<PagedResults<SoundDto>> GetAllSoundAsync(BackgroundMediaLoadReq req);
-        Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(BackgroundMediaLoadReq req);
+        Task<PagedResults<SoundDto>> GetAllSoundAsync(SoundBackgroundMediaLoadR req);
+        Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(SoundBackgroundMediaLoadR req);
         Task<SoundDto> GetSoundByPostAsync(Guid postId);
-        Task<PagedResults<SoundDto>> SearchSoundAsync(SearchSoundReq req);
+        Task<PagedResults<SoundDto>> SearchSoundAsync(SoundSearchSoundR req);
         Task<bool> AddSoundAsync(Guid postId, Guid soundId);
         Task<bool> RemoveSoundAsync(Guid postId);
     }

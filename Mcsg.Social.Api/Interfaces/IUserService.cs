@@ -11,12 +11,12 @@ namespace Mcsg.Social.Api.Interfaces
         Task<UserProfileResponse> GetCurrentUserAsync();
         Task<UserProfileResponse> GetUserByUserNameAsync(string profileName);
         Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateR req);
-        Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateRequest userAvatarUpdateRequest);
+        Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest);
         Task<UserProfileAvatarResponse> GetUserAvatar(Guid userId);
-        Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest);
+        Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR userCoverPhotoUpdateRequest);
         Task<List<SimilarProfile>> GetSimilarNameAsync(string name);
         Task SyncWalletUserReward(Guid userId, float point, RewardType type);
         Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name);
-        Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SearchUserReq input);
+        Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input);
     }
 }

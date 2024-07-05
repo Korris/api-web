@@ -27,8 +27,8 @@
         Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
         Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
 
-        Task<SubPost> SubPostChapterToSeries(string hashId, ChapterPostReq chapterPostReq);
-        Task<SubPost> SubPostUpdateChapterToSeries(string hashId, int order, ChapterPostReq chapterPostReq);
+        Task<SubPost> SubPostChapterToSeries(string hashId, StoryChapterPostR chapterPostReq);
+        Task<SubPost> SubPostUpdateChapterToSeries(string hashId, int order, StoryChapterPostR chapterPostReq);
         Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
         Task<bool> DeleteChapter(string hashId, int order);
         void VerifyBasicInfo(string title);
@@ -39,10 +39,10 @@
         Task UpdateKeyWordForComicAndStoryToSmartLookup();
         Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input);
         Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input);
-        Task<IEnumerable<string>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
+        Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
         Task<ListIdForHomePage> GetLatestPostsByType();
         Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
         Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
-        Task<IEnumerable<string>> GetSubPostRandomIdsAsync(GetPostRandomIdsReq input);
+        Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     }
 }

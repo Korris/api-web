@@ -12,9 +12,8 @@ namespace Mcsg.Social.Api.Controllers
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly IPostService _postService;
-        private readonly IFeedService _feedService;
+        #region -- Methods --
+
         public ProfileController(IUserService userService, IPostService postService, IFeedService feedService)
         {
             _userService = userService;
@@ -55,5 +54,17 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _postService.GetSeriesByUserByPage(PostType.Story, profileName, loadReq);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IUserService _userService;
+
+        private readonly IPostService _postService;
+
+        private readonly IFeedService _feedService;
+
+        #endregion
     }
 }

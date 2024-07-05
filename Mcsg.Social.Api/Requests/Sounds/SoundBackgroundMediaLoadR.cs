@@ -2,12 +2,8 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    using Common.Core.Enums;
-
-    public class PopularTagReq
+    public class SoundBackgroundMediaLoadR
     {
-        [DefaultValue(null)]
-        public PostType? PostType { get; set; }
         [DefaultValue(1)]
         public int PageNumber { get; set; }
         [DefaultValue(10)]

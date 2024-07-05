@@ -2,9 +2,9 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class UpdateNotificationReq
+    public class SoundSearchSoundR : SoundBackgroundMediaLoadR
     {
         [Required]
-        public Guid NotificationId { get; set; }
+        public string? Keyword { get; set; }
     }
 }

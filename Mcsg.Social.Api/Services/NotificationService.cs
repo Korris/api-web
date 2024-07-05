@@ -62,7 +62,7 @@ namespace Mcsg.Social.Api.Services
             return _mapper.Map<NotificationModel>(result);
         }
 
-        public async Task<PagedResults<NotificationModel>> GetNotificationByReceiverAsync(NotificationReq request)
+        public async Task<PagedResults<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
             if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
@@ -101,7 +101,7 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<PagedResults<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationReq request)
+        public async Task<PagedResults<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request)
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
             if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers
 {
     using Interfaces;
-    using Models;
     using Requests;
 
     [Route("[controller]")]
@@ -12,7 +11,8 @@ namespace Mcsg.Social.Api.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        #region -- Methods --
+
         public UserController(IUserService userService)
         {
             _userService = userService;
@@ -40,14 +40,14 @@ namespace Mcsg.Social.Api.Controllers
             return Ok(result);
         }
         [HttpPut("avatar")]
-        public async Task<IActionResult> UpdateUserAvatar([FromForm] UserAvatarUpdateRequest userAvatarUpdateRequest)
+        public async Task<IActionResult> UpdateUserAvatar([FromForm] UserAvatarUpdateR userAvatarUpdateRequest)
         {
             var result = await _userService.UpdateUserAvatar(userAvatarUpdateRequest);
             return Ok(result);
         }
 
         [HttpPut("cover-photo")]
-        public async Task<IActionResult> UpdateUserCoverPhoto([FromForm] UserCoverPhotoUpdateRequest userCoverPhotoUpdateRequest)
+        public async Task<IActionResult> UpdateUserCoverPhoto([FromForm] UserCoverPhotoUpdateR userCoverPhotoUpdateRequest)
         {
             var result = await _userService.UpdateUserCoverPhoto(userCoverPhotoUpdateRequest);
             return Ok(result);
@@ -68,5 +68,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _userService.GetSimilarProfilesMentionAsync(name);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IUserService _userService;
+
+        #endregion
     }
 }

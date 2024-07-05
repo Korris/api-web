@@ -4,15 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers
 {
     using Interfaces;
-    using Models;
     using Requests;
 
     [ApiController]
     [Route("[controller]")]
     public class SmartLookupController : ControllerBase
     {
-        private readonly ISmartLookupService _smartLookupService;
-        private readonly IUserService _userService;
+        #region -- Methods --
 
         public SmartLookupController(ISmartLookupService smartLookupService, IUserService userService)
         {
@@ -26,7 +24,6 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _smartLookupService.SearchAsync(keyword?.ToString());
             return Ok(result);
         }
-
 
         [HttpGet("recent-search")]
         [Authorize]
@@ -46,17 +43,27 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpPost("add-recent-search")]
         [Authorize]
-        public async Task<IActionResult> AddRecentSearch([FromBody] AddRecentSearchRequest req)
+        public async Task<IActionResult> AddRecentSearch([FromBody] SmartLookupAddRecentSearchR req)
         {
             var result = await _smartLookupService.AddRecentSearchAsync(req);
             return Ok(result);
         }
 
         [HttpGet("user-list")]
-        public async Task<IActionResult> SearchUserByKeyWord([FromQuery] SearchUserReq input)
+        public async Task<IActionResult> SearchUserByKeyWord([FromQuery] SmartLookupSearchUserR input)
         {
             var result = await _userService.SearchUserbyKeyword(input);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly ISmartLookupService _smartLookupService;
+
+        private readonly IUserService _userService;
+
+        #endregion
     }
 }

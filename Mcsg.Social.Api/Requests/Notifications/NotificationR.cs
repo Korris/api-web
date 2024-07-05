@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class BackgroundMediaLoadReq
+    public class NotificationR
     {
         [DefaultValue(1)]
         public int PageNumber { get; set; }

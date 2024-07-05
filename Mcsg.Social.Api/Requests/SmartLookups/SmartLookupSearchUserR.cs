@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests
 {
-    public class SearchUserReq : BasePageResultReq
+    public class SmartLookupSearchUserR : BasePageResultReq
     {
         public string? ProfileName { get; set; }
     }

@@ -10,7 +10,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class SoundController : ControllerBase
     {
-        private readonly ISoundService _soundService;
+        #region -- Methods --
+
         public SoundController(ISoundService soundService)
         {
             _soundService = soundService;
@@ -18,7 +19,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpGet("list")]
         [Authorize]
-        public async Task<IActionResult> GetAllSound([FromQuery] BackgroundMediaLoadReq request)
+        public async Task<IActionResult> GetAllSound([FromQuery] SoundBackgroundMediaLoadR request)
         {
             var result = await _soundService.GetAllSoundAsync(request);
             return Ok(result);
@@ -26,17 +27,25 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpGet("recently-used")]
         [Authorize]
-        public async Task<IActionResult> GetRecentlyUseSound([FromQuery] BackgroundMediaLoadReq request)
+        public async Task<IActionResult> GetRecentlyUseSound([FromQuery] SoundBackgroundMediaLoadR request)
         {
             var result = await _soundService.GetRecentlyUseSoundAsync(request);
             return Ok(result);
         }
         [HttpGet("search")]
         [Authorize]
-        public async Task<IActionResult> SearchSound([FromQuery] SearchSoundReq request)
+        public async Task<IActionResult> SearchSound([FromQuery] SoundSearchSoundR request)
         {
             var result = await _soundService.SearchSoundAsync(request);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly ISoundService _soundService;
+
+        #endregion
     }
 }

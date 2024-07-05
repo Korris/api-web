@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests
 {
-    public class TagSuggestReq
+    public class TagSuggestR
     {
         public string? Text { get; set; }
     }

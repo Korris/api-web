@@ -9,12 +9,12 @@
     {
         Task<List<string>> AddTagsToPost(Guid postId, List<string> tags);
         Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags);
-        Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestReq tagSuggestReq);
-        Task<PagedResults<PopularTagResponse>> GetPopularTags(PopularTagReq popularTagReq);
-        Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TodayTrendingTagReq todayTrendingTagReq);
+        Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestR tagSuggestReq);
+        Task<PagedResults<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq);
+        Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq);
         Task<List<TagView>> GetTagsByPostIdAsync(Guid postId);
         Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId);
-        Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(SearchTagReq input);
-        Task<IEnumerable<TagSearchResponse>> SearchTagsByName(SearchTagsReq request);
+        Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input);
+        Task<IEnumerable<TagSearchResponse>> SearchTagsByName(TagSearchKeywordR request);
     }
 }

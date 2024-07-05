@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests
 {
-    public class SearchTagsReq
+    public class TagSearchKeywordR
     {
         public string? Keyword { get; set; }
     }

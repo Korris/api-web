@@ -11,6 +11,7 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Models;
+    using Requests;
 
     public partial class SmartLookupService : ISmartLookupService
     {
@@ -138,7 +139,7 @@ namespace Mcsg.Social.Api.Services
             return await _smartLookupUserRepository.DeleteAsync(id);
         }
 
-        public async Task<bool> AddRecentSearchAsync(AddRecentSearchRequest res)
+        public async Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res)
         {
             if (_currentUserService.Session != null && _currentUserService.Session.UserId != Guid.Empty)
             {

@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests
 {
-    public class ReactReq
+    using Lib.Data.Enums;
+
+    public class ReactionReactR
     {
         public Guid TargetId { get; set; }
         public ReactionType Type { get; set; }

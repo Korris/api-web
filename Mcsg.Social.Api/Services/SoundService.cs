@@ -33,7 +33,7 @@ namespace Mcsg.Social.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResults<SoundDto>> GetAllSoundAsync(BackgroundMediaLoadReq req)
+        public async Task<PagedResults<SoundDto>> GetAllSoundAsync(SoundBackgroundMediaLoadR req)
         {
             var offset = req.PageSize * (req.PageNumber - 1);
             var multi = await _bgMediaRepository.Connection.QueryMultipleAsync(GetAllSoundQuery,
@@ -59,7 +59,7 @@ namespace Mcsg.Social.Api.Services
                 return new PagedResults<SoundDto>(0);
             }
         }
-        public async Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(BackgroundMediaLoadReq req)
+        public async Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(SoundBackgroundMediaLoadR req)
         {
             var offset = req.PageSize * (req.PageNumber - 1);
             var multi = await _bgMediaRepository.Connection.QueryMultipleAsync(GetRecentlyUseSoundQuery,
@@ -91,7 +91,7 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<PagedResults<SoundDto>> SearchSoundAsync(SearchSoundReq req)
+        public async Task<PagedResults<SoundDto>> SearchSoundAsync(SoundSearchSoundR req)
         {
             if (string.IsNullOrWhiteSpace(req.Keyword))
             {

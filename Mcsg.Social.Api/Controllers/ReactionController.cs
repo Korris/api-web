@@ -10,10 +10,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class ReactionController : ControllerBase
     {
-        private readonly IPostReactService _postReactService;
-        private readonly ISubPostReactService _subPostReactService;
-        private readonly ISubPostCommentReactService _subPostCommentReactService;
-        private readonly IPostCommentReactService _postCommentReactService;
+        #region -- Methods --
+
         public ReactionController(IPostReactService postReactService, ISubPostReactService subPostReactService, ISubPostCommentReactService subPostCommentReactService, IPostCommentReactService postCommentReactService)
         {
             _postReactService = postReactService;
@@ -21,19 +19,22 @@ namespace Mcsg.Social.Api.Controllers
             _subPostCommentReactService = subPostCommentReactService;
             _postCommentReactService = postCommentReactService;
         }
+
         [HttpGet("post/{postId}")]
         public async Task<IActionResult> GetPostReacts(Guid postId)
         {
             var result = await _postReactService.GetReactions(postId);
             return Ok(result);
         }
+
         [HttpPost("post")]
         [Authorize]
-        public async Task<IActionResult> AddPostReact(ReactReq request)
+        public async Task<IActionResult> AddPostReact(ReactionReactR request)
         {
             var result = await _postReactService.AddReactionToPost(request.TargetId, request.Type);
             return Ok(result);
         }
+
         [HttpDelete("post/{postId}")]
         [Authorize]
         public async Task<IActionResult> DeleteReact(Guid postId)
@@ -41,15 +42,17 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _postReactService.RemoveReactionToPost(postId);
             return Ok(result);
         }
+
         [HttpGet("sub-post/{subPostId}")]
         public async Task<IActionResult> GetSubPostReacts(Guid subPostId)
         {
             var result = await _subPostReactService.GetReactions(subPostId);
             return Ok(result);
         }
+
         [HttpPost("sub-post")]
         [Authorize]
-        public async Task<IActionResult> AddSubPostReact(ReactReq request)
+        public async Task<IActionResult> AddSubPostReact(ReactionReactR request)
         {
             var result = await _subPostReactService.AddReactionToSubPost(request.TargetId, request.Type);
             return Ok(result);
@@ -62,15 +65,17 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _subPostReactService.RemoveReactionToSubPost(subPostId);
             return Ok(result);
         }
+
         [HttpGet("comment-post/{commentPostId}")]
         public async Task<IActionResult> GetCommentPostReacts(Guid commentPostId)
         {
             var result = await _postCommentReactService.GetReactions(commentPostId);
             return Ok(result);
         }
+
         [HttpPost("comment-post")]
         [Authorize]
-        public async Task<IActionResult> AddCommentPostReact(ReactReq request)
+        public async Task<IActionResult> AddCommentPostReact(ReactionReactR request)
         {
             var result = await _postCommentReactService.AddReaction(request.TargetId, request.Type);
             return Ok(result);
@@ -83,15 +88,17 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _postCommentReactService.RemoveReaction(commentPostId);
             return Ok(result);
         }
+
         [HttpGet("comment-subpost/{commentSubPostId}")]
         public async Task<IActionResult> GetCommentSubPostReacts(Guid commentSubPostId)
         {
             var result = await _subPostCommentReactService.GetReactions(commentSubPostId);
             return Ok(result);
         }
+
         [HttpPost("comment-subpost")]
         [Authorize]
-        public async Task<IActionResult> AddCommentSubPostReact(ReactReq request)
+        public async Task<IActionResult> AddCommentSubPostReact(ReactionReactR request)
         {
             var result = await _subPostCommentReactService.AddReaction(request.TargetId, request.Type);
             return Ok(result);
@@ -104,5 +111,19 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _subPostCommentReactService.RemoveReaction(commentSubPostId);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IPostReactService _postReactService;
+
+        private readonly ISubPostReactService _subPostReactService;
+
+        private readonly ISubPostCommentReactService _subPostCommentReactService;
+
+        private readonly IPostCommentReactService _postCommentReactService;
+
+        #endregion
     }
 }
