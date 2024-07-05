@@ -10,7 +10,7 @@ public class RefreshTokenDto
     /// <summary>
     /// Refresh token
     /// </summary>
-    public string RefreshToken { get; set; } = default!;
+    public string? RefreshToken { get; set; }
 
     /// <summary>
     /// Refresh token expiry time
