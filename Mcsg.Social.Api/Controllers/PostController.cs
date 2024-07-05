@@ -17,7 +17,7 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpGet("{postType}/tag/{tagName}")]
-        public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] TopPostReq loadReq)
+        public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] ComicTopPostR loadReq)
         {
             if (postType != PostType.Story && postType != PostType.Comic)
             {

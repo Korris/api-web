@@ -44,13 +44,13 @@ namespace Mcsg.Social.Api.Controllers
             return Ok(result);
         }
         [HttpGet("comics/{profileName}")]
-        public async Task<IActionResult> GetUserComic(string profileName, [FromQuery] TopPostReq loadReq)
+        public async Task<IActionResult> GetUserComic(string profileName, [FromQuery] ComicTopPostR loadReq)
         {
             var result = await _postService.GetSeriesByUserByPage(PostType.Comic, profileName, loadReq);
             return Ok(result);
         }
         [HttpGet("stories/{profileName}")]
-        public async Task<IActionResult> GetUserStories(string profileName, [FromQuery] TopPostReq loadReq)
+        public async Task<IActionResult> GetUserStories(string profileName, [FromQuery] ComicTopPostR loadReq)
         {
             var result = await _postService.GetSeriesByUserByPage(PostType.Story, profileName, loadReq);
             return Ok(result);

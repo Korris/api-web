@@ -178,7 +178,7 @@ namespace Mcsg.Social.Api.Services
             return response;
         }
 
-        public async Task<List<BasicCommentResponse>> GetReplyByCommentId(ReplyByCommentInput input)
+        public async Task<List<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input)
         {
             List<BasicCommentResponse> results;
 
@@ -206,7 +206,7 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input)
+        public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input)
         {
             var methodName = $"{typeof(CommentService).FullName}.{nameof(GetCommentWithMostReaction)}";
             $"{methodName} ->Begin".LogInfor();

@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class ReactionByTargetRequest
+    public class FeedReactionByTargetR
     {
         [DefaultValue(1)]
         public int PageNumber { get; set; }

@@ -11,7 +11,8 @@ namespace Mcsg.Social.Api.Controllers
     [Authorize]
     public class FavoriteController : ControllerBase
     {
-        private readonly IFavoriteService _favoriteService;
+        #region -- Methods --
+
         public FavoriteController(IFavoriteService favoriteService)
         {
             _favoriteService = favoriteService;
@@ -32,14 +33,14 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpGet("tag-favorite")]
-        public async Task<IActionResult> GetTagFavorite([FromQuery] FavoriteTagReq req)
+        public async Task<IActionResult> GetTagFavorite([FromQuery] FavoriteTagR req)
         {
             var result = await _favoriteService.GetTagFavoriteAsync(req);
             return Ok(result);
         }
 
         [HttpGet("post-favorite")]
-        public async Task<IActionResult> GetPostFavorite([FromQuery] FavoritePostReq req)
+        public async Task<IActionResult> GetPostFavorite([FromQuery] FavoritePostR req)
         {
             var result = await _favoriteService.GetPostFavoriteByUserAsync(req);
             return Ok(result);
@@ -58,5 +59,13 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _favoriteService.RemovePostToFavoriteAsync(postId);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IFavoriteService _favoriteService;
+
+        #endregion
     }
 }

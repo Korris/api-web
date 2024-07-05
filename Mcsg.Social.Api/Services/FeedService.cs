@@ -472,7 +472,7 @@ namespace Mcsg.Social.Api.Services
             }
         }
 
-        public async Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string keyWord, SearchKeywordReq feedLoadReq)
+        public async Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
         {
             try
             {
@@ -671,7 +671,7 @@ namespace Mcsg.Social.Api.Services
             await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
             return result;
         }
-        public async Task<FeedResponse> UpdateFeedAsync(string hashId, UpdateFeedPostReq feedPostReq)
+        public async Task<FeedResponse> UpdateFeedAsync(string hashId, FeedUpdatePostR feedPostReq)
         {
             var ss = _currentUserService.Session;
             var currentUserId = ss.UserId;
@@ -833,7 +833,7 @@ namespace Mcsg.Social.Api.Services
         {
             return await _postService.Delete(postId);
         }
-        public async Task<bool> ReportFeedAsync(ReportPostReq req)
+        public async Task<bool> ReportFeedAsync(FeedReportPostReq req)
         {
             return await _postService.ReportPostAsync(req);
         }

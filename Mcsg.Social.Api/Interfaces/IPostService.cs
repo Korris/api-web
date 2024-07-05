@@ -11,34 +11,34 @@
     public interface IPostService
     {
         Task<bool> Delete(Guid postId);
-        Task<PostSeriesResponse> PostSeries(PostType type, PostSeriesReq postReq);
-        Task<PostSeriesResponse> UpdateSeries(string hashId, PostUpdateSeriesReq postReq);
+        Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR postReq);
+        Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR postReq);
         Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters);
         Task<ChapterResponse> GetSeriesChapter(string hashId, int order);
-        Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ChapterListReq request);
+        Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
         Task<PagedResults<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
-        Task<PagedResults<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ChapterListReq loadReq);
-        Task<PagedResults<PostSeriesTopResponse>> GetMySeries(PostType type, PostListSeriesReq request);
-        Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, TopPostReq loadReq);
-        Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, TopPostReq loadReq);
-        Task<PagedResults<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, TopPostReq loadReq);
+        Task<PagedResults<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq);
+        Task<PagedResults<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR request);
+        Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq);
+        Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq);
+        Task<PagedResults<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq);
         Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, int number);
         Task<PostSeriesAllTopResponse> GetTopSeries(PostType type);
-        Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, PostListSeriesReq request);
-        Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, RelationPostSeriesReq request);
+        Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
+        Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
 
         Task<SubPost> SubPostChapterToSeries(string hashId, ChapterPostReq chapterPostReq);
         Task<SubPost> SubPostUpdateChapterToSeries(string hashId, int order, ChapterPostReq chapterPostReq);
-        Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ChapterOrderSwapReq orders);
+        Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
         Task<bool> DeleteChapter(string hashId, int order);
         void VerifyBasicInfo(string title);
         ChapterResponse MappingChapterResponse(SubPost newChapter);
         Task<List<RewardRespone>> CheckRewardsForPost(Guid currentUserId, PostType type);
         Task<List<MyPostSeriesResponse>> GetMyAllSeries();
-        Task<bool> ReportPostAsync(ReportPostReq req);
+        Task<bool> ReportPostAsync(FeedReportPostReq req);
         Task UpdateKeyWordForComicAndStoryToSmartLookup();
-        Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input);
-        Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input);
+        Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input);
+        Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input);
         Task<IEnumerable<string>> GetPostRandomIdsAsync(GetPostRandomIdsReq req);
         Task<ListIdForHomePage> GetLatestPostsByType();
         Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);

@@ -12,6 +12,6 @@
         Task<bool> RemoveReaction(Guid targetId);
         Task<T> GetReaction(Guid targetId, ReactionType type);
         Task<ReactionsResponse> GetReactions(Guid targetId);
-        Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, ReactionByTargetRequest request);
+        Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request);
     }
 }

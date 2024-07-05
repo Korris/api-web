@@ -100,7 +100,7 @@ namespace Mcsg.Social.Api.Services
         }
 
         #region PostStoryOrComic
-        public async Task<PostSeriesResponse> PostSeries(PostType type, PostSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR comicPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
             var profileId = _currentUserService.Session.ProfileId;
@@ -353,7 +353,7 @@ namespace Mcsg.Social.Api.Services
 
             return result;
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, PostListSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
         {
             var currentUserId = _currentUserService?.Session?.UserId;
             var isFavorite = currentUserId == null ? false : request.IsFavorite;
@@ -408,7 +408,7 @@ namespace Mcsg.Social.Api.Services
                 return new PagedResults<PostSeriesTopResponse>(0);
             }
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, RelationPostSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request)
         {
             try
             {
@@ -482,7 +482,7 @@ namespace Mcsg.Social.Api.Services
                 throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
             }
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, TopPostReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq)
         {
             ValidateTotalItem(loadReq.PageSize);
             PagedResults<PostSeriesTopResponse> results;
@@ -532,7 +532,7 @@ namespace Mcsg.Social.Api.Services
             await _smartLookupRepository.InsertAsync(smartLookupInserts);
         }
 
-        public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, TopPostReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq)
         {
             ValidateTotalItem(loadReq.PageSize);
             PagedResults<PostSeriesTopResponse> results;
@@ -564,7 +564,7 @@ namespace Mcsg.Social.Api.Services
             }
             return results;
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, TopPostReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq)
         {
             ValidateTotalItem(loadReq.PageSize);
             PagedResults<PostSeriesTopResponse> results;
@@ -597,7 +597,7 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
-        public async Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, PostByTagNameInput input)
+        public async Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input)
         {
             ValidateTotalItem(input.PageSize);
             PagedResults<PostBoxResposne> results;
@@ -631,7 +631,7 @@ namespace Mcsg.Social.Api.Services
             return results;
         }
 
-        public async Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, PostByProFileNameInput input)
+        public async Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input)
         {
             ValidateTotalItem(input.PageSize);
             PagedResults<PostBoxResposne> results;
@@ -739,7 +739,7 @@ namespace Mcsg.Social.Api.Services
 
             return MappingTopSeries(items);
         }
-        public async Task<PostSeriesResponse> UpdateSeries(string hashId, PostUpdateSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR comicPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
             var currentFullName = $"{_currentUserService.Session.FirstName} {_currentUserService.Session.LastName}";
@@ -852,7 +852,7 @@ namespace Mcsg.Social.Api.Services
 
             return itemResponse;
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetMySeries(PostType type, PostListSeriesReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
         {
             ValidateTotalItem(loadReq.PageSize);
             var currentUserId = _currentUserService?.Session?.UserId;
@@ -1224,7 +1224,7 @@ namespace Mcsg.Social.Api.Services
         #endregion
 
         #region Chapters        
-        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ChapterListReq loadReq)
+        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR loadReq)
         {
             PagedResults<ChapterResponse> results;
             var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -1294,7 +1294,7 @@ namespace Mcsg.Social.Api.Services
             }
             return results;
         }
-        public async Task<PagedResults<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ChapterListReq loadReq)
+        public async Task<PagedResults<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
         {
             PagedResults<ChapterTOCExtendResponse> results;
             var query = GetSeriesChaptersWithOffsetSimpleByHashId;
@@ -1476,7 +1476,7 @@ namespace Mcsg.Social.Api.Services
             return result;
         }
 
-        public async Task<List<ChapterResponse>> SwapChapterOrder(string postHashId, ChapterOrderSwapReq orders)
+        public async Task<List<ChapterResponse>> SwapChapterOrder(string postHashId, ComicChapterOrderSwapR orders)
         {
             var result = new List<ChapterResponse>();
             var subPosts = await _postRepository
@@ -1554,7 +1554,7 @@ namespace Mcsg.Social.Api.Services
             //}
         }
 
-        private int GetOffsetSetup(ref TopPostReq loadReq)
+        private int GetOffsetSetup(ref ComicTopPostR loadReq)
         {
             var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 
@@ -1679,7 +1679,7 @@ namespace Mcsg.Social.Api.Services
         #endregion
 
         #region REPORT
-        public async Task<bool> ReportPostAsync(ReportPostReq req)
+        public async Task<bool> ReportPostAsync(FeedReportPostReq req)
         {
             var postReport = new PostReport
             {

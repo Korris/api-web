@@ -11,7 +11,7 @@
         Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request);
         Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType);
-        Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(MostReactionCommentInput input);
-        Task<List<BasicCommentResponse>> GetReplyByCommentId(ReplyByCommentInput input);
+        Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input);
+        Task<List<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input);
     }
 }

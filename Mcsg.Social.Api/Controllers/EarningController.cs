@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers
 {
     using Interfaces;
-    using Models;
     using Models.Earning;
     using Requests;
 
@@ -12,7 +11,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class EarningController : ControllerBase
     {
-        private readonly IEarningService _earningService;
+        #region -- Methods --
+
         public EarningController(IEarningService earningService)
         {
             _earningService = earningService;
@@ -36,7 +36,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [Authorize]
         [HttpPost("enable-earning")]
-        public async Task<IActionResult> EnableEarning(EnableEarningModeRequest req)
+        public async Task<IActionResult> EnableEarning(EarningEnableR req)
         {
             await _earningService.EnableEarningAsync(req);
             return Ok();
@@ -52,7 +52,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [Authorize]
         [HttpGet("report-detail")]
-        public async Task<IActionResult> GetReportOfSeries(string hashId, [FromQuery] ChapterListReq req)
+        public async Task<IActionResult> GetReportOfSeries(string hashId, [FromQuery] ComicChapterListR req)
         {
             var result = await _earningService.GetReportOfSeriesAsync(hashId, req);
             return Ok(result);
@@ -60,10 +60,18 @@ namespace Mcsg.Social.Api.Controllers
 
         [Authorize]
         [HttpGet("affiliate-code")]
-        public IActionResult GetAffiliateCode([FromQuery] AffiliateCodeRequest req)
+        public IActionResult GetAffiliateCode([FromQuery] EarningAffiliateCodeR req)
         {
             var result = _earningService.GetAffiliateCode(req);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IEarningService _earningService;
+
+        #endregion
     }
 }

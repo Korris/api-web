@@ -133,7 +133,7 @@ namespace Mcsg.Social.Api.Services
             }
             return result;
         }
-        public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, ReactionByTargetRequest request)
+        public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
         {
             int? reactType = !request.Type.IsNumeric() ? null : request.Type.ToInt();
             var query = string.Format(GetReactionByTargetQuery, _reactRepository.TableName);

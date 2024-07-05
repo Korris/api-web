@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class ReportPostReq
+    public class FeedReportPostReq
     {
         public Guid PostId { get; set; }
         public ReasonType ReasonType { get; set; }

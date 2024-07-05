@@ -75,7 +75,7 @@ namespace Mcsg.Social.Api.Services
                 Amount = affiliateAmount,
             };
         }
-        public string GetAffiliateCode(Guid userId, AffiliateCodeRequest req)
+        public string GetAffiliateCode(Guid userId, EarningAffiliateCodeR req)
         {
             var entityTypes = Enum.GetNames(typeof(AffiliateEntityType)).ToList().ConvertAll(x => x.ToLower());
 

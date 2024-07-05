@@ -10,7 +10,8 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class CommentController : ControllerBase
     {
-        private readonly ICommentService _commentService;
+        #region -- Methods --
+
         public CommentController(ICommentService commentService)
         {
             _commentService = commentService;
@@ -70,6 +71,7 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _commentService.GetCommentsOfPostAsync(request);
             return Ok(result);
         }
+
         [HttpGet("sub-feed")]
         public async Task<IActionResult> GetSubFeedComments([FromQuery] CommentLoadReq request)
         {
@@ -83,6 +85,7 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _commentService.GetCommentsOfPostAsync(request);
             return Ok(result);
         }
+
         [HttpGet("comic-chapter")]
         public async Task<IActionResult> GetComicChapterComments([FromQuery] CommentLoadReq request)
         {
@@ -96,6 +99,7 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _commentService.GetCommentsOfPostAsync(request);
             return Ok(result);
         }
+
         [HttpGet("story-chapter")]
         public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentLoadReq request)
         {
@@ -104,17 +108,25 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpGet("comment-most-reaction")]
-        public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] MostReactionCommentInput input)
+        public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] CommentMostReactionR input)
         {
             var result = await _commentService.GetCommentWithMostReaction(input);
             return Ok(result);
         }
 
         [HttpGet("reply-by-comment")]
-        public async Task<IActionResult> GetReplyByCommentId([FromQuery] ReplyByCommentInput input)
+        public async Task<IActionResult> GetReplyByCommentId([FromQuery] CommentReplyByCommentR input)
         {
             var result = await _commentService.GetReplyByCommentId(input);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly ICommentService _commentService;
+
+        #endregion
     }
 }

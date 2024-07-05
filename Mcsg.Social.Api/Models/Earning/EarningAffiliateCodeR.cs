@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Models.Earning
 {
-    public class AffiliateCodeRequest
+    public class EarningAffiliateCodeR
     {
         [Required]
         public string HashId { get; set; }

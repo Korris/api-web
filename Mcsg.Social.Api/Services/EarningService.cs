@@ -10,7 +10,6 @@ namespace Mcsg.Social.Api.Services
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
-    using Models;
     using Models.Earning;
     using Requests;
 
@@ -52,7 +51,7 @@ namespace Mcsg.Social.Api.Services
             return user != null ? user.IsActiveEarning : false;
         }
 
-        public async Task EnableEarningAsync(EnableEarningModeRequest req)
+        public async Task EnableEarningAsync(EarningEnableR req)
         {
             var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
             if (user != null)
@@ -109,7 +108,7 @@ namespace Mcsg.Social.Api.Services
         {
             return await _postService.GetMyAllSeries();
         }
-        public async Task<PagedResults<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ChapterListReq loadReq)
+        public async Task<PagedResults<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ComicChapterListR loadReq)
         {
             var userId = _currentUserService.Session.UserId;
 
@@ -151,7 +150,7 @@ namespace Mcsg.Social.Api.Services
                 return new PagedResults<ReportSeriesData>(0);
             }
         }
-        public string GetAffiliateCode(AffiliateCodeRequest req)
+        public string GetAffiliateCode(EarningAffiliateCodeR req)
         {
             return _affiliateService.GetAffiliateCode(_currentUserService.Session.UserId, req);
         }

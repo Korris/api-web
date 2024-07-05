@@ -10,8 +10,7 @@ namespace Mcsg.Social.Api.Controllers
     [Route("[controller]")]
     public class FeedController : ControllerBase
     {
-        private readonly IFeedService _feedService;
-        private readonly IPostReactService _postReactService;
+        #region -- Methods --
 
         public FeedController(IFeedService feedService, IPostReactService postReactService)
         {
@@ -29,47 +28,54 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpPut("{hashId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateFeed(string hashId, UpdateFeedPostReq request)
+        public async Task<IActionResult> UpdateFeed(string hashId, FeedUpdatePostR request)
         {
             var result = await _feedService.UpdateFeedAsync(hashId, request);
             return Ok(result);
         }
+
         [HttpGet("list")]
         public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.ALL);
+            var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.ALL);
             return Ok(result);
         }
+
         [HttpGet("display-setting")]
         public IActionResult GetFeedDisplayConfig()
         {
             var result = _feedService.GetFeedDisplayConfig();
             return Ok(result);
         }
+
         [HttpGet("trending")]
         public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.TRENDING);
+            var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.TRENDING);
             return Ok(result);
         }
+
         [HttpGet("hot")]
         public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
         {
-            var result = await _feedService.GetFeedsAsync(request, Mcsg.Social.Api.Enums.LoadFeedType.HOT);
+            var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.HOT);
             return Ok(result);
         }
+
         [HttpGet("list/{tagName}")]
         public async Task<IActionResult> GetFeedByTag(string tagName, [FromQuery] FeedLoadReq request)
         {
             var result = await _feedService.GetFeedsByTagAsync(tagName, request);
             return Ok(result);
         }
+
         [HttpGet("search/{keyword}")]
-        public async Task<IActionResult> GetFeedByKeyword(string keyword, [FromQuery] SearchKeywordReq request)
+        public async Task<IActionResult> GetFeedByKeyword(string keyword, [FromQuery] FeedSearchKeywordR request)
         {
             var result = await _feedService.GetFeedByKeywordAsync(keyword, request);
             return Ok(result);
         }
+
         [HttpGet("{hashId}")]
         public async Task<IActionResult> GetFeed(string hashId)
         {
@@ -93,7 +99,7 @@ namespace Mcsg.Social.Api.Controllers
         }
 
         [HttpGet("{id}/reactions")]
-        public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] ReactionByTargetRequest request)
+        public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
         {
             var result = await _postReactService.GetReactionsByTargetAsync(id, request);
             return Ok(result);
@@ -101,7 +107,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpPost("report")]
         [Authorize]
-        public async Task<IActionResult> ReportFeed([FromBody] ReportPostReq request)
+        public async Task<IActionResult> ReportFeed([FromBody] FeedReportPostReq request)
         {
             var result = await _feedService.ReportFeedAsync(request);
             return Ok(result);
@@ -113,5 +119,15 @@ namespace Mcsg.Social.Api.Controllers
             var result = await _feedService.GetFeedsByIds(hashIds);
             return Ok(result);
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IFeedService _feedService;
+
+        private readonly IPostReactService _postReactService;
+
+        #endregion
     }
 }

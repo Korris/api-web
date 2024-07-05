@@ -27,7 +27,7 @@
             _type = PostType.Story;
             _currentUserService = currentUserService;
         }
-        public async Task<PostSeriesResponse> PostStory(PostSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> PostStory(ComicPostSeriesR comicPostReq)
         {
             return await _postService.PostSeries(_type, comicPostReq);
         }
@@ -67,7 +67,7 @@
             return result;
 
         }
-        public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ChapterOrderSwapReq orders)
+        public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders)
         {
             return await _postService.SwapChapterOrder(comicHashId, orders);
         }
@@ -75,7 +75,7 @@
         {
             return await _postService.DeleteChapter(comicHashId, order);
         }
-        public async Task<PostSeriesResponse> UpdateStory(string hashId, PostUpdateSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR comicPostReq)
         {
             return await _postService.UpdateSeries(hashId, comicPostReq);
         }
@@ -96,45 +96,45 @@
         {
             return await _postService.GetTopSeries(_type);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopStoryAsync(PostListSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request)
         {
             return await _postService.GetTopSeriesAsync(_type, request);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationStoriesAsync(RelationPostSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request)
         {
             return await _postService.GetRelationSeriesAsync(_type, request);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetMyStories(PostListSeriesReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq)
         {
             return await _postService.GetMySeries(_type, loadReq);
         }
 
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListStory(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
         }
 
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListStory(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
         }
 
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListStory(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
         }
 
-        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ChapterListReq request)
+        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
         {
             return await _postService.GetChapters(hashId, request);
         }
 
-        public async Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(PostByProFileNameInput request)
+        public async Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request)
         {
             return await _postService.GetPostByUserProfileName(_type, request);
         }
 
-        public async Task<PagedResults<PostBoxResposne>> GetStoryByTagName(PostByTagNameInput request)
+        public async Task<PagedResults<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request)
         {
             return await _postService.GetPostByTagName(_type, request);
         }

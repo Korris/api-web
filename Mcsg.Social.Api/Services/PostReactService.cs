@@ -27,7 +27,7 @@
         {
             return await _reactService.GetReactions(postId);
         }
-        public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, ReactionByTargetRequest request)
+        public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
         {
             return await _reactService.GetReactionsByTargetAsync(targetId, request);
         }

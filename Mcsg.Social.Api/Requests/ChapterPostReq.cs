@@ -16,15 +16,12 @@
         public bool IsEnableComment { get; set; }
         #endregion
     }
-    public class ChapterComicReq : ChapterPostReq
-    {
-        public List<ResourcePostReq> Files { get; set; }
-    }
+
     public class ChapterStoryReq : ChapterPostReq
     {
         public string? Body { get; set; }
     }
-    public class ChapterOrderSwapReq
+    public class ComicChapterOrderSwapR
     {
         public int Order1 { get; set; }
         public int Order2 { get; set; }

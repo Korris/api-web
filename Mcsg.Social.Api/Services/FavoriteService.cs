@@ -87,7 +87,7 @@ namespace Mcsg.Social.Api.Services
             return iResult > 0;
         }
 
-        public async Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagReq req)
+        public async Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req)
         {
             var offset = req.PageSize * (req.PageNumber - 1);
             var multipleQuery = await _tagFavoriteRepository.Connection.
@@ -138,7 +138,7 @@ namespace Mcsg.Social.Api.Services
             return true;
         }
 
-        public async Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostReq req)
+        public async Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req)
         {
             var offset = req.PageSize * (req.PageNumber - 1);
             var multipleQuery = await _postFavoriteRepository.Connection.
@@ -155,7 +155,7 @@ namespace Mcsg.Social.Api.Services
 
             return response;
         }
-        public async Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostReq req)
+        public async Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req)
         {
             try
             {

@@ -2,13 +2,12 @@
 
 namespace Mcsg.Social.Api.Requests
 {
-    public class SearchKeywordReq
+    public class FavoriteTagR
     {
         [DefaultValue(1)]
         public int PageNumber { get; set; }
-        [DefaultValue(10)]
+        [DefaultValue(6)]
         public int PageSize { get; set; }
-        [DefaultValue("CreatedDate")]
-        public string? OrderBy { get; set; }
+
     }
 }

@@ -12,9 +12,9 @@
         Task<bool> RemovePostToFavoriteAsync(Guid postId);
         Task<bool> RemoveTagToFavoriteAsync(Guid tagId);
 
-        Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagReq req);
-        Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostReq req);
-        Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostReq req);
+        Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
+        Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
+        Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
 
     }
 }

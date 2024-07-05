@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests
 {
-    public class FavoritePostReq : BasePageResultReq
+    public class ComicTopPostR : BasePageResultReq
     {
-
     }
 }

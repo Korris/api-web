@@ -18,7 +18,7 @@ namespace Mcsg.Social.Api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> PostFeed(PostSeriesReq request)
+        public async Task<IActionResult> PostFeed(ComicPostSeriesR request)
         {
             var result = await _storyService.PostStory(request);
             return Ok(result);
@@ -31,7 +31,7 @@ namespace Mcsg.Social.Api.Controllers
         }
         [HttpPut("{hashId}")]
         [Authorize]
-        public async Task<IActionResult> UpdateStory(string hashId, PostUpdateSeriesReq request)
+        public async Task<IActionResult> UpdateStory(string hashId, ComicPostUpdateSeriesR request)
         {
             var result = await _storyService.UpdateStory(hashId, request);
             return Ok(result);
@@ -58,37 +58,37 @@ namespace Mcsg.Social.Api.Controllers
             return Ok(result);
         }
         [HttpGet("list")]
-        public async Task<IActionResult> GetAllTopStory([FromQuery] PostListSeriesReq request)
+        public async Task<IActionResult> GetAllTopStory([FromQuery] ComicPostListSeriesR request)
         {
             var result = await _storyService.GetTopStoryAsync(request);
             return Ok(result);
         }
         [HttpGet("relation")]
-        public async Task<IActionResult> GetRelationStories([FromQuery] RelationPostSeriesReq request)
+        public async Task<IActionResult> GetRelationStories([FromQuery] ComicRelationPostSeriesR request)
         {
             var result = await _storyService.GetRelationStoriesAsync(request);
             return Ok(result);
         }
         [HttpGet("top-hit")]
-        public async Task<IActionResult> GetTopListHitStory([FromQuery] TopPostReq request)
+        public async Task<IActionResult> GetTopListHitStory([FromQuery] ComicTopPostR request)
         {
             var result = await _storyService.GetTopHitListStory(request);
             return Ok(result);
         }
         [HttpGet("top-latest")]
-        public async Task<IActionResult> GetTopListLatestStory([FromQuery] TopPostReq request)
+        public async Task<IActionResult> GetTopListLatestStory([FromQuery] ComicTopPostR request)
         {
             var result = await _storyService.GetTopLatestListStory(request);
             return Ok(result);
         }
         [HttpGet("top-completed")]
-        public async Task<IActionResult> GetTopListCompletedStory([FromQuery] TopPostReq request)
+        public async Task<IActionResult> GetTopListCompletedStory([FromQuery] ComicTopPostR request)
         {
             var result = await _storyService.GetTopCompletedListStory(request);
             return Ok(result);
         }
         [HttpGet("{storyHashId}/chapters")]
-        public async Task<IActionResult> GetChapters(string storyHashId, [FromQuery] ChapterListReq request)
+        public async Task<IActionResult> GetChapters(string storyHashId, [FromQuery] ComicChapterListR request)
         {
             var result = await _storyService.GetChapters(storyHashId, request);
             return Ok(result);
@@ -114,7 +114,7 @@ namespace Mcsg.Social.Api.Controllers
         }
         [HttpPut("{storyHashId}/chapter-swap")]
         [Authorize]
-        public async Task<IActionResult> PutSwapChapter(string storyHashId, ChapterOrderSwapReq orders)
+        public async Task<IActionResult> PutSwapChapter(string storyHashId, ComicChapterOrderSwapR orders)
         {
             var result = await _storyService.SwapChapterOrder(storyHashId, orders);
             return Ok(result);
@@ -128,21 +128,21 @@ namespace Mcsg.Social.Api.Controllers
         }
         [HttpGet("my-stories")]
         [Authorize]
-        public async Task<IActionResult> GetMyStories([FromQuery] PostListSeriesReq loadReq)
+        public async Task<IActionResult> GetMyStories([FromQuery] ComicPostListSeriesR loadReq)
         {
             var result = await _storyService.GetMyStories(loadReq);
             return Ok(result);
         }
 
         [HttpGet("search-by-profileName")]
-        public async Task<IActionResult> GetSearchComic([FromQuery] PostByProFileNameInput input)
+        public async Task<IActionResult> GetSearchComic([FromQuery] ComicPostByProFileNameR input)
         {
             var result = await _storyService.GetStoryByUserProfileName(input);
             return Ok(result);
         }
 
         [HttpGet("search-by-tagName")]
-        public async Task<IActionResult> GetSearchComicByTagName([FromQuery] PostByTagNameInput input)
+        public async Task<IActionResult> GetSearchComicByTagName([FromQuery] ComicPostByTagNameR input)
         {
             var result = await _storyService.GetStoryByTagName(input);
             return Ok(result);

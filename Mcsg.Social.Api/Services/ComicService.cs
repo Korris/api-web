@@ -37,19 +37,19 @@
         }
 
         #region Load data
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListComic(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListComic(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListComic(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListComic(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListComic(TopPostReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetRecommendedComic(TopPostRecommendedReq req)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetRecommendedComic(ComicTopPostRecommendedR req)
         {
             return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
         }
@@ -61,7 +61,7 @@
         {
             return await _postService.GetSeriesChapter(hashId, order);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetMyComics(PostListSeriesReq loadReq)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetMyComics(ComicPostListSeriesR loadReq)
         {
             return await _postService.GetMySeries(_type, loadReq);
         }
@@ -69,11 +69,11 @@
         {
             return await _postService.GetTopSeries(_type);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetTopComicAsync(PostListSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetTopComicAsync(ComicPostListSeriesR request)
         {
             return await _postService.GetTopSeriesAsync(_type, request);
         }
-        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationComicsAsync(RelationPostSeriesReq request)
+        public async Task<PagedResults<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request)
         {
             return await _postService.GetRelationSeriesAsync(_type, request);
         }
@@ -81,7 +81,7 @@
         {
             return await _postService.GetTopNewSeries(_type, number);
         }
-        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ChapterListReq request)
+        public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
         {
             return await _postService.GetChapters(hashId, request);
         }
@@ -89,12 +89,12 @@
         {
             return await _postService.GetChaptersListSimple(hashId);
         }
-        public async Task<PagedResults<PostBoxResposne>> GetComicByUserProfileName(PostByProFileNameInput request)
+        public async Task<PagedResults<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request)
         {
             return await _postService.GetPostByUserProfileName(_type, request);
         }
 
-        public async Task<PagedResults<PostBoxResposne>> GetComicByTagName(PostByTagNameInput request)
+        public async Task<PagedResults<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request)
         {
             return await _postService.GetPostByTagName(_type, request);
         }
@@ -102,12 +102,12 @@
         #endregion
 
         #region Modify data
-        public async Task<PostSeriesResponse> PostComic(PostSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> PostComic(ComicPostSeriesR comicPostReq)
         {
             return await _postService.PostSeries(_type, comicPostReq);
         }
 
-        public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ChapterComicReq chapterPostReq)
+        public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR chapterPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
             var userFolder = _currentUserService.Session.UserFolder;
@@ -128,7 +128,7 @@
             return result;
         }
 
-        public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ChapterComicReq chapterPostReq)
+        public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ComicChapterComicR chapterPostReq)
         {
             var currentUserId = _currentUserService.Session.UserId;
             var userFolder = _currentUserService.Session.UserFolder;
@@ -154,7 +154,7 @@
         {
             return await _postService.DeleteChapter(comicHashId, order);
         }
-        public async Task<PostSeriesResponse> UpdateComic(string hashId, PostUpdateSeriesReq comicPostReq)
+        public async Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR comicPostReq)
         {
             return await _postService.UpdateSeries(hashId, comicPostReq);
         }
@@ -162,7 +162,7 @@
         {
             return await _postService.Delete(postId);
         }
-        public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ChapterOrderSwapReq orders)
+        public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders)
         {
             return await _postService.SwapChapterOrder(comicHashId, orders);
         }
