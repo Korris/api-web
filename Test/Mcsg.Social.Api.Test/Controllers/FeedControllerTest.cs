@@ -21,14 +21,6 @@ public class FeedControllerTest
     [TestCase("", false)]
     public void PostFeed_01_ValidationFailed(string? tag, bool expected)
     {
-        var req = new FeedPostR { Tags = null };
-        var vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
-        req = new FeedPostR { Tags = [] };
-        vr = new FeedPostV().Validate(req);
-        Assert.That(vr.IsValid, Is.EqualTo(false));
-
         PostFeed_01(tag, expected);
     }
 
@@ -80,6 +72,22 @@ public class FeedControllerTest
     public void PostFeed_01_ValidationPassed(string tag, bool expected)
     {
         PostFeed_01(tag, expected);
+    }
+
+    /// <summary>
+    /// Test case empty
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="expected"></param>
+    public void PostFeed_02_ValidationPassed()
+    {
+        var req = new FeedPostR { Tags = null };
+        var vr = new FeedPostV().Validate(req);
+        Assert.That(vr.IsValid, Is.EqualTo(true));
+
+        req = new FeedPostR { Tags = [] };
+        vr = new FeedPostV().Validate(req);
+        Assert.That(vr.IsValid, Is.EqualTo(true));
     }
 
     private void PostFeed_01(string? tag, bool expected)

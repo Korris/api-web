@@ -46,10 +46,15 @@ public class FeedPostV : AbstractValidator<FeedPostR>
     {
         if (tags == null)
         {
-            return false;
+            tags = [];
         }
 
-        return tags.Distinct().Count() == tags.Count && tags.Count > 0;
+        if (tags.Count == 0)
+        {
+            return true;
+        }
+
+        return tags.Distinct().Count() == tags.Count;
     }
 
     #endregion

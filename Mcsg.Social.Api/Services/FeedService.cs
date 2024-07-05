@@ -48,6 +48,7 @@ namespace Mcsg.Social.Api.Services
         public FeedService(IUnitOfWork unitOfWork,
             ITagService tagService,
             IPostService postService,
+            IFileService fileService,
             ISmartCountService smartCountService,
             IMetaDataService metaDataService,
             ICurrentUserService currentUserService,
@@ -64,6 +65,7 @@ namespace Mcsg.Social.Api.Services
             _unitOfWork = unitOfWork;
             _tagService = tagService;
             _postService = postService;
+            _fileService = fileService;
             _smartCountService = smartCountService;
             _viewHistoryService = viewHistoryService;
             _metaDataService = metaDataService;
