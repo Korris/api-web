@@ -21,6 +21,7 @@
         public string ResourceUrl { get; set; }
         public string ResourceHashId { get; set; }
         public string GifId { get; set; }
+        public Guid PostId { get; set; }
         public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
     }
 }
