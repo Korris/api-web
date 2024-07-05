@@ -11,10 +11,14 @@
  */
 #endregion
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Mcsg.Common.Core.Extensions;
 
+using Common.SeedWork.Dtos;
 using Interfaces;
 using Notifications;
 using Storages;
@@ -52,6 +56,49 @@ public static class IServiceCollectionExtension
     {
         service.Configure(action);
         service.AddSingleton<IStorageClient, StorageClient>();
+
+        return service;
+    }
+
+    /// <summary>
+    /// Add bearer authentication
+    /// </summary>
+    /// <param name="service">Service</param>
+    /// <param name="jwt">JWT DTO</param>
+    /// <returns>Return the result</returns>
+    public static IServiceCollection AddBearerAuthentication(this IServiceCollection service, JwtDto jwt)
+    {
+        // JWT
+        var key = Encoding.UTF8.GetBytes(jwt.Signing);
+        service.AddAuthentication(p =>
+        {
+            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(p =>
+        {
+            p.RequireHttpsMetadata = false;
+            p.SaveToken = true;
+            p.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
+            };
+            p.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Query.ContainsKey("access_token"))
+                    {
+                        context.Token = context.Request.Query["access_token"];
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+        });
+        service.AddAuthorization();
 
         return service;
     }

@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 namespace Mcsg.Media.Api;
 
@@ -111,25 +108,7 @@ public class Program
         #endregion
 
         #region -- Setup token --
-        // JWT
-        var key = Encoding.UTF8.GetBytes(st.Jwt.Signing);
-        builder.Services.AddAuthentication(p =>
-        {
-            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(p =>
-        {
-            p.RequireHttpsMetadata = false;
-            p.SaveToken = true;
-            p.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
-            };
-        });
+        builder.Services.AddBearerAuthentication(st.Jwt);
 
         // Add policy
         builder.Services.AddAuthorization(p =>
