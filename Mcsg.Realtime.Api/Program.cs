@@ -11,7 +11,6 @@ using Hubs;
 using Interfaces;
 using Lib.Common;
 using Lib.Common.Constants;
-using Lib.Common.Models;
 using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
@@ -105,8 +104,6 @@ public class Program
         builder.Services.AddDataLibrary(csDb);
         #endregion
 
-        builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
-
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers();
@@ -119,7 +116,7 @@ public class Program
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
         //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(builder.Configuration);
+        builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);

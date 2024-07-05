@@ -1,6 +1,5 @@
 ﻿using Mcsg.Lib.Common.Distributor;
 using Mcsg.Lib.Common.Mail;
-using Mcsg.Lib.Common.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,12 +9,9 @@ namespace Mcsg.Lib.Common
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddCommonLibrary(this IServiceCollection services,
-            IConfiguration configuration)
+        public static IServiceCollection AddCommonLibrary(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSetting>(configuration.GetSection("JwtSettings"));
             services.AddTransient<IEmailSender, SmtpSender>();
-
             return services;
         }
 

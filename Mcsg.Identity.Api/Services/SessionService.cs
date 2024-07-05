@@ -1,23 +1,19 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services;
 
 using Interfaces;
-using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 
 public partial class SessionService : ISessionService
 {
-    private readonly JwtSetting _jwtConfiguration;
     private readonly IRepository<Session> _sessionRepository;
-    public SessionService(
-        IUnitOfWork unitOfWork,
-        IOptions<JwtSetting> jwtConfiguration)
+
+    public SessionService(ISetting setting, IUnitOfWork unitOfWork)
     {
-        _jwtConfiguration = jwtConfiguration.Value;
+        _setting = setting;
         _sessionRepository = unitOfWork.GetRepository<Session>();
     }
 
@@ -29,7 +25,7 @@ public partial class SessionService : ISessionService
         {
             Id = Guid.NewGuid(),
             LoginProvider = provider,
-            ExpiredDateUtc = utcNow.AddMinutes(_jwtConfiguration.ExpiredTokenTimeInMinute),
+            ExpiredDateUtc = utcNow.AddMinutes(_setting.Jwt.ExpiredTokenTimeInMinute),
             LastActionDateUtc = utcNow,
             UserId = user.Id,
             Email = user.Email ?? "",
@@ -53,4 +49,6 @@ public partial class SessionService : ISessionService
     {
         await _sessionRepository.Connection.ExecuteAsync(ExpiredUserSessionsQuery, new { userid = userId });
     }
+
+    private readonly ISetting _setting;
 }

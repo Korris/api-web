@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Mcsg.Identity.Api.Helpers;
 
+using Common.SeedWork.Dtos;
 using Lib.Common.Constants;
 using Lib.Common.Exceptions;
-using Lib.Common.Models;
 using Response;
 
 public static class TokenHelper
@@ -40,7 +40,7 @@ public static class TokenHelper
         return principal;
     }
 
-    public static TokenResponse GenerateAccessToken(Guid sessionId, JwtSetting jwtConfiguration)
+    public static TokenResponse GenerateAccessToken(Guid sessionId, JwtDto jwt)
     {
         Dictionary<string, object> claims = new()
         {
@@ -48,16 +48,16 @@ public static class TokenHelper
         };
 
         DateTime utcNow = DateTime.UtcNow;
-        DateTime expiresAt = utcNow.AddMinutes(jwtConfiguration.ExpiredTokenTimeInMinute);
+        DateTime expiresAt = utcNow.AddMinutes(jwt.ExpiredTokenTimeInMinute);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             IssuedAt = utcNow,
             Claims = claims,
             Expires = expiresAt,
-            Issuer = jwtConfiguration.Issuer,
-            Audience = jwtConfiguration.Audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.Key)), SecurityAlgorithms.HmacSha256),
+            Issuer = jwt.Issuer,
+            Audience = jwt.Audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Signing)), SecurityAlgorithms.HmacSha256),
             NotBefore = utcNow,
         };
 

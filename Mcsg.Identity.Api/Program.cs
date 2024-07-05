@@ -13,7 +13,6 @@ using Helpers;
 using Interfaces;
 using Lib.Common;
 using Lib.Common.Constants;
-using Lib.Common.Models;
 using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
@@ -119,7 +118,6 @@ public class Program
         });
         #endregion
 
-        builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
 
         // Add services to the container.
@@ -133,7 +131,7 @@ public class Program
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
 
         //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(builder.Configuration);
+        builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);

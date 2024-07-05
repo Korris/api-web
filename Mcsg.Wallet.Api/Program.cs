@@ -98,7 +98,6 @@ public class Program
         builder.Services.AddWalletDbContext(csDbWallet);
         #endregion
 
-        builder.Services.Configure<JwtSetting>(builder.Configuration.GetSection("JWT"));
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
         builder.Services.Configure<ZaloPaySetting>(builder.Configuration.GetSection(ZaloPaySetting.ConfigName));
 
@@ -112,7 +111,7 @@ public class Program
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
         //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(builder.Configuration);
+        builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary(builder.Configuration);

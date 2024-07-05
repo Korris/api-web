@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services;
@@ -10,7 +9,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Exceptions;
 using Lib.Common.Extensions;
-using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -18,13 +16,10 @@ using Response;
 
 public partial class TokenService : ITokenService
 {
-    private readonly JwtSetting _jwtConfiguration;
     private readonly IRepository<UserRefreshToken> _userRefreshTokenRepository;
-    public TokenService(
-        IUnitOfWork unitOfWork,
-        IOptions<JwtSetting> jwtConfiguration)
+    public TokenService(ISetting setting, IUnitOfWork unitOfWork)
     {
-        _jwtConfiguration = jwtConfiguration.Value;
+        _setting = setting;
         _userRefreshTokenRepository = unitOfWork.GetRepository<UserRefreshToken>();
     }
 
@@ -49,7 +44,7 @@ public partial class TokenService : ITokenService
 
     public Guid GetSessionIdFromToken(string accessToken)
     {
-        ClaimsPrincipal principal = TokenHelper.GetPrincipalFromToken(accessToken, _jwtConfiguration.Key) ?? throw new ForbiddenAccessException(ErrorCodes.InvalidAccessToken);
+        ClaimsPrincipal principal = TokenHelper.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(ErrorCodes.InvalidAccessToken);
         return principal.FindFirstValue(SecurityClaimTypes.SessionIdClaimName).ToGuid();
     }
 
@@ -63,7 +58,7 @@ public partial class TokenService : ITokenService
             if (userRefreshTokens != null && userRefreshTokens.Any())
             {
                 var userRefreshToken = userRefreshTokens.FirstOrDefault();
-                userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtConfiguration.RefreshTokenExpiredTimeInDay);
+                userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_setting.Jwt.RefreshTokenExpiredTimeInDay);
                 await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
                 return new RefreshTokenDto()
                 {
@@ -77,7 +72,7 @@ public partial class TokenService : ITokenService
                 {
                     UserId = user.Id,
                     RefreshToken = TokenHelper.GenerateToken(),
-                    RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtConfiguration.RefreshTokenExpiredTimeInDay)
+                    RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_setting.Jwt.RefreshTokenExpiredTimeInDay)
                 };
                 await _userRefreshTokenRepository.InsertAsync(userRefreshToken);
                 return new RefreshTokenDto()
@@ -92,7 +87,7 @@ public partial class TokenService : ITokenService
 
     public TokenResponse GenerateAccessToken(Guid sessionId)
     {
-        return TokenHelper.GenerateAccessToken(sessionId, _jwtConfiguration);
+        return TokenHelper.GenerateAccessToken(sessionId, _setting.Jwt);
     }
 
     public async Task<bool> DeleteRefreshTokenAsync(Guid userId)
@@ -104,4 +99,6 @@ public partial class TokenService : ITokenService
             });
         return iResult > 0;
     }
+
+    private readonly ISetting _setting;
 }

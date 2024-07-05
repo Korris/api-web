@@ -98,7 +98,7 @@ public class Program
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
         //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(builder.Configuration);
+        builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
         //Register services
