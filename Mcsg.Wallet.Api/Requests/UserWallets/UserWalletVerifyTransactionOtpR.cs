@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Wallet.Api.Models;
+﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class VerifyTransactionOtpReq
+public class UserWalletVerifyTransactionOtpR
 {
     public Guid TransactionId { get; set; }
     public string Otp { get; set; }

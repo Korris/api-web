@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Request;
+namespace Mcsg.Wallet.Api.Requests;
 
 using Constants.ZaloPay;
+using Models._3rdClass.ZaloPay.Request;
 
-public class ZaloPayCallBackReq
+public class UserWalletZaloPayCallBackR
 {
     [JsonProperty("data")]
     public ZaloPayCallBackData Data { get; set; }

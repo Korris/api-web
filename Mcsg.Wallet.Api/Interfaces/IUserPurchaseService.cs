@@ -1,10 +1,10 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
-using Mcsg.Lib.Common.Models;
 using Models;
+using Requests;
 
 public interface IUserPurchaseService
 {
-    Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(PaginatedRequest request);
+    Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(UserPurchasePaginatedR request);
     Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync();
 }

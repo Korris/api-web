@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Wallet.Api.Models;
+namespace Mcsg.Wallet.Api.Requests;
 
 using Constants;
 
-public class BuyChapterReq
+public class PremiumBuyChapterR
 {
     public Guid ChapterId { get; set; }
     [DefaultValue(PayMethods.POINT)]

@@ -18,6 +18,7 @@ using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;
 using Models;
+using Requests;
 using static Common.Core.Constants.Setting;
 
 public partial class PremiumService : IPremiumService
@@ -65,7 +66,7 @@ public partial class PremiumService : IPremiumService
 
         return packageResponses;
     }
-    public async Task<bool> BuyPremium(BuyPremiumReq req)
+    public async Task<bool> BuyPremium(PremiumBuyPremiumR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
@@ -235,7 +236,7 @@ public partial class PremiumService : IPremiumService
     #endregion
 
     #region Chapter
-    public async Task<bool> BuyChapter(BuyChapterReq req)
+    public async Task<bool> BuyChapter(PremiumBuyChapterR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets
@@ -339,7 +340,7 @@ public partial class PremiumService : IPremiumService
     #endregion
 
     #region Serie
-    public async Task<bool> BuySerieAsync(BuySerieReq req)
+    public async Task<bool> BuySerieAsync(PremiumBuySerieR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();

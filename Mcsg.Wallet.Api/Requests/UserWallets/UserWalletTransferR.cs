@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Wallet.Api.Models;
+﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class TransferReq
+public class UserWalletTransferR
 {
     public string FromAddress { get; set; }
     public string ToAddress { get; set; }

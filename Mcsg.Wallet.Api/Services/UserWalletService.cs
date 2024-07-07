@@ -21,8 +21,8 @@ using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;
 using Models;
-using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
+using Requests;
 using static Common.Core.Constants.Setting;
 
 public class UserWalletService : IUserWalletService
@@ -294,7 +294,7 @@ public class UserWalletService : IUserWalletService
         return userPaymentMethods;
     }
 
-    public async Task<AddUserPaymentMethodResp> AddUserPaymentMethod(AddUserPaymentMethodReq addUserPaymentMethodReq)
+    public async Task<AddUserPaymentMethodResp> AddUserPaymentMethod(UserWalletAddPaymentMethodR addUserPaymentMethodReq)
     {
         var paymentMethod = await _dbContext.PaymentMethods
                     .Where(x => x.Id == addUserPaymentMethodReq.PaymentMethodId)
@@ -325,7 +325,7 @@ public class UserWalletService : IUserWalletService
             AccountName = addUserPaymentMethodReq.AccountName,
         };
     }
-    public async Task<UpdateUserPaymentMethodResp> UpdateUserPaymentMethod(Guid userPaymentMethodId, UpdateUserPaymentMethodReq updateUserPaymentMethodReq)
+    public async Task<UpdateUserPaymentMethodResp> UpdateUserPaymentMethod(Guid userPaymentMethodId, UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq)
     {
         var userPaymentMethod = await _dbContext.UserPaymentMethods
             .Include(x => x.PaymentMethod)
@@ -369,7 +369,7 @@ public class UserWalletService : IUserWalletService
     #endregion
 
     #region User OTP/transaction
-    public async Task<bool> VerifyTransactionOtpAsync(VerifyTransactionOtpReq req)
+    public async Task<bool> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
     {
         var otpData = await _dbContext.WalletTransactionOtps.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.TransactionId == req.TransactionId
@@ -404,7 +404,7 @@ public class UserWalletService : IUserWalletService
     #endregion
 
     #region Donate
-    public async Task<TransactionOtpInfoResp> DonateAsync(DonateReq req)
+    public async Task<TransactionOtpInfoResp> DonateAsync(UserWalletDonateR req)
     {
         var userId = _currentUserService?.Session?.UserId;
 
@@ -452,7 +452,7 @@ public class UserWalletService : IUserWalletService
     #endregion
 
     #region Transfer
-    public async Task<TransactionOtpInfoResp> TransferAsync(TransferReq req)
+    public async Task<TransactionOtpInfoResp> TransferAsync(UserWalletTransferR req)
     {
         if (req.FromAddress == req.ToAddress)
         {
@@ -521,7 +521,7 @@ public class UserWalletService : IUserWalletService
         return result;
     }
 
-    public async Task<TransactionOtpInfoResp> WithdrawAsync(WithdrawReq req)
+    public async Task<TransactionOtpInfoResp> WithdrawAsync(UserWalletWithdrawR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
@@ -573,7 +573,7 @@ public class UserWalletService : IUserWalletService
         result.MaxPointCanDeposit = Default.MaximumPointCanDeposit;
         return result;
     }
-    public async Task<DepositResp> DepositAsync(DepositReq req)
+    public async Task<DepositResp> DepositAsync(UserWalletDepositR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
@@ -681,7 +681,7 @@ public class UserWalletService : IUserWalletService
         }
 
     }
-    public async Task<CallBackZaloPayResponse> CallBackZaloPayAsync(ZaloPayCallBackReq req)
+    public async Task<CallBackZaloPayResponse> CallBackZaloPayAsync(UserWalletZaloPayCallBackR req)
     {
         try
         {
@@ -743,7 +743,7 @@ public class UserWalletService : IUserWalletService
         }
     }
 
-    public async Task<bool> DepositCancelAsync(DepositCancelReq req)
+    public async Task<bool> DepositCancelAsync(UserWalletDepositCancelR req)
     {
         var userId = _currentUserService?.Session?.UserId;
         var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();

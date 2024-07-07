@@ -12,6 +12,7 @@ using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
 using Models;
+using Requests;
 
 public class UserPurchaseService : IUserPurchaseService
 {
@@ -39,7 +40,7 @@ public class UserPurchaseService : IUserPurchaseService
         _dbContext = walletDbContext;
     }
 
-    public async Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(PaginatedRequest request)
+    public async Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(UserPurchasePaginatedR request)
     {
         try
         {

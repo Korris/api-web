@@ -23,6 +23,7 @@ public class WalletController : ControllerBase
         var result = await _bankService.GetBanks();
         return Ok(result);
     }
+
     [Authorize]
     [HttpPut("sync-bank-list")]
     public async Task<IActionResult> SyncBankList()

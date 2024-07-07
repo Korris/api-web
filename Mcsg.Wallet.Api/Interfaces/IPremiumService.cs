@@ -1,13 +1,14 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
 using Models;
+using Requests;
 
 public interface IPremiumService
 {
     Task<IEnumerable<PremiumPackageResponse>> GetPremiumPackage();
     Task<BuyItemResp> SelectPremiumPackage(int? packageNo);
-    Task<bool> BuyPremium(BuyPremiumReq req);
+    Task<bool> BuyPremium(PremiumBuyPremiumR req);
     Task<BuyItemResp> SelectChapterPackage(Guid chapterId);
-    Task<bool> BuyChapter(BuyChapterReq req);
-    Task<bool> BuySerieAsync(BuySerieReq req);
+    Task<bool> BuyChapter(PremiumBuyChapterR req);
+    Task<bool> BuySerieAsync(PremiumBuySerieR req);
 }

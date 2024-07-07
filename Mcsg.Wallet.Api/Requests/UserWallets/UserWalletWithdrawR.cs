@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Wallet.Api.Models;
+﻿namespace Mcsg.Wallet.Api.Requests;
 
 using Constants;
 
-public class WithdrawReq
+public class UserWalletWithdrawR
 {
     public float Amount { get; set; }
     public string Content { get; set; }

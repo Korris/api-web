@@ -1,15 +1,11 @@
-﻿namespace Mcsg.Wallet.Api.Models;
+﻿namespace Mcsg.Wallet.Api.Requests;
 
 using Constants;
 
-public class DepositReq
+public class UserWalletDepositR
 {
     public int PointAmount { get; set; }
     public string DepositMethodName { get; set; }
     public CurrencyType CurrencyType { get; set; }
     public string RedirectUrl { get; set; }
-}
-public class DepositCancelReq
-{
-    public Guid TransactionId { get; set; }
 }

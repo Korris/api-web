@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Wallet.Api.Models;
+namespace Mcsg.Wallet.Api.Requests;
 
 using Constants;
 
-public class BuyPremiumReq
+public class PremiumBuyPremiumR
 {
     public int PremiumPackageNo { get; set; }
     [DefaultValue(PayMethods.POINT)]

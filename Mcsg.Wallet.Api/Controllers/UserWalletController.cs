@@ -8,8 +8,7 @@ using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
-using Models;
-using Models._3rdClass.ZaloPay.Request;
+using Requests;
 
 [ApiController]
 [Route("[controller]")]
@@ -23,6 +22,7 @@ public class UserWalletController : ControllerBase
     private readonly IOtpService _otpService;
     readonly WalletDbContext _walletDbContext;
     IRepository<User> _repository;
+
     public UserWalletController(IUserWalletService userWalletService,
         IZaloPayService zaloPayService,
         WalletDbContext walletDbContext,
@@ -85,6 +85,7 @@ public class UserWalletController : ControllerBase
         var result = await _userWalletService.GetUserWalletAsync();
         return Ok(result);
     }
+
     [HttpGet("info/{address}")]
     public async Task<IActionResult> GetUserBasicWallet(string address)
     {
@@ -100,14 +101,14 @@ public class UserWalletController : ControllerBase
     }
 
     [HttpPost("payment-method/add")]
-    public async Task<IActionResult> AddUserPaymentMethod([FromBody] AddUserPaymentMethodReq addUserPaymentMethodReq)
+    public async Task<IActionResult> AddUserPaymentMethod([FromBody] UserWalletAddPaymentMethodR addUserPaymentMethodReq)
     {
         var result = await _userWalletService.AddUserPaymentMethod(addUserPaymentMethodReq);
         return Ok(result);
-
     }
+
     [HttpPut("payment-method/{userPaymentMethodId}")]
-    public async Task<IActionResult> UpdateUserPaymentMethod(Guid userPaymentMethodId, [FromBody] UpdateUserPaymentMethodReq updateUserPaymentMethodReq)
+    public async Task<IActionResult> UpdateUserPaymentMethod(Guid userPaymentMethodId, [FromBody] UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq)
     {
         var result = await _userWalletService.UpdateUserPaymentMethod(userPaymentMethodId, updateUserPaymentMethodReq);
         return Ok(result);
@@ -137,7 +138,7 @@ public class UserWalletController : ControllerBase
 
     [HttpPost("donate")]
     [Authorize]
-    public async Task<IActionResult> Donate(DonateReq req)
+    public async Task<IActionResult> Donate(UserWalletDonateR req)
     {
         var result = await _userWalletService.DonateAsync(req);
         return Ok(result);
@@ -145,25 +146,28 @@ public class UserWalletController : ControllerBase
 
     [HttpPost("transfer")]
     [Authorize]
-    public async Task<IActionResult> Transfer(TransferReq req)
+    public async Task<IActionResult> Transfer(UserWalletTransferR req)
     {
         var result = await _userWalletService.TransferAsync(req);
         return Ok(result);
     }
+
     [HttpGet("deposit-prepare")]
     public async Task<IActionResult> PrepareDeposit()
     {
         var result = await _userWalletService.DepositPrepareAsync();
         return Ok(result);
     }
+
     [HttpPost("deposit")]
-    public async Task<IActionResult> Deposit(DepositReq req)
+    public async Task<IActionResult> Deposit(UserWalletDepositR req)
     {
         var result = await _userWalletService.DepositAsync(req);
         return Ok(result);
     }
+
     [HttpPost("deposit-cancel")]
-    public async Task<IActionResult> DepositCancel(DepositCancelReq req)
+    public async Task<IActionResult> DepositCancel(UserWalletDepositCancelR req)
     {
         var result = await _userWalletService.DepositCancelAsync(req);
         return Ok(result);
@@ -175,8 +179,9 @@ public class UserWalletController : ControllerBase
         var result = await _userWalletService.WithdrawPrepareAsync();
         return Ok(result);
     }
+
     [HttpPost("withdraw")]
-    public async Task<IActionResult> Withdraw(WithdrawReq req)
+    public async Task<IActionResult> Withdraw(UserWalletWithdrawR req)
     {
         var result = await _userWalletService.WithdrawAsync(req);
         return Ok(result);
@@ -190,17 +195,19 @@ public class UserWalletController : ControllerBase
     }
 
     [HttpPost("transaction/verifyOtp")]
-    public async Task<IActionResult> VerifyTransactionOtp(VerifyTransactionOtpReq req)
+    public async Task<IActionResult> VerifyTransactionOtp(UserWalletVerifyTransactionOtpR req)
     {
         var result = await _userWalletService.VerifyTransactionOtpAsync(req);
         return Ok(result);
     }
+
     [HttpPost("zalopay-callback")]
-    public async Task<IActionResult> CallBackZaloPayAsync(ZaloPayCallBackReq req)
+    public async Task<IActionResult> CallBackZaloPayAsync(UserWalletZaloPayCallBackR req)
     {
         var result = await _userWalletService.CallBackZaloPayAsync(req);
         return Ok(result);
     }
+
     [HttpPost("callback-zalopay")]
     public IActionResult CallBackZaloPay(dynamic cbdata)
     {

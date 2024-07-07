@@ -1,10 +1,13 @@
 ﻿namespace Mcsg.Wallet.Api.Models;
 
-public class AddUserPaymentMethodResp : AddUserPaymentMethodReq
+using Requests;
+
+public class AddUserPaymentMethodResp : UserWalletAddPaymentMethodR
 {
     public Guid Id { get; set; }
 }
-public class UpdateUserPaymentMethodResp : AddUserPaymentMethodReq
+
+public class UpdateUserPaymentMethodResp : UserWalletAddPaymentMethodR
 {
     public Guid Id { get; set; }
 }
