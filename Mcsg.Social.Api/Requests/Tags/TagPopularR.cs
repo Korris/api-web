@@ -3,13 +3,10 @@
 namespace Mcsg.Social.Api.Requests;
 
 using Common.Core.Enums;
+using Lib.Common.Models;
 
-public class TagPopularR
+public class TagPopularR : PaginatedR
 {
     [DefaultValue(null)]
     public PostType? PostType { get; set; }
-    [DefaultValue(1)]
-    public int PageNumber { get; set; }
-    [DefaultValue(10)]
-    public int PageSize { get; set; }
 }

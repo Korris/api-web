@@ -2,7 +2,7 @@
 {
     using Lib.Data.Wallet.Enums;
 
-    public class UserWalletTransactionReq : GetByPageReq
+    public class UserWalletTransactionReq : GetByPageR
     {
         public List<TransactionType>? Types { get; set; }
         public TransactionStatus? Status { get; set; }

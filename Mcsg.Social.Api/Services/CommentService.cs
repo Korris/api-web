@@ -262,7 +262,7 @@ public partial class CommentService : ICommentService
         return results;
     }
 
-    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadReq request)
+    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request)
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))
         {
@@ -344,7 +344,7 @@ public partial class CommentService : ICommentService
         return response;
     }
 
-    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadReq request, PostType postType)
+    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadR request, PostType postType)
     {
         var query = GetCommentOfSubPostQuery;
         var postId = request.PostId;

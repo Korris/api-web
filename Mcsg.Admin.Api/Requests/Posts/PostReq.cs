@@ -2,7 +2,7 @@
 {
     using Common.Core.Enums;
 
-    public class PostListReq : GetByPageReq
+    public class PostListReq : GetByPageR
     {
         public string HashId { get; set; }
         public PostType? PostType { get; set; }

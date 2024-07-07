@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class FavoritePostR : BasePageResultReq
+public class FavoritePostR : BasePageResultR
 {
 }

@@ -36,7 +36,7 @@ public class CommentController : ControllerBase
 
     [Obsolete("This method is obsolete, please use /feed")]
     [HttpGet("post")]
-    public async Task<IActionResult> GetPostComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetPostComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfPostAsync(request);
         return Ok(result);
@@ -44,7 +44,7 @@ public class CommentController : ControllerBase
 
     [Obsolete("This method is obsolete, please use /sub-feed")]
     [HttpGet("sub-post")]
-    public async Task<IActionResult> GetSubPostComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetSubPostComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
         return Ok(result);
@@ -66,42 +66,42 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("feed")]
-    public async Task<IActionResult> GetFeedComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetFeedComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfPostAsync(request);
         return Ok(result);
     }
 
     [HttpGet("sub-feed")]
-    public async Task<IActionResult> GetSubFeedComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetSubFeedComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
         return Ok(result);
     }
 
     [HttpGet("comic")]
-    public async Task<IActionResult> GetComicComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetComicComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfPostAsync(request);
         return Ok(result);
     }
 
     [HttpGet("comic-chapter")]
-    public async Task<IActionResult> GetComicChapterComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetComicChapterComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Comic);
         return Ok(result);
     }
 
     [HttpGet("story")]
-    public async Task<IActionResult> GetStoryComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetStoryComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfPostAsync(request);
         return Ok(result);
     }
 
     [HttpGet("story-chapter")]
-    public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentLoadReq request)
+    public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentLoadR request)
     {
         var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Story);
         return Ok(result);

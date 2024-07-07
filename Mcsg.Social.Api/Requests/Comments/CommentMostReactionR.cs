@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class CommentMostReactionR : BasePageResultReq
+public class CommentMostReactionR : BasePageResultR
 {
     public string? HashPostId { get; set; }
     public bool IsGetTotalPostComment { get; set; }

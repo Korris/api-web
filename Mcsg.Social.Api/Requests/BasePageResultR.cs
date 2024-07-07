@@ -2,6 +2,6 @@
 
 using Lib.Common.Models;
 
-public class FeedSearchKeywordR : PaginatedR
+public class BasePageResultR : PaginatedR
 {
 }

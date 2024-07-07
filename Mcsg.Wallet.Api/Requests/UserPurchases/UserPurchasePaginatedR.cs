@@ -1,13 +1,7 @@
-﻿using System.ComponentModel;
+﻿namespace Mcsg.Wallet.Api.Requests;
 
-namespace Mcsg.Wallet.Api.Requests;
+using Lib.Common.Models;
 
-public class UserPurchasePaginatedR
+public class UserPurchasePaginatedR : PaginatedR
 {
-    [DefaultValue(1)]
-    public int PageNumber { get; set; }
-    [DefaultValue(10)]
-    public int PageSize { get; set; }
-    [DefaultValue("CreatedDate")]
-    public string OrderBy { get; set; }
 }

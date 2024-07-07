@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Social.Api.Requests;
+namespace Mcsg.Lib.Common.Models;
 
-public class BasePageResultReq
+public class PaginatedR
 {
     [DefaultValue(1)]
     public int PageNumber { get; set; }

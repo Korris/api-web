@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class TagSearchR : BasePageResultReq
+public class TagSearchR : BasePageResultR
 {
     public string? Name { get; set; }
 }

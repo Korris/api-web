@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class FeedLoadReq : BasePageResultReq
+public class FeedLoadReq : BasePageResultR
 {
     public string? ProfileName { get; set; }
 }

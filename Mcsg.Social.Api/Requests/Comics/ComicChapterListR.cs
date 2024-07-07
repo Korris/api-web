@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Requests;
 
-public class ComicChapterListR : BasePageResultReq
+public class ComicChapterListR : BasePageResultR
 {
     [DefaultValue("Order")]
     public string? OrderBy { get; set; }
