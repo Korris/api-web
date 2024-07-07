@@ -80,10 +80,13 @@ public static class IServiceCollectionExtension
             p.SaveToken = true;
             p.TokenValidationParameters = new TokenValidationParameters
             {
+                ValidIssuer = jwt.Issuer,
+                ValidAudience = jwt.Audience,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidateAudience = true,
+                ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
             };
             p.Events = new JwtBearerEvents

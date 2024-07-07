@@ -40,4 +40,37 @@ public static class Error
     public const string E109 = "E109";
 
     #endregion
+
+    #region -- E4xx --
+
+    /// <summary>
+    /// Bad request code
+    /// </summary>
+    public const string E400 = "400";
+
+    /// <summary>
+    /// Unauthorize access code
+    /// </summary>
+    public const string E401 = "401";
+
+    /// <summary>
+    /// Forbidden access code
+    /// </summary>
+    public const string E403 = "403";
+
+    /// <summary>
+    /// Not found code
+    /// </summary>
+    public const string E404 = "404";
+
+    #endregion
+
+    #region -- E5xx --
+
+    /// <summary>
+    /// API error code
+    /// </summary>
+    public const string E500 = "500";
+
+    #endregion
 }
