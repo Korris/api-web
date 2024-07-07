@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class RecentSearchResponse : SmartLookupResponse
 {
-    public class RecentSearchResponse : SmartLookupResponse
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

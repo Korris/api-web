@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Enums
+﻿namespace Mcsg.Social.Api.Enums;
+
+public enum LoadFeedType
 {
-    public enum LoadFeedType
-    {
-        ALL = 0,
-        TRENDING = 1,
-        HOT = 2,
-    }
+    ALL = 0,
+    TRENDING = 1,
+    HOT = 2,
 }

@@ -1,9 +1,8 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Social.Api.Interfaces;
 
-namespace Mcsg.Social.Api.Interfaces
+using Lib.Data.Domain.Entities;
+
+public interface IJobService
 {
-    public interface IJobService
-    {
-        Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName);
-    }
+    Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName);
 }

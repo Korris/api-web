@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class UserAvatarUpdateR
 {
-    public class UserAvatarUpdateR
-    {
-        public IFormFile Avatar { get; set; }
-    }
+    public IFormFile Avatar { get; set; }
 }

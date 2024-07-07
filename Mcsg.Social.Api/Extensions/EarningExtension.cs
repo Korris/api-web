@@ -1,18 +1,17 @@
-﻿namespace Mcsg.Social.Api.Extensions
-{
-    using Common.Core.Enums;
+﻿namespace Mcsg.Social.Api.Extensions;
 
-    public static class EarningExtension
+using Common.Core.Enums;
+
+public static class EarningExtension
+{
+    public static string ToDisplay(this PostType value)
     {
-        public static string ToDisplay(this PostType value)
-        {
-            var enumDisplayStatus = (PostType)value;
-            return enumDisplayStatus.ToString();
-        }
-        public static string ToDisplay(this PostStatus value)
-        {
-            var enumDisplayStatus = (PostStatus)value;
-            return enumDisplayStatus.ToString();
-        }
+        var enumDisplayStatus = (PostType)value;
+        return enumDisplayStatus.ToString();
+    }
+    public static string ToDisplay(this PostStatus value)
+    {
+        var enumDisplayStatus = (PostStatus)value;
+        return enumDisplayStatus.ToString();
     }
 }

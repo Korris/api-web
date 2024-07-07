@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class UserCoverPhotoUpdateR
 {
-    public class UserCoverPhotoUpdateR
-    {
-        public IFormFile CoverPhoto { get; set; }
-    }
+    public IFormFile CoverPhoto { get; set; }
 }

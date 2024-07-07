@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class TodayTrendingTagResponse
 {
-    public class TodayTrendingTagResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public int Count { get; set; }
-        public int TotalCount { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public int Count { get; set; }
+    public int TotalCount { get; set; }
 }

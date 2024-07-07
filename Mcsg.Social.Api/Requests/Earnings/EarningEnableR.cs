@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class EarningEnableR
 {
-    public class EarningEnableR
-    {
-        public bool Status { get; set; }
-    }
+    public bool Status { get; set; }
 }

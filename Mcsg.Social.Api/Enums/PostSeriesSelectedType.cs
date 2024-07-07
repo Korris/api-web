@@ -1,12 +1,11 @@
-﻿namespace Mcsg.Social.Api.Enums
+﻿namespace Mcsg.Social.Api.Enums;
+
+public enum PostSeriesSelectedType
 {
-    public enum PostSeriesSelectedType
-    {
-        HIT = 0,
-        LATEST = 1,
-        COMPLETED = 2,
-        BY_TAG = 3,
-        RECOMMEND = 4,
-        BY_USER = 5
-    }
+    HIT = 0,
+    LATEST = 1,
+    COMPLETED = 2,
+    BY_TAG = 3,
+    RECOMMEND = 4,
+    BY_USER = 5
 }

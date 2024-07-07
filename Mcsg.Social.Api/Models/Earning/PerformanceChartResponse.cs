@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models.Earning
+﻿namespace Mcsg.Social.Api.Models.Earning;
+
+public class PerformanceChartResponse
 {
-    public class PerformanceChartResponse
-    {
-        public PerformanceChartTotalView TotalView { get; set; }
-        public PerformanceChartTotalPurchase TotalPurchase { get; set; }
-        public PerformanceChartEarningToDate EarningToDate { get; set; }
-    }
+    public PerformanceChartTotalView TotalView { get; set; }
+    public PerformanceChartTotalPurchase TotalPurchase { get; set; }
+    public PerformanceChartEarningToDate EarningToDate { get; set; }
 }

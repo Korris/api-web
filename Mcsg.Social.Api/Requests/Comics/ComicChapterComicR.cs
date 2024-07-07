@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicChapterComicR : StoryChapterPostR
 {
-    public class ComicChapterComicR : StoryChapterPostR
-    {
-        public List<ResourcePostReq> Files { get; set; }
-    }
+    public List<ResourcePostReq> Files { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Models.Earning
+﻿namespace Mcsg.Social.Api.Models.Earning;
+
+public class UserPurchaseData
 {
-    public class UserPurchaseData
-    {
-        public Guid UserId { get; set; }
-        public float Amount { get; set; }
-    }
+    public Guid UserId { get; set; }
+    public float Amount { get; set; }
 }

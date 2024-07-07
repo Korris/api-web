@@ -1,39 +1,38 @@
-﻿namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services;
+
+using Interfaces;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Entities.Common;
+using Lib.Data.Enums;
+using Models;
+using Requests;
+
+public partial class PostReactService : IPostReactService
 {
-    using Interfaces;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Entities.Common;
-    using Lib.Data.Enums;
-    using Models;
-    using Requests;
+    private readonly IReactService<PostReaction> _reactService;
 
-    public partial class PostReactService : IPostReactService
+    public PostReactService(IReactService<PostReaction> reactService)
     {
-        private readonly IReactService<PostReaction> _reactService;
-
-        public PostReactService(IReactService<PostReaction> reactService)
-        {
-            _reactService = reactService;
-        }
-        public async Task<bool> AddReactionToPost(Guid postId, ReactionType type)
-        {
-            var reactRes = await _reactService.AddReaction(postId, type);
+        _reactService = reactService;
+    }
+    public async Task<bool> AddReactionToPost(Guid postId, ReactionType type)
+    {
+        var reactRes = await _reactService.AddReaction(postId, type);
 
 
-            return reactRes;
-        }
+        return reactRes;
+    }
 
-        public async Task<ReactionsResponse> GetReactions(Guid postId)
-        {
-            return await _reactService.GetReactions(postId);
-        }
-        public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
-        {
-            return await _reactService.GetReactionsByTargetAsync(targetId, request);
-        }
-        public async Task<bool> RemoveReactionToPost(Guid postId)
-        {
-            return await _reactService.RemoveReaction(postId);
-        }
+    public async Task<ReactionsResponse> GetReactions(Guid postId)
+    {
+        return await _reactService.GetReactions(postId);
+    }
+    public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
+    {
+        return await _reactService.GetReactionsByTargetAsync(targetId, request);
+    }
+    public async Task<bool> RemoveReactionToPost(Guid postId)
+    {
+        return await _reactService.RemoveReaction(postId);
     }
 }

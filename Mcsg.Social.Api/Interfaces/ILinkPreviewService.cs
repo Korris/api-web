@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Interfaces
-{
-    using Models;
+﻿namespace Mcsg.Social.Api.Interfaces;
 
-    public interface ILinkPreviewService
-    {
-        MetaDataResponse GetMetaDataByUrl(string url);
-    }
+using Models;
+
+public interface ILinkPreviewService
+{
+    MetaDataResponse GetMetaDataByUrl(string url);
 }

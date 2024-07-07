@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicPostUpdateSeriesR : ComicPostSeriesR
 {
-    public class ComicPostUpdateSeriesR : ComicPostSeriesR
-    {
-        public bool IsCompleted { get; set; }
-    }
+    public bool IsCompleted { get; set; }
 }

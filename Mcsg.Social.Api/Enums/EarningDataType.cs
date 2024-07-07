@@ -1,12 +1,11 @@
-﻿namespace Mcsg.Social.Api.Enums
+﻿namespace Mcsg.Social.Api.Enums;
+
+public enum EarningDataType
 {
-    public enum EarningDataType
-    {
-        TotalGuestView = 0,
-        TotalPremiumView = 1,
-        SaleAffiliate = 2,
-        SaleChapter = 3,
-        RevenueOfMonth = 4,
-        TotalRevenue = 5,
-    }
+    TotalGuestView = 0,
+    TotalPremiumView = 1,
+    SaleAffiliate = 2,
+    SaleChapter = 3,
+    RevenueOfMonth = 4,
+    TotalRevenue = 5,
 }

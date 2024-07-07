@@ -1,16 +1,15 @@
-﻿namespace Mcsg.Social.Api.Interfaces
-{
-    using Models;
-    using Requests;
+﻿namespace Mcsg.Social.Api.Interfaces;
 
-    public interface ISmartLookupService
-    {
-        Task CalculateSmartLookupWhenDeletePostAsync(Guid postId);
-        Task CalculateSmartLookupWhenCreatePostAsync();
-        Task CalculateSmartLookupForTagAsync(List<string> tags);
-        Task<IEnumerable<SmartLookupResponse>> SearchAsync(string keyword);
-        Task<IEnumerable<RecentSearchResponse>> GetRecentListAsync();
-        Task<bool> DeleteRecentSearchAsync(Guid id);
-        Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res);
-    }
+using Models;
+using Requests;
+
+public interface ISmartLookupService
+{
+    Task CalculateSmartLookupWhenDeletePostAsync(Guid postId);
+    Task CalculateSmartLookupWhenCreatePostAsync();
+    Task CalculateSmartLookupForTagAsync(List<string> tags);
+    Task<IEnumerable<SmartLookupResponse>> SearchAsync(string keyword);
+    Task<IEnumerable<RecentSearchResponse>> GetRecentListAsync();
+    Task<bool> DeleteRecentSearchAsync(Guid id);
+    Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res);
 }

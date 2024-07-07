@@ -1,12 +1,11 @@
-﻿using Mcsg.Lib.Data.Enums;
+﻿namespace Mcsg.Social.Api.Models;
 
-namespace Mcsg.Social.Api.Models
+using Lib.Data.Enums;
+
+public class ReactionsUserModel
 {
-    public class ReactionsUserModel
-    {
-        public ReactionType Type { get; set; }
-        public Guid AuthorId { get; set; }
-        public string AuthorName { get; set; }
-        public string AuthorAvatar { get; set; }
-    }
+    public ReactionType Type { get; set; }
+    public Guid AuthorId { get; set; }
+    public string AuthorName { get; set; }
+    public string AuthorAvatar { get; set; }
 }

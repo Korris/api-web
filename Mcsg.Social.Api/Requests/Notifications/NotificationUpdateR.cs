@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Social.Api.Requests
+namespace Mcsg.Social.Api.Requests;
+
+public class NotificationUpdateR
 {
-    public class NotificationUpdateR
-    {
-        [Required]
-        public Guid NotificationId { get; set; }
-    }
+    [Required]
+    public Guid NotificationId { get; set; }
 }

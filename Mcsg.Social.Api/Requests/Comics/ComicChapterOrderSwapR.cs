@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicChapterOrderSwapR
 {
-    public class ComicChapterOrderSwapR
-    {
-        public int Order1 { get; set; }
-        public int Order2 { get; set; }
-    }
+    public int Order1 { get; set; }
+    public int Order2 { get; set; }
 }

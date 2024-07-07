@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Social.Api.Interfaces
-{
-    using Common.Core.Enums;
+﻿namespace Mcsg.Social.Api.Interfaces;
 
-    public interface IViewHistoryService
-    {
-        Task PrepareAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType);
-        Task QueueAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType);
-    }
+using Common.Core.Enums;
+
+public interface IViewHistoryService
+{
+    Task PrepareAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType);
+    Task QueueAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType);
 }

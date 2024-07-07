@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class FeedDisplayConfig
 {
-    public class FeedDisplayConfig
-    {
-        public int PremiumPackage { get; set; }
-        public int Trending { get; set; }
-        public int ComicRecommended { get; set; }
-    }
+    public int PremiumPackage { get; set; }
+    public int Trending { get; set; }
+    public int ComicRecommended { get; set; }
 }

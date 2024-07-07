@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class UserAvatarUpdateResponse
 {
-    public class UserAvatarUpdateResponse
-    {
-        public string? Avatar { get; set; }
-    }
+    public string? Avatar { get; set; }
 }

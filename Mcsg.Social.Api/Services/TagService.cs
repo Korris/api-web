@@ -1,99 +1,235 @@
 ﻿using Dapper;
 using System.Text.RegularExpressions;
 
-namespace Mcsg.Social.Api.Services
+namespace Mcsg.Social.Api.Services;
+
+using Common.SeedWork.Constants;
+using Common.SeedWork.Exceptions;
+using Constants;
+using Extensions;
+using Interfaces;
+using Lib.Common.Constants;
+using Lib.Common.Web.Security;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Entities.Common;
+using Lib.Data.Enums;
+using Lib.Data.Repositories;
+using Lib.Data.Repositories.Interface;
+using Models;
+using Models.Tag;
+using Requests;
+
+public partial class TagService : ITagService
 {
-    using Common.SeedWork.Constants;
-    using Common.SeedWork.Exceptions;
-    using Constants;
-    using Extensions;
-    using Interfaces;
-    using Lib.Common.Constants;
-    using Lib.Common.Web.Security;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Entities.Common;
-    using Lib.Data.Enums;
-    using Lib.Data.Repositories;
-    using Lib.Data.Repositories.Interface;
-    using Models;
-    using Models.Tag;
-    using Requests;
+    private readonly IRepository<Tag> _tagRepository;
+    private readonly IRepository<TagPost> _tagPostRepository;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IRepository<SmartLookup> _smartLookupRepository;
+    private readonly ISmartLookupService _smartLookupService;
+    private readonly IRepository<Post> _postRepository;
+    private readonly IConfiguration _configuration;
 
-    public partial class TagService : ITagService
+    public TagService(
+        ICurrentUserService currentUserService,
+        IUnitOfWork unitOfWork,
+        ISmartLookupService smartLookupService,
+        IRepository<SmartLookup> smartLookupRepository,
+        IRepository<Post> postRepository,
+        IConfiguration configuration)
     {
-        private readonly IRepository<Tag> _tagRepository;
-        private readonly IRepository<TagPost> _tagPostRepository;
-        private readonly ICurrentUserService _currentUserService;
-        private readonly IRepository<SmartLookup> _smartLookupRepository;
-        private readonly ISmartLookupService _smartLookupService;
-        private readonly IRepository<Post> _postRepository;
-        private readonly IConfiguration _configuration;
+        _currentUserService = currentUserService;
+        _tagPostRepository = unitOfWork.GetRepository<TagPost>();
+        _tagRepository = unitOfWork.GetRepository<Tag>();
+        _smartLookupRepository = smartLookupRepository;
+        _smartLookupService = smartLookupService;
+        _postRepository = postRepository;
+        _configuration = configuration;
+    }
 
-        public TagService(
-            ICurrentUserService currentUserService,
-            IUnitOfWork unitOfWork,
-            ISmartLookupService smartLookupService,
-            IRepository<SmartLookup> smartLookupRepository,
-            IRepository<Post> postRepository,
-            IConfiguration configuration)
+    public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags)
+    {
+        // Find all tags associated with the post
+        var query = string.Format(GetAllTagsByNameQuery, _tagRepository.TableName);
+        var tagsDb = await _tagRepository.Connection
+            .QueryAsync<TagView>(query, new { TagNames = tags, PostId = postId });
+
+        // Find tags that need to be created
+        var listTagNeedToCreate = tags.Except(tagsDb.Select(x => x.Name)).ToList();
+
+        // Add new tags (if any) and get their IDs
+        List<Guid> listTagAddToPost = listTagNeedToCreate.Count > 0
+            ? await AddNewTags(listTagNeedToCreate)
+            : new List<Guid>();
+
+        // Add existing tags (not already associated with the post)
+        listTagAddToPost.AddRange(
+            tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList()
+        );
+        await AddTagsToPost(postId, listTagAddToPost);
+
+        // Publish for smart lookup calculation
+        await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
+
+        return tags;
+    }
+    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags)
+    {
+        // Validate tags
+        tags.ForEach(t => { t = ValidateTag(t); });
+
+        // Find all tag in database
+        var tagsDb = await _tagRepository
+                .Connection.QueryAsync<Tag>(GetTagsByTagNameQuery, new
+                {
+                    TagNames = tags
+                });
+
+        var listTagNeedToAdd = new List<Guid>();
+
+        // Check if tag not created, should create tag first.
+        var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
+        if (listTagNotCreated.Count > 0)
         {
-            _currentUserService = currentUserService;
-            _tagPostRepository = unitOfWork.GetRepository<TagPost>();
-            _tagRepository = unitOfWork.GetRepository<Tag>();
-            _smartLookupRepository = smartLookupRepository;
-            _smartLookupService = smartLookupService;
-            _postRepository = postRepository;
-            _configuration = configuration;
+            var listNewTagId = await AddNewTags(listTagNotCreated);
+            listTagNeedToAdd.AddRange(listNewTagId);
         }
 
-        public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags)
+        // Find all tag with post (TagPost)
+        var query = string.Format(GetAllTagsByPostQuery, _tagRepository.TableName);
+        var tagsPostDb = await _tagRepository
+                .Connection.QueryAsync<TagView>(query, new
+                {
+                    PostId = postId
+                });
+
+        // Update tag to post
+        var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).Except(listTagNotCreated.Select(y => y)).ToList();
+        if (listTagExistNotAdd.Count > 0)
         {
-            // Find all tags associated with the post
-            var query = string.Format(GetAllTagsByNameQuery, _tagRepository.TableName);
-            var tagsDb = await _tagRepository.Connection
-                .QueryAsync<TagView>(query, new { TagNames = tags, PostId = postId });
-
-            // Find tags that need to be created
-            var listTagNeedToCreate = tags.Except(tagsDb.Select(x => x.Name)).ToList();
-
-            // Add new tags (if any) and get their IDs
-            List<Guid> listTagAddToPost = listTagNeedToCreate.Count > 0
-                ? await AddNewTags(listTagNeedToCreate)
-                : new List<Guid>();
-
-            // Add existing tags (not already associated with the post)
-            listTagAddToPost.AddRange(
-                tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList()
-            );
-            await AddTagsToPost(postId, listTagAddToPost);
-
-            // Publish for smart lookup calculation
-            await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
-
-            return tags;
+            var tagExistNotAddIds = tagsDb.Where(x => listTagExistNotAdd.Contains(x.Name)).Select(x => x.Id).ToList();
+            listTagNeedToAdd.AddRange(tagExistNotAddIds);
         }
-        public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags)
+
+
+        // Remove tag to post
+        var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
+        if (listRemove.Length > 0)
         {
-            // Validate tags
-            tags.ForEach(t => { t = ValidateTag(t); });
+            await _tagRepository
+                .Connection.ExecuteAsync(DeleteTagPosts, new
+                {
+                    PostId = postId,
+                    TagPostIds = listRemove
+                });
+        }
 
-            // Find all tag in database
-            var tagsDb = await _tagRepository
-                    .Connection.QueryAsync<Tag>(GetTagsByTagNameQuery, new
-                    {
-                        TagNames = tags
-                    });
+        await AddTagsToPost(postId, listTagNeedToAdd);
 
-            var listTagNeedToAdd = new List<Guid>();
+        //Publish to calculate smart lookup for tag
+        await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
+        return tags;
+    }
 
-            // Check if tag not created, should create tag first.
-            var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
-            if (listTagNotCreated.Count > 0)
+    public async Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestR tagSuggestReq)
+    {
+        string tagSearch = string.IsNullOrWhiteSpace(tagSuggestReq.Text) ? "" : ValidateTag(tagSuggestReq.Text);
+
+        var tagsDb = await _tagRepository
+                .Connection.QueryAsync<TagSuggestView>(GetSuggestTagsByNameQuery, new
+                {
+                    TagSearch = "%" + tagSearch + "%",
+                    PageSize = SystemConfig.TagSuggestMaxLength
+                });
+        return tagsDb;
+    }
+
+    public async Task<PagedResults<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
+    {
+        var query = GetPopularTagsQuery;
+        if (popularTagReq.PostType == null)
+        {
+            query = query.Replace("[AddPostType]", "");
+        }
+        else
+        {
+            query = query.Replace("[AddPostType]", @" post.""Type"" = @PostType AND ");
+        }
+        var offset = popularTagReq.PageSize * (popularTagReq.PageNumber - 1);
+        var multipleQuery = await _tagRepository.Connection.
+                            QueryMultipleAsync(query, new
+                            {
+                                PageSize = popularTagReq.PageSize,
+                                Offet = offset,
+                                PostType = popularTagReq.PostType
+                            });
+
+        var resDto = await multipleQuery.ReadAsync<PopularTagResponse>().ConfigureAwait(false);
+        var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
+        var response = new PagedResults<PopularTagResponse>(totalItems, popularTagReq.PageNumber, popularTagReq.PageSize);
+        response.Items = resDto;
+
+        return response;
+
+    }
+
+    public async Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq)
+    {
+        int.TryParse(_configuration["TodayTrending:FetchDataTimes"], out var getdataTimes);
+        int.TryParse(_configuration["TodayTrending:Days"], out var days);
+        var offset = todayTrendingTagReq.PageSize * (todayTrendingTagReq.PageNumber - 1);
+        var toDate = DateTime.UtcNow.Date.EndOfDay();
+        var fromDate = toDate.AddDays(-days).BeginOfDay();
+
+        IEnumerable<TodayTrendingTagResponse> resDto = null;
+        PagedResults<TodayTrendingTagResponse> response = null;
+        var times = 1;
+        do
+        {
+            var query = GetTodayTrendingTagsQuery;
+            if (todayTrendingTagReq.PostType == null)
             {
-                var listNewTagId = await AddNewTags(listTagNotCreated);
-                listTagNeedToAdd.AddRange(listNewTagId);
+                query = query.Replace("[AddPostType]", "");
             }
+            else
+            {
+                query = query.Replace("[AddPostType]", @" AND post.""Type"" = @PostType ");
+            }
+            var multipleQuery = await _tagRepository.Connection.
+                QueryMultipleAsync(query, new
+                {
+                    FromDate = fromDate,
+                    ToDate = toDate,
+                    PageSize = todayTrendingTagReq.PageSize,
+                    Offet = offset,
+                    PostType = todayTrendingTagReq.PostType
+                });
+            resDto = await multipleQuery.ReadAsync<TodayTrendingTagResponse>().ConfigureAwait(false);
+            var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
+            if (resDto.Any())
+            {
+                response = new PagedResults<TodayTrendingTagResponse>(totalItems, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
+                response.Items = resDto;
+            }
+            else
+            {
+                times++;
+                toDate = fromDate.AddMilliseconds(-1);
+                fromDate = toDate.AddDays(-days).Date;
+            }
+        }
+        while (times <= getdataTimes && !resDto.Any());
 
+        if (response == null)
+        {
+            response = new PagedResults<TodayTrendingTagResponse>(0, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
+        }
+        return response;
+
+    }
+    public async Task<List<TagView>> GetTagsByPostIdAsync(Guid postId)
+    {
+        try
+        {
             // Find all tag with post (TagPost)
             var query = string.Format(GetAllTagsByPostQuery, _tagRepository.TableName);
             var tagsPostDb = await _tagRepository
@@ -102,245 +238,109 @@ namespace Mcsg.Social.Api.Services
                         PostId = postId
                     });
 
-            // Update tag to post
-            var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).Except(listTagNotCreated.Select(y => y)).ToList();
-            if (listTagExistNotAdd.Count > 0)
-            {
-                var tagExistNotAddIds = tagsDb.Where(x => listTagExistNotAdd.Contains(x.Name)).Select(x => x.Id).ToList();
-                listTagNeedToAdd.AddRange(tagExistNotAddIds);
-            }
+            return tagsPostDb.ToList();
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+        }
+    }
 
-
-            // Remove tag to post
-            var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
-            if (listRemove.Length > 0)
-            {
-                await _tagRepository
-                    .Connection.ExecuteAsync(DeleteTagPosts, new
+    public async Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId)
+    {
+        try
+        {
+            // Find all tag with post (TagPost)
+            var tagsPostDb = await _tagRepository
+                    .Connection.QueryAsync<TagByPostResponse>(GetAllTagsByPostHashIdQuery, new
                     {
-                        PostId = postId,
-                        TagPostIds = listRemove
+                        PostHashId = postHashId
                     });
-            }
 
-            await AddTagsToPost(postId, listTagNeedToAdd);
+            return tagsPostDb.ToList();
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+        }
+    }
 
-            //Publish to calculate smart lookup for tag
-            await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
-            return tags;
+    private async Task<List<Guid>> AddNewTags(List<string> tagNames)
+    {
+        var userId = _currentUserService.Session.UserId;
+        var tagsToInsert = new List<Tag>();
+        var smartLookupInserts = new List<SmartLookup>();
+        foreach (var tagName in tagNames)
+        {
+            tagsToInsert.Add(new Tag
+            {
+                AuthorId = userId,
+                CreatedBy = userId,
+                LastModifiedBy = userId,
+                Name = tagName.Trim(),
+                Title = tagName,
+                IsDelete = false,
+            });
+            smartLookupInserts.Add(new SmartLookup
+            {
+                CountCriteria = 0,
+                Keyword = tagName,
+                KeywordType = LookupKeywordType.Tag
+            });
+        }
+        await _tagRepository.InsertAsync(tagsToInsert);
+        await _smartLookupRepository.InsertAsync(smartLookupInserts);
+
+        return tagsToInsert.Select(x => x.Id).ToList();
+
+    }
+
+    private async Task<IEnumerable<Guid>> AddTagsToPost(Guid postId, List<Guid> tagIds)
+    {
+        var userId = _currentUserService.Session.UserId;
+        var tagPostsToInsert = new List<TagPost>();
+        foreach (var tagId in tagIds)
+        {
+            tagPostsToInsert.Add(new TagPost
+            {
+                IsDelete = false,
+                PostId = postId,
+                TagId = tagId,
+                CreatedBy = userId,
+                LastModifiedBy = userId
+            });
+        }
+        await _tagPostRepository.InsertAsync(tagPostsToInsert);
+        return tagPostsToInsert.Select(x => x.Id).ToList();
+    }
+
+    private string ValidateTag(string tag)
+    {
+        tag = (tag + "").TrimStart('#');
+
+        if (tag.Length > SystemConfig.PostTagMaxLength)
+        {
+            throw new ArgumentException(ErrorCodes.PortalTagNameNotValidLength, string.Format(ErrorMessage.TagNameNotValidLength, tag));
         }
 
-        public async Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestR tagSuggestReq)
+        // Hash tag without any special character, except underscore, number and character
+        if (!Regex.IsMatch(tag, Regular.Tag))
         {
-            string tagSearch = string.IsNullOrWhiteSpace(tagSuggestReq.Text) ? "" : ValidateTag(tagSuggestReq.Text);
-
-            var tagsDb = await _tagRepository
-                    .Connection.QueryAsync<TagSuggestView>(GetSuggestTagsByNameQuery, new
-                    {
-                        TagSearch = "%" + tagSearch + "%",
-                        PageSize = SystemConfig.TagSuggestMaxLength
-                    });
-            return tagsDb;
+            throw new ArgumentException(ErrorCodes.PortalTagNameNotValid, string.Format(ErrorMessage.TagNameNotValid, tag));
         }
 
-        public async Task<PagedResults<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
+        return tag.ToLower();
+    }
+
+    public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input)
+    {
+        PagedResults<TagSearchResponse> results;
+        if (string.IsNullOrWhiteSpace(input.Name))
         {
-            var query = GetPopularTagsQuery;
-            if (popularTagReq.PostType == null)
-            {
-                query = query.Replace("[AddPostType]", "");
-            }
-            else
-            {
-                query = query.Replace("[AddPostType]", @" post.""Type"" = @PostType AND ");
-            }
-            var offset = popularTagReq.PageSize * (popularTagReq.PageNumber - 1);
-            var multipleQuery = await _tagRepository.Connection.
-                                QueryMultipleAsync(query, new
-                                {
-                                    PageSize = popularTagReq.PageSize,
-                                    Offet = offset,
-                                    PostType = popularTagReq.PostType
-                                });
-
-            var resDto = await multipleQuery.ReadAsync<PopularTagResponse>().ConfigureAwait(false);
-            var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-            var response = new PagedResults<PopularTagResponse>(totalItems, popularTagReq.PageNumber, popularTagReq.PageSize);
-            response.Items = resDto;
-
-            return response;
-
+            return new PagedResults<TagSearchResponse>(0);
         }
-
-        public async Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq)
-        {
-            int.TryParse(_configuration["TodayTrending:FetchDataTimes"], out var getdataTimes);
-            int.TryParse(_configuration["TodayTrending:Days"], out var days);
-            var offset = todayTrendingTagReq.PageSize * (todayTrendingTagReq.PageNumber - 1);
-            var toDate = DateTime.UtcNow.Date.EndOfDay();
-            var fromDate = toDate.AddDays(-days).BeginOfDay();
-
-            IEnumerable<TodayTrendingTagResponse> resDto = null;
-            PagedResults<TodayTrendingTagResponse> response = null;
-            var times = 1;
-            do
-            {
-                var query = GetTodayTrendingTagsQuery;
-                if (todayTrendingTagReq.PostType == null)
-                {
-                    query = query.Replace("[AddPostType]", "");
-                }
-                else
-                {
-                    query = query.Replace("[AddPostType]", @" AND post.""Type"" = @PostType ");
-                }
-                var multipleQuery = await _tagRepository.Connection.
-                    QueryMultipleAsync(query, new
-                    {
-                        FromDate = fromDate,
-                        ToDate = toDate,
-                        PageSize = todayTrendingTagReq.PageSize,
-                        Offet = offset,
-                        PostType = todayTrendingTagReq.PostType
-                    });
-                resDto = await multipleQuery.ReadAsync<TodayTrendingTagResponse>().ConfigureAwait(false);
-                var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-                if (resDto.Any())
-                {
-                    response = new PagedResults<TodayTrendingTagResponse>(totalItems, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
-                    response.Items = resDto;
-                }
-                else
-                {
-                    times++;
-                    toDate = fromDate.AddMilliseconds(-1);
-                    fromDate = toDate.AddDays(-days).Date;
-                }
-            }
-            while (times <= getdataTimes && !resDto.Any());
-
-            if (response == null)
-            {
-                response = new PagedResults<TodayTrendingTagResponse>(0, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
-            }
-            return response;
-
-        }
-        public async Task<List<TagView>> GetTagsByPostIdAsync(Guid postId)
-        {
-            try
-            {
-                // Find all tag with post (TagPost)
-                var query = string.Format(GetAllTagsByPostQuery, _tagRepository.TableName);
-                var tagsPostDb = await _tagRepository
-                        .Connection.QueryAsync<TagView>(query, new
-                        {
-                            PostId = postId
-                        });
-
-                return tagsPostDb.ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-            }
-        }
-
-        public async Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId)
-        {
-            try
-            {
-                // Find all tag with post (TagPost)
-                var tagsPostDb = await _tagRepository
-                        .Connection.QueryAsync<TagByPostResponse>(GetAllTagsByPostHashIdQuery, new
-                        {
-                            PostHashId = postHashId
-                        });
-
-                return tagsPostDb.ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-            }
-        }
-
-        private async Task<List<Guid>> AddNewTags(List<string> tagNames)
-        {
-            var userId = _currentUserService.Session.UserId;
-            var tagsToInsert = new List<Tag>();
-            var smartLookupInserts = new List<SmartLookup>();
-            foreach (var tagName in tagNames)
-            {
-                tagsToInsert.Add(new Tag
-                {
-                    AuthorId = userId,
-                    CreatedBy = userId,
-                    LastModifiedBy = userId,
-                    Name = tagName.Trim(),
-                    Title = tagName,
-                    IsDelete = false,
-                });
-                smartLookupInserts.Add(new SmartLookup
-                {
-                    CountCriteria = 0,
-                    Keyword = tagName,
-                    KeywordType = LookupKeywordType.Tag
-                });
-            }
-            await _tagRepository.InsertAsync(tagsToInsert);
-            await _smartLookupRepository.InsertAsync(smartLookupInserts);
-
-            return tagsToInsert.Select(x => x.Id).ToList();
-
-        }
-
-        private async Task<IEnumerable<Guid>> AddTagsToPost(Guid postId, List<Guid> tagIds)
-        {
-            var userId = _currentUserService.Session.UserId;
-            var tagPostsToInsert = new List<TagPost>();
-            foreach (var tagId in tagIds)
-            {
-                tagPostsToInsert.Add(new TagPost
-                {
-                    IsDelete = false,
-                    PostId = postId,
-                    TagId = tagId,
-                    CreatedBy = userId,
-                    LastModifiedBy = userId
-                });
-            }
-            await _tagPostRepository.InsertAsync(tagPostsToInsert);
-            return tagPostsToInsert.Select(x => x.Id).ToList();
-        }
-
-        private string ValidateTag(string tag)
-        {
-            tag = (tag + "").TrimStart('#');
-
-            if (tag.Length > SystemConfig.PostTagMaxLength)
-            {
-                throw new ArgumentException(ErrorCodes.PortalTagNameNotValidLength, string.Format(ErrorMessage.TagNameNotValidLength, tag));
-            }
-
-            // Hash tag without any special character, except underscore, number and character
-            if (!Regex.IsMatch(tag, Regular.Tag))
-            {
-                throw new ArgumentException(ErrorCodes.PortalTagNameNotValid, string.Format(ErrorMessage.TagNameNotValid, tag));
-            }
-
-            return tag.ToLower();
-        }
-
-        public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input)
-        {
-            PagedResults<TagSearchResponse> results;
-            if (string.IsNullOrWhiteSpace(input.Name))
-            {
-                return new PagedResults<TagSearchResponse>(0);
-            }
-            var keywords = input.Name.ToLower().Split(' ');
-            var query = $@"
+        var keywords = input.Name.ToLower().Split(' ');
+        var query = $@"
                                 SELECT t.""Name"",COUNT( t.""Id"")   from ""Tags"" t 
                                 LEFT JOIN ""TagPosts"" tp  
                                 ON tp.""TagId""  = t.""Id"" 
@@ -364,54 +364,53 @@ namespace Mcsg.Social.Api.Services
                                     [QueryCondition]
                                     ) q";
 
-            bool first = true;
-            var queryCondition = "";
-            foreach (var word in keywords)
+        bool first = true;
+        var queryCondition = "";
+        foreach (var word in keywords)
+        {
+            if (first)
             {
-                if (first)
-                {
-                    queryCondition += $@"AND t.""Name"" ILIKE '%{word}%'";
-                    first = false;
-                }
-                else
-                {
-                    queryCondition += $@"OR t.""Name"" ILIKE '%{word}%'";
-                }
-            }
-            query = query.Replace("[QueryCondition]", queryCondition);
-            var offset = input.PageSize * (input.PageNumber - 1);
-            var multi = await _tagRepository.Connection.QueryMultipleAsync(query, new
-            {
-                Offset = offset,
-                PageSize = input.PageSize
-            });
-            var items = await multi.ReadAsync<TagSearchResponse>().ConfigureAwait(false);
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-
-            if (items.Any())
-            {
-                results = new PagedResults<TagSearchResponse>(totalItems, input.PageNumber, input.PageSize);
-                results.Items = items;
+                queryCondition += $@"AND t.""Name"" ILIKE '%{word}%'";
+                first = false;
             }
             else
             {
-                results = new PagedResults<TagSearchResponse>(0);
+                queryCondition += $@"OR t.""Name"" ILIKE '%{word}%'";
             }
-
-            return results;
         }
-
-        public async Task<IEnumerable<TagSearchResponse>> SearchTagsByName(TagSearchKeywordR request)
+        query = query.Replace("[QueryCondition]", queryCondition);
+        var offset = input.PageSize * (input.PageNumber - 1);
+        var multi = await _tagRepository.Connection.QueryMultipleAsync(query, new
         {
-            var query = string.Format(string.IsNullOrWhiteSpace(request.Keyword) ? SearchTagsRandomQuery : SearchTagsByNameQuery, _tagRepository.TableName);
-            var tagNames = await _tagRepository.Connection.QueryAsync<TagSearchResponse>(query, new
-            {
-                ExactKeyword = request.Keyword,
-                StartsWithKeyword = $"{request.Keyword}%",
-                ContainsKeyword = $"%{request.Keyword}%"
-            });
+            Offset = offset,
+            PageSize = input.PageSize
+        });
+        var items = await multi.ReadAsync<TagSearchResponse>().ConfigureAwait(false);
+        var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
-            return tagNames;
+        if (items.Any())
+        {
+            results = new PagedResults<TagSearchResponse>(totalItems, input.PageNumber, input.PageSize);
+            results.Items = items;
         }
+        else
+        {
+            results = new PagedResults<TagSearchResponse>(0);
+        }
+
+        return results;
+    }
+
+    public async Task<IEnumerable<TagSearchResponse>> SearchTagsByName(TagSearchKeywordR request)
+    {
+        var query = string.Format(string.IsNullOrWhiteSpace(request.Keyword) ? SearchTagsRandomQuery : SearchTagsByNameQuery, _tagRepository.TableName);
+        var tagNames = await _tagRepository.Connection.QueryAsync<TagSearchResponse>(query, new
+        {
+            ExactKeyword = request.Keyword,
+            StartsWithKeyword = $"{request.Keyword}%",
+            ContainsKeyword = $"%{request.Keyword}%"
+        });
+
+        return tagNames;
     }
 }

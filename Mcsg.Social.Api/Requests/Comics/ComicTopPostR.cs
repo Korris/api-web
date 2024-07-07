@@ -1,6 +1,5 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicTopPostR : BasePageResultReq
 {
-    public class ComicTopPostR : BasePageResultReq
-    {
-    }
 }

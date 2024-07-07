@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Models.Earning
+﻿namespace Mcsg.Social.Api.Models.Earning;
+
+public class ReportDetailResponse
 {
-    public class ReportDetailResponse
-    {
-        public string ComicName { get; set; }
-        public List<ReportDetailData> Data { get; set; } = new List<ReportDetailData>();
-    }
+    public string ComicName { get; set; }
+    public List<ReportDetailData> Data { get; set; } = new List<ReportDetailData>();
 }

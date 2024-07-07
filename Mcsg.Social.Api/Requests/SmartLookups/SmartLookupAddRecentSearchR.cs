@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Requests
-{
-    using Models;
+﻿namespace Mcsg.Social.Api.Requests;
 
-    public class SmartLookupAddRecentSearchR : SmartLookupResponse
-    {
-    }
+using Models;
+
+public class SmartLookupAddRecentSearchR : SmartLookupResponse
+{
 }

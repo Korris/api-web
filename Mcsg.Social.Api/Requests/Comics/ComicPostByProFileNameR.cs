@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicPostByProFileNameR : BasePageResultReq
 {
-    public class ComicPostByProFileNameR : BasePageResultReq
-    {
-        public string? Keyword { get; set; }
-        public string? SearchBy { get; set; }
-    }
+    public string? Keyword { get; set; }
+    public string? SearchBy { get; set; }
 }

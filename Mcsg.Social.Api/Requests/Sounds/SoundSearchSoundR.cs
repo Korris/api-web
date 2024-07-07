@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Social.Api.Requests
+namespace Mcsg.Social.Api.Requests;
+
+public class SoundSearchSoundR : SoundBackgroundMediaLoadR
 {
-    public class SoundSearchSoundR : SoundBackgroundMediaLoadR
-    {
-        [Required]
-        public string? Keyword { get; set; }
-    }
+    [Required]
+    public string? Keyword { get; set; }
 }

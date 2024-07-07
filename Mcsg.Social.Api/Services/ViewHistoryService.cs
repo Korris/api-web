@@ -1,48 +1,47 @@
-﻿namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services;
+
+using Common.Core.Enums;
+using Interfaces;
+using Lib.Common.Distributor;
+using Lib.Common.Models;
+using Models;
+
+public partial class ViewHistoryService : IViewHistoryService
 {
-    using Common.Core.Enums;
-    using Interfaces;
-    using Lib.Common.Distributor;
-    using Lib.Common.Models;
-    using Models;
+    private readonly DistributeManager _distributeManager;
 
-    public partial class ViewHistoryService : IViewHistoryService
+    public ViewHistoryService(DistributeManager distributeManager)
     {
-        private readonly DistributeManager _distributeManager;
+        _distributeManager = distributeManager;
+    }
 
-        public ViewHistoryService(DistributeManager distributeManager)
+    public async Task PrepareAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType)
+    {
+        await _distributeManager.Deliver(new ViewHistoryDistributeItem
         {
-            _distributeManager = distributeManager;
-        }
-
-        public async Task PrepareAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType)
-        {
-            await _distributeManager.Deliver(new ViewHistoryDistributeItem
+            Data = new ViewHistoryData
             {
-                Data = new ViewHistoryData
-                {
-                    UserId = userId,
-                    EntityId = entityId,
-                    EntityType = type,
-                    IdAddress = ipAddress,
-                    SubType = subType
-                }
-            });
-        }
+                UserId = userId,
+                EntityId = entityId,
+                EntityType = type,
+                IdAddress = ipAddress,
+                SubType = subType
+            }
+        });
+    }
 
-        public async Task QueueAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType)
+    public async Task QueueAddView(Guid userId, Guid entityId, EntityType type, string ipAddress, EntitySubType? subType)
+    {
+        await _distributeManager.Deliver(new ViewHistoryDistributeItem
         {
-            await _distributeManager.Deliver(new ViewHistoryDistributeItem
+            Data = new ViewHistoryData
             {
-                Data = new ViewHistoryData
-                {
-                    UserId = userId,
-                    EntityId = entityId,
-                    EntityType = type,
-                    IdAddress = ipAddress,
-                    SubType = subType
-                }
-            });
-        }
+                UserId = userId,
+                EntityId = entityId,
+                EntityType = type,
+                IdAddress = ipAddress,
+                SubType = subType
+            }
+        });
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class UserCoverPhotoUpdateResponse
 {
-    public class UserCoverPhotoUpdateResponse
-    {
-        public string CoverPhoto { get; set; }
-    }
+    public string CoverPhoto { get; set; }
 }

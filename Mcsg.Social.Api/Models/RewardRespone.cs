@@ -1,10 +1,9 @@
-﻿using Mcsg.Lib.Common.Enums;
+﻿namespace Mcsg.Social.Api.Models;
 
-namespace Mcsg.Social.Api.Models
+using Lib.Common.Enums;
+
+public class RewardRespone
 {
-    public class RewardRespone
-    {
-        public RewardType Type { get; set; }
-        public string MessageCode { get; set; }
-    }
+    public RewardType Type { get; set; }
+    public string MessageCode { get; set; }
 }

@@ -1,19 +1,17 @@
-﻿using Mcsg.Lib.Data.Enums;
+﻿namespace Mcsg.Social.Api.Models;
 
-namespace Mcsg.Social.Api.Models
+using Lib.Data.Enums;
+public class ResourceResponse
 {
-    public class ResourceResponse
-    {
-        public ResourceType Type { get; set; }
-        public ResourceStatus Status { get; set; }
-        public int Order { get; set; }
-        public string Url { get; set; }
-        public string ShareUrl { get; set; }
-        public string Name { get; set; }
-        public string HashId { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Body { get; set; }
-        public string SubPostHashId { get; set; }
-    }
+    public ResourceType Type { get; set; }
+    public ResourceStatus Status { get; set; }
+    public int Order { get; set; }
+    public string Url { get; set; }
+    public string ShareUrl { get; set; }
+    public string Name { get; set; }
+    public string HashId { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public string Body { get; set; }
+    public string SubPostHashId { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Enums
+﻿namespace Mcsg.Social.Api.Enums;
+
+public enum CommentLevel
 {
-    public enum CommentLevel
-    {
-        Comment = 1,
-        Reply = 2,
-    }
+    Comment = 1,
+    Reply = 2,
 }

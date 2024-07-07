@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Social.Api.Requests
+namespace Mcsg.Social.Api.Requests;
+
+public class ComicTopPostRecommendedR : ComicTopPostR
 {
-    public class ComicTopPostRecommendedR : ComicTopPostR
-    {
-        [DefaultValue(3)]
-        public int PageSize { get; set; }
-    }
+    [DefaultValue(3)]
+    public int PageSize { get; set; }
 }

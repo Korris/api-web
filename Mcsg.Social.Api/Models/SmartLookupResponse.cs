@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class SmartLookupResponse
 {
-    public class SmartLookupResponse
-    {
-        public string Keyword { get; set; }
-        public string KeywordType { get; set; }
-        public string Avatar { get; set; }
-    }
+    public string Keyword { get; set; }
+    public string KeywordType { get; set; }
+    public string Avatar { get; set; }
 }

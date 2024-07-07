@@ -1,9 +1,8 @@
-namespace Mcsg.Social.Api.Requests
+namespace Mcsg.Social.Api.Requests;
+
+public class PostRandomIdsR
 {
-    public class PostRandomIdsR
-    {
-        public int AmountItem { get; set; }
-        public List<string>? PostRandomIds { get; set; }
-        public bool IsGetAllType { get; set; }
-    }
+    public int AmountItem { get; set; }
+    public List<string>? PostRandomIds { get; set; }
+    public bool IsGetAllType { get; set; }
 }

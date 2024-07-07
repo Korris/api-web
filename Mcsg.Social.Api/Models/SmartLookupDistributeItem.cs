@@ -1,10 +1,9 @@
-﻿using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Social.Api.Models;
 
-namespace Mcsg.Social.Api.Models
+using Lib.Common.Distributor;
+using Lib.Common.Models;
+
+public class SmartLookupDistributeItem : DistributedItem
 {
-    public class SmartLookupDistributeItem : DistributedItem
-    {
-        public SmartLookupData Data { get; set; }
-    }
+    public SmartLookupData Data { get; set; }
 }

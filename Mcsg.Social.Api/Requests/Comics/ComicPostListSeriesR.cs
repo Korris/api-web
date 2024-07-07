@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class ComicPostListSeriesR : BasePageResultReq
 {
-    public class ComicPostListSeriesR : BasePageResultReq
-    {
-        public string? HashTag { get; set; }
-        public bool IsFavorite { get; set; }
-    }
+    public string? HashTag { get; set; }
+    public bool IsFavorite { get; set; }
 }

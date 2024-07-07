@@ -1,38 +1,37 @@
 ﻿using AutoMapper;
 
-namespace Mcsg.Social.Api.Models
-{
-    using Extensions;
-    using Mappings;
+namespace Mcsg.Social.Api.Models;
 
-    public class CommentResponse : IMapFrom<CommentQueryModel>
+using Extensions;
+using Mappings;
+
+public class CommentResponse : IMapFrom<CommentQueryModel>
+{
+    public Guid Id { get; set; }
+    public Guid PostId { get; set; }
+    public Guid AuthorId { get; set; }
+    public string AuthorName { get; set; } = string.Empty;
+    public string UserAvatar { get; set; } = string.Empty;
+    public string Body { get; set; } = string.Empty;
+    public DateTime? LastModifiedDate { get; set; }
+    public string ResourceHashId { get; set; } = string.Empty;
+    public string ResourceUrl { get; set; } = string.Empty;
+    public string GifId { get; set; } = string.Empty;
+    public ReplyResponse Replies { get; set; } = new ReplyResponse();
+    public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
+    public void Mapping(Profile profile)
     {
-        public Guid Id { get; set; }
-        public Guid PostId { get; set; }
-        public Guid AuthorId { get; set; }
-        public string AuthorName { get; set; } = string.Empty;
-        public string UserAvatar { get; set; } = string.Empty;
-        public string Body { get; set; } = string.Empty;
-        public DateTime? LastModifiedDate { get; set; }
-        public string ResourceHashId { get; set; } = string.Empty;
-        public string ResourceUrl { get; set; } = string.Empty;
-        public string GifId { get; set; } = string.Empty;
-        public ReplyResponse Replies { get; set; } = new ReplyResponse();
-        public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<CommentQueryModel, CommentResponse>()
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-                .ForMember(d => d.PostId, opt => opt.MapFrom(s => s.PostId))
-                .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
-                .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
-                .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
-                .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
-                .ForMember(d => d.LastModifiedDate, opt => opt.MapFrom(s => s.LastModifiedDate))
-                .ForMember(d => d.ResourceUrl, opt => opt.Ignore())
-                .ForMember(d => d.Replies, opt => opt.Ignore())
-                .ForMember(d => d.Mentions, opt => opt.Ignore())
-                .ReverseMap();
-        }
+        profile.CreateMap<CommentQueryModel, CommentResponse>()
+            .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+            .ForMember(d => d.PostId, opt => opt.MapFrom(s => s.PostId))
+            .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
+            .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
+            .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
+            .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
+            .ForMember(d => d.LastModifiedDate, opt => opt.MapFrom(s => s.LastModifiedDate))
+            .ForMember(d => d.ResourceUrl, opt => opt.Ignore())
+            .ForMember(d => d.Replies, opt => opt.Ignore())
+            .ForMember(d => d.Mentions, opt => opt.Ignore())
+            .ReverseMap();
     }
 }

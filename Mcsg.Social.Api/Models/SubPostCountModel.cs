@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+
+public class SubPostCountModel
 {
-    public class SubPostCountModel
-    {
-        public Guid PostId { get; set; }
-        public int Count { get; set; }
-    }
+    public Guid PostId { get; set; }
+    public int Count { get; set; }
 }

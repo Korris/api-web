@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class StoryChapterR : StoryChapterPostR
 {
-    public class StoryChapterR : StoryChapterPostR
-    {
-        public string? Body { get; set; }
-    }
+    public string? Body { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
 
-namespace Mcsg.Social.Api.Requests
+namespace Mcsg.Social.Api.Requests;
+
+public class ComicChapterListR : BasePageResultReq
 {
-    public class ComicChapterListR : BasePageResultReq
-    {
-        [DefaultValue("Order")]
-        public string? OrderBy { get; set; }
-    }
+    [DefaultValue("Order")]
+    public string? OrderBy { get; set; }
 }

@@ -1,10 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models
+﻿namespace Mcsg.Social.Api.Models;
+public class TagSearchResponse
 {
-    public class TagSearchResponse
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Count { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Count { get; set; }
 
-    }
 }

@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class CommentReplyByCommentR : BasePageResultReq
 {
-    public class CommentReplyByCommentR : BasePageResultReq
-    {
-        public Guid CommentId { get; set; }
-        public bool IsSubPost { get; set; }
-    }
+    public Guid CommentId { get; set; }
+    public bool IsSubPost { get; set; }
 }

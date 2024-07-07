@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class TagSearchR : BasePageResultReq
 {
-    public class TagSearchR : BasePageResultReq
-    {
-        public string? Name { get; set; }
-    }
+    public string? Name { get; set; }
 }

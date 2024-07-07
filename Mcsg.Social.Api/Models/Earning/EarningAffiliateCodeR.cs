@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Social.Api.Models.Earning
+namespace Mcsg.Social.Api.Models.Earning;
+
+public class EarningAffiliateCodeR
 {
-    public class EarningAffiliateCodeR
-    {
-        [Required]
-        public string HashId { get; set; }
-        [Required]
-        public string Type { get; set; }
-    }
+    [Required]
+    public string HashId { get; set; }
+    [Required]
+    public string Type { get; set; }
 }

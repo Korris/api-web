@@ -1,20 +1,19 @@
-﻿namespace Mcsg.Social.Api.Interfaces
+﻿namespace Mcsg.Social.Api.Interfaces;
+
+using Lib.Data.Entities.Common;
+using Models;
+using Requests;
+
+public interface IFavoriteService
 {
-    using Lib.Data.Entities.Common;
-    using Models;
-    using Requests;
+    Task<bool> AddPostToFavoriteAsync(Guid postId);
+    Task<bool> AddTagToFavoriteAsync(Guid tagId);
 
-    public interface IFavoriteService
-    {
-        Task<bool> AddPostToFavoriteAsync(Guid postId);
-        Task<bool> AddTagToFavoriteAsync(Guid tagId);
+    Task<bool> RemovePostToFavoriteAsync(Guid postId);
+    Task<bool> RemoveTagToFavoriteAsync(Guid tagId);
 
-        Task<bool> RemovePostToFavoriteAsync(Guid postId);
-        Task<bool> RemoveTagToFavoriteAsync(Guid tagId);
+    Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
+    Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
+    Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
 
-        Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
-        Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
-        Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
-
-    }
 }

@@ -1,10 +1,9 @@
-﻿using Mcsg.Social.Api.Enums;
+﻿namespace Mcsg.Social.Api.Models.Earning;
 
-namespace Mcsg.Social.Api.Models.Earning
+using Enums;
+
+public class EarningDataModel
 {
-    public class EarningDataModel
-    {
-        public float Amount { get; set; }
-        public EarningDataType Type { get; set; }
-    }
+    public float Amount { get; set; }
+    public EarningDataType Type { get; set; }
 }

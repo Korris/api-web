@@ -1,11 +1,10 @@
-﻿namespace Mcsg.Social.Api.Requests
-{
-    using Lib.Data.Enums;
+﻿namespace Mcsg.Social.Api.Requests;
 
-    public class FeedReportPostReq
-    {
-        public Guid PostId { get; set; }
-        public ReasonType ReasonType { get; set; }
-        public string? ReasonText { get; set; }
-    }
+using Lib.Data.Enums;
+
+public class FeedReportPostReq
+{
+    public Guid PostId { get; set; }
+    public ReasonType ReasonType { get; set; }
+    public string? ReasonText { get; set; }
 }
