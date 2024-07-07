@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
-using Api.Interfaces;
+using Interfaces;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
 using Models;
 using Models._3rdClass.ZaloPay.Request;
-using Services;
 
 [ApiController]
 [Route("[controller]")]

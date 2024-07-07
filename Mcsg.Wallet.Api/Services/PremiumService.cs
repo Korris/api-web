@@ -6,6 +6,7 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
+using Interfaces;
 using Lib.Common.Distributor;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
@@ -19,15 +20,6 @@ using Lib.Data.Wallet.Enums;
 using Models;
 using static Common.Core.Constants.Setting;
 
-public interface IPremiumService
-{
-    Task<IEnumerable<PremiumPackageResponse>> GetPremiumPackage();
-    Task<BuyItemResp> SelectPremiumPackage(int? packageNo);
-    Task<bool> BuyPremium(BuyPremiumReq req);
-    Task<BuyItemResp> SelectChapterPackage(Guid chapterId);
-    Task<bool> BuyChapter(BuyChapterReq req);
-    Task<bool> BuySerieAsync(BuySerieReq req);
-}
 public partial class PremiumService : IPremiumService
 {
     private readonly IConfiguration _configuration;
@@ -35,7 +27,8 @@ public partial class PremiumService : IPremiumService
     private readonly ICurrentUserService _currentUserService;
     private readonly DistributeManager _distributeManager;
     private readonly IBankService _bankService;
-    private readonly IRepository<Lib.Data.Domain.Entities.User> _userRepository;
+    private readonly IRepository<User> _userRepository;
+
     public PremiumService(IConfiguration configuration,
          DistributeManager distributeManager,
           IBankService bankService,

@@ -4,18 +4,10 @@ using Newtonsoft.Json;
 namespace Mcsg.Wallet.Api.Services;
 
 using Constants;
+using Interfaces;
 using Lib.Data.Wallet;
 using Models;
 
-public interface IBankService
-{
-    Task<IEnumerable<BankResponse>> GetBanks();
-    Task<IEnumerable<BankFromApiResp>> SyncBanks();
-    List<PayMethodResp> GetDepositMethods();
-    List<PayMethodResp> GetPayMethods();
-    List<CurrencyTypeRatio> GetCurrencyTypeRatios();
-    string GetPayMethodTitle(string name);
-}
 public class BankService : IBankService
 {
     private readonly IConfiguration _configuration;

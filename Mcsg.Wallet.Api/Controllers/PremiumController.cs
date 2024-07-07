@@ -2,11 +2,11 @@
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Interfaces;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Wallet;
 using Models;
-using Services;
 
 [ApiController]
 [Route("[controller]")]

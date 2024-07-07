@@ -6,14 +6,12 @@ using System.Data;
 
 namespace Mcsg.Wallet.Api.Services;
 
-using Api.Constants;
-using Api.Interfaces;
-using Api.Models._3rdClass.ZaloPay.Request;
-using Api.Models._3rdClass.ZaloPay.Response;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
+using Constants;
+using Interfaces;
 using Lib.Common.Enums;
 using Lib.Common.Helpers;
 using Lib.Common.Models;
@@ -23,6 +21,8 @@ using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;
 using Models;
+using Models._3rdClass.ZaloPay.Request;
+using Models._3rdClass.ZaloPay.Response;
 using static Common.Core.Constants.Setting;
 
 public class UserWalletService : IUserWalletService

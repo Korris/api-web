@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
-using Services;
+
+using Interfaces;
 
 [ApiController]
 [Route("[controller]")]

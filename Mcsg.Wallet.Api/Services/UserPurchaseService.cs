@@ -5,18 +5,13 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Extensions;
+using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
 using Models;
-
-public interface IUserPurchaseService
-{
-    Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(PaginatedRequest request);
-    Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync();
-}
 
 public class UserPurchaseService : IUserPurchaseService
 {

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 namespace Mcsg.Wallet.Api.Services;
 
 using Constants;
+using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Helpers;
 using Lib.Common.Models;
@@ -14,16 +15,8 @@ using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Interfaces;
 using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
-
-public interface IZaloPayService
-{
-    Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status);
-    Task<CreateOrderResponse> CreateOrderAsync(Guid transactionId, string content, float amount, Guid? userId, string redirectUrl);
-    Task<QueryZalopayPayResponse> QueryOrderAsync(Guid transactionId);
-}
 
 public class ZaloPayService : IZaloPayService
 {

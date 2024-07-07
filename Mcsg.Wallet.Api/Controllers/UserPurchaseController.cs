@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Wallet;
-using Services;
 
 [ApiController]
 [Route("[controller]")]

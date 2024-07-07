@@ -2,17 +2,13 @@
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Interfaces;
 using Lib.Common.Distributor;
 using Lib.Common.Models;
 using Lib.Data.Enums;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
 using Models;
-
-public interface ISystemService
-{
-    Task<bool> SendAdminNoti(string action, string fromUser, string content);
-}
 
 public class SystemService : ISystemService
 {
