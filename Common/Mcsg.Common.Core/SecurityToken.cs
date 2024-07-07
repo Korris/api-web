@@ -24,6 +24,7 @@ namespace Mcsg.Common.Core;
 using Core.Dtos;
 using SeedWork.Constants;
 using SeedWork.Dtos;
+using SeedWork.Exceptions;
 
 /// <summary>
 /// Security token
@@ -87,6 +88,36 @@ public class SecurityToken
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Get principal from token
+    /// </summary>
+    /// <param name="token">Token</param>
+    /// <param name="secret">Secret (if null or length less than 16 will error)</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="ForbiddenAccessException"></exception>
+    public static ClaimsPrincipal GetPrincipalFromToken(string token, string secret)
+    {
+        var key = Encoding.UTF8.GetBytes(secret);
+        var param = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = false,
+            ClockSkew = TimeSpan.Zero // tokens expire exactly at token expiration time (instead of 5 minutes later)
+        };
+
+        var handler = new JwtSecurityTokenHandler();
+        var res = handler.ValidateToken(token, param, out Microsoft.IdentityModel.Tokens.SecurityToken jwt);
+        if (jwt is not JwtSecurityToken security || !security.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        {
+            throw new ForbiddenAccessException(Error.E200);
+        }
+
+        return res;
     }
 
     /// <summary>

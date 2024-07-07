@@ -3,11 +3,13 @@ using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core;
 using Common.Core.Dtos;
+using Common.SeedWork.Constants;
+using Common.SeedWork.Exceptions;
 using Helpers;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Exceptions;
 using Lib.Common.Extensions;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
@@ -43,7 +45,7 @@ public class TokenService : ITokenService
 
     public Guid GetSessionIdFromToken(string accessToken)
     {
-        ClaimsPrincipal principal = TokenHelper.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(ErrorCodes.InvalidAccessToken);
+        ClaimsPrincipal principal = SecurityToken.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(Error.E200);
         return principal.FindFirstValue(SecurityClaimTypes.SessionIdClaimName).ToGuid();
     }
 

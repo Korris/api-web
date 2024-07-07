@@ -41,6 +41,15 @@ public static class Error
 
     #endregion
 
+    #region -- E2xx --
+
+    /// <summary>
+    /// Invalid access token
+    /// </summary>
+    public const string E200 = "ERR_AUTH_00003";
+
+    #endregion
+
     #region -- E4xx --
 
     /// <summary>
