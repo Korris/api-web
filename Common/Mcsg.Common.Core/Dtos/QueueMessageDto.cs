@@ -166,7 +166,7 @@ public class QueueMessageDto
         /// <summary>
         /// Id
         /// </summary>
-        public ulong Id { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         /// Title

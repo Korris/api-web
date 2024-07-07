@@ -20,7 +20,7 @@ using Interfaces;
 /// <summary>
 /// Id data transfer object
 /// </summary>
-public class IdDto : IEntityId<ulong>
+public class IdDto : IEntityId<long>
 {
     #region -- Implements --
 
@@ -28,7 +28,7 @@ public class IdDto : IEntityId<ulong>
     /// Id
     /// </summary>
     [JsonIgnore]
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     #endregion
 
@@ -45,7 +45,7 @@ public class IdDto : IEntityId<ulong>
         }
         set
         {
-            Id = Convert.ToUInt64(SecurityAes.DecryptText(value));
+            Id = Convert.ToInt64(SecurityAes.DecryptText(value));
         }
     }
 

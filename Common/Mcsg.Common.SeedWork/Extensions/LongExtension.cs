@@ -26,7 +26,7 @@ public static class LongExtension
     /// <param name="num">Number</param>
     /// <param name="prefix">Prefix</param>
     /// <returns>Return the result</returns>
-    public static string ToSerialNumber(this ulong num, string prefix)
+    public static string ToSerialNumber(this long num, string prefix)
     {
         string? res;
 

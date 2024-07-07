@@ -16,23 +16,10 @@ using FluentValidation;
 namespace Mcsg.Common.Core.Validators;
 
 using Requests;
-using static SeedWork.Constants.Validator;
 
 /// <summary>
 /// IdBase validator
 /// </summary>
 public class IdBaseV : AbstractValidator<IdBaseR>
 {
-    #region -- Methods --
-
-    /// <summary>
-    /// Initialize
-    /// </summary>
-    public IdBaseV()
-    {
-        var t = "EncryptedId";
-        RuleFor(p => p.EncryptedId).NotEmpty().WithMessage($"{t} {NotEmpty}");
-    }
-
-    #endregion
 }

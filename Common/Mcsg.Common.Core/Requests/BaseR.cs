@@ -115,7 +115,7 @@ public abstract class BaseR : IRequest<SingleResponse>
     /// Current UserId logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public ulong? CurrentUserId => Payload?.RootElement.GetProperty("id").GetUInt64();
+    public long? CurrentUserId => Payload?.RootElement.GetProperty("id").GetInt64();
 
     /// <summary>
     /// The folder name is stored in MinIO

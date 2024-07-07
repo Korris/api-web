@@ -39,12 +39,12 @@ public class PayloadDto
     /// <summary>
     /// Id
     /// </summary>
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     /// <summary>
     /// EnterpriseId
     /// </summary>
-    public ulong? EnterpriseId { get; set; }
+    public long? EnterpriseId { get; set; }
 
     /// <summary>
     /// Encrypted EnterpriseId
@@ -57,7 +57,7 @@ public class PayloadDto
         }
         set
         {
-            EnterpriseId = string.IsNullOrWhiteSpace(value) ? null : Convert.ToUInt64(SecurityAes.DecryptText(value));
+            EnterpriseId = string.IsNullOrWhiteSpace(value) ? null : Convert.ToInt64(SecurityAes.DecryptText(value));
         }
     }
 
