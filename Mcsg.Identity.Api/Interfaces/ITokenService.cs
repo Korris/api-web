@@ -6,7 +6,7 @@ using Response;
 
 public interface ITokenService
 {
-    TokenResponse GenerateAccessToken(Guid sessionId);
+    TokenDto GenerateAccessToken(Guid sessionId);
 
     Task<RefreshTokenDto?> AddUserRefreshTokenAsync(User user);
 

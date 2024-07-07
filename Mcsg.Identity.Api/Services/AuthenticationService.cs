@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Constants;
@@ -178,7 +179,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
 
     }
-    public async Task<TokenResponse> LoginUser(LoginUserReq request)
+    public async Task<TokenDto> LoginUser(LoginUserReq request)
     {
         var vr = new AuthenticationLoginUserV().Validate(request);
         if (!vr.IsValid)
@@ -316,7 +317,7 @@ public partial class AuthenticationService : IAuthenticationService
         return verifyUserModel;
     }
 
-    public async Task<TokenResponse> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+    public async Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
     {
         var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId.ToString()) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
 
@@ -338,7 +339,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
 
-        TokenResponse response;
+        TokenDto response;
         if (changePasswordResult.Succeeded)
         {
             await LogOut();
@@ -354,10 +355,10 @@ public partial class AuthenticationService : IAuthenticationService
         return response;
     }
 
-    private async Task<TokenResponse> CreateAccessToken(User user)
+    private async Task<TokenDto> CreateAccessToken(User user)
     {
         var session = await _sessionService.CreateSessionAsync(user, "");
-        TokenResponse response = _tokenService.GenerateAccessToken(session.Id);
+        TokenDto response = _tokenService.GenerateAccessToken(session.Id);
         response.Roles = session.Roles;
         response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
@@ -371,9 +372,9 @@ public partial class AuthenticationService : IAuthenticationService
         return response;
     }
 
-    public async Task<TokenResponse> SetUserPassword(string password, string confirmPassword)
+    public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
     {
-        var response = new TokenResponse();
+        var response = new TokenDto();
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString()) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
         var isHasPassword = await _userManager.HasPasswordAsync(user);
@@ -466,7 +467,7 @@ public partial class AuthenticationService : IAuthenticationService
         return resetPass.Succeeded;
     }
 
-    public async Task<TokenResponse> SocialLogin(string socialType, string socialToken)
+    public async Task<TokenDto> SocialLogin(string socialType, string socialToken)
     {
         socialType = socialType.ToLower();
         List<string> socialMedias = new() {
@@ -615,7 +616,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<TokenResponse> VerifyRegisterOtp(UserOtpType type, string email, string phone, string otp, string otpToken)
+    public async Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string email, string phone, string otp, string otpToken)
     {
         var valid = await _otpService.VerifyAsync(otpToken, otp, type);
         if (valid)

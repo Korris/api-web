@@ -7,13 +7,11 @@ using Common.Core;
 using Common.Core.Dtos;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
-using Helpers;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Response;
 
 public class TokenService : ITokenService
 {
@@ -57,7 +55,7 @@ public class TokenService : ITokenService
 
             if (userRefreshToken != null)
             {
-                userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_setting.Jwt.RefreshTokenExpiredTimeInDay);
+                userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt);
                 await _context.SaveChangesAsync();
 
                 return new RefreshTokenDto
@@ -71,8 +69,8 @@ public class TokenService : ITokenService
                 userRefreshToken = new UserRefreshToken
                 {
                     UserId = user.Id,
-                    RefreshToken = TokenHelper.GenerateToken(),
-                    RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_setting.Jwt.RefreshTokenExpiredTimeInDay)
+                    RefreshToken = SecurityToken.GenerateToken(),
+                    RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
                 };
                 await _context.UserRefreshTokens.AddAsync(userRefreshToken);
 
@@ -87,9 +85,9 @@ public class TokenService : ITokenService
         return null;
     }
 
-    public TokenResponse GenerateAccessToken(Guid sessionId)
+    public TokenDto GenerateAccessToken(Guid sessionId)
     {
-        return TokenHelper.GenerateAccessToken(sessionId, _setting.Jwt);
+        return SecurityToken.GenerateAccessToken(sessionId, _setting.Jwt);
     }
 
     public async Task<bool> DeleteRefreshTokenAsync(Guid userId)

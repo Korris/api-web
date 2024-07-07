@@ -94,4 +94,15 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string Background = "Background";
     }
+
+    /// <summary>
+    /// Security claim
+    /// </summary>
+    public class SecurityClaim
+    {
+        /// <summary>
+        /// SessionId
+        /// </summary>
+        public const string SessionId = "sessionId";
+    }
 }

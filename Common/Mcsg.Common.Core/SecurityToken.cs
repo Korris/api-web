@@ -21,8 +21,8 @@ using System.Text.Json;
 
 namespace Mcsg.Common.Core;
 
+using Core.Constants;
 using Core.Dtos;
-using SeedWork.Constants;
 using SeedWork.Dtos;
 using SeedWork.Exceptions;
 
@@ -114,10 +114,56 @@ public class SecurityToken
         var res = handler.ValidateToken(token, param, out Microsoft.IdentityModel.Tokens.SecurityToken jwt);
         if (jwt is not JwtSecurityToken security || !security.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new ForbiddenAccessException(Error.E200);
+            throw new ForbiddenAccessException(SeedWork.Constants.Error.E200);
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// Generate access token
+    /// </summary>
+    /// <param name="sessionId">SessionId</param>
+    /// <param name="jwt">JwtDto</param>
+    /// <returns>Return the result</returns>
+    public static TokenDto GenerateAccessToken(Guid sessionId, JwtDto jwt)
+    {
+        Dictionary<string, object> claims = new()
+        {
+            { Setting.SecurityClaim.SessionId, sessionId.ToString() }
+        };
+
+        var utcNow = DateTime.UtcNow;
+        var expiresAt = utcNow.AddMinutes(jwt.TimeAt);
+        var key = Encoding.UTF8.GetBytes(jwt.Signing);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            IssuedAt = utcNow,
+            Claims = claims,
+            Expires = expiresAt,
+            Issuer = jwt.Issuer,
+            Audience = jwt.Audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+            NotBefore = utcNow,
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var jwtToken = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(jwtToken);
+        return new TokenDto() { AccessToken = tokenString, ExpiredDate = expiresAt };
+    }
+
+    /// <summary>
+    /// Generate token
+    /// </summary>
+    /// <param name="length">Length</param>
+    /// <returns>Return the result</returns>
+    public static string GenerateToken(int length = 64)
+    {
+        var randomNumber = new byte[length];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
     /// <summary>

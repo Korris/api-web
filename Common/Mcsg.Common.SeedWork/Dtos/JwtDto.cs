@@ -50,21 +50,6 @@ public class JwtDto
     public string Audience { get; set; }
 
     /// <summary>
-    /// Minutes
-    /// </summary>
-    public double ExpiredTokenTimeInMinute { get; set; } = 30;
-
-    /// <summary>
-    /// Days
-    /// </summary>
-    public double RefreshTokenExpiredTimeInDay { get; set; } = 30;
-
-    /// <summary>
-    /// Hours
-    /// </summary>
-    public double ConfirmationTokenExpiredTimeInHour { get; set; } = 24;
-
-    /// <summary>
     /// Time to live of AccessToken [1 - 1440] minutes
     /// </summary>
     public int TimeAt
@@ -92,7 +77,7 @@ public class JwtDto
     /// <summary>
     /// Time to live of RefreshToken [2 - 10080] minutes
     /// </summary>
-    public int? TimeRt
+    public int TimeRt
     {
         get
         {
@@ -126,7 +111,7 @@ public class JwtDto
     /// <summary>
     /// Time to live of RefreshToken
     /// </summary>
-    private int? _timeRt;
+    private int _timeRt;
 
     #endregion
 }

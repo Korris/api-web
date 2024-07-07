@@ -25,7 +25,7 @@ public partial class SessionService : ISessionService
         {
             Id = Guid.NewGuid(),
             LoginProvider = provider,
-            ExpiredDateUtc = utcNow.AddMinutes(_setting.Jwt.ExpiredTokenTimeInMinute),
+            ExpiredDateUtc = utcNow.AddMinutes(_setting.Jwt.TimeAt),
             LastActionDateUtc = utcNow,
             UserId = user.Id,
             Email = user.Email ?? "",
