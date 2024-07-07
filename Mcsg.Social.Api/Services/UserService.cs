@@ -6,12 +6,12 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Common.SeedWork.Constants;
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Distributor;
     using Lib.Common.Enums;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Models;
     using Lib.Common.Web.Security;
@@ -118,7 +118,7 @@ namespace Mcsg.Social.Api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(UpdateUserAvatar), userAvatarUpdateRequest);
-                throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
+                throw new BadRequestException(Error.E500, ex.Message);
             }
 
             return new UserAvatarUpdateResponse() { Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
@@ -156,7 +156,7 @@ namespace Mcsg.Social.Api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(UpdateUserCoverPhoto), userCoverPhotoUpdateRequest);
-                throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
+                throw new BadRequestException(Error.E500, ex.Message);
             }
 
             return new UserCoverPhotoUpdateResponse() { CoverPhoto = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };

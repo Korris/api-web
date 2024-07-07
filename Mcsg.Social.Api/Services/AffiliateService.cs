@@ -5,10 +5,10 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Dtos;
     using Common.Core.Enums;
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Extensions;
     using Interfaces;
-    using Lib.Common.Exceptions;
     using Lib.Common.Extensions;
     using Lib.Common.Web.Security;
     using Lib.Data.Wallet;

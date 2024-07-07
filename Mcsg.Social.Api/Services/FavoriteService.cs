@@ -3,9 +3,9 @@
 namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
+    using Common.SeedWork.Exceptions;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;

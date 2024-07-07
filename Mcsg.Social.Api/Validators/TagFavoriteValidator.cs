@@ -1,11 +1,11 @@
-﻿using Mcsg.Social.Api.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Interfaces;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Repositories;
-
-namespace Mcsg.Social.Api.Validators
+﻿namespace Mcsg.Social.Api.Validators
 {
+    using Common.SeedWork.Exceptions;
+    using Constants;
+    using Lib.Common.Interfaces;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Repositories;
+
     public class TagFavoriteValidator : IValidator<TagFavorite>
     {
         private readonly IRepository<Tag> _tagRepository;

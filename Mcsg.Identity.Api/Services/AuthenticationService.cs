@@ -8,10 +8,11 @@ namespace Mcsg.Identity.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.SeedWork.Constants;
+using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Exceptions;
 using Lib.Common.Web;
 using Lib.Common.Web.Security;
 using Lib.Data;
@@ -173,7 +174,7 @@ public partial class AuthenticationService : IAuthenticationService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(RegisterUser), request);
-            throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
+            throw new BadRequestException(Error.E500, ex.Message);
         }
 
     }
@@ -190,22 +191,22 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
         {
-            throw new AppUnauthorizedAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
+            throw new UnauthorizedAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
         }
         if (!request.Phone.IsNullOrEmpty() && user.PhoneNumberConfirmed == false)
         {
-            throw new AppUnauthorizedAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
+            throw new UnauthorizedAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
         }
         if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
         {
             if (user.Status == UserStatus.Suspended)
             {
                 var lockoutEndFormat = user.LockoutEnd == null ? "không thời hạn" : user.LockoutEnd?.ToString();
-                throw new AppUnauthorizedAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
+                throw new UnauthorizedAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
             }
             else if (user.Status == UserStatus.Banned)
             {
-                throw new AppUnauthorizedAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
+                throw new UnauthorizedAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
             }
 
         }
@@ -235,7 +236,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else
         {
-            throw new AppUnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
     }
     public async Task<bool> LogOut()
@@ -690,7 +691,7 @@ public partial class AuthenticationService : IAuthenticationService
         var userId = await _tokenService.IsValidRefreshTokenAsync(refreshToken);
         if (userId == Guid.Empty)
         {
-            throw new AppUnauthorizedAccessException(ErrorCodes.InvalidRefreshToken, ErrorMessage.TokenInCorrect);
+            throw new UnauthorizedAccessException(ErrorCodes.InvalidRefreshToken, ErrorMessage.TokenInCorrect);
         }
 
         var user = await _userRepository.GetByIdAsync(userId) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
@@ -780,7 +781,7 @@ public partial class AuthenticationService : IAuthenticationService
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult == false)
         {
-            throw new AppUnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
         user.IsDelete = true;
 

@@ -5,8 +5,8 @@ namespace Mcsg.Analytic.Api.Services
 {
     using Common.Core.Enums;
     using Common.SeedWork.Enums;
+    using Common.SeedWork.Exceptions;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Data.Analytic;
     using Lib.Data.Analytic.Entities;
@@ -56,7 +56,7 @@ namespace Mcsg.Analytic.Api.Services
                 });
 
                 if (postAndUserId == null || postAndUserId.ExpiredDateUtc <= timeNow)
-                    throw new AppUnauthorizedAccessException(ErrorCodes.InvalidSession);
+                    throw new UnauthorizedAccessException(ErrorCodes.InvalidSession);
                 req.PostId = postAndUserId.PostId ?? Guid.Empty;
                 authorId = postAndUserId.AuthorId;
                 var dateNow = DateOnly.FromDateTime(timeNow);

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Constants;
     using Lib.Common.Distributor;
-    using Lib.Common.Exceptions;
     using Lib.Common.Extensions;
     using Lib.Common.Models;
     using Lib.Common.Web.Security;

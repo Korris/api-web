@@ -5,11 +5,11 @@ using ComnonConstant = Mcsg.Lib.Common.Constants.ErrorCodes;
 namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Interfaces;
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
     using Lib.Data.Constants;

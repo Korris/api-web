@@ -8,13 +8,13 @@ namespace Mcsg.Social.Api.Services
     using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Constants;
     using Enums;
     using Extensions;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;

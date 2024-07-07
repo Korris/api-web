@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.SeedWork.Exceptions;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;

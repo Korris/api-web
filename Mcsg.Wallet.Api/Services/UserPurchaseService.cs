@@ -1,16 +1,17 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Models;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Wallet;
-using Mcsg.Lib.Data.Wallet.Enums;
-using Mcsg.Wallet.Api.Constants;
-using Mcsg.Wallet.Api.Extensions;
-using Mcsg.Wallet.Api.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.SeedWork.Exceptions;
+    using Constants;
+    using Extensions;
+    using Lib.Common.Constants;
+    using Lib.Common.Models;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Wallet;
+    using Lib.Data.Wallet.Enums;
+    using Models;
+
     public interface IUserPurchaseService
     {
         Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(PaginatedRequest request);

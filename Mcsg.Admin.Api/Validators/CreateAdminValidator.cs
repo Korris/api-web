@@ -2,9 +2,9 @@
 
 namespace Mcsg.Admin.Api.Validators
 {
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Interfaces;
     using Lib.Common.Mail;
     using Lib.Data.Domain.Entities;

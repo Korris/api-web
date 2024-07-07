@@ -2,9 +2,9 @@
 
 namespace Mcsg.Social.Api.Services
 {
+    using Common.SeedWork.Constants;
     using Extensions;
     using Interfaces;
-    using Lib.Common.Constants;
     using Models;
 
     public class LinkPreviewService : ILinkPreviewService
@@ -40,7 +40,7 @@ namespace Mcsg.Social.Api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ErrorCodes.ApiErrorCode, ex.Message);
+                _logger.LogError(Error.E500, ex.Message);
 
                 var uri = new Uri(url);
                 string host = uri.Host;

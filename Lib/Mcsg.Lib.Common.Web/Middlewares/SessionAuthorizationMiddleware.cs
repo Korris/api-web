@@ -5,10 +5,10 @@ using System.Security.Claims;
 namespace Mcsg.Lib.Common.Web.Middlewares
 {
     using Constants;
-    using Exceptions;
     using Extensions;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
+    using Mcsg.Common.SeedWork.Exceptions;
 
     public class SessionAuthorizationMiddleware
     {
@@ -31,7 +31,7 @@ namespace Mcsg.Lib.Common.Web.Middlewares
             Guid sessionId = context.GetSessionId();
             Session session = await _sessionRepository.GetByIdAsync(sessionId, newConection: true);
             if (session == null || session.ExpiredDateUtc <= DateTime.UtcNow)
-                throw new AppUnauthorizedAccessException(ErrorCodes.InvalidSession);
+                throw new UnauthorizedAccessException(ErrorCodes.InvalidSession);
             context.Items[nameof(Session).ToLower()] = session;
             await UpdateUserSessionAsync(session);
             UpdateUserClaims(session, context);

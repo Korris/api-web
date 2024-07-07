@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Enums;
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Constants;
     using Enums;
@@ -12,7 +13,6 @@ namespace Mcsg.Social.Api.Services
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Enums;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Interfaces;
     using Lib.Common.Web.Security;

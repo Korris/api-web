@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity;
 namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Enums;
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Interface;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Constants;

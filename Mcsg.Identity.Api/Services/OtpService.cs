@@ -3,11 +3,11 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Distributor;
-using Lib.Common.Exceptions;
 using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;

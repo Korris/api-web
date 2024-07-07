@@ -2,16 +2,9 @@
 {
     public class ErrorCodes
     {
-        public const string ForbiddenAccessCode = "403";
-        public const string BadRequestCode = "400";
-        public const string NotFoundCode = "404";
-        public const string UnauthorizeAccessCode = "401";
-        public const string ApiErrorCode = "500";
-
         //Authentication Error
         public const string InvalidUserOrPass = "ERR_AUTH_00001";
         public const string InvalidUser = "ERR_AUTH_00002";
-        public const string InvalidAccessToken = "ERR_AUTH_00003";
         public const string InvalidRefreshToken = "ERR_AUTH_00004";
         public const string InvalidSession = "ERR_AUTH_00005";
         public const string ErrorCreateResetPasswordToken = "ERR_AUTH_00006";

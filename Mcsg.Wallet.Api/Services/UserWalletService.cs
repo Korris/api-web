@@ -12,9 +12,9 @@ namespace Mcsg.Wallet.Api.Services
     using Api.Models._3rdClass.ZaloPay.Response;
     using Common.Core.Dtos;
     using Common.Core.Extensions;
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Lib.Common.Enums;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Common.Models;
     using Lib.Common.Web.RealTime.Services;

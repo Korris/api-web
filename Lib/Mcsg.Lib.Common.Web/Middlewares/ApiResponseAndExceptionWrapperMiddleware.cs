@@ -1,15 +1,13 @@
-﻿using Mcsg.Lib.Common.Exceptions;
-using Mcsg.Lib.Common.Models;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.IO;
+﻿using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace Mcsg.Lib.Common.Web.Middlewares
 {
+    using Mcsg.Common.SeedWork.Exceptions;
+    using Models;
+
     public class ApiResponseAndExceptionWrapperMiddleware
     {
         private readonly RequestDelegate _next;
@@ -65,7 +63,7 @@ namespace Mcsg.Lib.Common.Web.Middlewares
                 ForbiddenAccessException => HttpStatusCode.Forbidden,
                 BadRequestException => HttpStatusCode.BadRequest,
                 NotFoundException => HttpStatusCode.NotFound,
-                AppUnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError,
             };
 

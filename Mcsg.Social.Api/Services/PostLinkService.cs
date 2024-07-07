@@ -4,12 +4,12 @@ namespace Mcsg.Social.Api.Services
 {
     using Common.Core.Dtos;
     using Common.Core.Enums;
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Extensions;
     using Interfaces;
     using Lib.Common.Constants;
     using Lib.Common.Enums;
-    using Lib.Common.Exceptions;
     using Lib.Common.Helpers;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;

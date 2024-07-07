@@ -3,8 +3,8 @@ using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services;
 
-using Lib.Common.Constants;
-using Lib.Common.Exceptions;
+using Common.SeedWork.Constants;
+using Common.SeedWork.Exceptions;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories.Interface;
 using Response;
@@ -75,7 +75,7 @@ public class FacebookOAuthService : SSOService
         catch (Exception ex)
         {
             _logger.LogError($"Verify Facebook Token Exception: {ex.Message}", socialToken);
-            throw new BadRequestException(ErrorCodes.ApiErrorCode, ex.Message);
+            throw new BadRequestException(Error.E500, ex.Message);
         }
     }
 }

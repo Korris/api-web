@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Wallet.Api.Services
 {
+    using Common.SeedWork.Exceptions;
     using Common.SeedWork.Extensions;
     using Lib.Common.Constants;
     using Lib.Common.Distributor;
-    using Lib.Common.Exceptions;
     using Lib.Common.Models;
     using Lib.Data.Enums;
     using Lib.Data.Wallet;

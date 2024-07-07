@@ -4,11 +4,11 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Social.Api.Services
 {
     using Common.SeedWork.Constants;
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Extensions;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Entities.Common;

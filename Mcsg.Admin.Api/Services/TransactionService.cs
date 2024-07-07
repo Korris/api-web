@@ -2,10 +2,10 @@
 
 namespace Mcsg.Admin.Api.Services
 {
+    using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Lib.Common.Constants;
-    using Lib.Common.Exceptions;
     using Lib.Common.Models;
     using Lib.Common.Web.RealTime.Services;
     using Lib.Common.Web.Security;
