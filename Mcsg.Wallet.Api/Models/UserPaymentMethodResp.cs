@@ -1,12 +1,11 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
+﻿namespace Mcsg.Wallet.Api.Models;
 
-namespace Mcsg.Wallet.Api.Models
+using Lib.Data.Wallet.Enums;
+
+public class UserPaymentMethodResp
 {
-    public class UserPaymentMethodResp
-    {
-        public Guid Id { get; set; }
-        public PaymentMethodType PaymentMethodType { get; set; }
-        public Guid PaymentMethodId { get; set; }
-        public string PaymentMethodName { get; set; }
-    }
+    public Guid Id { get; set; }
+    public PaymentMethodType PaymentMethodType { get; set; }
+    public Guid PaymentMethodId { get; set; }
+    public string PaymentMethodName { get; set; }
 }

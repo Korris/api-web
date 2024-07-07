@@ -1,15 +1,15 @@
-﻿using Mcsg.Wallet.Api.Constants;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Wallet.Api.Models
+namespace Mcsg.Wallet.Api.Models;
+
+using Constants;
+
+public class BuySerieReq
 {
-    public class BuySerieReq
-    {
-        [Required]
-        public Guid SerieId { get; set; }
-        [DefaultValue(PayMethods.POINT)]
-        public string PayMethodName { get; set; }
-        public string AffiliateCode { get; set; }
-    }
+    [Required]
+    public Guid SerieId { get; set; }
+    [DefaultValue(PayMethods.POINT)]
+    public string PayMethodName { get; set; }
+    public string AffiliateCode { get; set; }
 }

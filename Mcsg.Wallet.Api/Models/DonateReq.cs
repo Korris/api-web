@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Wallet.Api.Models
+﻿namespace Mcsg.Wallet.Api.Models;
+
+public class DonateReq
 {
-    public class DonateReq
-    {
-        public Guid ToUserId { get; set; }
-        public float Amount { get; set; }
-        public string? Content { get; set; }
-    }
+    public Guid ToUserId { get; set; }
+    public float Amount { get; set; }
+    public string? Content { get; set; }
 }

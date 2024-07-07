@@ -1,13 +1,13 @@
-﻿using Mcsg.Wallet.Api.Constants;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace Mcsg.Wallet.Api.Models
+namespace Mcsg.Wallet.Api.Models;
+
+using Constants;
+
+public class BuyPremiumReq
 {
-    public class BuyPremiumReq
-    {
-        public int PremiumPackageNo { get; set; }
-        [DefaultValue(PayMethods.POINT)]
-        public string? PayMethodName { get; set; }
-        public string? AffiliateCode { get; set; }
-    }
+    public int PremiumPackageNo { get; set; }
+    [DefaultValue(PayMethods.POINT)]
+    public string? PayMethodName { get; set; }
+    public string? AffiliateCode { get; set; }
 }

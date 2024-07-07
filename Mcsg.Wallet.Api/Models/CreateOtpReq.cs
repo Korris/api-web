@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Wallet.Api.Models
+﻿namespace Mcsg.Wallet.Api.Models;
+
+public class CreateOtpReq
 {
-    public class CreateOtpReq
-    {
-        //   public 
-    }
+    //   public 
 }

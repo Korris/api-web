@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Wallet.Api.Constants.ZaloPay
+﻿namespace Mcsg.Wallet.Api.Constants.ZaloPay;
+
+public enum ZaloPayCallBackType
 {
-    public enum ZaloPayCallBackType
-    {
-        Order = 1,
-        Agreement = 2
-    }
+    Order = 1,
+    Agreement = 2
 }

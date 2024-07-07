@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Wallet.Api.Models
+﻿namespace Mcsg.Wallet.Api.Models;
+
+public class PayMethodResp
 {
-    public class PayMethodResp
-    {
-        public string Name { get; set; }
-        public string Title { get; set; }
-        public string Logo { get; set; }
-        public bool IsEnable { get; set; }
-    }
+    public string Name { get; set; }
+    public string Title { get; set; }
+    public string Logo { get; set; }
+    public bool IsEnable { get; set; }
 }

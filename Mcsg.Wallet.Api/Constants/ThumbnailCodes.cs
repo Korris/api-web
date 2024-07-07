@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Wallet.Api.Constants
+﻿namespace Mcsg.Wallet.Api.Constants;
+
+public class ThumbnailCodes
 {
-    public class ThumbnailCodes
-    {
-        public const string Premium = "CODE_PREMIUM";
-    }
+    public const string Premium = "CODE_PREMIUM";
 }

@@ -1,9 +1,8 @@
-﻿using Mcsg.Wallet.Api.Models.BaseClass;
+﻿namespace Mcsg.Wallet.Api.Models;
 
-namespace Mcsg.Wallet.Api.Models
+using BaseClass;
+
+public class UserPaymentMethodResponse : UserPaymentMethodView
 {
-    public class UserPaymentMethodResponse : UserPaymentMethodView
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

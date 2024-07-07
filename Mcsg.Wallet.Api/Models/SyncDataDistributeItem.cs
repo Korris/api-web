@@ -1,10 +1,9 @@
-﻿using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Wallet.Api.Models;
 
-namespace Mcsg.Wallet.Api.Models
+using Lib.Common.Distributor;
+using Lib.Common.Models;
+
+public class SyncDataDistributeItem : DistributedItem
 {
-    public class SyncDataDistributeItem : DistributedItem
-    {
-        public SyncData Data { get; set; }
-    }
+    public SyncData Data { get; set; }
 }
