@@ -3,6 +3,7 @@ using Dapper;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Constants;
     using Common.Core.Enums;
     using Common.SeedWork.Exceptions;
     using Constants;
@@ -84,10 +85,10 @@ namespace Mcsg.Realtime.Api.Services
             }
             var response = new PostCommentResp();
 
-            var userName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserNameClaimName)?.Value ?? "";
-            var profileName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.ProfileNameClaimName)?.Value ?? "";
+            var userName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserName)?.Value ?? "";
+            var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserAvatarClaimName)?.Value ?? "";
+            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
             var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
@@ -151,10 +152,10 @@ namespace Mcsg.Realtime.Api.Services
                 throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
             }
 
-            var userName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserNameClaimName)?.Value ?? "";
-            var profileName = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.ProfileNameClaimName)?.Value ?? "";
+            var userName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserName)?.Value ?? "";
+            var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == SecurityClaimTypes.UserAvatarClaimName)?.Value ?? "";
+            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
             var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };

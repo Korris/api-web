@@ -8,6 +8,7 @@ namespace Mcsg.Lib.Common.Web.Middlewares
     using Extensions;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
+    using Mcsg.Common.Core.Constants;
     using Mcsg.Common.SeedWork.Exceptions;
 
     public class SessionAuthorizationMiddleware
@@ -49,11 +50,11 @@ namespace Mcsg.Lib.Common.Web.Middlewares
         {
             var claims = new List<Claim>();
             claims.AddRange(session.Roles.Split(",").Select(role => new Claim(ClaimTypes.Role, role)));
-            claims.Add(new Claim(SecurityClaimTypes.UserNameClaimName, session.UserName ?? ""));
-            claims.Add(new Claim(SecurityClaimTypes.ProfileNameClaimName, session.ProfileName ?? ""));
-            claims.Add(new Claim(SecurityClaimTypes.UserIdClaimName, session.UserId.ToString()));
-            claims.Add(new Claim(SecurityClaimTypes.SessionIdClaimName, session.Id.ToString()));
-            claims.Add(new Claim(SecurityClaimTypes.UserAvatarClaimName, session.UserAvatar ?? ""));
+            claims.Add(new Claim(Setting.SecurityClaim.UserName, session.UserName ?? ""));
+            claims.Add(new Claim(Setting.SecurityClaim.ProfileName, session.ProfileName ?? ""));
+            claims.Add(new Claim(Setting.SecurityClaim.UserId, session.UserId.ToString()));
+            claims.Add(new Claim(Setting.SecurityClaim.SessionId, session.Id.ToString()));
+            claims.Add(new Claim(Setting.SecurityClaim.UserAvatar, session.UserAvatar ?? ""));
 
             context.User.AddIdentity(new ClaimsIdentity(claims));
         }

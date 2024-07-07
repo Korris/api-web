@@ -103,6 +103,26 @@ public class Setting : SeedWork.Constants.Setting
         /// <summary>
         /// SessionId
         /// </summary>
-        public const string SessionId = "sessionId";
+        public const string SessionId = "SessionId";
+
+        /// <summary>
+        /// User name
+        /// </summary>
+        public const string UserName = "UserName";
+
+        /// <summary>
+        /// User ID
+        /// </summary>
+        public const string UserId = "UserId";
+
+        /// <summary>
+        /// Profile name
+        /// </summary>
+        public const string ProfileName = "ProfileName";
+
+        /// <summary>
+        /// User avatar
+        /// </summary>
+        public const string UserAvatar = "UserAvatar";
     }
 }

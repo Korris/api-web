@@ -3,9 +3,9 @@
 namespace Mcsg.Lib.Common.Web.Security
 {
     using Data.Domain.Entities;
-    using Lib.Common.Constants;
     using Lib.Common.Security.Models;
     using Lib.Common.Web.Extensions;
+    using Mcsg.Common.Core.Constants;
 
     public class CurrentUserService : ICurrentUserService
     {
@@ -32,8 +32,8 @@ namespace Mcsg.Lib.Common.Web.Security
 
         public Task<CurrentUserModel> GetCurrentUserAsync()
         {
-            var userIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(SecurityClaimTypes.UserIdClaimName));
-            var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(SecurityClaimTypes.SessionIdClaimName));
+            var userIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.UserId));
+            var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.SessionId));
             var userId = string.IsNullOrWhiteSpace(userIdClaim?.Value) ? (Guid?)null : new Guid(userIdClaim.Value);
             return Task.FromResult(new CurrentUserModel
             {
