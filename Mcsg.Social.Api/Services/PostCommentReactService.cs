@@ -2,10 +2,12 @@
 
 using Interfaces;
 using Lib.Data.Domain.Entities;
+using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Mcsg.Lib.Data.Entities.Common;
 using Mcsg.Social.Api.Requests;
 using Models;
+using Requests;
 
 public partial class PostCommentReactService : IPostCommentReactService
 {
