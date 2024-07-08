@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Enums;
 using Interfaces;
-using Lib.Common.Helpers;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
@@ -112,7 +112,7 @@ public partial class ComicService : IComicService
         var currentUserId = _currentUserService.Session.UserId;
         var userFolder = _currentUserService.Session.UserFolder;
         var currentUserAvatar = _currentUserService.Session.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(currentUserAvatar);
+        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -133,7 +133,7 @@ public partial class ComicService : IComicService
         var currentUserId = _currentUserService.Session.UserId;
         var userFolder = _currentUserService.Session.UserFolder;
         var currentUserAvatar = _currentUserService.Session.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(currentUserAvatar);
+        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
         var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, chapterPostReq);

@@ -3,10 +3,10 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Common.Helpers;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Domain.Entities.Common;
@@ -155,7 +155,7 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             foreach (var item in items)
             {
-                item.AuthorAvatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.AuthorAvatar);
+                item.AuthorAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.AuthorAvatar);
             }
             var response = new PagedResults<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = items;

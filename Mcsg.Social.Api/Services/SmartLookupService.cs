@@ -2,9 +2,9 @@
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Distributor;
-using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
@@ -120,7 +120,7 @@ public partial class SmartLookupService : ISmartLookupService
             {
                 foreach (var item in result)
                 {
-                    item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
+                    item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
                 }
             }
         }

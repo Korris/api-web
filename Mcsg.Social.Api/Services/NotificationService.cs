@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -88,7 +89,7 @@ public partial class NotificationService : INotificationService
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             foreach (var item in resDto)
             {
-                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
             }
             var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
@@ -125,7 +126,7 @@ public partial class NotificationService : INotificationService
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             foreach (var item in resDto)
             {
-                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
             }
             var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;

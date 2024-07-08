@@ -4,6 +4,7 @@ using Dapper;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Enums;
 using Extensions;
 using Interfaces;
@@ -186,7 +187,7 @@ public partial class CommentService : ICommentService
             var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
             foreach (var item in items)
             {
-                item.UserAvatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.UserAvatar);
+                item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar);
                 item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(item.ResourceName, item.ResourceUrl) : "";
                 if (mentions != null && mentions.Any())
                 {
@@ -229,7 +230,7 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
-                item.UserAvatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.UserAvatar);
+                item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar);
                 item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(item.ResourceName, item.ResourceUrl) : "";
 
                 if (mentions != null && mentions.Any())

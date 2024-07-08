@@ -17,6 +17,7 @@ using System.Collections;
 
 namespace Mcsg.Common.Core.Extensions;
 
+using Constants;
 using SeedWork.Interfaces;
 
 /// <summary>
@@ -261,6 +262,27 @@ public static class StringExtension
         }
 
         return default;
+    }
+
+    #endregion
+
+    #region -- Image URL --
+
+    /// <summary>
+    /// Get public image URL
+    /// </summary>
+    /// <param name="mediaApiUrl">Media API URL</param>
+    /// <param name="mediaName">media name</param>
+    /// <returns>Return the public image URL</returns>
+    public static string ToPublicImageUrl(this string mediaApiUrl, string mediaName)
+    {
+        if (string.IsNullOrWhiteSpace(mediaName))
+        {
+            return string.Empty;
+        }
+
+        var url = string.Format(Setting.MediaConfig.PublicImageUrlPath, mediaName);
+        return $"{mediaApiUrl}/{url}";
     }
 
     #endregion

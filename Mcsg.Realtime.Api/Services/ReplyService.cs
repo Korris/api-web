@@ -4,12 +4,12 @@ using Dapper;
 namespace Mcsg.Realtime.Api.Services
 {
     using Common.Core.Constants;
+    using Common.Core.Extensions;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Interfaces;
     using Lib.Common.Constants;
-    using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
@@ -85,7 +85,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.GetPublicImageUrl(userAvatar) : "";
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
@@ -147,7 +147,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.GetPublicImageUrl(userAvatar) : "";
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
             var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.POST_COMMENT : ResourceLocationType.SUB_POST_COMMENT);

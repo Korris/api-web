@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -827,7 +828,7 @@ public partial class PostService : IPostService
             CreatedDate = item.CreatedDate,
             ProfileId = item.ProfileId,
             ProfileName = item.ProfileName,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.UserAvatar),
+            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
             Type = item.Type,
             IsMature = item.IsMature,
             IsCompleted = item.IsCompleted,
@@ -1081,7 +1082,7 @@ public partial class PostService : IPostService
         {
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
-            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(x.UserAvatar),
+            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
@@ -1130,7 +1131,7 @@ public partial class PostService : IPostService
         {
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
-            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(x.UserAvatar),
+            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,

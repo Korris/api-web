@@ -71,16 +71,5 @@ namespace Mcsg.Lib.Common.Helpers
         {
             return HttpUtility.UrlEncode(text);
         }
-
-        public static string GetPublicImageUrl(this string mediaApiUrl, string mediaName)
-        {
-            if (string.IsNullOrWhiteSpace(mediaName))
-            {
-                return string.Empty;
-            }
-
-            var url = string.Format(Setting.MediaConfig.PublicImageUrlPath, mediaName);
-            return $"{mediaApiUrl}/{url}";
-        }
     }
 }

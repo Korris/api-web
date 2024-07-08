@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Extensions;
 
+using Common.Core.Extensions;
 using Lib.Common.Helpers;
 
 public static class SoundExtension
@@ -27,6 +28,6 @@ public static class SoundExtension
 
     public static string ToPublicImageUrl(this string fileName)
     {
-        return Program._mediaApiUrl.GetPublicImageUrl(fileName);
+        return Program._mediaApiUrl.ToPublicImageUrl(fileName);
     }
 }
