@@ -532,7 +532,7 @@ public partial class FeedService : IFeedService
         }
 
         var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
+        var currentUserId = req.CurrentUserId!.Value;
         var currentProfileName = ss.ProfileName;
         var profileId = ss.ProfileId;
         var userFolder = ss.UserFolder;
@@ -681,7 +681,7 @@ public partial class FeedService : IFeedService
         }
 
         var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
+        var currentUserId = req.CurrentUserId!.Value;
         var currentUserName = ss.UserName;
         var currentProfileName = ss.ProfileName;
         var profileId = ss.ProfileId;

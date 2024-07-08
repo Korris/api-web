@@ -22,15 +22,17 @@ public class FeedController : ControllerBase
     [Authorize]
     public async Task<IActionResult> PostFeed(PostCreateR req)
     {
+        req.Analyze(HttpContext);
         var result = await _feedService.PostFeedAsync(req);
         return Ok(result);
     }
 
     [HttpPut("{hashId}")]
     [Authorize]
-    public async Task<IActionResult> UpdateFeed(string hashId, PostUpdateR request)
+    public async Task<IActionResult> UpdateFeed(string hashId, PostUpdateR req)
     {
-        var result = await _feedService.UpdateFeedAsync(hashId, request);
+        req.Analyze(HttpContext);
+        var result = await _feedService.UpdateFeedAsync(hashId, req);
         return Ok(result);
     }
 
