@@ -194,16 +194,14 @@ public class SecurityToken
             ExpiredDate = now.AddMinutes(Expires);
 
             var jti = Guid.NewGuid().ToString();
-            var sid = Guid.NewGuid().ToString();
             var iat = EpochTime.GetIntDate(now).ToString(CultureInfo.InvariantCulture);
 
             var claims = new List<Claim>
             {
                 new (JwtRegisteredClaimNames.Jti, jti),
-                new (JwtRegisteredClaimNames.Sid, sid),
+                new (JwtRegisteredClaimNames.Sid, Payload.SessionId.ToString()),
                 new (JwtRegisteredClaimNames.Iat, iat, ClaimValueTypes.Integer64),
-                new (ClaimTypes.Name, Payload.UserName),
-                new (Setting.SecurityClaim.SessionId, Payload.SessionId.ToString())
+                new (ClaimTypes.Name, Payload.UserName)
             };
 
             foreach (var i in Payload.Roles)

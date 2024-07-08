@@ -101,11 +101,6 @@ public class Setting : SeedWork.Constants.Setting
     public class SecurityClaim
     {
         /// <summary>
-        /// SessionId
-        /// </summary>
-        public const string SessionId = "SessionId";
-
-        /// <summary>
         /// User name
         /// </summary>
         public const string UserName = "UserName";

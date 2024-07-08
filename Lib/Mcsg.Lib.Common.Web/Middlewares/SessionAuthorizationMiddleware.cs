@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Mcsg.Lib.Common.Web.Middlewares;
@@ -64,7 +65,7 @@ public class SessionAuthorizationMiddleware
         claims.Add(new Claim(Setting.SecurityClaim.UserName, session.UserName ?? ""));
         claims.Add(new Claim(Setting.SecurityClaim.ProfileName, session.ProfileName ?? ""));
         claims.Add(new Claim(Setting.SecurityClaim.UserId, session.UserId.ToString()));
-        claims.Add(new Claim(Setting.SecurityClaim.SessionId, session.Id.ToString()));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sid, session.Id.ToString()));
         claims.Add(new Claim(Setting.SecurityClaim.UserAvatar, session.UserAvatar ?? ""));
 
         context.User.AddIdentity(new ClaimsIdentity(claims));

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services;
@@ -7,10 +8,9 @@ using Common.Core;
 using Common.Core.Dtos;
 using Common.SeedWork.Exceptions;
 using Interfaces;
+using Lib.Common.Extensions;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Mcsg.Common.Core.Constants;
-using Mcsg.Lib.Common.Extensions;
 
 public class TokenService : ITokenService
 {
@@ -43,7 +43,7 @@ public class TokenService : ITokenService
     public Guid GetSessionIdFromToken(string accessToken)
     {
         ClaimsPrincipal principal = SecurityToken.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(Common.SeedWork.Constants.Error.E200);
-        return principal.FindFirstValue(Setting.SecurityClaim.SessionId).ToGuid();
+        return principal.FindFirstValue(JwtRegisteredClaimNames.Sid).ToGuid();
     }
 
     public async Task<RefreshTokenDto?> AddUserRefreshTokenAsync(User user)

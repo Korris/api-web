@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Mcsg.Lib.Common.Web.Security
 {
@@ -33,7 +34,7 @@ namespace Mcsg.Lib.Common.Web.Security
         public Task<CurrentUserModel> GetCurrentUserAsync()
         {
             var userIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.UserId));
-            var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.SessionId));
+            var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(JwtRegisteredClaimNames.Sid));
             var userId = string.IsNullOrWhiteSpace(userIdClaim?.Value) ? (Guid?)null : new Guid(userIdClaim.Value);
             return Task.FromResult(new CurrentUserModel
             {
