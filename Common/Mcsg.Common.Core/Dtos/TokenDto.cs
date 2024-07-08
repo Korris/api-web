@@ -20,12 +20,12 @@ public class TokenDto
     /// <summary>
     /// Expired date
     /// </summary>
-    public DateTime ExpiredDate { get; set; } = DateTime.UtcNow.AddMinutes(30);
+    public DateTime ExpiredDate { get; set; }
 
     /// <summary>
     /// Refresh token expired date
     /// </summary>
-    public DateTime RefreshTokenExpiredDate { get; set; } = DateTime.UtcNow.AddDays(30);
+    public DateTime RefreshTokenExpiredDate { get; set; }
 
     /// <summary>
     /// Subscription key
