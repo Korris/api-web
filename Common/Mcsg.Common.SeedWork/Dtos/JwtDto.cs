@@ -75,7 +75,7 @@ public class JwtDto
     }
 
     /// <summary>
-    /// Time to live of RefreshToken [2 - 10080] minutes
+    /// Time to live of RefreshToken [2 - 43200] minutes
     /// </summary>
     public int TimeRt
     {
@@ -90,9 +90,9 @@ public class JwtDto
                 value = 2;
             }
 
-            if (value > 10080)
+            if (value > 43200)
             {
-                value = 10080;
+                value = 43200;
             }
 
             _timeRt = value;
