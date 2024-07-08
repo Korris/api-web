@@ -10,14 +10,14 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class FeedPostV : AbstractValidator<PostCreateR>
+public class PostFormBaseV : AbstractValidator<PostFormBase>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public FeedPostV()
+    public PostFormBaseV()
     {
         RuleForEach(post => post.Tags).Must(Valid).WithMessage(Tag);
         RuleFor(post => post.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");

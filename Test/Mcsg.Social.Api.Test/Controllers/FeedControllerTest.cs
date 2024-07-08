@@ -82,18 +82,18 @@ public class FeedControllerTest
     public void PostFeed_02_ValidationPassed()
     {
         var req = new PostCreateR { Tags = null };
-        var vr = new FeedPostV().Validate(req);
+        var vr = new PostCreateV().Validate(req);
         Assert.That(vr.IsValid, Is.EqualTo(true));
 
         req = new PostCreateR { Tags = [] };
-        vr = new FeedPostV().Validate(req);
+        vr = new PostCreateV().Validate(req);
         Assert.That(vr.IsValid, Is.EqualTo(true));
     }
 
     private void PostFeed_01(string? tag, bool expected)
     {
         var req = new PostCreateR { Tags = [tag] };
-        var vr = new FeedPostV().Validate(req);
+        var vr = new PostCreateV().Validate(req);
         Assert.That(vr.IsValid, Is.EqualTo(expected));
     }
     #endregion

@@ -524,7 +524,7 @@ public partial class FeedService : IFeedService
     #region Modify data
     public async Task<FeedResponse> PostFeedAsync(PostCreateR req)
     {
-        var vr = new FeedPostV().Validate(req);
+        var vr = new PostCreateV().Validate(req);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
@@ -671,8 +671,15 @@ public partial class FeedService : IFeedService
         return result;
     }
 
-    public async Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR feedPostReq)
+    public async Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR req)
     {
+        var vr = new PostUpdateV().Validate(req);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
         var currentUserName = ss.UserName;
@@ -683,7 +690,7 @@ public partial class FeedService : IFeedService
         var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
 
         // GetSingleFeedQuery
-        if (string.IsNullOrEmpty(feedPostReq.Content))
+        if (string.IsNullOrEmpty(req.Content))
         {
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
@@ -696,25 +703,25 @@ public partial class FeedService : IFeedService
             (query, new { HashId = hashId });
 
         VerifyFeed(post, false);
-        if (string.IsNullOrEmpty(feedPostReq.Content))
+        if (string.IsNullOrEmpty(req.Content))
         {
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
 
-        var cleanHtml = feedPostReq.Content.CleanHtml();
+        var cleanHtml = req.Content.CleanHtml();
         var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
 
-        post.Title = feedPostReq.Title;
+        post.Title = req.Title;
         post.Body = safePlainString;
-        post.ThumbnailUrl = feedPostReq.ThumbnailUrl;
-        post.CustomNote = feedPostReq.CustomNote;
+        post.ThumbnailUrl = req.ThumbnailUrl;
+        post.CustomNote = req.CustomNote;
         post.LastModifiedBy = currentUserId;
         post.LastModifiedDate = DateTime.UtcNow;
 
         var result = new FeedPostResponse
         {
             Id = post.Id,
-            Title = feedPostReq.Title,
+            Title = req.Title,
             HashId = hashId,
             UserId = currentUserId,
             ThumbnailUrl = post.ThumbnailUrl,
@@ -740,15 +747,15 @@ public partial class FeedService : IFeedService
             //}
 
             // Add tag to feed
-            if (feedPostReq.Tags != null && feedPostReq.Tags.Count > 0)
+            if (req.Tags != null && req.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, feedPostReq.Tags)).ToArray();
+                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags)).ToArray();
             }
 
             // Add file to feed
-            if (feedPostReq.Files != null && feedPostReq.Files.Count > 0)
+            if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(feedPostReq.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
             else
@@ -757,9 +764,9 @@ public partial class FeedService : IFeedService
                 result.TotalResource = 0;
             }
             // Add background sound to feed
-            if (feedPostReq.SoundId != null && feedPostReq.SoundId != Guid.Empty)
+            if (req.SoundId != null && req.SoundId != Guid.Empty)
             {
-                await _soundService.AddSoundAsync(post.Id, feedPostReq.SoundId.Value);
+                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value);
             }
             else
             {
@@ -767,9 +774,9 @@ public partial class FeedService : IFeedService
             }
 
             // Detech video link content feed
-            if (feedPostReq.Files == null || feedPostReq.Files.Count == 0)
+            if (req.Files == null || req.Files.Count == 0)
             {
-                result.Link = await _postLinkService.AddLinkAsync(post.Id, feedPostReq.Content);
+                result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
             }
             else
             {
