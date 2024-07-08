@@ -121,6 +121,76 @@ LIMIT 1
 ";
             }
         }
+
+        private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
+						post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
+						post.""ChapterCount"",
+						post.""Status"", post.""Type"",post.""ViewCount"",post.""TotalComment"",
+						post.""CreatedDate"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
+						post.""SubPostStr"", 
+						CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE null END AS ReactionByPostStr,
+					    COUNT(r.""Type"") AS TotalReact,
+						array_agg(DISTINCT tag.""Name"") as Tags from
+							(SELECT  p.""Id"",
+							p.""Title"", p.""Body"",  
+							p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
+							u.""ProfileName"",u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+							p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
+							 postid.""SelectType"",
+							p.""Status"", p.""Type"", postview.""ViewCount"",
+							p.""CreatedDate"",
+							   (
+               SELECT COUNT(*) 
+               FROM ""PostComments"" pc 
+               WHERE pc.""PostId"" = p.""Id"" AND pc.""IsDelete"" = FALSE
+           ) + (
+               SELECT COUNT(*)
+                FROM ""SubPostComments"" spc
+               INNER JOIN ""SubPosts"" sp ON spc.""PostId"" = sp.""Id""
+               WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE
+           ) AS ""TotalComment"",
+							to_jsonb(array_agg(sp.*)) AS ""SubPostStr""	
+							 
+							FROM ""Posts"" p
+							  INNER JOIN-- Select Id
+							 (
+								[SelectPostIdsQuery]  
+							) postid 
+							 ON postid.""Id"" = p.""Id""
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""		
+							[JoinSubPostSubQuery]	
+							--Post view
+							LEFT JOIN LATERAL (
+								SELECT 
+								""EntityId"", 
+								""Count"" as ""ViewCount""
+									FROM ""SmartCountActions"" 
+								WHERE ""EntityId"" = p.""Id"" AND ""EntityType"" = 0 AND ""ActionType"" = 2
+								LIMIT 1
+								) postview ON postview.""EntityId"" = p.""Id""
+							
+							GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
+							p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
+							sp.""Total"",
+							u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+							p.""Status"", p.""Type"",postview.""ViewCount"",
+							p.""CreatedDate""
+							) 
+						AS post
+						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
+						LEFT JOIN ""PostReactions"" r ON r.""TargetId"" = post.""Id""
+						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
+						post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
+						post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
+						post.""Status"", post.""Type"", post.""ViewCount"",
+						post.""CreatedDate"",
+						post.""SubPostStr""
+						ORDER BY ""[OrderBy]"" desc;
+
+						[CountResults] ";
+
+
         private string GetTopAllPostAllTypeByTagQuery
         {
             get

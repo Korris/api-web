@@ -36,6 +36,8 @@ public class PostSeriesTopResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
     public string ProfileName { get; set; }
+    public int TotalReact { get; set; }
+    public ReactionsResponse? Reaction { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
@@ -44,7 +46,8 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
     public int TotalSubPostComment { get; set; }
     public string SubPostStr { get; set; }
     public PostSeriesSelectedType SelectType { get; set; }
-
+    public string? ReactionByPostStr { get; set; }
+    public int TotalReact { set; get; }
 }
 
 public class NewPostSeriesResponse : PostSeriesResponse

@@ -438,7 +438,7 @@ public partial class PostService : IPostService
 
             countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostByMultiTagToCountQuery.Replace("[WhereMainQuery]", whereClause));
 
-            var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
+            var query = GetRelatedPostQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
                 .Replace("[WhereMainQuery]", whereClause)
                 .Replace("[CountResults]", countTopQuery)
                 .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
@@ -1151,7 +1151,13 @@ public partial class PostService : IPostService
             UserId = x.UserId,
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
-            SeriesStatus = x.ToSeriesStatus()
+            SeriesStatus = x.ToSeriesStatus(),
+            TotalComment = x.TotalComment,
+            Reaction = new ReactionsResponse
+            {
+                TotalReacts = x.TotalReact,
+                Reactions = x.ReactionByPostStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionByPostStr) : new List<ReactionResponse>()
+            }
         }).ToList();
     }
 
