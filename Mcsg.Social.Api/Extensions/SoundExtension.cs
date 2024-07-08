@@ -12,7 +12,7 @@ public static class SoundExtension
 
     public static string ToMediaPath(this string url, string fileName)
     {
-        return UrlHelper.GetMediaPath(Program._mediaApiUrl, fileName, url);
+        return Program._mediaApiUrl.GetMediaPath(fileName, url);
     }
 
     public static string ToAudioPath(this string url)
@@ -27,6 +27,6 @@ public static class SoundExtension
 
     public static string ToPublicImageUrl(this string fileName)
     {
-        return UrlHelper.GetPublicImageUrl(Program._mediaApiUrl, fileName);
+        return Program._mediaApiUrl.GetPublicImageUrl(fileName);
     }
 }

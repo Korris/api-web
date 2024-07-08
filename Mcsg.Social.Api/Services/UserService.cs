@@ -121,7 +121,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(Error.E500, ex.Message);
         }
 
-        return new UserAvatarUpdateResponse() { Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
+        return new UserAvatarUpdateResponse() { Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(fileName) };
     }
 
     public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR userCoverPhotoUpdateRequest)
@@ -159,7 +159,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(Error.E500, ex.Message);
         }
 
-        return new UserCoverPhotoUpdateResponse() { CoverPhoto = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, fileName) };
+        return new UserCoverPhotoUpdateResponse() { CoverPhoto = _setting.Minio.MediaApiUrl.GetPublicImageUrl(fileName) };
     }
 
     /// <summary>
@@ -252,7 +252,7 @@ public partial class UserService : IUserService
         return new UserProfileResponse
         {
             Id = user.Id,
-            AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.Avatar),
+            AvatarUrl = _setting.Minio.MediaApiUrl.GetPublicImageUrl(user.Avatar),
             Email = user.Email,
             JoinDate = user.CreatedDate,
             ProfileName = user.ProfileName,
@@ -262,7 +262,7 @@ public partial class UserService : IUserService
             DateOfBirth = user.DateOfBirth,
             Gender = user.Gender,
             PhoneNumber = user.PhoneNumber,
-            CoverPhotoUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.CoverPhoto),
+            CoverPhotoUrl = _setting.Minio.MediaApiUrl.GetPublicImageUrl(user.CoverPhoto),
             Location = user.Location,
             PhoneNumberConfirmed = user.PhoneNumberConfirmed,
             EmailConfirmed = user.EmailConfirmed,
@@ -297,7 +297,7 @@ public partial class UserService : IUserService
             var profileUsersRandom = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetRandomProfileNames, new { Name = name });
             foreach (var item in profileUsersRandom)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
             }
             return profileUsersRandom.ToList();
         }
@@ -306,7 +306,7 @@ public partial class UserService : IUserService
         var profiles = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetSimilarProfileNamesMention, new { Name = name });
         foreach (var item in profiles)
         {
-            item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+            item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
         }
         return profiles.ToList();
     }
@@ -397,7 +397,7 @@ public partial class UserService : IUserService
 
             foreach (var item in items)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
             }
             results.Items = items;
         }
@@ -414,7 +414,7 @@ public partial class UserService : IUserService
         var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserAvatarById, new { UserId = userId });
         return new UserProfileAvatarResponse
         {
-            AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, user.Avatar),
+            AvatarUrl = _setting.Minio.MediaApiUrl.GetPublicImageUrl(user.Avatar),
             ProfileId = user.ProfileId,
             ProfileName = user.ProfileName
         };
@@ -428,7 +428,7 @@ public partial class UserService : IUserService
 
         return new UserProfileAvatarResponse
         {
-            AvatarUrl = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, avatar),
+            AvatarUrl = _setting.Minio.MediaApiUrl.GetPublicImageUrl(avatar),
             ProfileId = profileId,
             ProfileName = profileName
         };

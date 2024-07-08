@@ -3,10 +3,11 @@
 namespace Mcsg.Lib.Common.Helpers
 {
     using Lib.Common.Constants;
+    using Mcsg.Common.Core.Constants;
 
     public static class UrlHelper
     {
-        public static string GetAbsolutePath(string url, string relativePath)
+        public static string GetAbsolutePath(this string url, string relativePath)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri))
             {
@@ -41,7 +42,7 @@ namespace Mcsg.Lib.Common.Helpers
             return resultUri.AbsoluteUri;
         }
 
-        public static string GetMediaPath(string baseUrl, string name, string url)
+        public static string GetMediaPath(this string baseUrl, string name, string url)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -52,33 +53,33 @@ namespace Mcsg.Lib.Common.Helpers
             string mediaPath = "";
             if (FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                mediaPath = string.Format(MediaConfig.AudioUrlPath, url);
+                mediaPath = string.Format(Setting.MediaConfig.AudioUrlPath, url);
             }
             else if (FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                mediaPath = string.Format(MediaConfig.ImageUrlPath, url);
+                mediaPath = string.Format(Setting.MediaConfig.ImageUrlPath, url);
             }
             else if (FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                mediaPath = string.Format(MediaConfig.VideoUrlPath, url);
+                mediaPath = string.Format(Setting.MediaConfig.VideoUrlPath, url);
             }
 
             return $"{baseUrl}/{mediaPath}";
         }
 
-        public static string CreateMediaUrl(string text, string encryptKey)
+        public static string CreateMediaUrl(this string text, string encryptKey)
         {
             return HttpUtility.UrlEncode(text);
         }
 
-        public static string GetPublicImageUrl(string mediaApiUrl, string mediaName)
+        public static string GetPublicImageUrl(this string mediaApiUrl, string mediaName)
         {
             if (string.IsNullOrWhiteSpace(mediaName))
             {
                 return string.Empty;
             }
 
-            var url = string.Format(MediaConfig.PublicImageUrlPath, mediaName);
+            var url = string.Format(Setting.MediaConfig.PublicImageUrlPath, mediaName);
             return $"{mediaApiUrl}/{url}";
         }
     }

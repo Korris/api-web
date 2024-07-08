@@ -125,4 +125,30 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string UserAvatar = "UserAvatar";
     }
+
+    /// <summary>
+    /// Media config
+    /// </summary>
+    public class MediaConfig
+    {
+        /// <summary>
+        /// Public image URL path
+        /// </summary>
+        public const string PublicImageUrlPath = "image?p={0}";
+
+        /// <summary>
+        /// Image URL path
+        /// </summary>
+        public const string ImageUrlPath = "image?i={0}";
+
+        /// <summary>
+        /// Video URL path
+        /// </summary>
+        public const string VideoUrlPath = "watch?v={0}";
+
+        /// <summary>
+        /// Audio URL path
+        /// </summary>
+        public const string AudioUrlPath = "watch?a={0}";
+    }
 }

@@ -67,14 +67,14 @@ public static class HtmlDocumentExtension
         if (faviconLink != null)
         {
             var fvUrl = faviconLink.GetAttributeValue("href", null);
-            return UrlHelper.GetAbsolutePath(url, fvUrl);
+            return url.GetAbsolutePath(fvUrl);
         }
 
         var shortcutFaviconLink = doc.DocumentNode.SelectSingleNode("//link[@rel='shortcut icon']");
         if (shortcutFaviconLink != null)
         {
             var fvUrl = shortcutFaviconLink.GetAttributeValue("href", null);
-            return UrlHelper.GetAbsolutePath(url, fvUrl);
+            return url.GetAbsolutePath(fvUrl);
         }
         return string.Empty;
     }

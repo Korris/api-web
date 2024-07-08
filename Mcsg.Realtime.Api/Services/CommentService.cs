@@ -89,7 +89,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.GetPublicImageUrl(userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
@@ -156,7 +156,7 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, userAvatar) : "";
+            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.GetPublicImageUrl(userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 

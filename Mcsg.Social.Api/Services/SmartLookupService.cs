@@ -120,7 +120,7 @@ public partial class SmartLookupService : ISmartLookupService
             {
                 foreach (var item in result)
                 {
-                    item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+                    item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
                 }
             }
         }

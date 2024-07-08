@@ -281,9 +281,9 @@ public partial class FeedService : IFeedService
         }
         else
         {
-            data.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, data.ResourceName, data.Url);
+            data.Url = _setting.Minio.MediaApiUrl.GetMediaPath(data.ResourceName, data.Url);
         }
-        data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, data.UserAvatar);
+        data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(data.UserAvatar);
         data.SubPosts.Add(new SubPostResponse
         {
             Files = new List<UploadFileResponse>()
@@ -378,7 +378,7 @@ public partial class FeedService : IFeedService
             UserId = res.UserId,
             MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataResponse>(res.MetaDatas) : null,
             TotalResources = res.TotalResources,
-            UserAvatar = res.UserAvatar != null ? UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, res.UserAvatar) : null,
+            UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.GetPublicImageUrl(res.UserAvatar) : null,
             FullName = res.FullName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
             Type = res.Type,
@@ -401,7 +401,7 @@ public partial class FeedService : IFeedService
                         }
                         else
                         {
-                            resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
+                            resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
                         }
 
                         itemResponse.Resources.Add(resourceResponse);
@@ -536,7 +536,7 @@ public partial class FeedService : IFeedService
         var profileId = ss.ProfileId;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
+        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(currentUserAvatar);
 
         var hashId = SystemConfig.PostHashLength.GetRandomString();
         if (string.IsNullOrEmpty(req.Content))
@@ -677,7 +677,7 @@ public partial class FeedService : IFeedService
         var profileId = ss.ProfileId;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, currentUserAvatar);
+        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(currentUserAvatar);
 
         // GetSingleFeedQuery
         if (string.IsNullOrEmpty(feedPostReq.Content))
@@ -852,7 +852,7 @@ public partial class FeedService : IFeedService
             TotalResource = item.TotalResource,
             Type = item.Type,
             Status = item.Status,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar),
+            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.UserAvatar),
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             CustomNote = item.CustomNote
         };
@@ -872,7 +872,7 @@ public partial class FeedService : IFeedService
                     }
                     else
                     {
-                        resourceResponse.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resourceResponse.Name, resourceResponse.Url);
+                        resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
                     }
                     itemResponse.Resources.Add(resourceResponse);
                 }
@@ -932,7 +932,7 @@ public partial class FeedService : IFeedService
             ProfileId = item.ProfileId,
             Type = item.Type,
             Status = item.Status,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.UserAvatar),
+            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.UserAvatar),
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             Body = System.Web.HttpUtility.HtmlDecode(item.Body),
             CustomNote = item.CustomNote
@@ -953,7 +953,7 @@ public partial class FeedService : IFeedService
                 }
                 else
                 {
-                    url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, fileDbs.Name, fileDbs.Url);
+                    url = _setting.Minio.MediaApiUrl.GetMediaPath(fileDbs.Name, fileDbs.Url);
                 }
                 itemResponse.Resources.Add(new ResourceResponse
                 {
@@ -988,7 +988,7 @@ public partial class FeedService : IFeedService
                         var resource = new UploadFileResponse
                         {
                             HashId = subPostdb.HashId,
-                            Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, x.Name, x.Url),
+                            Url = _setting.Minio.MediaApiUrl.GetMediaPath(x.Name, x.Url),
                             Name = x.Name,
                             ShareUrl = x.ShareUrl,
                             Type = x.Type,

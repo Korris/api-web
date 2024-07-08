@@ -155,7 +155,7 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             foreach (var item in items)
             {
-                item.AuthorAvatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.AuthorAvatar);
+                item.AuthorAvatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.AuthorAvatar);
             }
             var response = new PagedResults<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = items;

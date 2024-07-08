@@ -61,14 +61,14 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = UrlHelper.CreateMediaUrl(targetBlobName, _setting.Minio.MediaEncryptKey);
+                    resource.Url = targetBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey);
                     //resource.SubPostId = Guid.Empty;
                     await _resourceRepository.UpdateAsync(resource);
                 }
                 #endregion
 
                 response.HashId = resource.HashId;
-                response.Url = UrlHelper.GetMediaPath(_setting.Minio.MediaApiUrl, resource.Name, resource.Url);
+                response.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resource.Name, resource.Url);
                 response.Id = resource.Id;
             }
 

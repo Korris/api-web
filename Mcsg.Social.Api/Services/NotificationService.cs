@@ -88,7 +88,7 @@ public partial class NotificationService : INotificationService
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             foreach (var item in resDto)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
             }
             var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
@@ -125,7 +125,7 @@ public partial class NotificationService : INotificationService
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             foreach (var item in resDto)
             {
-                item.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, item.Avatar);
+                item.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(item.Avatar);
             }
             var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
