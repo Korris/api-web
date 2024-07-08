@@ -142,7 +142,6 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
     public DbSet<Post> Posts { get; set; }
     public DbSet<SubPost> SubPosts { get; set; }
     public DbSet<PostComment> PostComments { get; set; }
-    public DbSet<PostComment> SubPostComments { get; set; }
     public DbSet<PostReaction> PostReactions { get; set; }
     public DbSet<SubPostReaction> SubPostReactions { get; set; }
     public DbSet<PostCommentReaction> PostCommentReactions { get; set; }
