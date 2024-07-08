@@ -522,7 +522,7 @@ public partial class FeedService : IFeedService
     #endregion
 
     #region Modify data
-    public async Task<FeedResponse> PostFeedAsync(FeedPostR req)
+    public async Task<FeedResponse> PostFeedAsync(PostCreateR req)
     {
         var vr = new FeedPostV().Validate(req);
         if (!vr.IsValid)
@@ -670,7 +670,8 @@ public partial class FeedService : IFeedService
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
         return result;
     }
-    public async Task<FeedResponse> UpdateFeedAsync(string hashId, FeedUpdatePostR feedPostReq)
+
+    public async Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR feedPostReq)
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;

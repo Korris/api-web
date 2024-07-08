@@ -10,7 +10,7 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class FeedPostV : AbstractValidator<FeedPostR>
+public class FeedPostV : AbstractValidator<PostCreateR>
 {
     #region -- Methods --
 

@@ -12,8 +12,8 @@ public interface IFeedService
     Task<FeedResponse> GetFeedAsync(string hashId);
     Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string tagName, FeedSearchKeywordR feedLoadReq);
     FeedDisplayConfig GetFeedDisplayConfig();
-    Task<FeedResponse> PostFeedAsync(FeedPostR req);
-    Task<FeedResponse> UpdateFeedAsync(string hashId, FeedUpdatePostR feedPostReq);
+    Task<FeedResponse> PostFeedAsync(PostCreateR req);
+    Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR feedPostReq);
     Task<bool> DeleteFeedAsync(Guid postId);
 
     Task<bool> ReportFeedAsync(FeedReportPostReq req);

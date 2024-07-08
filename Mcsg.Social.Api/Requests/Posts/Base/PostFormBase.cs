@@ -4,9 +4,9 @@ using Common.Core.Requests;
 using Dtos;
 
 /// <summary>
-/// Request
+/// FormBase request
 /// </summary>
-public class FeedPostR : BaseR
+public class PostFormBase : BaseR
 {
     #region -- Properties --
 

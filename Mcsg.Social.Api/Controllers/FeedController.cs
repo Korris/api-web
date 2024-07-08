@@ -20,7 +20,7 @@ public class FeedController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostFeed(FeedPostR req)
+    public async Task<IActionResult> PostFeed(PostCreateR req)
     {
         var result = await _feedService.PostFeedAsync(req);
         return Ok(result);
@@ -28,7 +28,7 @@ public class FeedController : ControllerBase
 
     [HttpPut("{hashId}")]
     [Authorize]
-    public async Task<IActionResult> UpdateFeed(string hashId, FeedUpdatePostR request)
+    public async Task<IActionResult> UpdateFeed(string hashId, PostUpdateR request)
     {
         var result = await _feedService.UpdateFeedAsync(hashId, request);
         return Ok(result);
