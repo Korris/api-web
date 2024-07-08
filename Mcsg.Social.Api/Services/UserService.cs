@@ -468,7 +468,7 @@ public partial class UserService : IUserService
 
         foreach (var i in userNotFollowed)
         {
-            i.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, i.Avatar + "");
+            i.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(i.Avatar + "");
         }
 
         return userNotFollowed;
@@ -512,7 +512,7 @@ public partial class UserService : IUserService
         // Update link MinIO
         foreach (var i in items)
         {
-            i.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, i.Avatar + "");
+            i.Avatar = _setting.Minio.MediaApiUrl.GetPublicImageUrl(i.Avatar + "");
         }
         if (totalItems > 0)
         {
