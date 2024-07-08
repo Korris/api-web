@@ -179,7 +179,7 @@ LIMIT 1
 						AS post
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-						LEFT JOIN ""PostReactions"" r ON r.""TargetId"" = post.""Id""
+						LEFT JOIN ""PostReactions"" r ON r.""TargetId"" = post.""Id""  AND r.""IsDelete"" = FALSE
 						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
 						post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
