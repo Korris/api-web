@@ -36,6 +36,10 @@ public static class ApiErrorCode
     public const string DUPLICATE_USERNAME = "ERR_API_300007";
     public const string NEED_PREMIUM_TO_EDIT = "ERR_API_300008";
 
+    // User
+    public const string ALREADY_EXISTS = "ERR_API_300001";
+    public const string INVALID_OPERATION = "ERR_API_300002";
+
     // Affiliate
     public const string INVALID_AFFILIATE_ENTITY_TYPE = "ERR_API_300006";
 }

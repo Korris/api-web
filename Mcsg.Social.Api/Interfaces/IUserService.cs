@@ -18,5 +18,9 @@ namespace Mcsg.Social.Api.Interfaces
         Task SyncWalletUserReward(Guid userId, float point, RewardType type);
         Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name);
         Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input);
+        Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync();
+        Task<PagedResults<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR request);
+        Task<bool> FollowUserAsync(Guid userId); 
+        Task<bool> UnFollowUserAsync(Guid userId);
     }
 }

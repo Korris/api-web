@@ -58,7 +58,7 @@ public partial class UserService : IUserService
     public async Task<UserProfileResponse> GetCurrentUserAsync()
     {
         var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
-        var userRespone = CreateUserRespone(user);
+        var userRespone = await CreateUserRespone(user);
 
         //Check first login
         if (user.LastLoginDate == null)
@@ -72,7 +72,7 @@ public partial class UserService : IUserService
     public async Task<UserProfileResponse> GetUserByUserNameAsync(string profileName)
     {
         var user = await _context.Users.FirstOrDefaultAsync(p => p.ProfileName == profileName);
-        return CreateUserRespone(user);
+        return await CreateUserRespone(user);
     }
 
     public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest)
@@ -239,16 +239,17 @@ public partial class UserService : IUserService
 
         await SyncWalletUserInfo(user);
 
-        return CreateUserRespone(user);
+        return await CreateUserRespone(user);
     }
 
-    private UserProfileResponse CreateUserRespone(User? user)
+    private async Task<UserProfileResponse> CreateUserRespone(User? user)
     {
         if (user == null)
         {
             return new UserProfileResponse();
         }
-
+        var followingCount = await GetFollowingCountAsync(user.Id);
+        var followersCount = await GetFollowerCountAsync(user.Id);
         return new UserProfileResponse
         {
             Id = user.Id,
@@ -269,7 +270,9 @@ public partial class UserService : IUserService
             ProfileId = user.ProfileId,
             PremiumDate = user.PremiumDate,
             LastLoginDate = user.LastLoginDate,
-            IsPremium = user.IsPremium
+            IsPremium = user.IsPremium,
+            NumBerOfFollowing = followingCount,
+            NumBerOfFollowers = followersCount
         };
     }
 
@@ -432,6 +435,204 @@ public partial class UserService : IUserService
             ProfileId = profileId,
             ProfileName = profileName
         };
+    }
+
+    public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync()
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var qUser = _context.UserAvailable;
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+
+        var userNotFollowed = await (from a in qUser
+                                     where !qUserFollow.Select(p => p.UserFollowingId).Contains(a.Id) && a.Id != ss.UserId
+                                     orderby Guid.NewGuid()
+                                     select new UserFollowedResponse
+                                     {
+                                         UserId = a.Id,
+                                         ProfileName = a.ProfileName,
+                                         Avatar = a.Avatar,
+                                         UserName = a.UserName
+                                     })
+                                     .Take(5).ToListAsync();
+
+        foreach (var i in userNotFollowed)
+        {
+            i.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, i.Avatar + "");
+        }
+
+        return userNotFollowed;
+    }
+
+    public async Task<PagedResults<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR req)
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        PagedResults<UserFollowedResponse> res;
+        var offset = req.PageSize * (req.PageNumber - 1);
+        var qUser = _context.UserAvailable;
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+
+        var userFollowing = from a in qUser
+                            join b in qUserFollow
+                              on a.Id equals b.UserFollowingId
+                            where b.UserFollowerId == ss.UserId
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName
+                            };
+
+        // Paging
+        var totalItems = userFollowing.Count();
+        var items = await userFollowing.Skip(offset).Take(req.PageSize).ToListAsync();
+
+        // Update link MinIO
+        foreach (var i in items)
+        {
+            i.Avatar = UrlHelper.GetPublicImageUrl(_setting.Minio.MediaApiUrl, i.Avatar + "");
+        }
+        if (totalItems > 0)
+        {
+            res = new PagedResults<UserFollowedResponse>(totalItems, req.PageNumber, req.PageSize);
+            res.Items = items;
+        }
+        else
+        {
+            res = new PagedResults<UserFollowedResponse>(0);
+        }
+        return res;
+    }
+
+    public async Task<bool> FollowUserAsync(Guid userId)
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null || userId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+        if (ss.UserId == userId)
+        {
+            throw new BadRequestException(ApiErrorCode.INVALID_OPERATION, ApiErrorMessage.INVALID_OPERATION);
+        }
+
+        var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == ss.UserId && p.UserFollowingId == userId);
+        var userFollow = await qUserFollow.FirstOrDefaultAsync();
+        if (userFollow != null)
+        {
+            if (!userFollow.IsDelete)
+            {
+                throw new BadRequestException(ApiErrorCode.ALREADY_EXISTS, ApiErrorMessage.ALREADY_EXISTS);
+            }
+            else
+            {
+                userFollow.IsDelete = false;
+                userFollow.LastModifiedDate = DateTime.UtcNow;
+                userFollow.LastModifiedBy = ss.UserId;
+                _context.UserFollows.Update(userFollow);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
+        userFollow = new UserFollow
+        {
+            UserFollowerId = ss.UserId,
+            UserFollowingId = userId,
+            CreatedDate = DateTime.UtcNow,
+            CreatedBy = ss.UserId,
+            LastModifiedDate = DateTime.UtcNow,
+            LastModifiedBy = ss.UserId,
+            IsDelete = false
+        };
+
+        await _context.UserFollows.AddAsync(userFollow);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UnFollowUserAsync(Guid userId)
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null || userId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+        if (ss.UserId == userId)
+        {
+            throw new BadRequestException(ApiErrorCode.INVALID_OPERATION, ApiErrorMessage.INVALID_OPERATION);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == ss.UserId && p.UserFollowingId == userId);
+        var userFollow = await qUserFollow.FirstOrDefaultAsync();
+
+        if (userFollow == null || userFollow.IsDelete)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+        else
+        {
+            userFollow.IsDelete = true;
+            userFollow.LastModifiedDate = DateTime.UtcNow;
+            userFollow.LastModifiedBy = ss.UserId;
+            _context.UserFollows.Update(userFollow);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+    }
+
+    private async Task<int> GetFollowerCountAsync(Guid userId)
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.INVALID_OPERATION, ApiErrorMessage.INVALID_OPERATION);
+        }
+
+        return await _context.UserFollowAvailable.CountAsync(p => p.UserFollowingId == userId);
+    }
+
+    private async Task<int> GetFollowingCountAsync(Guid userId)
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.INVALID_OPERATION, ApiErrorMessage.INVALID_OPERATION);
+        }
+
+        return await _context.UserFollowAvailable.CountAsync(p => p.UserFollowerId == userId);
     }
 
     #region -- Fields --

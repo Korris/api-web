@@ -37,6 +37,10 @@ public static class ApiErrorMessage
     public const string DUPLICATE_USERNAME = "Duplicate username";
     public const string NEED_PREMIUM_TO_EDIT = "You need to upgrade to a premium account to edit username";
 
+    //User
+    public const string ALREADY_EXISTS = "You are already following this user.";
+    public const string INVALID_OPERATION = "Users cannot follow themselves.";
+
     // Affiliate
     public const string INVALID_AFFILIATE_ENTITY_TYPE = "Invalid Affiliate Type request";
 }

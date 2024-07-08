@@ -39,6 +39,7 @@ public class UserController : ControllerBase
         var result = await _userService.GetUserAvatar(userId);
         return Ok(result);
     }
+
     [HttpPut("avatar")]
     public async Task<IActionResult> UpdateUserAvatar([FromForm] UserAvatarUpdateR userAvatarUpdateRequest)
     {
@@ -60,12 +61,49 @@ public class UserController : ControllerBase
         var result = await _userService.GetSimilarNameAsync(name);
         return Ok(result);
     }
-    /// Todo Delete AllowAnonymouse after test
+
+    /// <summary>
+    /// //TODO Delete [AllowAnonymous] after test
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("similar-name-mention")]
     public async Task<IActionResult> GetSimilarProfileNamesMention(string? name)
     {
         var result = await _userService.GetSimilarProfilesMentionAsync(name);
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("suggested-profiles-not-followed")]
+    public async Task<IActionResult> GetSuggestedProfilesNotFollowed()
+    {
+        var result = await _userService.GetSuggestedProfilesNotFollowedAsync();
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("following")]
+    public async Task<IActionResult> GetFollowingProfiles([FromQuery] BasePageResultR request)
+    {
+        var result = await _userService.GetFollowingProfilesAsync(request);
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("follow/{userId}")]
+    public async Task<IActionResult> FollowUser(Guid userId)
+    {
+        var result = await _userService.FollowUserAsync(userId);
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("unfollow/{userId}")]
+    public async Task<IActionResult> UnfollowUserAsync(Guid userId)
+    {
+        var result = await _userService.UnFollowUserAsync(userId);
         return Ok(result);
     }
 
