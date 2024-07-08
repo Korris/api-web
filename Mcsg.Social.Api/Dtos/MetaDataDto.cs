@@ -1,9 +1,19 @@
-﻿namespace Mcsg.Social.Api.Requests;
+﻿namespace Mcsg.Social.Api.Dtos;
 
-public class MetaDataReq
+/// <summary>
+/// MetaDataDto
+/// </summary>
+public class MetaDataDto
 {
+    #region -- Properties --
+
     public string? Title { get; set; }
+
     public string? Url { get; set; }
+
     public string? Description { get; set; }
+
     public string? Domain { get; set; }
+
+    #endregion
 }

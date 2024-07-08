@@ -7,6 +7,7 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
+using Dtos;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
@@ -18,7 +19,6 @@ using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
-using Requests;
 
 public partial class FileService : IFileService
 {
@@ -148,7 +148,7 @@ public partial class FileService : IFileService
         };
     }
 
-    public async Task<List<SubPostResponse>> ProcessFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubPostResponse>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
     {
         var subPosts = new List<SubPostResponse>();
 
@@ -185,7 +185,7 @@ public partial class FileService : IFileService
         return subPosts;
     }
 
-    public async Task<List<UploadFileResponse>> ProcessComicFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileResponse>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
     {
         var files = new List<UploadFileResponse>();
 
@@ -206,7 +206,7 @@ public partial class FileService : IFileService
         return files;
     }
 
-    public async Task<List<UploadFileResponse>> ProcessComicFilesUpdateAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileResponse>> ProcessComicFilesUpdateAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
     {
         var files = new List<UploadFileResponse>();
 
@@ -227,7 +227,7 @@ public partial class FileService : IFileService
         return files;
     }
 
-    private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
         var subPostResponses = new List<SubPostResponse>();
@@ -304,7 +304,7 @@ public partial class FileService : IFileService
         return Tuple.Create(response, subPostResponses);
     }
 
-    private async Task<IEnumerable<Resource>> CompleteFilesAsyncNew(List<ResourcePostReq> resourceRequest, List<Resource> resourceAdded, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<IEnumerable<Resource>> CompleteFilesAsyncNew(List<ResourcePostDto> resourceRequest, List<Resource> resourceAdded, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
         if (string.IsNullOrWhiteSpace(userFolder))
@@ -381,7 +381,7 @@ public partial class FileService : IFileService
         return response;
     }
 
-    private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
         if (string.IsNullOrWhiteSpace(userFolder))
@@ -496,7 +496,7 @@ public partial class FileService : IFileService
         }
     }
 
-    public async Task<List<SubPostResponse>> UpdateFeedFilesAsync(List<ResourcePostReq> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubPostResponse>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {

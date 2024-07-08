@@ -1,13 +1,54 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class FeedPostR
+using Common.Core.Requests;
+using Dtos;
+
+/// <summary>
+/// Request
+/// </summary>
+public class FeedPostR : BaseR
 {
+    #region -- Properties --
+
+    /// <summary>
+    /// Title
+    /// </summary>
     public string? Title { get; set; }
+
+    /// <summary>
+    /// Content
+    /// </summary>
     public string? Content { get; set; }
+
+    /// <summary>
+    /// Thumbnail URL
+    /// </summary>
     public string? ThumbnailUrl { get; set; }
-    public MetaDataReq? MetaData { get; set; }
+
+    /// <summary>
+    /// Meta data
+    /// </summary>
+    public MetaDataDto? MetaData { get; set; }
+
+    /// <summary>
+    /// Tags
+    /// </summary>
     public List<string>? Tags { get; set; }
-    public List<ResourcePostReq>? Files { get; set; }
+
+    /// <summary>
+    /// Files
+    /// </summary>
+    public List<ResourcePostDto>? Files { get; set; }
+
+    /// <summary>
+    /// Sound ID
+    /// </summary>
     public Guid? SoundId { get; set; }
+
+    /// <summary>
+    /// Custom note
+    /// </summary>
     public string? CustomNote { get; set; }
+
+    #endregion
 }

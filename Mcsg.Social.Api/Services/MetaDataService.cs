@@ -1,11 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
+using Dtos;
 using Interfaces;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
-using Requests;
 
 public class MetaDataService : IMetaDataService
 {
@@ -16,7 +16,7 @@ public class MetaDataService : IMetaDataService
         _logger = logger;
         _metaDataRepository = unitOfWork.GetRepository<MetaData>();
     }
-    public async Task<MetaDataResponse> AddMetaDataToObject<T>(MetaDataReq request, Guid objId)
+    public async Task<MetaDataResponse> AddMetaDataToObject<T>(MetaDataDto request, Guid objId)
     {
         var metaData = new MetaData
         {
