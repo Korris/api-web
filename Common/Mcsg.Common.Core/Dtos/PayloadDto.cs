@@ -11,9 +11,9 @@
  */
 #endregion
 
-namespace Mcsg.Common.Core.Dtos;
+using System.Text.Json.Serialization;
 
-using SeedWork;
+namespace Mcsg.Common.Core.Dtos;
 
 /// <summary>
 /// Payload data transfer object
@@ -28,7 +28,6 @@ public class PayloadDto
     public PayloadDto()
     {
         UserName = string.Empty;
-        Email = string.Empty;
         Roles = [];
     }
 
@@ -39,37 +38,12 @@ public class PayloadDto
     /// <summary>
     /// Id
     /// </summary>
-    public long Id { get; set; }
-
-    /// <summary>
-    /// EnterpriseId
-    /// </summary>
-    public long? EnterpriseId { get; set; }
-
-    /// <summary>
-    /// Encrypted EnterpriseId
-    /// </summary>
-    public string? EncryptedEnterpriseId
-    {
-        get
-        {
-            return (EnterpriseId == null || EnterpriseId == 0) ? "" : SecurityAes.EncryptText(EnterpriseId + "");
-        }
-        set
-        {
-            EnterpriseId = string.IsNullOrWhiteSpace(value) ? null : Convert.ToInt64(SecurityAes.DecryptText(value));
-        }
-    }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// UserName
     /// </summary>
     public string UserName { get; set; }
-
-    /// <summary>
-    /// Email
-    /// </summary>
-    public string Email { get; set; }
 
     /// <summary>
     /// 1 Individual (for pet owners), 2 Enterprise (for clinic, spa, ...), 3 Administrator
@@ -80,6 +54,12 @@ public class PayloadDto
     /// Roles
     /// </summary>
     public IList<string> Roles { get; set; }
+
+    /// <summary>
+    /// SessionId
+    /// </summary>
+    [JsonIgnore]
+    public Guid SessionId { get; set; }
 
     #endregion
 }

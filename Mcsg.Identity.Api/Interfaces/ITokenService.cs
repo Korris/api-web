@@ -2,11 +2,10 @@
 
 using Common.Core.Dtos;
 using Lib.Data.Domain.Entities;
-using Response;
 
 public interface ITokenService
 {
-    TokenDto GenerateAccessToken(Guid sessionId);
+    TokenDto GenerateAccessToken(Guid sessionId, User user);
 
     Task<RefreshTokenDto?> AddUserRefreshTokenAsync(User user);
 

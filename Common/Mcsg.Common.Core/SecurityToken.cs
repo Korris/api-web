@@ -121,39 +121,6 @@ public class SecurityToken
     }
 
     /// <summary>
-    /// Generate access token
-    /// </summary>
-    /// <param name="sessionId">SessionId</param>
-    /// <param name="jwt">JwtDto</param>
-    /// <returns>Return the result</returns>
-    public static TokenDto GenerateAccessToken(Guid sessionId, JwtDto jwt)
-    {
-        Dictionary<string, object> claims = new()
-        {
-            { Setting.SecurityClaim.SessionId, sessionId.ToString() }
-        };
-
-        var utcNow = DateTime.UtcNow;
-        var expiresAt = utcNow.AddMinutes(jwt.TimeAt);
-        var key = Encoding.UTF8.GetBytes(jwt.Signing);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            IssuedAt = utcNow,
-            Claims = claims,
-            Expires = expiresAt,
-            Issuer = jwt.Issuer,
-            Audience = jwt.Audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-            NotBefore = utcNow,
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var jwtToken = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(jwtToken);
-        return new TokenDto() { AccessToken = tokenString, ExpiredDate = expiresAt };
-    }
-
-    /// <summary>
     /// Generate token
     /// </summary>
     /// <param name="length">Length</param>
@@ -212,6 +179,11 @@ public class SecurityToken
     public double Expires { get; private set; }
 
     /// <summary>
+    /// Expired date
+    /// </summary>
+    public DateTime ExpiredDate { get; private set; }
+
+    /// <summary>
     /// JSON web token
     /// </summary>
     public string Jwt
@@ -219,7 +191,7 @@ public class SecurityToken
         get
         {
             var now = DateTime.UtcNow;
-            var expires = now.AddMinutes(Expires);
+            ExpiredDate = now.AddMinutes(Expires);
 
             var jti = Guid.NewGuid().ToString();
             var sid = Guid.NewGuid().ToString();
@@ -230,7 +202,8 @@ public class SecurityToken
                 new (JwtRegisteredClaimNames.Jti, jti),
                 new (JwtRegisteredClaimNames.Sid, sid),
                 new (JwtRegisteredClaimNames.Iat, iat, ClaimValueTypes.Integer64),
-                new (ClaimTypes.Name, Payload.UserName)
+                new (ClaimTypes.Name, Payload.UserName),
+                new (Setting.SecurityClaim.SessionId, Payload.SessionId.ToString())
             };
 
             foreach (var i in Payload.Roles)
@@ -247,7 +220,7 @@ public class SecurityToken
                 audience: Audience,
                 claims: claims,
                 notBefore: now,
-                expires: expires);
+                expires: ExpiredDate);
 
             var header = new JwtHeader(signing);
             var token = new JwtSecurityToken(header, payload);

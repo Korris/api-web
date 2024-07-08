@@ -84,9 +84,17 @@ public class TokenService : ITokenService
         return null;
     }
 
-    public TokenDto GenerateAccessToken(Guid sessionId)
+    public TokenDto GenerateAccessToken(Guid sessionId, User user)
     {
-        return SecurityToken.GenerateAccessToken(sessionId, _setting.Jwt);
+        var payload = new PayloadDto
+        {
+            Id = user.Id,
+            UserName = user.UserName + "",
+            SessionId = sessionId
+        };
+        var st = new SecurityToken(_setting.Jwt, payload);
+
+        return new TokenDto { AccessToken = st.Jwt, ExpiredDate = st.ExpiredDate };
     }
 
     public async Task<bool> DeleteRefreshTokenAsync(Guid userId)

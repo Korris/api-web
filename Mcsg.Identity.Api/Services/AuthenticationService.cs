@@ -216,7 +216,7 @@ public partial class AuthenticationService : IAuthenticationService
         if (signinResult)
         {
             var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = _tokenService.GenerateAccessToken(session.Id);
+            var response = _tokenService.GenerateAccessToken(session.Id, user);
             response.Roles = session.Roles;
             response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
@@ -358,7 +358,7 @@ public partial class AuthenticationService : IAuthenticationService
     private async Task<TokenDto> CreateAccessToken(User user)
     {
         var session = await _sessionService.CreateSessionAsync(user, "");
-        TokenDto response = _tokenService.GenerateAccessToken(session.Id);
+        TokenDto response = _tokenService.GenerateAccessToken(session.Id, user);
         response.Roles = session.Roles;
         response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
@@ -399,7 +399,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (currentUser != null)
         {
-            response = _tokenService.GenerateAccessToken(Guid.Parse(currentUser.SessionId));
+            response = _tokenService.GenerateAccessToken(Guid.Parse(currentUser.SessionId), user);
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
             if (refreshToken != null)
             {
@@ -521,7 +521,7 @@ public partial class AuthenticationService : IAuthenticationService
             else
             {
                 var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id);
+                var response = _tokenService.GenerateAccessToken(session.Id, user);
                 response.Roles = session.Roles;
                 response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
@@ -597,7 +597,7 @@ public partial class AuthenticationService : IAuthenticationService
                 await _ssoService.AddUserSocial(socialInfo);
 
                 var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id);
+                var response = _tokenService.GenerateAccessToken(session.Id, user);
                 response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
                 var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
@@ -628,7 +628,7 @@ public partial class AuthenticationService : IAuthenticationService
             await _otpService.ClearAllUserOtpAsync(user.Id, type);
 
             var sessionId = (await _sessionService.CreateSessionAsync(user, ""))?.Id.ToString();
-            var response = _tokenService.GenerateAccessToken(Guid.Parse(sessionId));
+            var response = _tokenService.GenerateAccessToken(Guid.Parse(sessionId), user);
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
             if (refreshToken != null)
             {
@@ -700,7 +700,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         var sessionId = (await _sessionService.CreateSessionAsync(user, ""))?.Id.ToString();
 
-        var accessToken = _tokenService.GenerateAccessToken(Guid.Parse(sessionId));
+        var accessToken = _tokenService.GenerateAccessToken(Guid.Parse(sessionId), user);
 
         return new RefreshTokenResponse
         {
