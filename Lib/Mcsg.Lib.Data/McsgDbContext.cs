@@ -12,7 +12,7 @@ using Domain.Entities.Configurations;
 /// <summary>
 /// McsgDbContext
 /// </summary>
-public class McsgDbContext : IdentityDbContext<User, Role, Guid>
+public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 {
     #region -- Overrides --
 
