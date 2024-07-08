@@ -12,9 +12,11 @@ public class CommentController : ControllerBase
 {
     #region -- Methods --
 
-    public CommentController(ICommentService commentService)
+    public CommentController(ICommentService commentService, IPostCommentReactService postCommentReactService, ISubPostCommentReactService subPostCommentReactService)
     {
         _commentService = commentService;
+        _postCommentReactService = postCommentReactService;
+        _subPostCommentReactService = subPostCommentReactService;
     }
 
     #region Should remove after FE integrate code
@@ -121,11 +123,27 @@ public class CommentController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}/reactions")]
+    public async Task<IActionResult> GetPostCommentReaction(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        var result = await _postCommentReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/reactions-sub-post")]
+    public async Task<IActionResult> GetSubPostCommentReaction(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        var result = await _subPostCommentReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
 
     private readonly ICommentService _commentService;
+    private readonly IPostCommentReactService _postCommentReactService;
+    private readonly ISubPostCommentReactService _subPostCommentReactService;
 
     #endregion
 }

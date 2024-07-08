@@ -3,6 +3,8 @@
 using Interfaces;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
+using Mcsg.Lib.Data.Entities.Common;
+using Mcsg.Social.Api.Requests;
 using Models;
 
 public partial class SubPostCommentReactService : ISubPostCommentReactService
@@ -16,7 +18,10 @@ public partial class SubPostCommentReactService : ISubPostCommentReactService
     {
         return await _reactService.AddReaction(commentSubPostId, type);
     }
-
+    public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
+    {
+        return await _reactService.GetReactionsByTargetAsync(targetId, request);
+    }
     public async Task<ReactionsResponse> GetReactions(Guid commentSubPostId)
     {
         return await _reactService.GetReactions(commentSubPostId);
