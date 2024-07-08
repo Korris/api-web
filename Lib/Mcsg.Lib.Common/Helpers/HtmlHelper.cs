@@ -3,7 +3,6 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using Mcsg.Lib.Common.Extensions;
 using PuppeteerSharp;
-using System.Text.RegularExpressions;
 
 namespace Mcsg.Lib.Common.Helpers
 {
@@ -132,11 +131,6 @@ namespace Mcsg.Lib.Common.Helpers
             string name = System.IO.Path.GetFileName("@" + url);
 
             return name;
-        }
-        public static string CleanHtml(string html)
-        {
-            string cleaned = new Regex("style=\"[^\"]*\"").Replace(html, "");
-            return cleaned;
         }
     }
 }

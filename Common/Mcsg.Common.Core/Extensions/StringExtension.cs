@@ -14,6 +14,7 @@
 using Newtonsoft.Json;
 using Serilog;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Mcsg.Common.Core.Extensions;
 
@@ -283,6 +284,16 @@ public static class StringExtension
 
         var url = string.Format(Setting.MediaConfig.PublicImageUrlPath, mediaName);
         return $"{mediaApiUrl}/{url}";
+    }
+
+    /// <summary>
+    /// Clean HTML
+    /// </summary>
+    /// <param name="html">HTML</param>
+    /// <returns></returns>
+    public static string CleanHtml(this string? html)
+    {
+        return new Regex("style=\"[^\"]*\"").Replace(html + "", "");
     }
 
     #endregion

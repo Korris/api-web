@@ -21,9 +21,7 @@ using System.Text.Json.Serialization;
 namespace Mcsg.Common.Core.Requests;
 
 using Common.SeedWork.Constants;
-using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting.Role;
 
 /// <summary>
@@ -115,21 +113,7 @@ public abstract class BaseR : IRequest<SingleResponse>
     /// Current UserId logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public long? CurrentUserId => Payload?.RootElement.GetProperty("id").GetInt64();
-
-    /// <summary>
-    /// The folder name is stored in MinIO
-    /// </summary>
-    [SwaggerSchema(ReadOnly = true)]
-    public string Folder
-    {
-        get
-        {
-            var id = CurrentUserId == null ? 0 : CurrentUserId.Value;
-            var res = id.ToSerialNumber("U");
-            return $"{FolderMinIO.User}/{res}";
-        }
-    }
+    public Guid? CurrentUserId => Payload?.RootElement.GetProperty("id").GetGuid();
 
     /// <summary>
     /// UserAgent

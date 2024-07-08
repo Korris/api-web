@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Npgsql;
+using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -546,8 +547,9 @@ public partial class FeedService : IFeedService
         //Check first post
         var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
 
-        string cleanHtml = HtmlHelper.CleanHtml(req.Content);
-        var safePlainString = System.Web.HttpUtility.HtmlEncode(cleanHtml);
+        var cleanHtml = req.Content.CleanHtml();
+        var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
+
         var post = new Post()
         {
             Title = req.Title,
@@ -698,8 +700,8 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
 
-        string cleanHtml = HtmlHelper.CleanHtml(feedPostReq.Content);
-        var safePlainString = System.Web.HttpUtility.HtmlEncode(cleanHtml);
+        var cleanHtml = feedPostReq.Content.CleanHtml();
+        var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
 
         post.Title = feedPostReq.Title;
         post.Body = safePlainString;
