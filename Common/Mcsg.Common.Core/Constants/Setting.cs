@@ -82,6 +82,21 @@ public class Setting : SeedWork.Constants.Setting
         /// Free username length
         /// </summary>
         public const int FreeUserNameLength = 16;
+
+        /// <summary>
+        /// Value length limit
+        /// </summary>
+        public const int ValueLengthLimit = 4;
+
+        /// <summary>
+        /// Multipart body length limit
+        /// </summary>
+        public const int MultipartBodyLengthLimit = 128;
+
+        /// <summary>
+        /// Reward point
+        /// </summary>
+        public const int RewardPoint = 1000;
     }
 
     /// <summary>
@@ -145,5 +160,41 @@ public class Setting : SeedWork.Constants.Setting
         /// Audio URL path
         /// </summary>
         public const string AudioUrlPath = "watch?a={0}";
+    }
+
+    /// <summary>
+    /// Post config
+    /// </summary>
+    public static class PostConfig
+    {
+        /// <summary>
+        /// Hash length
+        /// </summary>
+        public const int HashLength = 12;
+
+        /// <summary>
+        /// Sub hash length
+        /// </summary>
+        public const int SubHashLength = 16;
+
+        /// <summary>
+        /// Tag maximum length
+        /// </summary>
+        public const int TagMaxLength = 32;
+
+        /// <summary>
+        /// Item count maximum
+        /// </summary>
+        public const int ItemCountMax = 100;
+
+        /// <summary>
+        /// Tag suggest maximum length
+        /// </summary>
+        public const int TagSuggestMaxLength = 6;
+
+        /// <summary>
+        /// Valid video size (8MB)
+        /// </summary>
+        public const int ValidVideoSize = 8;
     }
 }

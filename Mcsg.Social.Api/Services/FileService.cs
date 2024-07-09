@@ -2,6 +2,7 @@
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
@@ -282,7 +283,7 @@ public partial class FileService : IFileService
                         Order = resourceReq.Order,
                         Permission = PostPermission.PUBLIC,
                         PublishDate = DateTime.UtcNow,
-                        HashId = SystemConfig.SubPostHashLength.GetRandomString(),
+                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
                     };
                     subPostId = await _subPostRepository.InsertEntityAsync(subPost);
@@ -358,7 +359,7 @@ public partial class FileService : IFileService
                         Order = resourceReq.Order,
                         Permission = PostPermission.PUBLIC,
                         PublishDate = DateTime.UtcNow,
-                        HashId = SystemConfig.SubPostHashLength.GetRandomString(),
+                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
                     };
 
@@ -435,7 +436,7 @@ public partial class FileService : IFileService
                         Order = resourceReq.Order,
                         Permission = PostPermission.PUBLIC,
                         PublishDate = DateTime.UtcNow,
-                        HashId = SystemConfig.SubPostHashLength.GetRandomString(),
+                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
                     };
 

@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Services;
 
-using Constants;
+using Common.Core.Constants;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
@@ -39,7 +39,7 @@ public class JobService : IJobService
         }
         else
         {
-            canConvert = resource.Size.ToMegabytes() > SystemConfig.ValidVideoSize;
+            canConvert = resource.Size.ToMegabytes() > Setting.PostConfig.ValidVideoSize;
         }
 
         if (canConvert)
@@ -80,7 +80,7 @@ public class JobService : IJobService
         }
         else
         {
-            canConvert = resource.Size.ToMegabytes() > SystemConfig.ValidVideoSize;
+            canConvert = resource.Size.ToMegabytes() > Setting.PostConfig.ValidVideoSize;
         }
 
         if (canConvert)

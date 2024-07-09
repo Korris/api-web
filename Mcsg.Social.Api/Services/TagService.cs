@@ -5,7 +5,6 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
-using Constants;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -138,7 +137,7 @@ public partial class TagService : ITagService
                 .Connection.QueryAsync<TagSuggestView>(GetSuggestTagsByNameQuery, new
                 {
                     TagSearch = "%" + tagSearch + "%",
-                    PageSize = SystemConfig.TagSuggestMaxLength
+                    PageSize = Common.Core.Constants.Setting.PostConfig.TagSuggestMaxLength
                 });
         return tagsDb;
     }
@@ -318,7 +317,7 @@ public partial class TagService : ITagService
     {
         tag = (tag + "").TrimStart('#');
 
-        if (tag.Length > SystemConfig.PostTagMaxLength)
+        if (tag.Length > Common.Core.Constants.Setting.PostConfig.TagMaxLength)
         {
             throw new ArgumentException(ErrorCodes.PortalTagNameNotValidLength, string.Format(ErrorMessage.TagNameNotValidLength, tag));
         }

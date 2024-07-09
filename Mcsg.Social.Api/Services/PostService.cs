@@ -106,7 +106,7 @@ public partial class PostService : IPostService
         //Check first post
         var rewards = await CheckRewardsForPost(currentUserId, type);
 
-        var hashId = SystemConfig.PostHashLength.GetRandomString();
+        var hashId = PostConfig.HashLength.GetRandomString();
         //var safePlainString = "";
         //if (!string.IsNullOrEmpty(comicPostReq.Summary))
         //{
@@ -1363,7 +1363,7 @@ public partial class PostService : IPostService
             //CreatorNote = chapterPostReq.CreatorNote,
             IsEnableComment = chapterPostReq.IsEnableComment,
             ViewCount = 0,
-            HashId = SystemConfig.SubPostHashLength.GetRandomString(),
+            HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
         };
         post.LastModifiedDate = DateTime.UtcNow;
@@ -1570,7 +1570,7 @@ public partial class PostService : IPostService
 
     private void ValidateTotalItem(int number)
     {
-        if (number > SystemConfig.PostItemCountMax)
+        if (number > PostConfig.ItemCountMax)
         {
             throw new BadRequestException(ApiErrorCode.POST_REQ_TOTAL_EXCEEDS_LIMIT, ApiErrorMessage.POST_REQ_TOTAL_EXCEEDS_LIMIT);
         }
@@ -1610,7 +1610,7 @@ public partial class PostService : IPostService
                     break;
             }
 
-            await _userService.SyncWalletUserReward(userId, SystemConfig.DefaultRewardPoint, rewardType);
+            await _userService.SyncWalletUserReward(userId, Default.RewardPoint, rewardType);
             rewards.Add(new RewardRespone()
             {
                 Type = rewardType,
