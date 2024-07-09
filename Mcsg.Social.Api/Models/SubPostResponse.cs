@@ -36,6 +36,11 @@ public class SubPostQueryDbResponse : SubUploadFileDto
     public List<UploadFileQueryDbDto> FileDbs { get; set; }
 }
 
+public class SubPostFeedQuery : SubPostFeedResponse
+{
+    public string ResourcesStr { get; set; }
+}
+
 public class SubPostFeedResponse : FeedResponse
 {
     public string HashIdPost { get; set; }

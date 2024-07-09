@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
+using AutoMapper;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -25,6 +26,7 @@ using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
+using Mcsg.Common.Core.Dtos;
 using Models;
 using Requests;
 using Validators;
@@ -47,6 +49,7 @@ public partial class FeedService : IFeedService
     private readonly IConfiguration _configuration;
     private readonly FeedDisplayConfig _feedDisplayConfig;
     private readonly IPostLinkService _postLinkService;
+    private readonly IMapper _mapper;
 
     public FeedService(IUnitOfWork unitOfWork,
         ITagService tagService,
@@ -62,7 +65,9 @@ public partial class FeedService : IFeedService
         IConfiguration configuration,
         IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
         ISetting setting,
-        IStorageClient sc)
+        IStorageClient sc,
+        IMapper mapper
+        )
     {
         _postRepository = unitOfWork.GetRepository<Post>();
         _unitOfWork = unitOfWork;
@@ -80,6 +85,7 @@ public partial class FeedService : IFeedService
         _postLinkService = postLinkService;
         _setting = setting;
         _sc = sc;
+        _mapper = mapper;
     }
 
     #region Load data
@@ -200,107 +206,115 @@ public partial class FeedService : IFeedService
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
         var query = $@"WITH SubPostsCount AS (
                             SELECT ""PostId"", 
-                            COUNT(*) AS total_subposts 
+                                   COUNT(*) AS total_subposts 
                             FROM ""SubPosts""
                             WHERE ""IsDelete"" = false
                             GROUP BY ""PostId""
                         ),
                         ResourceCount AS (
-                            SELECT p.""Id"" AS ""PostId"",
-                            COUNT(r.""Id"") AS TotalResource
-                            FROM ""Posts"" p
-                            LEFT JOIN ""SubPosts"" sp
-                            ON p.""Id"" = sp.""PostId""
-                            AND sp.""IsDelete"" = false
-                            LEFT JOIN ""Resources"" r
-                            ON sp.""Id"" = r.""SubPostId""
-                            GROUP BY p.""Id""
+                            SELECT sp.""PostId"",
+                            to_jsonb(array_agg(
+                            json_build_object(
+                                'Url', r.""Url"",
+                                'Height', r.""Height"",
+                                'Width', r.""Width"",
+                                'ShareUrl', r.""ShareUrl"",
+                                'Type', r.""Type"",
+                                'Name', r.""Name"",
+                                'Order',r.""Order"",
+                                'HashId',r.""HashId"",
+                                'SubPostHashId',sp.""HashId""
+                   
+                            )
+                            )) AS Resources
+                            FROM ""SubPosts"" sp
+                            LEFT JOIN ""Resources"" r ON sp.""Id"" = r.""SubPostId""
+                            WHERE sp.""IsDelete"" = false
+                            GROUP BY sp.""PostId""
                         )
                         SELECT 
-                                    u.""ProfileName"" as Fullname,
-                                    u.""ProfileId"" ,u.""Avatar"" as UserAvatar, 
-                                    u.""Id"" as UserId,
-                                    p.""HashId"",
-                                    sp.""Id"",
-                                    sp.""CreatedDate"", 
-                                    sp.""Body"",
-                                    sp.""CreatedBy"",
-                                    r.""Url"" ,
-                                    r.""Height"" ,
-                                    r.""Width"" ,
-                                    r.""ShareUrl"",
-                                    r.""Type"" as ResourceType,
-                                    r.""Name"" as ResourceName,
-                                    COALESCE(psb.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps 
-                                                              WHERE ps.""PostId"" = sp.""PostId"" 
-                                                              AND ps.""Order"" = sc.total_subposts
-                                                              AND ps.""IsDelete"" = false )) 
-                                    AS PrevSubPostHashId,
-                                    COALESCE(asp.""HashId"", (SELECT ps.""HashId"" FROM ""SubPosts"" ps 
-                                                              WHERE ps.""PostId"" = sp.""PostId"" 
-                                                              AND ps.""Order"" = 1
-                                                              AND ps.""IsDelete"" = false)) 
-                                    AS NextSubPostHashId,
-                                    rc.TotalResource
-                                    FROM ""SubPosts"" sp
-                                    LEFT JOIN identity.""Users"" u 
-                                    ON u.""Id""  = sp.""UserId"" 
-                                    LEFT JOIN ""Posts"" p 
-                                    ON p.""Id""  = sp.""PostId"" 
-                                    LEFT JOIN ""Resources"" r 
-                                    ON r.""SubPostId"" = sp.""Id"" 
-                                    LEFT JOIN ""SubPosts"" psb 
-                                    ON sp.""PostId"" = psb.""PostId"" 
-                                    AND sp.""Order"" = psb.""Order"" + 1
-                                    AND psb.""IsDelete"" = false
-                                    LEFT JOIN ""SubPosts"" asp 
-                                    ON sp.""PostId"" = asp.""PostId"" 
-                                    AND sp.""Order"" = asp.""Order"" - 1
-                                    AND asp.""IsDelete"" = false
-                                    LEFT JOIN SubPostsCount sc
-                                    ON sp.""PostId"" = sc.""PostId""
-                                    LEFT JOIN ResourceCount rc
-                                    ON sp.""PostId"" = rc.""PostId""
-                                    WHERE sp.""HashId"" =@Id
-                                    AND sp.""IsDelete"" = false";
+                            u.""ProfileName"" AS Fullname,
+                            u.""ProfileId"",
+                            u.""Avatar"" AS UserAvatar,
+                            u.""Id"" AS UserId,
+                            p.""HashId"",
+                            sp.""Id"",
+                            sp.""CreatedDate"", 
+                            sp.""Body"",
+                            sp.""CreatedBy"",
+                            COALESCE(psb.""HashId"", (
+                                SELECT ps.""HashId"" 
+                                FROM ""SubPosts"" ps 
+                                WHERE ps.""PostId"" = sp.""PostId"" 
+                                  AND ps.""Order"" = sc.total_subposts
+                                  AND ps.""IsDelete"" = false
+                            )) AS PrevSubPostHashId,
+                            COALESCE(asp.""HashId"", (
+                                SELECT ps.""HashId"" 
+                                FROM ""SubPosts"" ps 
+                                WHERE ps.""PostId"" = sp.""PostId"" 
+                                  AND ps.""Order"" = 1
+                                  AND ps.""IsDelete"" = false
+                            )) AS NextSubPostHashId,
+                            rc.Resources as ""ResourcesStr""
+                        FROM ""SubPosts"" sp
+                        LEFT JOIN identity.""Users"" u ON u.""Id"" = sp.""UserId""
+                        LEFT JOIN ""Posts"" p ON p.""Id"" = sp.""PostId""
+                        LEFT JOIN ""SubPosts"" psb ON sp.""PostId"" = psb.""PostId""
+                         AND sp.""Order"" = psb.""Order"" + 1
+                         AND psb.""IsDelete"" = false
+                         LEFT JOIN ""SubPosts"" asp ON sp.""PostId"" = asp.""PostId""
+                         AND sp.""Order"" = asp.""Order"" - 1
+                         AND asp.""IsDelete"" = false
+                         LEFT JOIN SubPostsCount sc ON sp.""PostId"" = sc.""PostId""
+                         LEFT JOIN ResourceCount rc ON sp.""PostId"" = rc.""PostId""
+                         WHERE sp.""HashId"" = @Id
+                        AND sp.""IsDelete"" = false";
 
-        var data = await _postRepository.Connection.QueryFirstOrDefaultAsync<SubPostFeedResponse>(query, new
+        var dataQuery = await _postRepository.Connection.QueryFirstOrDefaultAsync<SubPostFeedQuery>(query, new
         {
             Id = hashId
         });
+        var resource = JsonConvert.DeserializeObject<List<ResourceResponse>>(dataQuery.ResourcesStr);
+        var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
+        data.Resources = resource;
+
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
-        if (data.TotalResource == 1)
+        if (data.Resources.Count == 1)
         {
             var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from ""Posts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
             data.Id = postData.Id;
             data.Body = postData.Body;
             data.HashId = postData.HashId;
             data.Body = System.Web.HttpUtility.HtmlDecode(data.Body);
+        }
 
-        }
-        if (data.ResourceType == ResourceType.Video || data.ResourceType == ResourceType.Audio)
+        foreach (var item in data.Resources)
         {
-            data.Url = await _sc.Strategy.PresignedGetObject(data.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
-        }
-        else
-        {
-            data.Url = _setting.Minio.MediaApiUrl.GetMediaPath(data.ResourceName, data.Url);
+            if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
+            {
+                item.Url = await _sc.Strategy.PresignedGetObject(item.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+            }
+            else
+            {
+                item.Url = _setting.Minio.MediaApiUrl.GetMediaPath(item.Name, item.Url);
+            }
         }
         data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(data.UserAvatar);
         data.SubPosts.Add(new SubUploadFileDto
         {
             Files = new List<UploadFileDto>()
-            {
-                new UploadFileDto()
                 {
-                    HashId = hashId,
-                    Height = data.Height,
-                    Width = data.Width,
-                    Url = data.Url,
-                    Type = data.ResourceType,
-                    Name = data.ResourceName
+                    new UploadFileDto()
+                    {
+                        HashId = hashId,
+                        Height = data.Height,
+                        Width = data.Width,
+                        Url = data.Url,
+                        Type = data.ResourceType,
+                        Name = data.ResourceName
+                    }
                 }
-            }
         });
         return data;
     }
@@ -394,7 +408,7 @@ public partial class FeedService : IFeedService
             var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources);
             if (resourceResponses != null && resourceResponses.Any())
             {
-                foreach (var resourceResponse in resourceResponses)
+                foreach (var resourceResponse in resourceResponses.OrderBy(p => p.Order))
                 {
                     if (resourceResponse != null)
                     {
@@ -411,18 +425,19 @@ public partial class FeedService : IFeedService
                         itemResponse.SubPosts.Add(new SubUploadFileDto
                         {
                             Files = new List<UploadFileDto>()
-                            {
-                                new UploadFileDto()
                                 {
-                                    SubPostHashId = resourceResponse.SubPostHashId,
-                                    HashId = resourceResponse.HashId,
-                                    Height = resourceResponse.Height,
-                                    Width = resourceResponse.Width,
-                                    Url = resourceResponse.Url,
-                                    Type = resourceResponse.Type,
-                                    Name = resourceResponse.Name
+                                    new UploadFileDto()
+                                    {
+                                        Order = resourceResponse.Order,
+                                        SubPostHashId = resourceResponse.SubPostHashId,
+                                        HashId = resourceResponse.HashId,
+                                        Height = resourceResponse.Height,
+                                        Width = resourceResponse.Width,
+                                        Url = resourceResponse.Url,
+                                        Type = resourceResponse.Type,
+                                        Name = resourceResponse.Name
+                                    }
                                 }
-                            }
                         });
                     }
                 }
@@ -437,15 +452,15 @@ public partial class FeedService : IFeedService
                 Type = link.Type.ToDisplay()
             };
             itemResponse.Resources = new List<ResourceResponse>()
-            {
-                new ResourceResponse()
                 {
-                    HashId = link.HashId,
-                    Url = link.Url,
-                    ShareUrl = link.Url,
-                    Type = link.Type.ToResourceType(),
-            }
-                 };
+                    new ResourceResponse()
+                    {
+                        HashId = link.HashId,
+                        Url = link.Url,
+                        ShareUrl = link.Url,
+                        Type = link.Type.ToResourceType(),
+                }
+                     };
         }
 
         return itemResponse;
@@ -678,7 +693,6 @@ public partial class FeedService : IFeedService
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
         return result;
     }
-
     public async Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR req)
     {
         var vr = new PostUpdateV().Validate(req);
@@ -769,7 +783,7 @@ public partial class FeedService : IFeedService
             // Add file to feed
             if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
             else
@@ -886,7 +900,7 @@ public partial class FeedService : IFeedService
         {
             itemResponse.Resources = new List<ResourceResponse>();
             var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(item.SubPostResourceStr);
-            foreach (var resourceResponse in resourceResponses)
+            foreach (var resourceResponse in resourceResponses.OrderBy(p => p.Order))
             {
                 if (resourceResponse != null)
                 {
@@ -911,15 +925,15 @@ public partial class FeedService : IFeedService
                 Type = item.LinkType.ToDisplay()
             };
             itemResponse.Resources = new List<ResourceResponse>()
-            {
-                new ResourceResponse()
                 {
-                    HashId = item.LinkHashId,
-                    Url = item.LinkUrl ?? "",
-                    ShareUrl = item.LinkUrl ?? "",
-                    Type = item.LinkType.ToResourceType()
-                }
-            };
+                    new ResourceResponse()
+                    {
+                        HashId = item.LinkHashId,
+                        Url = item.LinkUrl ?? "",
+                        ShareUrl = item.LinkUrl ?? "",
+                        Type = item.LinkType.ToResourceType()
+                    }
+                };
         }
         if (item.MetaTitle != null && item.MetaDomain != null)
         {
