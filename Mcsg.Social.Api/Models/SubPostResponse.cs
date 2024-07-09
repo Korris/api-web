@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Dtos;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
 
@@ -24,20 +25,15 @@ public class SubPostIds
     public string? SubPostHashId { get; set; }
     public Guid SubPostId { get; set; }
 }
-public class SubPostResponse : SubPostBasic
-{
-    public string ThumbnailUrl { get; set; }
-    public List<UploadFileResponse> Files { get; set; } = new List<UploadFileResponse>();
-    public string Body { get; set; }
-}
+
 public class SubPostResponseItem
 {
     public string HashId { get; set; }
     public IEnumerable<Resource> Resources { get; set; }
 }
-public class SubPostQueryDbResponse : SubPostResponse
+public class SubPostQueryDbResponse : SubUploadFileDto
 {
-    public List<UploadFileQueryDbResponse> FileDbs { get; set; }
+    public List<UploadFileQueryDbDto> FileDbs { get; set; }
 }
 
 public class SubPostFeedResponse : FeedResponse

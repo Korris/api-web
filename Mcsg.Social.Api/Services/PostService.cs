@@ -9,6 +9,7 @@ using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
+using Dtos;
 using Enums;
 using Extensions;
 using Interfaces;
@@ -258,7 +259,7 @@ public partial class PostService : IPostService
                         }
                     }
                     if (subpost != null && subpost.Files == null)
-                        subpost.Files = new List<UploadFileResponse>();
+                        subpost.Files = new List<UploadFileDto>();
                     if (resource != null)
                     {
                         subpost.Files.Add(MappingFile(resource));
@@ -1057,13 +1058,13 @@ public partial class PostService : IPostService
         }
     }
 
-    public UploadFileResponse MappingFile(Resource resources)
+    public UploadFileDto MappingFile(Resource resources)
     {
         if (resources == null || resources.Id == Guid.Empty)
         {
             return null;
         }
-        return new UploadFileResponse
+        return new UploadFileDto
         {
             HashId = resources.HashId,
             Order = resources.Order,

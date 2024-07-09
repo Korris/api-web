@@ -50,7 +50,7 @@ public partial class FileService : IFileService
         _sc = sc;
     }
 
-    public async Task<UploadFileResponse> UploadImageAsync(IFormFile file)
+    public async Task<UploadFileDto> UploadImageAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
@@ -63,7 +63,7 @@ public partial class FileService : IFileService
 
         return await UploadFileAsync(file);
     }
-    public async Task<UploadFileResponse> UploadFileAsync(IFormFile file)
+    public async Task<UploadFileDto> UploadFileAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
@@ -138,7 +138,7 @@ public partial class FileService : IFileService
 
         var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
 
-        return new UploadFileResponse()
+        return new UploadFileDto()
         {
             HashId = hashId,
             Url = shareUrl,
@@ -149,9 +149,9 @@ public partial class FileService : IFileService
         };
     }
 
-    public async Task<List<SubPostResponse>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
     {
-        var subPosts = new List<SubPostResponse>();
+        var subPosts = new List<SubUploadFileDto>();
 
         // Complete resource files
         var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userFolder, userAvatar, postId, true);
@@ -162,10 +162,10 @@ public partial class FileService : IFileService
             var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
             var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
 
-            subPosts.Add(new SubPostResponse
+            subPosts.Add(new SubUploadFileDto
             {
                 Status = PostStatus.Public,
-                Files = new List<UploadFileResponse> { new UploadFileResponse()
+                Files = new List<UploadFileDto> { new UploadFileDto()
                                         {
                                             SubPostHashId = subPostHashId?.HashId,
                                             HashId = resource?.HashId,
@@ -186,9 +186,9 @@ public partial class FileService : IFileService
         return subPosts;
     }
 
-    public async Task<List<UploadFileResponse>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
     {
-        var files = new List<UploadFileResponse>();
+        var files = new List<UploadFileDto>();
 
         // Complete resource files
         var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
@@ -196,7 +196,7 @@ public partial class FileService : IFileService
         // Map to response for comic service
         foreach (var resource in resources)
         {
-            files.Add(new UploadFileResponse()
+            files.Add(new UploadFileDto()
             {
                 HashId = resource.HashId,
                 Order = resource.Order,
@@ -207,9 +207,9 @@ public partial class FileService : IFileService
         return files;
     }
 
-    public async Task<List<UploadFileResponse>> ProcessComicFilesUpdateAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileDto>> ProcessComicFilesUpdateAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
     {
-        var files = new List<UploadFileResponse>();
+        var files = new List<UploadFileDto>();
 
         // Complete resource files
         var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
@@ -217,7 +217,7 @@ public partial class FileService : IFileService
         // Map to response for comic service
         foreach (var resource in resources)
         {
-            files.Add(new UploadFileResponse()
+            files.Add(new UploadFileDto()
             {
                 HashId = resource.HashId,
                 Order = resource.Order,
@@ -228,10 +228,10 @@ public partial class FileService : IFileService
         return files;
     }
 
-    private async Task<Tuple<List<Resource>, List<SubPostResponse>>> CompleteFilesAsyncAndSubPost(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<Resource>, List<SubUploadFileDto>>> CompleteFilesAsyncAndSubPost(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
-        var subPostResponses = new List<SubPostResponse>();
+        var subPostResponses = new List<SubUploadFileDto>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
             throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
@@ -287,7 +287,7 @@ public partial class FileService : IFileService
                         IsExclusive = false
                     };
                     subPostId = await _subPostRepository.InsertEntityAsync(subPost);
-                    subPostResponses.Add(new SubPostResponse { HashId = subPost.HashId, Id = subPostId });
+                    subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
                 }
 
                 resource.Type = resource.Name.GetResourceType();
@@ -497,7 +497,7 @@ public partial class FileService : IFileService
         }
     }
 
-    public async Task<List<SubPostResponse>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
@@ -549,7 +549,7 @@ public partial class FileService : IFileService
         // Map to response for feed service
         var resourcesResult = listResourceAddded.Concat(listResourcesNew);
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
-        var subPosts = new List<SubPostResponse>();
+        var subPosts = new List<SubUploadFileDto>();
         var subpostAndResourceHashId = await _resourceRepository.Connection.QueryAsync<SubPostIds>($@"SELECT  sp.""HashId"" as SubPostHashId, sp.""Id"" as SubPostId from ""SubPosts"" sp
                                                                                                          LEFT JOIN ""Resources"" r on sp.""Id"" = r.""SubPostId""
                                                                                                          LEFT JOIN ""Posts"" p  on sp.""PostId""= p.""Id""
@@ -560,12 +560,12 @@ public partial class FileService : IFileService
         {
             var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
             var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
-            subPosts.Add(new SubPostResponse
+            subPosts.Add(new SubUploadFileDto
             {
                 Body = resourceRequest.FirstOrDefault(p => p.Order == resource.Order).Body,
                 HashId = subPostData?.SubPostHashId ?? "",
                 Status = PostStatus.Public,
-                Files = new List<UploadFileResponse> { new UploadFileResponse()
+                Files = new List<UploadFileDto> { new UploadFileDto()
                                         {
                                             SubPostHashId = subPostData?.SubPostHashId ?? "",
                                             HashId = resource.HashId ,

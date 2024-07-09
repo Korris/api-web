@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 using Lib.Data.Enums;
 
-public class UploadFileResponse
+public class UploadFileDto
 {
     public string HashId { get; set; }
     public string SubPostHashId { get; set; }
@@ -15,8 +15,4 @@ public class UploadFileResponse
     public int Width { get; set; }
     public int Height { get; set; }
     public double Size { get; set; }
-}
-public class UploadFileQueryDbResponse : UploadFileResponse
-{
-    public Guid Id { get; set; }
 }

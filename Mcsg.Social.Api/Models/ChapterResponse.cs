@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
+using Dtos;
+
 public class ChapterBasicResponse : SubPostBasic
 {
     public int Order { get; set; }
@@ -12,7 +14,7 @@ public class ChapterBasicResponse : SubPostBasic
 }
 public class ChapterResponse : ChapterBasicResponse
 {
-    public List<UploadFileResponse> Files { get; set; } = new List<UploadFileResponse>();
+    public List<UploadFileDto> Files { get; set; } = new List<UploadFileDto>();
     public string Body { get; set; }
     public string ProfileName { get; set; }
 }

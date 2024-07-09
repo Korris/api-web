@@ -1,10 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Dtos;
 
 public class FeedBoxResponse : FeedBox
 {
-    public List<SubPostResponse>? SubPosts { get; set; } = new List<SubPostResponse>();
+    public List<SubUploadFileDto>? SubPosts { get; set; } = new List<SubUploadFileDto>();
     public List<ResourceResponse>? Resources { get; set; } = new List<ResourceResponse>();
     public MetaDataResponse? MetaData { get; set; }
     public PostLinkResponse? Link { get; set; }

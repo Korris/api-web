@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Dtos;
 
 public class PostBoxResponse : PostBox
 {
@@ -27,11 +28,4 @@ public class PostBox
     public int ChapterCount { get; set; }
     public PostType Type { get; set; }
     public DateTime? CreatedDate { get; set; }
-}
-
-public class SubPostDto
-{
-    public string? Title { get; set; }
-    public int Order { get; set; }
-    public DateTime CreatedDate { get; set; }
 }

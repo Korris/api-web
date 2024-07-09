@@ -13,6 +13,7 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
+using Dtos;
 using Enums;
 using Extensions;
 using Interfaces;
@@ -286,11 +287,11 @@ public partial class FeedService : IFeedService
             data.Url = _setting.Minio.MediaApiUrl.GetMediaPath(data.ResourceName, data.Url);
         }
         data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(data.UserAvatar);
-        data.SubPosts.Add(new SubPostResponse
+        data.SubPosts.Add(new SubUploadFileDto
         {
-            Files = new List<UploadFileResponse>()
+            Files = new List<UploadFileDto>()
             {
-                new UploadFileResponse()
+                new UploadFileDto()
                 {
                     HashId = hashId,
                     Height = data.Height,
@@ -310,7 +311,7 @@ public partial class FeedService : IFeedService
 
         FeedQueryDbResponse dbFeed = null;
         await _postRepository
-            .Connection.QueryAsync<FeedQueryDbResponse, SubPostQueryDbResponse, UploadFileQueryDbResponse, MetaDataQueryDbResponse, PostLinkDb, FeedQueryDbResponse>(query,
+            .Connection.QueryAsync<FeedQueryDbResponse, SubPostQueryDbResponse, UploadFileQueryDbDto, MetaDataQueryDbResponse, PostLinkDb, FeedQueryDbResponse>(query,
             (feed, subpost, uploadfiles, meta, link) =>
             {
                 if (dbFeed == null)
@@ -324,7 +325,7 @@ public partial class FeedService : IFeedService
                     if (uploadfiles != null)
                     {
                         if (subpost.FileDbs == null)
-                            subpost.FileDbs = new List<UploadFileQueryDbResponse>();
+                            subpost.FileDbs = new List<UploadFileQueryDbDto>();
                         subpost.FileDbs.Add(uploadfiles);
                     }
                     dbFeed.SubPostDbs.Add(subpost);
@@ -407,11 +408,11 @@ public partial class FeedService : IFeedService
                         }
 
                         itemResponse.Resources.Add(resourceResponse);
-                        itemResponse.SubPosts.Add(new SubPostResponse
+                        itemResponse.SubPosts.Add(new SubUploadFileDto
                         {
-                            Files = new List<UploadFileResponse>()
+                            Files = new List<UploadFileDto>()
                             {
-                                new UploadFileResponse()
+                                new UploadFileDto()
                                 {
                                     SubPostHashId = resourceResponse.SubPostHashId,
                                     HashId = resourceResponse.HashId,
@@ -965,7 +966,7 @@ public partial class FeedService : IFeedService
         bool hasResources = false;
         if (item.SubPostDbs != null && item.SubPostDbs.Count > 0)
         {
-            itemResponse.SubPosts = new List<SubPostResponse>();
+            itemResponse.SubPosts = new List<SubUploadFileDto>();
             foreach (var subPostdb in item.SubPostDbs)
             {
                 var fileDbs = subPostdb.FileDbs.FirstOrDefault();
@@ -989,7 +990,7 @@ public partial class FeedService : IFeedService
                     SubPostHashId = subPostdb.HashId,
 
                 });
-                var subPostResponse = new SubPostResponse()
+                var subPostResponse = new SubUploadFileDto()
                 {
                     Id = subPostdb.Id,
                     HashId = subPostdb?.HashId,
@@ -1008,7 +1009,7 @@ public partial class FeedService : IFeedService
 
                     subPostResponse.Files = subPostdb.FileDbs.Select(x =>
                     {
-                        var resource = new UploadFileResponse
+                        var resource = new UploadFileDto
                         {
                             HashId = subPostdb.HashId,
                             Url = _setting.Minio.MediaApiUrl.GetMediaPath(x.Name, x.Url),

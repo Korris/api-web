@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Dtos;
 using Lib.Data.Enums;
 
 public class PostResponse
@@ -20,6 +21,6 @@ public class PostResponse
     public string[] Tags { get; set; }
     public PostStatus Status { get; set; }
     public PostPermission Permission { get; set; }
-    public List<SubPostResponse> SubPosts { get; set; } = new List<SubPostResponse>();
+    public List<SubUploadFileDto> SubPosts { get; set; } = new List<SubUploadFileDto>();
     public string CustomNote { get; set; }
 }
