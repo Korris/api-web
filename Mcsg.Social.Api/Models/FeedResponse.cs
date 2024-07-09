@@ -10,6 +10,8 @@ public class FeedResponse : PostResponse
     {
         Type = PostType.Feed;
     }
+
+    public string UserName { get; set; }
     public string FullName { get; set; }
     public MetaDataResponse MetaData { get; set; }
     public PostLinkResponse Link { get; set; }
@@ -37,6 +39,7 @@ public class FeedQueryDbResponse : FeedResponse
 }
 public class FeedsListQueryDbResponse : FeedResponse
 {
+    public string UserName { get; set; }
     public string ProfileName { get; set; }
     public ResourceType ResourceType { get; set; }
     public string ResourceUrl { get; set; }

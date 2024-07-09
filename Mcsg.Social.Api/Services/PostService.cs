@@ -828,6 +828,7 @@ public partial class PostService : IPostService
             CoverUrl = item.CoverUrl,
             CreatedDate = item.CreatedDate,
             ProfileId = item.ProfileId,
+            UserName = item.UserName,
             ProfileName = item.ProfileName,
             UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
             Type = item.Type,

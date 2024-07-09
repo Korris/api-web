@@ -14,6 +14,7 @@
 using Newtonsoft.Json;
 using Serilog;
 using System.Collections;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Mcsg.Common.Core.Extensions;
@@ -294,6 +295,40 @@ public static class StringExtension
     public static string CleanHtml(this string? html)
     {
         return new Regex("style=\"[^\"]*\"").Replace(html + "", "");
+    }
+
+    #endregion
+
+    #region -- HTML --
+
+    /// <summary>
+    /// Replace mention userName in HTML
+    /// </summary>
+    /// <param name="html"></param>
+    /// <param name="oldUserName"></param>
+    /// <param name="newUserName"></param>
+    /// <returns></returns>
+    public static string? ReplaceMentionUserNameInHtml(this string? html, string? oldUserName, string? newUserName)
+    {
+        html = WebUtility.HtmlDecode(html);
+        if (oldUserName == null || html == null)
+        {
+            return null;
+        }
+
+        var pattern = $@"(<span\s+class=""\S*""\s+data-beautiful-mention="")@{Regex.Escape(oldUserName)}(""\s*>)(.*?)@(.*?)(</span>)";
+
+        return Regex.Replace(html, pattern, match =>
+        {
+            // Correctly use the matched groups
+            string startTag = match.Groups[1].Value;
+            string remainingMentionData = match.Groups[2].Value;
+            string mentionText = match.Groups[3].Value;
+            string endTag = match.Groups[5].Value;
+
+            // Replace mention old userName AND update the data-beautiful-mention attribute
+            return $"{startTag}@{newUserName}{remainingMentionData}{mentionText}@{newUserName}{endTag}";
+        });
     }
 
     #endregion

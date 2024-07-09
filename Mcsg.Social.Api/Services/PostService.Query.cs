@@ -34,6 +34,7 @@
 						p.""IsCompleted"",
 						postview.""ViewCount"",
 						u.""ProfileName"", 
+						u.""UserName"",
 						u.""ProfileId"",
 						u.""Avatar"" as ""UserAvatar"",
 						p.""Status"", p.""Type"", 
@@ -82,7 +83,7 @@ LIMIT 1
 						-- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
 						GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
 						p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"",
-						p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""CreatedDate"",
+						p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedDate"",
 						p.""Status"", p.""Type"", p.""CreatedDate"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"",ux.""Id"",
 						sp.""Permission"",subpostview.""ViewCount"",
 						sp.""PublishDate""

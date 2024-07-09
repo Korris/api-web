@@ -7,7 +7,7 @@
             get
             {
                 return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"", u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
 						post.""CreatedDate"",
 						post.""TotalResource"",
@@ -20,7 +20,7 @@
 						post.""LinkHashId"",
 						post.""LinkUrl"",
 						post.""LinkType"", 
-						post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+						post.""CustomNote"", array_agg(tag.""Name"") as Tags, u.""UserName"" from
 							(SELECT  p.""Id"",
 							p.""Title"", p.""Body"",  
 							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
@@ -60,7 +60,7 @@
 							 p.""IsDelete"" = false [AdditionalCondition] and  p.""Type"" = @Type AND p.""Status"" = @Status
 							-- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
 							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-							u.""Avatar"",u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
+							u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"",
 							p.""Status"", p.""Type"",
 							p.""CreatedDate"",
 							p.""CustomNote"",
@@ -78,6 +78,7 @@
 						AS post
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
+						LEFT JOIN identity.""Users"" u ON u.""Id"" = post.""UserId""
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"", 
@@ -92,7 +93,8 @@
 						post.""CustomNote"",
 						post.""LinkHashId"",
 						post.""LinkUrl"",
-						post.""LinkType""
+						post.""LinkType"",
+						u.""UserName""
 						ORDER BY post.""{1}"" DESC;
 
 						SELECT COUNT(*) AS TotalItems FROM {0} p [AdditionalTotalQuery] WHERE p.""Type"" = @Type 
@@ -407,6 +409,7 @@ LIMIT @PageSize
 						p.""CustomNote"",
 						u.""Avatar"" AS ""UserAvatar"",
 						u.""ProfileName"" AS ""FullName"",
+						u.""UserName"" AS ""UserName"",
 						u.""ProfileId"",
 						p.""CreatedDate"",
 						sp.""Total"" AS ""TotalResources"",
@@ -485,6 +488,7 @@ LIMIT @PageSize
 						p.""CustomNote"",
 						u.""Avatar"",
 						u.""ProfileName"",
+						u.""UserName"",
 						u.""ProfileId"",
 						p.""CreatedDate"",
 						""TotalResources"",

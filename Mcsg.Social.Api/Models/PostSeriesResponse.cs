@@ -12,6 +12,7 @@ public class PostSeriesResponse : PostResponse
     public bool IsMature { get; set; }
     public bool? IsCompleted { get; set; }
     public string ProfileName { get; set; }
+    public string UserName { get; set; }
     public ChaptersExclusiveData FreeChapters { get; set; }
     public ChaptersExclusiveData ExclusiveChapters { get; set; }
     public ChaptersExclusiveData EstimateBuyChapters { get; set; }

@@ -35,6 +35,7 @@ public class FeedBox
     public string? Body { get; set; }
     public string? HashId { get; set; }
     public string? FullName { get; set; }
+    public string? UserName { get; set; }
     public string? ProfileId { get; set; }
     public string? ThumbnailUrl { get; set; }
     public int TotalResources { get; set; }

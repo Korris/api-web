@@ -397,6 +397,7 @@ public partial class FeedService : IFeedService
             TotalResources = res.TotalResources,
             UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(res.UserAvatar) : null,
             FullName = res.FullName,
+            UserName = res.UserName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
             Type = res.Type,
             CustomNote = res.CustomNote
@@ -883,6 +884,7 @@ public partial class FeedService : IFeedService
             Title = item.Title,
             HashId = item.HashId,
             UserId = item.UserId,
+            UserName = item.UserName,
             FullName = item.ProfileName,
             ProfileId = item.ProfileId,
             ThumbnailUrl = item.ThumbnailUrl,
@@ -1073,7 +1075,7 @@ public partial class FeedService : IFeedService
     }
     private static string AddAdditionalFeedQuery(FeedLoadReq feedLoadReq, string query, LoadFeedType loadFeedType)
     {
-        if (string.IsNullOrEmpty(feedLoadReq.ProfileName))
+        if (string.IsNullOrEmpty(feedLoadReq.UserName))
         {
             query = query.Replace("[AdditionalCondition]", "")
                 .Replace("[AdditionalTotalQuery]", "")
@@ -1082,8 +1084,8 @@ public partial class FeedService : IFeedService
         else
         {
             var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
-            var additionalTotalCondition = @$"AND u.""ProfileName"" = '{feedLoadReq.ProfileName}'";
-            var additionalCondition = @$"AND u.""ProfileName"" = '{feedLoadReq.ProfileName}'";
+            var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
+            var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
 
             query = query.Replace("[AdditionalCondition]", additionalCondition)
                 .Replace("[AdditionalTotalQuery]", additionalTotalQuery)

@@ -8,11 +8,11 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Constants;
+using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Distributor;
 using Lib.Common.Enums;
-using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data;
@@ -69,9 +69,9 @@ public partial class UserService : IUserService
 
         return userRespone;
     }
-    public async Task<UserProfileResponse> GetUserByUserNameAsync(string profileName)
+    public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(p => p.ProfileName == profileName);
+        var user = await _context.Users.FirstOrDefaultAsync(p => p.UserName == userName);
         return await CreateUserRespone(user);
     }
 
@@ -220,6 +220,15 @@ public partial class UserService : IUserService
                 };
 
                 await _context.UserNameHistories.AddAsync(userNameHistory);
+                var postToUpdate = await _context.Posts.ToListAsync();
+
+                Parallel.ForEach(postToUpdate, post =>
+                {
+                    if (post.Body != null && user.UserName != null)
+                    {
+                        post.Body = post.Body.ReplaceMentionUserNameInHtml(user.UserName, userName);
+                    }
+                });
             }
             else if (userNameHistory.UserId != user.Id)
             {
