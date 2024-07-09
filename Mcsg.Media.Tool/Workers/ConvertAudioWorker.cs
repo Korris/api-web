@@ -3,6 +3,7 @@ using System.Web;
 
 namespace Mcsg.Media.Tool.Workers
 {
+    using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Interfaces;
     using Lib.Data.Domain.Entities;
@@ -51,7 +52,7 @@ namespace Mcsg.Media.Tool.Workers
                         var endCodenewUrl = HttpUtility.UrlEncode(newUrl);
                         var objectName = $"{MediaContainer}/{newUrl}";
 
-                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.DONE, endCodenewUrl, objectName);
+                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, endCodenewUrl, objectName);
                     }
 
                     //clean up resource

@@ -45,13 +45,13 @@ public static class PostExtension
     {
         return type switch
         {
-            PostLinkType.Youtube => ResourceType.YOUTUBE,
-            PostLinkType.Vimeo => ResourceType.VIMEO,
-            PostLinkType.Instagram => ResourceType.OTHER,
-            PostLinkType.Facebook => ResourceType.OTHER,
-            PostLinkType.Twitter => ResourceType.OTHER,
-            PostLinkType.Video => ResourceType.VIDEO,
-            PostLinkType.Other => ResourceType.OTHER,
+            PostLinkType.Youtube => ResourceType.Youtube,
+            PostLinkType.Vimeo => ResourceType.Vimeo,
+            PostLinkType.Instagram => ResourceType.Other,
+            PostLinkType.Facebook => ResourceType.Other,
+            PostLinkType.Twitter => ResourceType.Other,
+            PostLinkType.Video => ResourceType.Video,
+            PostLinkType.Other => ResourceType.Other,
             _ => throw new NotSupportedException($"Unsupported entity type: {type}"),
         };
     }

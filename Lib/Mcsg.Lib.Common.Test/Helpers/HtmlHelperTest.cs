@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Common.Helpers;
-
-namespace Mcsg.Lib.Common.Test.Helpers
+﻿namespace Mcsg.Lib.Common.Test.Helpers
 {
+    using Mcsg.Common.Core.Extensions;
+
     public class HtmlHelperTest
     {
         [Test]
@@ -9,7 +9,7 @@ namespace Mcsg.Lib.Common.Test.Helpers
         {
             string html = "<p class=\"editor-paragraph ltr\" style=\"color:blue;\" dir=\"ltr\"><span data-lexical-text=\"true\">post without hashtag</span></p>";
 
-            var cleanHtml = HtmlHelper.CleanHtml(html);
+            var cleanHtml = html.CleanHtml();
 
             /*Assert.IsNotNull(cleanHtml);
             Assert.IsNotEmpty(cleanHtml);

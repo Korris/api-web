@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.SeedWork.Extensions;
     using Constants;
@@ -337,7 +338,7 @@ namespace Mcsg.Function.Job.Services
                         //Check đã mua trước đó chưa
                         var boughtChapterIds = boughtChapters.Select(x => x.Id).ToList();
 
-                        var notBoughtChapters = chapters.Where(x => x.Permission == Lib.Data.Enums.PostPermission.PREMIUM
+                        var notBoughtChapters = chapters.Where(x => x.Permission == PostPermission.Premium
                                                         && !boughtChapterIds.Contains(x.Id)).ToList();
 
                         // Không có chapter nào cần mua thêm trong serie này.

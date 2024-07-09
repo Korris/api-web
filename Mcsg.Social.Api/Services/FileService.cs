@@ -127,7 +127,7 @@ public partial class FileService : IFileService
             Name = hashFileName,
             Url = tempBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey),
             ShareUrl = objectName,
-            Type = file.IsImageType() ? ResourceType.IMAGE : ResourceType.VIDEO,
+            Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
             CreatedBy = currentUser.UserId,
             Width = imgWidth,
             Height = imgHeight,
@@ -179,7 +179,7 @@ public partial class FileService : IFileService
                                         }},
                 Title = resource.Title,
                 //Name = resource.Name,
-                Permission = PostPermission.PUBLIC,
+                Permission = PostPermission.Public,
                 PublishDate = DateTime.UtcNow
             });
         }
@@ -281,7 +281,7 @@ public partial class FileService : IFileService
                         CreatedBy = resource.CreatedBy,
                         Status = PostStatus.Public,
                         Order = resourceReq.Order,
-                        Permission = PostPermission.PUBLIC,
+                        Permission = PostPermission.Public,
                         PublishDate = DateTime.UtcNow,
                         HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
@@ -357,7 +357,7 @@ public partial class FileService : IFileService
                         CreatedBy = resource.CreatedBy,
                         Status = PostStatus.Public,
                         Order = resourceReq.Order,
-                        Permission = PostPermission.PUBLIC,
+                        Permission = PostPermission.Public,
                         PublishDate = DateTime.UtcNow,
                         HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
@@ -434,7 +434,7 @@ public partial class FileService : IFileService
                         CreatedBy = resource.CreatedBy,
                         Status = PostStatus.Public,
                         Order = resourceReq.Order,
-                        Permission = PostPermission.PUBLIC,
+                        Permission = PostPermission.Public,
                         PublishDate = DateTime.UtcNow,
                         HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
@@ -578,7 +578,7 @@ public partial class FileService : IFileService
                                             Size = resource.Size
                                         }},
                 Title = resource.Title,
-                Permission = PostPermission.PUBLIC,
+                Permission = PostPermission.Public,
                 PublishDate = DateTime.UtcNow
             });
         }

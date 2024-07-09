@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Lib.Common.Extensions
+﻿namespace Mcsg.Lib.Common.Extensions
 {
+    using Constants;
+    using Mcsg.Common.Core.Enums;
+
     public static class ResourceExtensions
     {
         public static ResourceType GetResourceType(this string name)
@@ -15,19 +15,19 @@ namespace Mcsg.Lib.Common.Extensions
             string fileExtension = Path.GetExtension(name);
             if (FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                return ResourceType.AUDIO;
+                return ResourceType.Audio;
             }
             else if (FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                return ResourceType.IMAGE;
+                return ResourceType.Image;
             }
             else if (FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
             {
-                return ResourceType.VIDEO;
+                return ResourceType.Video;
             }
             else
             {
-                return ResourceType.OTHER;
+                return ResourceType.Other;
             }
         }
         public static string CreateCdnMediaUrl(this string url, string mediaCdnUrl)

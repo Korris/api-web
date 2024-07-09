@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
-using Lib.Data.Enums;
+using Common.Core.Enums;
+
 public class ResourceResponse
 {
     public ResourceType Type { get; set; }

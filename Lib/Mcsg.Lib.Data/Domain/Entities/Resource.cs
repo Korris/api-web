@@ -1,9 +1,11 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Mcsg.Common.Core.Enums;
+    using Mcsg.Lib.Data.Domain.Entities.Common;
+    using Mcsg.Lib.Data.Enums;
+
     [Table("Resources")]
     public class Resource : AuditableEntity
     {
@@ -20,6 +22,6 @@ namespace Mcsg.Lib.Data.Domain.Entities
         public int Height { get; set; }
         public ResourceType Type { get; set; }
         public ResourceLocationType LocationType { get; set; }
-        public ResourceStatus Status { get; set; } = ResourceStatus.DONE;
+        public ResourceStatus Status { get; set; } = ResourceStatus.Done;
     }
 }

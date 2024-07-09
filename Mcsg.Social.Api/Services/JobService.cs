@@ -3,6 +3,7 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Constants;
+using Common.Core.Enums;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
@@ -23,9 +24,9 @@ public class JobService : IJobService
 
     public async Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName)
     {
-        if (resource.Type == ResourceType.VIDEO)
+        if (resource.Type == ResourceType.Video)
             await ConvertVideo(resource, userName, userAvatar, blobName);
-        if (resource.Type == ResourceType.AUDIO)
+        if (resource.Type == ResourceType.Audio)
             await ConvertAudio(resource, userName, userAvatar, blobName);
     }
 
@@ -35,7 +36,7 @@ public class JobService : IJobService
         string fileExtension = Path.GetExtension(blobName);
         if (!FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
-            resource.Status = ResourceStatus.PROCESSING;
+            resource.Status = ResourceStatus.Processing;
         }
         else
         {
@@ -76,7 +77,7 @@ public class JobService : IJobService
         string fileExtension = Path.GetExtension(blobName);
         if (!FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
-            resource.Status = ResourceStatus.PROCESSING;
+            resource.Status = ResourceStatus.Processing;
         }
         else
         {

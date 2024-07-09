@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Function.Job.Services
+﻿namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Enums;
+
     public partial class SyncDataService
     {
         private string GetAllUserSession
@@ -51,7 +51,7 @@ namespace Mcsg.Function.Job.Services
 					FROM {_subPostRepository.TableName} 
 					WHERE ""PostId"" = @PostId 
                             AND ""IsDelete"" = false 
-                            AND ""Permission"" <> {(int)PostPermission.PRIVATE}
+                            AND ""Permission"" <> {(int)PostPermission.Private}
 					ORDER BY ""Order"" ; ";
             }
         }

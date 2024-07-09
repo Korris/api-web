@@ -286,7 +286,7 @@ public partial class PostService : IPostService
                     throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
                 }
                 //Check permission
-                if (subpost.Permission == PostPermission.PRIVATE)
+                if (subpost.Permission == PostPermission.Private)
                 {
                     throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
                 }
@@ -295,7 +295,7 @@ public partial class PostService : IPostService
                 {
                     throw new BadRequestException(ApiErrorCode.NEED_BUY_TO_READ, ApiErrorMessage.NEED_BUY_TO_READ);
                 }
-                if (subpost.Permission == PostPermission.PREMIUM && (!userIsPremium && subpost.UserExclusiveId == null))
+                if (subpost.Permission == PostPermission.Premium && (!userIsPremium && subpost.UserExclusiveId == null))
                 {
                     //Todo implement Premium
                     throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_READ, ApiErrorMessage.NEED_PREMIUM_TO_READ);
@@ -811,7 +811,7 @@ public partial class PostService : IPostService
             return new PostSeriesResponse();
         var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
 
-        var freeChapters = item.Chapters.Where(x => x.Permission == PostPermission.PUBLIC).Count();
+        var freeChapters = item.Chapters.Where(x => x.Permission == PostPermission.Public).Count();
         var exclusiveChapters = item.Chapters.Where(x => x.UserExclusiveId.HasValue).Count();
         var totalChapters = item.Chapters.Count;
         var estimateBuyChapters = totalChapters - freeChapters - exclusiveChapters;
