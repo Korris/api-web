@@ -6,7 +6,7 @@ using Dtos;
 /// <summary>
 /// FormBase request
 /// </summary>
-public class PostFormBase : BaseR
+public class PostFormBase : IdBaseR
 {
     #region -- Properties --
 

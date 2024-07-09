@@ -11,9 +11,6 @@
  */
 #endregion
 
-using Swashbuckle.AspNetCore.Annotations;
-using System.Text.Json.Serialization;
-
 namespace Mcsg.Common.Core.Requests;
 
 using SeedWork.Interfaces;
@@ -28,9 +25,7 @@ public abstract class IdBaseR : BaseR, IEntityId<Guid>
     /// <summary>
     /// Id
     /// </summary>
-    [JsonIgnore]
-    [SwaggerSchema(ReadOnly = true)]
-    public Guid Id { get; set; }
+    public virtual Guid Id { get; set; }
 
     #endregion
 }
