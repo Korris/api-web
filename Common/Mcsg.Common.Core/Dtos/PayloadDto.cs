@@ -50,6 +50,11 @@ public class PayloadDto
     public string ProfileName { get; set; } = default!;
 
     /// <summary>
+    /// ProfileId
+    /// </summary>
+    public string ProfileId { get; set; } = default!;
+
+    /// <summary>
     /// 0 Guest, 2 Free, 3 Premium
     /// </summary>
     public byte Type { get; set; }

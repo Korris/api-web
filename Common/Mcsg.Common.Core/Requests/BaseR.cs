@@ -122,6 +122,12 @@ public abstract class BaseR : IRequest<SingleResponse>
     public string? CurrentProfileName => Payload?.RootElement.GetProperty("profileName").GetString();
 
     /// <summary>
+    /// Current ProfileId logged in
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string? CurrentProfileId => Payload?.RootElement.GetProperty("profileId").GetString();
+
+    /// <summary>
     /// UserAgent
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]

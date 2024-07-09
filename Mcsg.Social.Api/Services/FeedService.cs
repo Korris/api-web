@@ -532,10 +532,16 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(M000, t);
         }
 
+        if (req.CurrentUserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var currentUserId = req.CurrentUserId.Value;
+        var currentProfileName = req.CurrentProfileName;
+        var currentProfileId = req.CurrentProfileId;
+
         var ss = _currentUserService.Session;
-        var currentUserId = req.CurrentUserId!.Value;
-        var currentProfileName = ss.ProfileName;
-        var profileId = ss.ProfileId;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
@@ -577,7 +583,7 @@ public partial class FeedService : IFeedService
             FullName = currentProfileName,
             AuthorName = currentProfileName,
             IsCurrentUserIsAuthor = true,
-            ProfileId = profileId,
+            ProfileId = currentProfileId,
             UserAvatar = currentUserAvatarUrl,
             Rewards = rewards,
             CustomNote = post.CustomNote
@@ -681,11 +687,17 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(M000, t);
         }
 
+        if (req.CurrentUserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var currentUserName = req.CurrentUserName;
+        var currentUserId = req.CurrentUserId.Value;
+        var currentProfileName = req.CurrentProfileName;
+        var currentProfileId = req.CurrentProfileId;
+
         var ss = _currentUserService.Session;
-        var currentUserId = req.CurrentUserId!.Value;
-        var currentUserName = ss.UserName;
-        var currentProfileName = ss.ProfileName;
-        var profileId = ss.ProfileId;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
@@ -732,7 +744,7 @@ public partial class FeedService : IFeedService
             FullName = currentProfileName,
             AuthorName = currentProfileName,
             IsCurrentUserIsAuthor = true,
-            ProfileId = profileId,
+            ProfileId = currentProfileId,
             UserAvatar = currentUserAvatarUrl,
             Rewards = rewards,
             CustomNote = post.CustomNote
