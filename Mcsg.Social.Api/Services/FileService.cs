@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -16,7 +17,6 @@ using Lib.Common.Helpers;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -239,7 +239,7 @@ public partial class FileService : IFileService
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
         {
-            var resourceList = await _resourceRepository.Connection.QueryAsync<Resource>(GetListResourceQuery, new { HashIds = hashIds });
+            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
 
             foreach (var resource in resourceList)
             {
@@ -315,7 +315,7 @@ public partial class FileService : IFileService
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
         {
-            var resourceList = await _resourceRepository.Connection.QueryAsync<Resource>(GetListResourceQuery, new { HashIds = hashIds });
+            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
 
             foreach (var resource in resourceList)
             {
@@ -392,7 +392,7 @@ public partial class FileService : IFileService
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
         {
-            var resourceList = await _resourceRepository.Connection.QueryAsync<Resource>(GetListResourceQuery, new { HashIds = hashIds });
+            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
 
             foreach (var resource in resourceList)
             {
@@ -466,15 +466,13 @@ public partial class FileService : IFileService
             throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
         }
 
-        var resourcesDb = await _resourceRepository.Connection.QueryAsync<Resource>(GetResourcesByPostIdQuery, new { PostId = postId });
+        var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
         if (resourcesDb.Any())
         {
-            await _resourceRepository
-                            .Connection.ExecuteAsync(RemoveFilesOfPostQuery, new
-                            {
-                                HashIds = resourcesDb.Select(p => p.HashId).ToList(),
-                                SubPostIds = resourcesDb.Select(x => x.SubPostId).ToList()
-                            });
+            var hashIds = resourcesDb.Select(p => p.HashId).ToList();
+            var subPostIds = resourcesDb.Select(p => p.SubPostId).ToList();
+            await RemoveResource(hashIds, subPostIds);
+
             foreach (var resource in resourcesDb)
             {
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
@@ -503,9 +501,10 @@ public partial class FileService : IFileService
         {
             throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
         }
-        /// resource current in post
-        var resourcesDb = await _resourceRepository.Connection.QueryAsync<Resource>(GetResourcesByPostIdQuery, new { PostId = postId });
-        var subPostDB = await _subPostRepository.Connection.QueryAsync<SubPost>(GetSubPostByPostIdQuery, new { PostId = postId });
+
+        var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
+        var subPostDB = await _context.SubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+
         //Update
         var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
         var resourceRequestHashId = resourceRequest.Select(x => x.HashId).ToList();
@@ -522,12 +521,8 @@ public partial class FileService : IFileService
 
         if (listRemove.Any())
         {
-            await _resourceRepository
-                        .Connection.ExecuteAsync(RemoveFilesOfPostQuery, new
-                        {
-                            HashIds = listRemoveHashId,
-                            SubPostIds = listRemove.Select(x => x.SubPostId).ToList()
-                        });
+            var subPostIds = listRemove.Select(x => x.SubPostId).ToList();
+            await RemoveResource(listRemoveHashId, subPostIds);
         }
 
         // Check change order
@@ -584,6 +579,52 @@ public partial class FileService : IFileService
         }
 
         return subPosts;
+    }
+
+    /// <summary>
+    /// Resource current in post
+    /// </summary>
+    /// <param name="postId">PostId</param>
+    /// <returns>Return a query</returns>
+    private IQueryable<Resource> QueryResourceByPostId(Guid postId)
+    {
+        return from a in _context.ResourceAvailable
+               join b in _context.SubPosts
+                  on a.SubPostId equals b.Id
+               where a.Type != ResourceType.Temp && b.PostId == postId
+               select a;
+    }
+
+    /// <summary>
+    /// Remove resource
+    /// </summary>
+    /// <param name="hashIds"></param>
+    /// <param name="subPostIds"></param>
+    /// <returns>Return the result</returns>
+    private async Task RemoveResource(List<string?> hashIds, List<Guid?>? subPostIds)
+    {
+        var willDelete = false;
+
+        if (hashIds?.Count > 0)
+        {
+            var a = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            a.ForEach(p => p.IsDelete = true);
+
+            willDelete = true;
+        }
+
+        if (subPostIds?.Count > 0)
+        {
+            var b = await _context.SubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
+            b.ForEach(p => p.IsDelete = true);
+
+            willDelete = true;
+        }
+
+        if (willDelete)
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 
     #region -- Fields --

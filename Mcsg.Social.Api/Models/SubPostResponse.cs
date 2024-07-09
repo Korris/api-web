@@ -3,23 +3,7 @@
 using Common.Core.Enums;
 using Dtos;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 
-public class SubPostBasic
-{
-    public Guid Id { get; set; }
-    public string HashId { get; set; }
-    public string Title { get; set; }
-    public string Name { get; set; }
-    public PostPermission Permission { get; set; }
-    public PostStatus Status { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime? PublishDate { get; set; }
-    public Guid? CreatedBy { get; set; }
-    public Guid? UserId { get; set; }
-    public string CreatorNote { get; set; }
-    public bool IsExclusive { get; set; }
-}
 public class SubPostIds
 {
     public string? SubPostHashId { get; set; }

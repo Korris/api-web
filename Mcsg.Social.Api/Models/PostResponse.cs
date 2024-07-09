@@ -2,7 +2,6 @@
 
 using Common.Core.Enums;
 using Dtos;
-using Lib.Data.Enums;
 
 public class PostResponse
 {

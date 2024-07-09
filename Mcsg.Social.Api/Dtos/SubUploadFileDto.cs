@@ -1,7 +1,5 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
-using Models;
-
 public class SubUploadFileDto : SubPostBasic
 {
     public string ThumbnailUrl { get; set; }
