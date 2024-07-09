@@ -11,8 +11,6 @@
  */
 #endregion
 
-using System.Text.Json.Serialization;
-
 namespace Mcsg.Common.SeedWork.Dtos;
 
 using Interfaces;
@@ -20,34 +18,14 @@ using Interfaces;
 /// <summary>
 /// Id data transfer object
 /// </summary>
-public class IdDto : IEntityId<long>
+public class IdDto : IEntityId<Guid>
 {
     #region -- Implements --
 
     /// <summary>
     /// Id
     /// </summary>
-    [JsonIgnore]
-    public long Id { get; set; }
-
-    #endregion
-
-    #region -- Properties --
-
-    /// <summary>
-    /// EncryptedId
-    /// </summary>
-    public virtual string EncryptedId
-    {
-        get
-        {
-            return SecurityAes.EncryptText(Id + "");
-        }
-        set
-        {
-            Id = Convert.ToInt64(SecurityAes.DecryptText(value));
-        }
-    }
+    public Guid Id { get; set; }
 
     #endregion
 }
