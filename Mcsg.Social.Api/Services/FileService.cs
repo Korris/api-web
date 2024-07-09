@@ -497,7 +497,7 @@ public partial class FileService : IFileService
         }
     }
 
-    public async Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {

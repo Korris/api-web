@@ -769,7 +769,7 @@ public partial class FeedService : IFeedService
             // Add file to feed
             if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
             else
