@@ -27,7 +27,6 @@ public class PayloadDto
     /// </summary>
     public PayloadDto()
     {
-        UserName = string.Empty;
         Roles = [];
     }
 
@@ -43,10 +42,15 @@ public class PayloadDto
     /// <summary>
     /// UserName
     /// </summary>
-    public string UserName { get; set; }
+    public string UserName { get; set; } = default!;
 
     /// <summary>
-    /// 1 Individual (for pet owners), 2 Enterprise (for clinic, spa, ...), 3 Administrator
+    /// ProfileName
+    /// </summary>
+    public string ProfileName { get; set; } = default!;
+
+    /// <summary>
+    /// 0 Guest, 2 Free, 3 Premium
     /// </summary>
     public byte Type { get; set; }
 

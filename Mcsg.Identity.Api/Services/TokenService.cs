@@ -90,6 +90,7 @@ public class TokenService : ITokenService
         {
             Id = user.Id,
             UserName = user.UserName + "",
+            ProfileName = user.ProfileName + "",
             SessionId = sessionId
         };
         var st = new SecurityToken(_setting.Jwt, payload);
