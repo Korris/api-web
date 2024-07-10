@@ -6,7 +6,6 @@ namespace Mcsg.Media.Tool.Workers
     using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Interfaces;
-    using Lib.Common.Constants;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Models;
@@ -85,7 +84,7 @@ namespace Mcsg.Media.Tool.Workers
                             HashId = resourceInfo.HashId,
                             PostId = video.PostId,
                             PostHashId = video.PostHashId,
-                            TargetType = NotificationTargetType.Feed
+                            TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed
                         };
 
                         await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Realtime);

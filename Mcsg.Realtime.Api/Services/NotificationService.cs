@@ -14,6 +14,7 @@ namespace Mcsg.Realtime.Api.Services
     using Dtos;
     using Hubs;
     using Lib.Common.Constants;
+    using Mcsg.Common.Core.Enums;
     using Requests;
 
     public interface INotificationService
@@ -80,11 +81,11 @@ namespace Mcsg.Realtime.Api.Services
                     response.LocationHashId = comment.PostHashId;
                     response.EntityId = comment.Id;
                     response.Message = comment.AuthorName + NotificationContent.CommentOnFeed;
-                    response.TargetType = comment.Type == PostTypes.Post ? NotificationTargetType.CommentOnFeed : NotificationTargetType.CommentOnSubFeed;
+                    response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
                     response.ActorId = comment.AuthorId;
                     response.ActorName = comment.AuthorName;
                     response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
-                    response.NotificationType = NotificationType.Comment;
+                    response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
                     response.UserAvatar = comment.UserAvatar;
 
                     // Then notification the comment to post owner
@@ -131,11 +132,11 @@ namespace Mcsg.Realtime.Api.Services
                 response.LocationHashId = post.HashId;
                 response.EntityId = comment.Id;
                 response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
-                response.TargetType = comment.Type == PostTypes.Post ? NotificationTargetType.ReplyOnFeed : NotificationTargetType.ReplyOnSubFeed;
+                response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed : Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed;
                 response.ActorId = comment.AuthorId;
                 response.ActorName = comment.AuthorName;
                 response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
-                response.NotificationType = NotificationType.Reply;
+                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reply;
                 response.UserAvatar = comment.UserAvatar;
 
                 // Then notification the comment to post owner
@@ -165,12 +166,12 @@ namespace Mcsg.Realtime.Api.Services
             response.LocationHashId = video.PostHashId;
             response.EntityHashId = video.HashId;
             response.Message = GetVideoMessage(video.Action);
-            response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : NotificationTargetType.None;
+            response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : Common.Core.Constants.Setting.NotificationTargetType.None;
             response.ActorId = video.AuthorId;
             response.ActorName = video.AuthorName;
             response.UserAvatar = video.UserAvatar;
             response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
-            response.NotificationType = NotificationType.Video + video.Action.ToString();
+            response.NotificationType = Common.Core.Constants.Setting.NotificationType.Video + video.Action.ToString();
 
             // Then notification the comment to post owner
             await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -196,7 +197,7 @@ namespace Mcsg.Realtime.Api.Services
                     postHashId = post.HashId;
 
                     response.Message = reaction.AuthorName + NotificationContent.ReactOnFeed;
-                    response.TargetType = NotificationTargetType.Feed;
+                    response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed;
                 }
             }
 
@@ -227,7 +228,7 @@ namespace Mcsg.Realtime.Api.Services
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
                 response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
-                response.NotificationType = NotificationType.Reaction;
+                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 // Then notification the comment to post owner
                 await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -247,11 +248,11 @@ namespace Mcsg.Realtime.Api.Services
             if (receiverId != mention.AuthorId)
             {
                 var entityType = NotificationEntityType.PostCommentMention;
-                var targetType = NotificationTargetType.CommentOnFeed;
+                var targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed;
                 if (mention.LocationType == MentionLocationType.SubPostComment || mention.LocationType == MentionLocationType.SubPostCommentReply)
                 {
                     entityType = NotificationEntityType.SubPostCommentMention;
-                    targetType = NotificationTargetType.CommentOnSubFeed;
+                    targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
                 }
 
                 var noti = await AddNotificationAsync(
@@ -273,7 +274,7 @@ namespace Mcsg.Realtime.Api.Services
                 response.ActorId = mention.AuthorId;
                 response.ActorName = mention.AuthorName;
                 response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
-                response.NotificationType = NotificationType.Mention;
+                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Mention;
                 response.UserAvatar = mention.UserAvatar;
 
                 // Then notification the comment to post owner

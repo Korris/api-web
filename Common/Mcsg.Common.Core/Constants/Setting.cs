@@ -265,4 +265,81 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const int HashLength = 32;
     }
+
+    /// <summary>
+    /// Notification type
+    /// </summary>
+    public class NotificationType
+    {
+        /// <summary>
+        /// Comment
+        /// </summary>
+        public const string Comment = "Comment";
+
+        /// <summary>
+        /// Reply
+        /// </summary>
+        public const string Reply = "Reply";
+
+        /// <summary>
+        /// Video
+        /// </summary>
+        public const string Video = "Video";
+
+        /// <summary>
+        /// Feed
+        /// </summary>
+        public const string Feed = "Feed";
+
+        /// <summary>
+        /// Reaction
+        /// </summary>
+        public const string Reaction = "Reaction";
+
+        /// <summary>
+        /// Mention
+        /// </summary>
+        public const string Mention = "Mention";
+    }
+
+    /// <summary>
+    /// NotificationTarget type
+    /// </summary>
+    public class NotificationTargetType
+    {
+        /// <summary>
+        /// None
+        /// </summary>
+        public const string None = "None";
+
+        /// <summary>
+        /// Feed
+        /// </summary>
+        public const string Feed = "Feed";
+
+        /// <summary>
+        /// SubFeed
+        /// </summary>
+        public const string SubFeed = "SubFeed";
+
+        /// <summary>
+        /// CommentOnFeed
+        /// </summary>
+        public const string CommentOnFeed = "CommentOnFeed";
+
+        /// <summary>
+        /// CommentOnSubFeed
+        /// </summary>
+        public const string CommentOnSubFeed = "CommentOnSubFeed";
+
+        /// <summary>
+        /// ReplyOnFeed
+        /// </summary>
+        public const string ReplyOnFeed = "ReplyOnFeed";
+
+        /// <summary>
+        /// ReplyOnSubFeed
+        /// </summary>
+        public const string ReplyOnSubFeed = "ReplyOnSubFeed";
+    }
 }

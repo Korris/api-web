@@ -7,10 +7,8 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Models;
 using Requests;
 
@@ -60,15 +58,15 @@ public class JobService : IJobService
             await _context.Jobs.AddAsync(convertJob);
             await _context.SaveChangesAsync();
 
-            //Send notification when video process processing
-            var notiReq = new VideoNotificationReq()
+            // Send notification when video process processing
+            var notiReq = new VideoNotificationReq
             {
                 Id = resource.Id,
                 AuthorId = resource.AuthorId.Value,
                 AuthorName = userName,
                 Action = NotificationAction.Processing,
                 HashId = resource.HashId,
-                TargetType = NotificationTargetType.None,
+                TargetType = Setting.NotificationTargetType.None,
                 UserAvatar = userAvatar
             };
 

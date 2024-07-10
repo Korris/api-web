@@ -1,9 +1,11 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Common;
+    using Enums;
+    using Mcsg.Common.Core.Enums;
+
     [Table("NotificationObjects")]
     public class NotificationObject : AuditableEntity
     {

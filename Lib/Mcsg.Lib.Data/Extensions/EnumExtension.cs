@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Lib.Data.Extensions
+﻿namespace Mcsg.Lib.Data.Extensions
 {
+    using Common.Core.Enums;
+    using Domain.Entities;
+    using Enums;
+
     public static class EnumExtension
     {
         public static string ToTable(this NotificationEntityType notiEntityType)
