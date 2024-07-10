@@ -18,7 +18,7 @@ using SeedWork.Interfaces;
 /// <summary>
 /// IdBase request
 /// </summary>
-public abstract class IdBaseR : BaseR, IEntityId<Guid>
+public class IdBaseR : BaseR, IEntityId<Guid>
 {
     #region -- Implements --
 

@@ -27,9 +27,25 @@ using static Common.SeedWork.Constants.Setting.Role;
 /// <summary>
 /// Base request
 /// </summary>
-public abstract class BaseR : IRequest<SingleResponse>
+public class BaseR : IRequest<SingleResponse>
 {
     #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public BaseR()
+    {
+    }
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="hc">HTTP context</param>
+    public BaseR(HttpContext hc)
+    {
+        _hc = hc;
+    }
 
     /// <summary>
     /// Analyze
