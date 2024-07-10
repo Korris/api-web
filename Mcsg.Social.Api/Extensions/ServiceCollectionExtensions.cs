@@ -3,7 +3,7 @@
 namespace Mcsg.Social.Api.Extensions;
 
 using Common.Core.Constants;
-using Lib.Common.Extensions;
+using Common.SeedWork.Extensions;
 using static Common.SeedWork.Dtos.StorageDto;
 
 public static class ServiceCollectionExtensions
