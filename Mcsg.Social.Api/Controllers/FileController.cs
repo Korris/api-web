@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers;
 
 using Attributes;
+using Common.Core.Requests;
 using Interfaces;
 
 [ApiController]
@@ -23,7 +24,8 @@ public class FileController : ControllerBase
     [HttpPost("upload-media")]
     public async Task<IActionResult> UploadMedia(IFormFile file)
     {
-        var result = await _fileService.UploadFileAsync(file);
+        var req = new BaseR(HttpContext);
+        var result = await _fileService.UploadFileAsync(file, req.CurrentUserId);
         return Ok(result);
     }
 
@@ -33,7 +35,8 @@ public class FileController : ControllerBase
     [HttpPost("upload-images")]
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
-        var result = await _fileService.UploadImageAsync(file);
+        var req = new BaseR(HttpContext);
+        var result = await _fileService.UploadImageAsync(file, req.CurrentUserId);
         return Ok(result);
     }
 

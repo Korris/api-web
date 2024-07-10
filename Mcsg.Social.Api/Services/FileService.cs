@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -14,43 +13,20 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Helpers;
-using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
-using Models;
 
-public partial class FileService : IFileService
+public class FileService : IFileService
 {
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IJobService _jobService;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<Resource> _resourceRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
-    private readonly IConfiguration _configuration;
-
-    public FileService(ICurrentUserService currentUserService
-        , IUnitOfWork unitOfWork
-        , IConfiguration configuration
-        , IJobService jobService
-        , McsgDbContext context
-        , ISetting setting
-        , IStorageClient sc
-        )
+    public FileService(McsgDbContext context, ISetting setting, IStorageClient sc, IJobService jobService)
     {
-        _configuration = configuration;
-        _currentUserService = currentUserService;
-        _userRepository = unitOfWork.GetRepository<User>();
-        _resourceRepository = unitOfWork.GetRepository<Resource>();
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
-        _jobService = jobService;
         _context = context;
         _setting = setting;
         _sc = sc;
+        _jobService = jobService;
     }
 
-    public async Task<UploadFileDto> UploadImageAsync(IFormFile file)
+    public async Task<UploadFileDto> UploadImageAsync(IFormFile file, Guid? userId)
     {
         if (file == null || file.Length == 0)
         {
@@ -61,17 +37,17 @@ public partial class FileService : IFileService
             throw new NotFoundException(ApiErrorCode.OnlyImageFile, ApiErrorMessage.OnlyImageFile);
         }
 
-        return await UploadFileAsync(file);
+        return await UploadFileAsync(file, userId);
     }
-    public async Task<UploadFileDto> UploadFileAsync(IFormFile file)
+
+    public async Task<UploadFileDto> UploadFileAsync(IFormFile file, Guid? userId)
     {
         if (file == null || file.Length == 0)
         {
             throw new NotFoundException(ApiErrorCode.NotFileUpload, ApiErrorMessage.NotFileUpload);
         }
 
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _context.Users.FindAsync(currentUser.UserId);
+        var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
             throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
@@ -119,22 +95,23 @@ public partial class FileService : IFileService
         }
 
         // Insert to resource with type is temp
-        var resource = new Resource()
+        var resource = new Resource
         {
-            AuthorId = currentUser.UserId,
+            AuthorId = userId,
             HashId = hashId,
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
             Url = tempBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey),
             ShareUrl = objectName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
-            CreatedBy = currentUser.UserId,
+            CreatedBy = userId,
             Width = imgWidth,
             Height = imgHeight,
             Size = file.Length
         };
 
-        await _resourceRepository.InsertAsync(resource);
+        await _context.Resources.AddAsync(resource);
+        await _context.SaveChangesAsync();
 
         var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
 
@@ -272,7 +249,7 @@ public partial class FileService : IFileService
                 var subPostId = resource.SubPostId ?? postId;
                 if (addSubPost)
                 {
-                    var subPost = new SubPost()
+                    var subPost = new SubPost
                     {
                         Title = resource.Title,
                         PostId = postId,
@@ -286,7 +263,10 @@ public partial class FileService : IFileService
                         HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
                         IsExclusive = false
                     };
-                    subPostId = await _subPostRepository.InsertEntityAsync(subPost);
+
+                    await _context.SubPosts.AddAsync(subPost);
+                    subPostId = subPost.Id;
+
                     subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
                 }
 
@@ -295,9 +275,9 @@ public partial class FileService : IFileService
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
+                await _context.SaveChangesAsync();
 
                 await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-                await _resourceRepository.UpdateAsync(resource);
                 response.Add(resource);
             }
             response = response.OrderBy(x => x.Order).ToList();
@@ -348,7 +328,7 @@ public partial class FileService : IFileService
                 var subPostId = resource.SubPostId ?? postId;
                 if (addSubPost)
                 {
-                    var subPost = new SubPost()
+                    var subPost = new SubPost
                     {
                         Title = resource.Title,
                         PostId = postId,
@@ -363,7 +343,8 @@ public partial class FileService : IFileService
                         IsExclusive = false
                     };
 
-                    subPostId = await _subPostRepository.InsertEntityAsync(subPost);
+                    await _context.SubPosts.AddAsync(subPost);
+                    subPostId = subPost.Id;
                 }
 
                 resource.Type = resource.Name.GetResourceType();
@@ -371,9 +352,9 @@ public partial class FileService : IFileService
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
+                await _context.SaveChangesAsync();
 
                 await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-                await _resourceRepository.UpdateAsync(resource);
 
                 response.Add(resource);
             }
@@ -425,7 +406,7 @@ public partial class FileService : IFileService
                 var subPostId = resource.SubPostId ?? postId;
                 if (addSubPost)
                 {
-                    var subPost = new SubPost()
+                    var subPost = new SubPost
                     {
                         Title = resource.Title,
                         PostId = postId,
@@ -440,7 +421,8 @@ public partial class FileService : IFileService
                         IsExclusive = false
                     };
 
-                    subPostId = await _subPostRepository.InsertEntityAsync(subPost);
+                    await _context.SubPosts.AddAsync(subPost);
+                    subPostId = subPost.Id;
                 }
 
                 resource.Type = resource.Name.GetResourceType();
@@ -448,9 +430,9 @@ public partial class FileService : IFileService
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
+                await _context.SaveChangesAsync();
 
                 await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-                await _resourceRepository.UpdateAsync(resource);
 
                 response.Add(resource);
             }
@@ -534,23 +516,31 @@ public partial class FileService : IFileService
             if (resourceReq != null && subPostByResource != null && ((resourceReq.Order != resourceAdded.Order) || subPostByResource.Body != resourceReq.Body))
             {
                 resourceAdded.Order = resourceReq.Order;
-                await _resourceRepository.UpdateAsync(resourceAdded);
                 subPostByResource.Order = resourceReq.Order;
                 subPostByResource.Body = resourceReq.Body;
-                await _subPostRepository.UpdateAsync(subPostByResource);
             }
         }
+        await _context.SaveChangesAsync();
 
         // Map to response for feed service
         var resourcesResult = listResourceAddded.Concat(listResourcesNew);
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
         var subPosts = new List<SubUploadFileDto>();
-        var subpostAndResourceHashId = await _resourceRepository.Connection.QueryAsync<SubPostIds>($@"SELECT  sp.""HashId"" as SubPostHashId, sp.""Id"" as SubPostId from ""SubPosts"" sp
-                                                                                                         LEFT JOIN ""Resources"" r on sp.""Id"" = r.""SubPostId""
-                                                                                                         LEFT JOIN ""Posts"" p  on sp.""PostId""= p.""Id""
-                                                                                                         WHERE p.""Id""=@PostId
-                                                                                                         AND r.""IsDelete"" = false
-                                                                                                         AND sp.""IsDelete"" = false", new { PostId = postId });
+
+        var subpostAndResourceHashId = await (from a in _context.SubPostAvailable
+                                              join b in _context.ResourceAvailable
+                                                on a.Id equals b.SubPostId into g1
+                                              from b in g1.DefaultIfEmpty()
+                                              join c in _context.Posts
+                                                on a.PostId equals c.Id into g2
+                                              from c in g2.DefaultIfEmpty()
+                                              where c.Id == postId
+                                              select new
+                                              {
+                                                  SubPostHashId = a.HashId,
+                                                  SubPostId = a.Id
+                                              }).ToListAsync();
+
         foreach (var resource in resourcesResult.OrderBy(p => p.Order))
         {
             var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
@@ -643,6 +633,11 @@ public partial class FileService : IFileService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// Job service
+    /// </summary>
+    private readonly IJobService _jobService;
 
     #endregion
 }

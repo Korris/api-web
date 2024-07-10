@@ -4,8 +4,8 @@ using Dtos;
 
 public interface IFileService
 {
-    Task<UploadFileDto> UploadImageAsync(IFormFile file);
-    Task<UploadFileDto> UploadFileAsync(IFormFile file);
+    Task<UploadFileDto> UploadImageAsync(IFormFile file, Guid? userId);
+    Task<UploadFileDto> UploadFileAsync(IFormFile file, Guid? userId);
     Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
     Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid subPostId);
     Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);

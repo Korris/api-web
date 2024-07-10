@@ -4,17 +4,12 @@ using Common.Core.Enums;
 using Dtos;
 using Lib.Data.Domain.Entities;
 
-public class SubPostIds
-{
-    public string? SubPostHashId { get; set; }
-    public Guid SubPostId { get; set; }
-}
-
 public class SubPostResponseItem
 {
     public string HashId { get; set; }
     public IEnumerable<Resource> Resources { get; set; }
 }
+
 public class SubPostQueryDbResponse : SubUploadFileDto
 {
     public List<UploadFileQueryDbDto> FileDbs { get; set; }
