@@ -96,19 +96,22 @@ namespace Mcsg.Social.Api.Services
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
 														 FROM ""PostComments""  pc
 														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId";
+														 WHERE p.""HashId"" = @HashId
+														 AND pc.""IsDelete"" = false";
 
         private string GetTotalCommentQuery => $@"SELECT 
 														(SELECT COUNT(*)
 														 FROM ""PostComments""  pc
 														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId) 
+														 WHERE p.""HashId"" = @HashId
+														 AND pc.""IsDelete"" = false) 
 														+
 														(SELECT COUNT(*)
 														 FROM ""SubPostComments"" spc
 														 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
 														 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId) AS total_comment_count";
+														 WHERE p.""HashId"" = @HashId
+														 AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetCommentOfPostQuery
         {
             get
