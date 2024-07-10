@@ -4,10 +4,10 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Constants;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
-using Lib.Common.Helpers;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
@@ -112,7 +112,7 @@ public class JobService : IJobService
 
         var url = urlBuilder.ToString();
 
-        var response = await HttpHelper.MakePostRequest(url, req);
+        var response = await url.MakePostRequest(req);
 
         if (response.IsSuccessStatusCode)
         {

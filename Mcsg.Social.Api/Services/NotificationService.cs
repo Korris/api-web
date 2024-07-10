@@ -8,7 +8,6 @@ using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Helpers;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
@@ -188,7 +187,7 @@ public partial class NotificationService : INotificationService
 
         var url = urlBuilder.ToString();
 
-        var response = await HttpHelper.MakePostRequest(url, req);
+        var response = await url.MakePostRequest(req);
 
         if (response.IsSuccessStatusCode)
         {

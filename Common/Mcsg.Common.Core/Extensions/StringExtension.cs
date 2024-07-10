@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Serilog;
 using System.Collections;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Mcsg.Common.Core.Extensions;
@@ -329,6 +330,29 @@ public static class StringExtension
             // Replace mention old userName AND update the data-beautiful-mention attribute
             return $"{startTag}@{newUserName}{remainingMentionData}{mentionText}@{newUserName}{endTag}";
         });
+    }
+
+    #endregion
+
+    #region -- HttpClient --
+
+    /// <summary>
+    /// Make POST request
+    /// </summary>
+    /// <param name="apiUrl">API URL</param>
+    /// <param name="data">Data</param>
+    /// <returns>Return the result</returns>
+    public static async Task<HttpResponseMessage> MakePostRequest(this string? apiUrl, object data)
+    {
+        ArgumentNullException.ThrowIfNull(apiUrl, nameof(apiUrl));
+
+        var json = JsonConvert.SerializeObject(data);
+
+        using (var client = new HttpClient())
+        {
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            return await client.PostAsync(apiUrl, content);
+        }
     }
 
     #endregion

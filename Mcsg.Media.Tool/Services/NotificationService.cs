@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Media.Tool.Services
 {
-    using Lib.Common.Helpers;
+    using Common.Core.Extensions;
     using Models;
 
     public class NotificationService
@@ -16,7 +16,7 @@
 
             var url = urlBuilder.ToString();
 
-            var response = await HttpHelper.MakePostRequest(url, req);
+            var response = await url.MakePostRequest(req);
 
             if (response.IsSuccessStatusCode)
             {

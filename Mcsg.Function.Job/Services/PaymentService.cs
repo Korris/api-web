@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Extensions;
     using Interfaces;
     using Job.Constants;
     using Lib.Common.Enums;
     using Lib.Common.Extensions;
-    using Lib.Common.Helpers;
     using Lib.Common.Models;
     using Lib.Common.Models.RealTime;
     using Lib.Data.Repositories.Interface;
@@ -115,7 +115,7 @@ namespace Mcsg.Function.Job.Services
 
             var url = urlBuilder.ToString();
 
-            var response = await HttpHelper.MakePostRequest(url, req);
+            var response = await url.MakePostRequest(req);
 
             if (response.IsSuccessStatusCode)
             {

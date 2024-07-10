@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Common.Core.Extensions;
 using Constants;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
 using Lib.Common.Web.RealTime.Services;
@@ -178,7 +178,7 @@ public class ZaloPayService : IZaloPayService
 
         var url = urlBuilder.ToString();
 
-        var response = await HttpHelper.MakePostRequest(url, req);
+        var response = await url.MakePostRequest(req);
 
         if (response.IsSuccessStatusCode)
         {
