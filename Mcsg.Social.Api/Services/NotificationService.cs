@@ -180,28 +180,6 @@ public partial class NotificationService : INotificationService
         return await _notiRepository.UpdateAsync(notification);
     }
 
-    public async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req)
-    {
-        var baseUrl = _setting.Api.Realtime;
-        var urlBuilder = new System.Text.StringBuilder();
-        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");
-
-        var url = urlBuilder.ToString();
-
-        var response = await HttpHelper.MakePostRequest(url, req);
-
-        if (response.IsSuccessStatusCode)
-        {
-            string responseContent = await response.Content.ReadAsStringAsync();
-            var responseBody = JsonConvert.DeserializeObject<ApiResponseOfNotification>(responseContent);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
     public async Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req)
     {
         var baseUrl = _setting.Api.Realtime;

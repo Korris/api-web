@@ -11,6 +11,5 @@ public interface INotificationService
     Task<bool> ReadAllNotificationAsync();
     Task<PagedResults<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request);
     Task<PagedResults<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request);
-    Task<bool> AddVideoNotificationAsync(VideoNotificationReq req);
     Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req);
 }

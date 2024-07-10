@@ -7,27 +7,31 @@ using Common.Core.Enums;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
+using Lib.Common.Helpers;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Enums;
-using Lib.Data.Repositories;
+using Models;
 using Requests;
 
 public class JobService : IJobService
 {
-    private readonly IRepository<Job> _jobRepository;
-    private readonly INotificationService _notificationService;
-    public JobService(IRepository<Job> jobRepository, INotificationService notificationService)
+    public JobService(McsgDbContext context, ISetting setting)
     {
-        _jobRepository = jobRepository;
-        _notificationService = notificationService;
+        _context = context;
+        _setting = setting;
     }
 
     public async Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName)
     {
         if (resource.Type == ResourceType.Video)
+        {
             await ConvertVideo(resource, userName, userAvatar, blobName);
+        }
         if (resource.Type == ResourceType.Audio)
+        {
             await ConvertAudio(resource, userName, userAvatar, blobName);
+        }
     }
 
     private async Task ConvertVideo(Resource resource, string userName, string userAvatar, string blobName)
@@ -45,7 +49,7 @@ public class JobService : IJobService
 
         if (canConvert)
         {
-            var convertJob = new Job()
+            var convertJob = new Job
             {
                 JobCategory = JobCategory.Media,
                 Id = Guid.NewGuid(),
@@ -53,7 +57,8 @@ public class JobService : IJobService
                 JobType = JobType.ConvertVideo,
                 Data = JsonConvert.SerializeObject(resource)
             };
-            await _jobRepository.InsertAsync(convertJob);
+            await _context.Jobs.AddAsync(convertJob);
+            await _context.SaveChangesAsync();
 
             //Send notification when video process processing
             var notiReq = new VideoNotificationReq()
@@ -67,7 +72,7 @@ public class JobService : IJobService
                 UserAvatar = userAvatar
             };
 
-            await _notificationService.AddVideoNotificationAsync(notiReq);
+            await AddVideoNotificationAsync(notiReq);
         }
     }
 
@@ -86,7 +91,7 @@ public class JobService : IJobService
 
         if (canConvert)
         {
-            var convertJob = new Job()
+            var convertJob = new Job
             {
                 JobCategory = JobCategory.Media,
                 Id = Guid.NewGuid(),
@@ -94,7 +99,45 @@ public class JobService : IJobService
                 JobType = JobType.ConvertAudio,
                 Data = JsonConvert.SerializeObject(resource),
             };
-            await _jobRepository.InsertAsync(convertJob);
+            await _context.Jobs.AddAsync(convertJob);
+            await _context.SaveChangesAsync();
         }
     }
+
+    private async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req)
+    {
+        var baseUrl = _setting.Api.Realtime;
+        var urlBuilder = new System.Text.StringBuilder();
+        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");
+
+        var url = urlBuilder.ToString();
+
+        var response = await HttpHelper.MakePostRequest(url, req);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<ApiResponseOfNotification>(responseContent);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB Context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
+
+    #endregion
 }
