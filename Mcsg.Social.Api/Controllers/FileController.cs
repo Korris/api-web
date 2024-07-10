@@ -8,7 +8,7 @@ using Common.Core.Requests;
 using Interfaces;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]"), Authorize]
 public class FileController : ControllerBase
 {
     #region -- Methods --
@@ -18,7 +18,6 @@ public class FileController : ControllerBase
         _fileService = fileService;
     }
 
-    [Authorize]
     [DisableRequestSizeLimit]
     [ServiceFilter(typeof(MediaOnlyAttribute))]
     [HttpPost("upload-media")]
@@ -29,7 +28,6 @@ public class FileController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
     [DisableRequestSizeLimit]
     [ServiceFilter(typeof(MediaOnlyAttribute))]
     [HttpPost("upload-images")]

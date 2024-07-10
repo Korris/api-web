@@ -5,16 +5,17 @@ namespace Mcsg.Social.Api.Attributes;
 
 using Constants;
 
+/// <summary>
+/// MediaOnly attribute
+/// </summary>
 public class MediaOnlyAttribute : ActionFilterAttribute
 {
-    private string[] mediaExtension;
+    #region -- Overrides --
 
-    public MediaOnlyAttribute()
-    {
-        var extensions = Program._mediaExtensionAllow;
-        mediaExtension = !string.IsNullOrWhiteSpace(extensions) ? extensions.Split(',', StringSplitOptions.RemoveEmptyEntries) : new string[0];
-        mediaExtension = mediaExtension.Select(x => x.Trim().ToLower()).ToArray();
-    }
+    /// <summary>
+    /// OnActionExecuting
+    /// </summary>
+    /// <param name="context">Context</param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         var file = context.HttpContext.Request.Form.Files.Count > 0 ? context.HttpContext.Request.Form.Files[0] : null;
@@ -24,14 +25,39 @@ public class MediaOnlyAttribute : ActionFilterAttribute
         }
     }
 
-    public override void OnActionExecuted(ActionExecutedContext context)
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public MediaOnlyAttribute()
     {
-        // No action needed after the action has executed
+        var extensions = Program._mediaExtensionAllow;
+        _extension = !string.IsNullOrWhiteSpace(extensions) ? extensions.Split(',', StringSplitOptions.RemoveEmptyEntries) : new string[0];
+        _extension = _extension.Select(x => x.Trim().ToLower()).ToArray();
     }
 
+    /// <summary>
+    /// Check file name is media
+    /// </summary>
+    /// <param name="fileName">File name</param>
+    /// <returns>Return the result</returns>
     private bool IsMedia(string fileName)
     {
-        string fileExtension = Path.GetExtension(fileName).Replace(".", "").ToLower();
-        return mediaExtension.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
+        var extension = Path.GetExtension(fileName).Replace(".", "").ToLower();
+        return _extension.Contains(extension, StringComparer.OrdinalIgnoreCase);
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Extension
+    /// </summary>
+    private string[] _extension;
+
+    #endregion
 }
