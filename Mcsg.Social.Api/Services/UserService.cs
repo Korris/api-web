@@ -10,7 +10,6 @@ using Common.SeedWork.Exceptions;
 using Constants;
 using Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Distributor;
 using Lib.Common.Enums;
 using Lib.Common.Models;
@@ -23,6 +22,7 @@ using Lib.Data.Repositories;
 using Models;
 using Requests;
 using Validators;
+using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
 public partial class UserService : IUserService
@@ -90,7 +90,7 @@ public partial class UserService : IUserService
         {
             var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
 
-            var objectName = $"{BlobStorageDefinition.ImageContainer}/{userAvatarUpdateRequest.Avatar.FileName}";
+            var objectName = $"{Setting.MinioFolder.Image}/{userAvatarUpdateRequest.Avatar.FileName}";
             var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
             if (isExistFile != null)
             {
@@ -109,7 +109,7 @@ public partial class UserService : IUserService
                 newFormFile = imageContent.ResizeImage(180, 180);
             }
 
-            objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
+            objectName = $"{Setting.MinioFolder.Image}/{fileName}";
             await _sc.Strategy.PutObject(newFormFile, objectName, null);
             newFormFile.Close();
 
@@ -118,7 +118,7 @@ public partial class UserService : IUserService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(UpdateUserAvatar), userAvatarUpdateRequest);
-            throw new BadRequestException(Common.SeedWork.Constants.Error.E500, ex.Message);
+            throw new BadRequestException(E500, ex.Message);
         }
 
         return new UserAvatarUpdateResponse() { Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };
@@ -137,7 +137,7 @@ public partial class UserService : IUserService
         try
         {
             var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
-            var objectName = $"{BlobStorageDefinition.ImageContainer}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
+            var objectName = $"{Setting.MinioFolder.Image}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
             var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
             if (isExistFile != null)
             {
@@ -148,7 +148,7 @@ public partial class UserService : IUserService
                 fileName = userCoverPhotoUpdateRequest.CoverPhoto.FileName;
             }
             user.CoverPhoto = fileName;
-            objectName = $"{BlobStorageDefinition.ImageContainer}/{fileName}";
+            objectName = $"{Setting.MinioFolder.Image}/{fileName}";
             await _sc.Strategy.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
             await _userRepository.UpdateAsync(user);
 
@@ -156,7 +156,7 @@ public partial class UserService : IUserService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(UpdateUserCoverPhoto), userCoverPhotoUpdateRequest);
-            throw new BadRequestException(Common.SeedWork.Constants.Error.E500, ex.Message);
+            throw new BadRequestException(E500, ex.Message);
         }
 
         return new UserCoverPhotoUpdateResponse() { CoverPhoto = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };

@@ -4,10 +4,8 @@ public static class ApiErrorCode
 {
     // Resource
     public const string NotFoundThumbnail = "ERR_API_000001";
-    public const string NotFileUpload = "ERR_API_000002";
     public const string InvalidFile = "ERR_API_000003";
     public const string OnlyMediaFile = "ERR_API_000005";
-    public const string OnlyImageFile = "ERR_API_000006";
 
     //Tag
     public const string TAG_NOT_EXIST = "ERR_API_100001";

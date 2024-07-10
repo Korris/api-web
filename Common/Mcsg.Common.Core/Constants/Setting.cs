@@ -342,4 +342,20 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string ReplyOnSubFeed = "ReplyOnSubFeed";
     }
+
+    /// <summary>
+    /// Minio folder
+    /// </summary>
+    public static class MinioFolder
+    {
+        /// <summary>
+        /// Media
+        /// </summary>
+        public const string Media = "media";
+
+        /// <summary>
+        /// Image
+        /// </summary>
+        public const string Image = "images";
+    }
 }

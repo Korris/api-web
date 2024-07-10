@@ -9,7 +9,6 @@ namespace Mcsg.Identity.Api.Services;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
@@ -25,6 +24,7 @@ using Lib.Data.Repositories.Interface;
 using Requests;
 using Response;
 using Validators;
+using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 using static SSORegister;
 
@@ -175,7 +175,7 @@ public partial class AuthenticationService : IAuthenticationService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(RegisterUser), request);
-            throw new BadRequestException(Error.E500, ex.Message);
+            throw new BadRequestException(E500, ex.Message);
         }
 
     }
@@ -188,7 +188,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(M000, t);
         }
 
-        var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone) ?? throw new NotFoundException(E203, M203);
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
         {
@@ -254,7 +254,7 @@ public partial class AuthenticationService : IAuthenticationService
         if (string.IsNullOrEmpty(otpToken))
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
-            var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString()) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString()) ?? throw new NotFoundException(E203, M203);
             if (type == UserOtpType.VerifyEmail)
             {
                 if (user.EmailConfirmed)
@@ -319,7 +319,7 @@ public partial class AuthenticationService : IAuthenticationService
 
     public async Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
     {
-        var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId.ToString()) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId.ToString()) ?? throw new NotFoundException(E203, M203);
 
         var isCurrentPassword = await _userManager.CheckPasswordAsync(user, oldPassword);
         if (!isCurrentPassword)
@@ -376,7 +376,7 @@ public partial class AuthenticationService : IAuthenticationService
     {
         var response = new TokenDto();
         var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString()) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString()) ?? throw new NotFoundException(E203, M203);
         var isHasPassword = await _userManager.HasPasswordAsync(user);
         if (isHasPassword)
         {
@@ -417,7 +417,7 @@ public partial class AuthenticationService : IAuthenticationService
         var response = new VerifyUserResponse();
         if (!string.IsNullOrEmpty(email))
         {
-            var user = await _userManager.FindByEmailAsync(email) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            var user = await _userManager.FindByEmailAsync(email) ?? throw new NotFoundException(E203, M203);
             var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.ResetByEmail);
             response.Token = userOtp.Token;
             response.IsEmail = true;
@@ -428,7 +428,7 @@ public partial class AuthenticationService : IAuthenticationService
             var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserByPhoneQuery, new { Phone = phone });
             if (user == null)
             {
-                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+                throw new NotFoundException(E203, M203);
             }
             var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.ResetByPhone);
             response.Token = userOtp.Token;
@@ -438,7 +438,7 @@ public partial class AuthenticationService : IAuthenticationService
     }
     public async Task<bool> ResetPassword(ResetPasswordReq request)
     {
-        var user = await GetUserByEmailOrPhone(request.Type, request.Email, request.Phone) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await GetUserByEmailOrPhone(request.Type, request.Email, request.Phone) ?? throw new NotFoundException(E203, M203);
         var valid = await _otpService.VerifyAsync(request.OtpToken, request.OtpCode, request.Type);
         if (!valid)
         {
@@ -516,7 +516,7 @@ public partial class AuthenticationService : IAuthenticationService
             var user = await _userManager.FindByIdAsync(existUserId.ToString());
             if (user == null)
             {
-                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+                throw new NotFoundException(E203, M203);
             }
             else
             {
@@ -622,7 +622,7 @@ public partial class AuthenticationService : IAuthenticationService
         if (valid)
         {
             //EmailConfirmed user
-            var user = await GetUserByEmailOrPhone(type, email, phone) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            var user = await GetUserByEmailOrPhone(type, email, phone) ?? throw new NotFoundException(E203, M203);
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
             await _otpService.ClearAllUserOtpAsync(user.Id, type);
@@ -650,7 +650,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
 
         //EmailConfirmed user
-        var user = await GetUserByEmailOrPhone(otpType, email, phone) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await GetUserByEmailOrPhone(otpType, email, phone) ?? throw new NotFoundException(E203, M203);
         var isHasPassword = await _userManager.HasPasswordAsync(user);
         if (isHasPassword)
         {
@@ -695,7 +695,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new UnauthorizedAccessException(ErrorCodes.InvalidRefreshToken, ErrorMessage.TokenInCorrect);
         }
 
-        var user = await _userRepository.GetByIdAsync(userId) ?? throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+        var user = await _userRepository.GetByIdAsync(userId) ?? throw new NotFoundException(E203, M203);
         var userRefreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
 
         var sessionId = (await _sessionService.CreateSessionAsync(user, ""))?.Id.ToString();

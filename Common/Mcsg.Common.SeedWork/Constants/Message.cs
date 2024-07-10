@@ -129,9 +129,24 @@ public static class Message
     #region -- M2xx --
 
     /// <summary>
-    /// User is not associated with any enterprise
+    /// Invalid access token
     /// </summary>
-    public const string M200 = "The enterprise user is not associated with any enterprise entity";
+    public const string M200 = "Invalid access token";
+
+    /// <summary>
+    /// No file uploaded
+    /// </summary>
+    public const string M201 = "No file uploaded.";
+
+    /// <summary>
+    /// Only image files are allowed
+    /// </summary>
+    public const string M202 = "Only image files are allowed.";
+
+    /// <summary>
+    /// Account does not exist
+    /// </summary>
+    public const string M203 = "Account does not exist";
 
     #endregion
 }

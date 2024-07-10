@@ -17,6 +17,8 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
 
 public partial class NotificationService : INotificationService
 {
@@ -68,7 +70,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
@@ -107,7 +109,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
@@ -145,7 +147,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
 
 
@@ -164,7 +166,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
 
         var notification = await _notiRepository.GetByIdAsync(id);

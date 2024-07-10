@@ -10,12 +10,13 @@ namespace Mcsg.Realtime.Api.Services
     using Constants;
     using Dtos;
     using Interfaces;
-    using Lib.Common.Constants;
     using Lib.Common.Web.Security;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Requests;
+    using static Common.SeedWork.Constants.Error;
+    using static Common.SeedWork.Constants.Message;
 
     public interface ICommentService
     {
@@ -76,7 +77,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null)
             {
-                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+                throw new NotFoundException(E203, M203);
             }
 
             if (!ValidComment(req))
@@ -144,7 +145,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null)
             {
-                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+                throw new NotFoundException(E203, M203);
             }
 
             if (!ValidComment(req))
@@ -197,7 +198,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null)
             {
-                throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+                throw new NotFoundException(E203, M203);
             }
 
             if (req.CommentId == Guid.Empty)

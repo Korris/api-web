@@ -3,10 +3,10 @@ using System.Net;
 
 namespace Mcsg.Media.Api.Controllers;
 
+using Common.Core.Constants;
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Common.Constants;
 
 /// <summary>
 /// Video controller
@@ -53,7 +53,7 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        objectName = $"{BlobStorageDefinition.MediaContainer}/{objectName}";
+        objectName = $"{Setting.MinioFolder.Media}/{objectName}";
         var ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {

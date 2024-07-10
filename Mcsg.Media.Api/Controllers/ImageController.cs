@@ -4,10 +4,10 @@ using System.Net.Mime;
 
 namespace Mcsg.Media.Api.Controllers;
 
+using Common.Core.Constants;
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Common.Constants;
 
 /// <summary>
 /// Image controller
@@ -43,7 +43,7 @@ public class ImageController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(p))
         {
-            objectName = $"{BlobStorageDefinition.ImageContainer}/{p}";
+            objectName = $"{Setting.MinioFolder.Image}/{p}";
             ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         }
         else
@@ -59,7 +59,7 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
-            objectName = $"{BlobStorageDefinition.MediaContainer}/{objectName}";
+            objectName = $"{Setting.MinioFolder.Media}/{objectName}";
             ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         }
 

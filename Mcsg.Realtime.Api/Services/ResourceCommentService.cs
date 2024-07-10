@@ -2,12 +2,10 @@
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Constants;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Interfaces;
-    using Lib.Common.Constants;
-    using Lib.Common.Extensions;
-    using Lib.Common.Helpers;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
@@ -48,10 +46,10 @@ namespace Mcsg.Realtime.Api.Services
                 string tempBlobName = resource.Name.GetTempBlobName(userName);
                 string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)

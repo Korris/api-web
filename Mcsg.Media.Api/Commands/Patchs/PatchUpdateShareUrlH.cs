@@ -4,9 +4,9 @@ using System.Web;
 
 namespace Mcsg.Media.Api.Commands;
 
+using Common.Core.Constants;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Helpers;
 using Lib.Data;
 using Requests;
@@ -51,7 +51,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
                 continue;
             }
 
-            var mediaContainer = $"{BlobStorageDefinition.MediaContainer}/";
+            var mediaContainer = $"{Setting.MinioFolder.Media}/";
             var urlDecrypt = CryptoHelper.Decrypt(url, _setting.Minio.MediaEncryptKey);
             if (!string.IsNullOrWhiteSpace(urlDecrypt))
             {

@@ -12,7 +12,6 @@
         public const string ErrorResettingPassword = "ERR_AUTH_00008";
         public const string InvalidApiKey = "ERR_AUTH_00009";
         public const string DuplicateUser = "ERR_AUTH_00010";
-        public const string NotExistedUser = "ERR_AUTH_00011";
         public const string InvalidSocialToken = "ERR_AUTH_00012";
         public const string SocialEmailNotPublic = "ERR_AUTH_00013";
         public const string PasswordInCorrect = "ERR_AUTH_00014";

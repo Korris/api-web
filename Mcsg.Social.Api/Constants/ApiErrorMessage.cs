@@ -4,9 +4,7 @@ public static class ApiErrorMessage
 {
     // Resource
     public const string NotFoundThumbnail = "No thumbnail found for the URL.";
-    public const string NotFileUpload = "No file uploaded.";
     public const string OnlyMediaFile = "Only media files are allowed.";
-    public const string OnlyImageFile = "Only image files are allowed.";
 
     //Tag
     public const string TAG_NOT_EXIST = "Tag does not exist";

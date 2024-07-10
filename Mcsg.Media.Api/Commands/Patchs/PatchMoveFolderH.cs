@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Media.Api.Commands;
 
+using Common.Core.Constants;
+using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Data;
-using Mcsg.Lib.Common.Constants;
 using Requests;
 
 /// <summary>
@@ -56,10 +57,10 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
 
         foreach (var i in dicUsers)
         {
-            var dstFolder = $"{BlobStorageDefinition.MediaContainer}/{i.Key.Email}";
+            var dstFolder = $"{Setting.MinioFolder.Media}/{i.Key.Email}";
             foreach (var j in i.Value)
             {
-                var srcFolder = $"{BlobStorageDefinition.MediaContainer}/{j}";
+                var srcFolder = $"{Setting.MinioFolder.Media}/{j}";
                 count += await _sc.Strategy.MoveFolder(srcFolder, dstFolder, null);
             }
         }

@@ -6,7 +6,6 @@
         public const string MobileNumberExist = "Số điện thoại đã tồn tại";
         public const string EmailAndMobileNumberExist = "Số điện thoại và Email đã tồn tại";
         public const string EmailExist = "Email đã tồn tại";
-        public const string AccountNotExist = "Tài khoản không tồn tại";
         public const string EmailNotConfirmed = "Email {0} chưa được xác thực";
         public const string MobileNotConfirmed = "Số điện thoại {0} chưa được xác thực";
         public const string NewPasswordShouldDifferentCurrent = "Mật khẩu mới phải khác mật khẩu cũ.";

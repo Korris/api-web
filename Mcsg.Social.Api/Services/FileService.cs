@@ -8,14 +8,12 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
-using Constants;
 using Dtos;
 using Interfaces;
-using Lib.Common.Constants;
-using Lib.Common.Extensions;
-using Lib.Common.Helpers;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
 
 public class FileService : IFileService
 {
@@ -31,11 +29,11 @@ public class FileService : IFileService
     {
         if (file == null || file.Length == 0)
         {
-            throw new NotFoundException(ApiErrorCode.NotFileUpload, ApiErrorMessage.NotFileUpload);
+            throw new NotFoundException(E201, M201);
         }
         if (!file.IsImageType())
         {
-            throw new NotFoundException(ApiErrorCode.OnlyImageFile, ApiErrorMessage.OnlyImageFile);
+            throw new NotFoundException(E202, M202);
         }
 
         return await UploadFileAsync(file, userId);
@@ -45,13 +43,13 @@ public class FileService : IFileService
     {
         if (file == null || file.Length == 0)
         {
-            throw new NotFoundException(ApiErrorCode.NotFileUpload, ApiErrorMessage.NotFileUpload);
+            throw new NotFoundException(E201, M201);
         }
 
         var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
 
         // Upload to temp folder
@@ -73,7 +71,7 @@ public class FileService : IFileService
             imgHeight = compressedImage.Height;
             using (var stream = compressedImage.Image.OpenReadStream())
             {
-                objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                objectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 await _sc.Strategy.PutObject(stream, objectName, null);
             }
         }
@@ -90,7 +88,7 @@ public class FileService : IFileService
             tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
             using (var stream = file.OpenReadStream())
             {
-                objectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                objectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 await _sc.Strategy.PutObject(stream, objectName, null);
             }
         }
@@ -212,7 +210,7 @@ public class FileService : IFileService
         var subPostResponses = new List<SubUploadFileDto>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
@@ -232,10 +230,10 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
@@ -291,7 +289,7 @@ public class FileService : IFileService
         var response = new List<Resource>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
@@ -311,10 +309,10 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
@@ -369,7 +367,7 @@ public class FileService : IFileService
         var response = new List<Resource>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
         var hashIds = resourceRequest.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
@@ -389,10 +387,10 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                var tempObjectName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
@@ -446,7 +444,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
@@ -461,14 +459,14 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                tempBlobName = $"{BlobStorageDefinition.MediaContainer}/{tempBlobName}";
+                tempBlobName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
                     await _sc.Strategy.RemoveObject(tempBlobName, null);
                 }
 
-                targetBlobName = $"{BlobStorageDefinition.MediaContainer}/{targetBlobName}";
+                targetBlobName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
@@ -482,7 +480,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(ErrorCodes.NotExistedUser, ErrorMessage.AccountNotExist);
+            throw new NotFoundException(E203, M203);
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();

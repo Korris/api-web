@@ -58,6 +58,21 @@ public static class Error
     /// </summary>
     public const string E200 = "ERR_AUTH_00003";
 
+    /// <summary>
+    /// Not file upload
+    /// </summary>
+    public const string E201 = "ERR_API_000002";
+
+    /// <summary>
+    /// Only image file
+    /// </summary>
+    public const string E202 = "ERR_API_000006";
+
+    /// <summary>
+    /// Not existed user
+    /// </summary>
+    public const string E203 = "ERR_AUTH_00011";
+
     #endregion
 
     #region -- E4xx --
