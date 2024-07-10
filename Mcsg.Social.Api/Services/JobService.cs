@@ -5,12 +5,12 @@ namespace Mcsg.Social.Api.Services;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Requests;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Models;
-using Requests;
 
 public class JobService : IJobService
 {
@@ -59,7 +59,7 @@ public class JobService : IJobService
             await _context.SaveChangesAsync();
 
             // Send notification when video process processing
-            var notiReq = new VideoNotificationReq
+            var notiReq = new VideoNotificationR
             {
                 Id = resource.Id,
                 AuthorId = resource.AuthorId.Value,
@@ -102,7 +102,7 @@ public class JobService : IJobService
         }
     }
 
-    private async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req)
+    private async Task<bool> AddVideoNotificationAsync(VideoNotificationR req)
     {
         var baseUrl = _setting.Api.Realtime;
         var urlBuilder = new System.Text.StringBuilder();

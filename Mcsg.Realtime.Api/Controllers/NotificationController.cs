@@ -2,6 +2,7 @@
 
 namespace Mcsg.Realtime.Api.Controllers
 {
+    using Common.Core.Requests;
     using Lib.Common.Models.RealTime;
     using Requests;
     using Services;
@@ -17,7 +18,7 @@ namespace Mcsg.Realtime.Api.Controllers
         }
 
         [HttpPost("video")]
-        public async Task<IActionResult> AddVideoNotification([FromBody] VideoNotificationReq request)
+        public async Task<IActionResult> AddVideoNotification([FromBody] VideoNotificationR request)
         {
             var result = await _notificationService.AddVideoNotification(request);
             return Ok(result);

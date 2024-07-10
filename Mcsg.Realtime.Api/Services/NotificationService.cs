@@ -1,19 +1,20 @@
-﻿using Mcsg.Lib.Common.Models.RealTime;
-using Mcsg.Lib.Common.Web.Security;
-using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
-using Mcsg.Lib.Data.Repositories;
-using Mcsg.Lib.Data.Repositories.Interface;
-using Mcsg.Realtime.Api.Constants;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Npgsql;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Requests;
+    using Constants;
     using Dtos;
     using Hubs;
     using Lib.Common.Constants;
+    using Lib.Common.Models.RealTime;
+    using Lib.Common.Web.Security;
+    using Lib.Data.Domain.Entities;
+    using Lib.Data.Enums;
+    using Lib.Data.Repositories;
+    using Lib.Data.Repositories.Interface;
     using Mcsg.Common.Core.Enums;
     using Requests;
 
@@ -21,7 +22,7 @@ namespace Mcsg.Realtime.Api.Services
     {
         Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment);
         Task<NotificationResponse> AddReplyNotification(CommentNotificationReq comment);
-        Task<NotificationResponse> AddVideoNotification(VideoNotificationReq video);
+        Task<NotificationResponse> AddVideoNotification(VideoNotificationR video);
         Task<NotificationResponse> AddReactionNotification(ReactionNotificationReq reaction);
         Task<NotificationResponse> AddMentionNotification(MentionNotificationReq mention);
         Task<NotificationDto> AddNotificationAsync(Guid actorId, Guid receiverId, NotificationAction action, NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead, Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "");
@@ -146,7 +147,7 @@ namespace Mcsg.Realtime.Api.Services
             return response;
         }
 
-        public async Task<NotificationResponse> AddVideoNotification(VideoNotificationReq video)
+        public async Task<NotificationResponse> AddVideoNotification(VideoNotificationR video)
         {
             var response = new NotificationResponse();
 

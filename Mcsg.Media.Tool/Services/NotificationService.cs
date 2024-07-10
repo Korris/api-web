@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Media.Tool.Services
 {
     using Common.Core.Extensions;
-    using Models;
+    using Common.Core.Requests;
 
     public class NotificationService
     {
@@ -9,7 +9,7 @@
         {
         }
 
-        public async Task<bool> AddVideoNotificationAsync(VideoNotificationReq req, string baseUrl)
+        public async Task<bool> AddVideoNotificationAsync(VideoNotificationR req, string baseUrl)
         {
             var urlBuilder = new System.Text.StringBuilder();
             urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");

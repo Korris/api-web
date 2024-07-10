@@ -5,10 +5,9 @@ namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.Core.Requests;
     using Interfaces;
     using Lib.Data.Domain.Entities;
-    using Lib.Data.Enums;
-    using Models;
 
     internal class ConvertVideoWorker : BaseWorker, IWorker
     {
@@ -75,7 +74,7 @@ namespace Mcsg.Media.Tool.Workers
 
                     if (video != null && !string.IsNullOrWhiteSpace(video.HashId))
                     {
-                        var notiReq = new VideoNotificationReq()
+                        var notiReq = new VideoNotificationR
                         {
                             Id = video.Id,
                             AuthorId = video.AuthorId,
