@@ -100,10 +100,13 @@ public partial class PostService : IPostService
     #region PostStoryOrComic
     public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR comicPostReq)
     {
-        var currentUserId = _currentUserService.Session.UserId;
-        var profileId = _currentUserService.Session.ProfileId;
-        var currentFullName = $"{_currentUserService.Session.ProfileName}";
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var profileId = ss.ProfileId;
+        var currentFullName = ss.ProfileName;
+
         VerifyBasicInfo(comicPostReq.Title);
+
         //Check first post
         var rewards = await CheckRewardsForPost(currentUserId, type);
 
@@ -739,9 +742,11 @@ public partial class PostService : IPostService
     }
     public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR comicPostReq)
     {
-        var currentUserId = _currentUserService.Session.UserId;
-        var currentFullName = $"{_currentUserService.Session.FirstName} {_currentUserService.Session.LastName}";
-        var profileId = _currentUserService.Session.ProfileId;
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var profileId = ss.ProfileId;
+        var currentFullName = ss.ProfileName;
+
         VerifyBasicInfo(comicPostReq.Title);
 
         #region Get post

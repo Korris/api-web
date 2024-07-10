@@ -109,9 +109,11 @@ public partial class ComicService : IComicService
 
     public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR chapterPostReq)
     {
-        var currentUserId = _currentUserService.Session.UserId;
-        var userFolder = _currentUserService.Session.UserFolder;
-        var currentUserAvatar = _currentUserService.Session.UserAvatar;
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var userFolder = ss.UserFolder;
+        var currentUserAvatar = ss.UserAvatar;
+        var currentProfileId = ss.ProfileId;
         var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
@@ -130,10 +132,13 @@ public partial class ComicService : IComicService
 
     public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ComicChapterComicR chapterPostReq)
     {
-        var currentUserId = _currentUserService.Session.UserId;
-        var userFolder = _currentUserService.Session.UserFolder;
-        var currentUserAvatar = _currentUserService.Session.UserAvatar;
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var userFolder = ss.UserFolder;
+        var currentUserAvatar = ss.UserAvatar;
+        var currentProfileId = ss.ProfileId;
         var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
+
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
         var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, chapterPostReq);
