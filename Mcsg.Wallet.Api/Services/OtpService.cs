@@ -3,13 +3,13 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Distributor;
 using Lib.Common.Models;
-using Lib.Data.Enums;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;

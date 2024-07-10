@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Interfaces;

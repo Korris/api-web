@@ -3,11 +3,11 @@
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Dtos;
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Interfaces;
 using Lib.Common.Distributor;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;

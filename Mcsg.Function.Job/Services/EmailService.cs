@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
     using Constants;
     using Extensions;
     using Interfaces;
     using Lib.Common.Models;
-    using Lib.Data.Enums;
     using Entities = Lib.Data.Domain.Entities;
 
     public class EmailService : IEmailService
