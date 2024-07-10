@@ -149,12 +149,12 @@ public partial class FileService : IFileService
         };
     }
 
-    public async Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
     {
         var subPosts = new List<SubUploadFileDto>();
 
         // Complete resource files
-        var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userFolder, userAvatar, postId, true);
+        var (resources, subPostResponses) = await CompleteFilesAsyncAndSubPost(resourceRequest, userId, userName, userFolder, userAvatar, postId, true);
 
         // Map to response for feed service
         foreach (var resource in resources)
@@ -186,12 +186,12 @@ public partial class FileService : IFileService
         return subPosts;
     }
 
-    public async Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid subPostId)
     {
         var files = new List<UploadFileDto>();
 
         // Complete resource files
-        var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
+        var resources = await CompleteFilesAsync(resourceRequest, userId, userName, userFolder, userAvatar, subPostId, false);
 
         // Map to response for comic service
         foreach (var resource in resources)
@@ -207,12 +207,12 @@ public partial class FileService : IFileService
         return files;
     }
 
-    public async Task<List<UploadFileDto>> ProcessComicFilesUpdateAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid subPostId)
+    public async Task<List<UploadFileDto>> ProcessComicFilesUpdateAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, string userName, Guid subPostId)
     {
         var files = new List<UploadFileDto>();
 
         // Complete resource files
-        var resources = await CompleteFilesAsync(resourceRequest, userId, userFolder, userAvatar, subPostId, false);
+        var resources = await CompleteFilesAsync(resourceRequest, userId, userName, userFolder, userAvatar, subPostId, false);
 
         // Map to response for comic service
         foreach (var resource in resources)
@@ -228,7 +228,7 @@ public partial class FileService : IFileService
         return files;
     }
 
-    private async Task<Tuple<List<Resource>, List<SubUploadFileDto>>> CompleteFilesAsyncAndSubPost(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<Resource>, List<SubUploadFileDto>>> CompleteFilesAsyncAndSubPost(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
         var subPostResponses = new List<SubUploadFileDto>();
@@ -296,7 +296,7 @@ public partial class FileService : IFileService
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
 
-                await _jobService.CreateConvertJob(resource, userFolder, userAvatar, targetBlobName);
+                await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
                 await _resourceRepository.UpdateAsync(resource);
                 response.Add(resource);
             }
@@ -382,7 +382,7 @@ public partial class FileService : IFileService
         return response;
     }
 
-    private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostDto> resourceRequest, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<Resource>();
         if (string.IsNullOrWhiteSpace(userFolder))
@@ -449,7 +449,7 @@ public partial class FileService : IFileService
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
 
-                await _jobService.CreateConvertJob(resource, userFolder, userAvatar, targetBlobName);
+                await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
                 await _resourceRepository.UpdateAsync(resource);
 
                 response.Add(resource);

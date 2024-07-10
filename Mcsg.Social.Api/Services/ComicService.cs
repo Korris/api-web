@@ -111,6 +111,7 @@ public partial class ComicService : IComicService
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
+        var currentUserName = ss.UserName;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentProfileId = ss.ProfileId;
@@ -124,7 +125,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, subPost.Id);
+            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, subPost.Id);
         }
 
         return result;
@@ -134,6 +135,7 @@ public partial class ComicService : IComicService
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
+        var currentUserName = ss.UserName;
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentProfileId = ss.ProfileId;
@@ -149,7 +151,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, subPost.Id);
+            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, subPost.Id);
         }
 
         return result;

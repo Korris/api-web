@@ -553,6 +553,7 @@ public partial class FeedService : IFeedService
         }
 
         var currentUserId = req.CurrentUserId.Value;
+        var currentUserName = req.CurrentUserName;
         var currentProfileName = req.CurrentProfileName;
         var currentProfileId = req.CurrentProfileId;
 
@@ -617,7 +618,7 @@ public partial class FeedService : IFeedService
             }
             if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
 
