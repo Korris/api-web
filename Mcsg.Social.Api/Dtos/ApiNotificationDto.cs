@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
-public class ApiResponseOfNotification
+public class ApiNotificationDto
 {
     public string TargetType { get; set; }
     public Guid? LocationId { get; set; }

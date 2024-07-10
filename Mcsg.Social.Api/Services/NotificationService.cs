@@ -6,6 +6,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
+using Dtos;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
@@ -192,7 +193,7 @@ public partial class NotificationService : INotificationService
         if (response.IsSuccessStatusCode)
         {
             string responseContent = await response.Content.ReadAsStringAsync();
-            var responseBody = JsonConvert.DeserializeObject<ApiResponseOfNotification>(responseContent);
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
 
             return true;
         }

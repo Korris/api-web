@@ -7,10 +7,10 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.SeedWork.Extensions;
+using Dtos;
 using Interfaces;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Models;
 
 public class JobService : IJobService
 {
@@ -115,7 +115,7 @@ public class JobService : IJobService
         if (response.IsSuccessStatusCode)
         {
             string responseContent = await response.Content.ReadAsStringAsync();
-            var responseBody = JsonConvert.DeserializeObject<ApiResponseOfNotification>(responseContent);
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
 
             return true;
         }
