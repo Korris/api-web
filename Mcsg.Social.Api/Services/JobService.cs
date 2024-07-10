@@ -38,7 +38,7 @@ public class JobService : IJobService
     {
         bool canConvert = true;
         string fileExtension = Path.GetExtension(blobName);
-        if (!FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        if (!Setting.FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             resource.Status = ResourceStatus.Processing;
         }
@@ -80,7 +80,7 @@ public class JobService : IJobService
     {
         bool canConvert = true;
         string fileExtension = Path.GetExtension(blobName);
-        if (!FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        if (!Setting.FileExt.AllowPlayAfterUpload.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
             resource.Status = ResourceStatus.Processing;
         }

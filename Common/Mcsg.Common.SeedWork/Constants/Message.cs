@@ -114,6 +114,16 @@ public static class Message
     /// </summary>
     public const string M111 = "Confirm email error";
 
+    /// <summary>
+    /// Invalid file
+    /// </summary>
+    public const string M112 = "Invalid file";
+
+    /// <summary>
+    /// Invalid parent folder
+    /// </summary>
+    public const string M113 = "Invalid parent folder";
+
     #endregion
 
     #region -- M2xx --

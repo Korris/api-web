@@ -100,17 +100,6 @@ public class Setting : SeedWork.Constants.Setting
     }
 
     /// <summary>
-    /// Tags
-    /// </summary>
-    public class Tags
-    {
-        /// <summary>
-        /// Background
-        /// </summary>
-        public const string Background = "Background";
-    }
-
-    /// <summary>
     /// Security claim
     /// </summary>
     public class SecurityClaim
@@ -165,7 +154,7 @@ public class Setting : SeedWork.Constants.Setting
     /// <summary>
     /// Post config
     /// </summary>
-    public static class PostConfig
+    public class PostConfig
     {
         /// <summary>
         /// Hash length
@@ -196,5 +185,84 @@ public class Setting : SeedWork.Constants.Setting
         /// Valid video size (8MB)
         /// </summary>
         public const int ValidVideoSize = 8;
+    }
+
+    /// <summary>
+    /// File location
+    /// </summary>
+    public class FileLocation
+    {
+        /// <summary>
+        /// Audio
+        /// </summary>
+        public const string Audio = "audios";
+
+        /// <summary>
+        /// Image
+        /// </summary>
+        public const string Image = "images";
+
+        /// <summary>
+        /// Video
+        /// </summary>
+        public const string Video = "videos";
+
+        /// <summary>
+        /// Other
+        /// </summary>
+        public const string Other = "others";
+
+        /// <summary>
+        /// Temp
+        /// </summary>
+        public const string Temp = "temp";
+    }
+
+    /// <summary>
+    /// File extension
+    /// </summary>
+    public class FileExt
+    {
+        /// <summary>
+        /// Audios
+        /// </summary>
+        public static string[] Audios = { ".mp3", ".wav", ".ogg" };
+
+        /// <summary>
+        /// Images
+        /// </summary>
+        public static string[] Images = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".heic", ".webp", ".heif" };
+
+        /// <summary>
+        /// Videos
+        /// </summary>
+        public static string[] Videos = { ".mp4", ".avi", ".mkv", ".mov", ".webm" };
+
+        /// <summary>
+        /// Allow play after upload
+        /// </summary>
+        public static string[] AllowPlayAfterUpload = { ".mp4", ".webm", ".ogg", ".mp3" };
+    }
+
+    /// <summary>
+    /// File type
+    /// </summary>
+    public class FileType
+    {
+        /// <summary>
+        /// Images
+        /// </summary>
+        public static string[] Images = { "image/jpeg", "image/png", "image/gif", "image/heic" };
+    }
+
+    /// <summary>
+    /// Resource config
+    /// </summary>
+    public class ResourceConfig
+    {
+        /// <summary>
+        /// Hash length
+        /// </summary>
+        public const int HashLength = 32;
     }
 }

@@ -63,8 +63,6 @@
         // MCSG.Api 
         public const string NotFoundThumbnail = "No thumbnail found for the URL.";
         public const string NotFileUpload = "No file uploaded.";
-        public const string InvalidFile = "Invalid file.";
-        public const string InvalidParentFolder = "Invalid parent folder.";
         public const string OnlyMediaFile = "Only media files are allowed.";
     }
 }

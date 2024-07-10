@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Extensions;
@@ -82,7 +82,7 @@ public partial class UserService : IUserService
 
         var fileExtension = Path.GetExtension(userAvatarUpdateRequest.Avatar.FileName);
 
-        if (!FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
+        if (!Setting.FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
             throw new BadRequestException(ApiErrorCode.INVALID_FILE_TYPE, ApiErrorMessage.INVALID_AVATAR_FILE_TYPE);
 
         string fileName = string.Empty;
@@ -118,7 +118,7 @@ public partial class UserService : IUserService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(UpdateUserAvatar), userAvatarUpdateRequest);
-            throw new BadRequestException(Error.E500, ex.Message);
+            throw new BadRequestException(Common.SeedWork.Constants.Error.E500, ex.Message);
         }
 
         return new UserAvatarUpdateResponse() { Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };
@@ -130,7 +130,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.INVALID_COVER_PHOTO_IMAGE, ApiErrorMessage.INVALID_COVER_PHOTO_IMAGE);
 
         var fileExtension = Path.GetExtension(userCoverPhotoUpdateRequest.CoverPhoto.FileName);
-        if (!FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
+        if (!Setting.FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
             throw new BadRequestException(ApiErrorCode.INVALID_FILE_TYPE, ApiErrorMessage.INVALID_COVER_PHOTO_FILE_TYPE);
 
         string fileName = string.Empty;
@@ -156,7 +156,7 @@ public partial class UserService : IUserService
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(UpdateUserCoverPhoto), userCoverPhotoUpdateRequest);
-            throw new BadRequestException(Error.E500, ex.Message);
+            throw new BadRequestException(Common.SeedWork.Constants.Error.E500, ex.Message);
         }
 
         return new UserCoverPhotoUpdateResponse() { CoverPhoto = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };
@@ -207,7 +207,7 @@ public partial class UserService : IUserService
             var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == userName);
             if (userNameHistory == null)
             {
-                if (!user.IsPremium && userName.Length <= Validator.UserNamePremium.Max)
+                if (!user.IsPremium && userName.Length <= Common.SeedWork.Constants.Validator.UserNamePremium.Max)
                 {
                     throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_EDIT, ApiErrorMessage.NEED_PREMIUM_TO_EDIT);
                 }

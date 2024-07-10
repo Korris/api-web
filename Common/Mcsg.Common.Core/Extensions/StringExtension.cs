@@ -17,11 +17,15 @@ using System.Collections;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Mcsg.Common.Core.Extensions;
 
-using Constants;
+using Common.Core.Enums;
 using SeedWork.Interfaces;
+using static Common.Core.Constants.Setting;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// String extension for using [this string] only
@@ -284,7 +288,7 @@ public static class StringExtension
             return string.Empty;
         }
 
-        var url = string.Format(Setting.MediaConfig.PublicImageUrlPath, mediaName);
+        var url = string.Format(MediaConfig.PublicImageUrlPath, mediaName);
         return $"{mediaApiUrl}/{url}";
     }
 
@@ -353,6 +357,213 @@ public static class StringExtension
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             return await client.PostAsync(apiUrl, content);
         }
+    }
+
+    #endregion
+
+    #region -- File --
+
+    /// <summary>
+    /// Get file location
+    /// </summary>
+    /// <param name="fileName">The full file name, including the extension</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="FormatException"></exception>
+    public static string GetFileLocation(this string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new FormatException(M112);
+        }
+
+        var fileExtension = Path.GetExtension(fileName);
+        if (FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return FileLocation.Audio;
+        }
+        else if (FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return FileLocation.Image;
+        }
+        else if (FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return FileLocation.Video;
+        }
+        else
+        {
+            return FileLocation.Other;
+        }
+    }
+
+    /// <summary>
+    /// Get ResourceType
+    /// </summary>
+    /// <param name="fileName">The file name</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="FormatException">Format exception</exception>
+    public static ResourceType GetResourceType(this string? fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new FormatException(E112);
+        }
+
+        var fileExtension = Path.GetExtension(fileName);
+        if (FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return ResourceType.Audio;
+        }
+        else if (FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return ResourceType.Image;
+        }
+        else if (FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            return ResourceType.Video;
+        }
+        else
+        {
+            return ResourceType.Other;
+        }
+    }
+
+    /// <summary>
+    /// Convert other file extensions to .jpg
+    /// </summary>
+    /// <param name="fileName">The full file name, including the extension</param>
+    /// <returns>Return the result</returns>
+    public static string ToJpg(this string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+        return fileName.Replace(extension, ".jpg");
+    }
+
+    /// <summary>
+    /// Get temp blob name
+    /// </summary>
+    /// <param name="fileName">The full file name, including the extension</param>
+    /// <param name="parentFolder">Parent folder</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="FormatException">Format exception</exception>
+    public static string GetTempBlobName(this string? fileName, string parentFolder)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new FormatException(E112);
+        }
+        if (string.IsNullOrWhiteSpace(parentFolder))
+        {
+            throw new FormatException(E113);
+        }
+
+        return string.Format("{0}/{1}/{2}", parentFolder, FileLocation.Temp, fileName);
+    }
+
+    /// <summary>
+    /// Get media blob name
+    /// </summary>
+    /// <param name="fileName">The full file name, including the extension</param>
+    /// <param name="parentFolder">Parent folder</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="FormatException">Format exception</exception>
+    public static string GetMediaBlobName(this string? fileName, string parentFolder)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new FormatException(E112);
+        }
+        if (string.IsNullOrWhiteSpace(parentFolder))
+        {
+            throw new FormatException(E113);
+        }
+
+        var folder = fileName.GetFileLocation();
+        return string.Format("{0}/{1}/{2}", parentFolder, folder, fileName);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="relativePath"></param>
+    /// <returns>Return the result</returns>
+    public static string GetAbsolutePath(this string url, string relativePath)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri))
+        {
+            return null; // Invalid URL
+        }
+
+        if (string.IsNullOrEmpty(relativePath))
+        {
+            return absoluteUri.AbsoluteUri;
+        }
+
+        Uri resultUri;
+
+        if (relativePath.StartsWith("/"))
+        {
+            resultUri = new Uri(absoluteUri, relativePath);
+        }
+        else if (relativePath.StartsWith("./"))
+        {
+            string combinedPath = absoluteUri.AbsolutePath;
+            combinedPath = combinedPath.Substring(0, combinedPath.LastIndexOf('/')); // Remove the last segment
+            combinedPath = combinedPath.TrimEnd('/'); // Remove trailing slashes
+
+            resultUri = new Uri(absoluteUri, new Uri(combinedPath + '/' + relativePath, UriKind.Relative));
+        }
+        else
+        {
+            // If relativePath does not start with "/", "./", or "../", it's considered an absolute path.
+            resultUri = new Uri(relativePath, UriKind.RelativeOrAbsolute);
+        }
+
+        return resultUri.AbsoluteUri;
+    }
+
+    /// <summary>
+    /// Get media path
+    /// </summary>
+    /// <param name="baseUrl">Base URL</param>
+    /// <param name="name">Name</param>
+    /// <param name="url">URL</param>
+    /// <returns>Return the result</returns>
+    /// <exception cref="FormatException">Format exception</exception>
+    public static string GetMediaPath(this string baseUrl, string name, string url)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new FormatException(E112);
+        }
+
+        var mediaPath = "";
+        var fileExtension = Path.GetExtension(name);
+        if (FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            mediaPath = string.Format(MediaConfig.AudioUrlPath, url);
+        }
+        else if (FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            mediaPath = string.Format(MediaConfig.ImageUrlPath, url);
+        }
+        else if (FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        {
+            mediaPath = string.Format(MediaConfig.VideoUrlPath, url);
+        }
+
+        return $"{baseUrl}/{mediaPath}";
+    }
+
+    /// <summary>
+    /// Create media URL
+    /// </summary>
+    /// <param name="name">Name</param>
+    /// <param name="encryptKey">Encrypt key</param>
+    /// <returns>Return the result</returns>
+    public static string CreateMediaUrl(this string name, string encryptKey)
+    {
+        return HttpUtility.UrlEncode(name);
     }
 
     #endregion

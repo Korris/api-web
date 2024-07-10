@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Extensions;
 
-using Lib.Common.Helpers;
+using Common.Core.Extensions;
 
 public static class HtmlDocumentExtension
 {

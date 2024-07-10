@@ -6,7 +6,6 @@ public static class ApiErrorCode
     public const string NotFoundThumbnail = "ERR_API_000001";
     public const string NotFileUpload = "ERR_API_000002";
     public const string InvalidFile = "ERR_API_000003";
-    public const string InvalidParentFolder = "ERR_API_000004";
     public const string OnlyMediaFile = "ERR_API_000005";
     public const string OnlyImageFile = "ERR_API_000006";
 

@@ -39,6 +39,16 @@ public static class Error
     /// </summary>
     public const string E109 = "E109";
 
+    /// <summary>
+    /// Invalid file
+    /// </summary>
+    public const string E112 = "E112";
+
+    /// <summary>
+    /// Invalid parent folder
+    /// </summary>
+    public const string E113 = "E113";
+
     #endregion
 
     #region -- E2xx --

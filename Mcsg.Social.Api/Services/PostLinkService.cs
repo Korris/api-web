@@ -2,8 +2,10 @@
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -56,7 +58,7 @@ public partial class PostLinkService : IPostLinkService
                     await _postLinkRepository.Connection.ExecuteAsync(RemoveAllLinkOfPostQuery, new { PostId = postId });
                     var postLink = new PostLink()
                     {
-                        HashId = ResourcesDefinition.HashLength.GetRandomString(),
+                        HashId = Setting.ResourceConfig.HashLength.GetRandomString(),
                         PostId = postId,
                         Url = lastLink.Value,
                         Type = youtubeLinks.Contains(lastLink.Value) ? PostLinkType.Youtube : PostLinkType.Video,

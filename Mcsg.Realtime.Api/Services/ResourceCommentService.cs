@@ -2,6 +2,7 @@
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Interfaces;
     using Lib.Common.Constants;

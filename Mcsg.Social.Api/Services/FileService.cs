@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Constants;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -54,7 +55,7 @@ public class FileService : IFileService
         }
 
         // Upload to temp folder
-        string hashId = ResourcesDefinition.HashLength.GetRandomString();
+        string hashId = Setting.ResourceConfig.HashLength.GetRandomString();
         string hashFileName = file.GetHashName(hashId);
         string tempBlobName = "";
         string fileTitle = file.FileName;

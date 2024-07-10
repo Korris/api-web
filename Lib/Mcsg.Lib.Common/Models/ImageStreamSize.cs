@@ -1,8 +1,9 @@
-﻿namespace Mcsg.Lib.Common.Models
+﻿namespace Mcsg.Lib.Common.Models;
+
+using Mcsg.Common.Core.Dtos;
+
+public class ImageStreamSize : ImageRatio
 {
-    public class ImageStreamSize : ImageRatio
-    {
-        public Stream Stream { get; set; }
-        public long Length { get; set; }
-    }
+    public Stream Stream { get; set; }
+    public long Length { get; set; }
 }
