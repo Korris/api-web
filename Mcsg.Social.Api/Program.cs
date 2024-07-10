@@ -122,6 +122,13 @@ public class Program
         builder.Services.AddAnalyticDbContext(csDbAnalytic);
         builder.Services.AddWalletDbContext(csDbWallet);
 
+        // Attribute
+        builder.Services.AddScoped<MediaOnlyAttribute>();
+
+        // Service
+        builder.Services.AddScoped<IFileService, FileService>();
+        builder.Services.AddScoped<IJobService, JobService>();
+
         // MediatR
         builder.Services.AddMediatR(p =>
         {
@@ -154,11 +161,8 @@ public class Program
         builder.Services.AddScoped<IFeedService, FeedService>();
         builder.Services.AddScoped<ILinkPreviewService, LinkPreviewService>();
         builder.Services.AddScoped<ITagService, TagService>();
-        builder.Services.AddScoped<IFileService, FileService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IMetaDataService, MetaDataService>();
-        builder.Services.AddScoped<MediaOnlyAttribute>();
-        builder.Services.AddScoped<IJobService, JobService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IPostReactService, PostReactService>();
         builder.Services.AddScoped<ISubPostReactService, SubPostReactService>();
