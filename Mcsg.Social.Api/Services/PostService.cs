@@ -1070,7 +1070,7 @@ public partial class PostService : IPostService
             query = query.Replace("[QueryCondition]", @"AND t.""Id"" = ANY(@TagIds)");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
-                Limit = input.PageNumber,
+                Limit = input.PageSize,
                 TagIds = tagIds,
             });
             var items = MappingRelatedBoxResponse(dataQuery);
@@ -1092,7 +1092,7 @@ public partial class PostService : IPostService
             query = query.Replace("[QueryCondition]", "");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
-                Limit = input.PageNumber,
+                Limit = input.PageSize,
             });
             var items = MappingRelatedBoxResponse(dataQuery);
             if (items != null && items.Count() > 0)
