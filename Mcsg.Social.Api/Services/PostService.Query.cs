@@ -155,7 +155,7 @@ LIMIT 1
 								[QueryCondition]
 								GROUP BY p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"",pr.reaction_count,pc.comment_count,spc.sub_comment_count
 								ORDER BY RANDOM()
-								LImit @Limit";
+								LIMIT @Limit";
         private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
 						post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
 						post.""ChapterCount"",

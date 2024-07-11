@@ -73,9 +73,17 @@ public class PostController : ControllerBase
 
     [Authorize]
     [HttpGet("get-post-maybe-you-like")]
-    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] int amount)
+    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] ComicRelationPostSeriesR input)
     {
-        var result = await _postService.GetPostMaybeYouLike(amount);
+        var result = await _postService.GetPostMaybeYouLike(input);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("get-news-feed")]
+    public async Task<IActionResult> GetNewsFeed([FromQuery] int amount)
+    {
+        var result = await _postService.GetNewsFeed(amount);
         return Ok(result);
     }
 

@@ -1031,9 +1031,32 @@ public partial class PostService : IPostService
         }
     }
 
-    public async Task<List<RelatedBoxResponse>> GetPostMaybeYouLike(int amount)
+    public async Task<List<NewsFeedDto>> GetNewsFeed(int amount)
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var userFollowingIds = await _context.UserFollows.AsNoTracking()
+                                                .Where(p => p.UserFollowerId == user.Id)
+                                                .Select(p => p.UserFollowerId)
+                                                .ToListAsync();
+
+        return new List<NewsFeedDto>();
+    }
+
+    public async Task<PagedResults<RelatedBoxResponse>> GetPostMaybeYouLike(ComicRelationPostSeriesR input)
     {
         var currentUserId = _currentUserService.Session.UserId;
+        var offset = input.PageSize * (input.PageNumber - 1);
         var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking().Where(p => p.UserId == currentUserId).GroupBy(p => p.PostId).Select(g => g.First().PostId).ToListAsync();
         if (postIdReaded.Any())
         {
@@ -1047,24 +1070,44 @@ public partial class PostService : IPostService
             query = query.Replace("[QueryCondition]", @"AND t.""Id"" = ANY(@TagIds)");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
-                Limit = amount,
-                TagIds = tagIds
+                Limit = input.PageNumber,
+                TagIds = tagIds,
             });
-            var data = MappingRelatedBoxResponse(dataQuery);
-            return data;
+            var items = MappingRelatedBoxResponse(dataQuery);
+            if (items != null && items.Count() > 0)
+            {
+                var results = new PagedResults<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
+                results.Items = items;
+                return results;
+            }
+            else
+            {
+                return new PagedResults<RelatedBoxResponse>(0);
+            }
         }
+        /// haven't read any stories/comics yet
         else
         {
             var query = GetRelatedBoxPostQuery;
             query = query.Replace("[QueryCondition]", "");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
-                Limit = amount,
+                Limit = input.PageNumber,
             });
-            var data = MappingRelatedBoxResponse(dataQuery);
-            return data;
+            var items = MappingRelatedBoxResponse(dataQuery);
+            if (items != null && items.Count() > 0)
+            {
+                var results = new PagedResults<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
+                results.Items = items;
+                return results;
+            }
+            else
+            {
+                return new PagedResults<RelatedBoxResponse>(0);
+            }
         }
     }
+
 
     private List<RelatedBoxResponse> MappingRelatedBoxResponse(IEnumerable<RelatedBoxQueryResponse> posts)
     {
