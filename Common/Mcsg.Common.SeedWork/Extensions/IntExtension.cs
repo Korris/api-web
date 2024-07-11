@@ -61,5 +61,16 @@ public static class IntExtension
         return new string(otp);
     }
 
+    /// <summary>
+    /// To duration
+    /// </summary>
+    /// <param name="value">Value</param>
+    /// <returns>Return the result</returns>
+    public static string ToDuration(this int value)
+    {
+        TimeSpan ts = TimeSpan.FromSeconds(value);
+        return $"{ts.Minutes:D2}:{ts.Seconds:D2}";
+    }
+
     #endregion
 }

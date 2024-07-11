@@ -530,7 +530,7 @@ public static class StringExtension
     /// <param name="url">URL</param>
     /// <returns>Return the result</returns>
     /// <exception cref="FormatException">Format exception</exception>
-    public static string GetMediaPath(this string baseUrl, string name, string url)
+    public static string GetMediaPath(this string baseUrl, string name, string? url)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

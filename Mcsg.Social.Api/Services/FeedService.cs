@@ -945,7 +945,7 @@ public partial class FeedService : IFeedService
     #endregion
 
     #region Private method
-    private FeedResponse MappingFeedRespone(FeedQueryDbResponse item, SoundDto? sound)
+    private FeedResponse MappingFeedRespone(FeedQueryDbResponse item, BackgroundMedia.SearchDto? sound)
     {
         if (item == null)
             return new FeedResponse();

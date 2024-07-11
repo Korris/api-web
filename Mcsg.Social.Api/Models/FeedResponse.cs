@@ -2,7 +2,7 @@
 
 using Common.Core.Enums;
 using Dtos;
-using Requests;
+using Lib.Data.Domain.Entities;
 
 public class FeedResponse : PostResponse
 {
@@ -17,7 +17,7 @@ public class FeedResponse : PostResponse
     public PostLinkResponse Link { get; set; }
     public int TotalResource { get; set; }
     public List<ResourceResponse> Resources { get; set; } = new List<ResourceResponse>();
-    public SoundDto? BackgroundSound { get; set; }
+    public BackgroundMedia.SearchDto? BackgroundSound { get; set; }
 }
 
 public class FeedQueryDbResponse : FeedResponse

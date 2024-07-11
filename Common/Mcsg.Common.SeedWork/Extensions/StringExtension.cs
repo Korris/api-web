@@ -443,5 +443,6 @@ public static class StringExtension
     {
         return (s + "").Trim();
     }
+
     #endregion
 }

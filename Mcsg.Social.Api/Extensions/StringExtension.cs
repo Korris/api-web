@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Extensions;
 
+using Common.Core.Extensions;
+
 public static class StringExtension
 {
     public static int ToInt(this string text)
@@ -7,5 +9,10 @@ public static class StringExtension
         int _out;
         var isNumeric = Int32.TryParse(text, out _out);
         return _out;
+    }
+
+    public static string ToPublicImageUrl(this string fileName)
+    {
+        return Program._mediaApiUrl.ToPublicImageUrl(fileName);
     }
 }

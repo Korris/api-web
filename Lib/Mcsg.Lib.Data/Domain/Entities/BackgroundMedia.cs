@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mcsg.Lib.Data.Domain.Entities
 {
     [Table("BackgroundMedias")]
-    public class BackgroundMedia : AuditableEntity
+    public partial class BackgroundMedia : AuditableEntity
     {
         public string? Title { get; set; }
         public string? Url { get; set; }
