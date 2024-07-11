@@ -92,6 +92,9 @@ public class TokenService : ITokenService
             UserName = user.UserName + "",
             ProfileName = user.ProfileName + "",
             ProfileId = user.ProfileId + "",
+            UserFolder = user.UserFolder,
+            UserAvatar = user.Avatar + "",
+            IsPremium = user.IsPremium,
             SessionId = sessionId
         };
         var st = new SecurityToken(_setting.Jwt, payload);

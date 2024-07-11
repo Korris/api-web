@@ -55,6 +55,21 @@ public class PayloadDto
     public string ProfileId { get; set; } = default!;
 
     /// <summary>
+    /// UserFolder
+    /// </summary>
+    public string UserFolder { get; set; } = default!;
+
+    /// <summary>
+    /// UserAvatar
+    /// </summary>
+    public string UserAvatar { get; set; } = default!;
+
+    /// <summary>
+    /// IsPremium
+    /// </summary>
+    public bool IsPremium { get; set; }
+
+    /// <summary>
     /// 0 Guest, 2 Free, 3 Premium
     /// </summary>
     public byte Type { get; set; }

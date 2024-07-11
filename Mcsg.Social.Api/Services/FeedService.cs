@@ -546,20 +546,18 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(M000, t);
         }
 
-        if (req.CurrentUserId == null)
+        if (req.UserId == null)
         {
             throw new BadRequestException(M109);
         }
 
-        var currentUserId = req.CurrentUserId.Value;
-        var currentUserName = req.CurrentUserName;
-        var currentProfileName = req.CurrentProfileName;
-        var currentProfileId = req.CurrentProfileId;
-
-        var ss = _currentUserService.Session;
-        var userFolder = ss.UserFolder;
-        var currentUserAvatar = ss.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
+        var userName = req.UserName;
+        var userId = req.UserId.Value;
+        var profileName = req.ProfileName;
+        var profileId = req.ProfileId;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
+        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
         if (string.IsNullOrEmpty(req.Content))
@@ -567,7 +565,7 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
         //Check first post
-        var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
+        var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
         var cleanHtml = req.Content.CleanHtml();
         var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
@@ -577,12 +575,12 @@ public partial class FeedService : IFeedService
             Title = req.Title,
             Type = PostType.Feed,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             Body = safePlainString,
             ThumbnailUrl = req.ThumbnailUrl,
-            AuthorName = currentProfileName,
+            AuthorName = profileName,
             Status = PostStatus.Public,
-            CreatedBy = currentUserId,
+            CreatedBy = userId,
             CustomNote = req.CustomNote
         };
         var result = new FeedPostResponse
@@ -590,16 +588,16 @@ public partial class FeedService : IFeedService
             Id = post.Id,
             Title = req.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedDate = DateTime.UtcNow,
             Status = PostStatus.Public,
             Body = cleanHtml,
-            FullName = currentProfileName,
-            AuthorName = currentProfileName,
+            FullName = profileName,
+            AuthorName = profileName,
             IsCurrentUserIsAuthor = true,
-            ProfileId = currentProfileId,
-            UserAvatar = currentUserAvatarUrl,
+            ProfileId = profileId,
+            UserAvatar = userAvatar,
             Rewards = rewards,
             CustomNote = post.CustomNote
         };
@@ -608,7 +606,7 @@ public partial class FeedService : IFeedService
             await _postRepository.InsertAsync(post);
             if (req.MetaData != null)
             {
-                req.MetaData.Description = System.Web.HttpUtility.HtmlEncode(req.MetaData.Description);
+                req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
                 result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
             }
             if (req.Tags != null && req.Tags.Count > 0)
@@ -617,7 +615,7 @@ public partial class FeedService : IFeedService
             }
             if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, userId, userFolder, userAvatar, userName, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
 
@@ -701,20 +699,18 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(M000, t);
         }
 
-        if (req.CurrentUserId == null)
+        if (req.UserId == null)
         {
             throw new BadRequestException(M109);
         }
 
-        var currentUserName = req.CurrentUserName;
-        var currentUserId = req.CurrentUserId.Value;
-        var currentProfileName = req.CurrentProfileName;
-        var currentProfileId = req.CurrentProfileId;
-
-        var ss = _currentUserService.Session;
-        var userFolder = ss.UserFolder;
-        var currentUserAvatar = ss.UserAvatar;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
+        var userName = req.UserName;
+        var userId = req.UserId.Value;
+        var profileName = req.ProfileName;
+        var profileId = req.ProfileId;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
+        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
         // GetSingleFeedQuery
         if (string.IsNullOrEmpty(req.Content))
@@ -722,7 +718,7 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
         //Check first post
-        var rewards = await _postService.CheckRewardsForPost(currentUserId, PostType.Feed);
+        var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
 
         var query = string.Format(GetSingleFeedQuery, _postRepository.TableName);
@@ -742,7 +738,7 @@ public partial class FeedService : IFeedService
         post.Body = safePlainString;
         post.ThumbnailUrl = req.ThumbnailUrl;
         post.CustomNote = req.CustomNote;
-        post.LastModifiedBy = currentUserId;
+        post.LastModifiedBy = userId;
         post.LastModifiedDate = DateTime.UtcNow;
 
         var result = new FeedPostResponse
@@ -750,16 +746,16 @@ public partial class FeedService : IFeedService
             Id = post.Id,
             Title = req.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedDate = DateTime.UtcNow,
             Status = PostStatus.Public,
             Body = cleanHtml,
-            FullName = currentProfileName,
-            AuthorName = currentProfileName,
+            FullName = profileName,
+            AuthorName = profileName,
             IsCurrentUserIsAuthor = true,
-            ProfileId = currentProfileId,
-            UserAvatar = currentUserAvatarUrl,
+            ProfileId = profileId,
+            UserAvatar = userAvatar,
             Rewards = rewards,
             CustomNote = post.CustomNote
         };
@@ -782,12 +778,12 @@ public partial class FeedService : IFeedService
             // Add file to feed
             if (req.Files != null && req.Files.Count > 0)
             {
-                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, currentUserId, currentUserName, userFolder, currentUserAvatarUrl, post.Id, post.HashId));
+                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, userId, userName, userFolder, userAvatar, post.Id, post.HashId));
                 result.TotalResource = result.SubPosts?.Count ?? 0;
             }
             else
             {
-                await _fileService.RemoveFileAsync(post.Id, currentUserName);
+                await _fileService.RemoveFileAsync(post.Id, userName);
                 result.TotalResource = 0;
             }
             // Add background sound to feed

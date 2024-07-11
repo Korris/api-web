@@ -120,28 +120,46 @@ public class BaseR : IRequest<SingleResponse>
     #region -- Properties --
 
     /// <summary>
-    /// Current UserName logged in
+    /// UserName logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public string? CurrentUserName => _hc?.User.Identity?.Name;
+    public string? UserName => _hc?.User.Identity?.Name;
 
     /// <summary>
-    /// Current UserId logged in
+    /// UserId logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public Guid? CurrentUserId => Payload?.RootElement.GetProperty("id").GetGuid();
+    public Guid? UserId => Payload?.RootElement.GetProperty("id").GetGuid();
 
     /// <summary>
-    /// Current ProfileName logged in
+    /// ProfileName logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public string? CurrentProfileName => Payload?.RootElement.GetProperty("profileName").GetString();
+    public string? ProfileName => Payload?.RootElement.GetProperty("profileName").GetString();
 
     /// <summary>
-    /// Current ProfileId logged in
+    /// ProfileId logged in
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public string? CurrentProfileId => Payload?.RootElement.GetProperty("profileId").GetString();
+    public string? ProfileId => Payload?.RootElement.GetProperty("profileId").GetString();
+
+    /// <summary>
+    /// UserFolder logged in
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string? UserFolder => Payload?.RootElement.GetProperty("userFolder").GetString();
+
+    /// <summary>
+    /// UserAvatar logged in
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string? UserAvatar => Payload?.RootElement.GetProperty("userAvatar").GetString();
+
+    /// <summary>
+    /// User IsPremium
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool? IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean();
 
     /// <summary>
     /// UserAgent

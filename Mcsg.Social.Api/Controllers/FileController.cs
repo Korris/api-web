@@ -24,7 +24,7 @@ public class FileController : ControllerBase
     public async Task<IActionResult> UploadMedia(IFormFile file)
     {
         var req = new BaseR(HttpContext);
-        var result = await _fileService.UploadFileAsync(file, req.CurrentUserId);
+        var result = await _fileService.UploadFileAsync(file, req.UserId);
         return Ok(result);
     }
 
@@ -34,7 +34,7 @@ public class FileController : ControllerBase
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
         var req = new BaseR(HttpContext);
-        var result = await _fileService.UploadImageAsync(file, req.CurrentUserId);
+        var result = await _fileService.UploadImageAsync(file, req.UserId);
         return Ok(result);
     }
 
