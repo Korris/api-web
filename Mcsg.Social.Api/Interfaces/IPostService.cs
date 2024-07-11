@@ -44,4 +44,5 @@ public interface IPostService
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
+    Task<List<RelatedBoxResponse>> GetPostMaybeYouLike(int amount);
 }

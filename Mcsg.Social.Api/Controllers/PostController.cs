@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
 using Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Requests;
 
 [ApiController]
@@ -67,6 +68,14 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetPostDetails([FromQuery] string hashIds)
     {
         var result = await _postService.GetPostDetails(hashIds);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("get-post-maybe-you-like")]
+    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] int amount)
+    {
+        var result = await _postService.GetPostMaybeYouLike(amount);
         return Ok(result);
     }
 

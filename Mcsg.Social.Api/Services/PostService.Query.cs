@@ -123,6 +123,39 @@ LIMIT 1
             }
         }
 
+        private string GetRelatedBoxPostQuery => @"
+								select p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"", 
+								COALESCE(pr.reaction_count, 0) AS TotalReacts,
+								COALESCE(pc.comment_count, 0) + COALESCE(spc.sub_comment_count, 0) AS TotalComment,
+								CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE NULL END AS ReactionStr,
+								CASE WHEN COUNT(t.""Id"") > 0 THEN array_agg(DISTINCT t.""Name"") ELSE NULL END as Tags
+								from ""Posts"" p
+								LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+								LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id"" 
+								LEFT JOIN 
+									(SELECT ""TargetId"", COUNT(*) AS reaction_count 
+									 FROM ""PostReactions"" 
+										 WHERE ""IsDelete"" = false
+									 GROUP BY ""TargetId"") pr ON p.""Id""= pr.""TargetId""
+								LEFT JOIN 
+									(SELECT ""PostId"", COUNT(*) AS comment_count 
+									 FROM ""PostComments"" 
+		 										 WHERE ""IsDelete"" = false
+									 GROUP BY ""PostId"") pc ON p.""Id"" = pc.""PostId""
+								LEFT JOIN 
+									(SELECT sp.""PostId"", COUNT(spc.""Id"") AS sub_comment_count 
+									 FROM ""SubPostComments"" spc
+									 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
+									 WHERE spc.""IsDelete""= false
+									 GROUP BY sp.""PostId"") spc ON p.""Id"" = spc.""PostId""
+								LEFT JOIN 
+									""PostReactions"" r ON p.""Id"" = r.""TargetId"" AND r.""IsDelete"" = false
+								WHERE p.""Type"" != 0
+								And p.""IsDelete"" = false
+								[QueryCondition]
+								GROUP BY p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"",pr.reaction_count,pc.comment_count,spc.sub_comment_count
+								ORDER BY RANDOM()
+								LImit @Limit";
         private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
 						post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
 						post.""ChapterCount"",

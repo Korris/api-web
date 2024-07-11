@@ -24,6 +24,9 @@ using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
+using Mcsg.Lib.Data.Analytic;
+using Mcsg.Lib.Data.Analytic.Entities;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.Earning;
 using Requests;
@@ -46,6 +49,9 @@ public partial class PostService : IPostService
     private readonly IViewHistoryService _viewHistoryService;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
+    private readonly IRepository<UserViewPost> _userViewPostRepository;
+    private readonly AnalyticDbContext _analyticDbContext;
+
     public PostService(IUnitOfWork unitOfWork,
         ITagService tagService,
         IRepository<SmartLookup> smartLookupRepository,
@@ -59,7 +65,9 @@ public partial class PostService : IPostService
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<PostReport> postReportValidator,
-        IRepository<PostComment> postCommentRepository)
+        IRepository<PostComment> postCommentRepository,
+        IRepository<UserViewPost> userViewPostRepository,
+        AnalyticDbContext analyticDbContext)
     {
         _postRepository = unitOfWork.GetRepository<Post>();
         _subPostRepository = unitOfWork.GetRepository<SubPost>();
@@ -78,6 +86,8 @@ public partial class PostService : IPostService
         _postReportValidator = postReportValidator;
         _smartLookupRepository = smartLookupRepository;
         _postCommentRepository = postCommentRepository;
+        _userViewPostRepository = userViewPostRepository;
+        _analyticDbContext = analyticDbContext;
     }
 
     public async Task<bool> Delete(Guid postId)
@@ -1020,6 +1030,59 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
+    }
+
+    public async Task<List<RelatedBoxResponse>> GetPostMaybeYouLike(int amount)
+    {
+        var currentUserId = _currentUserService.Session.UserId;
+        var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking().Where(p => p.UserId == currentUserId).GroupBy(p => p.PostId).Select(g => g.First().PostId).ToListAsync();
+        if (postIdReaded.Any())
+        {
+            var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
+                                                                                            from ""TagPosts"" tp 
+                                                                                            join ""Posts"" p on tp.""PostId"" =  p.""Id""
+                                                                                            WHERE tp.""PostId"" = ANY (@PostId)
+                                                                                            AND tp.""IsDelete"" = false
+                                                                                             ", new { PostId = postIdReaded });
+            var query = GetRelatedBoxPostQuery;
+            query = query.Replace("[QueryCondition]", @"AND t.""Id"" = ANY(@TagIds)");
+            var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
+            {
+                Limit = amount,
+                TagIds = tagIds
+            });
+            var data = MappingRelatedBoxResponse(dataQuery);
+            return data;
+        }
+        else
+        {
+            var query = GetRelatedBoxPostQuery;
+            query = query.Replace("[QueryCondition]", "");
+            var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
+            {
+                Limit = amount,
+            });
+            var data = MappingRelatedBoxResponse(dataQuery);
+            return data;
+        }
+    }
+
+    private List<RelatedBoxResponse> MappingRelatedBoxResponse(IEnumerable<RelatedBoxQueryResponse> posts)
+    {
+        return posts.Select(x => new RelatedBoxResponse
+        {
+            Title = x.Title,
+            HashId = x.HashId,
+            ThumbnailUrl = x.ThumbnailUrl,
+            Id = x.Id,
+            Tags = x.Tags,
+            TotalComment = x.TotalComment,
+            Reaction = new ReactionsResponse
+            {
+                TotalReacts = x.TotalReacts,
+                Reactions = x.ReactionStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionStr) : new List<ReactionResponse>()
+            }
+        }).ToList();
     }
 
     public async Task<List<PostBoxResponse>> GetPostDetails(string hashIds)
