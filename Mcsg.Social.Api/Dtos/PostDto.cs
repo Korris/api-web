@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
-using Dtos;
 
-public class PostResponse
+public class PostDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; }
@@ -20,6 +19,6 @@ public class PostResponse
     public string[] Tags { get; set; }
     public PostStatus Status { get; set; }
     public PostPermission Permission { get; set; }
-    public List<SubUploadFileDto> SubPosts { get; set; } = new List<SubUploadFileDto>();
+    public List<SubUploadFileDto> SubPosts { get; set; } = [];
     public string CustomNote { get; set; }
 }

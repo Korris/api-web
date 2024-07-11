@@ -6,9 +6,9 @@ using Dtos;
 public class FeedBoxResponse : FeedBox
 {
     public List<SubUploadFileDto>? SubPosts { get; set; } = new List<SubUploadFileDto>();
-    public List<ResourceResponse>? Resources { get; set; } = new List<ResourceResponse>();
+    public List<ResourceDto>? Resources { get; set; } = new List<ResourceDto>();
     public MetaDataDto? MetaData { get; set; }
-    public PostLinkResponse? Link { get; set; }
+    public PostLinkDto? Link { get; set; }
 
 }
 

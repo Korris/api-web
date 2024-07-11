@@ -8,6 +8,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
+using Dtos;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -15,7 +16,6 @@ using Lib.Common.Enums;
 using Lib.Common.Helpers;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Models;
 
 public partial class PostLinkService : IPostLinkService
 {
@@ -24,11 +24,11 @@ public partial class PostLinkService : IPostLinkService
         _context = context;
     }
 
-    public async Task<PostLinkResponse> AddLinkAsync(Guid postId, string content)
+    public async Task<PostLinkDto> AddLinkAsync(Guid postId, string content)
     {
         try
         {
-            var result = new PostLinkResponse();
+            var result = new PostLinkDto();
             var youtubeLinks = ParserHelper.GetVideoLink(content, VideoWebsite.Youtube);
             var videoLinks = ParserHelper.GetVideoLink(content, VideoWebsite.Video);
             var links = youtubeLinks.Concat(videoLinks).ToList();

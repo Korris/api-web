@@ -4,6 +4,7 @@ using Common.Core.Enums;
 using Common.SeedWork.Responses;
 using Enums;
 using Lib.Data.Domain.Entities;
+using Mcsg.Social.Api.Dtos;
 using Models;
 using Models.Earning;
 using Requests;
@@ -33,7 +34,7 @@ public interface IPostService
     Task<bool> DeleteChapter(string hashId, int order);
     void VerifyBasicInfo(string title);
     ChapterResponse MappingChapterResponse(SubPost newChapter);
-    Task<List<RewardRespone>> CheckRewardsForPost(Guid currentUserId, PostType type);
+    Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
     Task<List<MyPostSeriesResponse>> GetMyAllSeries();
     Task<bool> ReportPostAsync(FeedReportPostReq req);
     Task UpdateKeyWordForComicAndStoryToSmartLookup();

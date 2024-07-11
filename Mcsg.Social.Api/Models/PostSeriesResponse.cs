@@ -1,9 +1,10 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Dtos;
 using Enums;
 
-public class PostSeriesResponse : PostResponse
+public class PostSeriesResponse : PostDto
 {
     public int? ViewCount { get; set; }
     public int? CommentCount { get; set; }
@@ -55,7 +56,7 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 
 public class NewPostSeriesResponse : PostSeriesResponse
 {
-    public List<RewardRespone> Rewards { get; set; }
+    public List<RewardDto> Rewards { get; set; }
 }
 public class ChaptersExclusiveData
 {

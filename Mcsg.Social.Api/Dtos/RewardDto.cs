@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 using Lib.Common.Enums;
 
-public class RewardRespone
+public class RewardDto
 {
     public RewardType Type { get; set; }
     public string MessageCode { get; set; }

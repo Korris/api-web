@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
 
-public class ResourceResponse
+public class ResourceDto
 {
     public ResourceType Type { get; set; }
     public ResourceStatus Status { get; set; }

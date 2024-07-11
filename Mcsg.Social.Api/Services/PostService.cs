@@ -931,7 +931,7 @@ public partial class PostService : IPostService
                         UserId = currentUserId
                     });
             var queryResults = await multi.ReadAsync<MyPostSeriesQueryResult>().ConfigureAwait(false);
-            var listItemResponse = new List<FeedResponse>();
+            var listItemResponse = new List<FeedDto>();
 
             if (queryResults != null && queryResults.Count() > 0)
             {
@@ -1702,9 +1702,9 @@ public partial class PostService : IPostService
         return query;
     }
 
-    public async Task<List<RewardRespone>> CheckRewardsForPost(Guid userId, PostType type)
+    public async Task<List<RewardDto>> CheckRewardsForPost(Guid userId, PostType type)
     {
-        var res = new List<RewardRespone>();
+        var res = new List<RewardDto>();
 
         var check = await _context.PostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
@@ -1726,7 +1726,7 @@ public partial class PostService : IPostService
 
             await _userService.SyncWalletUserReward(userId, Default.RewardPoint, rewardType);
 
-            res.Add(new RewardRespone
+            res.Add(new RewardDto
             {
                 Type = rewardType,
                 MessageCode = rewardType.ToString()

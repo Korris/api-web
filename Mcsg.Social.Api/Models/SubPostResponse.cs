@@ -10,28 +10,19 @@ public class SubPostResponseItem
     public IEnumerable<Resource> Resources { get; set; }
 }
 
-public class SubPostQueryDbResponse : SubUploadFileDto
-{
-    public List<UploadFileQueryDbDto> FileDbs { get; set; }
-}
-
 public class SubPostFeedQuery : SubPostFeedResponse
 {
     public string ResourcesStr { get; set; }
 }
 
-public class SubPostFeedResponse : FeedResponse
+public class SubPostFeedResponse : FeedDto
 {
     public string HashIdPost { get; set; }
-    /// <summary>
-    /// File Information
-    /// </summary>
     public string Url { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
     public string ResourceName { get; set; }
     public string ShareUrl { get; set; }
-    ///
     public ResourceType ResourceType { get; set; }
     public string PrevSubPostHashId { get; set; }
     public string NextSubPostHashId { get; set; }

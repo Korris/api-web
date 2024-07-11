@@ -5,6 +5,7 @@ namespace Mcsg.Social.Api.Services;
 using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
+using Dtos;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
@@ -155,11 +156,11 @@ public partial class FavoriteService : IFavoriteService
 
         return response;
     }
-    public async Task<PagedResponse<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req)
+    public async Task<PagedResponse<FeedDto>> GetPostFavoriteByUserAsync(FavoritePostR req)
     {
         try
         {
-            PagedResponse<FeedResponse> results;
+            PagedResponse<FeedDto> results;
             var userId = _currentUserService.Session.UserId;
 
             var offset = req.PageSize * (req.PageNumber - 1);
@@ -171,8 +172,8 @@ public partial class FavoriteService : IFavoriteService
                             PageSize = req.PageSize,
                             Offet = offset,
                         });
-            var items = await multi.ReadAsync<FeedsListQueryDbResponse>().ConfigureAwait(false);
-            var listItemResponse = new List<FeedResponse>();
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
                 listItemResponse.Add(_feedService.MappingFeedInListRespone(item));
@@ -181,12 +182,12 @@ public partial class FavoriteService : IFavoriteService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResponse<FeedResponse>(totalItems, req.PageNumber, req.PageSize);
+                results = new PagedResponse<FeedDto>(totalItems, req.PageNumber, req.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResponse<FeedResponse>(0);
+                results = new PagedResponse<FeedDto>(0);
             }
 
             return results;

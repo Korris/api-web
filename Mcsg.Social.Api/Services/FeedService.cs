@@ -87,11 +87,11 @@ public partial class FeedService : IFeedService
     }
 
     #region Load data
-    public async Task<PagedResponse<FeedResponse>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
+    public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
     {
         try
         {
-            PagedResponse<FeedResponse> results;
+            PagedResponse<FeedDto> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
             var date = DateTime.UtcNow.Date;
 
@@ -128,8 +128,8 @@ public partial class FeedService : IFeedService
                         Status = PostStatus.Public,
                         DateOnly = DateOnly.FromDateTime(date)
                     });
-            var items = await multi.ReadAsync<FeedsListQueryDbResponse>().ConfigureAwait(false);
-            var listItemResponse = new List<FeedResponse>();
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
                 listItemResponse.Add(MappingFeedInListRespone(item));
@@ -138,12 +138,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResponse<FeedResponse>(0);
+                results = new PagedResponse<FeedDto>(0);
             }
             return results;
         }
@@ -152,11 +152,11 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
-    public async Task<PagedResponse<FeedResponse>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
+    public async Task<PagedResponse<FeedDto>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
     {
         try
         {
-            PagedResponse<FeedResponse> results;
+            PagedResponse<FeedDto> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
 
             if (feedLoadReq.OrderBy == null)
@@ -174,8 +174,8 @@ public partial class FeedService : IFeedService
                         Offet = offset,
                         TagName = tagName
                     });
-            var items = await multi.ReadAsync<FeedsListQueryDbResponse>().ConfigureAwait(false);
-            var listItemResponse = new List<FeedResponse>();
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
                 listItemResponse.Add(MappingFeedInListRespone(item));
@@ -184,12 +184,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResponse<FeedResponse>(0);
+                results = new PagedResponse<FeedDto>(0);
             }
             return results;
         }
@@ -273,7 +273,7 @@ public partial class FeedService : IFeedService
         {
             Id = hashId
         });
-        var resource = JsonConvert.DeserializeObject<List<ResourceResponse>>(dataQuery.ResourcesStr);
+        var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery.ResourcesStr);
         var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
         data.Resources = resource;
 
@@ -317,13 +317,13 @@ public partial class FeedService : IFeedService
         return data;
     }
 
-    public async Task<FeedResponse> GetFeedAsync(string hashId)
+    public async Task<FeedDto> GetFeedAsync(string hashId)
     {
         var query = string.Format(GetFeedQuery, _postRepository.TableName);
 
-        FeedQueryDbResponse dbFeed = null;
+        FeedQueryDbDto dbFeed = null;
         await _postRepository
-            .Connection.QueryAsync<FeedQueryDbResponse, SubPostQueryDbResponse, UploadFileQueryDbDto, MetaDataQueryDto, PostLinkDb, FeedQueryDbResponse>(query,
+            .Connection.QueryAsync<FeedQueryDbDto, SubPostQueryDbDto, UploadFileQueryDbDto, MetaDataQueryDto, PostLinkDbDto, FeedQueryDbDto>(query,
             (feed, subpost, uploadfiles, meta, link) =>
             {
                 if (dbFeed == null)
@@ -333,7 +333,7 @@ public partial class FeedService : IFeedService
                 if (subpost != null)
                 {
                     if (dbFeed.SubPostDbs == null)
-                        dbFeed.SubPostDbs = new List<SubPostQueryDbResponse>();
+                        dbFeed.SubPostDbs = new List<SubPostQueryDbDto>();
                     if (uploadfiles != null)
                     {
                         if (subpost.FileDbs == null)
@@ -396,15 +396,15 @@ public partial class FeedService : IFeedService
             UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(res.UserAvatar) : null,
             FullName = res.FullName,
             UserName = res.UserName,
-            Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources.ToString()) : new List<ResourceResponse>(),
+            Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Type = res.Type,
             CustomNote = res.CustomNote
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
         {
-            itemResponse.Resources = new List<ResourceResponse>();
-            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(res.Resources);
+            itemResponse.Resources = new List<ResourceDto>();
+            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources);
             if (resourceResponses != null && resourceResponses.Any())
             {
                 foreach (var resourceResponse in resourceResponses.OrderBy(p => p.Order))
@@ -444,15 +444,15 @@ public partial class FeedService : IFeedService
         }
         else if (link is not null)
         {
-            itemResponse.Link = new PostLinkResponse
+            itemResponse.Link = new PostLinkDto
             {
                 HashId = link.HashId,
                 Url = link.Url,
                 Type = link.Type.ToDisplay()
             };
-            itemResponse.Resources = new List<ResourceResponse>()
+            itemResponse.Resources = new List<ResourceDto>()
                 {
-                    new ResourceResponse()
+                    new ResourceDto()
                     {
                         HashId = link.HashId,
                         Url = link.Url,
@@ -486,11 +486,11 @@ public partial class FeedService : IFeedService
         }
     }
 
-    public async Task<PagedResponse<FeedResponse>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
+    public async Task<PagedResponse<FeedDto>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
     {
         try
         {
-            PagedResponse<FeedResponse> results;
+            PagedResponse<FeedDto> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
 
             if (feedLoadReq.OrderBy == null)
@@ -507,8 +507,8 @@ public partial class FeedService : IFeedService
                         PageSize = feedLoadReq.PageSize,
                         Offet = offset
                     });
-            var items = await multi.ReadAsync<FeedsListQueryDbResponse>().ConfigureAwait(false);
-            var listItemResponse = new List<FeedResponse>();
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
                 listItemResponse.Add(MappingFeedInListRespone(item));
@@ -517,12 +517,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResponse<FeedResponse>(0);
+                results = new PagedResponse<FeedDto>(0);
             }
             return results;
         }
@@ -538,7 +538,7 @@ public partial class FeedService : IFeedService
     #endregion
 
     #region Modify data
-    public async Task<FeedResponse> PostFeedAsync(PostCreateR req)
+    public async Task<FeedDto> PostFeedAsync(PostCreateR req)
     {
         var vr = new PostCreateV().Validate(req);
         if (!vr.IsValid)
@@ -571,7 +571,7 @@ public partial class FeedService : IFeedService
         await _context.Posts.AddAsync(post);
         await _context.SaveChangesAsync();
 
-        var result = new FeedPostResponse
+        var result = new FeedPostDto
         {
             Id = post.Id,
             Title = req.Title,
@@ -626,7 +626,7 @@ public partial class FeedService : IFeedService
                 var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
                 if (removeLink)
                 {
-                    result.Link = new PostLinkResponse();
+                    result.Link = new PostLinkDto();
                 }
             }
         }
@@ -645,14 +645,14 @@ public partial class FeedService : IFeedService
             }
         }
 
-        var resourceResponse = new List<ResourceResponse>();
+        var resourceResponse = new List<ResourceDto>();
         foreach (var subPost in result.SubPosts)
         {
             if (subPost.Files != null)
             {
                 foreach (var file in subPost.Files)
                 {
-                    var resource = new ResourceResponse()
+                    var resource = new ResourceDto()
                     {
                         Name = file?.Name ?? "",
                         HashId = file?.HashId,
@@ -678,7 +678,7 @@ public partial class FeedService : IFeedService
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
         return result;
     }
-    public async Task<FeedResponse> UpdateFeedAsync(string hashId, PostUpdateR req)
+    public async Task<FeedDto> UpdateFeedAsync(string hashId, PostUpdateR req)
     {
         var vr = new PostUpdateV().Validate(req);
         if (!vr.IsValid)
@@ -729,7 +729,7 @@ public partial class FeedService : IFeedService
         post.LastModifiedBy = userId;
         post.LastModifiedDate = DateTime.UtcNow;
 
-        var result = new FeedPostResponse
+        var result = new FeedPostDto
         {
             Id = post.Id,
             Title = req.Title,
@@ -794,7 +794,7 @@ public partial class FeedService : IFeedService
                 var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
                 if (removeLink)
                 {
-                    result.Link = new PostLinkResponse();
+                    result.Link = new PostLinkDto();
                 }
             }
         }
@@ -813,14 +813,14 @@ public partial class FeedService : IFeedService
             }
         }
 
-        var resourceResponse = new List<ResourceResponse>();
+        var resourceResponse = new List<ResourceDto>();
         foreach (var subPost in result.SubPosts)
         {
             if (subPost.Files != null)
             {
                 foreach (var file in subPost.Files)
                 {
-                    var resource = new ResourceResponse()
+                    var resource = new ResourceDto()
                     {
                         Body = subPost.Body,
                         Name = file?.Name ?? "",
@@ -858,9 +858,9 @@ public partial class FeedService : IFeedService
     #endregion
 
     #region Map Data
-    public FeedResponse MappingFeedInListRespone(FeedsListQueryDbResponse item)
+    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item)
     {
-        var itemResponse = new FeedResponse()
+        var itemResponse = new FeedDto()
         {
             Id = item.Id,
             Title = item.Title,
@@ -882,8 +882,8 @@ public partial class FeedService : IFeedService
         #region Mapping with db query list
         if (item.TotalResource > 0 && !string.IsNullOrEmpty(item.SubPostResourceStr))
         {
-            itemResponse.Resources = new List<ResourceResponse>();
-            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(item.SubPostResourceStr);
+            itemResponse.Resources = new List<ResourceDto>();
+            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostResourceStr);
 
             // Ensure not null
             resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
@@ -910,15 +910,15 @@ public partial class FeedService : IFeedService
         }
         else if (!string.IsNullOrEmpty(item.LinkUrl))
         {
-            itemResponse.Link = new PostLinkResponse
+            itemResponse.Link = new PostLinkDto
             {
                 HashId = item.LinkHashId ?? "",
                 Url = item.LinkUrl ?? "",
                 Type = item.LinkType.ToDisplay()
             };
-            itemResponse.Resources = new List<ResourceResponse>()
+            itemResponse.Resources = new List<ResourceDto>()
                 {
-                    new ResourceResponse()
+                    new ResourceDto()
                     {
                         HashId = item.LinkHashId,
                         Url = item.LinkUrl ?? "",
@@ -945,12 +945,12 @@ public partial class FeedService : IFeedService
     #endregion
 
     #region Private method
-    private FeedResponse MappingFeedRespone(FeedQueryDbResponse item, BackgroundMedia.SearchDto? sound)
+    private FeedDto MappingFeedRespone(FeedQueryDbDto item, BackgroundMedia.SearchDto? sound)
     {
         if (item == null)
-            return new FeedResponse();
+            return new FeedDto();
 
-        var itemResponse = new FeedResponse()
+        var itemResponse = new FeedDto()
         {
             Id = item.Id,
             Title = item.Title,
@@ -985,7 +985,7 @@ public partial class FeedService : IFeedService
                 {
                     url = _setting.Minio.MediaApiUrl.GetMediaPath(fileDbs.Name, fileDbs.Url);
                 }
-                itemResponse.Resources.Add(new ResourceResponse
+                itemResponse.Resources.Add(new ResourceDto
                 {
                     HashId = subPostdb.HashId,
                     Type = fileDbs.Type,
@@ -1049,7 +1049,7 @@ public partial class FeedService : IFeedService
         }
         if (item.LinkDb != null && !string.IsNullOrEmpty(item.LinkDb.HashId) && !hasResources)
         {
-            itemResponse.Link = new PostLinkResponse
+            itemResponse.Link = new PostLinkDto
             {
                 HashId = item.LinkDb.HashId ?? "",
                 Url = item.LinkDb.Url ?? "",

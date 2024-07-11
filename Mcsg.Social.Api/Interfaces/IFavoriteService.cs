@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.SeedWork.Responses;
+using Dtos;
 using Models;
 using Requests;
 
@@ -14,6 +15,6 @@ public interface IFavoriteService
 
     Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
     Task<PagedResponse<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
-    Task<PagedResponse<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
+    Task<PagedResponse<FeedDto>> GetPostFavoriteByUserAsync(FavoritePostR req);
 
 }
