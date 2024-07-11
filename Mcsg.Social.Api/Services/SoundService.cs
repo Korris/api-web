@@ -3,12 +3,12 @@ using Dapper;
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
@@ -138,10 +138,11 @@ public partial class SoundService : ISoundService
             return null;
         }
     }
+
     public async Task<bool> AddSoundAsync(Guid postId, Guid soundId)
     {
         await _bgMediaPostRepository.Connection.ExecuteAsync(RemoveAllSoundOfPostQuery, new { PostId = postId });
-        var bgSoundPost = new BackgroundMediaPost()
+        var bgSoundPost = new BackgroundMediaPost
         {
             BackgroundMediaId = soundId,
             PostId = postId,

@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Social.Api.Services
+﻿namespace Mcsg.Social.Api.Services
 {
+    using Common.Core.Enums;
+
     public partial class SoundService
     {
         private string GetAllSoundQuery
