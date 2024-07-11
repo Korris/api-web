@@ -1053,7 +1053,7 @@ public partial class PostService : IPostService
         return new List<NewsFeedDto>();
     }
 
-    public async Task<PagedResults<RelatedBoxResponse>> GetPostMaybeYouLike(ComicRelationPostSeriesR input)
+    public async Task<PagedResults<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input)
     {
         var currentUserId = _currentUserService.Session.UserId;
         var offset = input.PageSize * (input.PageNumber - 1);
