@@ -20,6 +20,7 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
@@ -38,9 +39,7 @@ public partial class FeedService : IFeedService
     private readonly IFileService _fileService;
     private readonly ISmartCountService _smartCountService;
     private readonly IViewHistoryService _viewHistoryService;
-
     private readonly ICurrentUserService _currentUserService;
-    private readonly IMetaDataService _metaDataService;
     private readonly ISmartLookupService _smartLookupService;
     private readonly ISoundService _soundService;
     private readonly IConfiguration _configuration;
@@ -53,7 +52,6 @@ public partial class FeedService : IFeedService
         IPostService postService,
         IFileService fileService,
         ISmartCountService smartCountService,
-        IMetaDataService metaDataService,
         ICurrentUserService currentUserService,
         ISmartLookupService smartLookupService,
         IViewHistoryService viewHistoryService,
@@ -61,8 +59,10 @@ public partial class FeedService : IFeedService
         ISoundService soundService,
         IConfiguration configuration,
         IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
+        McsgDbContext context,
         ISetting setting,
         IStorageClient sc,
+        IMetaDataService metaDataService,
         IMapper mapper
         )
     {
@@ -73,15 +73,16 @@ public partial class FeedService : IFeedService
         _fileService = fileService;
         _smartCountService = smartCountService;
         _viewHistoryService = viewHistoryService;
-        _metaDataService = metaDataService;
         _currentUserService = currentUserService;
         _smartLookupService = smartLookupService;
         _soundService = soundService;
         _configuration = configuration;
         _feedDisplayConfig = feedDisplayConfig.CurrentValue;
         _postLinkService = postLinkService;
+        _context = context;
         _setting = setting;
         _sc = sc;
+        _metaDataService = metaDataService;
         _mapper = mapper;
     }
 
@@ -559,35 +560,22 @@ public partial class FeedService : IFeedService
         var userAvatar = req.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        var hashId = Setting.PostConfig.HashLength.GetRandomString();
-        if (string.IsNullOrEmpty(req.Content))
-        {
-            throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
-        }
-        //Check first post
+        var cleanHtml = req.Content.CleanHtml();
+        var content = HttpUtility.HtmlEncode(cleanHtml);
+
+        // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
-        var cleanHtml = req.Content.CleanHtml();
-        var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
+        // Create
+        var post = Post.Create(req.Title, content, req.ThumbnailUrl, profileName, req.CustomNote, userId);
+        await _context.Posts.AddAsync(post);
+        await _context.SaveChangesAsync();
 
-        var post = new Post()
-        {
-            Title = req.Title,
-            Type = PostType.Feed,
-            HashId = hashId,
-            UserId = userId,
-            Body = safePlainString,
-            ThumbnailUrl = req.ThumbnailUrl,
-            AuthorName = profileName,
-            Status = PostStatus.Public,
-            CreatedBy = userId,
-            CustomNote = req.CustomNote
-        };
         var result = new FeedPostResponse
         {
             Id = post.Id,
             Title = req.Title,
-            HashId = hashId,
+            HashId = post.HashId,
             UserId = userId,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedDate = DateTime.UtcNow,
@@ -601,9 +589,9 @@ public partial class FeedService : IFeedService
             Rewards = rewards,
             CustomNote = post.CustomNote
         };
+
         try
         {
-            await _postRepository.InsertAsync(post);
             if (req.MetaData != null)
             {
                 req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
@@ -1124,6 +1112,11 @@ public partial class FeedService : IFeedService
     #region -- Fields --
 
     /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    /// <summary>
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
@@ -1132,6 +1125,11 @@ public partial class FeedService : IFeedService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// MetaData service
+    /// </summary>
+    private readonly IMetaDataService _metaDataService;
 
     #endregion
 }

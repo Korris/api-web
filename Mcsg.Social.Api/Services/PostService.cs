@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
@@ -17,6 +18,7 @@ using Lib.Common.Constants;
 using Lib.Common.Enums;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
@@ -53,6 +55,7 @@ public partial class PostService : IPostService
         IViewHistoryService viewHistoryService,
         IConfiguration configuration,
         IMapper mapper,
+        McsgDbContext context,
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<PostReport> postReportValidator,
@@ -70,11 +73,13 @@ public partial class PostService : IPostService
         _smartLookupService = smartLookupService;
         _configuration = configuration;
         _mapper = mapper;
+        _context = context;
         _setting = setting;
         _postReportValidator = postReportValidator;
         _smartLookupRepository = smartLookupRepository;
         _postCommentRepository = postCommentRepository;
     }
+
     public async Task<bool> Delete(Guid postId)
     {
         var feedDb = await _postRepository.GetByIdAsync(postId);
@@ -1592,41 +1597,38 @@ public partial class PostService : IPostService
         return query;
     }
 
-
     public async Task<List<RewardRespone>> CheckRewardsForPost(Guid userId, PostType type)
     {
-        var rewards = new List<RewardRespone>();
-        var check = await _postRepository
-            .Connection.QueryFirstOrDefaultAsync<Guid?>(CheckUserFirstPost,
-            new
-            {
-                UserId = userId,
-                PostType = type
-            });
+        var res = new List<RewardRespone>();
+
+        var check = await _context.PostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
-            RewardType rewardType = RewardType.FIRST_FEED;
+            var rewardType = RewardType.FIRST_FEED;
             switch (type)
             {
                 case PostType.Story:
                     rewardType = RewardType.FIRST_STORY;
                     break;
+
                 case PostType.Comic:
                     rewardType = RewardType.FIRST_COMIC;
                     break;
+
                 default:
                     break;
             }
 
             await _userService.SyncWalletUserReward(userId, Default.RewardPoint, rewardType);
-            rewards.Add(new RewardRespone()
+
+            res.Add(new RewardRespone
             {
                 Type = rewardType,
                 MessageCode = rewardType.ToString()
             });
         }
-        return rewards;
 
+        return res;
     }
 
     public async Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input)
@@ -1713,6 +1715,11 @@ public partial class PostService : IPostService
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
 
     /// <summary>
     /// Setting

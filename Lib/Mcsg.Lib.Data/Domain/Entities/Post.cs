@@ -7,7 +7,7 @@ namespace Mcsg.Lib.Data.Domain.Entities
     using Mcsg.Common.Core.Enums;
 
     [Table("Posts")]
-    public class Post : AuditableHasPrivateEntity
+    public partial class Post : AuditableHasPrivateEntity
     {
         public string? Title { get; set; }
         public string? HashId { get; set; }

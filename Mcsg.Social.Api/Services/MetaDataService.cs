@@ -2,20 +2,17 @@
 
 using Dtos;
 using Interfaces;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 public class MetaDataService : IMetaDataService
 {
-    private readonly ILogger<LinkPreviewService> _logger;
-    private readonly IRepository<MetaData> _metaDataRepository;
-    public MetaDataService(ILogger<LinkPreviewService> logger, IUnitOfWork unitOfWork)
+    public MetaDataService(McsgDbContext context)
     {
-        _logger = logger;
-        _metaDataRepository = unitOfWork.GetRepository<MetaData>();
+        _context = context;
     }
+
     public async Task<MetaDataResponse> AddMetaDataToObject<T>(MetaDataDto request, Guid objId)
     {
         var metaData = new MetaData
@@ -52,7 +49,10 @@ public class MetaDataService : IMetaDataService
                     break;
                 }
         }
-        await _metaDataRepository.InsertAsync(metaData);
+
+        await _context.MetaDatas.AddAsync(metaData);
+        await _context.SaveChangesAsync();
+
         return new MetaDataResponse
         {
             Description = metaData.Description,
@@ -61,4 +61,13 @@ public class MetaDataService : IMetaDataService
             Url = metaData.Url
         };
     }
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    #endregion
 }

@@ -663,14 +663,6 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
 								GROUP BY qpost1.""Id""";
             }
         }
-
-        private string CheckUserFirstPost
-        {
-            get
-            {
-                return @"SELECT ""Id"" FROM ""Posts"" WHERE ""UserId"" = @UserId AND ""Type"" = @PostType LIMIT 1;";
-            }
-        }
         #endregion
 
         #region SubPost - View

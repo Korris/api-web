@@ -128,6 +128,7 @@ public class Program
         // Service
         builder.Services.AddScoped<IFileService, FileService>();
         builder.Services.AddScoped<IJobService, JobService>();
+        builder.Services.AddScoped<IMetaDataService, MetaDataService>();
 
         // MediatR
         builder.Services.AddMediatR(p =>
@@ -162,7 +163,6 @@ public class Program
         builder.Services.AddScoped<ILinkPreviewService, LinkPreviewService>();
         builder.Services.AddScoped<ITagService, TagService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IMetaDataService, MetaDataService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IPostReactService, PostReactService>();
         builder.Services.AddScoped<ISubPostReactService, SubPostReactService>();
