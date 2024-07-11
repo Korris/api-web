@@ -599,7 +599,7 @@ public partial class FeedService : IFeedService
             }
             if (req.Tags != null && req.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags)).ToArray();
+                result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags, userId)).ToArray();
             }
             if (req.Files != null && req.Files.Count > 0)
             {
@@ -760,7 +760,7 @@ public partial class FeedService : IFeedService
             // Add tag to feed
             if (req.Tags != null && req.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags)).ToArray();
+                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags, userId)).ToArray();
             }
 
             // Add file to feed

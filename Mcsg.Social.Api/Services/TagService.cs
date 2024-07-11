@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace Mcsg.Social.Api.Services;
@@ -9,6 +10,7 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
@@ -29,6 +31,7 @@ public partial class TagService : ITagService
     private readonly IConfiguration _configuration;
 
     public TagService(
+        McsgDbContext context,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ISmartLookupService smartLookupService,
@@ -36,6 +39,7 @@ public partial class TagService : ITagService
         IRepository<Post> postRepository,
         IConfiguration configuration)
     {
+        _context = context;
         _currentUserService = currentUserService;
         _tagPostRepository = unitOfWork.GetRepository<TagPost>();
         _tagRepository = unitOfWork.GetRepository<Tag>();
@@ -45,43 +49,48 @@ public partial class TagService : ITagService
         _configuration = configuration;
     }
 
-    public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags)
+    public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags, Guid userId)
     {
         // Find all tags associated with the post
-        var query = string.Format(GetAllTagsByNameQuery, _tagRepository.TableName);
-        var tagsDb = await _tagRepository.Connection
-            .QueryAsync<TagView>(query, new { TagNames = tags, PostId = postId });
+        var qTagPost = _context.TagPostAvailable.Where(p => p.PostId == postId);
+        var tagsDb = await (from a in _context.TagAvailable
+                            join b in qTagPost
+                               on a.Id equals b.TagId into g
+                            from b in g.DefaultIfEmpty()
+                            where tags.Contains(a.Name + "")
+                            select new TagView
+                            {
+                                Id = a.Id,
+                                Title = a.Title + "",
+                                Name = a.Name + "",
+                                PostId = b == null ? Guid.Empty : b.PostId
+                            }).ToListAsync();
 
         // Find tags that need to be created
         var listTagNeedToCreate = tags.Except(tagsDb.Select(x => x.Name)).ToList();
 
         // Add new tags (if any) and get their IDs
-        List<Guid> listTagAddToPost = listTagNeedToCreate.Count > 0
-            ? await AddNewTags(listTagNeedToCreate)
-            : new List<Guid>();
+        var listTagAddToPost = listTagNeedToCreate.Count > 0 ? await AddNewTags(listTagNeedToCreate, userId) : [];
 
         // Add existing tags (not already associated with the post)
-        listTagAddToPost.AddRange(
-            tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList()
-        );
-        await AddTagsToPost(postId, listTagAddToPost);
+        listTagAddToPost.AddRange(tagsDb.Where(x => x.PostId != postId).Select(x => x.Id).ToList());
+        await AddTagsToPost(postId, listTagAddToPost, userId);
 
         // Publish for smart lookup calculation
         await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
 
+        await _context.SaveChangesAsync();
+
         return tags;
     }
-    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags)
+
+    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags, Guid userId)
     {
         // Validate tags
         tags.ForEach(t => { t = ValidateTag(t); });
 
         // Find all tag in database
-        var tagsDb = await _tagRepository
-                .Connection.QueryAsync<Tag>(GetTagsByTagNameQuery, new
-                {
-                    TagNames = tags
-                });
+        var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
 
         var listTagNeedToAdd = new List<Guid>();
 
@@ -89,17 +98,12 @@ public partial class TagService : ITagService
         var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
         if (listTagNotCreated.Count > 0)
         {
-            var listNewTagId = await AddNewTags(listTagNotCreated);
+            var listNewTagId = await AddNewTags(listTagNotCreated, userId);
             listTagNeedToAdd.AddRange(listNewTagId);
         }
 
         // Find all tag with post (TagPost)
-        var query = string.Format(GetAllTagsByPostQuery, _tagRepository.TableName);
-        var tagsPostDb = await _tagRepository
-                .Connection.QueryAsync<TagView>(query, new
-                {
-                    PostId = postId
-                });
+        var tagsPostDb = await GetTagsByPostIdAsync(postId);
 
         // Update tag to post
         var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).Except(listTagNotCreated.Select(y => y)).ToList();
@@ -109,23 +113,21 @@ public partial class TagService : ITagService
             listTagNeedToAdd.AddRange(tagExistNotAddIds);
         }
 
-
         // Remove tag to post
         var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
         if (listRemove.Length > 0)
         {
-            await _tagRepository
-                .Connection.ExecuteAsync(DeleteTagPosts, new
-                {
-                    PostId = postId,
-                    TagPostIds = listRemove
-                });
+            var tagPosts = await _context.TagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
+            tagPosts.ForEach(p => p.IsDelete = true);
         }
 
-        await AddTagsToPost(postId, listTagNeedToAdd);
+        await AddTagsToPost(postId, listTagNeedToAdd, userId);
 
-        //Publish to calculate smart lookup for tag
+        // Publish for smart lookup calculation
         await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
+
+        await _context.SaveChangesAsync();
+
         return tags;
     }
 
@@ -225,24 +227,25 @@ public partial class TagService : ITagService
         return response;
 
     }
+
+    /// <summary>
+    /// Find all tag with post (TagPost)
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <returns></returns>
     public async Task<List<TagView>> GetTagsByPostIdAsync(Guid postId)
     {
-        try
-        {
-            // Find all tag with post (TagPost)
-            var query = string.Format(GetAllTagsByPostQuery, _tagRepository.TableName);
-            var tagsPostDb = await _tagRepository
-                    .Connection.QueryAsync<TagView>(query, new
-                    {
-                        PostId = postId
-                    });
-
-            return tagsPostDb.ToList();
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-        }
+        return await (from a in _context.TagAvailable
+                      join b in _context.TagPosts
+                          on a.Id equals b.TagId
+                      where b.PostId == postId
+                      select new TagView
+                      {
+                          Title = a.Title + "",
+                          Name = a.Name + "",
+                          Id = a.Id,
+                          PostId = b.PostId
+                      }).ToListAsync();
     }
 
     public async Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId)
@@ -264,52 +267,54 @@ public partial class TagService : ITagService
         }
     }
 
-    private async Task<List<Guid>> AddNewTags(List<string> tagNames)
+    private async Task<List<Guid>> AddNewTags(List<string> tagNames, Guid userId)
     {
-        var userId = _currentUserService.Session.UserId;
         var tagsToInsert = new List<Tag>();
         var smartLookupInserts = new List<SmartLookup>();
-        foreach (var tagName in tagNames)
+
+        foreach (var i in tagNames)
         {
             tagsToInsert.Add(new Tag
             {
                 AuthorId = userId,
                 CreatedBy = userId,
                 LastModifiedBy = userId,
-                Name = tagName.Trim(),
-                Title = tagName,
+                Name = i.Trim(),
+                Title = i,
                 IsDelete = false,
             });
             smartLookupInserts.Add(new SmartLookup
             {
                 CountCriteria = 0,
-                Keyword = tagName,
+                Keyword = i,
                 KeywordType = LookupKeywordType.Tag
             });
         }
-        await _tagRepository.InsertAsync(tagsToInsert);
-        await _smartLookupRepository.InsertAsync(smartLookupInserts);
+
+        await _context.Tags.AddRangeAsync(tagsToInsert);
+        await _context.SmartLookups.AddRangeAsync(smartLookupInserts);
 
         return tagsToInsert.Select(x => x.Id).ToList();
-
     }
 
-    private async Task<IEnumerable<Guid>> AddTagsToPost(Guid postId, List<Guid> tagIds)
+    private async Task<IEnumerable<Guid>> AddTagsToPost(Guid postId, List<Guid> tagIds, Guid userId)
     {
-        var userId = _currentUserService.Session.UserId;
         var tagPostsToInsert = new List<TagPost>();
-        foreach (var tagId in tagIds)
+
+        foreach (var i in tagIds)
         {
             tagPostsToInsert.Add(new TagPost
             {
                 IsDelete = false,
                 PostId = postId,
-                TagId = tagId,
+                TagId = i,
                 CreatedBy = userId,
                 LastModifiedBy = userId
             });
         }
-        await _tagPostRepository.InsertAsync(tagPostsToInsert);
+
+        await _context.TagPosts.AddRangeAsync(tagPostsToInsert);
+
         return tagPostsToInsert.Select(x => x.Id).ToList();
     }
 
@@ -412,4 +417,13 @@ public partial class TagService : ITagService
 
         return tagNames;
     }
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    #endregion
 }

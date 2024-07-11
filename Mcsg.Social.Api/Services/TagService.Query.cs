@@ -2,58 +2,18 @@
 {
     public partial class TagService
     {
-        private string GetAllTagsByNameQuery
+        private string GetAllTagsByPostHashIdQuery
         {
             get
             {
-                return @"SELECT 
-						t.""Title"", t.""Name"", t.""Id"", tp.""PostId""
-						FROM {0} t
-						LEFT JOIN ""TagPosts"" tp ON tp.""TagId"" = t.""Id"" AND tp.""PostId"" = @PostId
-						WHERE t.""IsDelete"" = false 
-						AND t.""Name"" = ANY(@TagNames);";
-            }
-        }
-		private string GetTagsByTagNameQuery
-		{
-			get
-			{
-				return @$"SELECT ""Title"", ""Name"", ""Id""
-						FROM {_tagRepository.TableName} 						
-						WHERE ""IsDelete"" = false 
-						AND ""Name"" = ANY(@TagNames);";
-			}
-		}
-		private string GetAllTagsByPostQuery
-        {
-            get
-            {
-                return @"SELECT 
-						t.""Title"", t.""Name"", t.""Id"", tp.""PostId""
-						FROM {0} t
-						INNER JOIN ""TagPosts"" tp ON tp.""TagId"" = t.""Id"" AND tp.""PostId"" = @PostId
-						WHERE t.""IsDelete"" = false;";
-            }
-        }
-		private string GetAllTagsByPostHashIdQuery
-		{
-			get
-			{
-				return @$"SELECT post.""HashId"" AS ""PostHashId"", tp.""PostId"", tag.""Id"", tag.""Title"", tag.""Name""
+                return @$"SELECT post.""HashId"" AS ""PostHashId"", tp.""PostId"", tag.""Id"", tag.""Title"", tag.""Name""
 						FROM {_postRepository.TableName} post
 						INNER JOIN {_tagPostRepository.TableName} tp ON tp.""PostId"" = post.""Id""
                         INNER JOIN {_tagRepository.TableName} tag ON tp.""TagId"" = tag.""Id"" 
 						WHERE post.""HashId"" = @PostHashId AND post.""IsDelete"" = false; ";
-			}
-		}
-		private string DeleteTagPosts
-        {
-            get
-            {
-                return @"DELETE FROM ""TagPosts""
-						WHERE ""PostId"" = @PostId AND ""Id"" = ANY(@TagPostIds);";
             }
         }
+
         private string GetSuggestTagsByNameQuery
         {
             get

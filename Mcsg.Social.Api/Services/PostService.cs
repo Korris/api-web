@@ -174,7 +174,7 @@ public partial class PostService : IPostService
             await _postRepository.InsertAsync(post);
             if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, comicPostReq.Tags)).ToArray();
+                result.Tags = (await _tagService.AddTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
             }
         }
         catch (Exception)
@@ -811,7 +811,7 @@ public partial class PostService : IPostService
             await _postRepository.UpdateAsync(post);
             if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags)).ToArray();
+                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
             }
         }
         catch (Exception e)
