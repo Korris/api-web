@@ -280,8 +280,8 @@ public partial class UserService : IUserService
             PremiumDate = user.PremiumDate,
             LastLoginDate = user.LastLoginDate,
             IsPremium = user.IsPremium,
-            NumBerOfFollowing = followingCount,
-            NumBerOfFollowers = followersCount
+            NumberOfFollowing = followingCount,
+            NumberOfFollowers = followersCount
         };
     }
 

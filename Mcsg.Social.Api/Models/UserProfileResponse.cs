@@ -28,6 +28,6 @@ public class UserProfileResponse
     public string ProfileId { get; set; }
     public DateOnly? PremiumDate { get; set; }
     public bool IsPremium { get; set; }
-    public int? NumBerOfFollowing { get; set; }
-    public int? NumBerOfFollowers { get; set; }
+    public int? NumberOfFollowing { get; set; }
+    public int? NumberOfFollowers { get; set; }
 }
