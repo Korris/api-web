@@ -2,11 +2,11 @@
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -37,19 +37,19 @@ public partial class ComicService : IComicService
     }
 
     #region Load data
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListComic(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListComic(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListComic(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListComic(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetRecommendedComic(ComicTopPostRecommendedR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRecommendedComic(ComicTopPostRecommendedR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
     }
@@ -61,7 +61,7 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetSeriesChapter(hashId, order);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetMyComics(ComicPostListSeriesR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMyComics(ComicPostListSeriesR loadReq)
     {
         return await _postService.GetMySeries(_type, loadReq);
     }
@@ -69,11 +69,11 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetTopSeries(_type);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopComicAsync(ComicPostListSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopComicAsync(ComicPostListSeriesR request)
     {
         return await _postService.GetTopSeriesAsync(_type, request);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request)
     {
         return await _postService.GetRelationSeriesAsync(_type, request);
     }
@@ -81,20 +81,20 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetTopNewSeries(_type, number);
     }
-    public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
+    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
     {
         return await _postService.GetChapters(hashId, request);
     }
-    public async Task<PagedResults<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
     {
         return await _postService.GetChaptersListSimple(hashId);
     }
-    public async Task<PagedResults<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request)
     {
         return await _postService.GetPostByUserProfileName(_type, request);
     }
 
-    public async Task<PagedResults<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request)
     {
         return await _postService.GetPostByTagName(_type, request);
     }

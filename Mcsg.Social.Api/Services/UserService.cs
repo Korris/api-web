@@ -7,6 +7,7 @@ using Common.Core.Constants;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Responses;
 using Constants;
 using Extensions;
 using Interfaces;
@@ -16,7 +17,6 @@ using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Models;
@@ -359,12 +359,12 @@ public partial class UserService : IUserService
         });
     }
 
-    public async Task<PagedResults<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input)
+    public async Task<PagedResponse<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input)
     {
-        PagedResults<UserSearchResponse> results;
+        PagedResponse<UserSearchResponse> results;
         if (string.IsNullOrWhiteSpace(input.ProfileName))
         {
-            return new PagedResults<UserSearchResponse>(0);
+            return new PagedResponse<UserSearchResponse>(0);
         }
         var keywords = input.ProfileName.ToLower().Split(' ');
         var query = $@"SELECT ""ProfileName"",
@@ -405,7 +405,7 @@ public partial class UserService : IUserService
 
         if (items.Any())
         {
-            results = new PagedResults<UserSearchResponse>(totalItems, input.PageNumber, input.PageSize);
+            results = new PagedResponse<UserSearchResponse>(totalItems, input.PageNumber, input.PageSize);
 
             foreach (var item in items)
             {
@@ -415,7 +415,7 @@ public partial class UserService : IUserService
         }
         else
         {
-            results = new PagedResults<UserSearchResponse>(0);
+            results = new PagedResponse<UserSearchResponse>(0);
         }
         return results;
     }
@@ -483,7 +483,7 @@ public partial class UserService : IUserService
         return userNotFollowed;
     }
 
-    public async Task<PagedResults<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR req)
+    public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR req)
     {
         var ss = _currentUserService.Session;
         if (ss == null)
@@ -497,7 +497,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        PagedResults<UserFollowedResponse> res;
+        PagedResponse<UserFollowedResponse> res;
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
         var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
@@ -525,12 +525,12 @@ public partial class UserService : IUserService
         }
         if (totalItems > 0)
         {
-            res = new PagedResults<UserFollowedResponse>(totalItems, req.PageNumber, req.PageSize);
+            res = new PagedResponse<UserFollowedResponse>(totalItems, req.PageNumber, req.PageSize);
             res.Items = items;
         }
         else
         {
-            res = new PagedResults<UserFollowedResponse>(0);
+            res = new PagedResponse<UserFollowedResponse>(0);
         }
         return res;
     }

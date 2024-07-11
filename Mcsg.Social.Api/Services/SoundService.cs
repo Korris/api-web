@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.SeedWork.Responses;
+using Dtos;
 using Extensions;
 using Interfaces;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
@@ -24,13 +25,13 @@ public partial class SoundService : ISoundService
         _mapper = mapper;
     }
 
-    public async Task<PagedResults<SoundDto>> GetAllSoundAsync(SoundBackgroundMediaLoadR req)
+    public async Task<PagedResponse<SoundDto>> GetAllSoundAsync(SoundBackgroundMediaLoadR req)
     {
         var offset = req.PageSize * (req.PageNumber - 1);
         var multi = await _bgMediaRepository.Connection.QueryMultipleAsync(GetAllSoundQuery,
                                                                         new
                                                                         {
-                                                                            PageSize = req.PageSize,
+                                                                            req.PageSize,
                                                                             Offet = offset
                                                                         });
 
@@ -40,23 +41,23 @@ public partial class SoundService : ISoundService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var resDto = _mapper.Map<IEnumerable<SoundDto>>(items);
-            var response = new PagedResults<SoundDto>(totalItems, req.PageNumber, req.PageSize);
+            var response = new PagedResponse<SoundDto>(totalItems, req.PageNumber, req.PageSize);
             response.Items = resDto;
 
             return response;
         }
         else
         {
-            return new PagedResults<SoundDto>(0);
+            return new PagedResponse<SoundDto>(0);
         }
     }
-    public async Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(SoundBackgroundMediaLoadR req)
+    public async Task<PagedResponse<SoundRecentlyDto>> GetRecentlyUseSoundAsync(SoundBackgroundMediaLoadR req)
     {
         var offset = req.PageSize * (req.PageNumber - 1);
         var multi = await _bgMediaRepository.Connection.QueryMultipleAsync(GetRecentlyUseSoundQuery,
                                                                         new
                                                                         {
-                                                                            PageSize = req.PageSize,
+                                                                            req.PageSize,
                                                                             Offet = offset
                                                                         });
 
@@ -71,22 +72,22 @@ public partial class SoundService : ISoundService
                 item.Url = item.Url.ToAudioPath();
                 item.Thumbnail = item.Thumbnail.ToImagePath();
             }
-            var response = new PagedResults<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);
+            var response = new PagedResponse<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);
             response.Items = items;
 
             return response;
         }
         else
         {
-            return new PagedResults<SoundRecentlyDto>(0);
+            return new PagedResponse<SoundRecentlyDto>(0);
         }
     }
 
-    public async Task<PagedResults<SoundDto>> SearchSoundAsync(SoundSearchSoundR req)
+    public async Task<PagedResponse<SoundDto>> SearchSoundAsync(SoundSearchSoundR req)
     {
         if (string.IsNullOrWhiteSpace(req.Keyword))
         {
-            return new PagedResults<SoundDto>(0);
+            return new PagedResponse<SoundDto>(0);
         }
 
         req.Keyword = "%" + req.Keyword + "%";
@@ -94,9 +95,9 @@ public partial class SoundService : ISoundService
         var multi = await _bgMediaRepository.Connection.QueryMultipleAsync(SearchSoundByTitleQuery,
                                                                         new
                                                                         {
-                                                                            PageSize = req.PageSize,
+                                                                            req.PageSize,
                                                                             Offet = offset,
-                                                                            Keyword = req.Keyword
+                                                                            req.Keyword
                                                                         });
 
         var items = await multi.ReadAsync<BackgroundMedia>().ConfigureAwait(false);
@@ -105,14 +106,14 @@ public partial class SoundService : ISoundService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var resDto = _mapper.Map<IEnumerable<SoundDto>>(items);
-            var response = new PagedResults<SoundDto>(totalItems, req.PageNumber, req.PageSize);
+            var response = new PagedResponse<SoundDto>(totalItems, req.PageNumber, req.PageSize);
             response.Items = resDto;
 
             return response;
         }
         else
         {
-            return new PagedResults<SoundDto>(0);
+            return new PagedResponse<SoundDto>(0);
         }
     }
     public async Task<SoundDto> GetSoundByPostAsync(Guid postId)

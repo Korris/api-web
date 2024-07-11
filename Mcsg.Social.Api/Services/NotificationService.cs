@@ -6,12 +6,12 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -65,7 +65,7 @@ public partial class NotificationService : INotificationService
         return _mapper.Map<NotificationModel>(result);
     }
 
-    public async Task<PagedResults<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
+    public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
     {
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
@@ -93,18 +93,18 @@ public partial class NotificationService : INotificationService
             {
                 item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
             }
-            var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
+            var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
             return response;
         }
         else
         {
-            return new PagedResults<NotificationModel>(0);
+            return new PagedResponse<NotificationModel>(0);
         }
     }
 
-    public async Task<PagedResults<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request)
+    public async Task<PagedResponse<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request)
     {
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
@@ -130,7 +130,7 @@ public partial class NotificationService : INotificationService
             {
                 item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
             }
-            var response = new PagedResults<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
+            var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
             return response;
@@ -138,7 +138,7 @@ public partial class NotificationService : INotificationService
         else
         {
 
-            return new PagedResults<NotificationModel>(0);
+            return new PagedResponse<NotificationModel>(0);
         }
     }
 

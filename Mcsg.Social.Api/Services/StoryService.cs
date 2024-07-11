@@ -1,11 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -88,7 +88,7 @@ public partial class StoryService : IStoryService
     {
         return await _postService.GetSeriesChapter(hashId, order);
     }
-    public async Task<PagedResults<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
     {
         return await _postService.GetChaptersListSimple(hashId);
     }
@@ -96,45 +96,45 @@ public partial class StoryService : IStoryService
     {
         return await _postService.GetTopSeries(_type);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request)
     {
         return await _postService.GetTopSeriesAsync(_type, request);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request)
     {
         return await _postService.GetRelationSeriesAsync(_type, request);
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq)
     {
         return await _postService.GetMySeries(_type, loadReq);
     }
 
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
     }
 
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
     }
 
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
     }
 
-    public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
+    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
     {
         return await _postService.GetChapters(hashId, request);
     }
 
-    public async Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request)
     {
         return await _postService.GetPostByUserProfileName(_type, request);
     }
 
-    public async Task<PagedResults<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request)
     {
         return await _postService.GetPostByTagName(_type, request);
     }

@@ -1,9 +1,10 @@
-﻿using Mcsg.Lib.Data.Entities.Common;
-using System.Data;
+﻿using System.Data;
 using System.Linq.Expressions;
 
 namespace Mcsg.Lib.Data.Repositories
 {
+    using Mcsg.Common.SeedWork.Responses;
+
     public interface IRepository<TEntity>
     {
         string TableName { get; set; }
@@ -17,7 +18,7 @@ namespace Mcsg.Lib.Data.Repositories
 
         Task<TEntity> GetSignleByPredicateAsync(Expression<Func<TEntity, bool>> predicate, string column = "", bool newConection = false);
 
-        Task<PagedResults<TEntity>> GetByPageAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber = 1, int pageSize = 10, string column = "", bool newConection = false);
+        Task<PagedResponse<TEntity>> GetByPageAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber = 1, int pageSize = 10, string column = "", bool newConection = false);
 
         Task<int> InsertAsync(TEntity entity, bool newConection = false);
 

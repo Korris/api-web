@@ -5,11 +5,11 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -39,15 +39,15 @@ public partial class CommentService : ICommentService
         _configuration = configuration;
     }
 
-    public async Task<PagedResults<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
+    public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
     {
-        PagedResults<CommentResponse> response;
+        PagedResponse<CommentResponse> response;
 
         var result = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<CommentQueryResult>(GetCommentByPostInHomePageQuery, new { PostId = postId });
 
         if (result != null)
         {
-            response = new PagedResults<CommentResponse>(1, 1, 1);
+            response = new PagedResponse<CommentResponse>(1, 1, 1);
             var commentData = new CommentResponse()
             {
                 Id = result.Id,
@@ -103,19 +103,19 @@ public partial class CommentService : ICommentService
         }
         else
         {
-            response = new PagedResults<CommentResponse>(0);
+            response = new PagedResponse<CommentResponse>(0);
         }
         return response;
     }
-    public async Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId)
+    public async Task<PagedResponse<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId)
     {
-        PagedResults<CommentResponse> response;
+        PagedResponse<CommentResponse> response;
 
         var result = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<CommentQueryResult>(GetCommentBySubPostQuery, new { PostId = postId });
 
         if (result != null)
         {
-            response = new PagedResults<CommentResponse>(1, 1, 1);
+            response = new PagedResponse<CommentResponse>(1, 1, 1);
             var commentData = new CommentResponse()
             {
                 Id = result.Id,
@@ -170,7 +170,7 @@ public partial class CommentService : ICommentService
         }
         else
         {
-            response = new PagedResults<CommentResponse>(0);
+            response = new PagedResponse<CommentResponse>(0);
         }
         return response;
     }

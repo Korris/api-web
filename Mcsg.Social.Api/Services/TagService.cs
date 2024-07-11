@@ -6,13 +6,13 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Responses;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -144,7 +144,7 @@ public partial class TagService : ITagService
         return tagsDb;
     }
 
-    public async Task<PagedResults<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
+    public async Task<PagedResponse<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
     {
         var query = GetPopularTagsQuery;
         if (popularTagReq.PostType == null)
@@ -166,14 +166,14 @@ public partial class TagService : ITagService
 
         var resDto = await multipleQuery.ReadAsync<PopularTagResponse>().ConfigureAwait(false);
         var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-        var response = new PagedResults<PopularTagResponse>(totalItems, popularTagReq.PageNumber, popularTagReq.PageSize);
+        var response = new PagedResponse<PopularTagResponse>(totalItems, popularTagReq.PageNumber, popularTagReq.PageSize);
         response.Items = resDto;
 
         return response;
 
     }
 
-    public async Task<PagedResults<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq)
+    public async Task<PagedResponse<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq)
     {
         int.TryParse(_configuration["TodayTrending:FetchDataTimes"], out var getdataTimes);
         int.TryParse(_configuration["TodayTrending:Days"], out var days);
@@ -182,7 +182,7 @@ public partial class TagService : ITagService
         var fromDate = toDate.AddDays(-days).BeginOfDay();
 
         IEnumerable<TodayTrendingTagResponse> resDto = null;
-        PagedResults<TodayTrendingTagResponse> response = null;
+        PagedResponse<TodayTrendingTagResponse> response = null;
         var times = 1;
         do
         {
@@ -208,7 +208,7 @@ public partial class TagService : ITagService
             var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
             if (resDto.Any())
             {
-                response = new PagedResults<TodayTrendingTagResponse>(totalItems, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
+                response = new PagedResponse<TodayTrendingTagResponse>(totalItems, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
                 response.Items = resDto;
             }
             else
@@ -222,7 +222,7 @@ public partial class TagService : ITagService
 
         if (response == null)
         {
-            response = new PagedResults<TodayTrendingTagResponse>(0, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
+            response = new PagedResponse<TodayTrendingTagResponse>(0, todayTrendingTagReq.PageNumber, todayTrendingTagReq.PageSize);
         }
         return response;
 
@@ -336,12 +336,12 @@ public partial class TagService : ITagService
         return tag.ToLower();
     }
 
-    public async Task<PagedResults<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input)
+    public async Task<PagedResponse<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input)
     {
-        PagedResults<TagSearchResponse> results;
+        PagedResponse<TagSearchResponse> results;
         if (string.IsNullOrWhiteSpace(input.Name))
         {
-            return new PagedResults<TagSearchResponse>(0);
+            return new PagedResponse<TagSearchResponse>(0);
         }
         var keywords = input.Name.ToLower().Split(' ');
         var query = $@"
@@ -394,12 +394,12 @@ public partial class TagService : ITagService
 
         if (items.Any())
         {
-            results = new PagedResults<TagSearchResponse>(totalItems, input.PageNumber, input.PageSize);
+            results = new PagedResponse<TagSearchResponse>(totalItems, input.PageNumber, input.PageSize);
             results.Items = items;
         }
         else
         {
-            results = new PagedResults<TagSearchResponse>(0);
+            results = new PagedResponse<TagSearchResponse>(0);
         }
 
         return results;

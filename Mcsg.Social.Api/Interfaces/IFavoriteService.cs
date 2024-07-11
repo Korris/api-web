@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
-using Lib.Data.Entities.Common;
+using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
@@ -12,8 +12,8 @@ public interface IFavoriteService
     Task<bool> RemovePostToFavoriteAsync(Guid postId);
     Task<bool> RemoveTagToFavoriteAsync(Guid tagId);
 
-    Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
-    Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
-    Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
+    Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
+    Task<PagedResponse<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
+    Task<PagedResponse<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req);
 
 }

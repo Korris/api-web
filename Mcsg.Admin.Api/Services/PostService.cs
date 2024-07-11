@@ -4,6 +4,7 @@ namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Enums;
     using Common.SeedWork.Exceptions;
+    using Common.SeedWork.Responses;
     using Dtos;
     using Interface;
     using Lib.Common.Constants;
@@ -11,7 +12,6 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Common.Web.Security;
     using Lib.Data.Constants;
     using Lib.Data.Domain.Entities;
-    using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Requests;
 
@@ -33,11 +33,11 @@ namespace Mcsg.Admin.Api.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<PagedResults<PostBasicResponse>> GetListAsync(PostListReq request)
+        public async Task<PagedResponse<PostBasicResponse>> GetListAsync(PostListReq request)
         {
             try
             {
-                PagedResults<PostBasicResponse> results;
+                PagedResponse<PostBasicResponse> results;
                 var offset = (request.PageNumber - 1) >= 0 ? request.PageSize * (request.PageNumber - 1) : 0;
 
                 var strOrderBy = request.OrderByAsc ? SQLConstant.OrderByDesc : "";
@@ -134,14 +134,14 @@ namespace Mcsg.Admin.Api.Services
                             item.Tags = item.Tags.Distinct().ToArray();
                     }
 
-                    results = new PagedResults<PostBasicResponse>(totalItems, request.PageNumber, request.PageSize)
+                    results = new PagedResponse<PostBasicResponse>(totalItems, request.PageNumber, request.PageSize)
                     {
                         Items = items
                     };
                 }
                 else
                 {
-                    results = new PagedResults<PostBasicResponse>(0);
+                    results = new PagedResponse<PostBasicResponse>(0);
                 }
                 return results;
             }

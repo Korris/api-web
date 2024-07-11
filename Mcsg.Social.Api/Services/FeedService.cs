@@ -13,6 +13,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
+using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
 using Enums;
@@ -22,7 +23,6 @@ using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -87,11 +87,11 @@ public partial class FeedService : IFeedService
     }
 
     #region Load data
-    public async Task<PagedResults<FeedResponse>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
+    public async Task<PagedResponse<FeedResponse>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
     {
         try
         {
-            PagedResults<FeedResponse> results;
+            PagedResponse<FeedResponse> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
             var date = DateTime.UtcNow.Date;
 
@@ -138,12 +138,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResults<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResults<FeedResponse>(0);
+                results = new PagedResponse<FeedResponse>(0);
             }
             return results;
         }
@@ -152,11 +152,11 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
-    public async Task<PagedResults<FeedResponse>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
+    public async Task<PagedResponse<FeedResponse>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
     {
         try
         {
-            PagedResults<FeedResponse> results;
+            PagedResponse<FeedResponse> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
 
             if (feedLoadReq.OrderBy == null)
@@ -184,12 +184,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResults<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResults<FeedResponse>(0);
+                results = new PagedResponse<FeedResponse>(0);
             }
             return results;
         }
@@ -486,11 +486,11 @@ public partial class FeedService : IFeedService
         }
     }
 
-    public async Task<PagedResults<FeedResponse>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
+    public async Task<PagedResponse<FeedResponse>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
     {
         try
         {
-            PagedResults<FeedResponse> results;
+            PagedResponse<FeedResponse> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
 
             if (feedLoadReq.OrderBy == null)
@@ -517,12 +517,12 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResults<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results = new PagedResponse<FeedResponse>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResults<FeedResponse>(0);
+                results = new PagedResponse<FeedResponse>(0);
             }
             return results;
         }

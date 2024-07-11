@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
+using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Models;
 using Requests;
@@ -27,7 +27,7 @@ public partial class PostReactService : IPostReactService
     {
         return await _reactService.GetReactions(postId);
     }
-    public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
+    public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {
         return await _reactService.GetReactionsByTargetAsync(targetId, request);
     }

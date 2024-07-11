@@ -1,14 +1,14 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.Core.Enums;
-using Lib.Data.Entities.Common;
+using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
 public interface ICommentService
 {
-    Task<PagedResults<CommentResponse>> GetLatestPostCommentInAsync(Guid postId);
-    Task<PagedResults<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
+    Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId);
+    Task<PagedResponse<CommentResponse>> GetLatestSubPostCommentInAsync(Guid postId);
     Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request);
     Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadR request, PostType postType);
     Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input);

@@ -2,13 +2,13 @@
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.SeedWork.Responses;
 using Constants;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Models.Earning;
 using Requests;
@@ -108,7 +108,7 @@ public partial class EarningService : IEarningService
     {
         return await _postService.GetMyAllSeries();
     }
-    public async Task<PagedResults<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ComicChapterListR loadReq)
     {
         var userId = _currentUserService.Session.UserId;
 
@@ -141,13 +141,13 @@ public partial class EarningService : IEarningService
                 }
             }
 
-            var results = new PagedResults<ReportSeriesData>(chapterPageData.TotalItems, loadReq.PageNumber, loadReq.PageSize);
+            var results = new PagedResponse<ReportSeriesData>(chapterPageData.TotalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = dtos;
             return results;
         }
         else
         {
-            return new PagedResults<ReportSeriesData>(0);
+            return new PagedResponse<ReportSeriesData>(0);
         }
     }
     public string GetAffiliateCode(EarningAffiliateCodeR req)

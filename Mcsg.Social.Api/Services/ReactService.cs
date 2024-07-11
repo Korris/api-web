@@ -4,13 +4,13 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.SeedWork.Responses;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Domain.Entities.Common;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -133,7 +133,7 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
         }
         return result;
     }
-    public async Task<PagedResults<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
+    public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {
         int? reactType = !request.Type.IsNumeric() ? null : request.Type.ToInt();
         var query = string.Format(GetReactionByTargetQuery, _reactRepository.TableName);
@@ -157,14 +157,14 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
             {
                 item.AuthorAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.AuthorAvatar);
             }
-            var response = new PagedResults<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
+            var response = new PagedResponse<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = items;
 
             return response;
         }
         else
         {
-            return new PagedResults<ReactionsUserModel>(0);
+            return new PagedResponse<ReactionsUserModel>(0);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Social.Api.Requests;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 public class SoundRecentlyDto
 {

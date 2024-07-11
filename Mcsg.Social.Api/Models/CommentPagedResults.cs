@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
-using Lib.Data.Entities.Common;
+using Common.SeedWork.Responses;
 
-public class CommentPagedResults<T> : PagedResults<T>
+public class CommentPagedResults<T> : PagedResponse<T>
 {
     public int TotalComments { get; set; }
 

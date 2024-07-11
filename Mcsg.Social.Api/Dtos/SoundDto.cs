@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Mcsg.Social.Api.Requests;
+namespace Mcsg.Social.Api.Dtos;
 
 using Extensions;
 using Lib.Data.Domain.Entities;

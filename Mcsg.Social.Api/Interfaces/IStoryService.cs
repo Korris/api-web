@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
-using Lib.Data.Entities.Common;
+using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
@@ -8,7 +8,7 @@ public interface IStoryService
 {
     Task<PostSeriesResponse> PostStory(ComicPostSeriesR comicPostReq);
     Task<PostSeriesResponse> GetStory(string hashId, bool isLoadChapters);
-    Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
+    Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR storyPostReq);
     Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq);
     Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StoryChapterR chapterPostReq);
@@ -17,14 +17,14 @@ public interface IStoryService
     Task<bool> Delete(Guid postId);
 
     Task<ChapterResponse> GetChapter(string hashId, int order);
-    Task<PagedResults<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
+    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
     Task<PostSeriesAllTopResponse> GetTopStory();
-    Task<PagedResults<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request);
-    Task<PagedResults<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq);
-    Task<PagedResults<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req);
-    Task<PagedResults<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req);
-    Task<PagedResults<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req);
-    Task<PagedResults<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request);
-    Task<PagedResults<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request);
-    Task<PagedResults<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request);
+    Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request);
+    Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request);
 }

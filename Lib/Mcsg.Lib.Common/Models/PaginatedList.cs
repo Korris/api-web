@@ -1,18 +1,17 @@
-﻿using Mcsg.Lib.Data.Entities.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Lib.Common.Models
 {
-    public class PaginatedList<T> : PagedResults<T>
-    {
+    using Mcsg.Common.SeedWork.Responses;
 
+    public class PaginatedList<T> : PagedResponse<T>
+    {
         public PaginatedList(int totalItems, int pageNumber = 1, int pageSize = 10) : base(totalItems, pageNumber, pageSize)
         {
-
         }
+
         public PaginatedList(List<T> items, int totalItems, int pageNumber = 1, int pageSize = 10) : base(items, totalItems, pageNumber, pageSize)
         {
-
         }
 
         public bool HasPreviousPage => PageNumber > 1;

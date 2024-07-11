@@ -4,12 +4,12 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -87,7 +87,7 @@ public partial class FavoriteService : IFavoriteService
         return iResult > 0;
     }
 
-    public async Task<PagedResults<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req)
+    public async Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req)
     {
         var offset = req.PageSize * (req.PageNumber - 1);
         var multipleQuery = await _tagFavoriteRepository.Connection.
@@ -99,7 +99,7 @@ public partial class FavoriteService : IFavoriteService
 
         var items = await multipleQuery.ReadAsync<FavoriteTagResponse>().ConfigureAwait(false);
         var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-        var response = new PagedResults<FavoriteTagResponse>(totalItems, req.PageNumber, req.PageSize);
+        var response = new PagedResponse<FavoriteTagResponse>(totalItems, req.PageNumber, req.PageSize);
         response.Items = items;
 
         return response;
@@ -138,7 +138,7 @@ public partial class FavoriteService : IFavoriteService
         return true;
     }
 
-    public async Task<PagedResults<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req)
+    public async Task<PagedResponse<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req)
     {
         var offset = req.PageSize * (req.PageNumber - 1);
         var multipleQuery = await _postFavoriteRepository.Connection.
@@ -150,16 +150,16 @@ public partial class FavoriteService : IFavoriteService
 
         var items = await multipleQuery.ReadAsync<FavoritePostResponse>().ConfigureAwait(false);
         var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-        var response = new PagedResults<FavoritePostResponse>(totalItems, req.PageNumber, req.PageSize);
+        var response = new PagedResponse<FavoritePostResponse>(totalItems, req.PageNumber, req.PageSize);
         response.Items = items;
 
         return response;
     }
-    public async Task<PagedResults<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req)
+    public async Task<PagedResponse<FeedResponse>> GetPostFavoriteByUserAsync(FavoritePostR req)
     {
         try
         {
-            PagedResults<FeedResponse> results;
+            PagedResponse<FeedResponse> results;
             var userId = _currentUserService.Session.UserId;
 
             var offset = req.PageSize * (req.PageNumber - 1);
@@ -181,12 +181,12 @@ public partial class FavoriteService : IFavoriteService
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResults<FeedResponse>(totalItems, req.PageNumber, req.PageSize);
+                results = new PagedResponse<FeedResponse>(totalItems, req.PageNumber, req.PageSize);
                 results.Items = listItemResponse;
             }
             else
             {
-                results = new PagedResults<FeedResponse>(0);
+                results = new PagedResponse<FeedResponse>(0);
             }
 
             return results;

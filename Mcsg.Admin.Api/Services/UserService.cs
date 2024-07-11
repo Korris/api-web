@@ -5,6 +5,7 @@ namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Enums;
     using Common.SeedWork.Exceptions;
+    using Common.SeedWork.Responses;
     using Constants;
     using Dtos;
     using Interface;
@@ -13,7 +14,6 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Common.Web.Security;
     using Lib.Data.Constants;
     using Lib.Data.Domain.Entities;
-    using Lib.Data.Entities.Common;
     using Lib.Data.Repositories;
     using Requests;
 
@@ -38,11 +38,11 @@ namespace Mcsg.Admin.Api.Services
             _currentUserService = currentUserService;
         }
 
-        public async Task<PagedResults<UserRespone>> GetListUserAsync(UserListRequest request)
+        public async Task<PagedResponse<UserRespone>> GetListUserAsync(UserListRequest request)
         {
             try
             {
-                PagedResults<UserRespone> results;
+                PagedResponse<UserRespone> results;
                 var offset = (request.PageNumber - 1) >= 0 ? request.PageSize * (request.PageNumber - 1) : 0;
 
                 var strOrderBy = request.OrderByAsc ? SQLConstant.OrderByDesc : "";
@@ -112,14 +112,14 @@ namespace Mcsg.Admin.Api.Services
                     {
                         item.IsPremium = item.PremiumDate != null && item.PremiumDate >= dateOnlyNow;
                     }
-                    results = new PagedResults<UserRespone>(totalItems, request.PageNumber, request.PageSize)
+                    results = new PagedResponse<UserRespone>(totalItems, request.PageNumber, request.PageSize)
                     {
                         Items = items
                     };
                 }
                 else
                 {
-                    results = new PagedResults<UserRespone>(0);
+                    results = new PagedResponse<UserRespone>(0);
                 }
                 return results;
             }

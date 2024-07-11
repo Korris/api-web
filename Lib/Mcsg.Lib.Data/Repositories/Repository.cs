@@ -13,8 +13,8 @@ namespace Mcsg.Lib.Data.Repositories
 {
     using Common.SeedWork.Extensions;
     using Constants;
-    using Entities.Common;
     using Extensions;
+    using Mcsg.Common.SeedWork.Responses;
 
     public partial class Repository<TEntity> : IRepository<TEntity>
     {
@@ -187,7 +187,7 @@ namespace Mcsg.Lib.Data.Repositories
             return rowsAffected > 0;
         }
 
-        public virtual async Task<PagedResults<TEntity>> GetByPageAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber = 1, int pageSize = 10, string column = "", bool newConection = false)
+        public virtual async Task<PagedResponse<TEntity>> GetByPageAsync(Expression<Func<TEntity, bool>> predicate, int pageNumber = 1, int pageSize = 10, string column = "", bool newConection = false)
         {
             var whereStatement = predicate == null ? "" : $" WHERE {GetSqlFromPredicate(predicate)} ";
             var offset = pageSize * (pageNumber - 1);
@@ -223,7 +223,7 @@ namespace Mcsg.Lib.Data.Repositories
 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             multi.Dispose();
-            var result = new PagedResults<TEntity>(totalItems, pageNumber, pageSize)
+            var result = new PagedResponse<TEntity>(totalItems, pageNumber, pageSize)
             {
                 Items = items
             };

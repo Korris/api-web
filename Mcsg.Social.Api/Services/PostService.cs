@@ -9,6 +9,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
+using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
 using Enums;
@@ -22,7 +23,6 @@ using Lib.Data;
 using Lib.Data.Analytic;
 using Lib.Data.Analytic.Entities;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Entities.Common;
 using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -367,7 +367,7 @@ public partial class PostService : IPostService
 
         return result;
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         var isFavorite = currentUserId == null ? false : request.IsFavorite;
@@ -413,16 +413,16 @@ public partial class PostService : IPostService
         var items = MapTopSeries(dbFeed.ToList());
         if (items != null && items.Count() > 0)
         {
-            var results = new PagedResults<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
+            var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
             return results;
         }
         else
         {
-            return new PagedResults<PostSeriesTopResponse>(0);
+            return new PagedResponse<PostSeriesTopResponse>(0);
         }
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request)
     {
         try
         {
@@ -482,13 +482,13 @@ public partial class PostService : IPostService
             var items = MapTopSeries(dbFeed.ToList());
             if (items != null && items.Count() > 0)
             {
-                var results = new PagedResults<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
+                var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
                 results.Items = items;
                 return results;
             }
             else
             {
-                return new PagedResults<PostSeriesTopResponse>(0);
+                return new PagedResponse<PostSeriesTopResponse>(0);
             }
         }
         catch (Exception ex)
@@ -496,10 +496,10 @@ public partial class PostService : IPostService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
-        PagedResults<PostSeriesTopResponse> results;
+        PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(selectedType);
 
@@ -519,12 +519,12 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = MappingTopSeries(items);
         }
         else
         {
-            results = new PagedResults<PostSeriesTopResponse>(0);
+            results = new PagedResponse<PostSeriesTopResponse>(0);
         }
         return results;
     }
@@ -546,10 +546,10 @@ public partial class PostService : IPostService
         await _smartLookupRepository.InsertAsync(smartLookupInserts);
     }
 
-    public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
-        PagedResults<PostSeriesTopResponse> results;
+        PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
 
@@ -569,19 +569,19 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = MappingTopSeries(items);
         }
         else
         {
-            results = new PagedResults<PostSeriesTopResponse>(0);
+            results = new PagedResponse<PostSeriesTopResponse>(0);
         }
         return results;
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
-        PagedResults<PostSeriesTopResponse> results;
+        PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_USER);
 
@@ -601,20 +601,20 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = MappingTopSeries(items);
         }
         else
         {
-            results = new PagedResults<PostSeriesTopResponse>(0);
+            results = new PagedResponse<PostSeriesTopResponse>(0);
         }
         return results;
     }
 
-    public async Task<PagedResults<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input)
+    public async Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input)
     {
         ValidateTotalItem(input.PageSize);
-        PagedResults<PostBoxResposne> results;
+        PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
 
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
@@ -635,20 +635,20 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
+            results = new PagedResponse<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
             results.Items = MappingToPostBoxResponse(items);
         }
         else
         {
-            results = new PagedResults<PostBoxResposne>(0);
+            results = new PagedResponse<PostBoxResposne>(0);
         }
         return results;
     }
 
-    public async Task<PagedResults<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input)
+    public async Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input)
     {
         ValidateTotalItem(input.PageSize);
-        PagedResults<PostBoxResposne> results;
+        PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
 
         var queryCondition = "";
@@ -723,7 +723,7 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
+            results = new PagedResponse<PostBoxResposne>(totalItems, input.PageNumber, input.PageSize);
             results.Items = MappingToPostBoxResponse(items);
             foreach (var item in results.Items)
             {
@@ -732,7 +732,7 @@ public partial class PostService : IPostService
         }
         else
         {
-            results = new PagedResults<PostBoxResposne>(0);
+            results = new PagedResponse<PostBoxResposne>(0);
         }
         return results;
     }
@@ -869,11 +869,11 @@ public partial class PostService : IPostService
 
         return itemResponse;
     }
-    public async Task<PagedResults<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         var currentUserId = _currentUserService?.Session?.UserId;
-        PagedResults<PostSeriesTopResponse> results;
+        PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 
         if (loadReq.OrderBy == null)
@@ -909,12 +909,12 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = MappingTopSeries(items);
         }
         else
         {
-            results = new PagedResults<PostSeriesTopResponse>(0);
+            results = new PagedResponse<PostSeriesTopResponse>(0);
         }
         return results;
     }
@@ -1053,7 +1053,7 @@ public partial class PostService : IPostService
         return new List<NewsFeedDto>();
     }
 
-    public async Task<PagedResults<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input)
+    public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input)
     {
         var currentUserId = _currentUserService.Session.UserId;
         var offset = input.PageSize * (input.PageNumber - 1);
@@ -1076,13 +1076,13 @@ public partial class PostService : IPostService
             var items = MappingRelatedBoxResponse(dataQuery);
             if (items != null && items.Count() > 0)
             {
-                var results = new PagedResults<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
+                var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
                 results.Items = items;
                 return results;
             }
             else
             {
-                return new PagedResults<RelatedBoxResponse>(0);
+                return new PagedResponse<RelatedBoxResponse>(0);
             }
         }
         /// haven't read any stories/comics yet
@@ -1097,13 +1097,13 @@ public partial class PostService : IPostService
             var items = MappingRelatedBoxResponse(dataQuery);
             if (items != null && items.Count() > 0)
             {
-                var results = new PagedResults<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
+                var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
                 results.Items = items;
                 return results;
             }
             else
             {
-                return new PagedResults<RelatedBoxResponse>(0);
+                return new PagedResponse<RelatedBoxResponse>(0);
             }
         }
     }
@@ -1345,9 +1345,9 @@ public partial class PostService : IPostService
     #endregion
 
     #region Chapters        
-    public async Task<PagedResults<ChapterResponse>> GetChapters(string hashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR loadReq)
     {
-        PagedResults<ChapterResponse> results;
+        PagedResponse<ChapterResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 
         if (loadReq.OrderBy == null)
@@ -1376,7 +1376,7 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<ChapterResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<ChapterResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             foreach (var item in items)
             {
                 item.IsPublicNow = CheckIsPublicNow(item.PublishDate);
@@ -1386,13 +1386,13 @@ public partial class PostService : IPostService
         }
         else
         {
-            results = new PagedResults<ChapterResponse>(0);
+            results = new PagedResponse<ChapterResponse>(0);
         }
         return results;
     }
-    public async Task<PagedResults<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
     {
-        PagedResults<ChapterTOCResponse> results;
+        PagedResponse<ChapterTOCResponse> results;
         var query = GetSeriesChaptersSimpleByHashId;
 
         var multi = await _postRepository
@@ -1406,18 +1406,18 @@ public partial class PostService : IPostService
 
         if (items != null && items.Count() > 0)
         {
-            results = new PagedResults<ChapterTOCResponse>(totalItems, 1, totalItems);
+            results = new PagedResponse<ChapterTOCResponse>(totalItems, 1, totalItems);
             results.Items = items;
         }
         else
         {
-            results = new PagedResults<ChapterTOCResponse>(0);
+            results = new PagedResponse<ChapterTOCResponse>(0);
         }
         return results;
     }
-    public async Task<PagedResults<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
     {
-        PagedResults<ChapterTOCExtendResponse> results;
+        PagedResponse<ChapterTOCExtendResponse> results;
         var query = GetSeriesChaptersWithOffsetSimpleByHashId;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 
@@ -1439,12 +1439,12 @@ public partial class PostService : IPostService
         if (items != null && items.Count() > 0)
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-            results = new PagedResults<ChapterTOCExtendResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results = new PagedResponse<ChapterTOCExtendResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = items;
         }
         else
         {
-            results = new PagedResults<ChapterTOCExtendResponse>(0);
+            results = new PagedResponse<ChapterTOCExtendResponse>(0);
         }
         return results;
     }
