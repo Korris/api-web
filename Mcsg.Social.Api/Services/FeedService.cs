@@ -283,7 +283,7 @@ public partial class FeedService : IFeedService
             data.Id = postData.Id;
             data.Body = postData.Body;
             data.HashId = postData.HashId;
-            data.Body = System.Web.HttpUtility.HtmlDecode(data.Body);
+            data.Body = HttpUtility.HtmlDecode(data.Body);
         }
 
         foreach (var item in data.Resources)
@@ -384,7 +384,7 @@ public partial class FeedService : IFeedService
         var itemResponse = new FeedBoxResponse()
         {
             ThumbnailUrl = res.ThumbnailUrl,
-            Body = System.Web.HttpUtility.HtmlDecode(res.Body),
+            Body = HttpUtility.HtmlDecode(res.Body),
             CreatedDate = res.CreatedDate,
             HashId = res.HashId,
             Id = res.Id,
@@ -765,7 +765,7 @@ public partial class FeedService : IFeedService
 
             //if (feedPostReq.MetaData != null)
             //{
-            //	feedPostReq.MetaData.Description = System.Web.HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
+            //	feedPostReq.MetaData.Description = HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
             //	result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(feedPostReq.MetaData, post.Id);
             //}
 
@@ -890,13 +890,21 @@ public partial class FeedService : IFeedService
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             CustomNote = item.CustomNote
         };
-        itemResponse.Body = System.Web.HttpUtility.HtmlDecode(item.Body);
+        itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         #region Mapping with db query list
         if (item.TotalResource > 0 && !string.IsNullOrEmpty(item.SubPostResourceStr))
         {
             itemResponse.Resources = new List<ResourceResponse>();
             var resourceResponses = JsonConvert.DeserializeObject<List<ResourceResponse>>(item.SubPostResourceStr);
-            foreach (var resourceResponse in resourceResponses.OrderBy(p => p.Order))
+
+            // Ensure not null
+            resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
+            if (resourceResponses == null)
+            {
+                resourceResponses = [];
+            }
+
+            foreach (var resourceResponse in resourceResponses)
             {
                 if (resourceResponse != null)
                 {
@@ -935,9 +943,9 @@ public partial class FeedService : IFeedService
         {
             itemResponse.MetaData = new MetaDataResponse
             {
-                Description = !string.IsNullOrWhiteSpace(item.MetaDescription) ? System.Web.HttpUtility.HtmlDecode(item.MetaDescription) : "",
+                Description = !string.IsNullOrWhiteSpace(item.MetaDescription) ? HttpUtility.HtmlDecode(item.MetaDescription) : "",
                 Domain = item.MetaDomain ?? "",
-                Title = !string.IsNullOrWhiteSpace(item.MetaTitle) ? System.Web.HttpUtility.HtmlDecode(item.MetaTitle) : "",
+                Title = !string.IsNullOrWhiteSpace(item.MetaTitle) ? HttpUtility.HtmlDecode(item.MetaTitle) : "",
                 Url = item.MetaUrl ?? ""
             };
         }
@@ -968,7 +976,7 @@ public partial class FeedService : IFeedService
             Status = item.Status,
             UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
-            Body = System.Web.HttpUtility.HtmlDecode(item.Body),
+            Body = HttpUtility.HtmlDecode(item.Body),
             CustomNote = item.CustomNote
         };
 
@@ -1045,9 +1053,9 @@ public partial class FeedService : IFeedService
         {
             itemResponse.MetaData = new MetaDataResponse
             {
-                Description = !string.IsNullOrWhiteSpace(item.MetaDataDb.Description) ? System.Web.HttpUtility.HtmlDecode(item.MetaDataDb.Description) : "",
+                Description = !string.IsNullOrWhiteSpace(item.MetaDataDb.Description) ? HttpUtility.HtmlDecode(item.MetaDataDb.Description) : "",
                 Domain = item.MetaDataDb.Domain ?? "",
-                Title = !string.IsNullOrWhiteSpace(item.MetaDataDb.Title) ? System.Web.HttpUtility.HtmlDecode(item.MetaDataDb.Title) : "",
+                Title = !string.IsNullOrWhiteSpace(item.MetaDataDb.Title) ? HttpUtility.HtmlDecode(item.MetaDataDb.Title) : "",
                 Url = item.MetaDataDb.Url ?? ""
             };
         }
