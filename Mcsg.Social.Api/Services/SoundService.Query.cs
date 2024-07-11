@@ -72,15 +72,7 @@
 	                        ORDER BY bg.""Order"" ";
             }
         }
-        private string RemoveAllSoundOfPostQuery
-        {
-            get
-            {
-                return @$"UPDATE {_bgMediaPostRepository.TableName}
-	                            SET ""Status"" = {(int)BackgroundMediaPostStatus.Remove}
-	                            WHERE ""PostId"" = @PostId ";
-            }
-        }
+
         private string RemoveSoundOfPostQuery
         {
             get

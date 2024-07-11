@@ -9,6 +9,6 @@ public interface ISoundService
     Task<PagedResults<SoundRecentlyDto>> GetRecentlyUseSoundAsync(SoundBackgroundMediaLoadR req);
     Task<SoundDto> GetSoundByPostAsync(Guid postId);
     Task<PagedResults<SoundDto>> SearchSoundAsync(SoundSearchSoundR req);
-    Task<bool> AddSoundAsync(Guid postId, Guid soundId);
+    Task<bool> AddSoundAsync(Guid postId, Guid soundId, Guid userId);
     Task<bool> RemoveSoundAsync(Guid postId);
 }

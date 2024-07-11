@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Web.Security;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Entities.Common;
 using Lib.Data.Repositories;
@@ -15,21 +16,11 @@ using Requests;
 
 public partial class SoundService : ISoundService
 {
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<BackgroundMedia> _bgMediaRepository;
-    private readonly IRepository<BackgroundMediaPost> _bgMediaPostRepository;
-    private readonly IMapper _mapper;
-    public SoundService(ICurrentUserService currentUserService
-        , IUnitOfWork unitOfWork
-        , ISetting setting
-        , IMapper mapper)
+    public SoundService(McsgDbContext context, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _currentUserService = currentUserService;
-        _postRepository = unitOfWork.GetRepository<Post>();
+        _context = context;
         _bgMediaRepository = unitOfWork.GetRepository<BackgroundMedia>();
         _bgMediaPostRepository = unitOfWork.GetRepository<BackgroundMediaPost>();
-        _setting = setting;
         _mapper = mapper;
     }
 
@@ -139,34 +130,43 @@ public partial class SoundService : ISoundService
         }
     }
 
-    public async Task<bool> AddSoundAsync(Guid postId, Guid soundId)
+    public async Task<bool> AddSoundAsync(Guid postId, Guid soundId, Guid userId)
     {
-        await _bgMediaPostRepository.Connection.ExecuteAsync(RemoveAllSoundOfPostQuery, new { PostId = postId });
+        await RemoveSoundAsync(postId);
+
         var bgSoundPost = new BackgroundMediaPost
         {
             BackgroundMediaId = soundId,
             PostId = postId,
             Status = BackgroundMediaPostStatus.Add,
-            CreatedBy = _currentUserService.Session.UserId
+            CreatedBy = userId
         };
 
-        var result = await _bgMediaPostRepository.InsertAsync(bgSoundPost);
+        await _context.BackgroundMediaPosts.AddAsync(bgSoundPost);
+        var result = await _context.SaveChangesAsync();
+
         return result > 0;
     }
 
     public async Task<bool> RemoveSoundAsync(Guid postId)
     {
-        var result = await _bgMediaPostRepository.Connection.ExecuteAsync(RemoveAllSoundOfPostQuery,
-                                                new { PostId = postId });
+        var backgroundMediaPosts = await _context.BackgroundMediaPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+        backgroundMediaPosts.ForEach(p => p.Status = BackgroundMediaPostStatus.Remove);
+        var result = await _context.SaveChangesAsync();
+
         return result > 0;
     }
 
     #region -- Fields --
 
     /// <summary>
-    /// Setting
+    /// DB context
     /// </summary>
-    private readonly ISetting _setting;
+    private readonly McsgDbContext _context;
+
+    private readonly IRepository<BackgroundMedia> _bgMediaRepository;
+    private readonly IRepository<BackgroundMediaPost> _bgMediaPostRepository;
+    private readonly IMapper _mapper;
 
     #endregion
 }

@@ -1,4 +1,4 @@
-﻿using Dapper;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -13,21 +13,15 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Enums;
 using Lib.Common.Helpers;
+using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 public partial class PostLinkService : IPostLinkService
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<PostLink> _postLinkRepository;
-    public PostLinkService(IUnitOfWork unitOfWork)
+    public PostLinkService(McsgDbContext context)
     {
-        _unitOfWork = unitOfWork;
-        _postRepository = unitOfWork.GetRepository<Post>();
-        _postLinkRepository = unitOfWork.GetRepository<PostLink>();
+        _context = context;
     }
 
     public async Task<PostLinkResponse> AddLinkAsync(Guid postId, string content)
@@ -55,8 +49,9 @@ public partial class PostLinkService : IPostLinkService
                 if (linkIndexs != null && linkIndexs.Any())
                 {
                     var lastLink = linkIndexs.MaxBy(x => x.Key);
-                    await _postLinkRepository.Connection.ExecuteAsync(RemoveAllLinkOfPostQuery, new { PostId = postId });
-                    var postLink = new PostLink()
+                    await RemoveLinkAsync(postId);
+
+                    var postLink = new PostLink
                     {
                         HashId = Setting.ResourceConfig.HashLength.GetRandomString(),
                         PostId = postId,
@@ -64,7 +59,9 @@ public partial class PostLinkService : IPostLinkService
                         Type = youtubeLinks.Contains(lastLink.Value) ? PostLinkType.Youtube : PostLinkType.Video,
                         Description = ""
                     };
-                    var addResult = await _postLinkRepository.InsertAsync(postLink);
+                    await _context.PostLinks.AddAsync(postLink);
+
+                    var addResult = await _context.SaveChangesAsync();
                     if (addResult > 0)
                     {
                         result.HashId = postLink.HashId;
@@ -81,10 +78,22 @@ public partial class PostLinkService : IPostLinkService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
     public async Task<bool> RemoveLinkAsync(Guid postId)
     {
-        var result = await _postLinkRepository.Connection.ExecuteAsync(RemoveAllLinkOfPostQuery,
-                                                new { PostId = postId });
+        var postLinks = await _context.PostLinkAvailable.Where(p => p.PostId == postId).ToListAsync();
+        postLinks.ForEach(p => p.IsDelete = true);
+        var result = await _context.SaveChangesAsync();
+
         return result > 0;
     }
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    #endregion
 }

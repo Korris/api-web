@@ -609,7 +609,7 @@ public partial class FeedService : IFeedService
 
             if (req.SoundId != null && req.SoundId != Guid.Empty)
             {
-                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value);
+                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
             }
             else
             {
@@ -777,7 +777,7 @@ public partial class FeedService : IFeedService
             // Add background sound to feed
             if (req.SoundId != null && req.SoundId != Guid.Empty)
             {
-                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value);
+                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
             }
             else
             {
