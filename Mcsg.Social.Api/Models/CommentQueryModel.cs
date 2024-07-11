@@ -9,6 +9,7 @@ public class CommentQueryModel
     public DateTime? LastModifiedDate { get; set; }
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public Guid ResourceId { get; set; }
     public string ResourceHashId { get; set; } = string.Empty;

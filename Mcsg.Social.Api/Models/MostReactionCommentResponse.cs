@@ -16,6 +16,7 @@ public class BasicCommentResponse
     public string UserAvatar { get; set; }
     public string ProfileId { get; set; }
     public string AuthorName { get; set; }
+    public string? UserName { get; set; }
     public DateTime CreatedDate { get; set; }
     public string ResourceName { get; set; }
     public string ResourceUrl { get; set; }

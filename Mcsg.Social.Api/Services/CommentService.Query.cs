@@ -32,6 +32,7 @@ namespace Mcsg.Social.Api.Services
 													NULL as Order,
 													u.""Avatar"" as UserAvatar,
 													u.""ProfileName"" as AuthorName,
+													u.""UserName"" as UserName,
 													u.""ProfileId"",
 													COUNT(reply.*) as ReplyCount, 
 													r.""Name"" as ResourceName,
@@ -47,7 +48,7 @@ namespace Mcsg.Social.Api.Services
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
 												AND pc.""IsDelete"" = false
-												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												UNION
 												SELECT 
 													spc.""CreatedBy"" as AuthorId,
@@ -60,6 +61,7 @@ namespace Mcsg.Social.Api.Services
 													sp.""Order"",
 													u.""Avatar"",
 													u.""ProfileName"",
+													u.""UserName"" as UserName,
 													u.""ProfileId"",
 													COUNT(reply.*) ReplyCount,
 													r.""Name"" as ResourceName,
@@ -75,7 +77,7 @@ namespace Mcsg.Social.Api.Services
 												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""Posts""  WHERE ""HashId"" =@HashId) 
 												AND spc.""ParentId"" is null
 												AND spc.""IsDelete"" = false
-												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												ORDER BY reaction_count desc,
 												""CreatedDate"" desc
 												OFFSET @Offset
@@ -129,7 +131,7 @@ namespace Mcsg.Social.Api.Services
                                     JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
                                     )
                                 SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""LastModifiedDate"", cte.""AuthorId"", 
-                                        (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""Avatar"" AS UserAvatar
+                                        (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
                                         , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
                                 FROM cte
                                 LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
@@ -284,6 +286,7 @@ namespace Mcsg.Social.Api.Services
 						, men.""LocationId"", men.""LocationType""
 						, men.""EntityId"", men.""EntityType""
 						, (CASE WHEN use.""ProfileName"" IS NULL THEN use.""UserName"" ELSE use.""ProfileName"" END) AS ProfileName
+						, use.""UserName"" as UserName
 						, men.""Length"", men.""Offset"", men.""Text""
 						FROM public.""Mentions"" men 
 						LEFT JOIN identity.""Users"" use ON men.""EntityId"" = use.""Id"" 

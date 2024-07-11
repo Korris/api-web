@@ -12,7 +12,7 @@ public class PostSeriesResponse : PostResponse
     public bool IsMature { get; set; }
     public bool? IsCompleted { get; set; }
     public string ProfileName { get; set; }
-    public string UserName { get; set; }
+    public string? UserName { get; set; }
     public ChaptersExclusiveData FreeChapters { get; set; }
     public ChaptersExclusiveData ExclusiveChapters { get; set; }
     public ChaptersExclusiveData EstimateBuyChapters { get; set; }
@@ -37,6 +37,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
     public string ProfileName { get; set; }
+    public string UserName { get; set; }
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
 }
@@ -44,6 +45,7 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
     public string ProfileName { get; set; }
+    public string UserName { get; set; }
     public int TotalSubPostComment { get; set; }
     public string SubPostStr { get; set; }
     public PostSeriesSelectedType SelectType { get; set; }

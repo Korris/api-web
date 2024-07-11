@@ -11,6 +11,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
     public Guid PostId { get; set; }
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public DateTime? LastModifiedDate { get; set; }
@@ -26,6 +27,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
             .ForMember(d => d.PostId, opt => opt.MapFrom(s => s.PostId))
             .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
             .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
+            .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
             .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
             .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
             .ForMember(d => d.LastModifiedDate, opt => opt.MapFrom(s => s.LastModifiedDate))

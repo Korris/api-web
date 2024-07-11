@@ -11,6 +11,7 @@ public class ReplyData
     public Guid ParentId { get; set; }
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public DateTime? LastModifiedDate { get; set; }

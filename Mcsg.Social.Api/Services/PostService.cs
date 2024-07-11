@@ -1088,6 +1088,7 @@ public partial class PostService : IPostService
         {
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
+            UserName = x.UserName,
             UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,
@@ -1137,6 +1138,7 @@ public partial class PostService : IPostService
         {
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
+            UserName = x.UserName,
             UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,

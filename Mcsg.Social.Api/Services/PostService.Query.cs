@@ -200,7 +200,7 @@ LIMIT 1
 						post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
 						post.""ChapterCount"",
 						post.""Status"", post.""Type"",post.""ViewCount"",post.""TotalSubPostComment"",
-						post.""CreatedDate"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
+						post.""CreatedDate"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
 						post.""SubPostStr"", 
 						array_agg(tag.""Name"") as Tags from
 							(SELECT  p.""Id"",
@@ -241,6 +241,7 @@ LIMIT 1
 							p.""CreatedDate""
 							) 
 						AS post
+						LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
@@ -248,7 +249,8 @@ LIMIT 1
 						post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"",post.""TotalSubPostComment"",
 						post.""Status"", post.""Type"", post.""ViewCount"",
 						post.""CreatedDate"",
-						post.""SubPostStr""
+						post.""SubPostStr"",
+						u.""UserName""
 						ORDER BY ""[OrderBy]"" desc;
 
 						[CountResults] ";

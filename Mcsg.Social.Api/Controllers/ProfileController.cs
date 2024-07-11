@@ -28,30 +28,30 @@ public class ProfileController : ControllerBase
         var result = await _userService.GetCurrentUserAsync();
         return Ok(result);
     }
-    [HttpGet("info/{profileName}")]
-    public async Task<IActionResult> GetUser(string profileName)
+    [HttpGet("info/{userName}")]
+    public async Task<IActionResult> GetUser(string userName)
     {
-        var result = await _userService.GetUserByUserNameAsync(profileName);
+        var result = await _userService.GetUserByUserNameAsync(userName);
         return Ok(result);
     }
 
-    [HttpGet("feeds/{profileName}")]
-    public async Task<IActionResult> GetUserFeed(string profileName, [FromQuery] FeedLoadReq loadReq)
+    [HttpGet("feeds/{userName}")]
+    public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq loadReq)
     {
-        loadReq.ProfileName = profileName;
+        loadReq.UserName = userName;
         var result = await _feedService.GetFeedsAsync(loadReq, LoadFeedType.ALL);
         return Ok(result);
     }
-    [HttpGet("comics/{profileName}")]
-    public async Task<IActionResult> GetUserComic(string profileName, [FromQuery] ComicTopPostR loadReq)
+    [HttpGet("comics/{userName}")]
+    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
     {
-        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, profileName, loadReq);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
         return Ok(result);
     }
-    [HttpGet("stories/{profileName}")]
-    public async Task<IActionResult> GetUserStories(string profileName, [FromQuery] ComicTopPostR loadReq)
+    [HttpGet("stories/{userName}")]
+    public async Task<IActionResult> GetUserStories(string userName, [FromQuery] ComicTopPostR loadReq)
     {
-        var result = await _postService.GetSeriesByUserByPage(PostType.Story, profileName, loadReq);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
         return Ok(result);
     }
 
