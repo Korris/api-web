@@ -323,7 +323,7 @@ public partial class FeedService : IFeedService
 
         FeedQueryDbResponse dbFeed = null;
         await _postRepository
-            .Connection.QueryAsync<FeedQueryDbResponse, SubPostQueryDbResponse, UploadFileQueryDbDto, MetaDataQueryDbResponse, PostLinkDb, FeedQueryDbResponse>(query,
+            .Connection.QueryAsync<FeedQueryDbResponse, SubPostQueryDbResponse, UploadFileQueryDbDto, MetaDataQueryDto, PostLinkDb, FeedQueryDbResponse>(query,
             (feed, subpost, uploadfiles, meta, link) =>
             {
                 if (dbFeed == null)
@@ -391,7 +391,7 @@ public partial class FeedService : IFeedService
             Id = res.Id,
             ProfileId = res.ProfileId,
             UserId = res.UserId,
-            MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataResponse>(res.MetaDatas) : null,
+            MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataDto>(res.MetaDatas) : null,
             TotalResources = res.TotalResources,
             UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(res.UserAvatar) : null,
             FullName = res.FullName,
@@ -929,7 +929,7 @@ public partial class FeedService : IFeedService
         }
         if (item.MetaTitle != null && item.MetaDomain != null)
         {
-            itemResponse.MetaData = new MetaDataResponse
+            itemResponse.MetaData = new MetaDataDto
             {
                 Description = !string.IsNullOrWhiteSpace(item.MetaDescription) ? HttpUtility.HtmlDecode(item.MetaDescription) : "",
                 Domain = item.MetaDomain ?? "",
@@ -1039,7 +1039,7 @@ public partial class FeedService : IFeedService
         }
         if (item.MetaDataDb != null)
         {
-            itemResponse.MetaData = new MetaDataResponse
+            itemResponse.MetaData = new MetaDataDto
             {
                 Description = !string.IsNullOrWhiteSpace(item.MetaDataDb.Description) ? HttpUtility.HtmlDecode(item.MetaDataDb.Description) : "",
                 Domain = item.MetaDataDb.Domain ?? "",

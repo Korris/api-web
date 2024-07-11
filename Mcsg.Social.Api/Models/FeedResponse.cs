@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
-using Lib.Data.Enums;
+using Dtos;
 using Requests;
 
 public class FeedResponse : PostResponse
@@ -13,7 +13,7 @@ public class FeedResponse : PostResponse
 
     public string UserName { get; set; }
     public string FullName { get; set; }
-    public MetaDataResponse MetaData { get; set; }
+    public MetaDataDto MetaData { get; set; }
     public PostLinkResponse Link { get; set; }
     public int TotalResource { get; set; }
     public List<ResourceResponse> Resources { get; set; } = new List<ResourceResponse>();
@@ -26,7 +26,7 @@ public class FeedQueryDbResponse : FeedResponse
 
     public List<SubPostQueryDbResponse> SubPostDbs { get; set; }
 
-    public MetaDataQueryDbResponse MetaDataDb { get; set; }
+    public MetaDataQueryDto MetaDataDb { get; set; }
     public PostLinkDb LinkDb { get; set; }
     public ResourceType ResourceType { get; set; }
     public string ResourceUrl { get; set; }

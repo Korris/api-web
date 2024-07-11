@@ -3,18 +3,20 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.SeedWork.Constants;
+using Dtos;
 using Extensions;
 using Interfaces;
-using Models;
 
 public class LinkPreviewService : ILinkPreviewService
 {
     private readonly ILogger<LinkPreviewService> _logger;
+
     public LinkPreviewService(ILogger<LinkPreviewService> logger)
     {
         _logger = logger;
     }
-    public MetaDataResponse GetMetaDataByUrl(string url)
+
+    public MetaDataDto GetMetaDataByUrl(string url)
     {
         try
         {
@@ -29,7 +31,7 @@ public class LinkPreviewService : ILinkPreviewService
             var ogUrl = doc.GetUrl(url);
             var uri = new Uri(url);
 
-            return new MetaDataResponse()
+            return new MetaDataDto
             {
                 Title = title ?? "",
                 Description = description ?? "",
@@ -43,8 +45,9 @@ public class LinkPreviewService : ILinkPreviewService
             _logger.LogError(Error.E500, ex.Message);
 
             var uri = new Uri(url);
-            string host = uri.Host;
-            return new MetaDataResponse()
+            var host = uri.Host;
+
+            return new MetaDataDto
             {
                 Title = host,
                 Description = host,

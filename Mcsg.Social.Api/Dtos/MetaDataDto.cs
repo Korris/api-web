@@ -23,6 +23,11 @@ public class MetaDataDto
     public string? Description { get; set; }
 
     /// <summary>
+    /// Image
+    /// </summary>
+    public string? Image { get; set; }
+
+    /// <summary>
     /// Domain
     /// </summary>
     public string? Domain { get; set; }

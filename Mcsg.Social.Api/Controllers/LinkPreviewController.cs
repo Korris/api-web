@@ -2,8 +2,8 @@
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Dtos;
 using Interfaces;
-using Models;
 
 [ApiController]
 [Route("[controller]")]
@@ -16,7 +16,7 @@ public class LinkPreviewController : ControllerBase
         _linkPreviewService = linkPreviewService;
     }
     [HttpGet("get-metadata")]
-    public ActionResult<MetaDataResponse> GetMetaData(string url)
+    public ActionResult<MetaDataDto> GetMetaData(string url)
     {
         var result = _linkPreviewService.GetMetaDataByUrl(url);
         return Ok(result);

@@ -4,7 +4,6 @@ using Dtos;
 using Interfaces;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Models;
 
 public class MetaDataService : IMetaDataService
 {
@@ -13,7 +12,7 @@ public class MetaDataService : IMetaDataService
         _context = context;
     }
 
-    public async Task<MetaDataResponse> AddMetaDataToObject<T>(MetaDataDto request, Guid objId)
+    public async Task<MetaDataDto> AddMetaDataToObject<T>(MetaDataDto request, Guid objId)
     {
         var metaData = new MetaData
         {
@@ -53,7 +52,7 @@ public class MetaDataService : IMetaDataService
         await _context.MetaDatas.AddAsync(metaData);
         await _context.SaveChangesAsync();
 
-        return new MetaDataResponse
+        return new MetaDataDto
         {
             Description = metaData.Description,
             Domain = metaData.Domain,

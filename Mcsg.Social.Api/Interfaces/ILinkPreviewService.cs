@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
-using Models;
+using Dtos;
 
 public interface ILinkPreviewService
 {
-    MetaDataResponse GetMetaDataByUrl(string url);
+    MetaDataDto GetMetaDataByUrl(string url);
 }
