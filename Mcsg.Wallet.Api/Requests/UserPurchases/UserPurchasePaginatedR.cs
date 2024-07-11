@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
-using Lib.Common.Models;
+using Common.Core.Requests;
 
 public class UserPurchasePaginatedR : PaginatedR
 {

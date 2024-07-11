@@ -3,7 +3,7 @@
 namespace Mcsg.Social.Api.Requests;
 
 using Common.Core.Enums;
-using Lib.Common.Models;
+using Common.Core.Requests;
 
 public class TagTodayTrendingR : PaginatedR
 {

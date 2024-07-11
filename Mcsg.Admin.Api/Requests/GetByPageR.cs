@@ -2,7 +2,7 @@
 
 namespace Mcsg.Admin.Api.Requests;
 
-using Lib.Common.Models;
+using Common.Core.Requests;
 
 public class GetByPageR : PaginatedR
 {

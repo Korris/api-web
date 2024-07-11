@@ -2,7 +2,7 @@
 
 namespace Mcsg.Social.Api.Requests;
 
-using Lib.Common.Models;
+using Common.Core.Requests;
 
 public class CommentLoadR : PaginatedR
 {
