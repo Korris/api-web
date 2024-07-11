@@ -1,14 +1,17 @@
 ﻿namespace Mcsg.Social.Api.Models;
+
 public class RelatedBoxResponse : RelatedBox
 {
     public ReactionsResponse? Reaction { get; set; }
 }
+
 public class RelatedBoxQueryResponse : RelatedBox
 {
     public string? ReactionStr { get; set; }
     public int TotalReacts { get; set; }
 
 }
+
 public class RelatedBox
 {
     public string? ThumbnailUrl { get; set; }
