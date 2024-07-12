@@ -21,4 +21,5 @@ public interface IUserService
     Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR request);
     Task<bool> FollowUserAsync(Guid userId);
     Task<bool> UnFollowUserAsync(Guid userId);
+    Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(BasePageResultR req);
 }

@@ -83,7 +83,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
     [HttpGet("following")]
     public async Task<IActionResult> GetFollowingProfiles([FromQuery] BasePageResultR request)
     {
@@ -91,7 +90,14 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
+    [HttpGet("followed")]
+    public async Task<IActionResult> GetFollowedUser([FromQuery] BasePageResultR request)
+    {
+        var result = await _userService.GetFollowedProfileAsync(request);
+        return Ok(result);
+    }
+
+
     [HttpPost("follow/{userId}")]
     public async Task<IActionResult> FollowUser(Guid userId)
     {
@@ -99,7 +105,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
     [HttpPost("unfollow/{userId}")]
     public async Task<IActionResult> UnfollowUserAsync(Guid userId)
     {

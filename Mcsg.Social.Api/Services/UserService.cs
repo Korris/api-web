@@ -10,7 +10,6 @@ using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Constants;
-using Extensions;
 using Interfaces;
 using Lib.Common.Distributor;
 using Lib.Common.Models;
@@ -510,7 +509,8 @@ public partial class UserService : IUserService
                                 UserId = a.Id,
                                 ProfileName = a.ProfileName,
                                 Avatar = a.Avatar,
-                                UserName = a.UserName
+                                UserName = a.UserName,
+                                IsFollowing = true
                             };
 
         // Paging
@@ -520,6 +520,73 @@ public partial class UserService : IUserService
         // Update link MinIO
         foreach (var i in items)
         {
+            i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+        }
+        if (totalItems > 0)
+        {
+            res = new PagedResponse<UserFollowedResponse>(totalItems, req.PageNumber, req.PageSize);
+            res.Items = items;
+        }
+        else
+        {
+            res = new PagedResponse<UserFollowedResponse>(0);
+        }
+        return res;
+    }
+
+    public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(BasePageResultR req)
+    {
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var user = await _context.Users.FindAsync(ss.UserId);
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        PagedResponse<UserFollowedResponse> res;
+        var offset = req.PageSize * (req.PageNumber - 1);
+        var qUser = _context.UserAvailable;
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowingId == ss.UserId);
+
+        var userFollowed = from a in qUser
+                           join b in qUserFollow
+                             on a.Id equals b.UserFollowerId
+                           where b.UserFollowingId == ss.UserId
+                           select new UserFollowedResponse
+                           {
+                               UserId = a.Id,
+                               ProfileName = a.ProfileName,
+                               Avatar = a.Avatar,
+                               UserName = a.UserName,
+                           };
+
+        var qUserFollowing = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+
+        var userFollowing = from a in qUser
+                            join b in qUserFollowing
+                              on a.Id equals b.UserFollowingId
+                            where b.UserFollowerId == ss.UserId
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName,
+                                IsFollowing = true
+                            };
+        // Paging
+        var totalItems = userFollowed.Count();
+        var items = await userFollowed.Skip(offset).Take(req.PageSize).ToListAsync();
+
+        // Update link MinIO
+        foreach (var i in items)
+        {
+            i.IsFollowing = userFollowing.Any(p => p.UserId == i.UserId);
             i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
         }
         if (totalItems > 0)
@@ -610,7 +677,7 @@ public partial class UserService : IUserService
 
         if (userFollow == null || userFollow.IsDelete)
         {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+            return false;
         }
         else
         {
@@ -619,7 +686,7 @@ public partial class UserService : IUserService
             userFollow.LastModifiedBy = ss.UserId;
             _context.UserFollows.Update(userFollow);
             await _context.SaveChangesAsync();
-            return true;
+            return false;
         }
     }
 
