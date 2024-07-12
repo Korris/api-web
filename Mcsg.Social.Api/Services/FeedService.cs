@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -6,7 +7,6 @@ using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
-using AutoMapper;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -397,36 +397,36 @@ public partial class FeedService : IFeedService
 
             foreach (var resourceResponse in resourceResponses)
             {
-                if (resourceResponse != null)
+                if (resourceResponse == null)
                 {
-                    if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                    {
-                        resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
-                    }
-
-                    itemResponse.Resources.Add(resourceResponse);
-                    itemResponse.SubPosts.Add(new SubUploadFileDto
-                    {
-                        Files = new List<UploadFileDto>()
-                                {
-                                    new UploadFileDto()
-                                    {
-                                        Order = resourceResponse.Order,
-                                        SubPostHashId = resourceResponse.SubPostHashId,
-                                        HashId = resourceResponse.HashId,
-                                        Height = resourceResponse.Height,
-                                        Width = resourceResponse.Width,
-                                        Url = resourceResponse.Url,
-                                        Type = resourceResponse.Type,
-                                        Name = resourceResponse.Name
-                                    }
-                                }
-                    });
+                    continue;
                 }
+
+                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
+                {
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                }
+
+                itemResponse.Resources.Add(resourceResponse);
+                itemResponse.SubPosts.Add(new SubUploadFileDto
+                {
+                    Files = new List<UploadFileDto>() {
+                        new UploadFileDto() {
+                            Order = resourceResponse.Order,
+                            SubPostHashId = resourceResponse.SubPostHashId,
+                            HashId = resourceResponse.HashId,
+                            Height = resourceResponse.Height,
+                            Width = resourceResponse.Width,
+                            Url = resourceResponse.Url,
+                            Type = resourceResponse.Type,
+                            Name = resourceResponse.Name
+                        }
+                    }
+                });
             }
         }
         else if (link is not null)
@@ -835,18 +835,20 @@ public partial class FeedService : IFeedService
 
             foreach (var resourceResponse in resourceResponses)
             {
-                if (resourceResponse != null)
+                if (resourceResponse == null)
                 {
-                    if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                    {
-                        resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
-                    }
-                    itemResponse.Resources.Add(resourceResponse);
+                    continue;
                 }
+
+                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
+                {
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                }
+                itemResponse.Resources.Add(resourceResponse);
             }
         }
         else if (!string.IsNullOrEmpty(item.LinkUrl))
