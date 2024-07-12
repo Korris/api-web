@@ -503,41 +503,6 @@ LIMIT @PageSize
             }
         }
 
-        private string GetSingleFeedQuery
-        {
-            get
-            {
-                return @"SELECT 
-						p.""Id"", 
-						p.""Title"", 
-						p.""Body"",
-						p.""HashId"", 
-						p.""AuthorId"",
-						p.""AuthorName"",
-						p.""UserId"",
-						p.""Status"",
-						p.""ThumbnailUrl"",
-						p.""CoverUrl"",
-						p.""IsMature"",
-						p.""IsCompleted"",
-						p.""ViewCount"",
-						p.""ExternalCode"",
-						p.""ExternalResource"",
-						p.""Type"",
-						p.""IsDelete"",
-						p.""CreatedDate"", 
-						p.""CreatedBy"", 
-						p.""LastModifiedDate"", 
-						p.""LastModifiedBy"",
-						p.""CustomNote""
-						FROM public.""Posts"" p
-						WHERE 
-						p.""HashId"" = @HashId 
-							AND p.""Type"" = 0 
-							AND ""IsDelete"" = false";
-            }
-        }
-
         private string GetAllFeedByKeyword
         {
             get

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Web;
@@ -638,8 +639,10 @@ public partial class FeedService : IFeedService
                 }
             }
         }
+
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
+
         return result;
     }
 
@@ -665,34 +668,15 @@ public partial class FeedService : IFeedService
         var userAvatar = req.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        // GetSingleFeedQuery
-        if (string.IsNullOrEmpty(req.Content))
-        {
-            throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
-        }
-        //Check first post
+        var cleanHtml = req.Content.CleanHtml();
+        var content = HttpUtility.HtmlEncode(cleanHtml);
+
+        // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
-
-        var query = string.Format(GetSingleFeedQuery, _postRepository.TableName);
-        var post = await _postRepository.Connection.QueryFirstAsync<Post>
-            (query, new { HashId = hashId });
-
+        var post = await _context.PostAvailable.FirstOrDefaultAsync(p => p.HashId == hashId && p.Type == PostType.Feed);
         VerifyFeed(post, false, userId);
-        if (string.IsNullOrEmpty(req.Content))
-        {
-            throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
-        }
-
-        var cleanHtml = req.Content.CleanHtml();
-        var safePlainString = HttpUtility.HtmlEncode(cleanHtml);
-
-        post.Title = req.Title;
-        post.Body = safePlainString;
-        post.ThumbnailUrl = req.ThumbnailUrl;
-        post.CustomNote = req.CustomNote;
-        post.LastModifiedBy = userId;
-        post.LastModifiedDate = DateTime.UtcNow;
+        post.Update(req.Title, content, req.ThumbnailUrl, req.CustomNote, userId);
 
         var result = new FeedPostDto
         {
@@ -713,13 +697,13 @@ public partial class FeedService : IFeedService
             CustomNote = post.CustomNote
         };
 
-        await _postRepository.UpdateAsync(post);
+        await _context.SaveChangesAsync();
 
-        //if (feedPostReq.MetaData != null)
-        //{
-        //	feedPostReq.MetaData.Description = HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
-        //	result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(feedPostReq.MetaData, post.Id);
-        //}
+        /*if (req.MetaData != null)
+        {
+            req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
+            result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
+        }*/
 
         // Add tag to feed
         if (req.Tags != null && req.Tags.Count > 0)
@@ -738,6 +722,7 @@ public partial class FeedService : IFeedService
             await _fileService.RemoveFileAsync(post.Id, userName);
             result.TotalResource = 0;
         }
+
         // Add background sound to feed
         if (req.SoundId != null && req.SoundId != Guid.Empty)
         {
@@ -792,8 +777,10 @@ public partial class FeedService : IFeedService
                 }
             }
         }
+
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
+
         return result;
     }
 
@@ -1033,25 +1020,23 @@ public partial class FeedService : IFeedService
 
     private void VerifyFeed(Post post, bool checkCompleted, Guid userId)
     {
-        if (post != null)
-        {
-            if (post.IsDelete)
-            {
-                throw new BadRequestException(ApiErrorCode.POST_HAS_DELETED, ApiErrorMessage.POST_HAS_DELETED);
-            }
-            if (post.CreatedBy != userId)
-            {
-                //TODO check permission
-                //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
-            }
-            if (checkCompleted && (post.IsCompleted ?? false))
-            {
-                throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
-            }
-        }
-        else
+        if (post == null)
         {
             throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+        }
+
+        if (post.IsDelete)
+        {
+            throw new BadRequestException(ApiErrorCode.POST_HAS_DELETED, ApiErrorMessage.POST_HAS_DELETED);
+        }
+        if (post.CreatedBy != userId)
+        {
+            //TODO check permission
+            //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+        }
+        if (checkCompleted && (post.IsCompleted ?? false))
+        {
+            throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
         }
     }
 
