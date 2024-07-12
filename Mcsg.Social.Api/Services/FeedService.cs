@@ -28,6 +28,8 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class FeedService : IFeedService
 {
+    #region -- Methods --
+
     public FeedService(
         McsgDbContext context,
         ISetting setting,
@@ -67,7 +69,6 @@ public partial class FeedService : IFeedService
         _mapper = mapper;
     }
 
-    #region Load data
     public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
     {
         try
@@ -133,6 +134,7 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
     public async Task<PagedResponse<FeedDto>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
     {
         try
@@ -443,6 +445,7 @@ public partial class FeedService : IFeedService
 
         return itemResponse;
     }
+
     public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
@@ -510,13 +513,12 @@ public partial class FeedService : IFeedService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
     public FeedDisplayConfig GetFeedDisplayConfig()
     {
         return _feedDisplayConfig;
     }
-    #endregion
 
-    #region Modify data
     public async Task<FeedDto> PostFeedAsync(PostCreateR req)
     {
         var vr = new PostCreateV().Validate(req);
@@ -640,6 +642,7 @@ public partial class FeedService : IFeedService
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
         return result;
     }
+
     public async Task<FeedDto> UpdateFeedAsync(string hashId, PostUpdateR req)
     {
         var vr = new PostUpdateV().Validate(req);
@@ -793,17 +796,17 @@ public partial class FeedService : IFeedService
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
         return result;
     }
+
     public async Task<bool> DeleteFeedAsync(Guid postId)
     {
         return await _postService.Delete(postId);
     }
+
     public async Task<bool> ReportFeedAsync(FeedReportPostReq req)
     {
         return await _postService.ReportPostAsync(req);
     }
-    #endregion
 
-    #region Map Data
     public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item)
     {
         var itemResponse = new FeedDto()
@@ -888,9 +891,7 @@ public partial class FeedService : IFeedService
 
         return itemResponse;
     }
-    #endregion
 
-    #region Private method
     private FeedDto MappingFeedRespone(FeedQueryDbDto item, BackgroundMedia.SearchDto? sound)
     {
         if (item == null)
@@ -1053,6 +1054,7 @@ public partial class FeedService : IFeedService
             throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
         }
     }
+
     #endregion
 
     #region -- Fields --
