@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Lib.Common.Extensions
+﻿namespace Mcsg.Lib.Common.Extensions;
+
+public static class EnumExtensions
 {
-    public static class EnumExtensions
+    public static T ToEnum<T>(this string text)
     {
-        public static T ToEnum<T>(this string text)
-        {
-            return (T)Enum.Parse(typeof(T), text);
-        }
+        return (T)Enum.Parse(typeof(T), text);
     }
 }

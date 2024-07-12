@@ -1,16 +1,15 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Lib.Common.Extensions
+namespace Mcsg.Lib.Common.Extensions;
+
+public static class JsonExtensions
 {
-    public static class JsonExtensions
+    public static string ToJson(this object obj)
     {
-        public static string ToJson(this object obj)
-        {
-            return JsonConvert.SerializeObject(obj);
-        }
-        public static T FromJson<T>(this string json)
-        {
-            return JsonConvert.DeserializeObject<T>(json);
-        }
+        return JsonConvert.SerializeObject(obj);
+    }
+    public static T FromJson<T>(this string json)
+    {
+        return JsonConvert.DeserializeObject<T>(json);
     }
 }

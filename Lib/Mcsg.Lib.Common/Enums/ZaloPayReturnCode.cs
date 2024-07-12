@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Lib.Common.Enums
+﻿namespace Mcsg.Lib.Common.Enums;
+
+public enum ZaloPayReturnCode
 {
-    public enum ZaloPayReturnCode
-    {
-        SUCCESS = 1,
-        FAIL = 2,
-        PROCESSING = 3
-    }
+    SUCCESS = 1,
+    FAIL = 2,
+    PROCESSING = 3
 }

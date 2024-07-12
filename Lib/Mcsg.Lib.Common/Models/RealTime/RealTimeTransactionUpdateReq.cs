@@ -1,17 +1,16 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
+﻿namespace Mcsg.Lib.Common.Models.RealTime;
 
-namespace Mcsg.Lib.Common.Models.RealTime
+using Mcsg.Lib.Data.Wallet.Enums;
+
+public class RealTimeTransactionUpdateReq
 {
-    public class RealTimeTransactionUpdateReq
-    {
-        public Guid UserId { get; set; }
-        public PaymentMethodType PaymentType { get; set; }
-        public string TransactionId { get; set; } = string.Empty;
-        public string ReferenceNumber { get; set; } = string.Empty;
-        public TransactionStatus TransactionStatus { get; set; }
-        public string WalletAddress { get; set; }
-        public float Point { get; set; }
-        public float RewardPoint { get; set; }
-        public float TotalPoint { get; set; }
-    }
+    public Guid UserId { get; set; }
+    public PaymentMethodType PaymentType { get; set; }
+    public string TransactionId { get; set; } = string.Empty;
+    public string ReferenceNumber { get; set; } = string.Empty;
+    public TransactionStatus TransactionStatus { get; set; }
+    public string WalletAddress { get; set; }
+    public float Point { get; set; }
+    public float RewardPoint { get; set; }
+    public float TotalPoint { get; set; }
 }

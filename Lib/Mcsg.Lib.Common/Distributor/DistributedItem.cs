@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Distributor
+﻿namespace Mcsg.Lib.Common.Distributor;
+
+public abstract class DistributedItem
 {
-    public abstract class DistributedItem
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

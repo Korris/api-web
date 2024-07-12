@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Interfaces
+﻿namespace Mcsg.Lib.Common.Interfaces;
+
+public interface IValidator<T>
 {
-    public interface IValidator<T>
-    {
-        Task OnValidate(T data);
-    }
+    Task OnValidate(T data);
 }

@@ -1,24 +1,23 @@
-﻿namespace Mcsg.Lib.Common.Models
+﻿namespace Mcsg.Lib.Common.Models;
+
+public class SyncData
 {
-    public class SyncData
-    {
-        public IDictionary<object, object> Data { get; set; }
-        public SyncTargetDb TargetDb { get; set; }
-        public SyncTargetEntity TargetEntity { get; set; }
-    }
+    public IDictionary<object, object> Data { get; set; }
+    public SyncTargetDb TargetDb { get; set; }
+    public SyncTargetEntity TargetEntity { get; set; }
+}
 
-    public enum SyncTargetDb
-    {
-        WALLETDB,
-        MAINDB
-    }
+public enum SyncTargetDb
+{
+    WALLETDB,
+    MAINDB
+}
 
-    public enum SyncTargetEntity
-    {
-        WALLET_USER_INFO,
-        WALLET_USER_REWARD,
-        WALLET_USER_BUY_PREMIUM,
-        WALLET_USER_BUY_CHAPTER,
-        WALLET_USER_BUY_SERIES,
-    }
+public enum SyncTargetEntity
+{
+    WALLET_USER_INFO,
+    WALLET_USER_REWARD,
+    WALLET_USER_BUY_PREMIUM,
+    WALLET_USER_BUY_CHAPTER,
+    WALLET_USER_BUY_SERIES,
 }

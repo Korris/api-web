@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Lib.Common.Enums
+﻿namespace Mcsg.Lib.Common.Enums;
+
+public enum HangfireDatabase
 {
-    public enum HangfireDatabase
-    {
-        PostgreSQL,
-        MicrosoftSQL
-    }
+    PostgreSQL,
+    MicrosoftSQL
 }

@@ -1,7 +1,8 @@
-﻿using Mcsg.Lib.Common.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Mcsg.Lib.Common.DataAnnotationExtensions;
+
+using Models;
 
 public class RequireEmailOrPhoneAttribute : ValidationAttribute
 {

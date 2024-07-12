@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Lib.Common.Constants
+﻿namespace Mcsg.Lib.Common.Constants;
+
+public class ApiStatus
 {
-    public class ApiStatus
-    {
-        public const string Successful = "Successful";
-        public const string Failure = "Failure";
-    }
+    public const string Successful = "Successful";
+    public const string Failure = "Failure";
 }

@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Lib.Common.Enums
+﻿namespace Mcsg.Lib.Common.Enums;
+
+public enum GenderEnum
 {
-    public enum GenderEnum
-    {
-        Male,
-        Female
-    }
+    Male,
+    Female
 }
