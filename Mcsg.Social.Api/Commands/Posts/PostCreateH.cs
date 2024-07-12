@@ -192,7 +192,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
 
-        res.SetSuccess(request);
+        res.SetSuccess(result);
         return res;
     }
 

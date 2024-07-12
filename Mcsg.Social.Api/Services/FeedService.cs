@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Dapper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Web;
@@ -12,7 +11,6 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
-using Constants;
 using Dtos;
 using Enums;
 using Extensions;
@@ -24,7 +22,6 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
-using Validators;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -526,270 +523,6 @@ public partial class FeedService : IFeedService
         return _feedDisplayConfig;
     }
 
-    public async Task<FeedDto> PostFeedAsync(PostCreateR req)
-    {
-        var vr = new PostCreateV().Validate(req);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (req.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var userName = req.UserName;
-        var userId = req.UserId.Value;
-        var profileName = req.ProfileName;
-        var profileId = req.ProfileId;
-        var userFolder = req.UserFolder;
-        var userAvatar = req.UserAvatar;
-        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
-
-        var cleanHtml = req.Content.CleanHtml();
-        var content = HttpUtility.HtmlEncode(cleanHtml);
-
-        // Check first post
-        var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
-
-        // Create
-        var post = Post.Create(req.Title, content, req.ThumbnailUrl, profileName, req.CustomNote, userId);
-        await _context.Posts.AddAsync(post);
-        await _context.SaveChangesAsync();
-
-        var result = new FeedPostDto
-        {
-            Id = post.Id,
-            Title = req.Title,
-            HashId = post.HashId,
-            UserId = userId,
-            ThumbnailUrl = post.ThumbnailUrl,
-            CreatedDate = DateTime.UtcNow,
-            Status = PostStatus.Public,
-            Body = cleanHtml,
-            FullName = profileName,
-            AuthorName = profileName,
-            IsCurrentUserIsAuthor = true,
-            ProfileId = profileId,
-            UserAvatar = userAvatar,
-            Rewards = rewards,
-            CustomNote = post.CustomNote
-        };
-
-        if (req.MetaData != null)
-        {
-            req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
-            result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
-        }
-        if (req.Tags != null && req.Tags.Count > 0)
-        {
-            result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags, userId)).ToArray();
-        }
-        if (req.Files != null && req.Files.Count > 0)
-        {
-            result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, userId, userFolder, userAvatar, userName, post.Id, post.HashId));
-            result.TotalResource = result.SubPosts?.Count ?? 0;
-        }
-
-        if (req.SoundId != null && req.SoundId != Guid.Empty)
-        {
-            await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
-        }
-        else
-        {
-            await _soundService.RemoveSoundAsync(post.Id);
-        }
-
-        // Detech video link content feed
-        if (req.Files == null || req.Files.Count == 0)
-        {
-            result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
-        }
-        else
-        {
-            var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
-            if (removeLink)
-            {
-                result.Link = new PostLinkDto();
-            }
-        }
-
-        var resourceResponse = new List<ResourceDto>();
-        foreach (var subPost in result.SubPosts)
-        {
-            if (subPost.Files != null)
-            {
-                foreach (var file in subPost.Files)
-                {
-                    var resource = new ResourceDto()
-                    {
-                        Name = file?.Name ?? "",
-                        HashId = file?.HashId,
-                        SubPostHashId = file?.SubPostHashId,
-                        Status = file.Status,
-                        Type = file.Type,
-                        Url = file?.Url ?? "",
-                        Width = file.Width,
-                        ShareUrl = file.ShareUrl,
-                        Height = file.Height,
-                        Order = file.Order
-                    };
-
-                    if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
-                    {
-                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
-                    }
-                    resourceResponse.Add(resource);
-                }
-            }
-        }
-
-        result.Resources = resourceResponse;
-        await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
-
-        return result;
-    }
-
-    public async Task<FeedDto> UpdateFeedAsync(string hashId, PostUpdateR req)
-    {
-        var vr = new PostUpdateV().Validate(req);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (req.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var userName = req.UserName;
-        var userId = req.UserId.Value;
-        var profileName = req.ProfileName;
-        var profileId = req.ProfileId;
-        var userFolder = req.UserFolder;
-        var userAvatar = req.UserAvatar;
-        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
-
-        var cleanHtml = req.Content.CleanHtml();
-        var content = HttpUtility.HtmlEncode(cleanHtml);
-
-        // Check first post
-        var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
-
-        var post = await _context.PostAvailable.FirstOrDefaultAsync(p => p.HashId == hashId && p.Type == PostType.Feed);
-        VerifyFeed(post, false, userId);
-        post.Update(req.Title, content, req.ThumbnailUrl, req.CustomNote, userId);
-
-        var result = new FeedPostDto
-        {
-            Id = post.Id,
-            Title = req.Title,
-            HashId = hashId,
-            UserId = userId,
-            ThumbnailUrl = post.ThumbnailUrl,
-            CreatedDate = DateTime.UtcNow,
-            Status = PostStatus.Public,
-            Body = cleanHtml,
-            FullName = profileName,
-            AuthorName = profileName,
-            IsCurrentUserIsAuthor = true,
-            ProfileId = profileId,
-            UserAvatar = userAvatar,
-            Rewards = rewards,
-            CustomNote = post.CustomNote
-        };
-
-        await _context.SaveChangesAsync();
-
-        /*if (req.MetaData != null)
-        {
-            req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
-            result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
-        }*/
-
-        // Add tag to feed
-        if (req.Tags != null && req.Tags.Count > 0)
-        {
-            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags, userId)).ToArray();
-        }
-
-        // Add file to feed
-        if (req.Files != null && req.Files.Count > 0)
-        {
-            result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, userId, userName, userFolder, userAvatar, post.Id, post.HashId));
-            result.TotalResource = result.SubPosts?.Count ?? 0;
-        }
-        else
-        {
-            await _fileService.RemoveFileAsync(post.Id, userName);
-            result.TotalResource = 0;
-        }
-
-        // Add background sound to feed
-        if (req.SoundId != null && req.SoundId != Guid.Empty)
-        {
-            await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
-        }
-        else
-        {
-            await _soundService.RemoveSoundAsync(post.Id);
-        }
-
-        // Detech video link content feed
-        if (req.Files == null || req.Files.Count == 0)
-        {
-            result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
-        }
-        else
-        {
-            var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
-            if (removeLink)
-            {
-                result.Link = new PostLinkDto();
-            }
-        }
-
-        var resourceResponse = new List<ResourceDto>();
-        foreach (var subPost in result.SubPosts)
-        {
-            if (subPost.Files != null)
-            {
-                foreach (var file in subPost.Files)
-                {
-                    var resource = new ResourceDto()
-                    {
-                        Body = subPost.Body,
-                        Name = file?.Name ?? "",
-                        HashId = file?.HashId,
-                        Status = file.Status,
-                        Type = file.Type,
-                        Url = file?.Url ?? "",
-                        Width = file.Width,
-                        ShareUrl = file.ShareUrl,
-                        Height = file.Height,
-                        Order = file.Order,
-                        SubPostHashId = subPost.HashId,
-                    };
-
-                    if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
-                    {
-                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
-                    }
-                    resourceResponse.Add(resource);
-                }
-            }
-        }
-
-        result.Resources = resourceResponse;
-        await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
-
-        return result;
-    }
-
     public async Task<bool> DeleteFeedAsync(Guid postId)
     {
         return await _postService.Delete(postId);
@@ -1024,27 +757,6 @@ public partial class FeedService : IFeedService
                 .Replace("[AdditionalTotalCondition]", additionalTotalCondition);
         }
         return query;
-    }
-
-    private void VerifyFeed(Post post, bool checkCompleted, Guid userId)
-    {
-        if (post == null)
-        {
-            throw new NotFoundException(E204, M204);
-        }
-        if (post.IsDelete)
-        {
-            throw new BadRequestException(E205, M205);
-        }
-        if (post.CreatedBy != userId)
-        {
-            //TODO check permission
-            //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
-        }
-        if (checkCompleted && (post.IsCompleted ?? false))
-        {
-            throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
-        }
     }
 
     #endregion
