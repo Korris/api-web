@@ -10,7 +10,7 @@ public interface IFeedService
 {
     Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType);
     Task<PagedResponse<FeedDto>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq);
-    Task<FeedDto> GetFeedAsync(string hashId);
+    Task<FeedDto> GetFeedAsync(string hashId, Guid userId);
     Task<PagedResponse<FeedDto>> GetFeedByKeywordAsync(string tagName, FeedSearchKeywordR feedLoadReq);
     FeedDisplayConfig GetFeedDisplayConfig();
     Task<FeedDto> PostFeedAsync(PostCreateR req);
@@ -19,6 +19,6 @@ public interface IFeedService
 
     Task<bool> ReportFeedAsync(FeedReportPostReq req);
     FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item);
-    Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId);
+    Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId);
     Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds);
 }

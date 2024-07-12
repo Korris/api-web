@@ -20,7 +20,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
@@ -32,57 +31,42 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class FeedService : IFeedService
 {
-    private readonly IRepository<Post> _postRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ITagService _tagService;
-    private readonly IPostService _postService;
-    private readonly IFileService _fileService;
-    private readonly ISmartCountService _smartCountService;
-    private readonly IViewHistoryService _viewHistoryService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly ISmartLookupService _smartLookupService;
-    private readonly ISoundService _soundService;
-    private readonly IConfiguration _configuration;
-    private readonly FeedDisplayConfig _feedDisplayConfig;
-    private readonly IPostLinkService _postLinkService;
-    private readonly IMapper _mapper;
-
-    public FeedService(IUnitOfWork unitOfWork,
-        ITagService tagService,
-        IPostService postService,
-        IFileService fileService,
-        ISmartCountService smartCountService,
-        ICurrentUserService currentUserService,
-        ISmartLookupService smartLookupService,
-        IViewHistoryService viewHistoryService,
-        IPostLinkService postLinkService,
-        ISoundService soundService,
-        IConfiguration configuration,
-        IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
+    public FeedService(
         McsgDbContext context,
         ISetting setting,
         IStorageClient sc,
+        IPostService postService,
         IMetaDataService metaDataService,
-        IMapper mapper
-        )
+        ITagService tagService,
+        IFileService fileService,
+        ISoundService soundService,
+        IPostLinkService postLinkService,
+        ISmartLookupService smartLookupService,
+        IUnitOfWork unitOfWork,
+        ISmartCountService smartCountService,
+        IViewHistoryService viewHistoryService,
+        IConfiguration configuration,
+        IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
+        IMapper mapper)
     {
-        _postRepository = unitOfWork.GetRepository<Post>();
-        _unitOfWork = unitOfWork;
-        _tagService = tagService;
-        _postService = postService;
-        _fileService = fileService;
-        _smartCountService = smartCountService;
-        _viewHistoryService = viewHistoryService;
-        _currentUserService = currentUserService;
-        _smartLookupService = smartLookupService;
-        _soundService = soundService;
-        _configuration = configuration;
-        _feedDisplayConfig = feedDisplayConfig.CurrentValue;
-        _postLinkService = postLinkService;
         _context = context;
         _setting = setting;
         _sc = sc;
+        _postService = postService;
         _metaDataService = metaDataService;
+        _tagService = tagService;
+        _fileService = fileService;
+        _soundService = soundService;
+        _postLinkService = postLinkService;
+        _smartLookupService = smartLookupService;
+
+        _unitOfWork = unitOfWork;
+        _postRepository = unitOfWork.GetRepository<Post>();
+
+        _smartCountService = smartCountService;
+        _viewHistoryService = viewHistoryService;
+        _configuration = configuration;
+        _feedDisplayConfig = feedDisplayConfig.CurrentValue;
         _mapper = mapper;
     }
 
@@ -199,9 +183,8 @@ public partial class FeedService : IFeedService
         }
     }
 
-    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId)
+    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId)
     {
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
         var query = $@"WITH SubPostsCount AS (
                             SELECT ""PostId"", 
                                    COUNT(*) AS total_subposts 
@@ -317,7 +300,7 @@ public partial class FeedService : IFeedService
         return data;
     }
 
-    public async Task<FeedDto> GetFeedAsync(string hashId)
+    public async Task<FeedDto> GetFeedAsync(string hashId, Guid userId)
     {
         var query = string.Format(GetFeedQuery, _postRepository.TableName);
 
@@ -368,18 +351,17 @@ public partial class FeedService : IFeedService
         {
             throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
         }
-        var currentUserId = _currentUserService?.Session?.UserId;
-        if (currentUserId != null)
-        {
-            //await _viewHistoryService.QueueAddView(currentUserId??Guid.Empty, dbFeed.Id, EntityType.POST, "", EntitySubType.SUB1);
-        }
-        if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != currentUserId))
+
+        //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
+
+        if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
             throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
         }
 
         return MappingFeedRespone(dbFeed, sound);
     }
+
     public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res)
     {
         var itemResponse = new FeedBoxResponse()
@@ -713,7 +695,7 @@ public partial class FeedService : IFeedService
         var post = await _postRepository.Connection.QueryFirstAsync<Post>
             (query, new { HashId = hashId });
 
-        VerifyFeed(post, false);
+        VerifyFeed(post, false, userId);
         if (string.IsNullOrEmpty(req.Content))
         {
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
@@ -1083,16 +1065,16 @@ public partial class FeedService : IFeedService
         }
         return query;
     }
-    private void VerifyFeed(Post post, bool checkCompleted)
+
+    private void VerifyFeed(Post post, bool checkCompleted, Guid userId)
     {
-        var currentUserId = _currentUserService.Session.UserId;
         if (post != null)
         {
             if (post.IsDelete)
             {
                 throw new BadRequestException(ApiErrorCode.POST_HAS_DELETED, ApiErrorMessage.POST_HAS_DELETED);
             }
-            if (post.CreatedBy != currentUserId)
+            if (post.CreatedBy != userId)
             {
                 //TODO check permission
                 //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
@@ -1127,9 +1109,47 @@ public partial class FeedService : IFeedService
     private readonly IStorageClient _sc;
 
     /// <summary>
+    /// Post service
+    /// </summary>
+    private readonly IPostService _postService;
+
+    /// <summary>
     /// MetaData service
     /// </summary>
     private readonly IMetaDataService _metaDataService;
+
+    /// <summary>
+    /// Tag service
+    /// </summary>
+    private readonly ITagService _tagService;
+
+    /// <summary>
+    /// File service
+    /// </summary>
+    private readonly IFileService _fileService;
+
+    /// <summary>
+    /// Sound service
+    /// </summary>
+    private readonly ISoundService _soundService;
+
+    /// <summary>
+    /// PostLink service
+    /// </summary>
+    private readonly IPostLinkService _postLinkService;
+
+    /// <summary>
+    /// SmartLookup service
+    /// </summary>
+    private readonly ISmartLookupService _smartLookupService;
+
+    private readonly IRepository<Post> _postRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ISmartCountService _smartCountService;
+    private readonly IViewHistoryService _viewHistoryService;
+    private readonly IConfiguration _configuration;
+    private readonly FeedDisplayConfig _feedDisplayConfig;
+    private readonly IMapper _mapper;
 
     #endregion
 }

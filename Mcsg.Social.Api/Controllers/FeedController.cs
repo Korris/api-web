@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -81,14 +82,16 @@ public class FeedController : ControllerBase
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetFeed(string hashId)
     {
-        var result = await _feedService.GetFeedAsync(hashId);
+        var req = new BaseR(HttpContext);
+        var result = await _feedService.GetFeedAsync(hashId, req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 
     [HttpGet("subpost/{hashId}")]
     public async Task<IActionResult> GetFeedSubPost(string hashId)
     {
-        var result = await _feedService.GetFeedSubPostAsync(hashId);
+        var req = new BaseR(HttpContext);
+        var result = await _feedService.GetFeedSubPostAsync(hashId, req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 
