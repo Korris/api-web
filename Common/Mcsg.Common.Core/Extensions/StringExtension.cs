@@ -567,11 +567,11 @@ public static class StringExtension
     }
 
     /// <summary>
-    /// 
+    /// Parse link to embed
     /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static string ParseLinkToEmbed(string str)
+    /// <param name="str">String</param>
+    /// <returns>Return the result</returns>
+    public static string ParseLinkToEmbed(this string str)
     {
         //here we pass through all of the regex
         MatchCollection HyperLinkmatches = HyperlinkRegex.Matches(str);
@@ -600,17 +600,17 @@ public static class StringExtension
             {
                 str = str.Replace(match.Value, "<a target='_blank' href='" + match.Value + "'>" + match.Value + "</a>");
             }
-
         }
+
         return str;
     }
 
     /// <summary>
-    /// 
+    /// Get video link
     /// </summary>
-    /// <param name="str"></param>
-    /// <param name="website"></param>
-    /// <returns></returns>
+    /// <param name="str">String</param>
+    /// <param name="website">VideoWebsite</param>
+    /// <returns>Return the result</returns>
     public static List<string> GetVideoLink(this string str, VideoWebsite website)
     {
         var links = new List<string>();
@@ -618,7 +618,6 @@ public static class StringExtension
         MatchCollection HyperLinkmatches = HyperlinkRegex.Matches(str);
         foreach (Match match in HyperLinkmatches)
         {
-
             Match youtubeMatch = YoutubeVideoRegex.Match(match.Value);
             Match vimeoMatch = VimeoVideoRegex.Match(match.Value);
 
