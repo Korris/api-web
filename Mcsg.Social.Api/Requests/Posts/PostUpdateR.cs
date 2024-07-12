@@ -18,4 +18,12 @@ namespace Mcsg.Social.Api.Requests;
 /// </summary>
 public class PostUpdateR : PostFormBase
 {
+    #region -- Properties --
+
+    /// <summary>
+    /// HashId
+    /// </summary>
+    public string? HashId { get; set; }
+
+    #endregion
 }

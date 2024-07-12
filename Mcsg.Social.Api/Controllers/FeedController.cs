@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
@@ -13,14 +14,14 @@ public class FeedController : ControllerBase
 {
     #region -- Methods --
 
-    public FeedController(IFeedService feedService, IPostReactService postReactService)
+    public FeedController(IMediator mediator, IFeedService feedService, IPostReactService postReactService)
     {
+        _mediator = mediator;
         _feedService = feedService;
         _postReactService = postReactService;
     }
 
-    [HttpPost]
-    [Authorize]
+    [HttpPost, Authorize]
     public async Task<IActionResult> PostFeed(PostCreateR req)
     {
         req.Analyze(HttpContext);
@@ -28,8 +29,7 @@ public class FeedController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{hashId}")]
-    [Authorize]
+    [HttpPut("{hashId}"), Authorize]
     public async Task<IActionResult> UpdateFeed(string hashId, PostUpdateR req)
     {
         req.Analyze(HttpContext);
@@ -128,6 +128,11 @@ public class FeedController : ControllerBase
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly IFeedService _feedService;
 
