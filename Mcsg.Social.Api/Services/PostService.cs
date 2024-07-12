@@ -16,14 +16,12 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Enums;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Analytic;
 using Lib.Data.Analytic.Entities;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -1050,7 +1048,81 @@ public partial class PostService : IPostService
                                                 .Select(p => p.UserFollowerId)
                                                 .ToListAsync();
 
-        return new List<NewsFeedDto>();
+        var query = @"select u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+                    p.""HashId"" as HashPostId,
+                    FALSE as IsSubPost , 
+                    NULL as Order
+                    from ""PostComments"" pc 
+                    left join ""Posts"" p on  pc.""PostId"" = p.""Id""
+                    left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
+                    WHERE pc.""CreatedBy"" = ANY(@UserIds)
+                    AND pc.""CreatedDate"" < now()
+                    AND pc.""CreatedDate"" > @FromDate
+                    AND p.""IsDelete"" = false
+                    AND pc.""IsDelete"" = false
+                    UNION 
+                    select u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"", 
+                    p.""HashId"" as HashPostId,
+                    TRUE as IsSubPost, 
+                    sp.""Order""
+                    from ""SubPostComments"" spc 
+                    left join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
+                    LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
+                    left join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
+                    WHERE spc.""CreatedBy"" = ANY(@UserIds)
+                    AND spc.""CreatedDate"" < now()
+                    AND spc.""CreatedDate"" > @FromDate
+                    AND p.""IsDelete"" = false
+                    AND sp.""IsDelete"" = false
+                    AND spc.""IsDelete"" = false
+                    Order by ""CreatedDate"" desc
+                    LIMIT 2";
+
+        var data = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(query, new
+        {
+            FromDate = DateTime.Today,
+            UserIds = userFollowingIds
+        });
+        var amountDataNeedToTake = data != null ? amount - data.Count() : amount;
+        var queryDataNeedToTake = @"select u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+                        p.""HashId"" as HashPostId,
+                        FALSE as IsSubPost, NULL as Order,
+                        COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
+                         RANDOM() AS sort_key
+                        FROM ""PostComments"" pc 
+                        LEFT JOIN ""Posts"" p on  pc.""PostId"" = p.""Id""
+						LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
+                        WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
+                        AND p.""IsDelete"" = false
+                        AND pc.""IsDelete"" = false
+						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
+                        UNION 
+                        SELECT u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",
+                        p.""HashId"" as HashPostId,
+                        TRUE as IsSubPost, sp.""Order"",
+						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
+                        RANDOM() AS sort_key
+                        FROM ""SubPostComments"" spc 
+                        LEFT join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
+					    LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+                        LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
+                        LEFT join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
+                        WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds]) 	
+                        AND p.""IsDelete"" = false
+                        AND sp.""IsDelete"" = false
+                        AND spc.""IsDelete"" = false
+					    GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",sp.""Order""
+                        ORDER BY sort_key
+                        LIMIT @Limit";
+
+        var commentIds = data.Select(p => p.Id).ToArray();
+        var dataNeedToTake = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(queryDataNeedToTake, new
+        {
+            CommentIds = amountDataNeedToTake < amount ? commentIds : [],
+            Limit = amountDataNeedToTake
+        });
+        return data.Concat(dataNeedToTake).ToList();
     }
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input)

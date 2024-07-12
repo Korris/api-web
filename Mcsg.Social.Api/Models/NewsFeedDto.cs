@@ -9,8 +9,11 @@ public class NewsFeedDto
     public string? Body { get; set; }
     public string? HashId { get; set; }
     public string? HashPostId { get; set; }
+    public string? ProfileName { get; set; }
+    public bool IsSubPost { get; set; }
     public DateTime CreatedDate { get; set; }
     public PostType Type { get; set; }
     public Guid Id { get; set; }
+    public int? Order { get; set; }
 }
 
