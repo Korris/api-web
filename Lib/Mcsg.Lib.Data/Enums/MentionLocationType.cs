@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum MentionLocationType
 {
-    public enum MentionLocationType
-    {
-        Feed = 1,
-        Comic = 2,
-        Story = 3,
-        PostComment = 4,
-        SubPostComment = 5,
-        PostCommentReply = 6,
-        SubPostCommentReply = 7
-    }
+    Feed = 1,
+    Comic = 2,
+    Story = 3,
+    PostComment = 4,
+    SubPostComment = 5,
+    PostCommentReply = 6,
+    SubPostCommentReply = 7
 }

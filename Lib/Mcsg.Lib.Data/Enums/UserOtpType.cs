@@ -1,12 +1,11 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum UserOtpType
 {
-    public enum UserOtpType
-    {
-        VerifyEmail,
-        VerifyPhone,
-        ResetByEmail,
-        ResetByPhone,
-        ConfirmEmail,
-        ConfirmPhone,
-    }
+    VerifyEmail,
+    VerifyPhone,
+    ResetByEmail,
+    ResetByPhone,
+    ConfirmEmail,
+    ConfirmPhone,
 }

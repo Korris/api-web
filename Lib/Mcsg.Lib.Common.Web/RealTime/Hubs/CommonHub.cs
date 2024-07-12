@@ -1,29 +1,28 @@
-﻿using Mcsg.Lib.Common.Web.Security;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Mcsg.Lib.Common.Web.RealTime.Hubs
+namespace Mcsg.Lib.Common.Web.RealTime.Hubs;
+
+using Security;
+
+public class CommonHub : Hub
 {
-    public class CommonHub : Hub
+    private readonly ICurrentUserService _currentUserService;
+    public CommonHub(ICurrentUserService currentUserService)
     {
-        private readonly ICurrentUserService _currentUserService;
-        public CommonHub(ICurrentUserService currentUserService)
-        {
-            _currentUserService = currentUserService;
-        }
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.All.SendAsync("CommonHub-onConnected", $"ClientID: {Context.ConnectionId}");
+        _currentUserService = currentUserService;
+    }
+    public override async Task OnConnectedAsync()
+    {
+        await Clients.All.SendAsync("CommonHub-onConnected", $"ClientID: {Context.ConnectionId}");
 
-            var user = await _currentUserService.GetCurrentUserAsync();
-            if (user != null)
-            {
-                await JoinGroup(user.UserId.ToString());
-            }
-        }
-        private async Task JoinGroup(string group)
+        var user = await _currentUserService.GetCurrentUserAsync();
+        if (user != null)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, group);
+            await JoinGroup(user.UserId.ToString());
         }
+    }
+    private async Task JoinGroup(string group)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, group);
     }
 }

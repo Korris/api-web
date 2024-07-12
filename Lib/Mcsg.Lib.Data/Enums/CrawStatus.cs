@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum CrawStatus
 {
-    public enum CrawStatus
-    {
-        HasNew = 0,
-        InQueue = 1,
-        Processing = 2,
-        Done = 3
-    }
+    HasNew = 0,
+    InQueue = 1,
+    Processing = 2,
+    Done = 3
 }

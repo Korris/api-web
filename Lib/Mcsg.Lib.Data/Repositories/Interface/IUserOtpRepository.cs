@@ -1,18 +1,17 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-using Mcsg.Lib.Data.Enums;
+﻿namespace Mcsg.Lib.Data.Repositories;
 
-namespace Mcsg.Lib.Data.Repositories
+using Domain.Entities;
+using Enums;
+
+public interface IUserOtpRepository : IRepository<UserOtp>
 {
-    public interface IUserOtpRepository : IRepository<UserOtp>
-    {
-        Task<IEnumerable<UserOtp>> GetByUserIdAsync(Guid userId);
+    Task<IEnumerable<UserOtp>> GetByUserIdAsync(Guid userId);
 
-        Task<IEnumerable<UserOtp>> GetByOtpTypeAsync(UserOtpType otpType);
+    Task<IEnumerable<UserOtp>> GetByOtpTypeAsync(UserOtpType otpType);
 
-        Task<IEnumerable<UserOtp>> GetByTokenAsync(string token, UserOtpType type);
+    Task<IEnumerable<UserOtp>> GetByTokenAsync(string token, UserOtpType type);
 
-        Task<IEnumerable<UserOtp>> GetByCodeAsync(string code);
+    Task<IEnumerable<UserOtp>> GetByCodeAsync(string code);
 
-        Task<bool> ClearAllOtp(Guid userId, UserOtpType otpType);
-    }
+    Task<bool> ClearAllOtp(Guid userId, UserOtpType otpType);
 }

@@ -1,52 +1,51 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Mcsg.Lib.Common.Web.Security
+namespace Mcsg.Lib.Common.Web.Security;
+
+using Data.Domain.Entities;
+using Lib.Common.Security.Models;
+using Lib.Common.Web.Extensions;
+using Mcsg.Common.Core.Constants;
+
+public class CurrentUserService : ICurrentUserService
 {
-    using Data.Domain.Entities;
-    using Lib.Common.Security.Models;
-    using Lib.Common.Web.Extensions;
-    using Mcsg.Common.Core.Constants;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public class CurrentUserService : ICurrentUserService
+    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        if (httpContextAccessor == null)
         {
-            if (httpContextAccessor == null)
-            {
-                throw new ArgumentNullException(nameof(httpContextAccessor), "It is required to inject HttpContextAccessor");
-            }
-
-            _httpContextAccessor = httpContextAccessor;
+            throw new ArgumentNullException(nameof(httpContextAccessor), "It is required to inject HttpContextAccessor");
         }
 
-        public Session Session
-        {
-            get
-            {
-                var currentSession = _httpContextAccessor.HttpContext.Items[nameof(Session).ToLower()] as Session;
-                return currentSession;
-            }
-        }
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-        public Task<CurrentUserModel> GetCurrentUserAsync()
+    public Session Session
+    {
+        get
         {
-            var userIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.UserId));
-            var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(JwtRegisteredClaimNames.Sid));
-            var userId = string.IsNullOrWhiteSpace(userIdClaim?.Value) ? (Guid?)null : new Guid(userIdClaim.Value);
-            return Task.FromResult(new CurrentUserModel
-            {
-                UserId = userId,
-                SessionId = sessionIdClaim?.Value ?? "",
-                Claims = _httpContextAccessor?.HttpContext?.User?.Claims,
-            });
+            var currentSession = _httpContextAccessor.HttpContext.Items[nameof(Session).ToLower()] as Session;
+            return currentSession;
         }
-        public Task<bool> RemoveCurrentUserAsync()
+    }
+
+    public Task<CurrentUserModel> GetCurrentUserAsync()
+    {
+        var userIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(Setting.SecurityClaim.UserId));
+        var sessionIdClaim = _httpContextAccessor?.HttpContext?.User?.Claims.FirstOrDefault(claim => claim.Type.Equals(JwtRegisteredClaimNames.Sid));
+        var userId = string.IsNullOrWhiteSpace(userIdClaim?.Value) ? (Guid?)null : new Guid(userIdClaim.Value);
+        return Task.FromResult(new CurrentUserModel
         {
-            _httpContextAccessor?.HttpContext?.RemoveAuthorization();
-            return Task.FromResult(true);
-        }
+            UserId = userId,
+            SessionId = sessionIdClaim?.Value ?? "",
+            Claims = _httpContextAccessor?.HttpContext?.User?.Claims,
+        });
+    }
+    public Task<bool> RemoveCurrentUserAsync()
+    {
+        _httpContextAccessor?.HttpContext?.RemoveAuthorization();
+        return Task.FromResult(true);
     }
 }

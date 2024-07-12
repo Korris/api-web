@@ -1,10 +1,10 @@
-﻿using Mcsg.Lib.Common.Web.Middlewares;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 
-namespace Mcsg.Lib.Common.Web.Extensions
+namespace Mcsg.Lib.Common.Web.Extensions;
+
+using Middlewares;
+
+public static class ApiResponseAndExceptionWrapperExtensions
 {
-    public static class ApiResponseAndExceptionWrapperExtensions
-    {
-        public static IApplicationBuilder UseApiResponseAndExceptionWrapper(this WebApplication applicationBuilder) => applicationBuilder.UseMiddleware<ApiResponseAndExceptionWrapperMiddleware>();
-    }
+    public static IApplicationBuilder UseApiResponseAndExceptionWrapper(this WebApplication applicationBuilder) => applicationBuilder.UseMiddleware<ApiResponseAndExceptionWrapperMiddleware>();
 }

@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum ComicExternalResource
 {
-    public enum ComicExternalResource
-    {
-        None = 0,
-        Nettruyen = 1
-    }
+    None = 0,
+    Nettruyen = 1
 }

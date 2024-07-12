@@ -1,17 +1,16 @@
 ﻿using System.Data;
 
-namespace Mcsg.Lib.Data.Repositories.Interface
+namespace Mcsg.Lib.Data.Repositories.Interface;
+
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        IDbConnection Connection { get; }
+    IDbConnection Connection { get; }
 
-        IRepository<TEntity> GetRepository<TEntity>();
+    IRepository<TEntity> GetRepository<TEntity>();
 
-        void BeginTransaction();
+    void BeginTransaction();
 
-        void CommitTransaction();
+    void CommitTransaction();
 
-        void RollbackTransaction();
-    }
+    void RollbackTransaction();
 }

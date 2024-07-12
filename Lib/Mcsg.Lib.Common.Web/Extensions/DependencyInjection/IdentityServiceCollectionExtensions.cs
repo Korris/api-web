@@ -1,46 +1,46 @@
-﻿using Mcsg.Lib.Data;
-using Mcsg.Lib.Data.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection
+namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection;
+
+using Data;
+using Data.Domain.Entities;
+
+public static class IdentityServiceCollectionExtensions
 {
-    public static class IdentityServiceCollectionExtensions
+    public static IServiceCollection AddIdentity<TErrorDescriber>(this IServiceCollection services) where TErrorDescriber : IdentityErrorDescriber
     {
-        public static IServiceCollection AddIdentity<TErrorDescriber>(this IServiceCollection services) where TErrorDescriber : IdentityErrorDescriber
+        services.AddIdentityCore<User>(option =>
         {
-            services.AddIdentityCore<User>(option =>
-            {
-                option.Password.RequireDigit = true;
-                option.Password.RequireLowercase = true;
-                option.Password.RequireNonAlphanumeric = true;
-                option.Password.RequireUppercase = true;
-                option.Password.RequiredLength = 8;
-            })
-            .AddRoles<Role>()
-            .AddEntityFrameworkStores<McsgDbContext>()
-            .AddDefaultTokenProviders()
-            .AddUserManager<ApplicationUserManager>()
-            .AddErrorDescriber<TErrorDescriber>();
+            option.Password.RequireDigit = true;
+            option.Password.RequireLowercase = true;
+            option.Password.RequireNonAlphanumeric = true;
+            option.Password.RequireUppercase = true;
+            option.Password.RequiredLength = 8;
+        })
+        .AddRoles<Role>()
+        .AddEntityFrameworkStores<McsgDbContext>()
+        .AddDefaultTokenProviders()
+        .AddUserManager<ApplicationUserManager>()
+        .AddErrorDescriber<TErrorDescriber>();
 
-            return services;
-        }
+        return services;
+    }
 
-        public static IServiceCollection AddIdentity(this IServiceCollection services)
+    public static IServiceCollection AddIdentity(this IServiceCollection services)
+    {
+        services.AddIdentityCore<User>(option =>
         {
-            services.AddIdentityCore<User>(option =>
-            {
-                option.Password.RequireDigit = true;
-                option.Password.RequireLowercase = true;
-                option.Password.RequireNonAlphanumeric = true;
-                option.Password.RequireUppercase = true;
-                option.Password.RequiredLength = 8;
-            })
-            .AddRoles<Role>()
-            .AddEntityFrameworkStores<McsgDbContext>()
-            .AddDefaultTokenProviders();
+            option.Password.RequireDigit = true;
+            option.Password.RequireLowercase = true;
+            option.Password.RequireNonAlphanumeric = true;
+            option.Password.RequireUppercase = true;
+            option.Password.RequiredLength = 8;
+        })
+        .AddRoles<Role>()
+        .AddEntityFrameworkStores<McsgDbContext>()
+        .AddDefaultTokenProviders();
 
-            return services;
-        }
+        return services;
     }
 }

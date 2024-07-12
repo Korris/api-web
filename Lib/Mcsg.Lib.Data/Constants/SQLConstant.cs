@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Lib.Data.Constants
+﻿namespace Mcsg.Lib.Data.Constants;
+
+public class SQLConstant
 {
-    public class SQLConstant
-    {
-        public const string OrderByDesc = "DESC";
-    }
+    public const string OrderByDesc = "DESC";
 }

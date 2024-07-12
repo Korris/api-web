@@ -1,27 +1,27 @@
-﻿using Mcsg.Lib.Common.Constants;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection
+namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection;
+
+using Constants;
+
+public static class SwaggerServiceCollectionExtensions
 {
-    public static class SwaggerServiceCollectionExtensions
+    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, string scheme)
     {
-        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, string scheme)
+        services.AddSwaggerGen(options =>
         {
-            services.AddSwaggerGen(options =>
+            switch (scheme)
             {
-                switch (scheme)
-                {
-                    case AuthenticationSchemes.JwtScheme:
-                        options.AddJwtSecurity();
-                        break;
-                    case AuthenticationSchemes.ApiKeyScheme:
-                        options.AddApiKeySecurity();
-                        break;
-                    default:
-                        break;
-                }
-            });
-            return services;
-        }
+                case AuthenticationSchemes.JwtScheme:
+                    options.AddJwtSecurity();
+                    break;
+                case AuthenticationSchemes.ApiKeyScheme:
+                    options.AddApiKeySecurity();
+                    break;
+                default:
+                    break;
+            }
+        });
+        return services;
     }
 }

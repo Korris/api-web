@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum ActionType
 {
-    public enum ActionType
-    {
-        COMMENT = 0,
-        REACTION = 1,
-        VIEW = 2
-    }
+    COMMENT = 0,
+    REACTION = 1,
+    VIEW = 2
 }

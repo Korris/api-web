@@ -3,154 +3,153 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Mcsg.Lib.Common.Web.Middlewares
+namespace Mcsg.Lib.Common.Web.Middlewares;
+
+using Mcsg.Common.SeedWork.Exceptions;
+using Models;
+
+public class ApiResponseAndExceptionWrapperMiddleware
 {
-    using Mcsg.Common.SeedWork.Exceptions;
-    using Models;
+    private readonly RequestDelegate _next;
 
-    public class ApiResponseAndExceptionWrapperMiddleware
+    public ApiResponseAndExceptionWrapperMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public ApiResponseAndExceptionWrapperMiddleware(RequestDelegate next)
+    public async Task Invoke(HttpContext context)
+    {
+        if (SkipApiResponseMiddleware(context))
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        else
         {
-            if (SkipApiResponseMiddleware(context))
-            {
-                await _next(context);
-            }
-            else
-            {
-                var originalBodyStream = context.Response.Body;
+            var originalBodyStream = context.Response.Body;
 
-                using (var responseBody = new MemoryStream())
+            using (var responseBody = new MemoryStream())
+            {
+                context.Response.Body = responseBody;
+
+                try
                 {
-                    context.Response.Body = responseBody;
-
-                    try
+                    await _next.Invoke(context);
+                    await HandleRequestAsync(context);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message == "No password has been provided but the backend requires one (in MD5)")
                     {
                         await _next.Invoke(context);
-                        await HandleRequestAsync(context);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        if (ex.Message == "No password has been provided but the backend requires one (in MD5)")
-                        {
-                            await _next.Invoke(context);
-                        }
-                        else
-                        {
-                            await HandleExceptionAsync(context, ex);
-                        }
+                        await HandleExceptionAsync(context, ex);
                     }
-                    finally
-                    {
-                        await PackageResponse(originalBodyStream, responseBody);
-                    }
+                }
+                finally
+                {
+                    await PackageResponse(originalBodyStream, responseBody);
                 }
             }
         }
+    }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception error)
+    private async Task HandleExceptionAsync(HttpContext context, Exception error)
+    {
+        HttpResponse response = context.Response;
+        HttpStatusCode status = error switch
         {
-            HttpResponse response = context.Response;
-            HttpStatusCode status = error switch
+            ForbiddenAccessException => HttpStatusCode.Forbidden,
+            BadRequestException => HttpStatusCode.BadRequest,
+            NotFoundException => HttpStatusCode.NotFound,
+            UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+            _ => HttpStatusCode.InternalServerError,
+        };
+
+        //TODO: logging exception error if need
+
+        response.StatusCode = (int)status;
+
+        await response.WriteAsJsonAsync(new ApiResponse
+        {
+            Status = status.ToString(),
+            Error = new ApiErrorResponse()
             {
-                ForbiddenAccessException => HttpStatusCode.Forbidden,
-                BadRequestException => HttpStatusCode.BadRequest,
-                NotFoundException => HttpStatusCode.NotFound,
-                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
-                _ => HttpStatusCode.InternalServerError,
-            };
+                Code = (error as BaseException)?.Code,
+                Message = error.Message,
+            },
+            Path = context.Request.Path
+        });
+    }
 
-            //TODO: logging exception error if need
+    private async Task PackageResponse(Stream originalBodyStream, MemoryStream responseBody)
+    {
+        responseBody.Seek(0, SeekOrigin.Begin);
+        await responseBody.CopyToAsync(originalBodyStream);
+    }
 
-            response.StatusCode = (int)status;
+    private bool SkipApiResponseMiddleware(HttpContext context)
+    {
+        return IsSwagger(context) || context.Request.Method == HttpMethods.Options;
+    }
 
-            await response.WriteAsJsonAsync(new ApiResponse
+    private bool IsSwagger(HttpContext context)
+    {
+        return context.Request.Path.StartsWithSegments("/swagger");
+    }
+
+    private async Task HandleRequestAsync(HttpContext context)
+    {
+        var body = await FormatResponse(context.Response);
+
+        await HandleRequestAsync(context, body);
+    }
+
+    private async Task HandleRequestAsync(HttpContext context, object body)
+    {
+        var code = context.Response.StatusCode;
+
+        if (body != null)
+        {
+            context.Response.Body.SetLength(0L);
+            var bodyString = body.ToString();
+            dynamic data = bodyString;
+
+            if (IsValidJson(bodyString))
             {
-                Status = status.ToString(),
-                Error = new ApiErrorResponse()
-                {
-                    Code = (error as BaseException)?.Code,
-                    Message = error.Message,
-                },
+                data = JsonNode.Parse(bodyString);
+
+            }
+
+            await context.Response.WriteAsJsonAsync(new ApiResponse
+            {
+                Status = code.ToString(),
+                Data = data,
                 Path = context.Request.Path
             });
         }
+    }
 
-        private async Task PackageResponse(Stream originalBodyStream, MemoryStream responseBody)
+    static bool IsValidJson(string jsonString)
+    {
+        try
         {
-            responseBody.Seek(0, SeekOrigin.Begin);
-            await responseBody.CopyToAsync(originalBodyStream);
+            JsonDocument.Parse(jsonString);
+            return true;
         }
-
-        private bool SkipApiResponseMiddleware(HttpContext context)
+        catch (JsonException)
         {
-            return IsSwagger(context) || context.Request.Method == HttpMethods.Options;
+            return false;
         }
+    }
 
-        private bool IsSwagger(HttpContext context)
-        {
-            return context.Request.Path.StartsWithSegments("/swagger");
-        }
+    private async Task<string> FormatResponse(HttpResponse response)
+    {
+        response.Body.Seek(0, SeekOrigin.Begin);
+        var plainBodyText = await new StreamReader(response.Body).ReadToEndAsync();
+        response.Body.Seek(0, SeekOrigin.Begin);
 
-        private async Task HandleRequestAsync(HttpContext context)
-        {
-            var body = await FormatResponse(context.Response);
-
-            await HandleRequestAsync(context, body);
-        }
-
-        private async Task HandleRequestAsync(HttpContext context, object body)
-        {
-            var code = context.Response.StatusCode;
-
-            if (body != null)
-            {
-                context.Response.Body.SetLength(0L);
-                var bodyString = body.ToString();
-                dynamic data = bodyString;
-
-                if (IsValidJson(bodyString))
-                {
-                    data = JsonNode.Parse(bodyString);
-
-                }
-
-                await context.Response.WriteAsJsonAsync(new ApiResponse
-                {
-                    Status = code.ToString(),
-                    Data = data,
-                    Path = context.Request.Path
-                });
-            }
-        }
-
-        static bool IsValidJson(string jsonString)
-        {
-            try
-            {
-                JsonDocument.Parse(jsonString);
-                return true;
-            }
-            catch (JsonException)
-            {
-                return false;
-            }
-        }
-
-        private async Task<string> FormatResponse(HttpResponse response)
-        {
-            response.Body.Seek(0, SeekOrigin.Begin);
-            var plainBodyText = await new StreamReader(response.Body).ReadToEndAsync();
-            response.Body.Seek(0, SeekOrigin.Begin);
-
-            return plainBodyText;
-        }
+        return plainBodyText;
     }
 }

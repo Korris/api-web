@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Lib.Data.Enums
+﻿namespace Mcsg.Lib.Data.Enums;
+
+public enum NotificationStatus
 {
-    public enum NotificationStatus
-    {
-        UnRead,
-        Read,
-        Hide
-    }
+    UnRead,
+    Read,
+    Hide
 }
