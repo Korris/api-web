@@ -1,18 +1,15 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Npgsql;
 using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
 using AutoMapper;
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
-using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
@@ -572,58 +569,41 @@ public partial class FeedService : IFeedService
             CustomNote = post.CustomNote
         };
 
-        try
+        if (req.MetaData != null)
         {
-            if (req.MetaData != null)
-            {
-                req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
-                result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
-            }
-            if (req.Tags != null && req.Tags.Count > 0)
-            {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags, userId)).ToArray();
-            }
-            if (req.Files != null && req.Files.Count > 0)
-            {
-                result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, userId, userFolder, userAvatar, userName, post.Id, post.HashId));
-                result.TotalResource = result.SubPosts?.Count ?? 0;
-            }
-
-            if (req.SoundId != null && req.SoundId != Guid.Empty)
-            {
-                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
-            }
-            else
-            {
-                await _soundService.RemoveSoundAsync(post.Id);
-            }
-
-            // Detech video link content feed
-            if (req.Files == null || req.Files.Count == 0)
-            {
-                result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
-            }
-            else
-            {
-                var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
-                if (removeLink)
-                {
-                    result.Link = new PostLinkDto();
-                }
-            }
+            req.MetaData.Description = HttpUtility.HtmlEncode(req.MetaData.Description);
+            result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(req.MetaData, post.Id);
         }
-        catch (PostgresException ex)
+        if (req.Tags != null && req.Tags.Count > 0)
         {
-            //Regenerate hash when dupplicate. Code == "23505"
-            if (ex.TableName == $"{nameof(Post)}s")
+            result.Tags = (await _tagService.AddTagsToPost(post.Id, req.Tags, userId)).ToArray();
+        }
+        if (req.Files != null && req.Files.Count > 0)
+        {
+            result.SubPosts = (await _fileService.ProcessFeedFilesAsync(req.Files, userId, userFolder, userAvatar, userName, post.Id, post.HashId));
+            result.TotalResource = result.SubPosts?.Count ?? 0;
+        }
+
+        if (req.SoundId != null && req.SoundId != Guid.Empty)
+        {
+            await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
+        }
+        else
+        {
+            await _soundService.RemoveSoundAsync(post.Id);
+        }
+
+        // Detech video link content feed
+        if (req.Files == null || req.Files.Count == 0)
+        {
+            result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
+        }
+        else
+        {
+            var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
+            if (removeLink)
             {
-                post.HashId = Setting.PostConfig.HashLength.GetRandomString();
-                await _postRepository.InsertAsync(post);
-            }
-            else
-            {
-                _unitOfWork.RollbackTransaction();
-                throw ex;
+                result.Link = new PostLinkDto();
             }
         }
 
@@ -729,69 +709,53 @@ public partial class FeedService : IFeedService
             Rewards = rewards,
             CustomNote = post.CustomNote
         };
-        try
+
+        await _postRepository.UpdateAsync(post);
+
+        //if (feedPostReq.MetaData != null)
+        //{
+        //	feedPostReq.MetaData.Description = HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
+        //	result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(feedPostReq.MetaData, post.Id);
+        //}
+
+        // Add tag to feed
+        if (req.Tags != null && req.Tags.Count > 0)
         {
-            await _postRepository.UpdateAsync(post);
-
-            //if (feedPostReq.MetaData != null)
-            //{
-            //	feedPostReq.MetaData.Description = HttpUtility.HtmlEncode(feedPostReq.MetaData.Description);
-            //	result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(feedPostReq.MetaData, post.Id);
-            //}
-
-            // Add tag to feed
-            if (req.Tags != null && req.Tags.Count > 0)
-            {
-                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags, userId)).ToArray();
-            }
-
-            // Add file to feed
-            if (req.Files != null && req.Files.Count > 0)
-            {
-                result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, userId, userName, userFolder, userAvatar, post.Id, post.HashId));
-                result.TotalResource = result.SubPosts?.Count ?? 0;
-            }
-            else
-            {
-                await _fileService.RemoveFileAsync(post.Id, userName);
-                result.TotalResource = 0;
-            }
-            // Add background sound to feed
-            if (req.SoundId != null && req.SoundId != Guid.Empty)
-            {
-                await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
-            }
-            else
-            {
-                await _soundService.RemoveSoundAsync(post.Id);
-            }
-
-            // Detech video link content feed
-            if (req.Files == null || req.Files.Count == 0)
-            {
-                result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
-            }
-            else
-            {
-                var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
-                if (removeLink)
-                {
-                    result.Link = new PostLinkDto();
-                }
-            }
+            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, req.Tags, userId)).ToArray();
         }
-        catch (PostgresException ex)
+
+        // Add file to feed
+        if (req.Files != null && req.Files.Count > 0)
         {
-            //Regenerate hash when dupplicate. Code == "23505"
-            if (ex.TableName == $"{nameof(Post)}s")
+            result.SubPosts = (await _fileService.UpdateFeedFilesAsync(req.Files, userId, userName, userFolder, userAvatar, post.Id, post.HashId));
+            result.TotalResource = result.SubPosts?.Count ?? 0;
+        }
+        else
+        {
+            await _fileService.RemoveFileAsync(post.Id, userName);
+            result.TotalResource = 0;
+        }
+        // Add background sound to feed
+        if (req.SoundId != null && req.SoundId != Guid.Empty)
+        {
+            await _soundService.AddSoundAsync(post.Id, req.SoundId.Value, userId);
+        }
+        else
+        {
+            await _soundService.RemoveSoundAsync(post.Id);
+        }
+
+        // Detech video link content feed
+        if (req.Files == null || req.Files.Count == 0)
+        {
+            result.Link = await _postLinkService.AddLinkAsync(post.Id, req.Content);
+        }
+        else
+        {
+            var removeLink = await _postLinkService.RemoveLinkAsync(post.Id);
+            if (removeLink)
             {
-                post.HashId = Setting.PostConfig.HashLength.GetRandomString();
-                await _postRepository.UpdateAsync(post);
-            }
-            else
-            {
-                _unitOfWork.RollbackTransaction();
-                throw ex;
+                result.Link = new PostLinkDto();
             }
         }
 
