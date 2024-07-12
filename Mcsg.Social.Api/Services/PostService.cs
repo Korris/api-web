@@ -1709,15 +1709,15 @@ public partial class PostService : IPostService
         var check = await _context.PostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
-            var rewardType = RewardType.FIRST_FEED;
+            var rewardType = RewardType.FirstFeed;
             switch (type)
             {
                 case PostType.Story:
-                    rewardType = RewardType.FIRST_STORY;
+                    rewardType = RewardType.FirstStory;
                     break;
 
                 case PostType.Comic:
-                    rewardType = RewardType.FIRST_COMIC;
+                    rewardType = RewardType.FirstComic;
                     break;
 
                 default:

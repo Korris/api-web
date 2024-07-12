@@ -88,19 +88,19 @@ namespace Mcsg.Function.Job.Services
         {
             switch (type)
             {
-                case RewardType.NEW_USER:
+                case RewardType.NewUser:
                     {
                         return RewardConstant.REWARD_FOR_NEW_USER;
                     }
-                case RewardType.FIRST_COMIC:
+                case RewardType.FirstComic:
                     {
                         return RewardConstant.REWARD_FOR_FIRST_COMIC;
                     }
-                case RewardType.FIRST_FEED:
+                case RewardType.FirstFeed:
                     {
                         return RewardConstant.REWARD_FOR_FIRST_FEDD;
                     }
-                case RewardType.FIRST_STORY:
+                case RewardType.FirstStory:
                     {
                         return RewardConstant.REWARD_FOR_FIRST_STORY;
                     }

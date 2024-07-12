@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
-using Lib.Common.Enums;
+using Common.Core.Enums;
 
 public class RewardDto
 {

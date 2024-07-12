@@ -1,7 +1,6 @@
-﻿using Mcsg.Lib.Common.Enums;
+﻿namespace Mcsg.Social.Api.Interfaces;
 
-namespace Mcsg.Social.Api.Interfaces;
-
+using Common.Core.Enums;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
