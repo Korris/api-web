@@ -387,25 +387,31 @@ public partial class FeedService : IFeedService
         {
             itemResponse.Resources = new List<ResourceDto>();
             var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources);
-            if (resourceResponses != null && resourceResponses.Any())
-            {
-                foreach (var resourceResponse in resourceResponses.OrderBy(p => p.Order))
-                {
-                    if (resourceResponse != null)
-                    {
-                        if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                        {
-                            resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
-                        }
-                        else
-                        {
-                            resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
-                        }
 
-                        itemResponse.Resources.Add(resourceResponse);
-                        itemResponse.SubPosts.Add(new SubUploadFileDto
-                        {
-                            Files = new List<UploadFileDto>()
+            // Ensure not null
+            resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
+            if (resourceResponses == null)
+            {
+                resourceResponses = [];
+            }
+
+            foreach (var resourceResponse in resourceResponses)
+            {
+                if (resourceResponse != null)
+                {
+                    if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
+                    {
+                        resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                    }
+
+                    itemResponse.Resources.Add(resourceResponse);
+                    itemResponse.SubPosts.Add(new SubUploadFileDto
+                    {
+                        Files = new List<UploadFileDto>()
                                 {
                                     new UploadFileDto()
                                     {
@@ -419,8 +425,7 @@ public partial class FeedService : IFeedService
                                         Name = resourceResponse.Name
                                     }
                                 }
-                        });
-                    }
+                    });
                 }
             }
         }
