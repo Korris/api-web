@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
-public class TagView
+public class TagViewDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; }

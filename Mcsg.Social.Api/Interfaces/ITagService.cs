@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.SeedWork.Responses;
+using Dtos;
 using Models;
 using Models.Tag;
 using Requests;
@@ -12,7 +13,7 @@ public interface ITagService
     Task<IEnumerable<TagSuggestView>> GetSuggestTags(TagSuggestR tagSuggestReq);
     Task<PagedResponse<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq);
     Task<PagedResponse<TodayTrendingTagResponse>> GetTodayTrendingTags(TagTodayTrendingR todayTrendingTagReq);
-    Task<List<TagView>> GetTagsByPostIdAsync(Guid postId);
+    Task<List<TagViewDto>> GetTagsByPostIdAsync(Guid postId);
     Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId);
     Task<PagedResponse<TagSearchResponse>> SearchTagbyKeyword(TagSearchR input);
     Task<IEnumerable<TagSearchResponse>> SearchTagsByName(TagSearchKeywordR request);

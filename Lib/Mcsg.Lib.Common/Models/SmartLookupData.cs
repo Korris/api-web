@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Lib.Common.Models
+﻿namespace Mcsg.Lib.Common.Models
 {
+    using Mcsg.Common.Core.Enums;
+
     public class SmartLookupData
     {
         public string ProfileName { get; set; }

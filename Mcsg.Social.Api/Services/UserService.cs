@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Constants;
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.SeedWork.Exceptions;
@@ -17,7 +18,6 @@ using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Models;
 using Requests;

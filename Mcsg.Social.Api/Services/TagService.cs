@@ -4,16 +4,17 @@ using System.Text.RegularExpressions;
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Core.Enums;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
+using Dtos;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -58,7 +59,7 @@ public partial class TagService : ITagService
                                on a.Id equals b.TagId into g
                             from b in g.DefaultIfEmpty()
                             where tags.Contains(a.Name + "")
-                            select new TagView
+                            select new TagViewDto
                             {
                                 Id = a.Id,
                                 Title = a.Title + "",
@@ -233,13 +234,13 @@ public partial class TagService : ITagService
     /// </summary>
     /// <param name="postId"></param>
     /// <returns></returns>
-    public async Task<List<TagView>> GetTagsByPostIdAsync(Guid postId)
+    public async Task<List<TagViewDto>> GetTagsByPostIdAsync(Guid postId)
     {
         return await (from a in _context.TagAvailable
                       join b in _context.TagPosts
                           on a.Id equals b.TagId
                       where b.PostId == postId
-                      select new TagView
+                      select new TagViewDto
                       {
                           Title = a.Title + "",
                           Name = a.Name + "",
