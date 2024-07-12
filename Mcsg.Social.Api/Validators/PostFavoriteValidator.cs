@@ -1,10 +1,11 @@
 ﻿namespace Mcsg.Social.Api.Validators;
 
 using Common.SeedWork.Exceptions;
-using Constants;
 using Lib.Common.Interfaces;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
 
 public class PostFavoriteValidator : IValidator<PostFavorite>
 {
@@ -16,6 +17,6 @@ public class PostFavoriteValidator : IValidator<PostFavorite>
 
     public async Task OnValidate(PostFavorite data)
     {
-        _ = await _postRepository.GetByIdAsync(data.PostId, "\"Id\"") ?? throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+        _ = await _postRepository.GetByIdAsync(data.PostId, "\"Id\"") ?? throw new BadRequestException(E204, M204);
     }
 }

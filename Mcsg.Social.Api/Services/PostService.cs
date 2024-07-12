@@ -28,6 +28,8 @@ using Models;
 using Models.Earning;
 using Requests;
 using static Common.Core.Constants.Setting;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : IPostService
 {
@@ -93,7 +95,7 @@ public partial class PostService : IPostService
         var currentUserId = _currentUserService.Session.UserId;
         if (feedDb == null)
         {
-            throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new BadRequestException(E204, M204);
         }
         else if (feedDb.UserId != currentUserId)
         {
@@ -230,7 +232,7 @@ public partial class PostService : IPostService
         //Add view
         if (dbPost == null)
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
         if (currentUserId != null)
         {
@@ -238,7 +240,7 @@ public partial class PostService : IPostService
         }
         if (dbPost.Status == PostStatus.Inactive || (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId))
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         return MappingFeedRespone(dbPost);
@@ -297,12 +299,12 @@ public partial class PostService : IPostService
             {
                 if (subpost.PublishDate != null && subpost.PublishDate < DateTime.UtcNow)
                 {
-                    throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+                    throw new BadRequestException(E204, M204);
                 }
                 //Check permission
                 if (subpost.Permission == PostPermission.Private)
                 {
-                    throw new BadRequestException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+                    throw new BadRequestException(E204, M204);
                 }
                 //Check IsExclusive
                 if (subpost.IsExclusive && subpost.UserExclusiveId == null)
@@ -431,7 +433,7 @@ public partial class PostService : IPostService
 
             if (post == null)
             {
-                throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+                throw new NotFoundException(E204, M204);
             }
 
             var offset = request.PageSize * (request.PageNumber - 1);
@@ -1719,7 +1721,7 @@ public partial class PostService : IPostService
         {
             if (post.IsDelete)
             {
-                throw new BadRequestException(ApiErrorCode.POST_HAS_DELETED, ApiErrorMessage.POST_HAS_DELETED);
+                throw new BadRequestException(E205, M205);
             }
             if (post.CreatedBy != currentUserId)
             {
@@ -1733,7 +1735,7 @@ public partial class PostService : IPostService
         }
         else
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
     }
 

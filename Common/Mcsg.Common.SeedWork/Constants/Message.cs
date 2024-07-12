@@ -148,5 +148,15 @@ public static class Message
     /// </summary>
     public const string M203 = "Account does not exist";
 
+    /// <summary>
+    /// Post does not exist
+    /// </summary>
+    public const string M204 = "Post does not exist";
+
+    /// <summary>
+    /// This post has deleted
+    /// </summary>
+    public const string M205 = "This post has deleted";
+
     #endregion
 }

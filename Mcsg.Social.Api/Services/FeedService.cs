@@ -25,6 +25,7 @@ using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 using Validators;
+using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
 public partial class FeedService : IFeedService
@@ -349,14 +350,14 @@ public partial class FeedService : IFeedService
         //Add view
         if (dbFeed == null)
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
 
         //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
 
         if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
 
         return MappingFeedRespone(dbFeed, sound);
@@ -1029,12 +1030,11 @@ public partial class FeedService : IFeedService
     {
         if (post == null)
         {
-            throw new NotFoundException(ApiErrorCode.POST_NOT_EXIST, ApiErrorMessage.POST_NOT_EXIST);
+            throw new NotFoundException(E204, M204);
         }
-
         if (post.IsDelete)
         {
-            throw new BadRequestException(ApiErrorCode.POST_HAS_DELETED, ApiErrorMessage.POST_HAS_DELETED);
+            throw new BadRequestException(E205, M205);
         }
         if (post.CreatedBy != userId)
         {

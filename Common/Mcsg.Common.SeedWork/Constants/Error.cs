@@ -73,6 +73,16 @@ public static class Error
     /// </summary>
     public const string E203 = "ERR_AUTH_00011";
 
+    /// <summary>
+    /// Post does not exist
+    /// </summary>
+    public const string E204 = "ERR_API_200001";
+
+    /// <summary>
+    /// This post has deleted
+    /// </summary>
+    public const string E205 = "ERR_API_200003";
+
     #endregion
 
     #region -- E4xx --
