@@ -45,7 +45,7 @@ public partial class SmartLookupService : ISmartLookupService
         // Calculate Smart lookup
         await _distributeManager.Deliver(new SmartLookupDistributeItem
         {
-            Data = new SmartLookupData
+            Data = new SmartLookupDto
             {
                 KeywordType = LookupKeywordType.People,
                 ProfileName = profileName
@@ -57,7 +57,7 @@ public partial class SmartLookupService : ISmartLookupService
         {
             await _distributeManager.Deliver(new SmartLookupDistributeItem
             {
-                Data = new SmartLookupData
+                Data = new SmartLookupDto
                 {
                     KeywordType = LookupKeywordType.Tag,
                     Tags = tagNames.ToList()
@@ -71,7 +71,7 @@ public partial class SmartLookupService : ISmartLookupService
         //publish calculate smart lookup
         await _distributeManager.Deliver(new SmartLookupDistributeItem
         {
-            Data = new SmartLookupData
+            Data = new SmartLookupDto
             {
                 KeywordType = LookupKeywordType.People,
                 ProfileName = profileName
@@ -83,7 +83,7 @@ public partial class SmartLookupService : ISmartLookupService
     {
         await _distributeManager.Deliver(new SmartLookupDistributeItem
         {
-            Data = new SmartLookupData
+            Data = new SmartLookupDto
             {
                 KeywordType = LookupKeywordType.Tag,
                 Tags = tags

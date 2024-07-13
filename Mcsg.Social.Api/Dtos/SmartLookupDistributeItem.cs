@@ -5,5 +5,5 @@ using Common.Core.Dtos;
 
 public class SmartLookupDistributeItem : DistributedItem
 {
-    public SmartLookupData Data { get; set; }
+    public SmartLookupDto Data { get; set; }
 }

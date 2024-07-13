@@ -489,9 +489,9 @@ public static class StringExtension
     /// <returns>Return the result</returns>
     public static string GetAbsolutePath(this string url, string relativePath)
     {
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri))
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? absoluteUri))
         {
-            return null; // Invalid URL
+            return string.Empty; // Invalid URL
         }
 
         if (string.IsNullOrEmpty(relativePath))
@@ -508,8 +508,8 @@ public static class StringExtension
         else if (relativePath.StartsWith("./"))
         {
             string combinedPath = absoluteUri.AbsolutePath;
-            combinedPath = combinedPath.Substring(0, combinedPath.LastIndexOf('/')); // Remove the last segment
-            combinedPath = combinedPath.TrimEnd('/'); // Remove trailing slashes
+            combinedPath = combinedPath.Substring(0, combinedPath.LastIndexOf('/')); // remove the last segment
+            combinedPath = combinedPath.TrimEnd('/'); // remove trailing slashes
 
             resultUri = new Uri(absoluteUri, new Uri(combinedPath + '/' + relativePath, UriKind.Relative));
         }

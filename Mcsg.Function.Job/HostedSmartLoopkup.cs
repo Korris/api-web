@@ -10,7 +10,6 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Interfaces;
-using Lib.Common.Models;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Information;
@@ -112,7 +111,7 @@ public class HostedSmartLoopkup : BackgroundService
         using (var scope = _ss.CreateScope())
         {
             var service = scope.ServiceProvider.GetRequiredService<IRepository<SmartLookup>>();
-            var payload = JsonConvert.DeserializeObject<SmartLookupData>(msg.Payload);
+            var payload = JsonConvert.DeserializeObject<SmartLookupDto>(msg.Payload);
 
             switch (payload.KeywordType)
             {
