@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 namespace Mcsg.Wallet.Api;
 
 using Common.Core.Extensions;
+using Common.Core.Middlewares;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -168,9 +169,7 @@ public class Program
         #endregion
 
         app.UseHttpsRedirection();
-
-        app.UseApiResponseAndExceptionWrapper();
-
+        app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UserSessionAuthorizationMiddleware();

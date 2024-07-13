@@ -8,6 +8,7 @@ namespace Mcsg.Social.Api;
 using Attributes;
 using Checkers;
 using Common.Core.Extensions;
+using Common.Core.Middlewares;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -245,9 +246,7 @@ public class Program
         #endregion
 
         app.UseHttpsRedirection();
-
-        app.UseApiResponseAndExceptionWrapper();
-
+        app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UserSessionAuthorizationMiddleware();
         app.UseAuthorization();

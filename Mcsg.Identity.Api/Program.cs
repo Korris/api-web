@@ -7,6 +7,7 @@ namespace Mcsg.Identity.Api;
 
 using Checkers;
 using Common.Core.Extensions;
+using Common.Core.Middlewares;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Helpers;
@@ -183,9 +184,7 @@ public class Program
         #endregion
 
         app.UseHttpsRedirection();
-
-        app.UseApiResponseAndExceptionWrapper();
-
+        app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UserSessionAuthorizationMiddleware();

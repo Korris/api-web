@@ -5,6 +5,7 @@ using System.Reflection;
 namespace Mcsg.Admin.Api;
 
 using Common.Core.Extensions;
+using Common.Core.Middlewares;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -171,9 +172,7 @@ public class Program
         #endregion
 
         app.UseHttpsRedirection();
-
-        app.UseApiResponseAndExceptionWrapper();
-
+        app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UserSessionAuthorizationMiddleware();
         app.UseAuthorization();
