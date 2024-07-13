@@ -224,7 +224,7 @@ public class Program
                     p.RouteTemplate = "swagger/{documentName}/swagger.json";
                     p.PreSerializeFilters.Add((q, r) =>
                     {
-                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}" }];
+                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}".ToLower() }];
                     });
                 });
             }
