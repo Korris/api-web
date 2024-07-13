@@ -14,11 +14,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace Mcsg.Common.Core.Extensions;
 
 using Common.SeedWork.Dtos;
+using Distributor;
 using Interfaces;
 using Notifications;
 using Storages;
@@ -102,6 +104,19 @@ public static class IServiceCollectionExtension
             };
         });
         service.AddAuthorization();
+
+        return service;
+    }
+
+    /// <summary>
+    /// Add distribution library
+    /// </summary>
+    /// <param name="service">Service</param>
+    /// <param name="assembly">Assembly</param>
+    /// <returns>Return the result</returns>
+    public static IServiceCollection AddDistributionLibrary(this IServiceCollection service, Assembly assembly)
+    {
+        service.AddSingleton(p => { return new DistributeManager(assembly, service.BuildServiceProvider()); });
 
         return service;
     }

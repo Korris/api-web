@@ -9,12 +9,12 @@ using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
+using Lib.Common.Extensions;
 using Lib.Common.Models;
-using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
+using Lib.Common.Web.RealTime.Services;
 using Lib.Data;
 using Lib.Data.Wallet;
 using Models;
@@ -114,10 +114,12 @@ public class Program
         builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
-        builder.Services.AddCommonWebLibrary(builder.Configuration);
-        builder.Services.AddCommonLibrary(builder.Configuration);
+        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddEmailSender();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
-        builder.Services.AddSignalR(builder.Configuration);
+
+        builder.Services.AddScoped<ISignalRService, SignalRService>();
+        builder.Services.AddSignalR();
 
         //add services
         builder.Services.AddScoped<IUserWalletService, UserWalletService>();

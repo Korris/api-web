@@ -7,8 +7,8 @@ namespace Mcsg.Analytic.Api;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
+using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
 using Lib.Data.Analytic;
@@ -91,7 +91,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers();
-        builder.Services.AddCommonLibrary(builder.Configuration);
+        builder.Services.AddEmailSender();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

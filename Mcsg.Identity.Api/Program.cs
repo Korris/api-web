@@ -11,9 +11,8 @@ using Common.SeedWork.Extensions;
 using Extensions;
 using Helpers;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
-using Lib.Common.Web;
+using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
@@ -134,8 +133,8 @@ public class Program
         builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
-        builder.Services.AddCommonWebLibrary(builder.Configuration);
-        builder.Services.AddCommonLibrary(builder.Configuration);
+        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddEmailSender();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

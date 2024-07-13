@@ -9,11 +9,11 @@ using Common.SeedWork.Extensions;
 using Extensions;
 using Hubs;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
-using Lib.Common.Web;
+using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
+using Lib.Common.Web.RealTime.Services;
 using Lib.Data;
 using Services;
 using static Common.Core.Constants.Setting;
@@ -119,11 +119,13 @@ public class Program
         builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
-        builder.Services.AddCommonWebLibrary(builder.Configuration);
-        builder.Services.AddCommonLibrary(builder.Configuration);
-        builder.Services.AddSignalR();
+        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddEmailSender();
         builder.Services.AddCors();
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        builder.Services.AddScoped<ISignalRService, SignalRService>();
+        builder.Services.AddSignalR();
 
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IReplyService, ReplyService>();

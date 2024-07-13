@@ -11,10 +11,9 @@ using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
+using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
-using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Data;
@@ -128,7 +127,13 @@ public class Program
         // Service
         builder.Services.AddScoped<IFileService, FileService>();
         builder.Services.AddScoped<IJobService, JobService>();
+        builder.Services.AddScoped<IPostService, PostService>();
         builder.Services.AddScoped<IMetaDataService, MetaDataService>();
+        builder.Services.AddScoped<ITagService, TagService>();
+        builder.Services.AddScoped<ISoundService, SoundService>();
+        builder.Services.AddScoped<IPostLinkService, PostLinkService>();
+        builder.Services.AddScoped<ISmartLookupService, SmartLookupService>();
+        builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
         // MediatR
         builder.Services.AddMediatR(p =>
@@ -154,15 +159,13 @@ public class Program
         builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
-        builder.Services.AddCommonWebLibrary(builder.Configuration);
-        builder.Services.AddCommonLibrary(builder.Configuration);
+        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddEmailSender();
         builder.Services.AddFileUploadLimit(st.Minio);
-        builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         builder.Services.AddScoped<IFeedService, FeedService>();
         builder.Services.AddScoped<ILinkPreviewService, LinkPreviewService>();
-        builder.Services.AddScoped<ITagService, TagService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IPostReactService, PostReactService>();
@@ -170,19 +173,15 @@ public class Program
         builder.Services.AddScoped<IPostCommentReactService, PostCommentReactService>();
         builder.Services.AddScoped<ISubPostCommentReactService, SubPostCommentReactService>();
         builder.Services.AddScoped(typeof(IReactService<>), typeof(ReactService<>));
-        builder.Services.AddScoped<IPostService, PostService>();
         builder.Services.AddScoped<IComicService, ComicService>();
         builder.Services.AddScoped<IStoryService, StoryService>();
-        builder.Services.AddScoped<ISmartLookupService, SmartLookupService>();
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddScoped<ISoundService, SoundService>();
         builder.Services.AddScoped<IViewHistoryService, ViewHistoryService>();
         builder.Services.AddScoped<IEarningService, EarningService>();
         builder.Services.AddScoped<IUserViewService, UserViewService>();
         builder.Services.AddScoped<IAffiliateService, AffiliateService>();
         builder.Services.AddScoped<IWalletService, WalletService>();
-        builder.Services.AddScoped<IPostLinkService, PostLinkService>();
 
         //validator
         builder.Services.AddScoped<IValidator<TagFavorite>, TagFavoriteValidator>();

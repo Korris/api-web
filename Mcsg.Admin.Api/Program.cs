@@ -7,10 +7,9 @@ namespace Mcsg.Admin.Api;
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Common;
 using Lib.Common.Constants;
+using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
-using Lib.Common.Web;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Common.Web.RealTime.Services;
@@ -115,14 +114,15 @@ public class Program
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
         builder.Services.AddIdentity();
+        builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddSignalR();
 
         //Add Authentication & Authorization Setup
         builder.Services.AddBearerAuthentication(st.Jwt);
         builder.Services.AddResponseCaching();
 
-        builder.Services.AddCommonWebLibrary(builder.Configuration);
-        builder.Services.AddCommonLibrary(builder.Configuration);
+        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddEmailSender();
 
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
