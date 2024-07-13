@@ -13,22 +13,6 @@
                           WHERE tp.""PostId"" = @postId";
             }
         }
-        private string GetRecentSearchQuery
-        {
-            get
-            {
-                return @$"SELECT ""Id"",""Keyword"", 
-                             CASE 
-                               WHEN ""KeywordType"" = {LookupKeywordType.Tag.GetHashCode()} THEN '{nameof(LookupKeywordType.Tag)}'
-                               WHEN ""KeywordType"" = {LookupKeywordType.People.GetHashCode()} THEN '{nameof(LookupKeywordType.People)}'
-                               WHEN ""KeywordType"" = {LookupKeywordType.None.GetHashCode()} THEN ''
-                             END AS ""KeywordType""
-                        FROM {_smartLookupUserRepository.TableName} 
-                        WHERE ""UserId"" = '{_currentUserService.Session.UserId}'
-                        ORDER BY ""CreatedDate"" DESC
-                        LIMIT 6";
-            }
-        }
 
         private string GetSmartLookupQuery
         {

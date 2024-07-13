@@ -1,7 +1,7 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Distributor;
-using Lib.Common.Models;
+using Common.Core.Dtos;
 
 public class SmartLookupDistributeItem : DistributedItem
 {

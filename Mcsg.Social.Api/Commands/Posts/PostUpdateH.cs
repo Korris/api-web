@@ -224,7 +224,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         }
 
         result.Resources = resourceResponse;
-        await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync();
+        await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
 
         res.SetSuccess(result);
         return res;

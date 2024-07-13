@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -29,7 +30,8 @@ public class SmartLookupController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetRecentSearch()
     {
-        var result = await _smartLookupService.GetRecentListAsync();
+        var r = new BaseR(HttpContext);
+        var result = await _smartLookupService.GetRecentListAsync(r.UserId!.Value);
         return Ok(result);
     }
 
@@ -41,11 +43,11 @@ public class SmartLookupController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("add-recent-search")]
-    [Authorize]
+    [HttpPost("add-recent-search"), Authorize]
     public async Task<IActionResult> AddRecentSearch([FromBody] SmartLookupAddRecentSearchR req)
     {
-        var result = await _smartLookupService.AddRecentSearchAsync(req);
+        var r = new BaseR(HttpContext);
+        var result = await _smartLookupService.AddRecentSearchAsync(req, r.UserId!.Value);
         return Ok(result);
     }
 

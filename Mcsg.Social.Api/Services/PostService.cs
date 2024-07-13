@@ -91,8 +91,11 @@ public partial class PostService : IPostService
 
     public async Task<bool> Delete(Guid postId)
     {
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var profileName = ss.ProfileName;
+
         var feedDb = await _postRepository.GetByIdAsync(postId);
-        var currentUserId = _currentUserService.Session.UserId;
         if (feedDb == null)
         {
             throw new BadRequestException(E204, M204);
@@ -105,7 +108,7 @@ public partial class PostService : IPostService
         {
             await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = currentUserId });
 
-            await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId);
+            await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
             return true;
         }
     }
@@ -1611,10 +1614,11 @@ public partial class PostService : IPostService
     }
     public async Task<bool> DeleteChapter(string hashId, int order)
     {
-        var subPost = await _postRepository
-            .Connection.QueryFirstAsync<SubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
+        var ss = _currentUserService.Session;
+        var currentUserId = ss.UserId;
+        var profileName = ss.ProfileName;
 
-        var currentUserId = _currentUserService.Session.UserId;
+        var subPost = await _postRepository.Connection.QueryFirstAsync<SubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
         if (subPost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, order));
@@ -1628,7 +1632,7 @@ public partial class PostService : IPostService
         {
             await _postRepository.Connection.QueryAsync(ExecSoftDeleteSubPost, new { SubPostId = subPost.Id, Date = DateTime.UtcNow, UserId = currentUserId });
 
-            await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId);
+            await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
             return true;
         }
     }

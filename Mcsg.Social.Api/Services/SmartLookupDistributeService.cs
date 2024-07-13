@@ -3,8 +3,8 @@
 using Common.Core.Distributor;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
+using Dtos;
 using Interfaces;
-using Models;
 
 public class SmartLookupDistributeService : BaseDistributor
 {

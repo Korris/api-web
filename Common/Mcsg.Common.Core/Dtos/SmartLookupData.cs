@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Common.Core.Dtos;
 
-using Mcsg.Common.Core.Enums;
+using Enums;
 
 public class SmartLookupData
 {
