@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
-using Lib.Common.Distributor;
+using Common.Core.Distributor;
 using Lib.Common.Models;
 
 public class ViewHistoryDistributeItem : DistributedItem

@@ -1,7 +1,15 @@
-﻿namespace Mcsg.Lib.Common.Distributor;
+﻿namespace Mcsg.Common.Core.Distributor;
 
+/// <summary>
+/// Base distributor
+/// </summary>
 public abstract class BaseDistributor
 {
+    /// <summary>
+    /// Deliver
+    /// </summary>
+    /// <param name="item">Distributed item</param>
+    /// <returns>Return the result</returns>
     internal virtual async Task Deliver(DistributedItem item)
     {
         if (await IsAcceptable(item))
@@ -10,6 +18,11 @@ public abstract class BaseDistributor
         }
     }
 
+    /// <summary>
+    /// Is acceptable
+    /// </summary>
+    /// <param name="item">Distributed item</param>
+    /// <returns>Return the result</returns>
     public virtual Task<bool> IsAcceptable(DistributedItem item)
     {
         // The job will not be delivered by default.
@@ -17,6 +30,11 @@ public abstract class BaseDistributor
         return Task.FromResult(false);
     }
 
+    /// <summary>
+    /// Apply action
+    /// </summary>
+    /// <param name="item">Distributed item</param>
+    /// <returns>Return the result</returns>
     public virtual Task ApplyAction(DistributedItem item)
     {
         return Task.CompletedTask;

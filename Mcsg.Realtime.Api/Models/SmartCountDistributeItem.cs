@@ -1,10 +1,9 @@
-﻿using Mcsg.Lib.Common.Distributor;
-using Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Realtime.Api.Models;
 
-namespace Mcsg.Realtime.Api.Models
+using Common.Core.Distributor;
+using Lib.Common.Models;
+
+public class SmartCountDistributeItem : DistributedItem
 {
-    public class SmartCountDistributeItem : DistributedItem
-    {
-        public SmartCountEntityData Data { get; set; }
-    }
+    public SmartCountEntityData Data { get; set; }
 }

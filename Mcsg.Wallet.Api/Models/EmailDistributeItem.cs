@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Wallet.Api.Models;
 
+using Common.Core.Distributor;
 using Common.Core.Enums;
-using Lib.Common.Distributor;
 using Lib.Common.Models;
 
 public class EmailJobDistributeItem : DistributedItem

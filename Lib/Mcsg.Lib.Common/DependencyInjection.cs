@@ -5,8 +5,8 @@ using System.Reflection;
 
 namespace Mcsg.Lib.Common;
 
-using Distributor;
 using Mail;
+using Mcsg.Common.Core.Distributor;
 
 public static class DependencyInjection
 {
