@@ -159,7 +159,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Add file to feed
         if (request.Files != null && request.Files.Count > 0)
         {
-            result.SubPosts = (await _fileService.UpdateFeedFilesAsync(request.Files, userId, userName, userFolder, userAvatar, ett.Id, ett.HashId));
+            result.SubPosts = (await _fileService.UpdateFeedFilesAsync(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId));
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }
         else
