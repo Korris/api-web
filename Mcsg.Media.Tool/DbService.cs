@@ -6,7 +6,6 @@ namespace Mcsg.Media.Tool
 {
     using Common.Core.Enums;
     using Lib.Data.Domain.Entities;
-    using Lib.Data.Enums;
     using Models;
 
     internal class DbService
@@ -68,12 +67,12 @@ namespace Mcsg.Media.Tool
             {
                 status = resourceStatus.GetHashCode(),
                 url,
-                shareUrl = shareUrl,
+                shareUrl,
                 id = resourceId,
             });
         }
 
-        public async Task<VideoNotificationModel> LoadResource(string hashId)
+        public async Task<VideoNotificationModel?> LoadResource(string hashId)
         {
             var query = @"SELECT res.""Id"", res.""HashId""
 	                    , res.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName

@@ -10,31 +10,35 @@ namespace Mcsg.Media.Tool
 
     internal class WorkDistributor
     {
-        private IDictionary<JobType, IWorker> _workers;
-        private readonly DbService _dbService;
-        private readonly ConcurrentQueue<Job> _jobQueue = new();
+        #region -- Methods --
 
         public WorkDistributor(ISetting setting, IStorageClient sc)
         {
             _dbService = new DbService(setting.DefaultConnection);
             _sc = sc;
+            _workers = new Dictionary<JobType, IWorker>
+            {
+                { JobType.ConvertVideo, new ConvertVideoWorker(setting, _sc) },
+                { JobType.ConvertAudio, new ConvertAudioWorker(setting, _sc) }
+            };
 
-            LoadWorker(setting);
             LoadActiveJobs();
-            TrytoCleanupWorkerPool();
+            CleanupWorkerPool();
         }
 
         public async Task Run()
         {
             while (true)
             {
-                if (_jobQueue.Count() == 0)
+                if (_jobQueue.Count == 0)
+                {
                     continue;
+                }
 
-                _jobQueue.TryDequeue(out Job job);
+                _jobQueue.TryDequeue(out Job? job);
                 if (job != null)
                 {
-                    _workers.TryGetValue(job.JobType, out IWorker worker);
+                    _workers.TryGetValue(job.JobType, out IWorker? worker);
                     if (worker != null && worker.HasAvailableSlot())
                     {
                         Console.WriteLine("Processing Job Id: {0}", job.Id);
@@ -45,19 +49,12 @@ namespace Mcsg.Media.Tool
                         _jobQueue.Enqueue(job);
                     }
                 }
+
                 GC.SuppressFinalize(this);
                 GC.Collect();
+
                 await Task.Delay(3000);
             }
-        }
-
-        private void LoadWorker(ISetting setting)
-        {
-            _workers = new Dictionary<JobType, IWorker>
-            {
-                { JobType.ConvertVideo, new ConvertVideoWorker(setting, _sc) },
-                { JobType.ConvertAudio, new ConvertAudioWorker(setting, _sc) }
-            };
         }
 
         private void LoadActiveJobs()
@@ -72,7 +69,7 @@ namespace Mcsg.Media.Tool
             });
         }
 
-        private void TrytoCleanupWorkerPool()
+        private void CleanupWorkerPool()
         {
             Task.Factory.StartNew(async () =>
             {
@@ -87,12 +84,29 @@ namespace Mcsg.Media.Tool
             });
         }
 
+        #endregion
+
         #region -- Fields --
 
         /// <summary>
         /// Storage client
         /// </summary>
         private readonly IStorageClient _sc;
+
+        /// <summary>
+        /// Dictionary worker
+        /// </summary>
+        private Dictionary<JobType, IWorker> _workers;
+
+        /// <summary>
+        /// Db service
+        /// </summary>
+        private readonly DbService _dbService;
+
+        /// <summary>
+        /// Job queue
+        /// </summary>
+        private readonly ConcurrentQueue<Job> _jobQueue = new();
 
         #endregion
     }
