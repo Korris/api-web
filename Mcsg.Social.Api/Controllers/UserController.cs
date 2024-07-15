@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -26,9 +27,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("profile")]
-    public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR req)
+    public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR request)
     {
-        var result = await _userService.UpdateUserProfile(req);
+        var req = new BaseR(HttpContext);
+        request.IsPremium = req.IsPremium == true;
+        var result = await _userService.UpdateUserProfile(request);
         return Ok(result);
     }
 

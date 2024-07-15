@@ -64,15 +64,36 @@ public class Validator
     public const string Equal = "does not match";
 
     /// <summary>
-    /// User name free
+    /// User name
     /// </summary>
-    public class UserNameFree
+    public class UserName
     {
         /// <summary>
         /// Minimum length
         /// </summary>
-        public const ushort Min = 16;
+        public const ushort Min = 6;
 
+        /// <summary>
+        /// Regular expression for validating usernames.<br/>
+        /// Allows letters (a-z, A-Z), numbers (0-9), dots (.), and underscores (_).<br/>
+        /// Dots and underscores are not allowed at the beginning or end of the username, and cannot be used consecutively.<br/>
+        /// No spaces allowed.<br/>
+        /// Minimum length: 6 characters.<br/>
+        /// Maximum length: 30 characters.<br/>
+        /// </summary>
+        public const string Regex = @"^(?![._])(?!.*[._]{2})[A-Za-z0-9]+(?:[._][A-Za-z0-9]+)*(?<![._])$";
+
+        /// <summary>
+        /// Regex message for validating.
+        /// </summary>
+        public const string Message = "User name can only contain letters, numbers, dots, and underscores Dots and underscores are not allowed at the beginning or end, and cannot be used consecutively.";
+    }
+
+    /// <summary>
+    /// User name free
+    /// </summary>
+    public class UserNameFree : UserName
+    {
         /// <summary>
         /// Maximum length
         /// </summary>
@@ -80,15 +101,10 @@ public class Validator
     }
 
     /// <summary>
-    /// User name Premium
+    /// User name premium
     /// </summary>
-    public class UserNamePremium
+    public class UserNamePremium : UserName
     {
-        /// <summary>
-        /// Minimum length
-        /// </summary>
-        public const ushort Min = 6;
-
         /// <summary>
         /// Maximum length
         /// </summary>
@@ -109,6 +125,19 @@ public class Validator
         /// Maximum length
         /// </summary>
         public const ushort Max = 50;
+
+        /// <summary>
+        /// Regular expression for validating profile names.<br/>
+        /// Allows characters A-Z, a-z, numbers, and special characters.<br/>
+        /// Special characters are not allowed at the beginning or consecutively.<br/>
+        /// Maximum length: 50 characters.<br/>
+        /// </summary>
+        public const string Regex = @"^(?!.*[^\p{L}\p{N} ]{2})[\p{L}\p{N}](?:[\p{L}\p{N}]|[^\p{L}\p{N} ](?![^\p{L}\p{N} ])| ){0,49}$";
+
+        /// <summary>
+        /// Regex message for validating.
+        /// </summary>
+        public const string Message = "Profile name can only contain letters, numbers, dots, underscores, and hyphens";
     }
 
     /// <summary>
@@ -287,5 +316,28 @@ public class Validator
         /// SetPass
         /// </summary>
         public const string SetPass = "SetPass";
+    }
+
+    /// <summary>
+    /// Location
+    /// </summary>
+    public class Location
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 200;
+
+        /// <summary>
+        /// Regular expression for validating location.<br/>
+        /// Allows characters A-Z, a-z, numbers, commas, dots, hyphens, slashes, spaces, and hashes, including Vietnamese characters.<br/>
+        /// Maximum length: 200 characters.<br/>
+        /// </summary>
+        public const string Regex = @"^[\p{L}\p{N},.\-/# ]{0,200}$";
+
+        /// <summary>
+        /// Regex message for validating 
+        /// </summary>
+        public const string Message = "Location can contain letters, numbers, commas, dots, hyphens, slashes, spaces, and hashes, including Vietnamese characters.";
     }
 }

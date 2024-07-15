@@ -10,4 +10,5 @@ public class UserProfileUpdateR
     public GenderEnum? Gender { get; set; }
     public string? Location { get; set; }
     public string? PhoneNumber { get; set; }
+    public bool IsPremium { get; set; }
 }

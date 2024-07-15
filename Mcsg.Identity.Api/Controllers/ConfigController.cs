@@ -5,10 +5,10 @@ using System.Text;
 namespace Mcsg.Identity.Api.Controllers;
 
 using Common.Core.Interfaces;
-using Common.SeedWork.Constants;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
+using static Common.SeedWork.Constants.Validator;
 
 /// <summary>
 /// Config controller
@@ -53,19 +53,26 @@ public class ConfigController : ControllerBase
         {
             ProfileName = new
             {
-                Validator.ProfileName.Min,
-                Validator.ProfileName.Max,
-                Regex = Regular.ProfileName
+                ProfileName.Min,
+                ProfileName.Max,
+                ProfileName.Regex
             },
             UserNameFree = new
             {
-                Validator.UserNameFree.Min,
-                Validator.UserNameFree.Max
+                UserNameFree.Min,
+                UserNameFree.Max,
+                UserNameFree.Regex
             },
             UserNamePremium = new
             {
-                Validator.UserNamePremium.Min,
-                Validator.UserNamePremium.Max
+                UserNamePremium.Min,
+                UserNamePremium.Max,
+                UserNamePremium.Regex
+            },
+            Location = new
+            {
+                Location.Max,
+                Location.Regex
             }
         };
         res.SetSuccess(nameof(validators), validators);
