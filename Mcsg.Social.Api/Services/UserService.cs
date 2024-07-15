@@ -17,6 +17,7 @@ using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
+using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Requests;
 using Validators;
@@ -70,7 +71,7 @@ public partial class UserService : IUserService
     public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
     {
         var user = await _context.Users.FirstOrDefaultAsync(p => p.UserName == userName);
-        return await CreateUserRespone(user);
+        return await CreateUserResponeByUsername(user);
     }
 
     public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest)
@@ -283,6 +284,42 @@ public partial class UserService : IUserService
         };
     }
 
+    private async Task<UserProfileResponse> CreateUserResponeByUsername(User? user)
+    {
+        var currentUserId = _currentUserService.Session?.UserId;
+        if (user == null)
+        {
+            return new UserProfileResponse();
+        }
+        var followingCount = await GetFollowingCountAsync(user.Id);
+        var followersCount = await GetFollowerCountAsync(user.Id);
+        return new UserProfileResponse
+        {
+            Id = user.Id,
+            AvatarUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.Avatar),
+            Email = user.Email,
+            JoinDate = user.CreatedDate,
+            ProfileName = user.ProfileName,
+            UserName = user.UserName,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            DateOfBirth = user.DateOfBirth,
+            Gender = user.Gender,
+            PhoneNumber = user.PhoneNumber,
+            CoverPhotoUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.CoverPhoto),
+            Location = user.Location,
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            EmailConfirmed = user.EmailConfirmed,
+            ProfileId = user.ProfileId,
+            PremiumDate = user.PremiumDate,
+            LastLoginDate = user.LastLoginDate,
+            IsPremium = user.IsPremium,
+            NumberOfFollowing = followingCount,
+            NumberOfFollowers = followersCount,
+            IsFollowing = currentUserId == null ? false : await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id)
+        };
+    }
+
     private string GenerateNewFileName(string fileName)
     {
         return $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}{Path.GetExtension(fileName)}";
@@ -444,25 +481,21 @@ public partial class UserService : IUserService
         };
     }
 
-    public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync()
+    public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
     {
-        var ss = _currentUserService.Session;
-        if (ss == null)
-        {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
-        }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+
+        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == userName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
         var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
 
         var userNotFollowed = await (from a in qUser
-                                     where !qUserFollow.Select(p => p.UserFollowingId).Contains(a.Id) && a.Id != ss.UserId
+                                     where !qUserFollow.Select(p => p.UserFollowingId).Contains(a.Id) && a.Id != user.Id
                                      orderby Guid.NewGuid()
                                      select new UserFollowedResponse
                                      {
@@ -481,15 +514,9 @@ public partial class UserService : IUserService
         return userNotFollowed;
     }
 
-    public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR req)
+    public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
     {
-        var ss = _currentUserService.Session;
-        if (ss == null)
-        {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
-        }
-
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -498,12 +525,12 @@ public partial class UserService : IUserService
         PagedResponse<UserFollowedResponse> res;
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
 
         var userFollowing = from a in qUser
                             join b in qUserFollow
                               on a.Id equals b.UserFollowingId
-                            where b.UserFollowerId == ss.UserId
+                            where b.UserFollowerId == user.Id
                             select new UserFollowedResponse
                             {
                                 UserId = a.Id,
@@ -534,15 +561,10 @@ public partial class UserService : IUserService
         return res;
     }
 
-    public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(BasePageResultR req)
+    public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req)
     {
-        var ss = _currentUserService.Session;
-        if (ss == null)
-        {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
-        }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -551,12 +573,12 @@ public partial class UserService : IUserService
         PagedResponse<UserFollowedResponse> res;
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowingId == ss.UserId);
+        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowingId == user.Id);
 
         var userFollowed = from a in qUser
                            join b in qUserFollow
                              on a.Id equals b.UserFollowerId
-                           where b.UserFollowingId == ss.UserId
+                           where b.UserFollowingId == user.Id
                            select new UserFollowedResponse
                            {
                                UserId = a.Id,
@@ -565,12 +587,12 @@ public partial class UserService : IUserService
                                UserName = a.UserName,
                            };
 
-        var qUserFollowing = _context.UserFollowAvailable.Where(p => p.UserFollowerId == ss.UserId);
+        var qUserFollowing = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
 
         var userFollowing = from a in qUser
                             join b in qUserFollowing
                               on a.Id equals b.UserFollowingId
-                            where b.UserFollowerId == ss.UserId
+                            where b.UserFollowerId == user.Id
                             select new UserFollowedResponse
                             {
                                 UserId = a.Id,

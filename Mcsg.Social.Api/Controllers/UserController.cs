@@ -77,26 +77,11 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("suggested-profiles-not-followed")]
-    public async Task<IActionResult> GetSuggestedProfilesNotFollowed()
+    public async Task<IActionResult> GetSuggestedProfilesNotFollowed([FromQuery] string userName)
     {
-        var result = await _userService.GetSuggestedProfilesNotFollowedAsync();
+        var result = await _userService.GetSuggestedProfilesNotFollowedAsync(userName);
         return Ok(result);
     }
-
-    [HttpGet("following")]
-    public async Task<IActionResult> GetFollowingProfiles([FromQuery] BasePageResultR request)
-    {
-        var result = await _userService.GetFollowingProfilesAsync(request);
-        return Ok(result);
-    }
-
-    [HttpGet("followed")]
-    public async Task<IActionResult> GetFollowedUser([FromQuery] BasePageResultR request)
-    {
-        var result = await _userService.GetFollowedProfileAsync(request);
-        return Ok(result);
-    }
-
 
     [HttpPost("follow/{userId}")]
     public async Task<IActionResult> FollowUser(Guid userId)

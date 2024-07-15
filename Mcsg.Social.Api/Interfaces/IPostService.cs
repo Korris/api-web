@@ -5,6 +5,7 @@ using Common.SeedWork.Responses;
 using Enums;
 using Lib.Data.Domain.Entities;
 using Mcsg.Social.Api.Dtos;
+using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Models.Earning;
 using Requests;
@@ -45,6 +46,6 @@ public interface IPostService
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
-    Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input);
-    Task<List<NewsFeedDto>> GetNewsFeed(int amount);
+    Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input);
+    Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
 }

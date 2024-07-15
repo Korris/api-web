@@ -6,6 +6,7 @@ namespace Mcsg.Social.Api.Controllers;
 using Common.Core.Enums;
 using Enums;
 using Interfaces;
+using Mcsg.Social.Api.Requests.Users;
 using Requests;
 
 [Route("[controller]")]
@@ -52,6 +53,20 @@ public class ProfileController : ControllerBase
     public async Task<IActionResult> GetUserStories(string userName, [FromQuery] ComicTopPostR loadReq)
     {
         var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
+        return Ok(result);
+    }
+    [AllowAnonymous]
+    [HttpGet("following")]
+    public async Task<IActionResult> GetFollowingProfiles([FromQuery] UserNamePagingR request)
+    {
+        var result = await _userService.GetFollowingProfilesAsync(request);
+        return Ok(result);
+    }
+
+    [HttpGet("followed")]
+    public async Task<IActionResult> GetFollowedUser([FromQuery] UserNamePagingR request)
+    {
+        var result = await _userService.GetFollowedProfileAsync(request);
         return Ok(result);
     }
 

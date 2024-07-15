@@ -30,4 +30,5 @@ public class UserProfileResponse
     public bool IsPremium { get; set; }
     public int? NumberOfFollowing { get; set; }
     public int? NumberOfFollowers { get; set; }
+    public bool IsFollowing { get; set; } = false;
 }

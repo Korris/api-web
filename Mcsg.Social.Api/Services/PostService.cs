@@ -24,6 +24,7 @@ using Lib.Data.Analytic.Entities;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
+using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Models.Earning;
 using Requests;
@@ -1034,15 +1035,12 @@ public partial class PostService : IPostService
         }
     }
 
-    public async Task<List<NewsFeedDto>> GetNewsFeed(int amount)
+    public async Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input)
     {
-        var ss = _currentUserService.Session;
-        if (ss == null)
-        {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
-        }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.Users.AsNoTracking()
+                                        .Where(p => p.UserName == input.UserName)
+                                        .FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -1061,6 +1059,7 @@ public partial class PostService : IPostService
                     left join ""Posts"" p on  pc.""PostId"" = p.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
+                    AND pc.""CreatedBy"" != @CurrentUserId
                     AND pc.""CreatedDate"" < now()
                     AND pc.""CreatedDate"" > @FromDate
                     AND p.""IsDelete"" = false
@@ -1075,6 +1074,7 @@ public partial class PostService : IPostService
                     LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
                     left join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
                     WHERE spc.""CreatedBy"" = ANY(@UserIds)
+                    AND spc.""CreatedBy"" != @CurrentUserId
                     AND spc.""CreatedDate"" < now()
                     AND spc.""CreatedDate"" > @FromDate
                     AND p.""IsDelete"" = false
@@ -1086,9 +1086,10 @@ public partial class PostService : IPostService
         var data = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(query, new
         {
             FromDate = DateTime.Today,
-            UserIds = userFollowingIds
+            UserIds = userFollowingIds,
+            CurrentUserId = user.Id
         });
-        var amountDataNeedToTake = data != null ? amount - data.Count() : amount;
+        var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
         var queryDataNeedToTake = @"select u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
                         p.""HashId"" as HashPostId,
                         FALSE as IsSubPost, NULL as Order,
@@ -1099,6 +1100,7 @@ public partial class PostService : IPostService
 						LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
+                        AND pc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
 						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
@@ -1114,6 +1116,7 @@ public partial class PostService : IPostService
                         LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
                         LEFT join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
                         WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds]) 	
+                        AND spc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND sp.""IsDelete"" = false
                         AND spc.""IsDelete"" = false
@@ -1124,15 +1127,21 @@ public partial class PostService : IPostService
         var commentIds = data.Select(p => p.Id).ToArray();
         var dataNeedToTake = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(queryDataNeedToTake, new
         {
-            CommentIds = amountDataNeedToTake < amount ? commentIds : [],
-            Limit = amountDataNeedToTake
+            CommentIds = amountDataNeedToTake < input.PageSize ? commentIds : [],
+            Limit = amountDataNeedToTake,
+            CurrentUserId = user.Id
         });
         return data.Concat(dataNeedToTake).ToList();
     }
 
-    public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(BasePageResultR input)
+    public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var currentUserId = _currentUserService.Session.UserId;
+
+        var currentUserId = await _context.Users.AsNoTracking()
+                                                .Where(p => p.UserName == input.UserName)
+                                                .Select(p => p.Id)
+                                                .FirstOrDefaultAsync();
+
         var offset = input.PageSize * (input.PageNumber - 1);
         var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking().Where(p => p.UserId == currentUserId).GroupBy(p => p.PostId).Select(g => g.First().PostId).ToListAsync();
         if (postIdReaded.Any())

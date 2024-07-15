@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
 using Interfaces;
+using Mcsg.Social.Api.Requests.Users;
 using Requests;
 
 [ApiController]
@@ -71,19 +71,17 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
     [HttpGet("get-post-maybe-you-like")]
-    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] BasePageResultR input)
+    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] UserNamePagingR input)
     {
         var result = await _postService.GetPostMaybeYouLike(input);
         return Ok(result);
     }
 
-    [Authorize]
     [HttpGet("get-news-feed")]
-    public async Task<IActionResult> GetNewsFeed([FromQuery] int amount)
+    public async Task<IActionResult> GetNewsFeed([FromQuery] UserNamePagingR input)
     {
-        var result = await _postService.GetNewsFeed(amount);
+        var result = await _postService.GetNewsFeed(input);
         return Ok(result);
     }
 

@@ -2,6 +2,7 @@
 
 using Common.Core.Enums;
 using Common.SeedWork.Responses;
+using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Requests;
 
@@ -17,9 +18,9 @@ public interface IUserService
     Task SyncWalletUserReward(Guid userId, float point, RewardType type);
     Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name);
     Task<PagedResponse<UserSearchResponse>> SearchUserbyKeyword(SmartLookupSearchUserR input);
-    Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync();
-    Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(BasePageResultR request);
+    Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName);
+    Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR request);
     Task<bool> FollowUserAsync(Guid userId);
     Task<bool> UnFollowUserAsync(Guid userId);
-    Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(BasePageResultR req);
+    Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req);
 }
