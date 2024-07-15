@@ -24,7 +24,6 @@ using Lib.Data.Analytic.Entities;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Models.Earning;
 using Requests;

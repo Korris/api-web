@@ -4,7 +4,6 @@ namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
 using Interfaces;
-using Mcsg.Social.Api.Requests.Users;
 using Requests;
 
 [ApiController]

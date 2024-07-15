@@ -2,7 +2,6 @@
 
 using Common.Core.Enums;
 using Common.SeedWork.Responses;
-using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Requests;
 

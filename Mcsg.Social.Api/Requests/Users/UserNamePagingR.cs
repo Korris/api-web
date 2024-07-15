@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Social.Api.Requests.Users
+﻿namespace Mcsg.Social.Api.Requests;
+
+public class UserNamePagingR : BasePageResultR
 {
-    public class UserNamePagingR : BasePageResultR
-    {
-        public string? UserName { get; set; }
-    }
+    public string? UserName { get; set; }
 }

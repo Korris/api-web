@@ -17,7 +17,6 @@ using Lib.Common.Web.Security;
 using Lib.Data;
 using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
-using Mcsg.Social.Api.Requests.Users;
 using Models;
 using Requests;
 using Validators;
