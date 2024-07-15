@@ -403,7 +403,8 @@ public partial class UserService : IUserService
         var keywords = input.ProfileName.ToLower().Split(' ');
         var query = $@"SELECT ""ProfileName"",
                                   ""ProfileId"",
-                                  ""Avatar""
+                                  ""Avatar"",
+                                  ""Id""
                           FROM identity.""Users"" 
                           [QueryCondition]
                           OFFSET @Offset 
@@ -440,11 +441,33 @@ public partial class UserService : IUserService
         if (items.Any())
         {
             results = new PagedResponse<UserSearchResponse>(totalItems, input.PageNumber, input.PageSize);
-
-            foreach (var item in items)
+            var userId = _currentUserService.Session?.UserId;
+            bool isHaveUser = false;
+            var userFollowingIds = new List<Guid>();
+            if (userId != null)
             {
-                item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
+                userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                        .Where(p => p.UserFollowerId == userId)
+                                                                        .Select(p => p.UserFollowingId)
+                                                                        .ToListAsync();
+                isHaveUser = userFollowingIds.Count > 0;
             }
+            if (isHaveUser)
+            {
+                foreach (var item in items)
+                {
+                    item.IsFollowing = userFollowingIds.Contains(item.Id);
+                    item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
+                }
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
+                }
+            }
+
             results.Items = items;
         }
         else
