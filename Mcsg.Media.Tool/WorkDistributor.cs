@@ -26,12 +26,18 @@ namespace Mcsg.Media.Tool
             CleanupWorkerPool();
         }
 
-        public async Task Run()
+        /// <summary>
+        /// Run
+        /// </summary>
+        /// <param name="cancellationToken">This allows you to stop the loop gracefully when needed</param>
+        /// <returns></returns>
+        public async Task Run(CancellationToken cancellationToken)
         {
             while (true)
             {
                 if (_jobQueue.Count == 0)
                 {
+                    await Task.Delay(100, cancellationToken); // add a delay to reduce CPU usage
                     continue;
                 }
 

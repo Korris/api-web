@@ -51,7 +51,8 @@ internal class Program
         var serviceProvider = services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();
 
-        await new WorkDistributor(st, sc!).Run();
+        var cancellation = new CancellationTokenSource();
+        await new WorkDistributor(st, sc!).Run(cancellation.Token);
         Console.ReadLine();
     }
 
