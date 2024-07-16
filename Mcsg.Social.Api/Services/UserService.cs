@@ -505,61 +505,72 @@ public partial class UserService : IUserService
 
     public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
     {
+        var currentIdProfileWatching = await _context.Users.AsNoTracking()
+                                                    .Where(p => p.UserName == userName)
+                                                    .Select(p => p.Id)
+                                                    .FirstOrDefaultAsync();
 
+        var userIdLoggedIn = _currentUserService.Session?.UserId;
+        var result = new List<UserFollowedResponse>();
 
-        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == userName).FirstOrDefaultAsync();
-        if (user == null)
+        if (userIdLoggedIn == null)
         {
-            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+            result = await _context.UserAvailable.AsNoTracking()
+                 .Where(p => p.Id != currentIdProfileWatching)
+                 .OrderBy(p => Guid.NewGuid())
+                 .Select(p => new UserFollowedResponse
+                 {
+                     UserId = p.Id,
+                     ProfileName = p.ProfileName,
+                     Avatar = p.Avatar,
+                     UserName = p.UserName,
+                 })
+                 .Take(5)
+                 .ToListAsync();
         }
 
-        var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
-
-        var userNotFollowed = await (from a in qUser
-                                     where !qUserFollow.Select(p => p.UserFollowingId).Contains(a.Id) && a.Id != user.Id
-                                     orderby Guid.NewGuid()
-                                     select new UserFollowedResponse
-                                     {
-                                         UserId = a.Id,
-                                         ProfileName = a.ProfileName,
-                                         Avatar = a.Avatar,
-                                         UserName = a.UserName
-                                     })
-                                     .Take(5).ToListAsync();
-        if (userNotFollowed.Any())
+        else
         {
-            var userId = _currentUserService.Session?.UserId;
-            bool isHaveUser = false;
-            var userFollowingIds = new List<Guid>();
-            if (userId != null)
-            {
-                userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
-                                                                        .Where(p => p.UserFollowerId == userId)
-                                                                        .Select(p => p.UserFollowingId)
-                                                                        .ToListAsync();
-                isHaveUser = userFollowingIds.Count > 0;
-            }
-            if (isHaveUser)
-            {
-                foreach (var i in userNotFollowed)
-                {
-                    i.IsFollowing = userFollowingIds.Contains(i.UserId);
-                    i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
-                }
+            var userId = await _context.Users.AsNoTracking()
+                                            .Where(p => p.Id == userIdLoggedIn)
+                                            .Select(p => p.Id)
+                                            .FirstOrDefaultAsync();
 
-            }
-            else
+            if (userId == null)
             {
-                foreach (var i in userNotFollowed)
+                throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+            }
+
+            var qUser = _context.UserAvailable;
+            var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == userId);
+
+            result = await (from a in qUser
+                            where !qUserFollow
+                            .Select(p => p.UserFollowingId)
+                            .Contains(a.Id) &&
+                            a.Id != userId &&
+                            a.Id != currentIdProfileWatching
+                            orderby Guid.NewGuid()
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName
+                            })
+                            .Take(5)
+                            .ToListAsync();
+
+            if (result.Any())
+            {
+                foreach (var i in result)
                 {
                     i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
                 }
             }
 
         }
-
-        return userNotFollowed;
+        return result;
     }
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
@@ -571,6 +582,19 @@ public partial class UserService : IUserService
         }
 
         PagedResponse<UserFollowedResponse> res;
+        var userIdWatchingProfile = _currentUserService.Session?.UserId;
+        var userFollowingIds = new List<Guid>();
+        bool isHaveUser = false;
+
+        if (userIdWatchingProfile != null)
+        {
+            userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                    .Where(p => p.UserFollowerId == userIdWatchingProfile)
+                                                                    .Select(p => p.UserFollowingId)
+                                                                    .ToListAsync();
+            isHaveUser = userFollowingIds.Count > 0;
+        }
+
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
         var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
@@ -585,7 +609,7 @@ public partial class UserService : IUserService
                                 ProfileName = a.ProfileName,
                                 Avatar = a.Avatar,
                                 UserName = a.UserName,
-                                IsFollowing = true
+                                IsFollowing = isHaveUser ? userFollowingIds.Contains(a.Id) : false
                             };
 
         // Paging
@@ -618,7 +642,20 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
+        var userIdWatchingProfile = _currentUserService.Session?.UserId;
+        var userFollowingIds = new List<Guid>();
         PagedResponse<UserFollowedResponse> res;
+        bool isHaveUser = false;
+
+        if (userIdWatchingProfile != null)
+        {
+            userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                    .Where(p => p.UserFollowerId == userIdWatchingProfile)
+                                                                    .Select(p => p.UserFollowingId)
+                                                                    .ToListAsync();
+            isHaveUser = userFollowingIds.Count > 0;
+        }
+
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
         var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowingId == user.Id);
@@ -635,20 +672,7 @@ public partial class UserService : IUserService
                                UserName = a.UserName,
                            };
 
-        var qUserFollowing = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
 
-        var userFollowing = from a in qUser
-                            join b in qUserFollowing
-                              on a.Id equals b.UserFollowingId
-                            where b.UserFollowerId == user.Id
-                            select new UserFollowedResponse
-                            {
-                                UserId = a.Id,
-                                ProfileName = a.ProfileName,
-                                Avatar = a.Avatar,
-                                UserName = a.UserName,
-                                IsFollowing = true
-                            };
         // Paging
         var totalItems = userFollowed.Count();
         var items = await userFollowed.Skip(offset).Take(req.PageSize).ToListAsync();
@@ -656,7 +680,7 @@ public partial class UserService : IUserService
         // Update link MinIO
         foreach (var i in items)
         {
-            i.IsFollowing = userFollowing.Any(p => p.UserId == i.UserId);
+            i.IsFollowing = isHaveUser ? userFollowingIds.Any(p => p == i.UserId) : false;
             i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
         }
         if (totalItems > 0)
