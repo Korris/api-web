@@ -527,10 +527,36 @@ public partial class UserService : IUserService
                                          UserName = a.UserName
                                      })
                                      .Take(5).ToListAsync();
-
-        foreach (var i in userNotFollowed)
+        if (userNotFollowed.Any())
         {
-            i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+            var userId = _currentUserService.Session?.UserId;
+            bool isHaveUser = false;
+            var userFollowingIds = new List<Guid>();
+            if (userId != null)
+            {
+                userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                        .Where(p => p.UserFollowerId == userId)
+                                                                        .Select(p => p.UserFollowingId)
+                                                                        .ToListAsync();
+                isHaveUser = userFollowingIds.Count > 0;
+            }
+            if (isHaveUser)
+            {
+                foreach (var i in userNotFollowed)
+                {
+                    i.IsFollowing = userFollowingIds.Contains(i.UserId);
+                    i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+                }
+
+            }
+            else
+            {
+                foreach (var i in userNotFollowed)
+                {
+                    i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+                }
+            }
+
         }
 
         return userNotFollowed;
