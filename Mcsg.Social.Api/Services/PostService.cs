@@ -1130,7 +1130,14 @@ public partial class PostService : IPostService
             Limit = amountDataNeedToTake,
             CurrentUserId = user.Id
         });
-        return data.Concat(dataNeedToTake).ToList();
+
+        var result = data.Concat(dataNeedToTake).ToList();
+        foreach (var item in result)
+        {
+            item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar + "");
+
+        }
+        return result;
     }
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
