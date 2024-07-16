@@ -1050,7 +1050,7 @@ public partial class PostService : IPostService
                                                 .Select(p => p.UserFollowerId)
                                                 .ToListAsync();
 
-        var query = @"select u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
@@ -1064,7 +1064,7 @@ public partial class PostService : IPostService
                     AND p.""IsDelete"" = false
                     AND pc.""IsDelete"" = false
                     UNION 
-                    select u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"", 
+                    select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"", 
                     p.""HashId"" as HashPostId,
                     TRUE as IsSubPost, 
                     sp.""Order""
@@ -1089,7 +1089,7 @@ public partial class PostService : IPostService
             CurrentUserId = user.Id
         });
         var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
-        var queryDataNeedToTake = @"select u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
                         p.""HashId"" as HashPostId,
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
@@ -1104,7 +1104,7 @@ public partial class PostService : IPostService
                         AND pc.""IsDelete"" = false
 						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
                         UNION 
-                        SELECT u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",
+                        SELECT u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",
                         p.""HashId"" as HashPostId,
                         TRUE as IsSubPost, sp.""Order"",
 						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
