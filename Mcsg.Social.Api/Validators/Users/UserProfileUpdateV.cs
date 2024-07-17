@@ -51,7 +51,6 @@ public class UserProfileUpdateV : AbstractValidator<UserProfileUpdateR>
         t = nameof(Location);
         RuleFor(p => p.Location.Triz())
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage($"{t} {NotEmpty}")
             .MaximumLength(Location.Max).WithMessage($"{t} {MaximumLength} {Location.Max}")
             .Matches(Location.Regex).WithMessage($"{t} {Location.Message}");
     }

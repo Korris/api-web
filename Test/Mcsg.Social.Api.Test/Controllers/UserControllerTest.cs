@@ -52,51 +52,95 @@ public class UserControllerTest
     }
 
     /// <summary>
-    /// Test case failed for userName
+    /// Test case failed for userName free
     /// </summary>
     /// <param name="profileName"></param>
     /// <param name="userName"></param>
     /// <param name="location"></param>
     /// <param name="expected"></param>
-    [TestCase(_pProfileName, "User Name", _pLocation, false)]
-    [TestCase(_pProfileName, ".username", _pLocation, false)]
-    [TestCase(_pProfileName, "_username", _pLocation, false)]
-    [TestCase(_pProfileName, "username.", _pLocation, false)]
-    [TestCase(_pProfileName, "username_", _pLocation, false)]
-    [TestCase(_pProfileName, "user..name", _pLocation, false)]
-    [TestCase(_pProfileName, "user__name", _pLocation, false)]
-    [TestCase(_pProfileName, _sShort, _pLocation, false)]
-    [TestCase(_pProfileName, _sLong60, _pLocation, false)]
-    [TestCase(_pProfileName, "User!Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User@Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User#Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User$Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User%Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User^Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User&Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User*Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User(Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User)Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User-Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User+Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User=Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User{Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User}Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User[Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User]Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User:Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User;Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User'Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User<Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User>Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User,Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User?Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User/Name", _pLocation, false)]
-    [TestCase(_pProfileName, "User|Name", _pLocation, false)]
-    [TestCase(_pProfileName, "UserKiệt", _pLocation, false)]
-    public void UpdateUserProfile_ValidationFailed_UserName(string? profileName, string? userName, string? location, bool expected)
+    [TestCase(_pProfileName, "abc123", _pLocation, false)]
+    [TestCase(_pProfileName, "a1b2c3d4", _pLocation, false)]
+    [TestCase(_pProfileName, "abcdefghijklmnopqrstuvwxyz123456767njh", _pLocation, false)]
+    [TestCase(_pProfileName, "abcdefghijklmnopqrstuvwxy", _pLocation, false)]
+    [TestCase(_pProfileName, "09876543210987654321", _pLocation, false)]
+    [TestCase(_pProfileName, "09876764", _pLocation, false)]
+    [TestCase(_pProfileName, "abcd efghijklmnopq1", _pLocation, false)]
+    [TestCase(_pProfileName, "abc def 1234567)890", _pLocation, false)]
+    [TestCase(_pProfileName, "abc123!@#", _pLocation, false)]
+    [TestCase(_pProfileName, "abc$%^123", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser@Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser#Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser$Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser%Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser^Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser&Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser*Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser(Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser)Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser-Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser+Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser=Name", _pLocation, false)]
+    [TestCase(_pProfileName, "sssssssssssssssUser{Name", _pLocation, false)]
+    [TestCase(_pProfileName, "sssssssssssssssUser}Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser[Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser]Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser:Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser;Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser'Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser<Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser>Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser,Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser?Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser/Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser|Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUserKiệt", _pLocation, false)]
+    public void UpdateUserProfile_ValidationFailed_UserNameFree(string? profileName, string? userName, string? location, bool expected)
     {
         UpdateUserProfile(profileName, userName, location, expected);
+    }
+
+    /// <summary>
+    /// Test case failed for userName premium
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="userName"></param>
+    /// <param name="location"></param>
+    /// <param name="expected"></param>
+    [TestCase(_pProfileName, "c12", _pLocation, false)]
+    [TestCase(_pProfileName, "abcdefghijklmnopqrstuvwxyz123456767njh", _pLocation, false)]
+    [TestCase(_pProfileName, "abcd efghijklmnopq1", _pLocation, false)]
+    [TestCase(_pProfileName, "abc def 1234567)890", _pLocation, false)]
+    [TestCase(_pProfileName, "abc123!@#", _pLocation, false)]
+    [TestCase(_pProfileName, "abc$%^123", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser@Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser#Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser$Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser%Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser^Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser&Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser*Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser(Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser)Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser-Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser+Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser=Name", _pLocation, false)]
+    [TestCase(_pProfileName, "sssssssssssssssUser{Name", _pLocation, false)]
+    [TestCase(_pProfileName, "sssssssssssssssUser}Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser[Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser]Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser:Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser;Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser'Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser<Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser>Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser,Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser?Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser/Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUser|Name", _pLocation, false)]
+    [TestCase(_pProfileName, "ssssssssUserKiệt", _pLocation, false)]
+    public void UpdateUserProfile_ValidationFailed_UserNamePremium(string? profileName, string? userName, string? location, bool expected)
+    {
+        UpdateUserProfile_UserNamePremium(profileName, userName, location, expected);
     }
 
     /// <summary>
@@ -163,20 +207,40 @@ public class UserControllerTest
     }
 
     /// <summary>
-    /// Test case pass for userName
+    /// Test case pass for userName free
     /// </summary>
     /// <param name="profileName"></param>
     /// <param name="userName"></param>
     /// <param name="location"></param>
     /// <param name="expected"></param>
-    [TestCase(_pProfileName, "User123", _pLocation, true)]
-    [TestCase(_pProfileName, "User_Name123", _pLocation, true)]
-    [TestCase(_pProfileName, "Profile.Name", _pLocation, true)]
-    public void UpdateUserProfile_ValidationPass_UserName(string? profileName, string? userName, string? location, bool expected)
+    [TestCase(_pProfileName, "User123jhHSuwt6534", _pLocation, true)]
+    [TestCase(_pProfileName, "1lllJHgsYtRSGXR", _pLocation, true)]
+    [TestCase(_pProfileName, "l1111238876555666666666666662", _pLocation, true)]
+    public void UpdateUserProfile_ValidationPass_UserNameFree(string? profileName, string? userName, string? location, bool expected)
     {
         UpdateUserProfile(profileName, userName, location, expected);
     }
 
+    /// <summary>
+    /// Test case pass for userName premium
+    /// </summary>
+    /// <param name="profileName"></param>
+    /// <param name="userName"></param>
+    /// <param name="location"></param>
+    /// <param name="expected"></param>
+    [TestCase(_pProfileName, "User123jhHSuwt6534", _pLocation, true)]
+    [TestCase(_pProfileName, "1lllJHgsYtRSGXR", _pLocation, true)]
+    [TestCase(_pProfileName, "l1111238876555666666666666662", _pLocation, true)]
+    [TestCase(_pProfileName, "H23ser", _pLocation, true)]
+    [TestCase(_pProfileName, "12dss45", _pLocation, true)]
+    [TestCase(_pProfileName, "HUser", _pLocation, true)]
+    [TestCase(_pProfileName, "12345", _pLocation, true)]
+    [TestCase(_pProfileName, "llllksdssdjsadkhkashffvghaskj", _pLocation, true)]
+    [TestCase(_pProfileName, "33211123887655566666666666666", _pLocation, true)]
+    public void UpdateUserProfile_ValidationPass_UserNamePremium(string? profileName, string? userName, string? location, bool expected)
+    {
+        UpdateUserProfile_UserNamePremium(profileName, userName, location, expected);
+    }
 
     /// <summary>
     /// Test case pass for location
@@ -186,6 +250,8 @@ public class UserControllerTest
     /// <param name="location"></param>
     /// <param name="expected"></param>
     [TestCase(_pProfileName, _pUserName, "# 46,An Dương Vương/22/33/44, Gò Vấp , TP.HCM", true)]
+    [TestCase(_pProfileName, _pUserName, null, true)]
+    [TestCase(_pProfileName, _pUserName, "", true)]
     public void UpdateUserProfile_ValidationPass_Address(string? profileName, string? userName, string? location, bool expected)
     {
         UpdateUserProfile(profileName, userName, location, expected);
@@ -199,8 +265,15 @@ public class UserControllerTest
         Assert.That(vr.IsValid, Is.EqualTo(expected));
     }
 
+    private void UpdateUserProfile_UserNamePremium(string? profileName, string? userName, string? location, bool expected)
+    {
+        var req = new UserProfileUpdateR { ProfileName = profileName, UserName = userName, Location = location, IsPremium = true };
+        var vr = new UserProfileUpdateV().Validate(req);
+        Assert.That(vr.IsValid, Is.EqualTo(expected));
+    }
+
     private const string _pProfileName = "Tuấn Kiệt";
-    private const string _pUserName = "TuanKiet";
+    private const string _pUserName = "TuanKiet981112464888";
     private const string _pLocation = "46, Dương Quản Hàm";
     private const string _sShort = "abc";
     private const string _sLong60 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. N";

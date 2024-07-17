@@ -69,24 +69,9 @@ public class Validator
     public class UserName
     {
         /// <summary>
-        /// Minimum length
+        /// Maximum length
         /// </summary>
-        public const ushort Min = 6;
-
-        /// <summary>
-        /// Regular expression for validating usernames.<br/>
-        /// Allows letters (a-z, A-Z), numbers (0-9), dots (.), and underscores (_).<br/>
-        /// Dots and underscores are not allowed at the beginning or end of the username, and cannot be used consecutively.<br/>
-        /// No spaces allowed.<br/>
-        /// Minimum length: 6 characters.<br/>
-        /// Maximum length: 30 characters.<br/>
-        /// </summary>
-        public const string Regex = @"^(?![._])(?!.*[._]{2})[A-Za-z0-9]+(?:[._][A-Za-z0-9]+)*(?<![._])$";
-
-        /// <summary>
-        /// Regex message for validating.
-        /// </summary>
-        public const string Message = "User name can only contain letters, numbers, dots, and underscores Dots and underscores are not allowed at the beginning or end, and cannot be used consecutively.";
+        public const ushort Max = 30;
     }
 
     /// <summary>
@@ -95,9 +80,24 @@ public class Validator
     public class UserNameFree : UserName
     {
         /// <summary>
-        /// Maximum length
+        /// Minimum length
         /// </summary>
-        public const ushort Max = 30;
+        public const ushort Min = 15;
+
+        /// <summary>
+        /// Regular expression for validating.<br/>
+        /// Allows letters (a-z, A-Z) and numbers (0-9).<br/>
+        /// No spaces allowed.<br/>
+        /// Minimum length: 15 characters.<br/>
+        /// Maximum length: 30 characters.<br/>
+        /// Must contain at least one letter and one number.<br/>
+        /// </summary>
+        public const string Regex = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$";
+
+        /// <summary>
+        /// Error message for invalid.<br/>
+        /// </summary>
+        public const string Message = "User name can only contain letters and numbers. No spaces allowed. Must be between 15 and 30 characters long and contain at least one letter and one number.";
     }
 
     /// <summary>
@@ -106,9 +106,23 @@ public class Validator
     public class UserNamePremium : UserName
     {
         /// <summary>
-        /// Maximum length
+        /// Minimum length
         /// </summary>
-        public const ushort Max = 14;
+        public const ushort Min = 5;
+
+        /// <summary>
+        /// Regular expression for validating.<br/>
+        /// Allows letters (a-z, A-Z) and numbers (0-9).<br/>
+        /// No spaces allowed.<br/>
+        /// Minimum length: 5 characters.<br/>
+        /// Maximum length: 30 characters.<br/>
+        /// </summary>
+        public const string Regex = @"^[A-Za-z0-9]+$";
+
+        /// <summary>
+        /// Error message for invalid.<br/>
+        /// </summary>
+        public const string Message = "User name can only contain letters and numbers. No spaces allowed. Must be between 5 and 30 characters";
     }
 
     /// <summary>
@@ -333,7 +347,7 @@ public class Validator
         /// Allows characters A-Z, a-z, numbers, commas, dots, hyphens, slashes, spaces, and hashes, including Vietnamese characters.<br/>
         /// Maximum length: 200 characters.<br/>
         /// </summary>
-        public const string Regex = @"^[\p{L}\p{N},.\-/# ]{0,200}$";
+        public const string Regex = @"^[\p{L}\p{N},.\-/# ]*$";
 
         /// <summary>
         /// Regex message for validating 

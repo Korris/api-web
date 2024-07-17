@@ -205,7 +205,7 @@ public partial class UserService : IUserService
             var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == userName);
             if (userNameHistory == null)
             {
-                if (!user.IsPremium && userName.Length <= Common.SeedWork.Constants.Validator.UserNamePremium.Max)
+                if (!user.IsPremium && userName.Length < Common.SeedWork.Constants.Validator.UserNameFree.Min)
                 {
                     throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_EDIT, ApiErrorMessage.NEED_PREMIUM_TO_EDIT);
                 }
