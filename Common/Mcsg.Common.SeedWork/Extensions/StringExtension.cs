@@ -14,6 +14,7 @@
 using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Mcsg.Common.SeedWork.Extensions;
 
@@ -442,6 +443,16 @@ public static class StringExtension
     public static string Triz(this string? s)
     {
         return (s + "").Trim();
+    }
+
+    /// <summary>
+    /// Encode a URL string
+    /// </summary>
+    /// <param name="s">Name</param>
+    /// <returns>Return an encoded string</returns>
+    public static string UrlEncode(this string? s)
+    {
+        return HttpUtility.UrlEncode(s + "").Replace("+", "%20");
     }
 
     #endregion

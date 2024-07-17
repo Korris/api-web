@@ -5,6 +5,7 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Constants;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
+    using Common.SeedWork.Extensions;
     using Interfaces;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
@@ -60,7 +61,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey);
+                    resource.Url = targetBlobName.UrlEncode();
                     //resource.SubPostId = Guid.Empty;
                     await _resourceRepository.UpdateAsync(resource);
                 }

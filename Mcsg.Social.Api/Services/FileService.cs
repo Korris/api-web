@@ -124,7 +124,7 @@ public class FileService : IFileService
             HashId = hashId,
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
-            Url = tempBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey),
+            Url = tempBlobName.UrlEncode(),
             ShareUrl = objectName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
             CreatedBy = userId,
@@ -455,7 +455,7 @@ public class FileService : IFileService
                 }
 
                 resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey);
+                resource.Url = targetBlobName.UrlEncode();
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
@@ -545,7 +545,7 @@ public class FileService : IFileService
                 }
 
                 resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey);
+                resource.Url = targetBlobName.UrlEncode();
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;
@@ -635,7 +635,7 @@ public class FileService : IFileService
                 }
 
                 resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetBlobName.CreateMediaUrl(_setting.Minio.MediaEncryptKey);
+                resource.Url = targetBlobName.UrlEncode();
                 resource.ShareUrl = targetObjectName;
                 resource.SubPostId = subPostId;
                 resource.Order = resourceReq.Order;

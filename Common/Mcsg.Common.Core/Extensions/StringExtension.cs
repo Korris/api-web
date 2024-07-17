@@ -17,7 +17,6 @@ using System.Collections;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace Mcsg.Common.Core.Extensions;
 
@@ -553,17 +552,6 @@ public static class StringExtension
         }
 
         return $"{baseUrl}/{mediaPath}";
-    }
-
-    /// <summary>
-    /// Create media URL
-    /// </summary>
-    /// <param name="name">Name</param>
-    /// <param name="encryptKey">Encrypt key</param>
-    /// <returns>Return the result</returns>
-    public static string CreateMediaUrl(this string name, string encryptKey)
-    {
-        return HttpUtility.UrlEncode(name);
     }
 
     /// <summary>
