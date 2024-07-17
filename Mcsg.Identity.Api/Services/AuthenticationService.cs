@@ -192,22 +192,22 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
         {
-            throw new UnauthorizedAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
+            throw new ForbiddenAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
         }
         if (!request.Phone.IsNullOrEmpty() && user.PhoneNumberConfirmed == false)
         {
-            throw new UnauthorizedAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
+            throw new ForbiddenAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
         }
         if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
         {
             if (user.Status == UserStatus.Suspended)
             {
                 var lockoutEndFormat = user.LockoutEnd == null ? "không thời hạn" : user.LockoutEnd?.ToString();
-                throw new UnauthorizedAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
+                throw new ForbiddenAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
             }
             else if (user.Status == UserStatus.Banned)
             {
-                throw new UnauthorizedAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
+                throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
             }
 
         }
@@ -237,7 +237,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else
         {
-            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+            throw new ForbiddenAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
     }
     public async Task<bool> LogOut()
