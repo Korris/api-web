@@ -1,0 +1,7 @@
+﻿namespace Mcsg.Comic.Api.Models;
+
+public class FavoriteTagResponse
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+}

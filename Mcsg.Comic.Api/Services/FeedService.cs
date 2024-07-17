@@ -1,0 +1,825 @@
+﻿using AutoMapper;
+using Dapper;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Web;
+
+namespace Mcsg.Comic.Api.Services;
+
+using Common.Core.Enums;
+using Common.Core.Extensions;
+using Common.Core.Interfaces;
+using Common.SeedWork.Exceptions;
+using Common.SeedWork.Responses;
+using Dtos;
+using Enums;
+using Extensions;
+using Interfaces;
+using Lib.Common.Constants;
+using Lib.Data;
+using Lib.Data.Domain.Entities;
+using Lib.Data.Repositories;
+using Lib.Data.Repositories.Interface;
+using Models;
+using Requests;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Message;
+
+public partial class FeedService : IFeedService
+{
+    #region -- Methods --
+
+    public FeedService(
+        McsgDbContext context,
+        ISetting setting,
+        IStorageClient sc,
+        IPostService postService,
+        IMetaDataService metaDataService,
+        ITagService tagService,
+        IFileService fileService,
+        ISoundService soundService,
+        IPostLinkService postLinkService,
+        ISmartLookupService smartLookupService,
+        IUnitOfWork unitOfWork,
+        ISmartCountService smartCountService,
+        IViewHistoryService viewHistoryService,
+        IConfiguration configuration,
+        IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
+        IMapper mapper)
+    {
+        _context = context;
+        _setting = setting;
+        _sc = sc;
+        _postService = postService;
+        _metaDataService = metaDataService;
+        _tagService = tagService;
+        _fileService = fileService;
+        _soundService = soundService;
+        _postLinkService = postLinkService;
+        _smartLookupService = smartLookupService;
+
+        _unitOfWork = unitOfWork;
+        _postRepository = unitOfWork.GetRepository<Post>();
+
+        _smartCountService = smartCountService;
+        _viewHistoryService = viewHistoryService;
+        _configuration = configuration;
+        _feedDisplayConfig = feedDisplayConfig.CurrentValue;
+        _mapper = mapper;
+    }
+
+    public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
+    {
+        try
+        {
+            PagedResponse<FeedDto> results;
+            var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
+            var date = DateTime.UtcNow.Date;
+
+            if (feedLoadReq.OrderBy == null)
+            {
+                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+            }
+            var query = "";
+            if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
+            {
+                query = string.Format(GetAllFeedsWithTopCommentQuery, _postRepository.TableName, feedLoadReq.OrderBy);
+                if (loadFeedType == LoadFeedType.HOT)
+                {
+                    int offsetDate = date.DayOfWeek - DayOfWeek.Monday;
+                    DateTime lastMonday = date.AddDays(-offsetDate);
+                    date = lastMonday;
+                }
+            }
+            else
+            {
+                query = string.Format(GetAllFeedsQuery, _postRepository.TableName, feedLoadReq.OrderBy);
+            }
+
+            query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
+
+            var multi = await _postRepository
+                    .Connection.QueryMultipleAsync(query, new
+                    {
+                        Type = (int)PostType.Feed,
+                        IsAccessPrivate = false,
+                        PageSize = feedLoadReq.PageSize,
+                        Offet = offset,
+                        Date = date,
+                        Status = PostStatus.Public,
+                        DateOnly = DateOnly.FromDateTime(date)
+                    });
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
+            foreach (var item in items)
+            {
+                listItemResponse.Add(MappingFeedInListRespone(item));
+            }
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results.Items = listItemResponse;
+            }
+            else
+            {
+                results = new PagedResponse<FeedDto>(0);
+            }
+            return results;
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+        }
+    }
+
+    public async Task<PagedResponse<FeedDto>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
+    {
+        try
+        {
+            PagedResponse<FeedDto> results;
+            var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
+
+            if (feedLoadReq.OrderBy == null)
+            {
+                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+            }
+            var query = string.Format(GetAllFeedsByTagQuery, _postRepository.TableName, feedLoadReq.OrderBy);
+
+            var multi = await _postRepository
+                    .Connection.QueryMultipleAsync(query, new
+                    {
+                        PostType = (int)PostType.Feed,
+                        IsAccessPrivate = false,
+                        PageSize = feedLoadReq.PageSize,
+                        Offet = offset,
+                        TagName = tagName
+                    });
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
+            foreach (var item in items)
+            {
+                listItemResponse.Add(MappingFeedInListRespone(item));
+            }
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results.Items = listItemResponse;
+            }
+            else
+            {
+                results = new PagedResponse<FeedDto>(0);
+            }
+            return results;
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+        }
+    }
+
+    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId)
+    {
+        var query = $@"WITH SubPostsCount AS (
+                            SELECT ""PostId"", 
+                                   COUNT(*) AS total_subposts 
+                            FROM ""SubPosts""
+                            WHERE ""IsDelete"" = false
+                            GROUP BY ""PostId""
+                        ),
+                        ResourceCount AS (
+                            SELECT sp.""PostId"",
+                            to_jsonb(array_agg(
+                            json_build_object(
+                                'Url', r.""Url"",
+                                'Height', r.""Height"",
+                                'Width', r.""Width"",
+                                'ShareUrl', r.""ShareUrl"",
+                                'Type', r.""Type"",
+                                'Name', r.""Name"",
+                                'Order',r.""Order"",
+                                'HashId',r.""HashId"",
+                                'SubPostHashId',sp.""HashId""
+                   
+                            )
+                            )) AS Resources
+                            FROM ""SubPosts"" sp
+                            LEFT JOIN ""Resources"" r ON sp.""Id"" = r.""SubPostId""
+                            WHERE sp.""IsDelete"" = false
+                            GROUP BY sp.""PostId""
+                        )
+                        SELECT 
+                            u.""ProfileName"" AS Fullname,
+                            u.""ProfileId"",
+                            u.""Avatar"" AS UserAvatar,
+                            u.""Id"" AS UserId,
+                            p.""HashId"",
+                            sp.""Id"",
+                            sp.""CreatedDate"", 
+                            sp.""Body"",
+                            sp.""CreatedBy"",
+                            COALESCE(psb.""HashId"", (
+                                SELECT ps.""HashId"" 
+                                FROM ""SubPosts"" ps 
+                                WHERE ps.""PostId"" = sp.""PostId"" 
+                                  AND ps.""Order"" = sc.total_subposts
+                                  AND ps.""IsDelete"" = false
+                            )) AS PrevSubPostHashId,
+                            COALESCE(asp.""HashId"", (
+                                SELECT ps.""HashId"" 
+                                FROM ""SubPosts"" ps 
+                                WHERE ps.""PostId"" = sp.""PostId"" 
+                                  AND ps.""Order"" = 1
+                                  AND ps.""IsDelete"" = false
+                            )) AS NextSubPostHashId,
+                            rc.Resources as ""ResourcesStr""
+                        FROM ""SubPosts"" sp
+                        LEFT JOIN identity.""Users"" u ON u.""Id"" = sp.""UserId""
+                        LEFT JOIN ""Posts"" p ON p.""Id"" = sp.""PostId""
+                        LEFT JOIN ""SubPosts"" psb ON sp.""PostId"" = psb.""PostId""
+                         AND sp.""Order"" = psb.""Order"" + 1
+                         AND psb.""IsDelete"" = false
+                         LEFT JOIN ""SubPosts"" asp ON sp.""PostId"" = asp.""PostId""
+                         AND sp.""Order"" = asp.""Order"" - 1
+                         AND asp.""IsDelete"" = false
+                         LEFT JOIN SubPostsCount sc ON sp.""PostId"" = sc.""PostId""
+                         LEFT JOIN ResourceCount rc ON sp.""PostId"" = rc.""PostId""
+                         WHERE sp.""HashId"" = @Id
+                        AND sp.""IsDelete"" = false";
+
+        var dataQuery = await _postRepository.Connection.QueryFirstOrDefaultAsync<SubPostFeedQuery>(query, new
+        {
+            Id = hashId
+        });
+        var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery.ResourcesStr);
+        var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
+        data.Resources = resource;
+
+        /// if only 1 Resource when click popup will show data of this Post instead of SubPost
+        if (data.Resources.Count == 1)
+        {
+            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from ""Posts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
+            data.Id = postData.Id;
+            data.Body = postData.Body;
+            data.HashId = postData.HashId;
+            data.Body = HttpUtility.HtmlDecode(data.Body);
+        }
+
+        foreach (var item in data.Resources)
+        {
+            if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
+            {
+                item.Url = await _sc.Strategy.PresignedGetObject(item.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+            }
+            else
+            {
+                item.Url = _setting.Minio.MediaApiUrl.GetMediaPath(item.Name, item.Url);
+            }
+        }
+        data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(data.UserAvatar);
+        data.SubPosts.Add(new SubUploadFileDto
+        {
+            Files = new List<UploadFileDto>()
+                {
+                    new UploadFileDto()
+                    {
+                        HashId = hashId,
+                        Height = data.Height,
+                        Width = data.Width,
+                        Url = data.Url,
+                        Type = data.ResourceType,
+                        Name = data.ResourceName
+                    }
+                }
+        });
+        return data;
+    }
+
+    public async Task<FeedDto> GetFeedAsync(string hashId, Guid userId)
+    {
+        var query = string.Format(GetFeedQuery, _postRepository.TableName);
+
+        FeedQueryDbDto dbFeed = null;
+        await _postRepository
+            .Connection.QueryAsync<FeedQueryDbDto, SubPostQueryDbDto, UploadFileQueryDbDto, MetaDataQueryDto, PostLinkDbDto, FeedQueryDbDto>(query,
+            (feed, subpost, uploadfiles, meta, link) =>
+            {
+                if (dbFeed == null)
+                {
+                    dbFeed = feed;
+                }
+                if (subpost != null)
+                {
+                    if (dbFeed.SubPostDbs == null)
+                        dbFeed.SubPostDbs = new List<SubPostQueryDbDto>();
+                    if (uploadfiles != null)
+                    {
+                        if (subpost.FileDbs == null)
+                            subpost.FileDbs = new List<UploadFileQueryDbDto>();
+                        subpost.FileDbs.Add(uploadfiles);
+                    }
+                    dbFeed.SubPostDbs.Add(subpost);
+                }
+                if (meta != null)
+                {
+                    if (feed.MetaDataDb == null)
+                        feed.MetaDataDb = meta;
+                }
+                if (link != null)
+                {
+                    if (feed.LinkDb == null)
+                        feed.LinkDb = link;
+                }
+                return feed;
+            },
+            param: new
+            {
+                HashId = hashId,
+                IsAccessPrivate = false,
+            }, splitOn: "Id, Id, Id, Id, Id");
+
+        // Will map later
+        var sound = await _soundService.GetSoundByPostAsync(dbFeed.Id);
+
+        //Add view
+        if (dbFeed == null)
+        {
+            throw new NotFoundException(E204, M204);
+        }
+
+        //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
+
+        if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
+        {
+            throw new NotFoundException(E204, M204);
+        }
+
+        return MappingFeedRespone(dbFeed, sound);
+    }
+
+    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res)
+    {
+        var itemResponse = new FeedBoxResponse()
+        {
+            ThumbnailUrl = res.ThumbnailUrl,
+            Body = HttpUtility.HtmlDecode(res.Body),
+            CreatedDate = res.CreatedDate,
+            HashId = res.HashId,
+            Id = res.Id,
+            ProfileId = res.ProfileId,
+            UserId = res.UserId,
+            MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataDto>(res.MetaDatas) : null,
+            TotalResources = res.TotalResources,
+            UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(res.UserAvatar) : null,
+            FullName = res.FullName,
+            UserName = res.UserName,
+            Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
+            Type = res.Type,
+            CustomNote = res.CustomNote
+        };
+        var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
+        if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
+        {
+            itemResponse.Resources = new List<ResourceDto>();
+            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources);
+
+            // Ensure not null
+            resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
+            if (resourceResponses == null)
+            {
+                resourceResponses = [];
+            }
+
+            foreach (var resourceResponse in resourceResponses)
+            {
+                if (resourceResponse == null)
+                {
+                    continue;
+                }
+
+                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
+                {
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                }
+
+                itemResponse.Resources.Add(resourceResponse);
+                itemResponse.SubPosts.Add(new SubUploadFileDto
+                {
+                    Files = new List<UploadFileDto>() {
+                        new UploadFileDto() {
+                            Order = resourceResponse.Order,
+                            SubPostHashId = resourceResponse.SubPostHashId,
+                            HashId = resourceResponse.HashId,
+                            Height = resourceResponse.Height,
+                            Width = resourceResponse.Width,
+                            Url = resourceResponse.Url,
+                            Type = resourceResponse.Type,
+                            Name = resourceResponse.Name
+                        }
+                    }
+                });
+            }
+        }
+        else if (link is not null)
+        {
+            itemResponse.Link = new PostLinkDto
+            {
+                HashId = link.HashId,
+                Url = link.Url,
+                Type = link.Type.ToDisplay()
+            };
+            itemResponse.Resources = new List<ResourceDto>()
+                {
+                    new ResourceDto()
+                    {
+                        HashId = link.HashId,
+                        Url = link.Url,
+                        ShareUrl = link.Url,
+                        Type = link.Type.ToResourceType(),
+                }
+                     };
+        }
+
+        return itemResponse;
+    }
+
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
+    {
+        var param = new { HashIds = hashIds.Split(',').ToList() };
+        var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
+
+        if (result != null && result.Any())
+        {
+            var listFeedDetails = new List<FeedBoxResponse>();
+
+            foreach (var res in result)
+            {
+                listFeedDetails.Add(MappingFeedBoxResponse(res));
+            }
+
+            return listFeedDetails;
+        }
+        else
+        {
+            return new List<FeedBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+        }
+    }
+
+    public async Task<PagedResponse<FeedDto>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)
+    {
+        try
+        {
+            PagedResponse<FeedDto> results;
+            var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
+
+            if (feedLoadReq.OrderBy == null)
+            {
+                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+            }
+            var query = string.Format(GetAllFeedByKeyword, _postRepository.TableName, feedLoadReq.OrderBy, keyWord);
+
+            var multi = await _postRepository
+                    .Connection.QueryMultipleAsync(query, new
+                    {
+                        PostType = (int)PostType.Feed,
+                        IsAccessPrivate = false,
+                        PageSize = feedLoadReq.PageSize,
+                        Offet = offset
+                    });
+            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+            var listItemResponse = new List<FeedDto>();
+            foreach (var item in items)
+            {
+                listItemResponse.Add(MappingFeedInListRespone(item));
+            }
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+                results.Items = listItemResponse;
+            }
+            else
+            {
+                results = new PagedResponse<FeedDto>(0);
+            }
+            return results;
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+        }
+    }
+
+    public FeedDisplayConfig GetFeedDisplayConfig()
+    {
+        return _feedDisplayConfig;
+    }
+
+    public async Task<bool> DeleteFeedAsync(Guid postId)
+    {
+        return await _postService.Delete(postId);
+    }
+
+    public async Task<bool> ReportFeedAsync(FeedReportPostReq req)
+    {
+        return await _postService.ReportPostAsync(req);
+    }
+
+    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item)
+    {
+        var itemResponse = new FeedDto()
+        {
+            Id = item.Id,
+            Title = item.Title,
+            HashId = item.HashId,
+            UserId = item.UserId,
+            UserName = item.UserName,
+            FullName = item.ProfileName,
+            ProfileId = item.ProfileId,
+            ThumbnailUrl = item.ThumbnailUrl,
+            CreatedDate = item.CreatedDate,
+            TotalResource = item.TotalResource,
+            Type = item.Type,
+            Status = item.Status,
+            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
+            Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
+            CustomNote = item.CustomNote
+        };
+        itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
+        #region Mapping with db query list
+        if (item.TotalResource > 0 && !string.IsNullOrEmpty(item.SubPostResourceStr))
+        {
+            itemResponse.Resources = new List<ResourceDto>();
+            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostResourceStr);
+
+            // Ensure not null
+            resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
+            if (resourceResponses == null)
+            {
+                resourceResponses = [];
+            }
+
+            foreach (var resourceResponse in resourceResponses)
+            {
+                if (resourceResponse == null)
+                {
+                    continue;
+                }
+
+                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
+                {
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    resourceResponse.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                }
+                itemResponse.Resources.Add(resourceResponse);
+            }
+        }
+        else if (!string.IsNullOrEmpty(item.LinkUrl))
+        {
+            itemResponse.Link = new PostLinkDto
+            {
+                HashId = item.LinkHashId ?? "",
+                Url = item.LinkUrl ?? "",
+                Type = item.LinkType.ToDisplay()
+            };
+            itemResponse.Resources = new List<ResourceDto>()
+                {
+                    new ResourceDto()
+                    {
+                        HashId = item.LinkHashId,
+                        Url = item.LinkUrl ?? "",
+                        ShareUrl = item.LinkUrl ?? "",
+                        Type = item.LinkType.ToResourceType()
+                    }
+                };
+        }
+        if (item.MetaTitle != null && item.MetaDomain != null)
+        {
+            itemResponse.MetaData = new MetaDataDto
+            {
+                Description = !string.IsNullOrWhiteSpace(item.MetaDescription) ? HttpUtility.HtmlDecode(item.MetaDescription) : "",
+                Domain = item.MetaDomain ?? "",
+                Title = !string.IsNullOrWhiteSpace(item.MetaTitle) ? HttpUtility.HtmlDecode(item.MetaTitle) : "",
+                Url = item.MetaUrl ?? ""
+            };
+        }
+
+        #endregion
+
+        return itemResponse;
+    }
+
+    private FeedDto MappingFeedRespone(FeedQueryDbDto item, BackgroundMedia.SearchDto? sound)
+    {
+        if (item == null)
+            return new FeedDto();
+
+        var itemResponse = new FeedDto()
+        {
+            Id = item.Id,
+            Title = item.Title,
+            HashId = item.HashId,
+            UserId = item.UserId,
+            FullName = item.ProfileName,
+            ThumbnailUrl = item.ThumbnailUrl,
+            CreatedDate = item.CreatedDate,
+            ProfileId = item.ProfileId,
+            Type = item.Type,
+            Status = item.Status,
+            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
+            Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
+            Body = HttpUtility.HtmlDecode(item.Body),
+            CustomNote = item.CustomNote
+        };
+
+        #region Mapping with db query single
+        bool hasResources = false;
+        if (item.SubPostDbs != null && item.SubPostDbs.Count > 0)
+        {
+            itemResponse.SubPosts = new List<SubUploadFileDto>();
+            foreach (var subPostdb in item.SubPostDbs)
+            {
+                var fileDbs = subPostdb.FileDbs.FirstOrDefault();
+                var url = "";
+                if (fileDbs.Type == ResourceType.Video || fileDbs.Type == ResourceType.Audio)
+                {
+                    url = _sc.Strategy.PresignedGetObject(fileDbs.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    url = _setting.Minio.MediaApiUrl.GetMediaPath(fileDbs.Name, fileDbs.Url);
+                }
+                itemResponse.Resources.Add(new ResourceDto
+                {
+                    HashId = subPostdb.HashId,
+                    Type = fileDbs.Type,
+                    Width = fileDbs.Width,
+                    Height = fileDbs.Height,
+                    Url = url,
+                    Order = fileDbs.Order,
+                    SubPostHashId = subPostdb.HashId,
+
+                });
+                var subPostResponse = new SubUploadFileDto()
+                {
+                    Id = subPostdb.Id,
+                    HashId = subPostdb?.HashId,
+                    Title = subPostdb.Title,
+                    Name = subPostdb.Name,
+                    ThumbnailUrl = subPostdb.ThumbnailUrl,
+                    Permission = subPostdb.Permission,
+                    CreatedDate = subPostdb.CreatedDate,
+                    PublishDate = subPostdb.PublishDate,
+                    Status = subPostdb.Status,
+                    Body = subPostdb.Body
+                };
+                if (subPostdb.FileDbs != null)
+                {
+                    hasResources = true;
+
+                    subPostResponse.Files = subPostdb.FileDbs.Select(x =>
+                    {
+                        var resource = new UploadFileDto
+                        {
+                            HashId = subPostdb.HashId,
+                            Url = _setting.Minio.MediaApiUrl.GetMediaPath(x.Name, x.Url),
+                            Name = x.Name,
+                            ShareUrl = x.ShareUrl,
+                            Type = x.Type,
+                            Status = x.Status,
+                            Width = x.Width,
+                            Height = x.Height,
+                            Order = x.Order
+                        };
+                        if (x.Type == ResourceType.Audio || x.Type == ResourceType.Video)
+                        {
+                            resource.Url = _sc.Strategy.PresignedGetObject(x.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                        }
+                        return resource;
+                    }).ToList();
+                }
+                itemResponse.SubPosts.Add(subPostResponse);
+            }
+        }
+        if (item.MetaDataDb != null)
+        {
+            itemResponse.MetaData = new MetaDataDto
+            {
+                Description = !string.IsNullOrWhiteSpace(item.MetaDataDb.Description) ? HttpUtility.HtmlDecode(item.MetaDataDb.Description) : "",
+                Domain = item.MetaDataDb.Domain ?? "",
+                Title = !string.IsNullOrWhiteSpace(item.MetaDataDb.Title) ? HttpUtility.HtmlDecode(item.MetaDataDb.Title) : "",
+                Url = item.MetaDataDb.Url ?? ""
+            };
+        }
+        if (item.LinkDb != null && !string.IsNullOrEmpty(item.LinkDb.HashId) && !hasResources)
+        {
+            itemResponse.Link = new PostLinkDto
+            {
+                HashId = item.LinkDb.HashId ?? "",
+                Url = item.LinkDb.Url ?? "",
+                Type = item.LinkDb.Type.ToDisplay()
+            };
+        }
+
+        // Will map later
+        itemResponse.BackgroundSound = sound;
+        #endregion
+        itemResponse.TotalResource = itemResponse.Resources.Count;
+        return itemResponse;
+    }
+    private static string AddAdditionalFeedQuery(FeedLoadReq feedLoadReq, string query, LoadFeedType loadFeedType)
+    {
+        if (string.IsNullOrEmpty(feedLoadReq.UserName))
+        {
+            query = query.Replace("[AdditionalCondition]", "")
+                .Replace("[AdditionalTotalQuery]", "")
+                .Replace("[AdditionalTotalCondition]", "");
+        }
+        else
+        {
+            var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
+            var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
+            var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
+
+            query = query.Replace("[AdditionalCondition]", additionalCondition)
+                .Replace("[AdditionalTotalQuery]", additionalTotalQuery)
+                .Replace("[AdditionalTotalCondition]", additionalTotalCondition);
+        }
+        return query;
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly McsgDbContext _context;
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
+
+    /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// Post service
+    /// </summary>
+    private readonly IPostService _postService;
+
+    /// <summary>
+    /// MetaData service
+    /// </summary>
+    private readonly IMetaDataService _metaDataService;
+
+    /// <summary>
+    /// Tag service
+    /// </summary>
+    private readonly ITagService _tagService;
+
+    /// <summary>
+    /// File service
+    /// </summary>
+    private readonly IFileService _fileService;
+
+    /// <summary>
+    /// Sound service
+    /// </summary>
+    private readonly ISoundService _soundService;
+
+    /// <summary>
+    /// PostLink service
+    /// </summary>
+    private readonly IPostLinkService _postLinkService;
+
+    /// <summary>
+    /// SmartLookup service
+    /// </summary>
+    private readonly ISmartLookupService _smartLookupService;
+
+    private readonly IRepository<Post> _postRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ISmartCountService _smartCountService;
+    private readonly IViewHistoryService _viewHistoryService;
+    private readonly IConfiguration _configuration;
+    private readonly FeedDisplayConfig _feedDisplayConfig;
+    private readonly IMapper _mapper;
+
+    #endregion
+}

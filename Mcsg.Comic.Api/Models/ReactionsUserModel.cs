@@ -1,0 +1,11 @@
+﻿namespace Mcsg.Comic.Api.Models;
+
+using Lib.Data.Enums;
+
+public class ReactionsUserModel
+{
+    public ReactionType Type { get; set; }
+    public Guid AuthorId { get; set; }
+    public string AuthorName { get; set; }
+    public string AuthorAvatar { get; set; }
+}
