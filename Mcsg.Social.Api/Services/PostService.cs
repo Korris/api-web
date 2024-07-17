@@ -1142,14 +1142,16 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-
         var currentUserId = await _context.Users.AsNoTracking()
                                                 .Where(p => p.UserName == input.UserName)
                                                 .Select(p => p.Id)
                                                 .FirstOrDefaultAsync();
 
         var offset = input.PageSize * (input.PageNumber - 1);
-        var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking().Where(p => p.UserId == currentUserId).GroupBy(p => p.PostId).Select(g => g.First().PostId).ToListAsync();
+        var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking()
+                                                                .Where(p => p.UserId == currentUserId)
+                                                                .GroupBy(p => p.PostId)
+                                                                .Select(g => g.First().PostId).ToListAsync();
         if (postIdReaded.Any())
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
@@ -1165,26 +1167,65 @@ public partial class PostService : IPostService
                 Limit = input.PageSize,
                 TagIds = tagIds,
             });
-            var items = MappingRelatedBoxResponse(dataQuery);
-            if (items != null && items.Count() > 0)
+
+            if (dataQuery != null && dataQuery.Count() == input.PageSize)
             {
+                var items = MappingRelatedBoxResponse(dataQuery);
                 var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
                 results.Items = items;
                 return results;
             }
             else
             {
-                return new PagedResponse<RelatedBoxResponse>(0);
+                var postIdHaveHightestViewCount = await _analyticDbContext.UserViewPosts.AsNoTracking()
+                                                                                        .GroupBy(p => p.PostId)
+                                                                                        .Select(g => new
+                                                                                        {
+                                                                                            Count = g.Count(),
+                                                                                            Id = g.Key
+                                                                                        })
+                                                                                        .OrderByDescending(g => g.Count)
+                                                                                        .Select(g => g.Id)
+                                                                                        .ToListAsync();
+                var queryTakeAll = GetRelatedBoxPostQuery;
+                queryTakeAll = queryTakeAll.Replace("[QueryCondition]", @"AND p.""Id"" = ANY(@PostId)");
+                var amountNeedToTake = dataQuery != null ? input.PageNumber - dataQuery.Count() : input.PageSize;
+                var dataQueryNeedToTake = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
+                {
+                    Limit = amountNeedToTake,
+                    PostId = postIdHaveHightestViewCount
+                });
+                if (dataQueryNeedToTake != null)
+                {
+                    var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
+                    results.Items = MappingRelatedBoxResponse(dataQuery != null ? dataQuery.Concat(dataQueryNeedToTake) : dataQueryNeedToTake);
+                    return results;
+                }
+                else
+                {
+                    return new PagedResponse<RelatedBoxResponse>(0);
+                }
             }
         }
         /// haven't read any stories/comics yet
         else
         {
+            var postIdHaveHightestViewCount = await _analyticDbContext.UserViewPosts.AsNoTracking()
+                                                                                        .GroupBy(p => p.PostId)
+                                                                                        .Select(g => new
+                                                                                        {
+                                                                                            Count = g.Count(),
+                                                                                            Id = g.Key
+                                                                                        })
+                                                                                        .OrderByDescending(g => g.Count)
+                                                                                        .Select(g => g.Id)
+                                                                                        .ToListAsync();
             var query = GetRelatedBoxPostQuery;
-            query = query.Replace("[QueryCondition]", "");
+            query = query.Replace("[QueryCondition]", @"AND p.""Id"" = ANY(@PostId)");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
                 Limit = input.PageSize,
+                PostId = postIdHaveHightestViewCount
             });
             var items = MappingRelatedBoxResponse(dataQuery);
             if (items != null && items.Count() > 0)
