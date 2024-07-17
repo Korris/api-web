@@ -33,10 +33,20 @@ public partial class Repository<TEntity> : IRepository<TEntity>
 
         // Determine the schema to be used
         var dbSchema = DbSchema.Default;
-        var tables = DbSchema.IdentityTables.Split(';');
+        var tables = DbSchema.ComicTables.Split(';');
+        if (tables.Contains(table))
+        {
+            dbSchema = $"{DbSchema.Comic}.";
+        }
+        tables = DbSchema.IdentityTables.Split(';');
         if (tables.Contains(table))
         {
             dbSchema = $"{DbSchema.Identity}.";
+        }
+        tables = DbSchema.StoryTables.Split(';');
+        if (tables.Contains(table))
+        {
+            dbSchema = $"{DbSchema.Story}.";
         }
 
         _tableName = $"{dbSchema}\"{table}\"";
