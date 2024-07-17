@@ -264,7 +264,7 @@ public class Program
     /// <summary>
     /// Variable prefix
     /// </summary>
-    private static string _prefix = "Soc";
+    private static string _prefix = "Sto";
 
     /// <summary>
     /// Media API URL
