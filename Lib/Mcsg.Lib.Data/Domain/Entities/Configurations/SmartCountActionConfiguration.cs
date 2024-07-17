@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Lib.Data.Domain.Entities.Configurations
 {
-    public class SmartCountActionConfiguration : BaseEntityConfiguration<SmartCountAction>
+    public class SmartCountActionConfiguration : BaseConfiguration<SmartCountAction>
     {
         public override void CreateEntityConfiguration(EntityTypeBuilder<SmartCountAction> builder)
         {

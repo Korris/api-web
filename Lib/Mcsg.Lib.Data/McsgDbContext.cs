@@ -24,7 +24,7 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
     {
         base.OnModelCreating(builder);
 
-        builder.ApplyConfigurationsFromAssembly(typeof(SessionEntityConfiguration).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(SessionConfiguration).Assembly);
 
         builder.Entity<User>(entity =>
         {

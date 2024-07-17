@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Lib.Data.Domain.Entities.Configurations
 {
-    public class ViewHistoryConfiguration : BaseEntityConfiguration<ViewHistory>
+    public class ViewHistoryConfiguration : BaseConfiguration<ViewHistory>
     {
         public override void CreateEntityConfiguration(EntityTypeBuilder<ViewHistory> builder)
         {

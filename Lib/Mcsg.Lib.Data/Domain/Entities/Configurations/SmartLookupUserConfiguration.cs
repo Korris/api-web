@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Lib.Data.Domain.Entities.Configurations
 {
-    public class SmartLookupUserConfiguration : BaseEntityConfiguration<SmartLookupUser>
+    public class SmartLookupUserConfiguration : BaseConfiguration<SmartLookupUser>
     {
         public override void CreateEntityConfiguration(EntityTypeBuilder<SmartLookupUser> builder)
         {
