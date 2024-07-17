@@ -13,7 +13,13 @@ namespace Mcsg.Lib.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
+                name: "comic");
+
+            migrationBuilder.EnsureSchema(
                 name: "identity");
+
+            migrationBuilder.EnsureSchema(
+                name: "story");
 
             migrationBuilder.CreateTable(
                 name: "BackgroundMedias",
@@ -437,6 +443,48 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComicPosts",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    HashId = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
+                    AuthorName = table.Column<string>(type: "text", nullable: true),
+                    CoverUrl = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    StatusReason = table.Column<string>(type: "text", nullable: true),
+                    IsMature = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
@@ -523,6 +571,48 @@ namespace Mcsg.Lib.Data.Migrations
                     table.PrimaryKey("PK_SmartLookupUsers", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SmartLookupUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoryPosts",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    HashId = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
+                    AuthorName = table.Column<string>(type: "text", nullable: true),
+                    CoverUrl = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    StatusReason = table.Column<string>(type: "text", nullable: true),
+                    IsMature = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryPosts_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -739,6 +829,89 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComicPostReactions",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicPostReactions_ComicPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicSubPosts",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    HashId = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CreatorNote = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicSubPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPosts_ComicPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BackgroundMediaPosts",
                 columns: table => new
                 {
@@ -940,6 +1113,89 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StoryPostReactions",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryPostReactions_StoryPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "story",
+                        principalTable: "StoryPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StorySubPosts",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    HashId = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CreatorNote = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StorySubPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StorySubPosts_StoryPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "story",
+                        principalTable: "StoryPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StorySubPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TagFavorites",
                 columns: table => new
                 {
@@ -996,6 +1252,84 @@ namespace Mcsg.Lib.Data.Migrations
                         name: "FK_TagPosts_Tags_TagId",
                         column: x => x.TagId,
                         principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicResources",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    HashId = table.Column<string>(type: "text", nullable: false),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    ShareUrl = table.Column<string>(type: "text", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicResources_ComicSubPosts_SubPostId",
+                        column: x => x.SubPostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicSubPosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ComicResources_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicSubPostReactions",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicSubPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostReactions_ComicSubPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "comic",
+                        principalTable: "ComicSubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1106,6 +1440,175 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StoryResources",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    HashId = table.Column<string>(type: "text", nullable: false),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    ShareUrl = table.Column<string>(type: "text", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryResources_StorySubPosts_SubPostId",
+                        column: x => x.SubPostId,
+                        principalSchema: "story",
+                        principalTable: "StorySubPosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StoryResources_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StorySubPostReactions",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StorySubPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostReactions_StorySubPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "story",
+                        principalTable: "StorySubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicPostComments",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicPostComments_ComicPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicPostComments_ComicResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "comic",
+                        principalTable: "ComicResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ComicPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicSubPostComments",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicSubPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostComments_ComicResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "comic",
+                        principalTable: "ComicResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostComments_ComicSubPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicSubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PostComments",
                 columns: table => new
                 {
@@ -1191,6 +1694,167 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StoryPostComments",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryPostComments_StoryPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "story",
+                        principalTable: "StoryPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryPostComments_StoryResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "story",
+                        principalTable: "StoryResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StoryPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StorySubPostComments",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StorySubPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostComments_StoryResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "story",
+                        principalTable: "StoryResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_StorySubPostComments_StorySubPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "story",
+                        principalTable: "StorySubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicPostCommentReactions",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicPostCommentReactions_ComicPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComicSubPostCommentReactions",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicSubPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostCommentReactions_ComicSubPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "comic",
+                        principalTable: "ComicSubPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicSubPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PostCommentReactions",
                 columns: table => new
                 {
@@ -1256,6 +1920,76 @@ namespace Mcsg.Lib.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StoryPostCommentReactions",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryPostCommentReactions_StoryPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "story",
+                        principalTable: "StoryPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StorySubPostCommentReactions",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StorySubPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostCommentReactions_StorySubPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "story",
+                        principalTable: "StorySubPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StorySubPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_BackgroundMediaPosts_BackgroundMediaId",
                 table: "BackgroundMediaPosts",
@@ -1265,6 +1999,142 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "IX_BackgroundMediaPosts_PostId",
                 table: "BackgroundMediaPosts",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostCommentReactions_AuthorId",
+                schema: "comic",
+                table: "ComicPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostComments_AuthorId",
+                schema: "comic",
+                table: "ComicPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostComments_PostId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostComments_ResourceId",
+                schema: "comic",
+                table: "ComicPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostReactions_AuthorId",
+                schema: "comic",
+                table: "ComicPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostReactions_TargetId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPosts_HashId_UserId_Type_Id",
+                schema: "comic",
+                table: "ComicPosts",
+                columns: new[] { "HashId", "UserId", "Type", "Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPosts_UserId",
+                schema: "comic",
+                table: "ComicPosts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicResources_AuthorId",
+                schema: "comic",
+                table: "ComicResources",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicResources_HashId",
+                schema: "comic",
+                table: "ComicResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicResources_Name",
+                schema: "comic",
+                table: "ComicResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicResources_SubPostId",
+                schema: "comic",
+                table: "ComicResources",
+                column: "SubPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostCommentReactions_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostComments_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostComments_PostId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostComments_ResourceId",
+                schema: "comic",
+                table: "ComicSubPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostReactions_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPostReactions_TargetId_ParentId_AuthorId",
+                schema: "comic",
+                table: "ComicSubPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPosts_PostId_HashId_AuthorId",
+                schema: "comic",
+                table: "ComicSubPosts",
+                columns: new[] { "PostId", "HashId", "AuthorId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicSubPosts_UserId",
+                schema: "comic",
+                table: "ComicSubPosts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_NotificationObjectId",
@@ -1391,6 +2261,142 @@ namespace Mcsg.Lib.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_SmartLookupUsers_UserId",
                 table: "SmartLookupUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostCommentReactions_AuthorId",
+                schema: "story",
+                table: "StoryPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "story",
+                table: "StoryPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostComments_AuthorId",
+                schema: "story",
+                table: "StoryPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostComments_PostId_ParentId_AuthorId",
+                schema: "story",
+                table: "StoryPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostComments_ResourceId",
+                schema: "story",
+                table: "StoryPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostReactions_AuthorId",
+                schema: "story",
+                table: "StoryPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostReactions_TargetId_ParentId_AuthorId",
+                schema: "story",
+                table: "StoryPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPosts_HashId_UserId_Type_Id",
+                schema: "story",
+                table: "StoryPosts",
+                columns: new[] { "HashId", "UserId", "Type", "Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPosts_UserId",
+                schema: "story",
+                table: "StoryPosts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryResources_AuthorId",
+                schema: "story",
+                table: "StoryResources",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryResources_HashId",
+                schema: "story",
+                table: "StoryResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryResources_Name",
+                schema: "story",
+                table: "StoryResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryResources_SubPostId",
+                schema: "story",
+                table: "StoryResources",
+                column: "SubPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostCommentReactions_AuthorId",
+                schema: "story",
+                table: "StorySubPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "story",
+                table: "StorySubPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostComments_AuthorId",
+                schema: "story",
+                table: "StorySubPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostComments_PostId_ParentId_AuthorId",
+                schema: "story",
+                table: "StorySubPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostComments_ResourceId",
+                schema: "story",
+                table: "StorySubPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostReactions_AuthorId",
+                schema: "story",
+                table: "StorySubPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPostReactions_TargetId_ParentId_AuthorId",
+                schema: "story",
+                table: "StorySubPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPosts_PostId_HashId_AuthorId",
+                schema: "story",
+                table: "StorySubPosts",
+                columns: new[] { "PostId", "HashId", "AuthorId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StorySubPosts_UserId",
+                schema: "story",
+                table: "StorySubPosts",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -1562,6 +2568,22 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "BackgroundMediaPosts");
 
             migrationBuilder.DropTable(
+                name: "ComicPostCommentReactions",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "ComicPostReactions",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "ComicSubPostCommentReactions",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "ComicSubPostReactions",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
                 name: "CrawComicChapters");
 
             migrationBuilder.DropTable(
@@ -1609,6 +2631,22 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "SmartLookupUsers");
+
+            migrationBuilder.DropTable(
+                name: "StoryPostCommentReactions",
+                schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "StoryPostReactions",
+                schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "StorySubPostCommentReactions",
+                schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "StorySubPostReactions",
+                schema: "story");
 
             migrationBuilder.DropTable(
                 name: "SubPostCommentReactions");
@@ -1667,10 +2705,26 @@ namespace Mcsg.Lib.Data.Migrations
                 name: "BackgroundMedias");
 
             migrationBuilder.DropTable(
+                name: "ComicPostComments",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "ComicSubPostComments",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
                 name: "NotificationObjects");
 
             migrationBuilder.DropTable(
                 name: "PostComments");
+
+            migrationBuilder.DropTable(
+                name: "StoryPostComments",
+                schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "StorySubPostComments",
+                schema: "story");
 
             migrationBuilder.DropTable(
                 name: "SubPostComments");
@@ -1686,10 +2740,34 @@ namespace Mcsg.Lib.Data.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
+                name: "ComicResources",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "StoryResources",
+                schema: "story");
+
+            migrationBuilder.DropTable(
                 name: "Resources");
 
             migrationBuilder.DropTable(
+                name: "ComicSubPosts",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "StorySubPosts",
+                schema: "story");
+
+            migrationBuilder.DropTable(
                 name: "SubPosts");
+
+            migrationBuilder.DropTable(
+                name: "ComicPosts",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "StoryPosts",
+                schema: "story");
 
             migrationBuilder.DropTable(
                 name: "Posts");
