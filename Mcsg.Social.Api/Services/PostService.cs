@@ -1049,8 +1049,10 @@ public partial class PostService : IPostService
                                                 .Where(p => p.UserFollowerId == user.Id)
                                                 .Select(p => p.UserFollowerId)
                                                 .ToListAsync();
-
-        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+        var fromDate = DateTime.Today.AddDays(-2);
+        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",
+                    pc.""CreatedDate"",
+                    p.""Type"" , 
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
@@ -1063,30 +1065,16 @@ public partial class PostService : IPostService
                     AND pc.""CreatedDate"" > @FromDate
                     AND p.""IsDelete"" = false
                     AND pc.""IsDelete"" = false
-                    UNION 
-                    select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"", 
-                    p.""HashId"" as HashPostId,
-                    TRUE as IsSubPost, 
-                    sp.""Order""
-                    from ""SubPostComments"" spc 
-                    left join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
-                    LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
-                    left join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
-                    WHERE spc.""CreatedBy"" = ANY(@UserIds)
-                    AND spc.""CreatedBy"" != @CurrentUserId
-                    AND spc.""CreatedDate"" < now()
-                    AND spc.""CreatedDate"" > @FromDate
-                    AND p.""IsDelete"" = false
-                    AND sp.""IsDelete"" = false
-                    AND spc.""IsDelete"" = false
+                    AND LENGTH(pc.""Body"") > 30
+              
                     Order by ""CreatedDate"" desc
                     LIMIT 2";
 
         var data = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(query, new
         {
-            FromDate = DateTime.Today,
             UserIds = userFollowingIds,
-            CurrentUserId = user.Id
+            CurrentUserId = user.Id,
+            FromDate = fromDate
         });
         var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
         var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
@@ -1102,24 +1090,10 @@ public partial class PostService : IPostService
                         AND pc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
+                        AND pc.""CreatedDate"" > @FromDate
+                        AND LENGTH(pc.""Body"") > 30
 						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
-                        UNION 
-                        SELECT u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",
-                        p.""HashId"" as HashPostId,
-                        TRUE as IsSubPost, sp.""Order"",
-						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
-                        RANDOM() AS sort_key
-                        FROM ""SubPostComments"" spc 
-                        LEFT join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
-					    LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-                        LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
-                        LEFT join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
-                        WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds]) 	
-                        AND spc.""CreatedBy"" != @CurrentUserId
-                        AND p.""IsDelete"" = false
-                        AND sp.""IsDelete"" = false
-                        AND spc.""IsDelete"" = false
-					    GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",sp.""Order""
+                      
                         ORDER BY sort_key
                         LIMIT @Limit";
 
@@ -1128,7 +1102,8 @@ public partial class PostService : IPostService
         {
             CommentIds = amountDataNeedToTake < input.PageSize ? commentIds : [],
             Limit = amountDataNeedToTake,
-            CurrentUserId = user.Id
+            CurrentUserId = user.Id,
+            FromDate = fromDate
         });
 
         var result = data.Concat(dataNeedToTake).ToList();
@@ -1162,6 +1137,7 @@ public partial class PostService : IPostService
                                                                                              ", new { PostId = postIdReaded });
             var query = GetRelatedBoxPostQuery;
             query = query.Replace("[QueryCondition]", @"AND t.""Id"" = ANY(@TagIds)");
+
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
                 Limit = input.PageSize,
@@ -1189,8 +1165,8 @@ public partial class PostService : IPostService
                                                                                         .ToListAsync();
                 var queryTakeAll = GetRelatedBoxPostQuery;
                 queryTakeAll = queryTakeAll.Replace("[QueryCondition]", @"AND p.""Id"" = ANY(@PostId)");
-                var amountNeedToTake = dataQuery != null ? input.PageNumber - dataQuery.Count() : input.PageSize;
-                var dataQueryNeedToTake = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
+                var amountNeedToTake = dataQuery != null ? input.PageSize - dataQuery.Count() : input.PageSize;
+                var dataQueryNeedToTake = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(queryTakeAll, new
                 {
                     Limit = amountNeedToTake,
                     PostId = postIdHaveHightestViewCount
@@ -1200,6 +1176,7 @@ public partial class PostService : IPostService
                     var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
                     results.Items = MappingRelatedBoxResponse(dataQuery != null ? dataQuery.Concat(dataQueryNeedToTake) : dataQueryNeedToTake);
                     return results;
+
                 }
                 else
                 {
@@ -1210,22 +1187,11 @@ public partial class PostService : IPostService
         /// haven't read any stories/comics yet
         else
         {
-            var postIdHaveHightestViewCount = await _analyticDbContext.UserViewPosts.AsNoTracking()
-                                                                                        .GroupBy(p => p.PostId)
-                                                                                        .Select(g => new
-                                                                                        {
-                                                                                            Count = g.Count(),
-                                                                                            Id = g.Key
-                                                                                        })
-                                                                                        .OrderByDescending(g => g.Count)
-                                                                                        .Select(g => g.Id)
-                                                                                        .ToListAsync();
             var query = GetRelatedBoxPostQuery;
-            query = query.Replace("[QueryCondition]", @"AND p.""Id"" = ANY(@PostId)");
+            query = query.Replace("[QueryCondition]", "");
             var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
             {
                 Limit = input.PageSize,
-                PostId = postIdHaveHightestViewCount
             });
             var items = MappingRelatedBoxResponse(dataQuery);
             if (items != null && items.Count() > 0)
