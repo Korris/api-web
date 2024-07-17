@@ -7,7 +7,9 @@ namespace Mcsg.Lib.Data;
 using Common.SeedWork.Extensions;
 using Constants;
 using Domain.Entities;
+using Domain.Entities.Comics;
 using Domain.Entities.Configurations;
+using Domain.Entities.Stories;
 
 /// <summary>
 /// McsgDbContext
@@ -133,40 +135,115 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     #region -- Properties --
 
-    public DbSet<Session> Sessions { get; set; }
-    public DbSet<UserOtp> UserOtps { get; set; }
-    public DbSet<UserNameHistory> UserNameHistories { get; set; }
-    public DbSet<UserSocial> UserSocials { get; set; }
-    public DbSet<Job> Jobs { get; set; }
-    public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-    public DbSet<Post> Posts { get; set; }
-    public DbSet<SubPost> SubPosts { get; set; }
-    public DbSet<PostComment> PostComments { get; set; }
-    public DbSet<PostReaction> PostReactions { get; set; }
-    public DbSet<SubPostReaction> SubPostReactions { get; set; }
-    public DbSet<PostCommentReaction> PostCommentReactions { get; set; }
-    public DbSet<SubPostCommentReaction> SubPostCommentReactions { get; set; }
-    public DbSet<MetaData> MetaDatas { get; set; }
-    public DbSet<Resource> Resources { get; set; }
-    public DbSet<SystemSetting> SystemSettings { get; set; }
-    public DbSet<SystemSettingHistory> SystemSettingHistories { get; set; }
-    public DbSet<Tag> Tags { get; set; }
-    public DbSet<TagPost> TagPosts { get; set; }
-    public DbSet<UserFollow> UserFollows { get; set; }
-    public DbSet<TagFavorite> TagFavorites { get; set; }
-    public DbSet<PostFavorite> PostFavorites { get; set; }
-    public DbSet<SmartLookup> SmartLookups { get; set; }
-    public DbSet<SmartCountAction> SmartCountActions { get; set; }
-    public DbSet<SmartLookupUser> SmartLookupUsers { get; set; }
-    public DbSet<Notification> Notifications { get; set; }
-    public DbSet<NotificationObject> NotificationObjects { get; set; }
-    public DbSet<BackgroundMedia> BackgroundMedias { get; set; }
-    public DbSet<BackgroundMediaPost> BackgroundMediaPosts { get; set; }
-    public DbSet<Mention> Mentions { get; set; }
-    public DbSet<CrawComic> CrawComics { get; set; }
-    public DbSet<CrawComicChapter> CrawComicChapters { get; set; }
-    public DbSet<PostReport> PostReports { get; set; }
-    public DbSet<PostLink> PostLinks { get; set; }
+    public virtual DbSet<BackgroundMedia> BackgroundMedias { get; set; }
+
+    public virtual DbSet<BackgroundMediaPost> BackgroundMediaPosts { get; set; }
+
+    public virtual DbSet<ComicPost> ComicPosts { get; set; }
+
+    public virtual DbSet<ComicPostComment> ComicPostComments { get; set; }
+
+    public virtual DbSet<ComicPostCommentReaction> ComicPostCommentReactions { get; set; }
+
+    public virtual DbSet<ComicPostReaction> ComicPostReactions { get; set; }
+
+    public virtual DbSet<ComicResource> ComicResources { get; set; }
+
+    public virtual DbSet<ComicSubPost> ComicSubPosts { get; set; }
+
+    public virtual DbSet<ComicSubPostComment> ComicSubPostComments { get; set; }
+
+    public virtual DbSet<ComicSubPostCommentReaction> ComicSubPostCommentReactions { get; set; }
+
+    public virtual DbSet<ComicSubPostReaction> ComicSubPostReactions { get; set; }
+
+    public virtual DbSet<CrawComic> CrawComics { get; set; }
+
+    public virtual DbSet<CrawComicChapter> CrawComicChapters { get; set; }
+
+    public virtual DbSet<Job> Jobs { get; set; }
+
+    public virtual DbSet<Mention> Mentions { get; set; }
+
+    public virtual DbSet<MetaData> MetaDatas { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
+
+    public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
+
+    public virtual DbSet<Post> Posts { get; set; }
+
+    public virtual DbSet<PostComment> PostComments { get; set; }
+
+    public virtual DbSet<PostCommentReaction> PostCommentReactions { get; set; }
+
+    public virtual DbSet<PostFavorite> PostFavorites { get; set; }
+
+    public virtual DbSet<PostLink> PostLinks { get; set; }
+
+    public virtual DbSet<PostReaction> PostReactions { get; set; }
+
+    public virtual DbSet<PostReport> PostReports { get; set; }
+
+    public virtual DbSet<Resource> Resources { get; set; }
+
+    public virtual DbSet<Session> Sessions { get; set; }
+
+    public virtual DbSet<SmartCountAction> SmartCountActions { get; set; }
+
+    public virtual DbSet<SmartLookup> SmartLookups { get; set; }
+
+    public virtual DbSet<SmartLookupUser> SmartLookupUsers { get; set; }
+
+    public virtual DbSet<StoryPost> StoryPosts { get; set; }
+
+    public virtual DbSet<StoryPostComment> StoryPostComments { get; set; }
+
+    public virtual DbSet<StoryPostCommentReaction> StoryPostCommentReactions { get; set; }
+
+    public virtual DbSet<StoryPostReaction> StoryPostReactions { get; set; }
+
+    public virtual DbSet<StoryResource> StoryResources { get; set; }
+
+    public virtual DbSet<StorySubPost> StorySubPosts { get; set; }
+
+    public virtual DbSet<StorySubPostComment> StorySubPostComments { get; set; }
+
+    public virtual DbSet<StorySubPostCommentReaction> StorySubPostCommentReactions { get; set; }
+
+    public virtual DbSet<StorySubPostReaction> StorySubPostReactions { get; set; }
+
+    public virtual DbSet<SubPost> SubPosts { get; set; }
+
+    public virtual DbSet<SubPostComment> SubPostComments { get; set; }
+
+    public virtual DbSet<SubPostCommentReaction> SubPostCommentReactions { get; set; }
+
+    public virtual DbSet<SubPostReaction> SubPostReactions { get; set; }
+
+    public virtual DbSet<SystemSetting> SystemSettings { get; set; }
+
+    public virtual DbSet<SystemSettingHistory> SystemSettingHistories { get; set; }
+
+    public virtual DbSet<Tag> Tags { get; set; }
+
+    public virtual DbSet<TagFavorite> TagFavorites { get; set; }
+
+    public virtual DbSet<TagPost> TagPosts { get; set; }
+
+    public virtual DbSet<UserExclusiveSubPost> UserExclusiveSubPosts { get; set; }
+
+    public virtual DbSet<UserFollow> UserFollows { get; set; }
+
+    public virtual DbSet<UserNameHistory> UserNameHistories { get; set; }
+
+    public virtual DbSet<UserOtp> UserOtps { get; set; }
+
+    public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+
+    public virtual DbSet<UserSocial> UserSocials { get; set; }
+
+    public virtual DbSet<ViewHistory> ViewHistories { get; set; }
 
     #endregion
 }

@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Lib.Data;
 
 using Domain.Entities;
+using Domain.Entities.Comics;
+using Domain.Entities.Stories;
 
 /// <summary>
 /// McsgDbContext
@@ -9,49 +11,117 @@ partial class McsgDbContext
 {
     #region -- Properties --
 
-    /// <summary>
-    /// UserAvailable
-    /// </summary>
-    public IQueryable<User> UserAvailable => Users.Where(p => !p.IsDelete);
+    public IQueryable<BackgroundMedia> BackgroundMediaAvailable => BackgroundMedias.Where(p => !p.IsDelete);
 
-    /// <summary>
-    /// UserFollowAvailable
-    /// </summary>
-    public IQueryable<UserFollow> UserFollowAvailable => UserFollows.Where(p => !p.IsDelete);
+    public IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable => BackgroundMediaPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPost> ComicPostAvailable => ComicPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPostComment> ComicPostCommentAvailable => ComicPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPostCommentReaction> ComicPostCommentReactionAvailable => ComicPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPostReaction> ComicPostReactionAvailable => ComicPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicResource> ComicResourceAvailable => ComicResources.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicSubPost> ComicSubPostAvailable => ComicSubPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicSubPostComment> ComicSubPostCommentAvailable => ComicSubPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicSubPostCommentReaction> ComicSubPostCommentReactionAvailable => ComicSubPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicSubPostReaction> ComicSubPostReactionAvailable => ComicSubPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<CrawComic> CrawComicAvailable => CrawComics.Where(p => !p.IsDelete);
+
+    public IQueryable<CrawComicChapter> CrawComicChapterAvailable => CrawComicChapters.Where(p => !p.IsDelete);
+
+    public IQueryable<Job> JobAvailable => Jobs.Where(p => !p.IsDelete);
+
+    public IQueryable<Mention> MentionAvailable => Mentions.Where(p => !p.IsDelete);
+
+    public IQueryable<MetaData> MetaDataAvailable => MetaDatas.Where(p => true);
+
+    public IQueryable<Notification> NotificationAvailable => Notifications.Where(p => !p.IsDelete);
+
+    public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
+
+    public IQueryable<Post> PostAvailable => Posts.Where(p => !p.IsDelete);
+
+    public IQueryable<PostComment> PostCommentAvailable => PostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<PostCommentReaction> PostCommentReactionAvailable => PostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<PostFavorite> PostFavoriteAvailable => PostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<PostLink> PostLinkAvailable => PostLinks.Where(p => !p.IsDelete);
+
+    public IQueryable<PostReaction> PostReactionAvailable => PostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<PostReport> PostReportAvailable => PostReports.Where(p => !p.IsDelete);
+
+    public IQueryable<Resource> ResourceAvailable => Resources.Where(p => !p.IsDelete);
 
     public IQueryable<Session> SessionAvailable => Sessions.Where(p => !p.IsDelete);
-    public IQueryable<UserOtp> UserOtpAvailable => UserOtps.Where(p => !p.IsDelete);
-    public IQueryable<UserNameHistory> UserNameHistoryAvailable => UserNameHistories.Where(p => !p.IsDelete);
-    public IQueryable<UserSocial> UserSocialAvailable => UserSocials.Where(p => !p.IsDelete);
-    public IQueryable<Job> JobAvailable => Jobs.Where(p => !p.IsDelete);
-    public IQueryable<UserRefreshToken> UserRefreshTokenAvailable => UserRefreshTokens.Where(p => !p.IsDelete);
-    public IQueryable<Post> PostAvailable => Posts.Where(p => !p.IsDelete);
+
+    public IQueryable<SmartCountAction> SmartCountActionAvailable => SmartCountActions.Where(p => true);
+
+    public IQueryable<SmartLookup> SmartLookupAvailable => SmartLookups.Where(p => true);
+
+    public IQueryable<SmartLookupUser> SmartLookupUserAvailable => SmartLookupUsers.Where(p => true);
+
+    public IQueryable<StoryPost> StoryPostAvailable => StoryPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostComment> StoryPostCommentAvailable => StoryPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable => StoryPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostReaction> StoryPostReactionAvailable => StoryPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryResource> StoryResourceAvailable => StoryResources.Where(p => !p.IsDelete);
+
+    public IQueryable<StorySubPost> StorySubPostAvailable => StorySubPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<StorySubPostComment> StorySubPostCommentAvailable => StorySubPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<StorySubPostCommentReaction> StorySubPostCommentReactionAvailable => StorySubPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<StorySubPostReaction> StorySubPostReactionAvailable => StorySubPostReactions.Where(p => !p.IsDelete);
+
     public IQueryable<SubPost> SubPostAvailable => SubPosts.Where(p => !p.IsDelete);
-    public IQueryable<PostComment> PostCommentAvailable => PostComments.Where(p => !p.IsDelete);
-    public IQueryable<PostReaction> PostReactionAvailable => PostReactions.Where(p => !p.IsDelete);
-    public IQueryable<SubPostReaction> SubPostReactionAvailable => SubPostReactions.Where(p => !p.IsDelete);
-    public IQueryable<PostCommentReaction> PostCommentReactionAvailable => PostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<SubPostComment> SubPostCommentAvailable => SubPostComments.Where(p => !p.IsDelete);
+
     public IQueryable<SubPostCommentReaction> SubPostCommentReactionAvailable => SubPostCommentReactions.Where(p => !p.IsDelete);
-    public IQueryable<MetaData> MetaDataAvailable => MetaDatas;
-    public IQueryable<Resource> ResourceAvailable => Resources.Where(p => !p.IsDelete);
+
+    public IQueryable<SubPostReaction> SubPostReactionAvailable => SubPostReactions.Where(p => !p.IsDelete);
+
     public IQueryable<SystemSetting> SystemSettingAvailable => SystemSettings.Where(p => !p.IsDelete);
+
     public IQueryable<SystemSettingHistory> SystemSettingHistoryAvailable => SystemSettingHistories.Where(p => !p.IsDelete);
+
     public IQueryable<Tag> TagAvailable => Tags.Where(p => !p.IsDelete);
-    public IQueryable<TagPost> TagPostAvailable => TagPosts.Where(p => !p.IsDelete);
+
     public IQueryable<TagFavorite> TagFavoriteAvailable => TagFavorites.Where(p => !p.IsDelete);
-    public IQueryable<PostFavorite> PostFavoriteAvailable => PostFavorites.Where(p => !p.IsDelete);
-    public IQueryable<SmartLookup> SmartLookupAvailable => SmartLookups;
-    public IQueryable<SmartCountAction> SmartCountActionAvailable => SmartCountActions;
-    public IQueryable<SmartLookupUser> SmartLookupUserAvailable => SmartLookupUsers;
-    public IQueryable<Notification> NotificationAvailable => Notifications.Where(p => !p.IsDelete);
-    public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
-    public IQueryable<BackgroundMedia> BackgroundMediaAvailable => BackgroundMedias.Where(p => !p.IsDelete);
-    public IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable => BackgroundMediaPosts.Where(p => !p.IsDelete);
-    public IQueryable<Mention> MentionAvailable => Mentions.Where(p => !p.IsDelete);
-    public IQueryable<CrawComic> CrawComicAvailable => CrawComics.Where(p => !p.IsDelete);
-    public IQueryable<CrawComicChapter> CrawComicChapterAvailable => CrawComicChapters.Where(p => !p.IsDelete);
-    public IQueryable<PostReport> PostReportAvailable => PostReports.Where(p => !p.IsDelete);
-    public IQueryable<PostLink> PostLinkAvailable => PostLinks.Where(p => !p.IsDelete);
+
+    public IQueryable<TagPost> TagPostAvailable => TagPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<User> UserAvailable => Users.Where(p => !p.IsDelete);
+
+    public IQueryable<UserExclusiveSubPost> UserExclusiveSubPostAvailable => UserExclusiveSubPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<UserFollow> UserFollowAvailable => UserFollows.Where(p => !p.IsDelete);
+
+    public IQueryable<UserNameHistory> UserNameHistoryAvailable => UserNameHistories.Where(p => !p.IsDelete);
+
+    public IQueryable<UserOtp> UserOtpAvailable => UserOtps.Where(p => !p.IsDelete);
+
+    public IQueryable<UserRefreshToken> UserRefreshTokenAvailable => UserRefreshTokens.Where(p => !p.IsDelete);
+
+    public IQueryable<UserSocial> UserSocialAvailable => UserSocials.Where(p => !p.IsDelete);
+
+    public IQueryable<ViewHistory> ViewHistoryAvailable => ViewHistories.Where(p => true);
 
     #endregion
 }
