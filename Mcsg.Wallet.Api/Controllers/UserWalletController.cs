@@ -226,4 +226,15 @@ public class UserWalletController : ControllerBase
         }
         return BadRequest();
     }
+
+    [HttpGet("wallet-info/{username}")]
+    public async Task<IActionResult> GetWalletAddressByUsername(string username)
+    {
+        if (!string.IsNullOrEmpty(username))
+        {
+            var result = await _userWalletService.GetUserWalletAddressByUsername(username);
+            return Ok(result);
+        }   
+        return BadRequest();
+    }
 }

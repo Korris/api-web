@@ -20,14 +20,17 @@ using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;
+using Mcsg.Lib.Data;
 using Models;
 using Models._3rdClass.ZaloPay.Response;
 using Requests;
 using static Common.Core.Constants.Setting;
+using static Mcsg.Common.SeedWork.Constants.Validator;
 
 public class UserWalletService : IUserWalletService
 {
-    public UserWalletService(WalletDbContext walletDbContext,
+    public UserWalletService(
+        WalletDbContext walletDbContext,
         ICurrentUserService currentUserService,
         IOtpService otpService,
         IBankService bankService,
@@ -37,7 +40,8 @@ public class UserWalletService : IUserWalletService
         ISignalRService signalRService,
         IOptions<ZaloPaySetting> zaloPaySettingOptions,
         IServiceProvider serviceProvider,
-        ILogger<UserWalletService> logger)
+        ILogger<UserWalletService> logger,
+        McsgDbContext context)
     {
         _otpService = otpService;
         _configuration = configuration;
@@ -50,6 +54,7 @@ public class UserWalletService : IUserWalletService
         _dbContext = walletDbContext;
         _setting = serviceProvider.GetRequiredService<ISetting>();
         _logger = logger;
+        _context = context;
     }
 
     #region User info
@@ -242,6 +247,45 @@ public class UserWalletService : IUserWalletService
                 }
         }
         _dbContext.Update(transaction);
+    }
+    public async Task<UserWalletBasicResp> GetUserWalletAddressByUsername(string username)
+    {
+        var result = new UserWalletBasicResp();
+        if (username == null)
+        {
+            return result;
+        }
+
+        var userId = await _context.UserAvailable
+            .AsNoTracking()
+            .Where(p => p.UserName == username)
+            .Select(p => p.Id)
+            .FirstOrDefaultAsync();
+
+        if (userId == null)
+        {
+            return result;
+        }
+        else
+        {
+
+            var userWallets = await _dbContext.UserWallets
+                .AsNoTracking()
+                .Where(p => p.UserId == userId)
+                .Select(p => new
+                {
+                    p.Address,
+                    p.Email,
+                    p.ProfileName
+                }).FirstOrDefaultAsync();
+
+            return result = new UserWalletBasicResp
+            {
+                Email = userWallets.Email,
+                WalletAddress = userWallets.Address,
+                ProfileName = userWallets.Email
+            };
+        }
     }
 
     #endregion
@@ -879,6 +923,7 @@ public class UserWalletService : IUserWalletService
     private readonly ZaloPaySetting _zaloPaySetting;
     private readonly ISignalRService _signalRService;
     private readonly ILogger<UserWalletService> _logger;
+    private readonly McsgDbContext _context;
 
     /// <summary>
     /// Setting
