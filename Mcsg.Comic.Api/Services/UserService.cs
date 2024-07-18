@@ -196,7 +196,6 @@ public partial class UserService : IUserService
             }
 
             user.ProfileName = profileName;
-            user.ProfileId = profileName.Replace(" ", "-");
         }
 
         var userName = req.UserName?.Trim();
