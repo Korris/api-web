@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Stories.Configurations
+namespace Mcsg.Lib.Data.Domain.Entities.Configurations
 {
     using Mcsg.Lib.Data.Constants;
-    using Mcsg.Lib.Data.Domain.Entities.Configurations;
 
     public class StorySubPostConfiguration : BaseConfiguration<StorySubPost>
     {

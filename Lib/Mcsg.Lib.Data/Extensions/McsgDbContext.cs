@@ -1,8 +1,6 @@
 ﻿namespace Mcsg.Lib.Data;
 
 using Domain.Entities;
-using Domain.Entities.Comics;
-using Domain.Entities.Stories;
 
 /// <summary>
 /// McsgDbContext

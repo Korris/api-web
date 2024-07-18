@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Comics
+namespace Mcsg.Lib.Data.Domain.Entities
 {
     using Mcsg.Common.Core.Enums;
     using Mcsg.Lib.Data.Domain.Entities.Common;

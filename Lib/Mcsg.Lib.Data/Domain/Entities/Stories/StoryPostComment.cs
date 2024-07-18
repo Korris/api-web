@@ -2,7 +2,7 @@
 using Mcsg.Lib.Data.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Stories
+namespace Mcsg.Lib.Data.Domain.Entities
 {
     [Table("StoryPostComments")]
     public class StoryPostComment : AuditableEntity

@@ -1,7 +1,7 @@
 ﻿using Mcsg.Lib.Data.Domain.Entities.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Comics
+namespace Mcsg.Lib.Data.Domain.Entities
 {
     [Table("ComicPostReactions")]
     public class ComicPostReaction : ReactionBase

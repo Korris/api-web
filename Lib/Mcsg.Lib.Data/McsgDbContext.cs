@@ -7,9 +7,7 @@ namespace Mcsg.Lib.Data;
 using Common.SeedWork.Extensions;
 using Constants;
 using Domain.Entities;
-using Domain.Entities.Comics;
 using Domain.Entities.Configurations;
-using Domain.Entities.Stories;
 
 /// <summary>
 /// McsgDbContext
