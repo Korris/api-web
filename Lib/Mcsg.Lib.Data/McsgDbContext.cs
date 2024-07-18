@@ -157,6 +157,8 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<ComicSubPostReaction> ComicSubPostReactions { get; set; }
 
+    public virtual DbSet<ComicTagPost> ComicTagPosts { get; set; }
+
     public virtual DbSet<CrawComic> CrawComics { get; set; }
 
     public virtual DbSet<CrawComicChapter> CrawComicChapters { get; set; }
@@ -187,6 +189,10 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<Resource> Resources { get; set; }
 
+    //public virtual DbSet<Role> Roles { get; set; }
+
+    //public virtual DbSet<RoleClaim> RoleClaims { get; set; }
+
     public virtual DbSet<Session> Sessions { get; set; }
 
     public virtual DbSet<SmartCountAction> SmartCountActions { get; set; }
@@ -213,6 +219,8 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<StorySubPostReaction> StorySubPostReactions { get; set; }
 
+    public virtual DbSet<StoryTagPost> StoryTagPosts { get; set; }
+
     public virtual DbSet<SubPost> SubPosts { get; set; }
 
     public virtual DbSet<SubPostComment> SubPostComments { get; set; }
@@ -231,9 +239,15 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<TagPost> TagPosts { get; set; }
 
+    //public virtual DbSet<User> Users { get; set; }
+
+    //public virtual DbSet<UserClaim> UserClaims { get; set; }
+
     public virtual DbSet<UserExclusiveSubPost> UserExclusiveSubPosts { get; set; }
 
     public virtual DbSet<UserFollow> UserFollows { get; set; }
+
+    //public virtual DbSet<UserLogin> UserLogins { get; set; }
 
     public virtual DbSet<UserNameHistory> UserNameHistories { get; set; }
 
@@ -242,6 +256,8 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
     public virtual DbSet<UserSocial> UserSocials { get; set; }
+
+    //public virtual DbSet<UserToken> UserTokens { get; set; }
 
     public virtual DbSet<ViewHistory> ViewHistories { get; set; }
 
