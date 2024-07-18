@@ -53,13 +53,18 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
         var count = 0;
 
         var users = await qUser.ToListAsync(cancellationToken);
-        var dicUsers = users.GroupBy(p => new { p.Email, p.ProfileId }).ToDictionary(p => p.Key, p => p.Select(q => q.UserName).ToList());
+        var dicUsers = users.GroupBy(p => new { p.Email, p.ProfileId }).ToDictionary(p => p.Key, p => p.Select(q => q.Email).ToList());
 
         foreach (var i in dicUsers)
         {
-            var dstFolder = $"{Setting.MinioFolder.Media}/{i.Key.Email}";
+            var dstFolder = $"{Setting.MinioFolder.Media}/{i.Key.ProfileId}";
             foreach (var j in i.Value)
             {
+                if (string.IsNullOrEmpty(j))
+                {
+                    continue;
+                }
+
                 var srcFolder = $"{Setting.MinioFolder.Media}/{j}";
                 count += await _sc.Strategy.MoveFolder(srcFolder, dstFolder, null);
             }

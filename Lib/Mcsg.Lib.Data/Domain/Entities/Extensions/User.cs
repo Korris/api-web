@@ -52,7 +52,7 @@ public partial class User
     /// UserFolder on MinIO
     /// </summary>
     [NotMapped]
-    public string UserFolder => (Email ?? ProfileId) + "";
+    public string UserFolder => ProfileId + "";
 
     #endregion
 
