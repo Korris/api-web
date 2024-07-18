@@ -17,15 +17,14 @@ using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
+using Lib.Data;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;
-using Mcsg.Lib.Data;
 using Models;
 using Models._3rdClass.ZaloPay.Response;
 using Requests;
 using static Common.Core.Constants.Setting;
-using static Mcsg.Common.SeedWork.Constants.Validator;
 
 public class UserWalletService : IUserWalletService
 {
@@ -248,6 +247,7 @@ public class UserWalletService : IUserWalletService
         }
         _dbContext.Update(transaction);
     }
+
     public async Task<UserWalletBasicResp> GetUserWalletAddressByUsername(string username)
     {
         var result = new UserWalletBasicResp();
@@ -262,30 +262,22 @@ public class UserWalletService : IUserWalletService
             .Select(p => p.Id)
             .FirstOrDefaultAsync();
 
-        if (userId == null)
-        {
-            return result;
-        }
-        else
-        {
-
-            var userWallets = await _dbContext.UserWallets
-                .AsNoTracking()
-                .Where(p => p.UserId == userId)
-                .Select(p => new
-                {
-                    p.Address,
-                    p.Email,
-                    p.ProfileName
-                }).FirstOrDefaultAsync();
-
-            return result = new UserWalletBasicResp
+        var userWallets = await _dbContext.UserWallets
+            .AsNoTracking()
+            .Where(p => p.UserId == userId)
+            .Select(p => new
             {
-                Email = userWallets.Email,
-                WalletAddress = userWallets.Address,
-                ProfileName = userWallets.Email
-            };
-        }
+                p.Address,
+                p.Email,
+                p.ProfileName
+            }).FirstOrDefaultAsync();
+
+        return result = new UserWalletBasicResp
+        {
+            Email = userWallets?.Email + "",
+            WalletAddress = userWallets?.Address + "",
+            ProfileName = userWallets?.ProfileName + ""
+        };
     }
 
     #endregion
