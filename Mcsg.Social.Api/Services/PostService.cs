@@ -1065,8 +1065,6 @@ public partial class PostService : IPostService
                     AND pc.""CreatedDate"" > @FromDate
                     AND p.""IsDelete"" = false
                     AND pc.""IsDelete"" = false
-                    AND LENGTH(pc.""Body"") > 30
-              
                     Order by ""CreatedDate"" desc
                     LIMIT 2";
 
@@ -1091,7 +1089,6 @@ public partial class PostService : IPostService
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
                         AND pc.""CreatedDate"" > @FromDate
-                        AND LENGTH(pc.""Body"") > 30
 						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
                       
                         ORDER BY sort_key
