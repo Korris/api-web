@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Realtime.Api.Services
 {
@@ -11,6 +12,7 @@ namespace Mcsg.Realtime.Api.Services
     using Dtos;
     using Interfaces;
     using Lib.Common.Web.Security;
+    using Lib.Data;
     using Lib.Data.Domain.Entities;
     using Lib.Data.Enums;
     using Lib.Data.Repositories;
@@ -40,6 +42,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly ISmartCountService _smartCountService;
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
+        private readonly McsgDbContext _context;
 
         public CommentService(ICurrentUserService currentUserService,
             IRepository<Post> postRepository,
@@ -54,7 +57,8 @@ namespace Mcsg.Realtime.Api.Services
             ISmartCountService smartCountService,
             IMapper mapper,
             ISetting setting,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            McsgDbContext context)
         {
             _currentUserService = currentUserService;
             _postRepository = postRepository;
@@ -70,6 +74,7 @@ namespace Mcsg.Realtime.Api.Services
             _mapper = mapper;
             _setting = setting;
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task<PostCommentResp> PostComment(PostCommentReq req)
@@ -134,6 +139,24 @@ namespace Mcsg.Realtime.Api.Services
                 // Send notification
                 var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
                 await _notificationService.AddCommentNotification(commentNotiRequest);
+            }
+
+            var userIds = response.Mentions.Select(p => p.EntityId).ToList();
+            var userInfos = await _context.UserAvailable
+                .AsNoTracking()
+                .Where(p => userIds.Contains(p.Id))
+                .Select(p => new
+                {
+                    p.Id,
+                    p.UserName
+                })
+                .ToListAsync();
+            var dicUser = userInfos.ToDictionary(p => p.Id, q => q.UserName);
+
+            foreach (var i in response.Mentions)
+            {
+                i.ProfileName = i.Text.Substring(1);
+                i.UserName = dicUser.GetValueOrDefault(i.EntityId);
             }
 
             response.UserAvatar = avatar;
