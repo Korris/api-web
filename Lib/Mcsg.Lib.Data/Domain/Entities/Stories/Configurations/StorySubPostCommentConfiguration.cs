@@ -6,7 +6,7 @@ namespace Mcsg.Lib.Data.Domain.Entities.Stories.Configurations
     using Mcsg.Lib.Data.Constants;
     using Mcsg.Lib.Data.Domain.Entities.Configurations;
 
-    public class SubPostCommentEntityConfiguration : BaseConfiguration<StorySubPostComment>
+    public class StorySubPostCommentConfiguration : BaseConfiguration<StorySubPostComment>
     {
         public override void CreateEntityConfiguration(EntityTypeBuilder<StorySubPostComment> builder)
         {
