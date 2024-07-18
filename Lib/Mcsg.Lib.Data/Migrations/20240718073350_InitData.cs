@@ -1196,6 +1196,70 @@ namespace Mcsg.Lib.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComicTagPosts",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicTagPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicTagPosts_ComicPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicTagPosts_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoryTagPosts",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryTagPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryTagPosts_StoryPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "story",
+                        principalTable: "StoryPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryTagPosts_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TagFavorites",
                 columns: table => new
                 {
@@ -2137,6 +2201,18 @@ namespace Mcsg.Lib.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComicTagPosts_PostId",
+                schema: "comic",
+                table: "ComicTagPosts",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicTagPosts_TagId_PostId",
+                schema: "comic",
+                table: "ComicTagPosts",
+                columns: new[] { "TagId", "PostId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_NotificationObjectId",
                 table: "Notifications",
                 column: "NotificationObjectId");
@@ -2400,6 +2476,18 @@ namespace Mcsg.Lib.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StoryTagPosts_PostId",
+                schema: "story",
+                table: "StoryTagPosts",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryTagPosts_TagId_PostId",
+                schema: "story",
+                table: "StoryTagPosts",
+                columns: new[] { "TagId", "PostId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubPostCommentReactions_AuthorId",
                 table: "SubPostCommentReactions",
                 column: "AuthorId");
@@ -2584,6 +2672,10 @@ namespace Mcsg.Lib.Data.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
+                name: "ComicTagPosts",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
                 name: "CrawComicChapters");
 
             migrationBuilder.DropTable(
@@ -2646,6 +2738,10 @@ namespace Mcsg.Lib.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "StorySubPostReactions",
+                schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "StoryTagPosts",
                 schema: "story");
 
             migrationBuilder.DropTable(

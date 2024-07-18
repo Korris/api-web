@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcsg.Lib.Data.Migrations
 {
     [DbContext(typeof(McsgDbContext))]
-    [Migration("20240607004219_InitData")]
+    [Migration("20240718073350_InitData")]
     partial class InitData
     {
         /// <inheritdoc />
@@ -648,6 +648,43 @@ namespace Mcsg.Lib.Data.Migrations
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("ComicSubPostReactions", "comic");
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicTagPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TagId", "PostId");
+
+                    b.ToTable("ComicTagPosts", "comic");
                 });
 
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.CrawComic", b =>
@@ -2164,6 +2201,43 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StorySubPostReactions", "story");
                 });
 
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryTagPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TagId", "PostId");
+
+                    b.ToTable("StoryTagPosts", "story");
+                });
+
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.SubPost", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3262,6 +3336,21 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicTagPost", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.NotificationObject", null)
@@ -3521,6 +3610,21 @@ namespace Mcsg.Lib.Data.Migrations
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryTagPost", b =>
+                {
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
