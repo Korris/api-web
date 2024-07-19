@@ -186,7 +186,7 @@ public partial class FeedService : IFeedService
         var query = $@"WITH SubPostsCount AS (
                             SELECT ""PostId"", 
                                    COUNT(*) AS total_subposts 
-                            FROM ""SubPosts""
+                            FROM ""story"".""StorySubPosts""
                             WHERE ""IsDelete"" = false
                             GROUP BY ""PostId""
                         ),
@@ -206,8 +206,8 @@ public partial class FeedService : IFeedService
                    
                             )
                             )) AS Resources
-                            FROM ""SubPosts"" sp
-                            LEFT JOIN ""Resources"" r ON sp.""Id"" = r.""SubPostId""
+                            FROM ""story"".""StorySubPosts"" sp
+                            LEFT JOIN ""story"".""StoryResources"" r ON sp.""Id"" = r.""SubPostId""
                             WHERE sp.""IsDelete"" = false
                             GROUP BY sp.""PostId""
                         )
@@ -223,26 +223,26 @@ public partial class FeedService : IFeedService
                             sp.""CreatedBy"",
                             COALESCE(psb.""HashId"", (
                                 SELECT ps.""HashId"" 
-                                FROM ""SubPosts"" ps 
+                                FROM ""story"".""StorySubPosts"" ps 
                                 WHERE ps.""PostId"" = sp.""PostId"" 
                                   AND ps.""Order"" = sc.total_subposts
                                   AND ps.""IsDelete"" = false
                             )) AS PrevSubPostHashId,
                             COALESCE(asp.""HashId"", (
                                 SELECT ps.""HashId"" 
-                                FROM ""SubPosts"" ps 
+                                FROM ""story"".""StorySubPosts"" ps 
                                 WHERE ps.""PostId"" = sp.""PostId"" 
                                   AND ps.""Order"" = 1
                                   AND ps.""IsDelete"" = false
                             )) AS NextSubPostHashId,
                             rc.Resources as ""ResourcesStr""
-                        FROM ""SubPosts"" sp
+                        FROM ""story"".""StorySubPosts"" sp
                         LEFT JOIN identity.""Users"" u ON u.""Id"" = sp.""UserId""
-                        LEFT JOIN ""Posts"" p ON p.""Id"" = sp.""PostId""
-                        LEFT JOIN ""SubPosts"" psb ON sp.""PostId"" = psb.""PostId""
+                        LEFT JOIN ""story"".""StoryPosts""  p ON p.""Id"" = sp.""PostId""
+                        LEFT JOIN ""story"".""StorySubPosts"" psb ON sp.""PostId"" = psb.""PostId""
                          AND sp.""Order"" = psb.""Order"" + 1
                          AND psb.""IsDelete"" = false
-                         LEFT JOIN ""SubPosts"" asp ON sp.""PostId"" = asp.""PostId""
+                         LEFT JOIN ""story"".""StorySubPosts"" asp ON sp.""PostId"" = asp.""PostId""
                          AND sp.""Order"" = asp.""Order"" - 1
                          AND asp.""IsDelete"" = false
                          LEFT JOIN SubPostsCount sc ON sp.""PostId"" = sc.""PostId""
@@ -261,7 +261,7 @@ public partial class FeedService : IFeedService
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
         if (data.Resources.Count == 1)
         {
-            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from ""Posts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
+            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from ""story"".""StoryPosts""  WHERE ""HashId"" =@Id", new { Id = data.HashId });
             data.Id = postData.Id;
             data.Body = postData.Body;
             data.HashId = postData.HashId;

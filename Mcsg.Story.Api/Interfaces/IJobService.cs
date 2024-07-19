@@ -4,5 +4,5 @@ using Lib.Data.Domain.Entities;
 
 public interface IJobService
 {
-    Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName);
+    Task CreateConvertJob(StoryResource resource, string userName, string userAvatar, string blobName);
 }

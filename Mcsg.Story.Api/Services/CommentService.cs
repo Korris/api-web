@@ -17,10 +17,10 @@ using Requests;
 
 public partial class CommentService : ICommentService
 {
-    private readonly IRepository<PostComment> _postCommentRepository;
-    private readonly IRepository<SubPostComment> _subPostCommentRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
-    private readonly IRepository<Resource> _resourceRepository;
+    private readonly IRepository<StoryPostComment> _postCommentRepository;
+    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
+    private readonly IRepository<StorySubPost> _subPostRepository;
+    private readonly IRepository<StoryResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<Mention> _mentionRepository;
     private IConfiguration _configuration;
@@ -28,10 +28,10 @@ public partial class CommentService : ICommentService
 
     public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration)
     {
-        _postCommentRepository = unitOfWork.GetRepository<PostComment>();
-        _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
-        _resourceRepository = unitOfWork.GetRepository<Resource>();
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _postCommentRepository = unitOfWork.GetRepository<StoryPostComment>();
+        _subPostCommentRepository = unitOfWork.GetRepository<StorySubPostComment>();
+        _resourceRepository = unitOfWork.GetRepository<StoryResource>();
+        _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _userRepository = unitOfWork.GetRepository<User>();
         _mentionRepository = unitOfWork.GetRepository<Mention>();
         _mapper = mapper;

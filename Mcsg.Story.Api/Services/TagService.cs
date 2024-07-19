@@ -53,7 +53,7 @@ public partial class TagService : ITagService
     public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags, Guid userId)
     {
         // Find all tags associated with the post
-        var qTagPost = _context.TagPostAvailable.Where(p => p.PostId == postId);
+        var qTagPost = _context.StoryTagPostAvailable.Where(p => p.PostId == postId);
         var tagsDb = await (from a in _context.TagAvailable
                             join b in qTagPost
                                on a.Id equals b.TagId into g
@@ -118,7 +118,7 @@ public partial class TagService : ITagService
         var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
         if (listRemove.Length > 0)
         {
-            var tagPosts = await _context.TagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
+            var tagPosts = await _context.StoryTagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
             tagPosts.ForEach(p => p.IsDelete = true);
         }
 
@@ -237,7 +237,7 @@ public partial class TagService : ITagService
     public async Task<List<TagViewDto>> GetTagsByPostIdAsync(Guid postId)
     {
         return await (from a in _context.TagAvailable
-                      join b in _context.TagPosts
+                      join b in _context.StoryTagPosts
                           on a.Id equals b.TagId
                       where b.PostId == postId
                       select new TagViewDto
@@ -300,11 +300,11 @@ public partial class TagService : ITagService
 
     private async Task<IEnumerable<Guid>> AddTagsToPost(Guid postId, List<Guid> tagIds, Guid userId)
     {
-        var tagPostsToInsert = new List<TagPost>();
+        var tagPostsToInsert = new List<StoryTagPost>();
 
         foreach (var i in tagIds)
         {
-            tagPostsToInsert.Add(new TagPost
+            tagPostsToInsert.Add(new StoryTagPost
             {
                 IsDelete = false,
                 PostId = postId,
@@ -314,7 +314,7 @@ public partial class TagService : ITagService
             });
         }
 
-        await _context.TagPosts.AddRangeAsync(tagPostsToInsert);
+        await _context.StoryTagPosts.AddRangeAsync(tagPostsToInsert);
 
         return tagPostsToInsert.Select(x => x.Id).ToList();
     }
@@ -349,7 +349,7 @@ public partial class TagService : ITagService
                                 SELECT t.""Name"",COUNT( t.""Id"")   from ""Tags"" t 
                                 LEFT JOIN ""TagPosts"" tp  
                                 ON tp.""TagId""  = t.""Id"" 
-                                LEFT JOIN ""Posts"" p 
+                                LEFT JOIN ""story"".""StoryPosts""  p 
                                 ON p.""Id""  = tp.""PostId"" 
                                 WHERE t.""IsDelete"" = false 
                                 AND tp.""IsDelete"" = false 
@@ -362,7 +362,7 @@ public partial class TagService : ITagService
                                 SELECT COUNT(*) AS TotalItems
                                 FROM (
                                     SELECT distinct  t.""Id""
-                                    FROM ""Posts"" post
+                                    FROM ""story"".""StoryPosts""  post
                                     INNER JOIN ""TagPosts"" tagpost ON post.""Id"" = tagpost.""PostId"" 
                                     INNER JOIN ""Tags"" t ON tagpost.""TagId"" = t.""Id"" 
                                     WHERE  post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 

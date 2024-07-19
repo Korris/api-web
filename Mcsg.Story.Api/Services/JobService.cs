@@ -20,7 +20,7 @@ public class JobService : IJobService
         _setting = setting;
     }
 
-    public async Task CreateConvertJob(Resource resource, string userName, string userAvatar, string blobName)
+    public async Task CreateConvertJob(StoryResource resource, string userName, string userAvatar, string blobName)
     {
         if (resource.Type == ResourceType.Video)
         {
@@ -32,7 +32,7 @@ public class JobService : IJobService
         }
     }
 
-    private async Task ConvertVideo(Resource resource, string userName, string userAvatar, string blobName)
+    private async Task ConvertVideo(StoryResource resource, string userName, string userAvatar, string blobName)
     {
         bool canConvert = true;
         string fileExtension = Path.GetExtension(blobName);
@@ -74,7 +74,7 @@ public class JobService : IJobService
         }
     }
 
-    private async Task ConvertAudio(Resource resource, string userName, string userAvatar, string blobName)
+    private async Task ConvertAudio(StoryResource resource, string userName, string userAvatar, string blobName)
     {
         bool canConvert = true;
         string fileExtension = Path.GetExtension(blobName);

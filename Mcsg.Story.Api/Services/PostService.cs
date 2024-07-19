@@ -33,10 +33,10 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : IPostService
 {
-    private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<PostComment> _postCommentRepository;
+    private readonly IRepository<StoryPost> _postRepository;
+    private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
+    private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly IRepository<PostReport> _postReportRepository;
     private readonly IValidator<PostReport> _postReportValidator;
     private readonly IUnitOfWork _unitOfWork;
@@ -64,12 +64,12 @@ public partial class PostService : IPostService
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<PostReport> postReportValidator,
-        IRepository<PostComment> postCommentRepository,
+        IRepository<StoryPostComment> postCommentRepository,
         IRepository<UserViewPost> userViewPostRepository,
         AnalyticDbContext analyticDbContext)
     {
-        _postRepository = unitOfWork.GetRepository<Post>();
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _postRepository = unitOfWork.GetRepository<StoryPost>();
+        _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _postReportRepository = unitOfWork.GetRepository<PostReport>();
         _unitOfWork = unitOfWork;
         _tagService = tagService;
@@ -133,7 +133,7 @@ public partial class PostService : IPostService
         //    safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
         //}
 
-        var post = new Post()
+        var post = new StoryPost()
         {
             Title = comicPostReq.Title,
             Type = type,
@@ -256,7 +256,7 @@ public partial class PostService : IPostService
 
         ChapterResponse subpost = null;
         await _subPostRepository
-            .Connection.QueryAsync<ChapterResponse, Resource, ChapterResponse>(query,
+            .Connection.QueryAsync<ChapterResponse, StoryResource, ChapterResponse>(query,
             (subpostdb, resource) =>
             {
                 if (subpostdb == null)
@@ -431,7 +431,7 @@ public partial class PostService : IPostService
         {
             #region Get post
             var queryGetPost = string.Format(GetPostWithHashId, _postRepository.TableName);
-            var post = await _postRepository.Connection.QueryFirstAsync<Post>(queryGetPost, new { HashId = request.HashId });
+            var post = await _postRepository.Connection.QueryFirstAsync<StoryPost>(queryGetPost, new { HashId = request.HashId });
             #endregion
 
             if (post == null)
@@ -534,7 +534,7 @@ public partial class PostService : IPostService
 
     public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
     {
-        var queryNameListPost = $@"SELECT ""Title"" FROM ""Posts"" where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
+        var queryNameListPost = $@"SELECT ""Title"" FROM ""story"".""StoryPosts""  where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
         var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
         var smartLookupInserts = new List<SmartLookup>();
         foreach (var name in nameListPost)
@@ -684,15 +684,15 @@ public partial class PostService : IPostService
 	                              END AS Tags,
 	                              COUNT(pc.""Id"") as CommentCount,
 	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
-	                              FROM ""Posts"" p
+	                              FROM ""story"".""StoryPosts""  p
 	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
 	                              LEFT JOIN ""TagPosts"" tp on p.""Id""  = tp.""PostId"" 
 	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
-	                              LEFT JOIN ""PostComments"" pc on pc.""PostId""  = p.""Id"" 
+	                              LEFT JOIN ""story"".""StoryPostComments"" pc on pc.""PostId""  = p.""Id"" 
 	                              LEFT JOIN LATERAL 
 										(
 											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedDate""
-											FROM ""SubPosts"" sp 
+											FROM ""story"".""StorySubPosts"" sp 
 											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
 											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
 											ORDER BY sp.""Order"" DESC
@@ -705,7 +705,7 @@ public partial class PostService : IPostService
                                   LIMIT @PageSize;
 
                                   SELECT COUNT(*) AS TotalCount
-                                  FROM ""Posts"" p
+                                  FROM ""story"".""StoryPosts""  p
                                   JOIN identity.""Users"" u on p.""CreatedBy"" = u.""Id""
                                   [QueryCondition]";
 
@@ -767,7 +767,7 @@ public partial class PostService : IPostService
 
         #region Get post
         var query = string.Format(GetPostWithHashId, _postRepository.TableName);
-        var post = await _postRepository.Connection.QueryFirstAsync<Post>
+        var post = await _postRepository.Connection.QueryFirstAsync<StoryPost>
             (query, new { HashId = hashId });
         VerifyPost(post, false);
         #endregion
@@ -1054,8 +1054,8 @@ public partial class PostService : IPostService
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
-                    from ""PostComments"" pc 
-                    left join ""Posts"" p on  pc.""PostId"" = p.""Id""
+                    from ""story"".""StoryPostComments"" pc 
+                    left join ""story"".""StoryPosts""  p on  pc.""PostId"" = p.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
@@ -1068,9 +1068,9 @@ public partial class PostService : IPostService
                     p.""HashId"" as HashPostId,
                     TRUE as IsSubPost, 
                     sp.""Order""
-                    from ""SubPostComments"" spc 
-                    left join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
-                    LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
+                    from ""story"".""StorySubPostComments"" spc 
+                    left join ""story"".""StorySubPosts"" sp on  spc.""PostId"" = sp.""Id""
+                    LEFT JOIN ""story"".""StoryPosts""  p on p.""Id"" = sp.""PostId""
                     left join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
                     WHERE spc.""CreatedBy"" = ANY(@UserIds)
                     AND spc.""CreatedBy"" != @CurrentUserId
@@ -1094,9 +1094,9 @@ public partial class PostService : IPostService
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
-                        FROM ""PostComments"" pc 
-                        LEFT JOIN ""Posts"" p on  pc.""PostId"" = p.""Id""
-						LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        FROM ""story"".""StoryPostComments"" pc 
+                        LEFT JOIN ""story"".""StoryPosts""  p on  pc.""PostId"" = p.""Id""
+						LEFT JOIN ""story"".""StoryPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
                         AND pc.""CreatedBy"" != @CurrentUserId
@@ -1109,10 +1109,10 @@ public partial class PostService : IPostService
                         TRUE as IsSubPost, sp.""Order"",
 						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
                         RANDOM() AS sort_key
-                        FROM ""SubPostComments"" spc 
-                        LEFT join ""SubPosts"" sp on  spc.""PostId"" = sp.""Id""
-					    LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-                        LEFT JOIN ""Posts"" p on p.""Id"" = sp.""PostId""
+                        FROM ""story"".""StorySubPostComments"" spc 
+                        LEFT join ""story"".""StorySubPosts"" sp on  spc.""PostId"" = sp.""Id""
+					    LEFT JOIN ""story"".""StorySubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+                        LEFT JOIN ""story"".""StoryPosts""  p on p.""Id"" = sp.""PostId""
                         LEFT join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
                         WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds]) 	
                         AND spc.""CreatedBy"" != @CurrentUserId
@@ -1154,7 +1154,7 @@ public partial class PostService : IPostService
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
                                                                                             from ""TagPosts"" tp 
-                                                                                            join ""Posts"" p on tp.""PostId"" =  p.""Id""
+                                                                                            join ""story"".""StoryPosts""  p on tp.""PostId"" =  p.""Id""
                                                                                             WHERE tp.""PostId"" = ANY (@PostId)
                                                                                             AND tp.""IsDelete"" = false
                                                                                              ", new { PostId = postIdReaded });
@@ -1265,7 +1265,7 @@ public partial class PostService : IPostService
         }
     }
 
-    public UploadFileDto MappingFile(Resource resources)
+    public UploadFileDto MappingFile(StoryResource resources)
     {
         if (resources == null || resources.Id == Guid.Empty)
         {
@@ -1541,7 +1541,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<SubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
+    public async Task<StorySubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1552,13 +1552,13 @@ public partial class PostService : IPostService
         var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
         var reader = await _postRepository
             .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
-        var post = (await reader.ReadAsync<Post>().ConfigureAwait(false)).FirstOrDefault();
+        var post = (await reader.ReadAsync<StoryPost>().ConfigureAwait(false)).FirstOrDefault();
         var maxOrder = (await reader.ReadAsync<int>(false)).FirstOrDefault();
         reader.Dispose();
         VerifyPost(post, true);
         #endregion
         var newOrder = maxOrder + 1;
-        var newChapter = new SubPost
+        var newChapter = new StorySubPost
         {
             AuthorId = post.AuthorId,
             CreatedBy = currentUserId,
@@ -1582,7 +1582,7 @@ public partial class PostService : IPostService
 
         return newChapter;
     }
-    public async Task<SubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
+    public async Task<StorySubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1592,7 +1592,7 @@ public partial class PostService : IPostService
         #region Get post
         var query = string.Format(GetPostWithHashId, _postRepository.TableName);
         var post = await _postRepository
-            .Connection.QueryFirstAsync<Post>(query, new { HashId = postHashId });
+            .Connection.QueryFirstAsync<StoryPost>(query, new { HashId = postHashId });
         VerifyPost(post, false);
         #endregion
 
@@ -1600,7 +1600,7 @@ public partial class PostService : IPostService
         var querySubpost = string.Format(GetSeriesChapterByHashIdOrder, _postRepository.TableName);
 
         var newChapter = await _subPostRepository
-            .Connection.QueryFirstAsync<SubPost>(querySubpost, new
+            .Connection.QueryFirstAsync<StorySubPost>(querySubpost, new
             {
                 PostHashId = postHashId,
                 IsAccessPrivate = false,
@@ -1633,7 +1633,7 @@ public partial class PostService : IPostService
         var currentUserId = ss.UserId;
         var profileName = ss.ProfileName;
 
-        var subPost = await _postRepository.Connection.QueryFirstAsync<SubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
+        var subPost = await _postRepository.Connection.QueryFirstAsync<StorySubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
         if (subPost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, order));
@@ -1664,7 +1664,7 @@ public partial class PostService : IPostService
 
         return listChapter;
     }
-    public ChapterResponse MappingChapterResponse(SubPost newChapter)
+    public ChapterResponse MappingChapterResponse(StorySubPost newChapter)
     {
         var result = new ChapterResponse();
 
@@ -1694,7 +1694,7 @@ public partial class PostService : IPostService
     {
         var result = new List<ChapterResponse>();
         var subPosts = await _postRepository
-            .Connection.QueryAsync<SubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = postHashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
+            .Connection.QueryAsync<StorySubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = postHashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
 
         var currentUserId = _currentUserService.Session.UserId;
         var chapter1 = subPosts.Where(x => x.Order == orders?.Order1).FirstOrDefault();
@@ -1733,7 +1733,7 @@ public partial class PostService : IPostService
     #endregion
 
     #region POST - COMMON
-    private void VerifyPost(Post post, bool checkCompleted)
+    private void VerifyPost(StoryPost post, bool checkCompleted)
     {
         var currentUserId = _currentUserService.Session.UserId;
         if (post != null)
@@ -1834,16 +1834,16 @@ public partial class PostService : IPostService
         try
         {
             var query = $@"SELECT sp.""HashId""
-                               FROM ""SubPosts"" sp
-                               JOIN ""Posts"" p ON sp.""PostId"" = p.""Id""
-                               JOIN ""Resources"" r on sp.""Id"" = r.""SubPostId""
+                               FROM ""story"".""StorySubPosts"" sp
+                               JOIN ""story"".""StoryPosts""  p ON sp.""PostId"" = p.""Id""
+                               JOIN ""story"".""StoryResources"" r on sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
 	                           AND sp.""IsDelete"" = false
 	                           [QueryByType]
 	                           [IgnoreQuery]
                                AND sp.""Order"" = (
                                                     SELECT MIN(sp_inner.""Order"")
-                                                    FROM ""SubPosts"" sp_inner
+                                                    FROM ""story"".""StorySubPosts"" sp_inner
                                                     WHERE sp_inner.""PostId"" = sp.""PostId""
 		                                            AND sp_inner.""IsDelete"" = false
                                                     )
@@ -1868,7 +1868,7 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From ""Posts"" 
+            var query = @$"SELECT ""HashId"" From ""story"".""StoryPosts""  
                                 WHERE ""IsDelete"" = false
                                 [QueryByType]
                                 [IgnoreQuery]

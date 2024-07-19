@@ -102,7 +102,7 @@
                             FROM {0} t
                             LEFT JOIN ""TagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
-                            LEFT JOIN ""Posts"" p 
+                            LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
                             AND tp.""IsDelete"" = false 
@@ -127,7 +127,7 @@
                             FROM {0} t
                             LEFT JOIN ""TagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
-                            LEFT JOIN ""Posts"" p 
+                            LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
                             AND tp.""IsDelete"" = false 
