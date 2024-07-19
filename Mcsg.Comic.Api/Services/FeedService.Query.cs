@@ -37,13 +37,13 @@
 							pl.""HashId"" AS ""LinkHashId"",
 							pl.""Url"" AS ""LinkUrl"",
 							pl.""Type"" AS ""LinkType""
-							FROM ""Posts"" p
+							FROM ""comic"".""ComicPosts""  p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM ""comic"".""ComicSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -52,7 +52,7 @@
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",r.""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId"" AS SubPostHashId 
-								FROM ""Resources"" r
+								FROM ""comic"".""ComicResources"" r
 								WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -132,7 +132,7 @@
 							md.""Url"" AS ""MetaUrl"",
 							md.""Domain"" AS ""MetaDomain""
 							FROM (
-								SELECT DISTINCT qpost.* FROM ""Posts"" qpost
+								SELECT DISTINCT qpost.* FROM ""comic"".""ComicPosts""  qpost
 							 	INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
@@ -146,7 +146,7 @@
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""comic"".""ComicSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -155,7 +155,7 @@
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM ""Resources"" 
+							 	FROM ""comic"".""ComicResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id""
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -234,7 +234,7 @@
 							pl.""Type"" AS ""LinkType""
 							FROM (
 								SELECT  smart.""Count"" as commentcount, qpost.*
-								FROM ""Posts"" qpost
+								FROM ""comic"".""ComicPosts""  qpost
 								INNER JOIN LATERAL (
 								SELECT 
 								""EntityType"", 
@@ -258,7 +258,7 @@ LIMIT @PageSize
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
+								SELECT ""Id"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""comic"".""ComicSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -267,7 +267,7 @@ LIMIT @PageSize
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM ""Resources"" 
+							 	FROM ""comic"".""ComicResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -308,7 +308,7 @@ LIMIT @PageSize
 
 						SELECT COUNT(*) AS TotalItems 
 						FROM (SELECT  qpost.""Id""
-								FROM ""Posts"" qpost
+								FROM ""comic"".""ComicPosts""  qpost
 								INNER JOIN LATERAL (
 									SELECT 
 									""EntityId""
@@ -364,13 +364,13 @@ LIMIT @PageSize
 						pl.""HashId"",
 						pl.""Url"",
 						pl.""Type""
-						FROM ""Posts"" p
+						FROM ""comic"".""ComicPosts""  p
 						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
 						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
-						LEFT JOIN ""SubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
-						LEFT JOIN ""Resources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false	
+						LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
+						LEFT JOIN ""comic"".""ComicResources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false	
 						LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
 						WHERE 
 						p.""HashId"" = @HashId AND p.""IsDelete"" = false 
@@ -413,8 +413,8 @@ LIMIT @PageSize
 						u.""ProfileId"",
 						p.""CreatedDate"",
 						sp.""Total"" AS ""TotalResources"",
-						to_jsonb(ARRAY_AGG(sp.*)) AS ""SubPosts"",
-						to_jsonb(ARRAY_AGG(spr.*)) AS ""Resources"",
+						to_jsonb(ARRAY_AGG(sp.*)) AS ""comic"".""ComicSubPosts"",
+						to_jsonb(ARRAY_AGG(spr.*)) AS ""comic"".""ComicResources"",
 						jsonb_build_object(
 							'Description', md.""Description"",
 							'Title', md.""Title"",
@@ -430,7 +430,7 @@ LIMIT @PageSize
 							)
 						END AS ""Link""
 					FROM
-						""Posts"" p
+						""comic"".""ComicPosts""  p
 					LEFT JOIN 
 						identity.""Users"" u ON p.""UserId"" = u.""Id""
 					LEFT JOIN 
@@ -445,7 +445,7 @@ LIMIT @PageSize
 							sp.""Order"",
 							COUNT(*) OVER() AS ""Total""
 						FROM
-							""SubPosts"" sp
+							""comic"".""ComicSubPosts"" sp
 						WHERE
 							sp.""PostId"" = p.""Id""
 							AND sp.""IsDelete"" = FALSE
@@ -469,7 +469,7 @@ LIMIT @PageSize
 							spr.""Order"",
 							sp.""HashId"" as SubPostHashId
 						FROM
-							""Resources"" spr
+							""comic"".""ComicResources"" spr
 						WHERE
 							spr.""SubPostId"" = sp.""Id""
 							AND spr.""IsDelete"" = FALSE
@@ -535,14 +535,14 @@ LIMIT @PageSize
 							FROM (
 								SELECT DISTINCT subqpost.* FROM 
 									(
-										SELECT qpost.* FROM ""Posts"" qpost
+										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
 								 		INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
-										SELECT qpost.* FROM ""Posts"" qpost
+										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
 										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
@@ -556,7 +556,7 @@ LIMIT @PageSize
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM ""comic"".""ComicSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -565,7 +565,7 @@ LIMIT @PageSize
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""ShareUrl"",""Status"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM ""Resources"" 
+							 	FROM ""comic"".""ComicResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id""
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -602,14 +602,14 @@ LIMIT @PageSize
 						FROM (
 								SELECT DISTINCT subqpost.* FROM 
 									(
-										SELECT qpost.* FROM ""Posts"" qpost
+										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
 								 		INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
-										SELECT qpost.* FROM ""Posts"" qpost
+										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
 										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
@@ -623,7 +623,7 @@ LIMIT @PageSize
         {
             get
             {
-                return @"SELECT ""Id"" FROM ""Posts"" WHERE ""UserId"" = @UserId AND ""Type"" = @PostType LIMIT 1;";
+                return @"SELECT ""Id"" FROM ""comic"".""ComicPosts""  WHERE ""UserId"" = @UserId AND ""Type"" = @PostType LIMIT 1;";
             }
         }
     }

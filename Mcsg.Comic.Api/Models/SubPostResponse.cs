@@ -7,7 +7,7 @@ using Lib.Data.Domain.Entities;
 public class SubPostResponseItem
 {
     public string HashId { get; set; }
-    public IEnumerable<Resource> Resources { get; set; }
+    public IEnumerable<ComicResource> Resources { get; set; }
 }
 
 public class SubPostFeedQuery : SubPostFeedResponse

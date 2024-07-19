@@ -26,8 +26,8 @@ public partial class FavoriteService : IFavoriteService
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Tag> _tagRepository;
     private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
-    private readonly IRepository<Resource> _resourceRepository;
+    private readonly IRepository<ComicSubPost> _subPostRepository;
+    private readonly IRepository<ComicResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<MetaData> _metaDataRepository;
     private readonly IRepository<PostLink> _postLinkRepository;
@@ -44,8 +44,8 @@ public partial class FavoriteService : IFavoriteService
         IRepository<PostFavorite> postFavoriteRepository,
         IRepository<Tag> tagRepository,
         IRepository<Post> postRepository,
-        IRepository<SubPost> subPostRepository,
-        IRepository<Resource> resourceRepository,
+        IRepository<ComicSubPost> subPostRepository,
+        IRepository<ComicResource> resourceRepository,
         IRepository<User> userRepository,
         IRepository<MetaData> metaDataRepository,
         IRepository<PostLink> postLinkRepository,

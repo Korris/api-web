@@ -16,7 +16,7 @@ namespace Mcsg.Comic.Api.Services
 												r.""Url"" as ResourceUrl,
 												r.""HashId"" as ResourceHashId
 											   FROM {0} pc
-											   LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
+											   LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
 											   LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
 											   WHERE pc.""ParentId"" = @CommentId
 											   AND pc.""IsDelete"" = false";
@@ -39,12 +39,12 @@ namespace Mcsg.Comic.Api.Services
 													r.""Url"" as ResourceUrl,
 													r.""HashId"" as ResourceHashId,
 													COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
-												FROM ""PostComments""  pc
-												LEFT JOIN ""PostComments"" reply on reply.""ParentId"" = pc.""Id""
+												FROM ""comic"".""ComicPostComments""  pc
+												LEFT JOIN ""comic"".""ComicPostComments"" reply on reply.""ParentId"" = pc.""Id""
 												LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-												LEFT JOIN ""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
-												LEFT JOIN ""Posts"" p on pc.""PostId"" = p.""Id""												
-												LEFT JOIN ""Resources"" r on pc.""ResourceId"" = r.""Id""
+												LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+												LEFT JOIN ""comic"".""ComicPosts""  p on pc.""PostId"" = p.""Id""												
+												LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
 												AND pc.""IsDelete"" = false
@@ -68,13 +68,13 @@ namespace Mcsg.Comic.Api.Services
 													r.""Url"" as ResourceUrl,
 													r.""HashId"" as ResourceHashId,
 													COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
-												FROM ""SubPostComments"" spc
-												LEFT JOIN ""SubPostComments"" reply on reply.""ParentId"" = spc.""Id""
+												FROM ""comic"".""ComicSubPostComments"" spc
+												LEFT JOIN ""comic"".""ComicSubPostComments"" reply on reply.""ParentId"" = spc.""Id""
 												LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
-												LEFT JOIN ""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-												LEFT JOIN ""SubPosts""  sp ON spc.""PostId"" = sp.""Id""
-												LEFT JOIN ""Resources"" r on spc.""ResourceId"" = r.""Id""
-												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""Posts""  WHERE ""HashId"" =@HashId) 
+												LEFT JOIN ""comic"".""ComicSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+												LEFT JOIN ""comic"".""ComicSubPosts""  sp ON spc.""PostId"" = sp.""Id""
+												LEFT JOIN ""comic"".""ComicResources"" r on spc.""ResourceId"" = r.""Id""
+												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""comic"".""ComicPosts""   WHERE ""HashId"" =@HashId) 
 												AND spc.""ParentId"" is null
 												AND spc.""IsDelete"" = false
 												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
@@ -85,36 +85,36 @@ namespace Mcsg.Comic.Api.Services
 
 												SELECT
 													(SELECT COUNT(*)
-													 FROM ""PostComments""  pc
-													 JOIN ""Posts"" p ON pc.""PostId""= p.""Id"" 
+													 FROM ""comic"".""ComicPostComments""  pc
+													 JOIN ""comic"".""ComicPosts""  p ON pc.""PostId""= p.""Id"" 
 													 WHERE p.""HashId"" = @HashId 
 													and ""ParentId"" is null 
 												     AND pc.""IsDelete"" = false) 
 													+
 													(SELECT COUNT(*)
-													 FROM ""SubPostComments"" spc
-													 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
-													 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
+													 FROM ""comic"".""ComicSubPostComments"" spc
+													 JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId""= sp.""Id""
+													 JOIN ""comic"".""ComicPosts""  p ON sp.""PostId""= p.""Id""
 													 WHERE p.""HashId"" = @HashId and ""ParentId"" is null
 													 AND spc.""IsDelete"" = false) AS total_comment_count";
 
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
-														 FROM ""PostComments""  pc
-														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
+														 FROM ""comic"".""ComicPostComments""  pc
+														 JOIN ""comic"".""ComicPosts""  p ON pc.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND pc.""IsDelete"" = false";
 
         private string GetTotalCommentQuery => $@"SELECT 
 														(SELECT COUNT(*)
-														 FROM ""PostComments""  pc
-														 JOIN ""Posts"" p ON pc.""PostId""= p.""Id""
+														 FROM ""comic"".""ComicPostComments""  pc
+														 JOIN ""comic"".""ComicPosts""  p ON pc.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND pc.""IsDelete"" = false) 
 														+
 														(SELECT COUNT(*)
-														 FROM ""SubPostComments"" spc
-														 JOIN ""SubPosts"" sp ON spc.""PostId""= sp.""Id""
-														 JOIN ""Posts"" p ON sp.""PostId""= p.""Id""
+														 FROM ""comic"".""ComicSubPostComments"" spc
+														 JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId""= sp.""Id""
+														 JOIN ""comic"".""ComicPosts""  p ON sp.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetCommentOfPostQuery

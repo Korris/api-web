@@ -248,7 +248,7 @@ public class FileService : IFileService
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
-        var subPostDB = await _context.SubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var subPostDB = await _context.ComicSubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
 
         //Update
         var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
@@ -290,8 +290,8 @@ public class FileService : IFileService
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
         var subPosts = new List<SubUploadFileDto>();
 
-        var subpostAndResourceHashId = await (from a in _context.SubPostAvailable
-                                              join b in _context.ResourceAvailable
+        var subpostAndResourceHashId = await (from a in _context.ComicSubPostAvailable
+                                              join b in _context.ComicResourceAvailable
                                                 on a.Id equals b.SubPostId into g1
                                               from b in g1.DefaultIfEmpty()
                                               join c in _context.Posts
@@ -389,9 +389,9 @@ public class FileService : IFileService
     /// <param name="addSubPost"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    private async Task<Tuple<List<Resource>, List<SubUploadFileDto>>> CompleteFilesSubPostAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<ComicResource>, List<SubUploadFileDto>>> CompleteFilesSubPostAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
-        var response = new List<Resource>();
+        var response = new List<ComicResource>();
         var subPostResponses = new List<SubUploadFileDto>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
@@ -400,7 +400,7 @@ public class FileService : IFileService
         var hashIds = req.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
         {
-            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
 
             foreach (var resource in resourceList)
             {
@@ -481,9 +481,9 @@ public class FileService : IFileService
     /// <param name="addSubPost"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    private async Task<IEnumerable<Resource>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<IEnumerable<ComicResource>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
-        var response = new List<Resource>();
+        var response = new List<ComicResource>();
         if (string.IsNullOrWhiteSpace(userFolder))
         {
             throw new NotFoundException(E203, M203);
@@ -491,7 +491,7 @@ public class FileService : IFileService
         var hashIds = req.Select(x => x.HashId).ToList();
         if (hashIds != null && hashIds.Any())
         {
-            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
 
             foreach (var resource in resourceList)
             {
@@ -524,7 +524,7 @@ public class FileService : IFileService
                 var subPostId = resource.SubPostId ?? postId;
                 if (addSubPost)
                 {
-                    var subPost = new SubPost
+                    var subPost = new ComicSubPost
                     {
                         Title = resource.Title,
                         PostId = postId,
@@ -539,7 +539,7 @@ public class FileService : IFileService
                         IsExclusive = false
                     };
 
-                    await _context.SubPosts.AddAsync(subPost);
+                    await _context.ComicSubPosts.AddAsync(subPost);
                     subPostId = subPost.Id;
                 }
 
@@ -563,10 +563,10 @@ public class FileService : IFileService
     /// </summary>
     /// <param name="postId">PostId</param>
     /// <returns>Return a query</returns>
-    private IQueryable<Resource> QueryResourceByPostId(Guid postId)
+    private IQueryable<ComicResource> QueryResourceByPostId(Guid postId)
     {
-        return from a in _context.ResourceAvailable
-               join b in _context.SubPosts
+        return from a in _context.ComicResourceAvailable
+               join b in _context.ComicSubPosts
                   on a.SubPostId equals b.Id
                where a.Type != ResourceType.Temp && b.PostId == postId
                select a;
@@ -584,7 +584,7 @@ public class FileService : IFileService
 
         if (hashIds?.Count > 0)
         {
-            var a = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            var a = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
             a.ForEach(p => p.IsDelete = true);
 
             willDelete = true;
@@ -592,7 +592,7 @@ public class FileService : IFileService
 
         if (subPostIds?.Count > 0)
         {
-            var b = await _context.SubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
+            var b = await _context.ComicSubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
             b.ForEach(p => p.IsDelete = true);
 
             willDelete = true;

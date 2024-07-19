@@ -15,14 +15,14 @@ public partial class StoryService : IStoryService
 {
     private readonly IPostService _postService;
     private readonly PostType _type;
-    private readonly IRepository<SubPost> _subPostRepository;
+    private readonly IRepository<ComicSubPost> _subPostRepository;
     private readonly ICurrentUserService _currentUserService;
     public StoryService(
         IUnitOfWork unitOfWork,
         IPostService postService,
         ICurrentUserService currentUserService)
     {
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
         _postService = postService;
         _type = PostType.Story;
         _currentUserService = currentUserService;
