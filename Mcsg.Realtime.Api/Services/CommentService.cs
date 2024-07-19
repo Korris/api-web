@@ -99,7 +99,7 @@ namespace Mcsg.Realtime.Api.Services
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.POST_COMMENT : ResourceLocationType.SUB_POST_COMMENT);
+            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
 
             var pDto = new PostDto();
 
@@ -184,7 +184,7 @@ namespace Mcsg.Realtime.Api.Services
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.POST_COMMENT : ResourceLocationType.SUB_POST_COMMENT);
+            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
 
             var pDto = new PostDto();
             var response = new PostCommentResp();

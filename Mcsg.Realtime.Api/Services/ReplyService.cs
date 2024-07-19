@@ -4,6 +4,7 @@ using Dapper;
 namespace Mcsg.Realtime.Api.Services
 {
     using Common.Core.Constants;
+    using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.SeedWork.Exceptions;
     using Constants;
@@ -90,7 +91,7 @@ namespace Mcsg.Realtime.Api.Services
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
 
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.POST_COMMENT : ResourceLocationType.SUB_POST_COMMENT);
+            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
 
             var pDto = new PostDto();
 
@@ -151,7 +152,7 @@ namespace Mcsg.Realtime.Api.Services
             var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar) : "";
 
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.POST_COMMENT : ResourceLocationType.SUB_POST_COMMENT);
+            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
 
             var response = new ReplyCommentResp();
             var pDto = new PostDto();
