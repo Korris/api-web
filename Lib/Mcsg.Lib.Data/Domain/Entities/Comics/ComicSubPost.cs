@@ -2,8 +2,8 @@
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
-    using Lib.Data.Domain.Entities.Common;
-    using Lib.Data.Enums;
+    using Common;
+    using Enums;
     using Mcsg.Common.Core.Enums;
 
     [Table("ComicSubPosts")]

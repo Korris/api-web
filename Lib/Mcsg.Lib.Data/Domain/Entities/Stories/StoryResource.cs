@@ -2,8 +2,8 @@
 
 namespace Mcsg.Lib.Data.Domain.Entities
 {
+    using Common;
     using Mcsg.Common.Core.Enums;
-    using Mcsg.Lib.Data.Domain.Entities.Common;
 
     [Table("StoryResources")]
     public class StoryResource : AuditableEntity
