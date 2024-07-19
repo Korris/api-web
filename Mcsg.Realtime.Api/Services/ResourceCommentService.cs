@@ -71,7 +71,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetBlobName.UrlEncode();
+                    resource.Url = targetObjectName.UrlEncode();
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }
@@ -115,7 +115,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetBlobName.UrlEncode();
+                    resource.Url = targetObjectName.UrlEncode();
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }
@@ -159,7 +159,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetBlobName.UrlEncode();
+                    resource.Url = targetObjectName.UrlEncode();
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }

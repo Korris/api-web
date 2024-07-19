@@ -3,7 +3,6 @@ using System.Net;
 
 namespace Mcsg.Media.Api.Controllers;
 
-using Common.Core.Constants;
 using Common.Core.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -53,7 +52,6 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        objectName = $"{Setting.MinioFolder.Social}/{objectName}";
         var ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {
