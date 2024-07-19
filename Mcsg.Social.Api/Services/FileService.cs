@@ -258,7 +258,7 @@ public class FileService : IFileService
         var listResourceAddded = resourcesDb.Where(x => resourceRequestHashId.Contains(x.HashId)).ToList();
 
         // Complete resource files
-        var listResourcesNew = await CompleteFilesNewAsync(listResourceNotAdd, listResourceAddded, userId, userName, userFolder, userAvatar, postId, true);
+        var listResourcesNew = await CompleteFilesAsync(listResourceNotAdd, userId, userName, userFolder, userAvatar, postId, true);
 
         //Remove
         var listRemove = resourcesDb.Where(x => !resourceRequestHashId.Contains(x.HashId)).ToList();
@@ -470,97 +470,6 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// CompleteFilesNew async
-    /// </summary>
-    /// <param name="req"></param>
-    /// <param name="resourceAdded"></param>
-    /// <param name="userId"></param>
-    /// <param name="userName"></param>
-    /// <param name="userFolder"></param>
-    /// <param name="userAvatar"></param>
-    /// <param name="postId"></param>
-    /// <param name="addSubPost"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
-    private async Task<IEnumerable<Resource>> CompleteFilesNewAsync(List<ResourcePostDto> req, List<Resource> resourceAdded, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
-    {
-        var response = new List<Resource>();
-        if (string.IsNullOrWhiteSpace(userFolder))
-        {
-            throw new NotFoundException(E203, M203);
-        }
-        var hashIds = req.Select(x => x.HashId).ToList();
-        if (hashIds != null && hashIds.Any())
-        {
-            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
-
-            foreach (var resource in resourceList)
-            {
-                if (resource == null)
-                {
-                    continue;
-                }
-
-                var resourceReq = req.FirstOrDefault(x => x.HashId == resource.HashId);
-
-                #region -- Copy file from temp target --
-                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
-                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
-
-                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
-
-                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
-
-                if (isExistTempFile != null && isExistTargetFile == null)
-                {
-                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
-
-                    resource.Size = isExistTempFile!.Size;
-                    await _sc.Strategy.RemoveObject(tempObjectName, null);
-                }
-                #endregion
-
-                var subPostId = resource.SubPostId ?? postId;
-                if (addSubPost)
-                {
-                    var subPost = new SubPost
-                    {
-                        Title = resource.Title,
-                        PostId = postId,
-                        UserId = userId,
-                        Body = resourceReq.Body,
-                        CreatedBy = resource.CreatedBy,
-                        Status = PostStatus.Public,
-                        Order = resourceReq.Order,
-                        Permission = PostPermission.Public,
-                        PublishDate = DateTime.UtcNow,
-                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
-                        IsExclusive = false
-                    };
-
-                    await _context.SubPosts.AddAsync(subPost);
-                    subPostId = subPost.Id;
-                }
-
-                resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetBlobName.UrlEncode();
-                resource.ShareUrl = targetObjectName;
-                resource.SubPostId = subPostId;
-                resource.Order = resourceReq.Order;
-                await _context.SaveChangesAsync();
-
-                await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-
-                response.Add(resource);
-            }
-            response = response.OrderBy(x => x.Order).ToList();
-        }
-        return response;
-    }
-
-    /// <summary>
     /// CompleteFiles async
     /// </summary>
     /// <param name="req"></param>
@@ -642,7 +551,6 @@ public class FileService : IFileService
                 await _context.SaveChangesAsync();
 
                 await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-
                 response.Add(resource);
             }
             response = response.OrderBy(x => x.Order).ToList();
