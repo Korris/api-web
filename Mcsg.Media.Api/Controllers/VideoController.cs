@@ -53,7 +53,7 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        objectName = $"{Setting.MinioFolder.Media}/{objectName}";
+        objectName = $"{Setting.MinioFolder.Social}/{objectName}";
         var ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {

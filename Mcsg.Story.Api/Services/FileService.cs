@@ -95,7 +95,7 @@ public class FileService : IFileService
             imgHeight = compressedImage.Height;
             using (var stream = compressedImage.Image.OpenReadStream())
             {
-                objectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 await _sc.Strategy.PutObject(stream, objectName, null);
             }
         }
@@ -112,7 +112,7 @@ public class FileService : IFileService
             tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
             using (var stream = file.OpenReadStream())
             {
-                objectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 await _sc.Strategy.PutObject(stream, objectName, null);
             }
         }
@@ -360,14 +360,14 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                tempBlobName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                tempBlobName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
                     await _sc.Strategy.RemoveObject(tempBlobName, null);
                 }
 
-                targetBlobName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
+                targetBlobName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
@@ -415,10 +415,10 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
@@ -506,10 +506,10 @@ public class FileService : IFileService
                 string tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)

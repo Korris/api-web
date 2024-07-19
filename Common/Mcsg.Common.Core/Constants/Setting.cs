@@ -349,9 +349,9 @@ public class Setting : SeedWork.Constants.Setting
     public static class MinioFolder
     {
         /// <summary>
-        /// Media
+        /// Social
         /// </summary>
-        public const string Media = "media";
+        public const string Social = "social";
 
         /// <summary>
         /// Image

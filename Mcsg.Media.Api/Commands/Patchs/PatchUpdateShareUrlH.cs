@@ -51,7 +51,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
                 continue;
             }
 
-            var mediaContainer = $"{Setting.MinioFolder.Media}/";
+            var mediaContainer = $"{Setting.MinioFolder.Social}/";
             var urlDecrypt = CryptoHelper.Decrypt(url, _setting.Minio.MediaEncryptKey);
             if (!string.IsNullOrWhiteSpace(urlDecrypt))
             {

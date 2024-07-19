@@ -57,7 +57,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
 
         foreach (var i in dicUsers)
         {
-            var dstFolder = $"{Setting.MinioFolder.Media}/{i.Key.ProfileId}";
+            var dstFolder = $"{Setting.MinioFolder.Social}/{i.Key.ProfileId}";
             foreach (var j in i.Value)
             {
                 if (string.IsNullOrEmpty(j))
@@ -65,7 +65,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
                     continue;
                 }
 
-                var srcFolder = $"{Setting.MinioFolder.Media}/{j}";
+                var srcFolder = $"{Setting.MinioFolder.Social}/{j}";
                 count += await _sc.Strategy.MoveFolder(srcFolder, dstFolder, null);
             }
         }

@@ -47,10 +47,10 @@ namespace Mcsg.Realtime.Api.Services
                 string tempBlobName = resource.Name.GetTempBlobName(userName);
                 string targetBlobName = resource.Name.GetMediaBlobName(userName);
 
-                var tempObjectName = $"{Setting.MinioFolder.Media}/{tempBlobName}";
+                var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
 
-                var targetObjectName = $"{Setting.MinioFolder.Media}/{targetBlobName}";
+                var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
                 var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
 
                 if (isExistTempFile != null && isExistTargetFile == null)
