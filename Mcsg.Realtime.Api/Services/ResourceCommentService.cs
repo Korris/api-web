@@ -1,4 +1,4 @@
-﻿using Dapper;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Realtime.Api.Services
 {
@@ -8,44 +8,98 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Interfaces;
     using Common.SeedWork.Extensions;
     using Interfaces;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Repositories;
-    using Lib.Data.Repositories.Interface;
+    using Lib.Data;
     using Requests;
 
-    public interface IResourceCommentService
-    {
-        Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType);
-    }
     public partial class ResourceCommentService : IResourceCommentService
     {
-        private readonly IRepository<Resource> _resourceRepository;
-        private IConfiguration _configuration;
-        public ResourceCommentService(IUnitOfWork unitOfWork
-            , IConfiguration configuration
-            , ISetting setting
-            , IStorageClient sc)
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="context">DB context</param>
+        /// <param name="setting">Setting</param>
+        /// <param name="sc">Storage client</param>
+        public ResourceCommentService(McsgDbContext context, ISetting setting, IStorageClient sc)
         {
-            _resourceRepository = unitOfWork.GetRepository<Resource>();
-            _configuration = configuration;
+            _context = context;
             _setting = setting;
             _sc = sc;
         }
-        public async Task<ResourceCommentResp> AddResourceToComment(string userName, string hashId, ResourceLocationType locationType)
+
+        public async Task<ResourceCommentResp> AddResourceToComment(string userFolder, string hashId, ResourceLocationType locationType, string microService)
         {
-            var response = new ResourceCommentResp();
-            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(hashId))
+            if (microService == MicroService.Comic.ToString())
             {
-                return null;
+                return await AddComicResourceToComment(userFolder, hashId, locationType);
             }
 
-            var resource = await _resourceRepository.Connection.QueryFirstOrDefaultAsync<Resource>(GetResourceQuery, new { HashId = hashId });
+            if (microService == MicroService.Story.ToString())
+            {
+                return await AddStoryResourceToComment(userFolder, hashId, locationType);
+            }
+
+            return await AddSocialResourceToComment(userFolder, hashId, locationType);
+        }
+
+        private async Task<ResourceCommentResp> AddComicResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+        {
+            var response = new ResourceCommentResp();
+            if (string.IsNullOrWhiteSpace(userFolder) || string.IsNullOrWhiteSpace(hashId))
+            {
+                return response;
+            }
+
+            var resource = await _context.ComicResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
 
             if (resource != null)
             {
                 #region -- Copy file from temp target --
-                string tempBlobName = resource.Name.GetTempBlobName(userName);
-                string targetBlobName = resource.Name.GetMediaBlobName(userName);
+                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+
+                var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
+                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+
+                var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
+                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+
+                if (isExistTempFile != null && isExistTargetFile == null)
+                {
+                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+
+                    resource.Size = isExistTempFile!.Size;
+                    await _sc.Strategy.RemoveObject(tempObjectName, null);
+
+                    resource.Type = resource.Name.GetResourceType();
+                    resource.Url = targetBlobName.UrlEncode();
+                    //resource.SubPostId = Guid.Empty;
+                    await _context.SaveChangesAsync();
+                }
+                #endregion
+
+                response.HashId = resource.HashId;
+                response.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resource.Name, resource.Url);
+                response.Id = resource.Id;
+            }
+
+            return response;
+        }
+
+        private async Task<ResourceCommentResp> AddSocialResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+        {
+            var response = new ResourceCommentResp();
+            if (string.IsNullOrWhiteSpace(userFolder) || string.IsNullOrWhiteSpace(hashId))
+            {
+                return response;
+            }
+
+            var resource = await _context.ResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+
+            if (resource != null)
+            {
+                #region -- Copy file from temp target --
+                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -63,7 +117,51 @@ namespace Mcsg.Realtime.Api.Services
                     resource.Type = resource.Name.GetResourceType();
                     resource.Url = targetBlobName.UrlEncode();
                     //resource.SubPostId = Guid.Empty;
-                    await _resourceRepository.UpdateAsync(resource);
+                    await _context.SaveChangesAsync();
+                }
+                #endregion
+
+                response.HashId = resource.HashId;
+                response.Url = _setting.Minio.MediaApiUrl.GetMediaPath(resource.Name, resource.Url);
+                response.Id = resource.Id;
+            }
+
+            return response;
+        }
+
+        private async Task<ResourceCommentResp> AddStoryResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+        {
+            var response = new ResourceCommentResp();
+            if (string.IsNullOrWhiteSpace(userFolder) || string.IsNullOrWhiteSpace(hashId))
+            {
+                return response;
+            }
+
+            var resource = await _context.StoryResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+
+            if (resource != null)
+            {
+                #region -- Copy file from temp target --
+                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+
+                var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
+                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+
+                var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
+                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+
+                if (isExistTempFile != null && isExistTargetFile == null)
+                {
+                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+
+                    resource.Size = isExistTempFile!.Size;
+                    await _sc.Strategy.RemoveObject(tempObjectName, null);
+
+                    resource.Type = resource.Name.GetResourceType();
+                    resource.Url = targetBlobName.UrlEncode();
+                    //resource.SubPostId = Guid.Empty;
+                    await _context.SaveChangesAsync();
                 }
                 #endregion
 
@@ -76,6 +174,11 @@ namespace Mcsg.Realtime.Api.Services
         }
 
         #region -- Fields --
+
+        /// <summary>
+        /// DB Context
+        /// </summary>
+        private readonly McsgDbContext _context;
 
         /// <summary>
         /// Setting

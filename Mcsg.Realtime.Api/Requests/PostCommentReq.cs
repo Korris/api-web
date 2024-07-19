@@ -10,5 +10,6 @@
         public string ResourceHashId { get; set; }
         public string GifId { get; set; }
         public string Type { get; set; } // post / subpost
+        public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
     }
 }

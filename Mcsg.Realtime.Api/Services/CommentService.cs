@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Services
 {
@@ -91,15 +92,20 @@ namespace Mcsg.Realtime.Api.Services
             }
             var response = new PostCommentResp();
 
-            var userName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserName)?.Value ?? "";
-            var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
+            var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
+            var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
+
+            var userName = payload?.UserName;
+            var profileName = payload?.ProfileName;
+            var userFolder = payload?.UserFolder;
+            var userAvatar = payload?.UserAvatar;
+            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
+
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar) : "";
+            var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+            var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
-            var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
-
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
+            var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
 
             var pDto = new PostDto();
 
@@ -159,7 +165,7 @@ namespace Mcsg.Realtime.Api.Services
                 i.UserName = dicUser.GetValueOrDefault(i.EntityId);
             }
 
-            response.UserAvatar = avatar;
+            response.UserAvatar = userAvatar;
 
             return response;
         }
@@ -176,15 +182,20 @@ namespace Mcsg.Realtime.Api.Services
                 throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
             }
 
-            var userName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserName)?.Value ?? "";
-            var profileName = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.ProfileName)?.Value ?? "";
+            var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
+            var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
+
+            var userName = payload?.UserName;
+            var profileName = payload?.ProfileName;
+            var userFolder = payload?.UserFolder;
+            var userAvatar = payload?.UserAvatar;
+            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
+
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-            var userAvatar = user.Claims.FirstOrDefault(x => x.Type == Setting.SecurityClaim.UserAvatar)?.Value ?? "";
-            var avatar = !string.IsNullOrWhiteSpace(userAvatar) ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar) : "";
+            var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+            var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
-            var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = avatar };
-
-            var resource = await _resourceCommentService.AddResourceToComment(userName, req.ResourceHashId, req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment);
+            var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
 
             var pDto = new PostDto();
             var response = new PostCommentResp();
@@ -212,7 +223,7 @@ namespace Mcsg.Realtime.Api.Services
             }
 
             response.AuthorName = authorName;
-            response.UserAvatar = avatar;
+            response.UserAvatar = userAvatar;
 
             return response;
         }
