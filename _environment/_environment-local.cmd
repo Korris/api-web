@@ -18,7 +18,7 @@ setx Bumcheo_Com_Minio_EndPoint "localhost:9000"
 setx Bumcheo_Com_Minio_PublicUrl "http://localhost:9001"
 setx Bumcheo_Com_Minio_AccessKey "admin"
 setx Bumcheo_Com_Minio_SecrectKey "P@SSnhucu6969"
-setx Bumcheo_Com_Minio_MediaEncryptKey "7weOVpAvST9y5v2xwqze3g=="
+setx Bumcheo_Com_EncryptKey "7weOVpAvST9y5v2xwqze3g=="
 setx Bumcheo_Com_Minio_MediaApiUrl "https://localhost:44304"
 setx Bumcheo_Com_Minio_MediaCdnUrl "https://localhost:44304"
 

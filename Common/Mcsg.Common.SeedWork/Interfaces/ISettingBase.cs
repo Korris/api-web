@@ -109,5 +109,10 @@ public interface ISettingBase
     /// </summary>
     string? Origins { get; set; }
 
+    /// <summary>
+    /// Encrypt key
+    /// </summary>
+    string EncryptKey { get; set; }
+
     #endregion
 }

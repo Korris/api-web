@@ -92,7 +92,7 @@ public class AffiliateService : IAffiliateService
             EntityType = (AffiliateEntityType)Enum.Parse(typeof(AffiliateEntityType), req.Type, true)
         };
 
-        affiliateCode = data.ToAffiliateCode(_setting.Minio.MediaEncryptKey);
+        affiliateCode = data.ToAffiliateCode(_setting.EncryptKey);
 
         return affiliateCode;
     }

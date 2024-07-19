@@ -123,6 +123,11 @@ public class SettingBase : ISettingBase
     /// </summary>
     public string? Origins { get; set; }
 
+    /// <summary>
+    /// Encrypt key
+    /// </summary>
+    public string EncryptKey { get; set; }
+
     #endregion
 
     #region -- Methods --
@@ -143,6 +148,8 @@ public class SettingBase : ISettingBase
         Queue = new QueueDto();
         Email = new NotificationDto();
         Minio = new MinioDto();
+
+        EncryptKey = string.Empty;
     }
 
     #endregion
