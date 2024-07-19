@@ -13,6 +13,8 @@
 
 namespace Mcsg.Common.Core.Constants;
 
+using Enums;
+
 /// <summary>
 /// Setting
 /// </summary>
@@ -27,12 +29,15 @@ public class Setting : SeedWork.Constants.Setting
         {
             return new Dictionary<string, string>
             {
-                { "Adm", "Admin" },
-                { "Ana", "Analytic" },
-                { "Ide", "Identity" },
-                { "Rea", "Realtime" },
-                { "Soc", "Social" },
-                { "Wal", "Wallet" }
+                { "Adm", MicroService.Admin.ToString() },
+                { "Ana", MicroService.Analytic.ToString() },
+                { "Cmc", MicroService.Comic.ToString() },
+                { "Ide", MicroService.Identity.ToString() },
+                { "Med", MicroService.Media.ToString() },
+                { "Rea", MicroService.Realtime.ToString() },
+                { "Soc", MicroService.Social.ToString() },
+                { "Sto", MicroService.Story.ToString() },
+                { "Wal", MicroService.Wallet.ToString() }
             };
         }
     }
