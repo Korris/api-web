@@ -165,7 +165,7 @@ public class FileService : IFileService
         var subPosts = new List<SubUploadFileDto>();
 
         // Complete resource files
-        var (resources, subPostResponses) = await CompleteFilesSubPostAsync(req, userId, userName, userFolder, userAvatar, postId, true);
+        var (resources, subPostResponses) = await CompleteFilesAsync(req, userId, userName, userFolder, userAvatar, postId, true);
 
         // Map to response for feed service
         foreach (var resource in resources)
@@ -212,7 +212,7 @@ public class FileService : IFileService
         var files = new List<UploadFileDto>();
 
         // Complete resource files
-        var resources = await CompleteFilesAsync(req, userId, userName, userFolder, userAvatar, subPostId, false);
+        var (resources, subPostResponses) = await CompleteFilesAsync(req, userId, userName, userFolder, userAvatar, subPostId, false);
 
         // Map to response for comic service
         foreach (var resource in resources)
@@ -258,7 +258,7 @@ public class FileService : IFileService
         var listResourceAddded = resourcesDb.Where(x => resourceRequestHashId.Contains(x.HashId)).ToList();
 
         // Complete resource files
-        var listResourcesNew = await CompleteFilesAsync(listResourceNotAdd, userId, userName, userFolder, userAvatar, postId, true);
+        var (listResourcesNew, subPostResponses) = await CompleteFilesAsync(listResourceNotAdd, userId, userName, userFolder, userAvatar, postId, true);
 
         //Remove
         var listRemove = resourcesDb.Where(x => !resourceRequestHashId.Contains(x.HashId)).ToList();
@@ -378,7 +378,7 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// CompleteFilesSubPost async
+    /// CompleteFiles async
     /// </summary>
     /// <param name="req"></param>
     /// <param name="userId"></param>
@@ -389,7 +389,7 @@ public class FileService : IFileService
     /// <param name="addSubPost"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    private async Task<Tuple<List<ComicResource>, List<SubUploadFileDto>>> CompleteFilesSubPostAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<ComicResource>, List<SubUploadFileDto>>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
         var response = new List<ComicResource>();
         var subPostResponses = new List<SubUploadFileDto>();
@@ -467,95 +467,6 @@ public class FileService : IFileService
             response = response.OrderBy(x => x.Order).ToList();
         }
         return Tuple.Create(response, subPostResponses);
-    }
-
-    /// <summary>
-    /// CompleteFiles async
-    /// </summary>
-    /// <param name="req"></param>
-    /// <param name="userId"></param>
-    /// <param name="userName"></param>
-    /// <param name="userFolder"></param>
-    /// <param name="userAvatar"></param>
-    /// <param name="postId"></param>
-    /// <param name="addSubPost"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundException"></exception>
-    private async Task<IEnumerable<ComicResource>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
-    {
-        var response = new List<ComicResource>();
-        if (string.IsNullOrWhiteSpace(userFolder))
-        {
-            throw new NotFoundException(E203, M203);
-        }
-        var hashIds = req.Select(x => x.HashId).ToList();
-        if (hashIds != null && hashIds.Any())
-        {
-            var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
-
-            foreach (var resource in resourceList)
-            {
-                if (resource == null)
-                {
-                    continue;
-                }
-
-                var resourceReq = req.FirstOrDefault(x => x.HashId == resource.HashId);
-
-                #region -- Copy file from temp target --
-                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
-                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
-
-                var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
-
-                var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
-
-                if (isExistTempFile != null && isExistTargetFile == null)
-                {
-                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
-
-                    resource.Size = isExistTempFile!.Size;
-                    await _sc.Strategy.RemoveObject(tempObjectName, null);
-                }
-                #endregion
-
-                var subPostId = resource.SubPostId ?? postId;
-                if (addSubPost)
-                {
-                    var subPost = new ComicSubPost
-                    {
-                        Title = resource.Title,
-                        PostId = postId,
-                        UserId = userId,
-                        Body = resourceReq.Body,
-                        CreatedBy = resource.CreatedBy,
-                        Status = PostStatus.Public,
-                        Order = resourceReq.Order,
-                        Permission = PostPermission.Public,
-                        PublishDate = DateTime.UtcNow,
-                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
-                        IsExclusive = false
-                    };
-
-                    await _context.ComicSubPosts.AddAsync(subPost);
-                    subPostId = subPost.Id;
-                }
-
-                resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetObjectName;
-                resource.ShareUrl = targetObjectName;
-                resource.SubPostId = subPostId;
-                resource.Order = resourceReq.Order;
-                await _context.SaveChangesAsync();
-
-                await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-                response.Add(resource);
-            }
-            response = response.OrderBy(x => x.Order).ToList();
-        }
-        return response;
     }
 
     /// <summary>
