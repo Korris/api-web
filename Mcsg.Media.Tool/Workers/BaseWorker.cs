@@ -28,7 +28,7 @@ namespace Mcsg.Media.Tool.Workers
 
         public async Task<string> DownloadBlobAsync(string path, Guid resourceId)
         {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, MediaContainer);
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "temp");
             var newName = Path.GetFileNameWithoutExtension(path) + resourceId.ToString() + Path.GetExtension(path);
             filePath = Path.Combine(filePath, Path.GetDirectoryName(path), newName);
             if (!Directory.Exists(Path.GetDirectoryName(filePath)))
@@ -41,8 +41,7 @@ namespace Mcsg.Media.Tool.Workers
                 File.Delete(filePath);
             }
 
-            var objectName = $"{MediaContainer}/{path}";
-            var fs = await _sc.Strategy.GetObject(objectName, null);
+            var fs = await _sc.Strategy.GetObject(path, null);
             fs.ToFile(filePath);
 
             return filePath;
@@ -50,12 +49,9 @@ namespace Mcsg.Media.Tool.Workers
 
         public async Task UploadBlobAsync(string localFile, string remoteUri)
         {
-            var fileStream = File.OpenRead(localFile);
-
-            var objectName = $"{MediaContainer}/{remoteUri}";
-            await _sc.Strategy.PutObject(fileStream, objectName, null);
-
-            fileStream.Close();
+            var fs = File.OpenRead(localFile);
+            await _sc.Strategy.PutObject(fs, remoteUri, null);
+            fs.Close();
         }
 
         public void RunFFmeg(string exepath, string input, string output, string command)
@@ -132,8 +128,6 @@ namespace Mcsg.Media.Tool.Workers
         protected DbService DbService { get; }
 
         protected NotificationService NotiService { get; }
-
-        protected const string MediaContainer = "media";
 
         #endregion
     }

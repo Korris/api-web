@@ -406,6 +406,9 @@ public class FileService : IFileService
             return Tuple.Create(response, subPostResponses);
         }
 
+        var subFolder = addSubPost ? "sub-posts" : "posts";
+        subFolder = $"{userFolder}/{subFolder}/{postId}";
+
         var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
         {
@@ -418,7 +421,7 @@ public class FileService : IFileService
 
             #region -- Copy file from temp target --
             var tempBlobName = resource.Name.GetTempBlobName(userFolder);
-            var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
             var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);

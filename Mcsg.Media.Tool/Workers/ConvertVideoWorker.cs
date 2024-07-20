@@ -50,11 +50,7 @@ namespace Mcsg.Media.Tool.Workers
                         //update job status
                         await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                        //correct resource table
-                        var endCodenewUrl = HttpUtility.UrlEncode(newUrl);
-                        var objectName = $"{MediaContainer}/{newUrl}";
-
-                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, endCodenewUrl, objectName);
+                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl);
                     }
 
                     //clean up resource

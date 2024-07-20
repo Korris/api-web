@@ -53,9 +53,12 @@ namespace Mcsg.Realtime.Api.Services
                 return null;
             }
 
+            var subFolder = "comments";
+            subFolder = $"{userFolder}/{subFolder}";
+
             #region -- Copy file from temp target --
             var tempBlobName = resource.Name.GetTempBlobName(userFolder);
-            var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
             var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -93,9 +96,12 @@ namespace Mcsg.Realtime.Api.Services
                 return null;
             }
 
+            var subFolder = "comments";
+            subFolder = $"{userFolder}/{subFolder}";
+
             #region -- Copy file from temp target --
             var tempBlobName = resource.Name.GetTempBlobName(userFolder);
-            var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
             var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -133,9 +139,12 @@ namespace Mcsg.Realtime.Api.Services
                 return null;
             }
 
+            var subFolder = "comments";
+            subFolder = $"{userFolder}/{subFolder}";
+
             #region -- Copy file from temp target --
             var tempBlobName = resource.Name.GetTempBlobName(userFolder);
-            var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
             var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
