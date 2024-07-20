@@ -5,5 +5,5 @@ using Requests;
 
 public interface IResourceCommentService
 {
-    Task<ResourceCommentResp> AddResourceToComment(string userFolder, string hashId, ResourceLocationType locationType, string microService);
+    Task<ResourceCommentResp?> AddResourceToComment(string userFolder, string hashId, ResourceLocationType locationType, string microService);
 }
