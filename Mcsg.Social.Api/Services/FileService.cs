@@ -126,7 +126,6 @@ public class FileService : IFileService
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
             Url = objectName,
-            ShareUrl = objectName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
             CreatedBy = userId,
             Width = imgWidth,
@@ -137,7 +136,7 @@ public class FileService : IFileService
         await _context.Resources.AddAsync(resource);
         await _context.SaveChangesAsync();
 
-        var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+        var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
 
         return new UploadFileDto()
         {
@@ -172,29 +171,30 @@ public class FileService : IFileService
         foreach (var resource in resources)
         {
             var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
-            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
 
             subPosts.Add(new SubUploadFileDto
             {
                 Status = PostStatus.Public,
-                Files = new List<UploadFileDto> { new UploadFileDto()
-                                        {
-                                            SubPostHashId = subPostHashId?.HashId,
-                                            HashId = resource?.HashId,
-                                            Url = shareUrl,
-                                            ShareUrl = resource.ShareUrl,
-                                            Height = resource.Height,
-                                            Width = resource.Width,
-                                            Order = resource.Order,
-                                            Type = resource.Type,
-                                            Size = resource.Size
-                                        }},
+                Files = [
+                    new UploadFileDto
+                    {
+                        SubPostHashId = subPostHashId?.HashId,
+                        HashId = resource?.HashId,
+                        Url = shareUrl,
+                        ShareUrl = shareUrl,
+                        Height = resource.Height,
+                        Width = resource.Width,
+                        Order = resource.Order,
+                        Type = resource.Type,
+                        Size = resource.Size
+                    }],
                 Title = resource.Title,
-                //Name = resource.Name,
                 Permission = PostPermission.Public,
                 PublishDate = DateTime.UtcNow
             });
         }
+
         return subPosts;
     }
 
@@ -307,25 +307,26 @@ public class FileService : IFileService
 
         foreach (var resource in resourcesResult.OrderBy(p => p.Order))
         {
-            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
             var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
             subPosts.Add(new SubUploadFileDto
             {
                 Body = req.FirstOrDefault(p => p.Order == resource.Order).Body,
                 HashId = subPostData?.SubPostHashId ?? "",
                 Status = PostStatus.Public,
-                Files = new List<UploadFileDto> { new UploadFileDto()
-                                        {
-                                            SubPostHashId = subPostData?.SubPostHashId ?? "",
-                                            HashId = resource.HashId ,
-                                            Url = shareUrl,
-                                            ShareUrl = resource.ShareUrl,
-                                            Height = resource.Height,
-                                            Width = resource.Width,
-                                            Order = resource.Order,
-                                            Type = resource.Type,
-                                            Size = resource.Size
-                                        }},
+                Files = [
+                    new UploadFileDto
+                    {
+                        SubPostHashId = subPostData?.SubPostHashId ?? "",
+                        HashId = resource.HashId ,
+                        Url = shareUrl,
+                        ShareUrl = shareUrl,
+                        Height = resource.Height,
+                        Width = resource.Width,
+                        Order = resource.Order,
+                        Type = resource.Type,
+                        Size = resource.Size
+                    }],
                 Title = resource.Title,
                 Permission = PostPermission.Public,
                 PublishDate = DateTime.UtcNow
@@ -464,7 +465,6 @@ public class FileService : IFileService
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
-            resource.ShareUrl = targetObjectName;
             resource.SubPostId = subPostId;
             resource.Order = resourceReq.Order;
             await _context.SaveChangesAsync();
