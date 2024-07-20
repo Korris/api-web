@@ -97,8 +97,8 @@ namespace Mcsg.Realtime.Api.Services
             if (resource != null)
             {
                 #region -- Copy file from temp target --
-                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
-                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+                var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);

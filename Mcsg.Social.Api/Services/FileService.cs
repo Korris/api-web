@@ -77,12 +77,13 @@ public class FileService : IFileService
         }
 
         // Upload to temp folder
-        string hashId = Setting.ResourceConfig.HashLength.GetRandomString();
-        string hashFileName = file.GetHashName(hashId);
-        string tempBlobName = "";
-        string fileTitle = file.FileName;
-        int imgWidth = 0, imgHeight = 0;
+        var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
+        var hashFileName = file.GetHashName(hashId);
+        var tempBlobName = "";
         var objectName = "";
+        var fileTitle = file.FileName;
+        var imgWidth = 0;
+        var imgHeight = 0;
 
         if (file.IsImage() && !file.IsGifAnimated())
         {
@@ -357,8 +358,8 @@ public class FileService : IFileService
 
             foreach (var resource in resourcesDb)
             {
-                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
-                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+                var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+                var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 tempBlobName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
@@ -393,79 +394,84 @@ public class FileService : IFileService
     {
         var response = new List<Resource>();
         var subPostResponses = new List<SubUploadFileDto>();
+
         if (string.IsNullOrWhiteSpace(userFolder))
         {
             throw new NotFoundException(E203, M203);
         }
+
         var hashIds = req.Select(x => x.HashId).ToList();
-        if (hashIds != null && hashIds.Any())
+        if (hashIds == null || hashIds.Count == 0)
         {
-            var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
-
-            foreach (var resource in resourceList)
-            {
-                if (resource == null)
-                {
-                    continue;
-                }
-
-                var resourceReq = req.FirstOrDefault(x => x.HashId == resource.HashId);
-
-                #region -- Copy file from temp target --
-                string tempBlobName = resource.Name.GetTempBlobName(userFolder);
-                string targetBlobName = resource.Name.GetMediaBlobName(userFolder);
-
-                var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
-
-                var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
-
-                if (isExistTempFile != null && isExistTargetFile == null)
-                {
-                    await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
-
-                    resource.Size = isExistTempFile!.Size;
-                    await _sc.Strategy.RemoveObject(tempObjectName, null);
-                }
-                #endregion
-
-                var subPostId = resource.SubPostId ?? postId;
-                if (addSubPost)
-                {
-                    var subPost = new SubPost
-                    {
-                        Title = resource.Title,
-                        PostId = postId,
-                        UserId = userId,
-                        Body = resourceReq.Body,
-                        CreatedBy = resource.CreatedBy,
-                        Status = PostStatus.Public,
-                        Order = resourceReq.Order,
-                        Permission = PostPermission.Public,
-                        PublishDate = DateTime.UtcNow,
-                        HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
-                        IsExclusive = false
-                    };
-
-                    await _context.SubPosts.AddAsync(subPost);
-                    subPostId = subPost.Id;
-
-                    subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
-                }
-
-                resource.Type = resource.Name.GetResourceType();
-                resource.Url = targetObjectName;
-                resource.ShareUrl = targetObjectName;
-                resource.SubPostId = subPostId;
-                resource.Order = resourceReq.Order;
-                await _context.SaveChangesAsync();
-
-                await _jobService.CreateConvertJob(resource, userName, userAvatar, targetBlobName);
-                response.Add(resource);
-            }
-            response = response.OrderBy(x => x.Order).ToList();
+            return Tuple.Create(response, subPostResponses);
         }
+
+        var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        foreach (var resource in resourceList)
+        {
+            if (resource == null)
+            {
+                continue;
+            }
+
+            var resourceReq = req.FirstOrDefault(x => x.HashId == resource.HashId);
+
+            #region -- Copy file from temp target --
+            var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
+
+            var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
+            var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+
+            var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
+            var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+
+            if (isExistTempFile != null && isExistTargetFile == null)
+            {
+                await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+
+                resource.Size = isExistTempFile!.Size;
+                await _sc.Strategy.RemoveObject(tempObjectName, null);
+            }
+            #endregion
+
+            var subPostId = resource.SubPostId ?? postId;
+            if (addSubPost)
+            {
+                var subPost = new SubPost
+                {
+                    Title = resource.Title,
+                    PostId = postId,
+                    UserId = userId,
+                    Body = resourceReq.Body,
+                    CreatedBy = resource.CreatedBy,
+                    Status = PostStatus.Public,
+                    Order = resourceReq.Order,
+                    Permission = PostPermission.Public,
+                    PublishDate = DateTime.UtcNow,
+                    HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
+                    IsExclusive = false
+                };
+
+                await _context.SubPosts.AddAsync(subPost);
+                subPostId = subPost.Id;
+
+                subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
+            }
+
+            resource.Type = resource.Name.GetResourceType();
+            resource.Url = targetObjectName;
+            resource.ShareUrl = targetObjectName;
+            resource.SubPostId = subPostId;
+            resource.Order = resourceReq.Order;
+            await _context.SaveChangesAsync();
+
+            await _jobService.CreateConvertJob(resource, userName, userAvatar, targetObjectName);
+            response.Add(resource);
+        }
+
+        response = response.OrderBy(x => x.Order).ToList();
+
         return Tuple.Create(response, subPostResponses);
     }
 
