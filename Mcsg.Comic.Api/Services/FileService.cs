@@ -119,7 +119,7 @@ public class FileService : IFileService
         }
 
         // Insert to resource with type is temp
-        var resource = new Resource
+        var resource = new ComicResource
         {
             AuthorId = userId,
             HashId = hashId,
@@ -134,7 +134,7 @@ public class FileService : IFileService
             Size = file.Length
         };
 
-        await _context.Resources.AddAsync(resource);
+        await _context.ComicResources.AddAsync(resource);
         await _context.SaveChangesAsync();
 
         var shareUrl = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
