@@ -6,7 +6,6 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
-    using Common.SeedWork.Extensions;
     using Interfaces;
     using Lib.Data;
     using Requests;
@@ -71,7 +70,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetObjectName.UrlEncode();
+                    resource.Url = targetObjectName;
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }
@@ -115,7 +114,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetObjectName.UrlEncode();
+                    resource.Url = targetObjectName;
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }
@@ -159,7 +158,7 @@ namespace Mcsg.Realtime.Api.Services
                     await _sc.Strategy.RemoveObject(tempObjectName, null);
 
                     resource.Type = resource.Name.GetResourceType();
-                    resource.Url = targetObjectName.UrlEncode();
+                    resource.Url = targetObjectName;
                     //resource.SubPostId = Guid.Empty;
                     await _context.SaveChangesAsync();
                 }
