@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Mcsg.Lib.Data.Migrations
+namespace Mcsg.Common.Domain.Migrations
 {
     [DbContext(typeof(McsgDbContext))]
     [Migration("20240718073350_InitData")]
@@ -110,7 +110,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("BackgroundMediaPosts", (string)null);
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +197,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicPosts", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,7 +257,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicPostComments", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostCommentReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -300,7 +300,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicPostCommentReactions", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -343,7 +343,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicPostReactions", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicResource", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicResource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -424,7 +424,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicResources", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -507,7 +507,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicSubPosts", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -564,7 +564,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicSubPostComments", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostCommentReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -607,7 +607,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicSubPostCommentReactions", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -650,7 +650,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("ComicSubPostReactions", "comic");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicTagPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicTagPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1661,7 +1661,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("SmartLookupUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1748,7 +1748,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StoryPosts", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1808,7 +1808,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StoryPostComments", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostCommentReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1851,7 +1851,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StoryPostCommentReactions", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1894,7 +1894,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StoryPostReactions", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryResource", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryResource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1975,7 +1975,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StoryResources", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2058,7 +2058,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StorySubPosts", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2115,7 +2115,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StorySubPostComments", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostCommentReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2158,7 +2158,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StorySubPostCommentReactions", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2201,7 +2201,7 @@ namespace Mcsg.Lib.Data.Migrations
                     b.ToTable("StorySubPostReactions", "story");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryTagPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryTagPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3203,7 +3203,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPost", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3212,7 +3212,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostComment", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3220,18 +3220,18 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicResource", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicResource", null)
                         .WithMany()
                         .HasForeignKey("ResourceId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostCommentReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3239,14 +3239,14 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostComment", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicPostComment", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3254,27 +3254,27 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicResource", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicResource", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicSubPost", null)
                         .WithMany()
                         .HasForeignKey("SubPostId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPost", b =>
                 {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3287,7 +3287,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostComment", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3295,18 +3295,18 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicSubPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicResource", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicResource", null)
                         .WithMany()
                         .HasForeignKey("ResourceId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostCommentReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3314,14 +3314,14 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostComment", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicSubPostComment", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicSubPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3329,16 +3329,16 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicSubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicSubPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Comics.ComicTagPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.ComicTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Comics.ComicPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.ComicPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3481,7 +3481,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPost", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3490,7 +3490,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostComment", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3498,18 +3498,18 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryResource", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryResource", null)
                         .WithMany()
                         .HasForeignKey("ResourceId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostCommentReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3517,14 +3517,14 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostComment", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryPostComment", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3532,27 +3532,27 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryResource", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryResource", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StorySubPost", null)
                         .WithMany()
                         .HasForeignKey("SubPostId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPost", b =>
                 {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3565,7 +3565,7 @@ namespace Mcsg.Lib.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostComment", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostComment", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3573,18 +3573,18 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StorySubPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryResource", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryResource", null)
                         .WithMany()
                         .HasForeignKey("ResourceId");
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostCommentReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostCommentReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3592,14 +3592,14 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostComment", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StorySubPostComment", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPostReaction", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StorySubPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Lib.Data.Domain.Entities.User", null)
                         .WithMany()
@@ -3607,16 +3607,16 @@ namespace Mcsg.Lib.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StorySubPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StorySubPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.Stories.StoryTagPost", b =>
+            modelBuilder.Entity("Mcsg.Lib.Data.Domain.Entities.StoryTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.Stories.StoryPost", null)
+                    b.HasOne("Mcsg.Lib.Data.Domain.Entities.StoryPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
