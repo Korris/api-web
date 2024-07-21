@@ -272,7 +272,7 @@ public partial class FeedService : IFeedService
         {
             if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
             {
-                item.Url = await _sc.Strategy.PresignedGetObject(item.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+                item.Url = await _sc.Strategy.PresignedGetObject(item.Url, _setting.Minio.MaxExpiryInSeconds, null);
             }
             else
             {
@@ -402,7 +402,7 @@ public partial class FeedService : IFeedService
 
                 if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
                 {
-                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -441,7 +441,6 @@ public partial class FeedService : IFeedService
                     {
                         HashId = link.HashId,
                         Url = link.Url,
-                        ShareUrl = link.Url,
                         Type = link.Type.ToResourceType(),
                 }
                      };
@@ -576,7 +575,7 @@ public partial class FeedService : IFeedService
 
                 if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
                 {
-                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    resourceResponse.Url = _sc.Strategy.PresignedGetObject(resourceResponse.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -599,7 +598,6 @@ public partial class FeedService : IFeedService
                     {
                         HashId = item.LinkHashId,
                         Url = item.LinkUrl ?? "",
-                        ShareUrl = item.LinkUrl ?? "",
                         Type = item.LinkType.ToResourceType()
                     }
                 };
@@ -654,7 +652,7 @@ public partial class FeedService : IFeedService
                 var url = "";
                 if (fileDbs.Type == ResourceType.Video || fileDbs.Type == ResourceType.Audio)
                 {
-                    url = _sc.Strategy.PresignedGetObject(fileDbs.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    url = _sc.Strategy.PresignedGetObject(fileDbs.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -695,7 +693,6 @@ public partial class FeedService : IFeedService
                             HashId = subPostdb.HashId,
                             Url = _setting.Minio.MediaApiUrl.GetMediaPath(x.Name, x.Url),
                             Name = x.Name,
-                            ShareUrl = x.ShareUrl,
                             Type = x.Type,
                             Status = x.Status,
                             Width = x.Width,
@@ -704,7 +701,7 @@ public partial class FeedService : IFeedService
                         };
                         if (x.Type == ResourceType.Audio || x.Type == ResourceType.Video)
                         {
-                            resource.Url = _sc.Strategy.PresignedGetObject(x.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                            resource.Url = _sc.Strategy.PresignedGetObject(x.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
                         }
                         return resource;
                     }).ToList();

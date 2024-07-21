@@ -8,7 +8,6 @@ public class ResourceDto
     public ResourceStatus Status { get; set; }
     public int Order { get; set; }
     public string Url { get; set; }
-    public string ShareUrl { get; set; }
     public string Name { get; set; }
     public string HashId { get; set; }
     public int Width { get; set; }

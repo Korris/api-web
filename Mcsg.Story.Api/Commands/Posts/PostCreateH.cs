@@ -175,14 +175,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                         Type = file.Type,
                         Url = file?.Url ?? "",
                         Width = file.Width,
-                        ShareUrl = file.ShareUrl,
                         Height = file.Height,
                         Order = file.Order
                     };
 
                     if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
                     {
-                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
                     }
                     resourceResponse.Add(resource);
                 }

@@ -159,7 +159,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Add file to feed
         if (request.Files != null && request.Files.Count > 0)
         {
-            result.SubPosts = (await _fileService.UpdateFeedFilesAsync(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId));
+            result.SubPosts = await _fileService.UpdateFeedFilesAsync(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId);
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }
         else
@@ -208,7 +208,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
                         Type = file.Type,
                         Url = file?.Url ?? "",
                         Width = file.Width,
-                        ShareUrl = file.ShareUrl,
                         Height = file.Height,
                         Order = file.Order,
                         SubPostHashId = subPost.HashId,
@@ -216,7 +215,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
                     if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
                     {
-                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.ShareUrl, _setting.Minio.MaxExpiryInSeconds, null);
+                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
                     }
                     resourceResponse.Add(resource);
                 }

@@ -7,7 +7,6 @@ public class UploadFileDto
     public string HashId { get; set; }
     public string SubPostHashId { get; set; }
     public string Url { get; set; }
-    public string ShareUrl { get; set; }
     public string Name { get; set; }
     public int Order { get; set; }
     public ResourceStatus Status { get; set; }
