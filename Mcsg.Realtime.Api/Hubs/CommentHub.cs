@@ -102,7 +102,7 @@ namespace Mcsg.Realtime.Api.Hubs
                 _ => _socialCommentService
             };
             // Handle and update comment in database
-            var resp = await _socialCommentService.DeleteComment(req);
+            var resp = await service.DeleteComment(req);
 
             // Then broadcast the comment to all connected clients
             await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteComment, JsonConvert.SerializeObject(resp));
@@ -123,7 +123,7 @@ namespace Mcsg.Realtime.Api.Hubs
                 _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _socialReplyService.ReplyComment(req);
+            var resp = await service.ReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveReply, JsonConvert.SerializeObject(resp));
@@ -144,7 +144,7 @@ namespace Mcsg.Realtime.Api.Hubs
                 _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _socialReplyService.UpdateReplyComment(req);
+            var resp = await service.UpdateReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateReply, JsonConvert.SerializeObject(resp));
@@ -165,7 +165,7 @@ namespace Mcsg.Realtime.Api.Hubs
                 _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _socialReplyService.DeleteReplyComment(req);
+            var resp = await service.DeleteReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteReply, JsonConvert.SerializeObject(resp));
