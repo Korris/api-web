@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
-using Mcsg.Common.Domain.Entities;
+using Common.Domain.Entities;
 
 public interface IJobService
 {

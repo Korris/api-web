@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
-
-namespace Mcsg.Lib.Data.Wallet.Entities
+﻿namespace Mcsg.Lib.Data.Wallet.Entities
 {
+    using Enums;
+
     public class EarningSummaryDetail : BaseWalletEntity
     {
         public Guid EarningSummaryId { get; set; }

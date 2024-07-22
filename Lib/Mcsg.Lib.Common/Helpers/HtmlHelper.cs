@@ -1,10 +1,11 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using Mcsg.Lib.Common.Extensions;
 using PuppeteerSharp;
 
 namespace Mcsg.Lib.Common.Helpers;
+
+using Extensions;
 
 public static class HtmlHelper
 {

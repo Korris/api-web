@@ -1,7 +1,8 @@
-﻿using Mcsg.Lib.Common.DataAnnotationExtensions;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Mcsg.Lib.Common.Models;
+
+using DataAnnotationExtensions;
 
 public abstract class BaseEmailPhoneRequest
 {

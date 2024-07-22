@@ -7,6 +7,7 @@ namespace Mcsg.Comic.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -23,7 +24,6 @@ using Lib.Data.Analytic;
 using Lib.Data.Analytic.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Mcsg.Common.Domain;
 using Models;
 using Models.Earning;
 using Requests;

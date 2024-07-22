@@ -1,8 +1,9 @@
-﻿using Mcsg.Analytic.Api.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Analytic.Api.Controllers
 {
+    using Models;
+
     [ApiController]
     [Route("[controller]")]
     public class ViewPostController : ControllerBase

@@ -3,12 +3,13 @@ using Hangfire.Dashboard;
 using Hangfire.Dashboard.BasicAuthorization;
 using Hangfire.PostgreSql;
 using Hangfire.SqlServer;
-using Mcsg.Lib.Common.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mcsg.Lib.Common.Extensions;
+
+using Enums;
 
 public static class HangfireExtension
 {

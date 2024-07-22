@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Mcsg.Lib.Common.Web.Extensions;
 
-using Mcsg.Lib.Common.Extensions;
+using Common.Extensions;
 
 public static class HttpContextExtensions
 {

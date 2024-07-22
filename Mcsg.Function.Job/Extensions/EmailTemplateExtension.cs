@@ -1,9 +1,10 @@
-﻿using Mcsg.Function.Job.Constants;
-using Mcsg.Lib.Common.Models;
-using System.Text;
+﻿using System.Text;
 
 namespace Mcsg.Function.Job.Extensions
 {
+    using Constants;
+    using Lib.Common.Models;
+
     internal static class EmailTemplateExtension
     {
         internal static string RenderEmailOtpBody(this StringBuilder template, Email email)

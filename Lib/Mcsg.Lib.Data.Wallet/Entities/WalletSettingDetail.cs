@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Wallet.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
+    using Enums;
+
     public class WalletSettingDetail : BaseWalletEntity
     {
         [MaxLength(50)]

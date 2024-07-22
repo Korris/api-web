@@ -2,8 +2,8 @@
 
 namespace Mcsg.Lib.Common.Extensions;
 
+using Helpers;
 using Mcsg.Common.Core.Dtos;
-using Mcsg.Lib.Common.Helpers;
 
 public static class AffiliateExtension
 {

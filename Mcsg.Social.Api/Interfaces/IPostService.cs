@@ -1,10 +1,10 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.Core.Enums;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Dtos;
 using Enums;
-using Mcsg.Common.Domain.Entities;
 using Models;
 using Models.Earning;
 using Requests;

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Distributor;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -11,7 +12,6 @@ using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
-using Mcsg.Common.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Lib.Data.Wallet;

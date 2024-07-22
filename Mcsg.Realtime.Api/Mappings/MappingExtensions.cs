@@ -1,9 +1,10 @@
 ﻿using AutoMapper.QueryableExtensions;
-using Mcsg.Lib.Common.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Realtime.Api.Mappings
 {
+    using Lib.Common.Models;
+
     public static class MappingExtensions
     {
         public static Task<PaginatedList<TDestination>> PaginatedListAsync<TDestination>(this IQueryable<TDestination> queryable, int pageNumber, int pageSize)

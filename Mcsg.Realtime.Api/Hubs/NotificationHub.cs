@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Common.Web.Security;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
 namespace Mcsg.Realtime.Api.Hubs
 {
+    using Lib.Common.Web.Security;
+
     public class NotificationHub : Hub
     {
         private readonly ICurrentUserService _currentUserService;

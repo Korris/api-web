@@ -1,11 +1,12 @@
-﻿using Mcsg.Analytic.Api.Models.Request;
-using Mcsg.Analytic.Api.Services;
-using Mcsg.Lib.Common.Extensions;
-using Mcsg.Lib.Common.Web.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Analytic.Api.Controllers
 {
+    using Lib.Common.Extensions;
+    using Lib.Common.Web.Extensions;
+    using Models.Request;
+    using Services;
+
     [Route("[controller]")]
     [ApiController]
     public class TrackingController : ControllerBase

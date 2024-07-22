@@ -1,6 +1,6 @@
-﻿using Mcsg.Common.Core.Enums;
+﻿namespace Mcsg.Comic.Api.Models;
 
-namespace Mcsg.Comic.Api.Models;
+using Common.Core.Enums;
 
 public class NewsFeedDto
 {
