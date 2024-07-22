@@ -13,7 +13,7 @@ public class NotificationQueryResult
     public Guid? EntityId { get; set; }
     public string EntityHashId { get; set; }
     public NotificationAction Action { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public Guid ActorId { get; set; }
     public string ActorName { get; set; }
     public string Avatar { get; set; }

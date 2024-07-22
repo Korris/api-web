@@ -57,7 +57,7 @@ public class UserPurchaseService : IUserPurchaseService
                         && (x.Type == TransactionType.BUY_PREMIUM || x.Type == TransactionType.BUY_CHAPTER)
                     )
                     )
-                .OrderByDescending(x => x.CreatedDate)
+                .OrderByDescending(x => x.CreatedOn)
                 .Select(x => new UserPurchaseTransactionItemDetailResp
                 {
                     Amount = x.Amount,
@@ -67,7 +67,7 @@ public class UserPurchaseService : IUserPurchaseService
                                 || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                                 ) ? "+" : "-",
                     Content = x.Content,
-                    CreatedDate = x.CreatedDate,
+                    CreatedOn = x.CreatedOn,
                     FromAddress = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.Address,
                     ToAddress = x.DestinationUserWallet != null ? x.DestinationUserWallet.Address : string.Empty,
                     FromUser = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.ProfileName,
@@ -140,7 +140,7 @@ public class UserPurchaseService : IUserPurchaseService
                             || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
-                CreatedDate = x.CreatedDate,
+                CreatedOn = x.CreatedOn,
                 FromAddress = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.Address,
                 //FromUserId = x.IsFromSystem ? Guid.Empty : x.SourceUserWallet.UserId,
                 ToAddress = x.DestinationUserWallet != null ? x.DestinationUserWallet.Address : string.Empty,

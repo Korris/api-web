@@ -141,7 +141,7 @@ public class HostedViewHistory : BackgroundService
             {
                 EntityType = payload.EntityType,
                 EntityId = payload.EntityId,
-                CreatedDate = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
                 IpAddress = payload.IdAddress,
                 SubType = payload.SubType,
                 UsedId = payload.UserId

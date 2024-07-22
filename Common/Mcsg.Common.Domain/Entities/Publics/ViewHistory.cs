@@ -13,5 +13,5 @@ public class ViewHistory : EntityId
     public string? IpAddress { get; set; }
     public Guid EntityId { get; set; }
     public Guid UsedId { get; set; }
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedOn { get; set; }
 }

@@ -29,7 +29,7 @@ public class FeedBoxQueryResponse : FeedBox
 public class FeedBox
 {
     public Guid Id { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public Guid UserId { get; set; }
     public string? UserAvatar { get; set; }
     public string? Body { get; set; }

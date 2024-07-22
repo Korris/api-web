@@ -128,7 +128,7 @@ public partial class SmartLookupService : ISmartLookupService
     {
         var tag = nameof(LookupKeywordType.Tag);
         var people = nameof(LookupKeywordType.People);
-        var q = _context.SmartLookupUserAvailable.Where(p => p.UserId == userId).OrderByDescending(x => x.CreatedDate).Take(6)
+        var q = _context.SmartLookupUserAvailable.Where(p => p.UserId == userId).OrderByDescending(x => x.CreatedOn).Take(6)
             .Select(p => new RecentSearchResponse
             {
                 Id = p.Id,
@@ -151,7 +151,7 @@ public partial class SmartLookupService : ISmartLookupService
             Id = Guid.NewGuid(),
             Keyword = res.Keyword,
             UserId = userId,
-            CreatedDate = DateTime.UtcNow
+            CreatedOn = DateTime.UtcNow
         };
 
         if (string.IsNullOrEmpty(res.KeywordType))

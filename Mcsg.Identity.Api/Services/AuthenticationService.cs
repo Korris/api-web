@@ -794,9 +794,9 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 await _userRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = now, UserId = user.Id });
             }
-            user.Email = $"d_{user.CreatedDate.Month}{user.CreatedDate.Day}{user.CreatedDate.Hour}{user.CreatedDate.Minute}_{user.Email}";
-            user.UserName = $"d_{user.CreatedDate.Month}{user.CreatedDate.Day}{user.CreatedDate.Hour}{user.CreatedDate.Minute}_{user.UserName}";
-            user.PhoneNumber = $"d_{user.CreatedDate.Month}{user.CreatedDate.Day}{user.CreatedDate.Hour}{user.CreatedDate.Minute}_{user.PhoneNumber}";
+            user.Email = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.Email}";
+            user.UserName = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.UserName}";
+            user.PhoneNumber = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.PhoneNumber}";
             await _userManager.UpdateAsync(user);
 
         }

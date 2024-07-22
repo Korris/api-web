@@ -53,8 +53,8 @@ public class UserWalletController : ControllerBase
         //    var wallet = await _walletDbContext.UserWallets.AddAsync(new Lib.Data.Wallet.Entities.UserWallet
         //    {
         //        Address = address,
-        //        CreatedDate = DateTime.UtcNow,
-        //        ModifiedDate = DateTime.UtcNow,
+        //        CreatedOn = DateTime.UtcNow,
+        //        ModifiedOn = DateTime.UtcNow,
         //        Id = Guid.NewGuid(),
         //        Point = 0,
         //        RewardPoint = 10,
@@ -67,13 +67,13 @@ public class UserWalletController : ControllerBase
 
         //    await _walletDbContext.WalletTransactions.AddAsync(new Lib.Data.Wallet.Entities.WalletTransaction
         //    {
-        //        CreatedDate = DateTime.UtcNow,
+        //        CreatedOn = DateTime.UtcNow,
         //        Id = Guid.NewGuid(),
         //        Amount = 10,
         //        IsFromSystem = true,
         //        Content = ApiMessages.REWARD_FOR_NEW_USER,
         //        ReferenceNumber = StringHelper.GetRandomString(12).ToLower(),
-        //        ModifiedDate = DateTime.UtcNow,
+        //        ModifiedOn = DateTime.UtcNow,
         //        DestinationUserWalletId = wallet.Entity.Id,
         //        Status = Lib.Data.Wallet.Enums.TransactionStatus.SUCCESS,
         //        Type = Lib.Data.Wallet.Enums.TransactionType.REWARD

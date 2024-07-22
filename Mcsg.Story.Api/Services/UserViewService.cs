@@ -36,7 +36,7 @@ public class UserViewService : IUserViewService
             var firstDate = date.Value.FirstDate();
             var lastDate = date.Value.LastDate();
 
-            query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
+            query = query.Where(x => x.CreatedOn >= firstDate && x.CreatedOn <= lastDate);
         }
 
         var viewCount = await query.CountAsync();
@@ -60,7 +60,7 @@ public class UserViewService : IUserViewService
             var firstDate = date.Value.FirstDate();
             var lastDate = date.Value.LastDate();
 
-            query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
+            query = query.Where(x => x.CreatedOn >= firstDate && x.CreatedOn <= lastDate);
         }
 
         var viewCount = await query.CountAsync();
@@ -85,7 +85,7 @@ public class UserViewService : IUserViewService
             var firstDate = date.Value.FirstDate();
             var lastDate = date.Value.LastDate();
 
-            query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
+            query = query.Where(x => x.CreatedOn >= firstDate && x.CreatedOn <= lastDate);
         }
 
         var viewCount = await query.CountAsync();
@@ -103,7 +103,7 @@ public class UserViewService : IUserViewService
             var firstDate = date.Value.FirstDate();
             var lastDate = date.Value.LastDate();
 
-            query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
+            query = query.Where(x => x.CreatedOn >= firstDate && x.CreatedOn <= lastDate);
         }
 
         var viewChapters = await query.GroupBy(x => x.SubPostId)
@@ -121,11 +121,11 @@ public class UserViewService : IUserViewService
         var beginOfYear = year.BeginOfYear();
         var endOfYear = year.EndOfYear();
         var query = _dbAnalystContext.UserViewPosts
-             .Where(x => x.AuthorId == userId && x.CreatedDate >= beginOfYear && x.CreatedDate <= endOfYear)
+             .Where(x => x.AuthorId == userId && x.CreatedOn >= beginOfYear && x.CreatedOn <= endOfYear)
             .GroupBy(v => new
             {
-                Year = v.CreatedDate.Year,
-                Month = v.CreatedDate.Month,
+                Year = v.CreatedOn.Year,
+                Month = v.CreatedOn.Month,
                 UserType = v.UserType == UserType.Premium ? 0 : 1
             })
             .Select(g => new
@@ -173,12 +173,12 @@ public class UserViewService : IUserViewService
         var beginOfMonth = month.BeginOfMonth();
         var endOfMonth = month.EndOfMonth();
         var query = _dbAnalystContext.UserViewPosts
-             .Where(x => x.AuthorId == userId && x.CreatedDate >= beginOfMonth && x.CreatedDate <= endOfMonth)
+             .Where(x => x.AuthorId == userId && x.CreatedOn >= beginOfMonth && x.CreatedOn <= endOfMonth)
             .GroupBy(v => new
             {
-                Year = v.CreatedDate.Year,
-                Month = v.CreatedDate.Month,
-                Day = v.CreatedDate.Day,
+                Year = v.CreatedOn.Year,
+                Month = v.CreatedOn.Month,
+                Day = v.CreatedOn.Day,
                 UserType = v.UserType == UserType.Premium ? 0 : 1
             })
             .Select(g => new

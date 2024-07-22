@@ -26,8 +26,8 @@ public class UserWalletService : IUserWalletService
         var wallet = await _walletDbContext.UserWallets.AddAsync(new UserWallet
         {
             Address = await GennerateWalletAddress(),
-            CreatedDate = DateTime.UtcNow,
-            ModifiedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             Id = Guid.NewGuid(),
             Point = 0,
             RewardPoint = SystemConfig.DefaultRewardPoint,
@@ -41,14 +41,14 @@ public class UserWalletService : IUserWalletService
 
         await _walletDbContext.WalletTransactions.AddAsync(new WalletTransaction
         {
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             Id = Guid.NewGuid(),
             Amount = SystemConfig.DefaultRewardPoint,
             Content = ApiMessages.REWARD_FOR_NEW_USER,
             IsFromSystem = true,
             DestinationUserWalletId = wallet.Entity.Id,
             ReferenceNumber = await GennerateWalletTransactionNumber(),
-            ModifiedDate = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             Status = Lib.Data.Wallet.Enums.TransactionStatus.SUCCESS,
             Type = Lib.Data.Wallet.Enums.TransactionType.REWARD,
             IsConfirmed = true,

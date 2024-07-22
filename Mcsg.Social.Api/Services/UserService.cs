@@ -261,7 +261,7 @@ public partial class UserService : IUserService
             Id = user.Id,
             AvatarUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.Avatar),
             Email = user.Email,
-            JoinDate = user.CreatedDate,
+            JoinDate = user.CreatedOn,
             ProfileName = user.ProfileName,
             UserName = user.UserName,
             FirstName = user.FirstName,
@@ -296,7 +296,7 @@ public partial class UserService : IUserService
             Id = user.Id,
             AvatarUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.Avatar),
             Email = user.Email,
-            JoinDate = user.CreatedDate,
+            JoinDate = user.CreatedOn,
             ProfileName = user.ProfileName,
             UserName = user.UserName,
             FirstName = user.FirstName,
@@ -727,7 +727,7 @@ public partial class UserService : IUserService
             else
             {
                 userFollow.IsDelete = false;
-                userFollow.ModifiedDate = DateTime.UtcNow;
+                userFollow.ModifiedOn = DateTime.UtcNow;
                 userFollow.ModifiedBy = ss.UserId;
                 _context.UserFollows.Update(userFollow);
                 await _context.SaveChangesAsync();
@@ -738,9 +738,9 @@ public partial class UserService : IUserService
         {
             UserFollowerId = ss.UserId,
             UserFollowingId = userId,
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             CreatedBy = ss.UserId,
-            ModifiedDate = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             ModifiedBy = ss.UserId,
             IsDelete = false
         };
@@ -779,7 +779,7 @@ public partial class UserService : IUserService
         else
         {
             userFollow.IsDelete = true;
-            userFollow.ModifiedDate = DateTime.UtcNow;
+            userFollow.ModifiedOn = DateTime.UtcNow;
             userFollow.ModifiedBy = ss.UserId;
             _context.UserFollows.Update(userFollow);
             await _context.SaveChangesAsync();

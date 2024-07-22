@@ -17,7 +17,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public string Message { get; set; }
     public Guid ActorId { get; set; }
     public string ActorName { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public string NotificationType { get; set; }
     public string Avatar { get; set; }
     public int? ReactionType { get; set; }
@@ -33,7 +33,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
             .ForMember(d => d.EntityHashId, opt => opt.MapFrom(s => s.EntityHashId))
             .ForMember(d => d.ActorId, opt => opt.MapFrom(s => s.ActorId))
             .ForMember(d => d.ActorName, opt => opt.MapFrom(s => s.ActorName))
-            .ForMember(d => d.CreatedDate, opt => opt.MapFrom(s => s.CreatedDate))
+            .ForMember(d => d.CreatedOn, opt => opt.MapFrom(s => s.CreatedOn))
             .ForMember(d => d.Message, opt => opt.MapFrom(s => s.ToMessage()))
             .ForMember(d => d.TargetType, opt => opt.MapFrom(s => s.ToTargetType()))
             .ForMember(d => d.NotificationType, opt => opt.MapFrom(s => s.ToNotiType()))

@@ -88,7 +88,7 @@ public partial class PremiumService : IPremiumService
         var checkPremium = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id
             && !x.IsDelete
             && x.PremiumPackageNo == package.No
-            && x.CreatedDate > minuteDate
+            && x.CreatedOn > minuteDate
         ).AnyAsync();
         if (checkPremium)
         {
@@ -97,7 +97,7 @@ public partial class PremiumService : IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedDate = now,
+            CreatedOn = now,
             CreatedBy = _currentUserService?.Session?.UserId,
             Id = Guid.NewGuid(),
             Amount = package.FirstTimePrice,
@@ -105,7 +105,7 @@ public partial class PremiumService : IPremiumService
             Content = "BUY PACKAGE: " + package.Name,
             SystemMessage = "BUY PACKAGE: " + package.No,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedDate = now,
+            ModifiedOn = now,
             SourceUserWalletId = userWallet.Id,
             Status = TransactionStatus.PENDING,
             Type = TransactionType.BUY_PREMIUM
@@ -163,7 +163,7 @@ public partial class PremiumService : IPremiumService
                 StartDate = nowDate,
                 EndDate = endDate,
                 CreatedBy = userWallet.UserId,
-                CreatedDate = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow
             };
             //Transaction purchase history 
             await _dbContext.UserPremiumPackages.AddAsync(userPremium);
@@ -262,7 +262,7 @@ public partial class PremiumService : IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             CreatedBy = _currentUserService?.Session?.UserId,
             Id = Guid.NewGuid(),
             Amount = Default.ChapterPrice,
@@ -270,7 +270,7 @@ public partial class PremiumService : IPremiumService
             Content = "BUY CHAPTER ID: " + req.ChapterId,
             SystemMessage = "BUY CHAPTER ID: " + req.ChapterId,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedDate = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.ChapterId,
             Status = TransactionStatus.PENDING,
@@ -359,14 +359,14 @@ public partial class PremiumService : IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             CreatedBy = _currentUserService?.Session?.UserId,
             Id = Guid.NewGuid(),
             IsFromSystem = false,
             Content = "BUY SERIES ID: " + req.SerieId,
             SystemMessage = "BUY SERIES ID: " + req.SerieId,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedDate = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.SerieId,
             Status = TransactionStatus.PENDING,

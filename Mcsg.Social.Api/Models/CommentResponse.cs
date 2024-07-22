@@ -14,7 +14,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
     public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedOn { get; set; }
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;
@@ -30,7 +30,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
             .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
             .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
             .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
-            .ForMember(d => d.ModifiedDate, opt => opt.MapFrom(s => s.ModifiedDate))
+            .ForMember(d => d.ModifiedOn, opt => opt.MapFrom(s => s.ModifiedOn))
             .ForMember(d => d.ResourceUrl, opt => opt.Ignore())
             .ForMember(d => d.Replies, opt => opt.Ignore())
             .ForMember(d => d.Mentions, opt => opt.Ignore())

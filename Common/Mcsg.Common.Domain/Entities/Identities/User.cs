@@ -21,9 +21,9 @@ public partial class User : IdentityUser<Guid>
     public string? Avatar { get; set; }
     public UserStatus Status { get; set; } = UserStatus.Active;
     public bool IsDelete { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public Guid? CreatedBy { get; set; }
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedOn { get; set; }
     public Guid? ModifiedBy { get; set; }
     public DateTime? ActivedDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
@@ -42,8 +42,8 @@ public partial class User : IdentityUser<Guid>
     public User()
     {
         var now = DateTime.UtcNow;
-        CreatedDate = now;
-        ModifiedDate = now;
+        CreatedOn = now;
+        ModifiedOn = now;
         IsDelete = false;
     }
 }

@@ -52,8 +52,8 @@ public class OtpService : IOtpService
         var otpInfo = new WalletTransactionOtp
         {
             Id = id,
-            CreatedDate = DateTime.UtcNow,
-            ModifiedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             Otp = otpCode,
             OtpToken = token,
             OtpType = type,

@@ -115,7 +115,7 @@ public class UserWalletService : IUserWalletService
                     || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId))
 
                 )
-            .OrderByDescending(x => x.CreatedDate)
+            .OrderByDescending(x => x.CreatedOn)
             .Select(x => new UserWalletTransactionItemResp
             {
                 Amount = x.Amount,
@@ -125,7 +125,7 @@ public class UserWalletService : IUserWalletService
                             || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
-                CreatedDate = x.CreatedDate,
+                CreatedOn = x.CreatedOn,
                 FromAddress = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.Address,
                 ToAddress = x.DestinationUserWallet != null ? x.DestinationUserWallet.Address : string.Empty,
                 FromUser = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.ProfileName,
@@ -163,7 +163,7 @@ public class UserWalletService : IUserWalletService
                             || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
-                CreatedDate = x.CreatedDate,
+                CreatedOn = x.CreatedOn,
                 FromAddress = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.Address,
                 FromUserId = x.IsFromSystem ? Guid.Empty : x.SourceUserWallet.UserId,
                 ToAddress = x.DestinationUserWallet != null ? x.DestinationUserWallet.Address : string.Empty,
@@ -413,7 +413,7 @@ public class UserWalletService : IUserWalletService
         if (otpData == null)
             throw new BadRequestException(ApiErrorCodes.OTP_INVALID, ApiErrorMessage.OTP_INVALID);
 
-        if (DateTime.UtcNow.Subtract(otpData.CreatedDate).TotalMinutes > _configuration.OtpExpired())
+        if (DateTime.UtcNow.Subtract(otpData.CreatedOn).TotalMinutes > _configuration.OtpExpired())
             throw new BadRequestException(ApiErrorCodes.OTP_EXPIRED, ApiErrorMessage.OTP_EXPIRED);
 
         await UpdateWalletInfor(req.TransactionId);
@@ -859,7 +859,7 @@ public class UserWalletService : IUserWalletService
     {
         var transaction = new WalletTransaction
         {
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             CreatedBy = _currentUserService?.Session?.UserId,
             Id = Guid.NewGuid(),
             Amount = amount,
@@ -867,7 +867,7 @@ public class UserWalletService : IUserWalletService
             Content = content,
             SystemMessage = systemMessage,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedDate = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = sourceId,
             Status = TransactionStatus.PENDING,
             Type = type

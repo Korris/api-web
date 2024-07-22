@@ -25,8 +25,8 @@ public class WalletDbContext : DbContext
                 Id = Guid.Parse("A2F9D301-B081-4CD8-850F-27BC996702E7"),
                 Name = "BL Coin",
                 Symbol = "BL",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
             });
 
         builder.Entity<WalletSettingDetail>().HasData(
@@ -37,8 +37,8 @@ public class WalletDbContext : DbContext
                 Type = WalletSettingDetailType.WithDrawNotify,
                 Value = "dev@angelpj.com",
                 Description = "With draw notify list email",
-                CreatedDate = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                CreatedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
             });
 
 
@@ -148,7 +148,7 @@ public class WalletDbContext : DbContext
             entity.HasOne(x => x.WalletTransaction)
             .WithMany(x => x.UserPurchaseTransactions)
             .HasForeignKey(x => x.WalletTransactionId);
-            entity.HasIndex(x => new { x.CreatorUserId, x.CreatedDate });
+            entity.HasIndex(x => new { x.CreatorUserId, x.CreatedOn });
         });
 
         builder.Entity<UserWallet>(entity =>

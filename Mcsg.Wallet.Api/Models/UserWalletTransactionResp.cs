@@ -24,7 +24,7 @@ public class UserWalletTransactionItemResp
     public string AmountSign { get; set; }
     public TransactionType TransactionType { get; set; }
     public TransactionStatus TransactionStatus { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public string Content { get; set; }
     public string SystemMessage { get; set; }
 }

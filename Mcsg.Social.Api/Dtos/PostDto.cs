@@ -13,7 +13,7 @@ public class PostDto
     public bool IsCurrentUserIsAuthor { get; set; }
     public string ThumbnailUrl { get; set; }
     public string UserAvatar { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public PostType Type { get; set; }
     public string Body { get; set; }
     public string[] Tags { get; set; }

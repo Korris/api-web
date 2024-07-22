@@ -84,7 +84,7 @@ namespace Mcsg.Admin.Api.Services
             var systemSettingHistory = new SystemSettingHistory()
             {
                 Id = Guid.NewGuid(),
-                CreatedDate = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
                 OldValue = systemSetting.Value,
                 NewValue = newValue
             };
@@ -167,7 +167,7 @@ namespace Mcsg.Admin.Api.Services
             var systemSettingHistory = new SystemSettingHistory()
             {
                 Id = Guid.NewGuid(),
-                CreatedDate = DateTime.UtcNow,
+                CreatedOn = DateTime.UtcNow,
                 OldValue = systemSetting.Value,
                 NewValue = newValue
             };

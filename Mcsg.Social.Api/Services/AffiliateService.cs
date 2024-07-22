@@ -64,7 +64,7 @@ public class AffiliateService : IAffiliateService
             var firstDate = date.Value.FirstDate();
             var lastDate = date.Value.LastDate();
 
-            query = query.Where(x => x.CreatedDate >= firstDate && x.CreatedDate <= lastDate);
+            query = query.Where(x => x.CreatedOn >= firstDate && x.CreatedOn <= lastDate);
         }
 
         var affiliateAmount = await query.SumAsync(x => x.Amount);
@@ -102,7 +102,7 @@ public class AffiliateService : IAffiliateService
         var endOfYear = year.EndOfYear();
 
         var detailTrans = _walletDbContext.UserPurchaseTransactions
-            .Where(x => x.AffiliateUserId == userId && x.CreatedDate >= beginOfYear && x.CreatedDate <= endOfYear)
+            .Where(x => x.AffiliateUserId == userId && x.CreatedOn >= beginOfYear && x.CreatedOn <= endOfYear)
             .ToList();
 
         if (detailTrans == null || !detailTrans.Any())
@@ -123,8 +123,8 @@ public class AffiliateService : IAffiliateService
 
         var yearData = await query.GroupBy(x => new
         {
-            Year = x.CreatedDate.Year,
-            Month = x.CreatedDate.Month
+            Year = x.CreatedOn.Year,
+            Month = x.CreatedOn.Month
         })
                                     .Select(n => new RevenueChartData
                                     {
@@ -145,7 +145,7 @@ public class AffiliateService : IAffiliateService
         var endOfMonth = month.EndOfMonth();
 
         var detailTrans = _walletDbContext.UserPurchaseTransactions
-            .Where(x => x.AffiliateUserId == userId && x.CreatedDate >= beginOfMonth && x.CreatedDate <= endOfMonth)
+            .Where(x => x.AffiliateUserId == userId && x.CreatedOn >= beginOfMonth && x.CreatedOn <= endOfMonth)
             .ToList();
 
         if (detailTrans == null || !detailTrans.Any())
@@ -166,9 +166,9 @@ public class AffiliateService : IAffiliateService
 
         var monthData = await query.GroupBy(x => new
         {
-            Year = x.CreatedDate.Year,
-            Month = x.CreatedDate.Month,
-            Day = x.CreatedDate.Day
+            Year = x.CreatedOn.Year,
+            Month = x.CreatedOn.Month,
+            Day = x.CreatedOn.Day
         })
                                     .Select(n => new RevenueChartData
                                     {
@@ -190,7 +190,7 @@ public class AffiliateService : IAffiliateService
         var endOfYear = year.EndOfYear();
 
         var detailTrans = _walletDbContext.UserPurchaseTransactions
-            .Where(x => x.AffiliateUserId == userId && x.CreatedDate >= beginOfYear && x.CreatedDate <= endOfYear)
+            .Where(x => x.AffiliateUserId == userId && x.CreatedOn >= beginOfYear && x.CreatedOn <= endOfYear)
             .ToList();
 
         if (detailTrans == null || !detailTrans.Any())
@@ -211,8 +211,8 @@ public class AffiliateService : IAffiliateService
 
         var yearData = await query.GroupBy(x => new
         {
-            Year = x.CreatedDate.Year,
-            Month = x.CreatedDate.Month
+            Year = x.CreatedOn.Year,
+            Month = x.CreatedOn.Month
         })
                                     .Select(n => new CountChartData
                                     {
@@ -233,7 +233,7 @@ public class AffiliateService : IAffiliateService
         var endOfMonth = month.EndOfMonth();
 
         var detailTrans = _walletDbContext.UserPurchaseTransactions
-            .Where(x => x.AffiliateUserId == userId && x.CreatedDate >= beginOfMonth && x.CreatedDate <= endOfMonth)
+            .Where(x => x.AffiliateUserId == userId && x.CreatedOn >= beginOfMonth && x.CreatedOn <= endOfMonth)
             .ToList();
 
         if (detailTrans == null || !detailTrans.Any())
@@ -254,9 +254,9 @@ public class AffiliateService : IAffiliateService
 
         var monthData = await query.GroupBy(x => new
         {
-            Year = x.CreatedDate.Year,
-            Month = x.CreatedDate.Month,
-            Day = x.CreatedDate.Day
+            Year = x.CreatedOn.Year,
+            Month = x.CreatedOn.Month,
+            Day = x.CreatedOn.Day
         })
                                     .Select(n => new CountChartData
                                     {

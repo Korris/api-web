@@ -62,7 +62,7 @@ namespace Mcsg.Function.Job.Services
 
                 var transaction = new WalletTransaction
                 {
-                    CreatedDate = DateTime.UtcNow,
+                    CreatedOn = DateTime.UtcNow,
                     CreatedBy = userWallet.UserId,
                     Id = Guid.NewGuid(),
                     Amount = reward.Point,
@@ -70,7 +70,7 @@ namespace Mcsg.Function.Job.Services
                     Content = RewardContent(reward.Type),
                     SystemMessage = RewardContent(reward.Type),
                     ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-                    ModifiedDate = DateTime.UtcNow,
+                    ModifiedOn = DateTime.UtcNow,
                     DestinationUserWalletId = userWallet.Id,
                     Status = TransactionStatus.SUCCESS,
                     Type = TransactionType.REWARD,
@@ -148,7 +148,7 @@ namespace Mcsg.Function.Job.Services
                     StartDate = nowDate,
                     EndDate = endDate,
                     CreatedBy = userId,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow
                 };
                 //Transaction purchase history 
                 var userPurchase = await _walletDbContext.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyPremiumData.TransactionId);
@@ -230,7 +230,7 @@ namespace Mcsg.Function.Job.Services
                     if (existBuy != null)
                     {
                         transaction.Status = TransactionStatus.FAILED;
-                        transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", existBuy.CreatedDate.ToString());
+                        transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", existBuy.CreatedOn.ToString());
                         await _walletDbContext.SaveChangesAsync();
                         return;//đã mua trước đó
                     }
@@ -344,7 +344,7 @@ namespace Mcsg.Function.Job.Services
                         if (notBoughtChapters.Count() == 0)
                         {
                             transaction.Status = TransactionStatus.FAILED;
-                            transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", boughtChapters.FirstOrDefault().CreatedDate.ToString());
+                            transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", boughtChapters.FirstOrDefault().CreatedOn.ToString());
                             await _walletDbContext.SaveChangesAsync();
                             return;//đã mua trước đó
                         }

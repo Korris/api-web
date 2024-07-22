@@ -9,7 +9,7 @@
                 return @$"UPDATE {_mentionRepository.TableName}
                                 SET ""IsDelete"" = true,
                                     ""ModifiedBy"" = @ModifiedBy,
-                                    ""ModifiedDate"" = @ModifiedDate
+                                    ""ModifiedOn"" = @ModifiedOn
                                 WHERE ""LocationId"" = @LocationId  ";
             }
         }

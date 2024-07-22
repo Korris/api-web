@@ -14,7 +14,7 @@ public class ReplyData
     public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedOn { get; set; }
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;

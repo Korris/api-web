@@ -94,14 +94,14 @@ namespace Mcsg.Analytic.Api.Services
                 UserId = req.UserId,
                 IpAddress = req.IpAddress,
                 BrowserAgent = req.BrowserAgent,
-                CreatedDate = timeNow,
+                CreatedOn = timeNow,
                 AuthorId = authorId
 
             };
             entity.UserHashString = GetHashString(entity);
 
             //Select latest view with SubPostId or latest other views
-            var checkView = await _dbContext.Set<UserViewPost>().Where(p => p.UserHashString == entity.UserHashString).OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
+            var checkView = await _dbContext.Set<UserViewPost>().Where(p => p.UserHashString == entity.UserHashString).OrderByDescending(x => x.CreatedOn).FirstOrDefaultAsync();
             if (checkView != null)
             {
 
@@ -118,7 +118,7 @@ namespace Mcsg.Analytic.Api.Services
                     {
                         return;
                     }
-                    var timeSpan = (timeNow - checkView.CreatedDate);
+                    var timeSpan = (timeNow - checkView.CreatedOn);
                     if (timeSpan.Days < 1)
                     {
                         entity.TimeSpan = Convert.ToInt32(timeSpan.TotalMilliseconds);
@@ -191,7 +191,7 @@ namespace Mcsg.Analytic.Api.Services
                     UserId = req.UserId,
                     IpAddress = ipAddress,
                     BrowserAgent = req.BrowserAgent,
-                    CreatedDate = date,
+                    CreatedOn = date,
                     AuthorId = postId?.UserId,
                     CreatedBy = Guid.Empty,
                     TimeSpan = timeSpan,

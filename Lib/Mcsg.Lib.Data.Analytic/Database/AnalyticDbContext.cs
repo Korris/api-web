@@ -23,7 +23,7 @@ public class AnalyticDbContext : DbContext
         {
             entity.ToTable("UserViewPosts");
             entity.Property(x => x.PostId).IsRequired();
-            entity.HasIndex(x => new { x.PostId, x.SubPostId, x.AuthorId, x.UserId, x.UserHashString, x.CreatedDate }).IsUnique();
+            entity.HasIndex(x => new { x.PostId, x.SubPostId, x.AuthorId, x.UserId, x.UserHashString, x.CreatedOn }).IsUnique();
         });
     }
 

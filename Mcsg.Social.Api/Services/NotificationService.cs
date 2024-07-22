@@ -176,7 +176,7 @@ public partial class NotificationService : INotificationService
         }
 
         notification.Status = NotificationStatus.Read;
-        notification.ModifiedDate = DateTime.UtcNow;
+        notification.ModifiedOn = DateTime.UtcNow;
         notification.ModifiedBy = currentUser.UserId;
 
         return await _notiRepository.UpdateAsync(notification);

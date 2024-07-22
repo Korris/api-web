@@ -10,7 +10,7 @@ public class SubPostBasic
     public string Name { get; set; }
     public PostPermission Permission { get; set; }
     public PostStatus Status { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreatedOn { get; set; }
     public DateTime? PublishDate { get; set; }
     public Guid? CreatedBy { get; set; }
     public Guid? UserId { get; set; }

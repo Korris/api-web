@@ -12,7 +12,7 @@ public class TrackingEntity : EntityId
     /// </summary>
     public TrackingEntity()
     {
-        CreatedDate = DateTime.UtcNow;
+        CreatedOn = DateTime.UtcNow;
     }
 
     #endregion
@@ -20,14 +20,14 @@ public class TrackingEntity : EntityId
     #region -- Properties --
 
     /// <summary>
-    /// Created date
-    /// </summary>
-    public DateTime CreatedDate { get; set; }
-
-    /// <summary>
     /// Created by
     /// </summary>
     public Guid? CreatedBy { get; set; }
+
+    /// <summary>
+    /// Created on
+    /// </summary>
+    public DateTime CreatedOn { get; set; }
 
     #endregion
 }

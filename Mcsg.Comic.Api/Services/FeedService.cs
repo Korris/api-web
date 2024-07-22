@@ -78,7 +78,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
             }
             var query = "";
             if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
@@ -143,7 +143,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
             }
             var query = string.Format(GetAllFeedsByTagQuery, _postRepository.TableName, feedLoadReq.OrderBy);
 
@@ -218,7 +218,7 @@ public partial class FeedService : IFeedService
                             u.""Id"" AS UserId,
                             p.""HashId"",
                             sp.""Id"",
-                            sp.""CreatedDate"", 
+                            sp.""CreatedOn"", 
                             sp.""Body"",
                             sp.""CreatedBy"",
                             COALESCE(psb.""HashId"", (
@@ -366,7 +366,7 @@ public partial class FeedService : IFeedService
         {
             ThumbnailUrl = res.ThumbnailUrl,
             Body = HttpUtility.HtmlDecode(res.Body),
-            CreatedDate = res.CreatedDate,
+            CreatedOn = res.CreatedOn,
             HashId = res.HashId,
             Id = res.Id,
             ProfileId = res.ProfileId,
@@ -480,7 +480,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedDate);
+                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
             }
             var query = string.Format(GetAllFeedByKeyword, _postRepository.TableName, feedLoadReq.OrderBy, keyWord);
 
@@ -544,7 +544,7 @@ public partial class FeedService : IFeedService
             FullName = item.ProfileName,
             ProfileId = item.ProfileId,
             ThumbnailUrl = item.ThumbnailUrl,
-            CreatedDate = item.CreatedDate,
+            CreatedOn = item.CreatedOn,
             TotalResource = item.TotalResource,
             Type = item.Type,
             Status = item.Status,
@@ -631,7 +631,7 @@ public partial class FeedService : IFeedService
             UserId = item.UserId,
             FullName = item.ProfileName,
             ThumbnailUrl = item.ThumbnailUrl,
-            CreatedDate = item.CreatedDate,
+            CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,
             Type = item.Type,
             Status = item.Status,
@@ -677,7 +677,7 @@ public partial class FeedService : IFeedService
                     Name = subPostdb.Name,
                     ThumbnailUrl = subPostdb.ThumbnailUrl,
                     Permission = subPostdb.Permission,
-                    CreatedDate = subPostdb.CreatedDate,
+                    CreatedOn = subPostdb.CreatedOn,
                     PublishDate = subPostdb.PublishDate,
                     Status = subPostdb.Status,
                     Body = subPostdb.Body

@@ -109,7 +109,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             HashId = ett.HashId,
             UserId = userId,
             ThumbnailUrl = ett.ThumbnailUrl,
-            CreatedDate = DateTime.UtcNow,
+            CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
             Body = cleanHtml,
             FullName = profileName,

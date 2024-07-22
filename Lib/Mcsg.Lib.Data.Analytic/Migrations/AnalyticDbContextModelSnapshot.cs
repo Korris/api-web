@@ -37,7 +37,7 @@ namespace Mcsg.Lib.Data.Analytic.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IpAddress")
@@ -66,7 +66,7 @@ namespace Mcsg.Lib.Data.Analytic.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PostId", "SubPostId", "AuthorId", "UserId", "UserHashString", "CreatedDate")
+                    b.HasIndex("PostId", "SubPostId", "AuthorId", "UserId", "UserHashString", "CreatedOn")
                         .IsUnique();
 
                     b.ToTable("UserViewPosts", (string)null);

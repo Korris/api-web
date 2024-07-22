@@ -21,8 +21,8 @@
         public string Location { get; set; }
         public bool IsPremium { get; set; }
         public string Status { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? ModifiedDate { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
         public DateTime? LastLoginDate { get; set; }//ToDo
     }
 }

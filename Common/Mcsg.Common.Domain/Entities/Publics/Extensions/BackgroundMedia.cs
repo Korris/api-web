@@ -12,7 +12,7 @@ public partial class BackgroundMedia
     /// </summary>
     public BackgroundMedia()
     {
-        CreatedDate = DateTime.UtcNow;
+        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ public partial class BackgroundMedia
         IsDelete = true;
 
         ModifiedBy = modifiedBy;
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     /// <summary>

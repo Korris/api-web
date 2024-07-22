@@ -12,7 +12,7 @@ public class AuditableEntity : TrackingEntity
     /// </summary>
     public AuditableEntity()
     {
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     #endregion
@@ -20,14 +20,14 @@ public class AuditableEntity : TrackingEntity
     #region -- Properties --
 
     /// <summary>
-    /// Modified date
-    /// </summary>
-    public DateTime? ModifiedDate { get; set; }
-
-    /// <summary>
     /// Modified by
     /// </summary>
     public Guid? ModifiedBy { get; set; }
+
+    /// <summary>
+    /// Modified date
+    /// </summary>
+    public DateTime? ModifiedOn { get; set; }
 
     /// <summary>
     /// Is delete

@@ -42,8 +42,8 @@ internal static class DataSeeder
                 SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -55,8 +55,8 @@ internal static class DataSeeder
                 NormalizedEmail = "SYSADMIN@ANGELPJ.COM",
                 PasswordHash = "AQAAAAIAAYagAAAAEKr7Nj0sDqfYailaVLg2J+hlUf2FE+Y87N4gqQEuVuoXgW2t8Xf+FErCIkoVEKszQg==",
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -68,8 +68,8 @@ internal static class DataSeeder
                 NormalizedEmail = "SYSTEM@ANGELPJ.COM",
                 PasswordHash = "AQAAAAIAAYagAAAAEKr7Nj0sDqfYailaVLg2J+hlUf2FE+Y87N4gqQEuVuoXgW2t8Xf+FErCIkoVEKszQg==",
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             }
         );
 
@@ -101,8 +101,8 @@ internal static class DataSeeder
                     Key = "Global_Setting",
                     Value = value,
                     IsActive = true,
-                    CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                    ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                    CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                    ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
                 }
            );
 
@@ -117,8 +117,8 @@ internal static class DataSeeder
                     Key = "Email_Setting",
                     Value = emailValue,
                     IsActive = true,
-                    CreatedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                    ModifiedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                    CreatedOn = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                    ModifiedOn = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
                 }
            );
 
@@ -143,8 +143,8 @@ internal static class DataSeeder
                 ArtistName = "Luna",
                 DurationSeconds = 62,
                 Order = 0,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -155,8 +155,8 @@ internal static class DataSeeder
                 ArtistName = "Twinkle",
                 DurationSeconds = 171,
                 Order = 1,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -167,8 +167,8 @@ internal static class DataSeeder
                 ArtistName = "Audio Chameleon",
                 DurationSeconds = 175,
                 Order = 3,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -179,8 +179,8 @@ internal static class DataSeeder
                 ArtistName = "Fx",
                 DurationSeconds = 25,
                 Order = 4,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -191,8 +191,8 @@ internal static class DataSeeder
                 ArtistName = "Isakukageyama",
                 DurationSeconds = 30,
                 Order = 5,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -203,8 +203,8 @@ internal static class DataSeeder
                 ArtistName = "Topflow",
                 DurationSeconds = 120,
                 Order = 6,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -215,8 +215,8 @@ internal static class DataSeeder
                 ArtistName = "Game studio",
                 DurationSeconds = 7,
                 Order = 7,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -227,8 +227,8 @@ internal static class DataSeeder
                 ArtistName = "Live Art",
                 DurationSeconds = 242,
                 Order = 8,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -239,8 +239,8 @@ internal static class DataSeeder
                 ArtistName = "Silverhoof",
                 DurationSeconds = 470,
                 Order = 9,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -251,8 +251,8 @@ internal static class DataSeeder
                 ArtistName = "Audio Philetrax",
                 DurationSeconds = 172,
                 Order = 10,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -263,8 +263,8 @@ internal static class DataSeeder
                 ArtistName = "Upthemusic",
                 DurationSeconds = 142,
                 Order = 11,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -275,8 +275,8 @@ internal static class DataSeeder
                 ArtistName = "Music hunter",
                 DurationSeconds = 924,
                 Order = 12,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -287,8 +287,8 @@ internal static class DataSeeder
                 ArtistName = "Yetiproduction",
                 DurationSeconds = 119,
                 Order = 13,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -299,8 +299,8 @@ internal static class DataSeeder
                 ArtistName = "Lexpremium",
                 DurationSeconds = 144,
                 Order = 14,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -311,8 +311,8 @@ internal static class DataSeeder
                 ArtistName = "Bestandbless",
                 DurationSeconds = 149,
                 Order = 15,
-                CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                CreatedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
+                ModifiedOn = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             }
         );
     }
@@ -335,8 +335,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "bad2ef8d-a7eb-4378-a93f-73cfe75a230e",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -351,8 +351,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "60b25b2d-a341-4d0c-902c-f20f90dc94d8",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -367,8 +367,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "7e8e89df-e5f5-4a30-97fe-12adf3be8c56",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -383,8 +383,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "e2e0302d-a04c-498d-a1a2-d4ea37e75cc1",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -399,8 +399,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "055bd076-992f-4f5c-863d-1930a63eff59",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -415,8 +415,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "13c0ec66-fe60-4830-a62f-59597157e14c",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -431,8 +431,8 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 EmailConfirmed = true,
                 ConcurrencyStamp = "a2e05fe9-cc5e-4111-97ad-1d6f3b134453",
-                CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             }
         );
     }

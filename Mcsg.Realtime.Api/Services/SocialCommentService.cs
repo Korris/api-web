@@ -267,7 +267,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -300,7 +300,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -328,7 +328,7 @@ namespace Mcsg.Realtime.Api.Services
 
             comment.Body = req.CommentText;
             comment.ModifiedBy = author.Id;
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _postCommentRepository.UpdateAsync(comment);
@@ -339,7 +339,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -364,7 +364,7 @@ namespace Mcsg.Realtime.Api.Services
 
             comment.Body = req.CommentText;
             comment.ModifiedBy = author.Id;
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _subPostCommentRepository.UpdateAsync(comment);
@@ -375,7 +375,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -407,7 +407,7 @@ namespace Mcsg.Realtime.Api.Services
                         {
                             Id = req.CommentId,
                             ModifiedBy = userId,
-                            ModifiedDate = DateTime.UtcNow,
+                            ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.PostComment
                         });
 
@@ -416,7 +416,7 @@ namespace Mcsg.Realtime.Api.Services
             return new PostCommentResp
             {
                 PostId = comment.PostId,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
             };
@@ -440,7 +440,7 @@ namespace Mcsg.Realtime.Api.Services
                             {
                                 Id = req.CommentId,
                                 ModifiedBy = userId,
-                                ModifiedDate = DateTime.UtcNow,
+                                ModifiedOn = DateTime.UtcNow,
                                 LocationType = (int)MentionLocationType.SubPostComment
                             });
 
@@ -449,7 +449,7 @@ namespace Mcsg.Realtime.Api.Services
             return new PostCommentResp
             {
                 PostId = comment.PostId,
-                CommentDate = comment.ModifiedDate.Value,
+                CommentDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
             };

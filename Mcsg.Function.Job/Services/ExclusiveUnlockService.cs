@@ -51,8 +51,8 @@ namespace Mcsg.Function.Job.Services
                 return @"UPDATE ""SubPosts""
 	    SET ""IsExclusive"" = false, 
 		    ""ModifiedBy"" = @SystemUser ,
-		    ""ModifiedDate"" = @NowTime
-	    WHERE ""CreatedDate"" < @WeekTime AND ""IsExclusive"" = true AND ""IsDelete"" = false";
+		    ""ModifiedOn"" = @NowTime
+	    WHERE ""CreatedOn"" < @WeekTime AND ""IsExclusive"" = true AND ""IsDelete"" = false";
             }
         }
 

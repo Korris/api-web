@@ -13,7 +13,7 @@ public partial class Post
     /// </summary>
     public Post()
     {
-        CreatedDate = DateTime.UtcNow;
+        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public partial class Post
         CustomNote = customNote;
 
         ModifiedBy = modifiedBy;
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public partial class Post
         IsDelete = true;
 
         ModifiedBy = modifiedBy;
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     /// <summary>

@@ -10,10 +10,10 @@
             {
                 return @"SELECT ""Id"", ""LoginProvider"", ""LoginDateUtc"", ""ExpiredDateUtc"", ""UserName"", ""Email"", 
                             ""LastName"", ""FirstName"", ""UserId"", ""Roles"", ""Claims"", 
-                            ""LastActionDateUtc"", ""CreatedDate"", ""CreatedBy"", ""ModifiedDate"", ""ModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
+                            ""LastActionDateUtc"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
 	                            FROM public.""Sessions""
 	                            WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateNow
-	                            ORDER BY ""CreatedDate"" DESC";
+	                            ORDER BY ""CreatedOn"" DESC";
             }
         }
 
@@ -35,7 +35,7 @@
         {
             get
             {
-                return @"SELECT ""Id"",""CreatedDate""
+                return @"SELECT ""Id"",""CreatedOn""
 	            FROM public.""UserExclusiveSubPosts""
 	            WHERE ""UserId"" = @UserId AND ""SubPostId"" = @SubPostId AND ""IsDelete"" = false";
             }
@@ -59,7 +59,7 @@
         {
             get
             {
-                return @"SELECT ""Id"",""CreatedDate""
+                return @"SELECT ""Id"",""CreatedOn""
 	            FROM public.""UserExclusiveSubPosts""
 	            WHERE ""UserId"" = @UserId AND ""SubPostId"" = ANY(@SubPostIds) AND ""IsDelete"" = false";
             }

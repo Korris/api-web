@@ -8,8 +8,8 @@
             {
                 return @"SELECT ""Id"", ""ParentId"", 
 				""TargetId"", ""AuthorId"", ""Type"",
-				""CreatedDate"", ""CreatedBy"",
-				""ModifiedDate"", ""ModifiedBy"", ""IsDelete""
+				""CreatedOn"", ""CreatedBy"",
+				""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
 					FROM {0}
 					WHERE ""TargetId"" = @TargetId
 					AND ( ""AuthorId"" IS NULL OR ""AuthorId"" = @AuthorId)
@@ -22,8 +22,8 @@
             {
                 return @"SELECT ""Id"", ""ParentId"", 
 				""TargetId"", ""AuthorId"", ""Type"",
-				""CreatedDate"", ""CreatedBy"",
-				""ModifiedDate"", ""ModifiedBy"", ""IsDelete""
+				""CreatedOn"", ""CreatedBy"",
+				""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
 					FROM {0}
 					WHERE ""TargetId"" = @TargetId
 					AND ""AuthorId"" = @AuthorId";
@@ -58,7 +58,7 @@
                             LEFT JOIN identity.""Users"" u ON r.""AuthorId"" = u.""Id""
                             WHERE r.""TargetId"" = @TargetId AND r.""IsDelete"" = false
                             AND r.""Type"" = (CASE WHEN @Type IS NULL THEN r.""Type"" ELSE @Type END)
-                            ORDER BY r.""ModifiedDate"" DESC 
+                            ORDER BY r.""ModifiedOn"" DESC 
                             LIMIT @PageSize
 						    OFFSET @Offet ;
 

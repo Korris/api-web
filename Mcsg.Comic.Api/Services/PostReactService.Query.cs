@@ -8,8 +8,8 @@
             {
                 return @"SELECT ""Id"", ""ParentId"", 
 				""PostId"", ""AuthorId"", ""Type"",
-				""CreatedDate"", ""CreatedBy"",
-				""ModifiedDate"", ""ModifiedBy""
+				""CreatedOn"", ""CreatedBy"",
+				""ModifiedOn"", ""ModifiedBy""
 					FROM {0}
 					WHERE ""PostId"" = @PostId
 					AND ""AuthorId"" = @UserId

@@ -111,7 +111,7 @@ namespace Mcsg.Function.Job.Services
                         ActionType = smartLookupData.ActionType,
                         EntityId = postId,
                         Count = countOfPost,
-                        ModifiedDate = todayDateTime,
+                        ModifiedOn = todayDateTime,
                         EntityType = EntityType.Post,
                         SubType = (EntitySubType)post.Type,
                         Date = todayDate
@@ -123,7 +123,7 @@ namespace Mcsg.Function.Job.Services
                     ActionType = smartLookupData.ActionType,
                     EntityId = smartLookupData.EntityId,
                     Count = countOfSubPost,
-                    ModifiedDate = todayDateTime,
+                    ModifiedOn = todayDateTime,
                     EntityType = EntityType.SubPost,
                     Date = todayDate
                 });
@@ -148,7 +148,7 @@ namespace Mcsg.Function.Job.Services
                     ActionType = smartLookupData.ActionType,
                     EntityId = postId,
                     Count = countOfPost,
-                    ModifiedDate = todayDateTime,
+                    ModifiedOn = todayDateTime,
                     EntityType = smartLookupData.EntityType,
                     SubType = (EntitySubType)post.Type,
                     Date = todayDate
@@ -247,7 +247,7 @@ namespace Mcsg.Function.Job.Services
 	                SELECT COUNT(pcm.""Id"") as count
 				                FROM ""PostComments"" pcm 
 				                WHERE pcm.""PostId"" = @PostId 
-AND date_trunc('day',pcm.""CreatedDate"") = @Today
+AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""PostId""
 	                UNION ALL
@@ -256,7 +256,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
 				                FROM ""SubPostComments"" pcm 
 				                INNER JOIN ""SubPosts"" sp ON sp.""Id"" = pcm.""PostId"" AND 
 				                sp.""PostId"" = @PostId
-AND date_trunc('day',pcm.""CreatedDate"") = @Today
+AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                WHERE  pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""PostId""
 	                ) as tb;";
@@ -269,7 +269,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
                 return @"SELECT COUNT(pcm.""Id"") as count
 				                FROM ""SubPostComments"" pcm 
 				                WHERE pcm.""PostId"" = @SubPostId 
-AND date_trunc('day',pcm.""CreatedDate"") = @Today
+AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""PostId"";";
             }
@@ -287,14 +287,14 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
 	                SELECT COUNT(pcm.""Id"") as count
 				                FROM ""PostReactions"" pcm 
 				                WHERE pcm.""TargetId"" = @PostId 
-AND date_trunc('day',pcm.""CreatedDate"") = @Today
+AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""TargetId""
 	                UNION ALL
 
 	                SELECT COUNT(pcm.""Id"") as count
 				                FROM ""SubPostReactions"" pcm 
-				                INNER JOIN ""SubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedDate"") = @Today AND 
+				                INNER JOIN ""SubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedOn"") = @Today AND 
 				                sp.""PostId"" = @PostId
 				                WHERE  pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""TargetId""
@@ -308,7 +308,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
                 return @"SELECT COUNT(pcm.""Id"") as count
 				                FROM ""SubPostReactions"" pcm 
 				                WHERE pcm.""TargetId"" = @SubPostId 
-AND date_trunc('day',pcm.""CreatedDate"") = @Today
+AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""PostId"";";
             }
@@ -356,7 +356,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
             get
             {
                 return @"UPDATE {0} AS s
-                                    SET ""Count"" = ""Count"" + 1, ""ModifiedDate"" = @Date
+                                    SET ""Count"" = ""Count"" + 1, ""ModifiedOn"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
             }
@@ -366,7 +366,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
             get
             {
                 return @"UPDATE {0} AS s
-                                    SET ""Count"" = ""Count"" - 1, ""ModifiedDate"" = @Date
+                                    SET ""Count"" = ""Count"" - 1, ""ModifiedOn"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
             }

@@ -51,7 +51,7 @@ namespace Mcsg.Admin.Api.Services
 
                 if (request.OrderBy == null || ignoreOderByColumn.Contains(request.OrderBy, StringComparer.OrdinalIgnoreCase))
                 {
-                    request.OrderBy = nameof(Post.CreatedDate);
+                    request.OrderBy = nameof(Post.CreatedOn);
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Mcsg.Admin.Api.Services
 
                 if (request.FromDate != null)
                 {
-                    query = query.Replace("[FromDate]", @"AND p.""CreatedDate"" >= @FromDate");
+                    query = query.Replace("[FromDate]", @"AND p.""CreatedOn"" >= @FromDate");
                 }
                 else
                 {
@@ -98,7 +98,7 @@ namespace Mcsg.Admin.Api.Services
                 }
                 if (request.ToDate != null)
                 {
-                    query = query.Replace("[ToDate]", @"AND p.""CreatedDate"" <= @ToDate");
+                    query = query.Replace("[ToDate]", @"AND p.""CreatedOn"" <= @ToDate");
                 }
                 else
                 {
@@ -164,7 +164,7 @@ namespace Mcsg.Admin.Api.Services
                 post.Status = PostStatus.Inactive;
             post.StatusReason = request.Reason;
             post.ModifiedBy = _currentUserService?.Session?.UserId;
-            post.ModifiedDate = DateTime.UtcNow;
+            post.ModifiedOn = DateTime.UtcNow;
 
             return await _postRepo.UpdateAsync(post);
         }
@@ -179,7 +179,7 @@ namespace Mcsg.Admin.Api.Services
             isResult = true;
             post.StatusReason = request.Reason;
             post.ModifiedBy = _currentUserService?.Session?.UserId;
-            post.ModifiedDate = DateTime.UtcNow;
+            post.ModifiedOn = DateTime.UtcNow;
 
             return await _postRepo.UpdateAsync(post);
         }

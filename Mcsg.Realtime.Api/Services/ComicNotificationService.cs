@@ -73,7 +73,7 @@ namespace Mcsg.Realtime.Api.Services
                     response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
                     response.ActorId = comment.AuthorId;
                     response.ActorName = comment.AuthorName;
-                    response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
+                    response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                     response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
                     response.UserAvatar = comment.UserAvatar;
 
@@ -124,7 +124,7 @@ namespace Mcsg.Realtime.Api.Services
                 response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed : Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed;
                 response.ActorId = comment.AuthorId;
                 response.ActorName = comment.AuthorName;
-                response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
+                response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reply;
                 response.UserAvatar = comment.UserAvatar;
 
@@ -159,7 +159,7 @@ namespace Mcsg.Realtime.Api.Services
             response.ActorId = video.AuthorId;
             response.ActorName = video.AuthorName;
             response.UserAvatar = video.UserAvatar;
-            response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
+            response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
             response.NotificationType = Common.Core.Constants.Setting.NotificationType.Video + video.Action.ToString();
 
             // Then notification the comment to post owner
@@ -216,7 +216,7 @@ namespace Mcsg.Realtime.Api.Services
                 response.EntityId = reaction.Id;
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
-                response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
+                response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 // Then notification the comment to post owner
@@ -262,7 +262,7 @@ namespace Mcsg.Realtime.Api.Services
                 response.TargetType = targetType;
                 response.ActorId = mention.AuthorId;
                 response.ActorName = mention.AuthorName;
-                response.CreatedDate = noti?.CreatedDate ?? DateTime.UtcNow;
+                response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = Common.Core.Constants.Setting.NotificationType.Mention;
                 response.UserAvatar = mention.UserAvatar;
 
@@ -308,7 +308,7 @@ namespace Mcsg.Realtime.Api.Services
                 dto.NotificationObjectId = notiObj.Id;
                 dto.ReceiverId = receiverId;
                 dto.ActorId = actorId;
-                dto.CreatedDate = noti.CreatedDate;
+                dto.CreatedOn = noti.CreatedOn;
 
                 return dto;
 
@@ -358,7 +358,7 @@ namespace Mcsg.Realtime.Api.Services
                     dto.NotificationObjectId = notiObj.Id;
                     dto.ReceiverId = receiverId;
                     dto.ActorId = actorId;
-                    dto.CreatedDate = noti.CreatedDate;
+                    dto.CreatedOn = noti.CreatedOn;
 
                     response.Add(dto);
                 }

@@ -238,7 +238,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 ReplyText = comment.Body,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value,
@@ -274,7 +274,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 ReplyText = comment.Body,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value,
@@ -304,7 +304,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.Body = req.ReplyText;
             comment.ParentId = req.ReplyToCommentId;
             comment.ModifiedBy = author.Id;
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _postCommentRepository.UpdateAsync(comment);
@@ -315,7 +315,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 ReplyText = comment.Body,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value,
@@ -342,7 +342,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.Body = req.ReplyText;
             comment.ParentId = req.ReplyToCommentId;
             comment.ModifiedBy = author.Id;
-            comment.ModifiedDate = DateTime.UtcNow;
+            comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _subPostCommentRepository.UpdateAsync(comment);
@@ -353,7 +353,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 ReplyText = comment.Body,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value,
@@ -386,14 +386,14 @@ namespace Mcsg.Realtime.Api.Services
                         {
                             Id = req.ReplyCommentId,
                             ModifiedBy = userId,
-                            ModifiedDate = DateTime.UtcNow,
+                            ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.PostCommentReply
                         });
 
             return new ReplyCommentResp
             {
                 PostId = comment.PostId,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value
@@ -418,14 +418,14 @@ namespace Mcsg.Realtime.Api.Services
                             {
                                 Id = req.ReplyCommentId,
                                 ModifiedBy = userId,
-                                ModifiedDate = DateTime.UtcNow,
+                                ModifiedOn = DateTime.UtcNow,
                                 LocationType = (int)MentionLocationType.SubPostCommentReply
                             });
 
             return new ReplyCommentResp
             {
                 PostId = comment.PostId,
-                ReplyDate = comment.ModifiedDate.Value,
+                ReplyDate = comment.ModifiedOn.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ReplyToCommentId = comment.ParentId.Value,

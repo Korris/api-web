@@ -90,7 +90,7 @@
                 return @$"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
 						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
-						post.""CreatedDate"",
+						post.""CreatedOn"",
 						post.""TotalResource"",
 						post.""SubPostStr"",
 						post.""SubPostResourceStr"",
@@ -107,7 +107,7 @@
 							p.""HashId""
 							,p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"", 
-							p.""CreatedDate"",
+							p.""CreatedOn"",
 							p.""CustomNote"",
 							sp.""Total"" AS ""TotalResource"",
 							to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
@@ -146,7 +146,7 @@
 							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
 							u.""Avatar"",u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"",
-							p.""CreatedDate"",
+							p.""CreatedOn"",
 							p.""CustomNote"",
 							sp.""Total"",
 							md.""Title"",
@@ -156,7 +156,7 @@
 							pl.""HashId"",
 							pl.""Url"",
 							pl.""Type""
-							ORDER BY p.""CreatedDate"" DESC
+							ORDER BY p.""CreatedOn"" DESC
 						LIMIT @PageSize
 						OFFSET @Offet) 
 						AS post
@@ -165,7 +165,7 @@
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"", 
-						post.""CreatedDate"",
+						post.""CreatedOn"",
 						post.""TotalResource"",
 						post.""SubPostStr"",
 						post.""SubPostResourceStr"",
@@ -177,7 +177,7 @@
 						post.""LinkHashId"",
 						post.""LinkUrl"",
 						post.""LinkType""
-						ORDER BY post.""CreatedDate"" DESC;
+						ORDER BY post.""CreatedOn"" DESC;
 
                         SELECT count(postFavorites.*) AS TotalItems 
                         FROM {_postRepository.TableName} post 

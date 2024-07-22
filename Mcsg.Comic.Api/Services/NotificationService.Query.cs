@@ -10,7 +10,7 @@
             {
                 return @$"SELECT noti.""Id"", noti.""ReceiverId""
                             , noti.""Status"", obj.""LocationId"", obj.""LocationHashId""
-                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedDate""
+                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedOn""
                             , obj.""ActorId""
                             , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
                             , us.""Avatar""
@@ -26,7 +26,7 @@
             {
                 return @$"SELECT noti.""Id"", noti.""ReceiverId""
                             , noti.""Status"", obj.""LocationId"", obj.""LocationHashId""
-                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedDate""
+                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedOn""
                             , obj.""ActorId""
                             , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
                             , us.""Avatar""
@@ -39,7 +39,7 @@
                             LEFT JOIN {_postCommentRepository.TableName} pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction}
                             LEFT JOIN {_subPostCommentRepository.TableName} spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction}
                             WHERE noti.""ReceiverId"" = @ReceiverId 
-                            ORDER BY noti.""CreatedDate"" DESC
+                            ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
 						    OFFSET @Offet ;
 
@@ -53,7 +53,7 @@
             {
                 return @$"SELECT noti.""Id"", noti.""ReceiverId""
                             , noti.""Status"", obj.""LocationId"", obj.""LocationHashId""
-                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedDate""
+                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedOn""
                             , obj.""ActorId""
                             , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
                             , us.""Avatar""
@@ -66,7 +66,7 @@
                             LEFT JOIN {_postCommentRepository.TableName} pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction}
                             LEFT JOIN {_subPostCommentRepository.TableName} spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction}
                             WHERE noti.""ReceiverId"" = @ReceiverId AND noti.""Status"" = 0 
-                            ORDER BY noti.""CreatedDate"" DESC
+                            ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
 						    OFFSET @Offet ;
 

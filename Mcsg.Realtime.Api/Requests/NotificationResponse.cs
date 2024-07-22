@@ -12,7 +12,7 @@
         public string Message { get; set; }
         public Guid ActorId { get; set; }
         public string ActorName { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedOn { get; set; }
         public string NotificationType { get; set; }
         public string UserAvatar { get; set; }
     }

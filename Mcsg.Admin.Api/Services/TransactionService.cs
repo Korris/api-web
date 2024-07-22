@@ -45,8 +45,8 @@ namespace Mcsg.Admin.Api.Services
                 .Include(x => x.DestinationUserWallet)
                 .Where(x =>
                     (
-                        (request.FromDate == null || x.CreatedDate >= request.FromDate) &&
-                        (request.ToDate == null || x.CreatedDate <= request.ToDate) &&
+                        (request.FromDate == null || x.CreatedOn >= request.FromDate) &&
+                        (request.ToDate == null || x.CreatedOn <= request.ToDate) &&
                         (request.Types == null || request.Types.Contains(x.Type)) &&
                         (request.Status == null || x.Status == request.Status) &&
                         (request.TransactionId == null || x.Id == request.TransactionId) &&
@@ -65,7 +65,7 @@ namespace Mcsg.Admin.Api.Services
                                     (x.Type == TransactionType.DEPOSIT
                                     ) ? "+" : " ",
                     Content = x.Content,
-                    CreatedDate = x.CreatedDate,
+                    CreatedOn = x.CreatedOn,
                     FromAddress = x.IsFromSystem ? WalletConstants.FROM_SYSTEM : x.SourceUserWallet.Address,
                     ToAddress = x.DestinationUserWallet != null ? x.DestinationUserWallet.Address : string.Empty,
                     FromUser = x.IsFromSystem ? WalletConstants.FROM_SYSTEM : x.SourceUserWallet.ProfileName,
@@ -89,8 +89,8 @@ namespace Mcsg.Admin.Api.Services
             var countQuery = _dbContext.WalletTransactions
                 .Where(x =>
                     (
-                        (request.FromDate == null || x.CreatedDate >= request.FromDate) &&
-                        (request.ToDate == null || x.CreatedDate <= request.ToDate) &&
+                        (request.FromDate == null || x.CreatedOn >= request.FromDate) &&
+                        (request.ToDate == null || x.CreatedOn <= request.ToDate) &&
                         (request.Types == null || request.Types.Contains(x.Type)) &&
                         (request.Status == null || x.Status == request.Status) &&
                         (request.TransactionId == null || x.Id == request.TransactionId) &&
@@ -150,7 +150,7 @@ namespace Mcsg.Admin.Api.Services
 
             }
             transaction.IsConfirmed = true;
-            transaction.ModifiedDate = DateTime.UtcNow;
+            transaction.ModifiedOn = DateTime.UtcNow;
             transaction.ModifiedBy = _currentUserService?.Session?.UserId;
             transaction.Status = TransactionStatus.SUCCESS;
             _dbContext.SaveChanges();
@@ -176,7 +176,7 @@ namespace Mcsg.Admin.Api.Services
             transaction.IsConfirmed = true;
             transaction.SystemMessage = "REJECT BY ADMIN: Reason:" + reason;
             transaction.Status = TransactionStatus.FAILED;
-            transaction.ModifiedDate = DateTime.UtcNow;
+            transaction.ModifiedOn = DateTime.UtcNow;
             transaction.ModifiedBy = _currentUserService?.Session?.UserId;
 
             _dbContext.SaveChanges();

@@ -79,7 +79,7 @@ namespace Mcsg.Admin.Api.Services
 
                 if (request.FromDate != null)
                 {
-                    query = query.Replace("[FromDate]", @"AND users.""CreatedDate"" >= @FromDate");
+                    query = query.Replace("[FromDate]", @"AND users.""CreatedOn"" >= @FromDate");
                 }
                 else
                 {
@@ -87,7 +87,7 @@ namespace Mcsg.Admin.Api.Services
                 }
                 if (request.ToDate != null)
                 {
-                    query = query.Replace("[ToDate]", @"AND users.""CreatedDate"" <= @ToDate");
+                    query = query.Replace("[ToDate]", @"AND users.""CreatedOn"" <= @ToDate");
                 }
                 else
                 {
@@ -139,7 +139,7 @@ namespace Mcsg.Admin.Api.Services
             user.Status = request.Status;
             user.StatusReason = request.Reason;
             user.ModifiedBy = _currentUserService?.Session?.UserId;
-            user.ModifiedDate = DateTime.UtcNow;
+            user.ModifiedOn = DateTime.UtcNow;
 
             if (user.Status == UserStatus.Active)
             {

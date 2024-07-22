@@ -13,7 +13,7 @@ public partial class ComicPost
     /// </summary>
     public ComicPost()
     {
-        CreatedDate = DateTime.UtcNow;
+        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public partial class ComicPost
         CustomNote = customNote;
 
         ModifiedBy = modifiedBy;
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public partial class ComicPost
         IsDelete = true;
 
         ModifiedBy = modifiedBy;
-        ModifiedDate = DateTime.UtcNow;
+        ModifiedOn = DateTime.UtcNow;
     }
 
     /// <summary>

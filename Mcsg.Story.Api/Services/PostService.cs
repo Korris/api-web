@@ -160,7 +160,7 @@ public partial class PostService : IPostService
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
-            CreatedDate = post.CreatedDate,
+            CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = comicPostReq.Summary,
             CoverUrl = comicPostReq.CoverUrl,
@@ -348,7 +348,7 @@ public partial class PostService : IPostService
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
             .Replace("[CountResults]", "")
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedDate");
+            .Replace("[OrderBy]", "CreatedOn");
 
         var dbFeed = await _postRepository
             .Connection.QueryAsync<PostSeriesTopQueryDbResponse>(query,
@@ -395,7 +395,7 @@ public partial class PostService : IPostService
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedDate");
+            .Replace("[OrderBy]", "CreatedOn");
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -463,7 +463,7 @@ public partial class PostService : IPostService
                 .Replace("[WhereMainQuery]", whereClause)
                 .Replace("[CountResults]", countTopQuery)
                 .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-                .Replace("[OrderBy]", "CreatedDate");
+                .Replace("[OrderBy]", "CreatedOn");
 
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new
@@ -691,7 +691,7 @@ public partial class PostService : IPostService
 	                              LEFT JOIN ""story"".""StoryPostComments"" pc on pc.""PostId""  = p.""Id"" 
 	                              LEFT JOIN LATERAL 
 										(
-											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedDate""
+											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
 											FROM ""story"".""StorySubPosts"" sp 
 											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
 											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
@@ -700,7 +700,7 @@ public partial class PostService : IPostService
 										) sp ON sp.""PostId"" = p.""Id""	
                                   [QueryCondition]
                                   GROUP BY p.""Id"" ,u.""ProfileName"" 
-                                  ORDER BY p.""CreatedDate"" desc  
+                                  ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
 
@@ -797,7 +797,7 @@ public partial class PostService : IPostService
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
-            CreatedDate = post.CreatedDate,
+            CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = comicPostReq.Summary,
             CoverUrl = comicPostReq.CoverUrl,
@@ -847,7 +847,7 @@ public partial class PostService : IPostService
             IsCurrentUserIsAuthor = currentUserId == item.AuthorId,
             ThumbnailUrl = item.ThumbnailUrl,
             CoverUrl = item.CoverUrl,
-            CreatedDate = item.CreatedDate,
+            CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,
             UserName = item.UserName,
             ProfileName = item.ProfileName,
@@ -881,7 +881,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedDate);
+            loadReq.OrderBy = nameof(Post.CreatedOn);
         }
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
@@ -1050,7 +1050,7 @@ public partial class PostService : IPostService
                                                 .Select(p => p.UserFollowerId)
                                                 .ToListAsync();
 
-        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"",p.""Type"" , 
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
@@ -1059,12 +1059,12 @@ public partial class PostService : IPostService
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
-                    AND pc.""CreatedDate"" < now()
-                    AND pc.""CreatedDate"" > @FromDate
+                    AND pc.""CreatedOn"" < now()
+                    AND pc.""CreatedOn"" > @FromDate
                     AND p.""IsDelete"" = false
                     AND pc.""IsDelete"" = false
                     UNION 
-                    select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"", 
+                    select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"", 
                     p.""HashId"" as HashPostId,
                     TRUE as IsSubPost, 
                     sp.""Order""
@@ -1074,12 +1074,12 @@ public partial class PostService : IPostService
                     left join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
                     WHERE spc.""CreatedBy"" = ANY(@UserIds)
                     AND spc.""CreatedBy"" != @CurrentUserId
-                    AND spc.""CreatedDate"" < now()
-                    AND spc.""CreatedDate"" > @FromDate
+                    AND spc.""CreatedOn"" < now()
+                    AND spc.""CreatedOn"" > @FromDate
                     AND p.""IsDelete"" = false
                     AND sp.""IsDelete"" = false
                     AND spc.""IsDelete"" = false
-                    Order by ""CreatedDate"" desc
+                    Order by ""CreatedOn"" desc
                     LIMIT 2";
 
         var data = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(query, new
@@ -1089,7 +1089,7 @@ public partial class PostService : IPostService
             CurrentUserId = user.Id
         });
         var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
-        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedDate"",p.""Type"" , 
+        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"",p.""Type"" , 
                         p.""HashId"" as HashPostId,
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
@@ -1104,7 +1104,7 @@ public partial class PostService : IPostService
                         AND pc.""IsDelete"" = false
 						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
                         UNION 
-                        SELECT u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",
+                        SELECT u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"",
                         p.""HashId"" as HashPostId,
                         TRUE as IsSubPost, sp.""Order"",
 						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
@@ -1119,7 +1119,7 @@ public partial class PostService : IPostService
                         AND p.""IsDelete"" = false
                         AND sp.""IsDelete"" = false
                         AND spc.""IsDelete"" = false
-					    GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedDate"",p.""Type"",sp.""Order""
+					    GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"",sp.""Order""
                         ORDER BY sort_key
                         LIMIT @Limit";
 
@@ -1250,7 +1250,7 @@ public partial class PostService : IPostService
                     ChapterCount = res.ChapterCount,
                     Type = res.Type,
                     HashId = res.HashId,
-                    CreatedDate = res.CreatedDate,
+                    CreatedOn = res.CreatedOn,
 
                 };
 
@@ -1303,14 +1303,14 @@ public partial class PostService : IPostService
             AuthorId = x.AuthorId,
             CoverUrl = x.CoverUrl,
             ThumbnailUrl = x.ThumbnailUrl,
-            CreatedDate = x.CreatedDate,
+            CreatedOn = x.CreatedOn,
             Id = x.Id,
             IsMature = x.IsMature,
             IsCompleted = x.IsCompleted,
             Permission = x.Permission,
             Status = x.Status,
             UserId = x.UserId,
-            //"AuthorName", "CoverUrl","CreatedDate", "IsMature", "Id", "Permission", "Status", "UserId"
+            //"AuthorName", "CoverUrl","CreatedOn", "IsMature", "Id", "Permission", "Status", "UserId"
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
         }).ToList();
@@ -1353,7 +1353,7 @@ public partial class PostService : IPostService
             AuthorId = x.AuthorId,
             CoverUrl = x.CoverUrl,
             ThumbnailUrl = x.ThumbnailUrl,
-            CreatedDate = x.CreatedDate,
+            CreatedOn = x.CreatedOn,
             Id = x.Id,
             IsMature = x.IsMature,
             IsCompleted = x.IsCompleted,
@@ -1424,7 +1424,7 @@ public partial class PostService : IPostService
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedDate");
+            .Replace("[OrderBy]", "CreatedOn");
 
         return query;
     }
@@ -1576,7 +1576,7 @@ public partial class PostService : IPostService
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
         };
-        post.ModifiedDate = DateTime.UtcNow;
+        post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
         await _postRepository.UpdateAsync(post);
 
@@ -1614,13 +1614,13 @@ public partial class PostService : IPostService
             newChapter.Name = chapterPostReq.Name;
         }
 
-        newChapter.ModifiedDate = DateTime.UtcNow;
+        newChapter.ModifiedOn = DateTime.UtcNow;
         newChapter.ModifiedBy = currentUserId;
         //newChapter.CreatorNote = chapterPostReq.CreatorNote;
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
 
-        post.ModifiedDate = DateTime.UtcNow;
+        post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
 
         await _postRepository.UpdateAsync(post);
@@ -1678,7 +1678,7 @@ public partial class PostService : IPostService
         result.Status = newChapter.Status;
         result.Title = newChapter.Title;
         result.Name = newChapter.Name;
-        result.CreatedDate = newChapter.CreatedDate;
+        result.CreatedOn = newChapter.CreatedOn;
         result.CreatorNote = newChapter.CreatorNote;
         result.PublishDate = newChapter.PublishDate;
         result.CreatedBy = newChapter.CreatedBy;
@@ -1774,7 +1774,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedDate);
+            loadReq.OrderBy = nameof(Post.CreatedOn);
         }
         return offset;
     }

@@ -24,7 +24,7 @@ public class PaginatedR
     /// <summary>
     /// Order by
     /// </summary>
-    [DefaultValue("CreatedDate")]
+    [DefaultValue("CreatedOn")]
     public string? OrderBy { get; set; }
 
     #endregion
