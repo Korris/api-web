@@ -2,7 +2,9 @@
 
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
-    public class WalletSetting : BaseWalletEntity
+    using Mcsg.Common.SeedWork;
+
+    public class WalletSetting : AuditableEntity
     {
         [MaxLength(50)]
         public string? Name { get; set; }

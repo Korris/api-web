@@ -250,7 +250,7 @@ namespace Mcsg.Realtime.Api.Services
                 AuthorId = author.Id,
                 Body = req.CommentText,
                 CreatedBy = author.Id,
-                LastModifiedBy = author.Id,
+                ModifiedBy = author.Id,
                 PostId = req.PostId,
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
@@ -267,7 +267,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -284,7 +284,7 @@ namespace Mcsg.Realtime.Api.Services
                 AuthorId = author.Id,
                 Body = req.CommentText,
                 CreatedBy = author.Id,
-                LastModifiedBy = author.Id,
+                ModifiedBy = author.Id,
                 PostId = req.PostId,
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
@@ -300,7 +300,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -327,8 +327,8 @@ namespace Mcsg.Realtime.Api.Services
             }
 
             comment.Body = req.CommentText;
-            comment.LastModifiedBy = author.Id;
-            comment.LastModifiedDate = DateTime.UtcNow;
+            comment.ModifiedBy = author.Id;
+            comment.ModifiedDate = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _postCommentRepository.UpdateAsync(comment);
@@ -339,7 +339,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -363,8 +363,8 @@ namespace Mcsg.Realtime.Api.Services
             }
 
             comment.Body = req.CommentText;
-            comment.LastModifiedBy = author.Id;
-            comment.LastModifiedDate = DateTime.UtcNow;
+            comment.ModifiedBy = author.Id;
+            comment.ModifiedDate = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
             await _subPostCommentRepository.UpdateAsync(comment);
@@ -375,7 +375,7 @@ namespace Mcsg.Realtime.Api.Services
             {
                 PostId = comment.PostId,
                 CommentText = comment.Body,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
                 ResourceHashId = resource?.HashId ?? null,
@@ -416,7 +416,7 @@ namespace Mcsg.Realtime.Api.Services
             return new PostCommentResp
             {
                 PostId = comment.PostId,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.Post,
                 Id = comment.Id,
             };
@@ -449,7 +449,7 @@ namespace Mcsg.Realtime.Api.Services
             return new PostCommentResp
             {
                 PostId = comment.PostId,
-                CommentDate = comment.LastModifiedDate.Value,
+                CommentDate = comment.ModifiedDate.Value,
                 Type = PostTypes.SubPost,
                 Id = comment.Id,
             };

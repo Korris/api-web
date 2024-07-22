@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Lib.Data.Wallet.Entities
 {
-    public class UserPremiumPackage : BaseWalletEntity
+    using Mcsg.Common.SeedWork;
+
+    public class UserPremiumPackage : AuditableEntity
     {
         public int? PremiumPackageNo { get; set; }
         public virtual PremiumPackage PremiumPackage { get; set; }

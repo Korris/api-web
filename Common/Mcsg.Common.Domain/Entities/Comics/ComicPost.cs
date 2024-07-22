@@ -2,7 +2,6 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using Common;
 using Core.Enums;
 
 [Table("ComicPosts")]

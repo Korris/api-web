@@ -2,7 +2,7 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using Common;
+using SeedWork;
 
 [Table("SubPostCommentReactions")]
 public class SubPostCommentReaction : ReactionBase

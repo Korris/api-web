@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Lib.Data.Analytic.Entities
 {
     using Common.SeedWork.Enums;
-    using Lib.Data.Analytic.Entities.Base;
     using Mcsg.Common.Core.Enums;
+    using Mcsg.Common.SeedWork;
 
     public class UserViewPost : TrackingEntity
     {
@@ -16,6 +16,5 @@
         public string? BrowserAgent { get; set; }
         public string? UserHashString { get; set; } // định danh user - UserLogin: Hash của user id + user type, Guest: IpAddress + BrowserAgent + DateOnly
         public long TimeSpan { get; set; } //Check time in miliseconds from latest view
-
     }
 }

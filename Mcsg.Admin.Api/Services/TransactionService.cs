@@ -152,7 +152,7 @@ namespace Mcsg.Admin.Api.Services
             transaction.IsConfirmed = true;
             transaction.ModifiedDate = DateTime.UtcNow;
             transaction.ModifiedBy = _currentUserService?.Session?.UserId;
-            transaction.Status = Lib.Data.Wallet.Enums.TransactionStatus.SUCCESS;
+            transaction.Status = TransactionStatus.SUCCESS;
             _dbContext.SaveChanges();
             return true;
         }

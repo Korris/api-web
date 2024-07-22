@@ -1,8 +1,9 @@
 ﻿namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
+    using Mcsg.Common.SeedWork;
 
-    public class WalletTransactionOtp : BaseWalletEntity
+    public class WalletTransactionOtp : AuditableEntity
     {
         public Guid TransactionId { get; set; }
         public WalletTransaction WalletTransaction { get; set; }

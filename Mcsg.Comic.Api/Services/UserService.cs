@@ -723,8 +723,8 @@ public partial class UserService : IUserService
             else
             {
                 userFollow.IsDelete = false;
-                userFollow.LastModifiedDate = DateTime.UtcNow;
-                userFollow.LastModifiedBy = ss.UserId;
+                userFollow.ModifiedDate = DateTime.UtcNow;
+                userFollow.ModifiedBy = ss.UserId;
                 _context.UserFollows.Update(userFollow);
                 await _context.SaveChangesAsync();
                 return true;
@@ -736,8 +736,8 @@ public partial class UserService : IUserService
             UserFollowingId = userId,
             CreatedDate = DateTime.UtcNow,
             CreatedBy = ss.UserId,
-            LastModifiedDate = DateTime.UtcNow,
-            LastModifiedBy = ss.UserId,
+            ModifiedDate = DateTime.UtcNow,
+            ModifiedBy = ss.UserId,
             IsDelete = false
         };
 
@@ -775,8 +775,8 @@ public partial class UserService : IUserService
         else
         {
             userFollow.IsDelete = true;
-            userFollow.LastModifiedDate = DateTime.UtcNow;
-            userFollow.LastModifiedBy = ss.UserId;
+            userFollow.ModifiedDate = DateTime.UtcNow;
+            userFollow.ModifiedBy = ss.UserId;
             _context.UserFollows.Update(userFollow);
             await _context.SaveChangesAsync();
             return false;

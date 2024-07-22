@@ -2,7 +2,9 @@
 
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
-    public class EarningPeriod : BaseWalletEntity
+    using Mcsg.Common.SeedWork;
+
+    public class EarningPeriod : AuditableEntity
     {
         [MaxLength(50)]
         public string? Title { get; set; } // 2024-001 => Year - number of payment

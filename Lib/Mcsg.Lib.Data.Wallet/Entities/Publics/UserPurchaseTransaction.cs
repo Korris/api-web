@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Lib.Data.Wallet.Entities
 {
-    public class UserPurchaseTransaction : BaseWalletEntity
+    using Mcsg.Common.SeedWork;
+
+    public class UserPurchaseTransaction : AuditableEntity
     {
         public Guid WalletTransactionId { get; set; }
         public WalletTransaction WalletTransaction { get; set; }

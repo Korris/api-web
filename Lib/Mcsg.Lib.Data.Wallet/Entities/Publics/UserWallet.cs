@@ -3,8 +3,9 @@
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
+    using Mcsg.Common.SeedWork;
 
-    public class UserWallet : BaseWalletEntity
+    public class UserWallet : AuditableEntity
     {
         public Guid UserId { get; set; }
 

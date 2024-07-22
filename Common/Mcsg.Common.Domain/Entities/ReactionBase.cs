@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork;
 
 public class ReactionBase : AuditableEntity
 {

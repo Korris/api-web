@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-using Common;
+using SeedWork;
 
 public class UserExclusiveSubPost : AuditableEntity
 {

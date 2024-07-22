@@ -1576,8 +1576,8 @@ public partial class PostService : IPostService
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
         };
-        post.LastModifiedDate = DateTime.UtcNow;
-        post.LastModifiedBy = currentUserId;
+        post.ModifiedDate = DateTime.UtcNow;
+        post.ModifiedBy = currentUserId;
         await _postRepository.UpdateAsync(post);
 
         return newChapter;
@@ -1614,14 +1614,14 @@ public partial class PostService : IPostService
             newChapter.Name = chapterPostReq.Name;
         }
 
-        newChapter.LastModifiedDate = DateTime.UtcNow;
-        newChapter.LastModifiedBy = currentUserId;
+        newChapter.ModifiedDate = DateTime.UtcNow;
+        newChapter.ModifiedBy = currentUserId;
         //newChapter.CreatorNote = chapterPostReq.CreatorNote;
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
 
-        post.LastModifiedDate = DateTime.UtcNow;
-        post.LastModifiedBy = currentUserId;
+        post.ModifiedDate = DateTime.UtcNow;
+        post.ModifiedBy = currentUserId;
 
         await _postRepository.UpdateAsync(post);
 

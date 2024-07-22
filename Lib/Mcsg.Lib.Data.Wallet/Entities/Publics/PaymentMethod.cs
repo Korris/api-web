@@ -3,8 +3,8 @@
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
-
-    public class PaymentMethod : BaseWalletEntity
+    using Mcsg.Common.SeedWork;
+    public class PaymentMethod : AuditableEntity
     {
         [MaxLength(255)]
         public string? Name { get; set; }

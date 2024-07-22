@@ -279,7 +279,7 @@ public partial class TagService : ITagService
             {
                 AuthorId = userId,
                 CreatedBy = userId,
-                LastModifiedBy = userId,
+                ModifiedBy = userId,
                 Name = i.Trim(),
                 Title = i,
                 IsDelete = false,
@@ -310,7 +310,7 @@ public partial class TagService : ITagService
                 PostId = postId,
                 TagId = i,
                 CreatedBy = userId,
-                LastModifiedBy = userId
+                ModifiedBy = userId
             });
         }
 

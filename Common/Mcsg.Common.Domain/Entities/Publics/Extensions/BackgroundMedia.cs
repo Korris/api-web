@@ -23,8 +23,8 @@ public partial class BackgroundMedia
     {
         IsDelete = true;
 
-        LastModifiedBy = modifiedBy;
-        LastModifiedDate = DateTime.UtcNow;
+        ModifiedBy = modifiedBy;
+        ModifiedDate = DateTime.UtcNow;
     }
 
     /// <summary>

@@ -3,8 +3,9 @@
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
+    using Mcsg.Common.SeedWork;
 
-    public class WalletTransaction : BaseWalletEntity
+    public class WalletTransaction : AuditableEntity
     {
         [MaxLength(32)]
         public string? ReferenceNumber { get; set; }

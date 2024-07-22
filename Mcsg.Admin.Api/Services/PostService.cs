@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Twilio.Rest;
 
 namespace Mcsg.Admin.Api.Services
 {
@@ -164,8 +163,8 @@ namespace Mcsg.Admin.Api.Services
             if (post.Status == PostStatus.Public)
                 post.Status = PostStatus.Inactive;
             post.StatusReason = request.Reason;
-            post.LastModifiedBy = _currentUserService?.Session?.UserId;
-            post.LastModifiedDate = DateTime.UtcNow;
+            post.ModifiedBy = _currentUserService?.Session?.UserId;
+            post.ModifiedDate = DateTime.UtcNow;
 
             return await _postRepo.UpdateAsync(post);
         }
@@ -179,8 +178,8 @@ namespace Mcsg.Admin.Api.Services
             }
             isResult = true;
             post.StatusReason = request.Reason;
-            post.LastModifiedBy = _currentUserService?.Session?.UserId;
-            post.LastModifiedDate = DateTime.UtcNow;
+            post.ModifiedBy = _currentUserService?.Session?.UserId;
+            post.ModifiedDate = DateTime.UtcNow;
 
             return await _postRepo.UpdateAsync(post);
         }

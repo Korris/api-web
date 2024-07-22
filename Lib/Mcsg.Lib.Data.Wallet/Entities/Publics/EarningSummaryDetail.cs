@@ -1,8 +1,9 @@
 ﻿namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
+    using Mcsg.Common.SeedWork;
 
-    public class EarningSummaryDetail : BaseWalletEntity
+    public class EarningSummaryDetail : AuditableEntity
     {
         public Guid EarningSummaryId { get; set; }
         public virtual EarningSummary EarningSummary { get; set; }

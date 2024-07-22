@@ -2,7 +2,7 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using Common;
+using SeedWork;
 
 [Table("StoryTagPosts")]
 public class StoryTagPost : AuditableEntity

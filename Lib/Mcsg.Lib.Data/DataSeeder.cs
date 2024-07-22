@@ -102,7 +102,7 @@ internal static class DataSeeder
                     Value = value,
                     IsActive = true,
                     CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                    LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                    ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
                 }
            );
 
@@ -118,7 +118,7 @@ internal static class DataSeeder
                     Value = emailValue,
                     IsActive = true,
                     CreatedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                    LastModifiedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                    ModifiedDate = new DateTime(2023, 10, 17, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
                 }
            );
 
@@ -144,7 +144,7 @@ internal static class DataSeeder
                 DurationSeconds = 62,
                 Order = 0,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -156,7 +156,7 @@ internal static class DataSeeder
                 DurationSeconds = 171,
                 Order = 1,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -168,7 +168,7 @@ internal static class DataSeeder
                 DurationSeconds = 175,
                 Order = 3,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -180,7 +180,7 @@ internal static class DataSeeder
                 DurationSeconds = 25,
                 Order = 4,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -192,7 +192,7 @@ internal static class DataSeeder
                 DurationSeconds = 30,
                 Order = 5,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -204,7 +204,7 @@ internal static class DataSeeder
                 DurationSeconds = 120,
                 Order = 6,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -216,7 +216,7 @@ internal static class DataSeeder
                 DurationSeconds = 7,
                 Order = 7,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -228,7 +228,7 @@ internal static class DataSeeder
                 DurationSeconds = 242,
                 Order = 8,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -240,7 +240,7 @@ internal static class DataSeeder
                 DurationSeconds = 470,
                 Order = 9,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -252,7 +252,7 @@ internal static class DataSeeder
                 DurationSeconds = 172,
                 Order = 10,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -264,7 +264,7 @@ internal static class DataSeeder
                 DurationSeconds = 142,
                 Order = 11,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -276,7 +276,7 @@ internal static class DataSeeder
                 DurationSeconds = 924,
                 Order = 12,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -288,7 +288,7 @@ internal static class DataSeeder
                 DurationSeconds = 119,
                 Order = 13,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -300,7 +300,7 @@ internal static class DataSeeder
                 DurationSeconds = 144,
                 Order = 14,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             },
             new BackgroundMedia
             {
@@ -312,7 +312,7 @@ internal static class DataSeeder
                 DurationSeconds = 149,
                 Order = 15,
                 CreatedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510),
-                LastModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
+                ModifiedDate = new DateTime(2023, 12, 13, 8, 18, 34, 709, DateTimeKind.Utc).AddTicks(6510)
             }
         );
     }

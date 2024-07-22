@@ -62,8 +62,8 @@ public partial class Post
         ThumbnailUrl = thumbnailUrl;
         CustomNote = customNote;
 
-        LastModifiedBy = modifiedBy;
-        LastModifiedDate = DateTime.UtcNow;
+        ModifiedBy = modifiedBy;
+        ModifiedDate = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -74,8 +74,8 @@ public partial class Post
     {
         IsDelete = true;
 
-        LastModifiedBy = modifiedBy;
-        LastModifiedDate = DateTime.UtcNow;
+        ModifiedBy = modifiedBy;
+        ModifiedDate = DateTime.UtcNow;
     }
 
     /// <summary>
