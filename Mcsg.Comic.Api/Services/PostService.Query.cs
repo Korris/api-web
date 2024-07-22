@@ -55,7 +55,7 @@
 						sp.""IsEnableComment""
 						FROM ""comic"".""ComicPosts""  p
 						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+						LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false [WithPermission]  [Not-load-chapter]	
 						LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
@@ -130,7 +130,7 @@ LIMIT 1
 								CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE NULL END AS ReactionStr,
 								CASE WHEN COUNT(t.""Id"") > 0 THEN array_agg(DISTINCT t.""Name"") ELSE NULL END as Tags
 								from ""comic"".""ComicPosts""  p
-								LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id""
 								LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id"" 
 								LEFT JOIN 
 									(SELECT ""TargetId"", COUNT(*) AS reaction_count 
@@ -211,7 +211,7 @@ LIMIT 1
 							p.""CreatedDate""
 							) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						LEFT JOIN ""comic"".""ComicPostReactions"" r ON r.""TargetId"" = post.""Id""  AND r.""IsDelete"" = FALSE
 						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
@@ -275,7 +275,7 @@ LIMIT 1
 							) 
 						AS post
 						LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
@@ -418,7 +418,7 @@ LIMIT 1
 									ORDER BY sp1.""CreatedDate"" DESC
 									LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-								LEFT JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 
 								WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
@@ -445,7 +445,7 @@ LIMIT 1
 									ORDER BY sp1.""CreatedDate"" DESC
 									LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-								LEFT JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								[WhereMainQuery] 								
 								GROUP BY qpost1.""Id"", psp1.""CreatedDate""
@@ -468,7 +468,7 @@ LIMIT 1
 									GROUP BY sp1.""Id"", sp1.""PostId""
 									-- LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-								LEFT JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false 								
@@ -489,7 +489,7 @@ LIMIT 1
 									GROUP BY sp1.""Id"", sp1.""PostId""
 									-- LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-								LEFT JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								[WhereMainQuery] 								
 								GROUP BY qpost1.""Id""";
@@ -514,7 +514,7 @@ LIMIT 1
 									LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
 
-								INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 
@@ -540,7 +540,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
 									GROUP BY sp1.""Id"", sp1.""PostId""
 									-- LIMIT 1
 								) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-								LEFT JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+								LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
@@ -603,7 +603,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""LastModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
 								 FROM ""comic"".""ComicPosts""  qpost1		
-							 	INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+							 	INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false 								
@@ -620,7 +620,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT qpost1.""Id""
 								 FROM ""comic"".""ComicPosts""  qpost1
-							 	INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+							 	INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
 AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false							
@@ -897,7 +897,7 @@ LIMIT 1
 							p.""CreatedDate""
 							) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
@@ -948,7 +948,7 @@ LIMIT 1
 						  FROM ""comic"".""ComicSubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
-					UPDATE ""TagPosts""
+					UPDATE ""comic"".""ComicTagPosts""
 					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
@@ -1082,7 +1082,7 @@ sp.""IsEnableComment""
     SELECT p.""Id"", p.""Type"", p.""CreatedDate"", p.""HashId"",
            ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedDate"" DESC) AS type_rank
     FROM ""comic"".""ComicPosts""  p
-LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""				
+LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId""				
 LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
     WHERE ""Type"" IN (0, 1, 2)
     AND t.""Name"" ILIKE @ExactKeyword   
@@ -1135,7 +1135,7 @@ ORDER BY group_number, random_row_num;
 
         private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
 												   FROM ""comic"".""ComicPosts""  p
-												   LEFT JOIN ""TagPosts"" tp on p.""Id"" = tp.""PostId""
+												   LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId""
 												   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
 												   WHERE p.""IsDelete"" = false 
 												   AND p.""Status"" = {(int)PostStatus.Public}
@@ -1191,6 +1191,7 @@ ORDER BY group_number, random_row_num;
             get
             {
                 return @"
+                
                 SELECT 
                     p.""Id"",
 					p.""HashId"",
@@ -1203,10 +1204,10 @@ ORDER BY group_number, random_row_num;
                     p.""ViewCount"",
 					p.""IsMature"",
 					p.""CreatedDate"",
-                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""comic"".""ComicSubPosts"",
+                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
 				    to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
-                FROM ""comic"".""ComicPosts""  p
-                LEFT JOIN ""TagPosts"" tp ON p.""Id"" = tp.""PostId""
+                FROM ""comic"".""ComicPosts"" p
+                LEFT JOIN ""comic"".""ComicTagPosts"" tp ON p.""Id"" = tp.""PostId""
                 LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id""
                 LEFT JOIN (
                     SELECT ""PostId"",

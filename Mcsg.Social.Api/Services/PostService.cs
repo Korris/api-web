@@ -978,8 +978,8 @@ public partial class PostService : IPostService
                 comicPercent
             };
 
-            var query = GetLatestPostsByTypeQuery;
-            query = query.Replace("[GetTotalCount]", GetCountPostByTypeQuery);
+            var query = GetLatestPostsDataByTypeQuery;
+            query = query.Replace("[GetTotalCount]", GetCountPostDataByTypeQuery);
 
             var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, param);
 

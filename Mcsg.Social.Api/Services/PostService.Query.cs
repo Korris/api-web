@@ -1073,6 +1073,84 @@ sp.""IsEnableComment""
             }
         }
 
+        private string GetLatestPostsDataByTypeQuery
+        {
+            get
+            {
+                return @$"WITH ranked_feed AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId"",
+        ROW_NUMBER() OVER (ORDER BY ""CreatedDate"" DESC) AS type_rank
+    FROM ""Posts""
+    WHERE ""IsDelete"" = false
+	AND ""Type"" = 0
+    AND ""Status"" = 1
+),
+ranked_story AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId"",
+        ROW_NUMBER() OVER (ORDER BY ""CreatedDate"" DESC) AS type_rank
+    FROM ""story"".""StoryPosts""
+    WHERE ""IsDelete"" = false
+	AND ""Type"" = 1
+    AND ""Status"" = 1
+),
+ranked_comic AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId"",
+        ROW_NUMBER() OVER (ORDER BY ""CreatedDate"" DESC) AS type_rank
+    FROM ""comic"".""ComicPosts""
+    WHERE ""IsDelete"" = false
+    AND ""Type"" = 2
+    AND ""Status"" = 1
+),
+limited_feed AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId""
+    FROM ranked_feed
+    WHERE type_rank <= @feed
+),
+limited_story AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId""
+    FROM ranked_story
+    WHERE type_rank <= @story
+),
+limited_comic AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId""
+    FROM ranked_comic
+    WHERE type_rank <= @comic
+),
+combined_posts AS (
+    SELECT ""Id"", ""CreatedDate"", ""HashId"", 0 AS ""Type"" FROM limited_feed
+    UNION ALL
+    SELECT ""Id"", ""CreatedDate"", ""HashId"", 1 AS ""Type"" FROM limited_story
+    UNION ALL
+    SELECT ""Id"", ""CreatedDate"", ""HashId"", 2 AS ""Type"" FROM limited_comic
+),
+numbered_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+        ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedDate"" DESC) AS num
+    FROM combined_posts
+),
+grouped_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"",
+        CEILING(CAST(num AS FLOAT) / 
+        CASE
+            WHEN ""Type"" = 0 THEN @feedPercent * 10
+            WHEN ""Type"" = 1 THEN @storyPercent * 10
+            WHEN ""Type"" = 2 THEN @comicPercent * 10
+        END) AS group_number
+    FROM numbered_posts
+),
+final_grouped_posts AS (
+    SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number,
+        ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY ""CreatedDate"" DESC) AS row_num
+    FROM grouped_posts
+)
+SELECT ""Id"", ""Type"", ""CreatedDate"", ""HashId"", group_number
+FROM final_grouped_posts
+WHERE row_num <= 10
+ORDER BY group_number, row_num;
+
+[GetTotalCount]";
+            }
+        }
         private string GetLatestPostsByTagQuery
         {
             get
@@ -1132,6 +1210,23 @@ ORDER BY group_number, random_row_num;
 												   FROM ""Posts""
 												   WHERE ""IsDelete"" = false 
 												   AND ""Status"" = {(int)PostStatus.Public}";
+
+        private string GetCountPostDataByTypeQuery => $@"SELECT (
+													(SELECT COUNT(*) 
+												   FROM ""comic"".""ComicPosts""
+												   WHERE ""IsDelete"" = false 
+												   AND ""Status"" = 1)
+													+
+													(SELECT COUNT(*) 
+												   FROM ""story"".""StoryPosts""
+												   WHERE ""IsDelete"" = false 
+												   AND ""Status"" = 1)
+													+
+													(SELECT COUNT(*)
+												   FROM ""Posts""
+												   WHERE ""IsDelete"" = false 
+												   AND ""Status"" = 1)
+													)";
 
         private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
 												   FROM ""Posts"" p
