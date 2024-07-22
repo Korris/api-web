@@ -27,7 +27,7 @@ public class FileService : IFileService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="jobService">Job service</param>
-    public FileService(McsgDbContext context, ISetting setting, IStorageClient sc, IJobService jobService)
+    public FileService(McsgContext context, ISetting setting, IStorageClient sc, IJobService jobService)
     {
         _context = context;
         _setting = setting;
@@ -527,7 +527,7 @@ public class FileService : IFileService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

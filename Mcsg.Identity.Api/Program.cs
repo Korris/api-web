@@ -97,7 +97,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+        builder.Services.AddDbContext<McsgContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
         builder.Services.AddDbContext<WalletDbContext>(p => p.UseNpgsql(csDbWallet!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
 
         // Checker

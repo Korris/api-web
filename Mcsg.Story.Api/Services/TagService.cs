@@ -32,7 +32,7 @@ public partial class TagService : ITagService
     private readonly IConfiguration _configuration;
 
     public TagService(
-        McsgDbContext context,
+        McsgContext context,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ISmartLookupService smartLookupService,
@@ -424,7 +424,7 @@ public partial class TagService : ITagService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     #endregion
 }

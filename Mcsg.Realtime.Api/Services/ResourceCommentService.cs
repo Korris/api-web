@@ -18,7 +18,7 @@ namespace Mcsg.Realtime.Api.Services
         /// <param name="context">DB context</param>
         /// <param name="setting">Setting</param>
         /// <param name="sc">Storage client</param>
-        public ResourceCommentService(McsgDbContext context, ISetting setting, IStorageClient sc)
+        public ResourceCommentService(McsgContext context, ISetting setting, IStorageClient sc)
         {
             _context = context;
             _setting = setting;
@@ -179,7 +179,7 @@ namespace Mcsg.Realtime.Api.Services
         /// <summary>
         /// DB Context
         /// </summary>
-        private readonly McsgDbContext _context;
+        private readonly McsgContext _context;
 
         /// <summary>
         /// Setting

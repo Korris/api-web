@@ -24,7 +24,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    public PatchMoveFolderH(McsgDbContext context, ISetting setting, IStorageClient sc)
+    public PatchMoveFolderH(McsgContext context, ISetting setting, IStorageClient sc)
     {
         _context = context;
         _setting = setting;
@@ -83,7 +83,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

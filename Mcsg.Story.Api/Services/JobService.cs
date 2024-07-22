@@ -14,7 +14,7 @@ using Interfaces;
 
 public class JobService : IJobService
 {
-    public JobService(McsgDbContext context, ISetting setting)
+    public JobService(McsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -130,7 +130,7 @@ public class JobService : IJobService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

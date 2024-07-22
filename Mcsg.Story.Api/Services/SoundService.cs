@@ -18,7 +18,7 @@ using Requests;
 
 public partial class SoundService : ISoundService
 {
-    public SoundService(McsgDbContext context, ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
+    public SoundService(McsgContext context, ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _setting = setting;
@@ -160,7 +160,7 @@ public partial class SoundService : ISoundService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

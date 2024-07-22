@@ -19,7 +19,7 @@ public static class IdentityServiceCollectionExtensions
             option.Password.RequiredLength = 8;
         })
         .AddRoles<Role>()
-        .AddEntityFrameworkStores<McsgDbContext>()
+        .AddEntityFrameworkStores<McsgContext>()
         .AddDefaultTokenProviders()
         .AddUserManager<ApplicationUserManager>()
         .AddErrorDescriber<TErrorDescriber>();
@@ -38,7 +38,7 @@ public static class IdentityServiceCollectionExtensions
             option.Password.RequiredLength = 8;
         })
         .AddRoles<Role>()
-        .AddEntityFrameworkStores<McsgDbContext>()
+        .AddEntityFrameworkStores<McsgContext>()
         .AddDefaultTokenProviders();
 
         return services;

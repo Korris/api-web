@@ -61,7 +61,7 @@ public partial class AuthenticationService : IAuthenticationService
         , SSOServiceResolver serviceAccessor
         , IRepository<SmartLookup> smartLookupRepository
         , IUserWalletService userWalletService
-        , McsgDbContext context
+        , McsgContext context
         , ISetting setting,
         IUserNameUniquenessChecker uniquenessChecker)
     {
@@ -826,7 +826,7 @@ public partial class AuthenticationService : IAuthenticationService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

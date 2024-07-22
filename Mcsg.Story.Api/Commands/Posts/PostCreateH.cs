@@ -50,7 +50,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostCreateH(McsgDbContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    public PostCreateH(McsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;

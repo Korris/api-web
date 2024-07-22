@@ -15,7 +15,7 @@ using Interfaces;
 
 public partial class PostLinkService : IPostLinkService
 {
-    public PostLinkService(McsgDbContext context)
+    public PostLinkService(McsgContext context)
     {
         _context = context;
     }
@@ -82,7 +82,7 @@ public partial class PostLinkService : IPostLinkService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     #endregion
 }

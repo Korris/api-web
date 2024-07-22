@@ -23,7 +23,7 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="uniquenessChecker">Uniqueness checker</param>
-    public PatchUpdateUserNameH(McsgDbContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker)
+    public PatchUpdateUserNameH(McsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker)
     {
         _context = context;
         _setting = setting;
@@ -83,7 +83,7 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

@@ -82,7 +82,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDbContext<McsgDbContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+        builder.Services.AddDbContext<McsgContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();

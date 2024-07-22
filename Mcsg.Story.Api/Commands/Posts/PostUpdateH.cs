@@ -51,7 +51,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostUpdateH(McsgDbContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    public PostUpdateH(McsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;

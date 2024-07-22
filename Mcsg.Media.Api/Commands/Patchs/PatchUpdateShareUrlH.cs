@@ -23,7 +23,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
     /// </summary>
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
-    public PatchUpdateShareUrlH(McsgDbContext context, ISetting setting)
+    public PatchUpdateShareUrlH(McsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -93,7 +93,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

@@ -30,7 +30,7 @@ public partial class FeedService : IFeedService
     #region -- Methods --
 
     public FeedService(
-        McsgDbContext context,
+        McsgContext context,
         ISetting setting,
         IStorageClient sc,
         IPostService postService,
@@ -763,7 +763,7 @@ public partial class FeedService : IFeedService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

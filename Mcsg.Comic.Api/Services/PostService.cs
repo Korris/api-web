@@ -60,7 +60,7 @@ public partial class PostService : IPostService
         IViewHistoryService viewHistoryService,
         IConfiguration configuration,
         IMapper mapper,
-        McsgDbContext context,
+        McsgContext context,
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<PostReport> postReportValidator,
@@ -1917,7 +1917,7 @@ public partial class PostService : IPostService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

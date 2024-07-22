@@ -26,7 +26,7 @@ public partial class SmartLookupService : ISmartLookupService
     /// <param name="tagRepository"></param>
     /// <param name="smartLookupUserRepository"></param>
     /// <param name="smartLookupRepository"></param>
-    public SmartLookupService(McsgDbContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<TagPost> tagPostRepository, IRepository<User> userRepository)
+    public SmartLookupService(McsgContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<TagPost> tagPostRepository, IRepository<User> userRepository)
     {
         _context = context;
         _setting = setting;
@@ -186,7 +186,7 @@ public partial class SmartLookupService : ISmartLookupService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

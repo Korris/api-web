@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Mcsg.Common.Domain.Migrations
 {
-    [DbContext(typeof(McsgDbContext))]
-    partial class McsgDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(McsgContext))]
+    partial class McsgContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

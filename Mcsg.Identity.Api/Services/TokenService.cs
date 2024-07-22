@@ -14,7 +14,7 @@ using Lib.Common.Extensions;
 
 public class TokenService : ITokenService
 {
-    public TokenService(McsgDbContext context, ISetting setting)
+    public TokenService(McsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -117,7 +117,7 @@ public class TokenService : ITokenService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

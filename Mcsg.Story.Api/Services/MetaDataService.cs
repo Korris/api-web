@@ -7,7 +7,7 @@ using Interfaces;
 
 public class MetaDataService : IMetaDataService
 {
-    public MetaDataService(McsgDbContext context)
+    public MetaDataService(McsgContext context)
     {
         _context = context;
     }
@@ -66,7 +66,7 @@ public class MetaDataService : IMetaDataService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     #endregion
 }

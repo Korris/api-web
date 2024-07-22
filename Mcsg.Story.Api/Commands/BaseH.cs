@@ -24,14 +24,14 @@ using Interfaces;
 /// Initialize
 /// </remarks>
 /// <param name="context">DB context</param>
-public abstract class BaseH(McsgDbContext context)
+public abstract class BaseH(McsgContext context)
 {
     #region -- Fields --
 
     /// <summary>
     /// DB context
     /// </summary>
-    protected readonly McsgDbContext _context = context;
+    protected readonly McsgContext _context = context;
 
     #endregion
 }
@@ -44,7 +44,7 @@ public abstract class BaseH(McsgDbContext context)
 /// </remarks>
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
-public abstract class BaseSettingH(McsgDbContext context, ISetting setting) : BaseH(context)
+public abstract class BaseSettingH(McsgContext context, ISetting setting) : BaseH(context)
 {
     #region -- Fields --
 
@@ -65,7 +65,7 @@ public abstract class BaseSettingH(McsgDbContext context, ISetting setting) : Ba
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
 /// <param name="sc">Storage client</param>
-public abstract class BaseMinioH(McsgDbContext context, ISetting setting, IStorageClient sc) : BaseSettingH(context, setting)
+public abstract class BaseMinioH(McsgContext context, ISetting setting, IStorageClient sc) : BaseSettingH(context, setting)
 {
     #region -- Fields --
 

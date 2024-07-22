@@ -10,9 +10,9 @@ using Domain.Entities.Configurations;
 using SeedWork.Extensions;
 
 /// <summary>
-/// McsgDbContext
+/// McsgContext
 /// </summary>
-public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
+public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 {
     #region -- Overrides --
 
@@ -85,13 +85,13 @@ public partial class McsgDbContext : IdentityDbContext<User, Role, Guid>
     /// <summary>
     /// Initialize
     /// </summary>
-    public McsgDbContext() { }
+    public McsgContext() { }
 
     /// <summary>
     /// Initialize
     /// </summary>
     /// <param name="options">Options</param>
-    public McsgDbContext(DbContextOptions<McsgDbContext> options) : base(options) { }
+    public McsgContext(DbContextOptions<McsgContext> options) : base(options) { }
 
     /// <summary>
     /// Make serial number

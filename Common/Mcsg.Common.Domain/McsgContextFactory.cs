@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace Mcsg.Common.Domain;
 
 /// <summary>
-/// McsgDbContextFactory
+/// McsgContextFactory
 /// </summary>
-public class McsgDbContextFactory : IDesignTimeDbContextFactory<McsgDbContext>
+public class McsgContextFactory : IDesignTimeDbContextFactory<McsgContext>
 {
     /// <summary>
     /// CreateDbContext
     /// </summary>
     /// <param name="args">Arguments</param>
     /// <returns>Return the result</returns>
-    public McsgDbContext CreateDbContext(string[] args)
+    public McsgContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<McsgDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<McsgContext>();
         optionsBuilder.UseNpgsql(args[0]); // args[0] as a connection string
 
-        return new McsgDbContext(optionsBuilder.Options);
+        return new McsgContext(optionsBuilder.Options);
     }
 }

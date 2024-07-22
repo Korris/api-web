@@ -3,9 +3,9 @@
 using Domain.Entities;
 
 /// <summary>
-/// McsgDbContext
+/// McsgContext
 /// </summary>
-partial class McsgDbContext
+partial class McsgContext
 {
     #region -- Properties --
 

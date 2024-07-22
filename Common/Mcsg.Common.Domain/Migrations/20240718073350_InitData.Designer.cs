@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Mcsg.Common.Domain.Migrations
 {
-    [DbContext(typeof(McsgDbContext))]
+    [DbContext(typeof(McsgContext))]
     [Migration("20240718073350_InitData")]
     partial class InitData
     {

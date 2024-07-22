@@ -38,7 +38,7 @@ public partial class UserService : IUserService
         ILogger<UserService> logger,
         IRepository<SmartLookup> smartLookupRepository,
         DistributeManager distributeManager,
-        McsgDbContext context,
+        McsgContext context,
         ISetting setting,
         IStorageClient sc)
     {
@@ -808,7 +808,7 @@ public partial class UserService : IUserService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     /// <summary>
     /// Setting

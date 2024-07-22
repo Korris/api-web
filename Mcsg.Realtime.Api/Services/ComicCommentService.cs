@@ -35,7 +35,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly ISmartCountService _smartCountService;
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
-        private readonly McsgDbContext _context;
+        private readonly McsgContext _context;
 
         public ComicCommentService(ICurrentUserService currentUserService,
             IRepository<ComicPost> postRepository,
@@ -51,7 +51,7 @@ namespace Mcsg.Realtime.Api.Services
             IMapper mapper,
             ISetting setting,
             IConfiguration configuration,
-            McsgDbContext context)
+            McsgContext context)
         {
             _currentUserService = currentUserService;
             _postRepository = postRepository;

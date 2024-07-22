@@ -33,7 +33,7 @@ public class UserNameUniquenessChecker : IUserNameUniquenessChecker
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public UserNameUniquenessChecker(McsgDbContext context)
+    public UserNameUniquenessChecker(McsgContext context)
     {
         _context = context;
     }
@@ -45,7 +45,7 @@ public class UserNameUniquenessChecker : IUserNameUniquenessChecker
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgDbContext _context;
+    private readonly McsgContext _context;
 
     #endregion
 }

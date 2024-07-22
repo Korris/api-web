@@ -14,12 +14,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDataLibrary(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<McsgDbContext>(options =>
+        services.AddDbContext<McsgContext>(options =>
         {
             options.UseNpgsql(connectionString,
                 builder =>
                 {
-                    builder.MigrationsAssembly(typeof(McsgDbContext).Assembly.FullName);
+                    builder.MigrationsAssembly(typeof(McsgContext).Assembly.FullName);
                     builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     builder.EnableRetryOnFailure();
                 })
