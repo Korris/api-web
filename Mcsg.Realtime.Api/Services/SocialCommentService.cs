@@ -20,7 +20,7 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public partial class CommentService : ICommentService
+    public partial class SocialCommentService : ISocialCommentService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRepository<Post> _postRepository;
@@ -37,7 +37,7 @@ namespace Mcsg.Realtime.Api.Services
         private IConfiguration _configuration;
         private readonly McsgDbContext _context;
 
-        public CommentService(ICurrentUserService currentUserService,
+        public SocialCommentService(ICurrentUserService currentUserService,
             IRepository<Post> postRepository,
             IRepository<SubPost> subPostRepository,
             IRepository<PostComment> postCommentRepository,

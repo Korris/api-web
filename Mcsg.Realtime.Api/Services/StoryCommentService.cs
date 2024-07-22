@@ -20,7 +20,7 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public partial class StoryCommentService : ICommentService
+    public partial class StoryCommentService : IStoryCommentService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRepository<StoryPost> _postRepository;
@@ -245,48 +245,37 @@ namespace Mcsg.Realtime.Api.Services
         #region Add New Comment
         private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
         {
-            try
+            var comment = new StoryPostComment
             {
+                AuthorId = author.Id,
+                Body = req.CommentText,
+                CreatedBy = author.Id,
+                LastModifiedBy = author.Id,
+                PostId = req.PostId,
+                Status = CommentStatus.Public,
+                ResourceId = resource?.Id ?? null,
+                GifId = req.GifId
+            };
 
-                var comment = new StoryPostComment
-                {
-                    AuthorId = author.Id,
-                    Body = req.CommentText,
-                    CreatedBy = author.Id,
-                    LastModifiedBy = author.Id,
-                    PostId = req.PostId,
-                    Status = CommentStatus.Public,
-                    ResourceId = resource?.Id ?? null,
-                    GifId = req.GifId
-                };
+            await _postCommentRepository.InsertAsync(comment);
+            //PING COUNT
+            await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.Post);
 
-                await _postCommentRepository.InsertAsync(comment);
-                //PING COUNT
-                await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.Post);
+            await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
 
-                await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
-
-
-                return new PostCommentResp
-                {
-                    PostId = comment.PostId,
-                    CommentText = comment.Body,
-                    CommentDate = comment.LastModifiedDate.Value,
-                    Type = PostTypes.Post,
-                    Id = comment.Id,
-                    ResourceHashId = resource?.HashId ?? null,
-                    ResourceUrl = resource?.Url ?? null,
-                    AuthorId = comment.AuthorId,
-                    GifId = req.GifId,
-                    Mentions = req.Mentions
-                };
-            }
-
-            catch (Exception ex)
+            return new PostCommentResp
             {
-
-                return new PostCommentResp { };
-            }
+                PostId = comment.PostId,
+                CommentText = comment.Body,
+                CommentDate = comment.LastModifiedDate.Value,
+                Type = PostTypes.Post,
+                Id = comment.Id,
+                ResourceHashId = resource?.HashId ?? null,
+                ResourceUrl = resource?.Url ?? null,
+                AuthorId = comment.AuthorId,
+                GifId = req.GifId,
+                Mentions = req.Mentions
+            };
         }
         private async Task<PostCommentResp> CommentToSubPost(PostCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
         {

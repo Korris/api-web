@@ -18,7 +18,7 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public partial class StoryReplyService : IReplyService
+    public partial class StoryReplyService : IStoryReplyService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRepository<StoryPost> _postRepository;

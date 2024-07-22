@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Realtime.Api.Services
 {
-    public partial class CommentService
+    public partial class SocialCommentService
     {
         private string DeleteCommentCommand
         {

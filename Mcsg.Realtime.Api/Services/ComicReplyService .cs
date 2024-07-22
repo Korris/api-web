@@ -18,7 +18,7 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public partial class ComicReplyService : IReplyService
+    public partial class ComicReplyService : IComicReplyService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRepository<ComicPost> _postRepository;

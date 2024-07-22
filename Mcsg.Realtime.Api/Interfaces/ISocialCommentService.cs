@@ -2,7 +2,7 @@
 
 using Requests;
 
-public interface ICommentService
+public interface ISocialCommentService
 {
     Task<PostCommentResp> PostComment(PostCommentReq req);
     Task<PostCommentResp> UpdateComment(UpdateCommentReq req);

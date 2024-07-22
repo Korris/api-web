@@ -2,7 +2,7 @@
 
 using Requests;
 
-public interface IReplyService
+public interface ISocialReplyService
 {
     Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req);
     Task<ReplyCommentResp> UpdateReplyComment(UpdateReplyCommentReq req);

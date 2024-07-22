@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Realtime.Api.Services
 {
-    public partial class ReplyService
+    public partial class SocialReplyService
     {
         private string DeleteReplyCommand
         {

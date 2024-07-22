@@ -18,7 +18,7 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public partial class ReplyService : IReplyService
+    public partial class SocialReplyService : ISocialReplyService
     {
         private readonly ICurrentUserService _currentUserService;
         private readonly IRepository<Post> _postRepository;
@@ -33,7 +33,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
 
-        public ReplyService(ICurrentUserService currentUserService,
+        public SocialReplyService(ICurrentUserService currentUserService,
             IRepository<Post> postRepository,
             IRepository<SubPost> subPostRepository,
             IRepository<PostComment> postCommentRepository,

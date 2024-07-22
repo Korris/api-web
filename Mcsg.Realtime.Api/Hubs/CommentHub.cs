@@ -7,32 +7,39 @@ namespace Mcsg.Realtime.Api.Hubs
     using Interfaces;
     using Lib.Common.Constants;
     using Requests;
-    using Services;
 
+    /// <summary>
+    /// Comment hub
+    /// </summary>
     public class CommentHub : Hub
     {
-        private readonly CommentService _commentService;
-        private readonly ComicCommentService _comicCommentService;
-        private readonly StoryCommentService _storyCommentService;
-        private readonly ReplyService _replyService;
-        private readonly ComicReplyService _comicReplyService;
-        private readonly StoryReplyService _storyReplyService;
-        public CommentHub(
-                CommentService commentService,
-                ComicCommentService comicCommentService,
-                StoryCommentService storyCommentService,
-                ReplyService replyService,
-                ComicReplyService comicReplyService,
-                StoryReplyService storyReplyService)
+        #region -- Methods --
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="comicCommentService"></param>
+        /// <param name="comicReplyService"></param>
+        /// <param name="socialCommentService"></param>
+        /// <param name="socialReplyService"></param>
+        /// <param name="storyCommentService"></param>
+        /// <param name="storyReplyService"></param>
+        public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
         {
-            _commentService = commentService;
             _comicCommentService = comicCommentService;
+            _comicReplyService = comicReplyService;
+
+            _socialCommentService = socialCommentService;
+            _socialReplyService = socialReplyService;
+
             _storyCommentService = storyCommentService;
             _storyReplyService = storyReplyService;
-            _comicReplyService = comicReplyService;
-            _replyService = replyService;
         }
 
+        /// <summary>
+        /// OnConnected async
+        /// </summary>
+        /// <returns></returns>
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
@@ -41,20 +48,16 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Send comment to post / subpost
         /// </summary>
-        /// <param name="postId"></param>
-        /// <param name="commentText"></param>
-        /// <param name="postId"></param>
-        /// <param name="resourceHashId"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task SendComment(PostCommentReq req)
         {
-            ICommentService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicCommentService,
                 nameof(MicroService.Story) => _storyCommentService,
-                _ => _commentService
+                _ => _socialCommentService
             };
             // Handle and store the new comment in database
 
@@ -66,22 +69,17 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Update comment to post / subpost
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="postId"></param>
-        /// <param name="commentText"></param>
-        /// <param name="postId"></param>
-        /// <param name="resourceHashId"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task UpdateComment(UpdateCommentReq req)
         {
             // Handle and update comment in database
-            ICommentService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicCommentService,
                 nameof(MicroService.Story) => _storyCommentService,
-                _ => _commentService
+                _ => _socialCommentService
             };
             var resp = await service.UpdateComment(req);
 
@@ -92,20 +90,19 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Delete comment in post / subpost
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task DeleteComment(DeleteCommentReq req)
         {
-            ICommentService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicCommentService,
                 nameof(MicroService.Story) => _storyCommentService,
-                _ => _commentService
+                _ => _socialCommentService
             };
             // Handle and update comment in database
-            var resp = await _commentService.DeleteComment(req);
+            var resp = await _socialCommentService.DeleteComment(req);
 
             // Then broadcast the comment to all connected clients
             await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteComment, JsonConvert.SerializeObject(resp));
@@ -114,23 +111,19 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Reply comment to comment in post / subpost
         /// </summary>
-        /// <param name="replyToCommentId"></param>
-        /// <param name="replyText"></param>
-        /// <param name="postId"></param>
-        /// <param name="resourceHashId"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task SendReply(ReplyCommentReq req)
         {
-            IReplyService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicReplyService,
                 nameof(MicroService.Story) => _storyReplyService,
-                _ => _replyService
+                _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _replyService.ReplyComment(req);
+            var resp = await _socialReplyService.ReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveReply, JsonConvert.SerializeObject(resp));
@@ -139,24 +132,19 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Update reply comment to comment in post / subpost
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="replyToCommentId"></param>
-        /// <param name="replyText"></param>
-        /// <param name="postId"></param>
-        /// <param name="resourceHashId"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task UpdateReply(UpdateReplyCommentReq req)
         {
-            IReplyService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicReplyService,
                 nameof(MicroService.Story) => _storyReplyService,
-                _ => _replyService
+                _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _replyService.UpdateReplyComment(req);
+            var resp = await _socialReplyService.UpdateReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateReply, JsonConvert.SerializeObject(resp));
@@ -165,24 +153,37 @@ namespace Mcsg.Realtime.Api.Hubs
         /// <summary>
         /// Reply comment to comment in post / subpost
         /// </summary>
-        /// <param name="replyCommentId"></param>
-        /// <param name="replyToCommentId"></param>
-        /// <param name="type">post / subpost</param>
+        /// <param name="req"></param>
         /// <returns></returns>
         //[Authorize]
         public async Task DeleteReply(DeleteReplyCommentReq req)
         {
-            IReplyService service = req.MicroService switch
+            var service = req.MicroService switch
             {
                 nameof(MicroService.Comic) => _comicReplyService,
                 nameof(MicroService.Story) => _storyReplyService,
-                _ => _replyService
+                _ => _socialReplyService
             };
             // Handle and store the new reply in database
-            var resp = await _replyService.DeleteReplyComment(req);
+            var resp = await _socialReplyService.DeleteReplyComment(req);
 
             // Then broadcast the reply to the clients of the comment
             await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteReply, JsonConvert.SerializeObject(resp));
         }
+
+        #endregion
+
+        #region -- Fields --
+
+        private readonly IComicCommentService _comicCommentService;
+        private readonly IComicReplyService _comicReplyService;
+
+        private readonly ISocialCommentService _socialCommentService;
+        private readonly ISocialReplyService _socialReplyService;
+
+        private readonly IStoryCommentService _storyCommentService;
+        private readonly IStoryReplyService _storyReplyService;
+
+        #endregion
     }
 }
