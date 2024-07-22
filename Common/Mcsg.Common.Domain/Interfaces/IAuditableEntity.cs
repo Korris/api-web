@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Common.Domain.Entities.Interface;
+﻿namespace Mcsg.Common.Domain.Interfaces;
 
 public interface IAuditableEntity
 {

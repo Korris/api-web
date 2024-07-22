@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Common.Domain.Entities.Common;
 
-using Interface;
+using Interfaces;
 
 public class AuditableEntity : BaseEntity, IAuditableEntity
 {
