@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Hubs
 {
+    using Common.Core.Enums;
     using Lib.Common.Constants;
-    using Mcsg.Common.Core.Enums;
     using Requests;
     using Services;
 

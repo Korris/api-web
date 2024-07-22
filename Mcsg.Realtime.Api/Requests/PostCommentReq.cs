@@ -1,15 +1,14 @@
-﻿namespace Mcsg.Realtime.Api.Requests
-{
-    using Dtos;
+﻿namespace Mcsg.Realtime.Api.Requests;
 
-    public class PostCommentReq
-    {
-        public Guid PostId { get; set; }
-        public string CommentText { get; set; }
-        public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
-        public string ResourceHashId { get; set; }
-        public string GifId { get; set; }
-        public string Type { get; set; } // post / subpost
-        public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
-    }
+using Dtos;
+
+public class PostCommentReq
+{
+    public Guid PostId { get; set; }
+    public string CommentText { get; set; }
+    public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
+    public string ResourceHashId { get; set; }
+    public string GifId { get; set; }
+    public string Type { get; set; } // post / subpost
+    public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
 }
