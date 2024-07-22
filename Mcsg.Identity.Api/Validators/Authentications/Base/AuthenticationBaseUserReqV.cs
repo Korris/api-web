@@ -27,15 +27,6 @@ public class AuthenticationBaseUserReqV : AbstractValidator<BaseUserReq>
             RuleFor(p => p.Phone).NotEmpty().WithMessage($"{t} {NotEmpty}");
         });
 
-        When(p => !string.IsNullOrWhiteSpace(p.Email), () =>
-        {
-            var t = nameof(Email);
-            RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}")
-                .MinimumLength(Email.Min).WithMessage($"{t} {MinimumLength} {Email.Min}")
-                .MaximumLength(Email.Max).WithMessage($"{t} {MaximumLength} {Email.Max}")
-                .EmailAddress().WithMessage($"{t} {EmailAddress}");
-        });
-
         When(p => !string.IsNullOrWhiteSpace(p.Phone), () =>
         {
             var t = "Phone";
