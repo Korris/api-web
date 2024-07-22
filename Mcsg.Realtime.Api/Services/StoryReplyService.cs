@@ -28,7 +28,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly IResourceCommentService _resourceCommentService;
         private readonly IRepository<StoryResource> _resourceRepository;
         private readonly IRepository<Mention> _mentionRepository;
-        private readonly INotificationService _notificationService;
+        private readonly IStoryNotificationService _notificationService;
         private readonly IMentionService _mentionService;
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
@@ -41,7 +41,7 @@ namespace Mcsg.Realtime.Api.Services
             IResourceCommentService resourceCommentService,
             IRepository<StoryResource> resourceRepository,
             IRepository<Mention> mentionRepository,
-            INotificationService notificationService,
+            IStoryNotificationService notificationService,
             IMentionService mentionService,
             IMapper mapper,
             ISetting setting,

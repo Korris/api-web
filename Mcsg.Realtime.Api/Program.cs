@@ -143,6 +143,8 @@ public class Program
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<IResourceCommentService, ResourceCommentService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
+        builder.Services.AddScoped<IStoryNotificationService, StoryNotificationService>();
+        builder.Services.AddScoped<IComicNotificationService, ComicNotificationService>();
         builder.Services.AddScoped<IMentionService, MentionService>();
 
         var app = builder.Build();
