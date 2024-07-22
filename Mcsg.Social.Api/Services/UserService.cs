@@ -55,14 +55,14 @@ public partial class UserService : IUserService
 
     public async Task<UserProfileResponse> GetCurrentUserAsync()
     {
-        var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
         var userRespone = await CreateUserRespone(user);
 
         //Check first login
         if (user.LastLoginDate == null)
         {
             user.LastLoginDate = DateTime.UtcNow;
-            await _userRepository.UpdateAsync(user);
+            await _context.SaveChangesAsync();
         }
 
         return userRespone;
@@ -86,7 +86,7 @@ public partial class UserService : IUserService
         string fileName = string.Empty;
         try
         {
-            var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
 
             var objectName = $"{Setting.MinioFolder.Image}/{userAvatarUpdateRequest.Avatar.FileName}";
             var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
@@ -111,7 +111,7 @@ public partial class UserService : IUserService
             await _sc.Strategy.PutObject(newFormFile, objectName, null);
             newFormFile.Close();
 
-            await _userRepository.UpdateAsync(user);
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -134,7 +134,7 @@ public partial class UserService : IUserService
         string fileName = string.Empty;
         try
         {
-            var user = await _userRepository.GetByIdAsync(_currentUserService.Session.UserId);
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
             var objectName = $"{Setting.MinioFolder.Image}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
             var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
             if (isExistFile != null)
@@ -148,8 +148,8 @@ public partial class UserService : IUserService
             user.CoverPhoto = fileName;
             objectName = $"{Setting.MinioFolder.Image}/{fileName}";
             await _sc.Strategy.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
-            await _userRepository.UpdateAsync(user);
 
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -478,7 +478,11 @@ public partial class UserService : IUserService
 
     public async Task<UserProfileAvatarResponse> GetUserAvatar(Guid userId)
     {
-        if (userId == Guid.Empty) return GetDefaultUser();
+        if (userId == Guid.Empty)
+        {
+            return GetDefaultUser();
+        }
+
         var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserAvatarById, new { UserId = userId });
         return new UserProfileAvatarResponse
         {
