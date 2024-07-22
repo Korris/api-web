@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Common.Domain.Entities.Interface
+﻿namespace Mcsg.Common.Domain.Entities.Interface;
+
+public interface IEntity
 {
-    public interface IEntity
-    {
-        Guid Id { get; set; }
-    }
+    Guid Id { get; set; }
 }

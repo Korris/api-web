@@ -1,26 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
-    using Core.Enums;
+namespace Mcsg.Common.Domain.Entities;
 
-    [Table("ComicResources")]
-    public class ComicResource : AuditableEntity
-    {
-        public Guid? AuthorId { get; set; }
-        public string? HashId { get; set; }
-        public Guid? SubPostId { get; set; }
-        public string? Title { get; set; }
-        public string? Name { get; set; }
-        public string? Url { get; set; }
-        public string? ShareUrl { get; set; }
-        public int Order { get; set; }
-        public double Size { get; set; } // bytes
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public ResourceType Type { get; set; }
-        public ResourceLocationType LocationType { get; set; }
-        public ResourceStatus Status { get; set; } = ResourceStatus.Done;
-    }
+using Common;
+using Core.Enums;
+
+[Table("ComicResources")]
+public class ComicResource : AuditableEntity
+{
+    public Guid? AuthorId { get; set; }
+    public string? HashId { get; set; }
+    public Guid? SubPostId { get; set; }
+    public string? Title { get; set; }
+    public string? Name { get; set; }
+    public string? Url { get; set; }
+    public string? ShareUrl { get; set; }
+    public int Order { get; set; }
+    public double Size { get; set; } // bytes
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public ResourceType Type { get; set; }
+    public ResourceLocationType LocationType { get; set; }
+    public ResourceStatus Status { get; set; } = ResourceStatus.Done;
 }

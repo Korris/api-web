@@ -1,21 +1,20 @@
-﻿namespace Mcsg.Common.Domain.Entities.Common
+﻿namespace Mcsg.Common.Domain.Entities.Common;
+
+using Interface;
+
+public class AuditableEntity : BaseEntity, IAuditableEntity
 {
-    using Interface;
+    public DateTime CreatedDate { get; set; }
+    public Guid? CreatedBy { get; set; }
+    public DateTime? LastModifiedDate { get; set; }
+    public Guid? LastModifiedBy { get; set; }
+    public bool IsDelete { get; set; }
 
-    public class AuditableEntity : BaseEntity, IAuditableEntity
+    public AuditableEntity() : base()
     {
-        public DateTime CreatedDate { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTime? LastModifiedDate { get; set; }
-        public Guid? LastModifiedBy { get; set; }
-        public bool IsDelete { get; set; }
-
-        public AuditableEntity() : base()
-        {
-            var now = DateTime.UtcNow;
-            CreatedDate = now;
-            LastModifiedDate = now;
-            IsDelete = false;
-        }
+        var now = DateTime.UtcNow;
+        CreatedDate = now;
+        LastModifiedDate = now;
+        IsDelete = false;
     }
 }

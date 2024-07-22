@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class TagFavorite : AuditableEntity
-    {
-        public Guid TagId { get; set; }
-        public Guid UserId { get; set; }
-    }
+using Common;
+
+public class TagFavorite : AuditableEntity
+{
+    public Guid TagId { get; set; }
+    public Guid UserId { get; set; }
 }

@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+namespace Mcsg.Common.Domain.Entities;
 
-    [Table("StoryTagPosts")]
-    public class StoryTagPost : AuditableEntity
-    {
-        public Guid TagId { get; set; }
-        public Guid PostId { get; set; }
-    }
+using Common;
+
+[Table("StoryTagPosts")]
+public class StoryTagPost : AuditableEntity
+{
+    public Guid TagId { get; set; }
+    public Guid PostId { get; set; }
 }

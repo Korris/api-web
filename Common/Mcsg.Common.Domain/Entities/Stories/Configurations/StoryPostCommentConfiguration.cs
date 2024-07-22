@@ -1,19 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Common.Domain.Entities.Configurations
-{
-    using Core.Constants;
+namespace Mcsg.Common.Domain.Entities.Configurations;
 
-    public class StoryPostCommentConfiguration : BaseConfiguration<StoryPostComment>
+using Core.Constants;
+
+public class StoryPostCommentConfiguration : BaseConfiguration<StoryPostComment>
+{
+    public override void CreateEntityConfiguration(EntityTypeBuilder<StoryPostComment> builder)
     {
-        public override void CreateEntityConfiguration(EntityTypeBuilder<StoryPostComment> builder)
-        {
-            builder.ToTable("StoryPostComments", DbSchema.Story);
-            builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
-            builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
-            builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
-            builder.HasOne(typeof(StoryResource)).WithMany().HasForeignKey("ResourceId");
-        }
+        builder.ToTable("StoryPostComments", DbSchema.Story);
+        builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
+        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
+        builder.HasOne(typeof(StoryResource)).WithMany().HasForeignKey("ResourceId");
     }
 }

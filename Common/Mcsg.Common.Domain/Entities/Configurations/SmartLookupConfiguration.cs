@@ -1,6 +1,5 @@
-﻿namespace Mcsg.Common.Domain.Entities.Configurations
+﻿namespace Mcsg.Common.Domain.Entities.Configurations;
+
+public class SmartLookupConfiguration : BaseConfiguration<SmartLookup>
 {
-    public class SmartLookupConfiguration : BaseConfiguration<SmartLookup>
-    {
-    }
 }

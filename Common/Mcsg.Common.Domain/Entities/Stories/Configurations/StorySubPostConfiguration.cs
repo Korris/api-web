@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Common.Domain.Entities.Configurations
-{
-    using Core.Constants;
+namespace Mcsg.Common.Domain.Entities.Configurations;
 
-    public class StorySubPostConfiguration : BaseConfiguration<StorySubPost>
+using Core.Constants;
+
+public class StorySubPostConfiguration : BaseConfiguration<StorySubPost>
+{
+    public override void CreateEntityConfiguration(EntityTypeBuilder<StorySubPost> builder)
     {
-        public override void CreateEntityConfiguration(EntityTypeBuilder<StorySubPost> builder)
-        {
-            builder.ToTable("StorySubPosts", DbSchema.Story);
-            builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-            builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
-            builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        }
+        builder.ToTable("StorySubPosts", DbSchema.Story);
+        builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
+        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

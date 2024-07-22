@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class UserFollow : AuditableEntity
-    {
-        public Guid UserFollowerId { get; set; }
-        public Guid UserFollowingId { get; set; }
-    }
+using Common;
+
+public class UserFollow : AuditableEntity
+{
+    public Guid UserFollowerId { get; set; }
+    public Guid UserFollowingId { get; set; }
 }

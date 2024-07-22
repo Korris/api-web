@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class UserExclusiveSubPost : AuditableEntity
-    {
-        public Guid UserId { get; set; }
-        public Guid SubPostId { get; set; }
-    }
+using Common;
+
+public class UserExclusiveSubPost : AuditableEntity
+{
+    public Guid UserId { get; set; }
+    public Guid SubPostId { get; set; }
 }

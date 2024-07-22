@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+namespace Mcsg.Common.Domain.Entities;
 
-    [Table("StoryPostReactions")]
-    public class StoryPostReaction : ReactionBase
-    {
-    }
+using Common;
+
+[Table("StoryPostReactions")]
+public class StoryPostReaction : ReactionBase
+{
 }

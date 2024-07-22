@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Common.Domain.Entities.Configurations
-{
-    using Core.Constants;
+namespace Mcsg.Common.Domain.Entities.Configurations;
 
-    public class ComicPostConfiguration : BaseConfiguration<ComicPost>
+using Core.Constants;
+
+public class ComicPostConfiguration : BaseConfiguration<ComicPost>
+{
+    public override void CreateEntityConfiguration(EntityTypeBuilder<ComicPost> builder)
     {
-        public override void CreateEntityConfiguration(EntityTypeBuilder<ComicPost> builder)
-        {
-            builder.ToTable("ComicPosts", DbSchema.Comic);
-            builder.Property(x => x.HashId).IsRequired();
-            builder.HasIndex(x => new { x.HashId, x.UserId, x.Type, x.Id }).IsUnique();
-            builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        }
+        builder.ToTable("ComicPosts", DbSchema.Comic);
+        builder.Property(x => x.HashId).IsRequired();
+        builder.HasIndex(x => new { x.HashId, x.UserId, x.Type, x.Id }).IsUnique();
+        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

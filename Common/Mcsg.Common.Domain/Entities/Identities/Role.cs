@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Mcsg.Common.Domain.Entities
+namespace Mcsg.Common.Domain.Entities;
+
+public class Role : IdentityRole<Guid>
 {
-    public class Role : IdentityRole<Guid>
-    {
-        public string? DisplayName { get; set; }
-    }
+    public string? DisplayName { get; set; }
 }

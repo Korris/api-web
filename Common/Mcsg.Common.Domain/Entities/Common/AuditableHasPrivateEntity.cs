@@ -1,14 +1,13 @@
-﻿namespace Mcsg.Common.Domain.Entities.Common
+﻿namespace Mcsg.Common.Domain.Entities.Common;
+
+using Core.Enums;
+
+public class AuditableHasPrivateEntity : AuditableEntity
 {
-    using Core.Enums;
+    public PostPermission Permission { get; set; }
 
-    public class AuditableHasPrivateEntity : AuditableEntity
+    public AuditableHasPrivateEntity() : base()
     {
-        public PostPermission Permission { get; set; }
-
-        public AuditableHasPrivateEntity() : base()
-        {
-            Permission = PostPermission.Public;
-        }
+        Permission = PostPermission.Public;
     }
 }

@@ -1,11 +1,10 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class UserRefreshToken : AuditableEntity
-    {
-        public Guid UserId { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpiryTime { get; set; }
-    }
+using Common;
+
+public class UserRefreshToken : AuditableEntity
+{
+    public Guid UserId { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 }

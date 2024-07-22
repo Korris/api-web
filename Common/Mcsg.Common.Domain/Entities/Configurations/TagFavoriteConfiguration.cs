@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Common.Domain.Entities.Configurations
+namespace Mcsg.Common.Domain.Entities.Configurations;
+
+public class TagFavoriteConfiguration : BaseConfiguration<TagFavorite>
 {
-    public class TagFavoriteConfiguration : BaseConfiguration<TagFavorite>
+    public override void CreateEntityConfiguration(EntityTypeBuilder<TagFavorite> builder)
     {
-        public override void CreateEntityConfiguration(EntityTypeBuilder<TagFavorite> builder)
-        {
-            builder.ToTable("TagFavorites");
-            builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
-            builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        }
+        builder.ToTable("TagFavorites");
+        builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
+        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

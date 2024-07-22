@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
-    using Core.Enums;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class PostReport : AuditableEntity
-    {
-        public Guid PostId { get; set; }
-        public Guid UserId { get; set; }
-        public ReasonType ReasonType { get; set; }
-        public string? ReasonText { get; set; }
-    }
+using Common;
+using Core.Enums;
+
+public class PostReport : AuditableEntity
+{
+    public Guid PostId { get; set; }
+    public Guid UserId { get; set; }
+    public ReasonType ReasonType { get; set; }
+    public string? ReasonText { get; set; }
 }

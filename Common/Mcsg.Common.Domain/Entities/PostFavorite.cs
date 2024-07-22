@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Common.Domain.Entities
-{
-    using Common;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-    public class PostFavorite : AuditableEntity
-    {
-        public Guid PostId { get; set; }
-        public Guid UserId { get; set; }
-    }
+using Common;
+
+public class PostFavorite : AuditableEntity
+{
+    public Guid PostId { get; set; }
+    public Guid UserId { get; set; }
 }
