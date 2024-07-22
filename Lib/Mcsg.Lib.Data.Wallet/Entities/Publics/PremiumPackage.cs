@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
-    using Mcsg.Common.SeedWork;
-
-    public class PremiumPackage : AuditableEntity
+    public class PremiumPackage
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

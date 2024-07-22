@@ -25,8 +25,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     FromDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ToDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -66,8 +66,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     Value = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -85,8 +85,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     Symbol = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
                     Logo = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -106,8 +106,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     TotalAmount = table.Column<float>(type: "real", nullable: false),
                     EarningPeriodId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -137,8 +137,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     SystemMessage = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -163,8 +163,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     DataValue = table.Column<float>(type: "real", nullable: false),
                     EarningValue = table.Column<float>(type: "real", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -197,8 +197,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     Type = table.Column<int>(type: "integer", nullable: false),
                     UserWalletId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -222,8 +222,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -252,8 +252,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     AccountNumber = table.Column<string>(type: "text", nullable: true),
                     AccountName = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -294,8 +294,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     RelatedId = table.Column<Guid>(type: "uuid", nullable: true),
                     ExternalId = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -332,8 +332,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     CreatorUserId = table.Column<Guid>(type: "uuid", nullable: true),
                     IsPaid = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -359,8 +359,8 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                     Type = table.Column<int>(type: "integer", nullable: false),
                     OtpType = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },

@@ -34,8 +34,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Order = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -60,8 +60,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ViewNumber = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -92,8 +92,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CrawStatus = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -113,8 +113,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Error = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -136,8 +136,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Text = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -178,8 +178,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ActorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -225,8 +225,8 @@ namespace Mcsg.Common.Domain.Migrations
                     PremiumDate = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -276,8 +276,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -295,8 +295,8 @@ namespace Mcsg.Common.Domain.Migrations
                     UserName = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -317,8 +317,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -336,8 +336,8 @@ namespace Mcsg.Common.Domain.Migrations
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -410,8 +410,8 @@ namespace Mcsg.Common.Domain.Migrations
                     RegisterBySocialPlatform = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -467,8 +467,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -494,8 +494,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -539,8 +539,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -603,8 +603,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -631,8 +631,8 @@ namespace Mcsg.Common.Domain.Migrations
                     NewValue = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -663,8 +663,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -710,8 +710,8 @@ namespace Mcsg.Common.Domain.Migrations
                     UserFollowingId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -836,8 +836,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -887,8 +887,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -921,8 +921,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -951,8 +951,8 @@ namespace Mcsg.Common.Domain.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -985,8 +985,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Type = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1007,8 +1007,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1044,8 +1044,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ReasonText = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1089,8 +1089,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -1120,8 +1120,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1171,8 +1171,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     Permission = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -1205,8 +1205,8 @@ namespace Mcsg.Common.Domain.Migrations
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1237,8 +1237,8 @@ namespace Mcsg.Common.Domain.Migrations
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1268,8 +1268,8 @@ namespace Mcsg.Common.Domain.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1299,8 +1299,8 @@ namespace Mcsg.Common.Domain.Migrations
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1342,8 +1342,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1371,8 +1371,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1419,8 +1419,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1446,8 +1446,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1481,8 +1481,8 @@ namespace Mcsg.Common.Domain.Migrations
                     SubPostId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1525,8 +1525,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1554,8 +1554,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1598,8 +1598,8 @@ namespace Mcsg.Common.Domain.Migrations
                     QuoteId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1643,8 +1643,8 @@ namespace Mcsg.Common.Domain.Migrations
                     GifId = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1688,8 +1688,8 @@ namespace Mcsg.Common.Domain.Migrations
                     QuoteId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1730,8 +1730,8 @@ namespace Mcsg.Common.Domain.Migrations
                     GifId = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1774,8 +1774,8 @@ namespace Mcsg.Common.Domain.Migrations
                     QuoteId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1819,8 +1819,8 @@ namespace Mcsg.Common.Domain.Migrations
                     GifId = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1856,8 +1856,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1891,8 +1891,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1925,8 +1925,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1958,8 +1958,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1992,8 +1992,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2027,8 +2027,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
