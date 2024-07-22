@@ -4,17 +4,31 @@ using Newtonsoft.Json;
 namespace Mcsg.Realtime.Api.Hubs
 {
     using Lib.Common.Constants;
+    using Mcsg.Common.Core.Enums;
     using Requests;
     using Services;
 
     public class CommentHub : Hub
     {
-        private readonly ICommentService _commentService;
-        private readonly IReplyService _replyService;
-        public CommentHub(ICommentService commentService
-            , IReplyService replyService)
+        private readonly CommentService _commentService;
+        private readonly ComicCommentService _comicCommentService;
+        private readonly StoryCommentService _storyCommentService;
+        private readonly ReplyService _replyService;
+        private readonly ComicReplyService _comicReplyService;
+        private readonly StoryReplyService _storyReplyService;
+        public CommentHub(
+                CommentService commentService,
+                ComicCommentService comicCommentService,
+                StoryCommentService storyCommentService,
+                ReplyService replyService,
+                ComicReplyService comicReplyService,
+                StoryReplyService storyReplyService)
         {
             _commentService = commentService;
+            _comicCommentService = comicCommentService;
+            _storyCommentService = storyCommentService;
+            _storyReplyService = storyReplyService;
+            _comicReplyService = comicReplyService;
             _replyService = replyService;
         }
 
@@ -35,9 +49,15 @@ namespace Mcsg.Realtime.Api.Hubs
         //[Authorize]
         public async Task SendComment(PostCommentReq req)
         {
+            ICommentService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicCommentService,
+                nameof(MicroService.Story) => _storyCommentService,
+                _ => _commentService
+            };
             // Handle and store the new comment in database
-            var resp = await _commentService.PostComment(req);
 
+            var resp = await service.PostComment(req);
             // Then broadcast the comment to all connected clients
             await Clients.All.SendAsync(RealTimeTopic.ReceiveComment, JsonConvert.SerializeObject(resp));
         }
@@ -56,7 +76,13 @@ namespace Mcsg.Realtime.Api.Hubs
         public async Task UpdateComment(UpdateCommentReq req)
         {
             // Handle and update comment in database
-            var resp = await _commentService.UpdateComment(req);
+            ICommentService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicCommentService,
+                nameof(MicroService.Story) => _storyCommentService,
+                _ => _commentService
+            };
+            var resp = await service.UpdateComment(req);
 
             // Then broadcast the comment to all connected clients
             await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateComment, JsonConvert.SerializeObject(resp));
@@ -71,6 +97,12 @@ namespace Mcsg.Realtime.Api.Hubs
         //[Authorize]
         public async Task DeleteComment(DeleteCommentReq req)
         {
+            ICommentService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicCommentService,
+                nameof(MicroService.Story) => _storyCommentService,
+                _ => _commentService
+            };
             // Handle and update comment in database
             var resp = await _commentService.DeleteComment(req);
 
@@ -90,6 +122,12 @@ namespace Mcsg.Realtime.Api.Hubs
         //[Authorize]
         public async Task SendReply(ReplyCommentReq req)
         {
+            IReplyService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicReplyService,
+                nameof(MicroService.Story) => _storyReplyService,
+                _ => _replyService
+            };
             // Handle and store the new reply in database
             var resp = await _replyService.ReplyComment(req);
 
@@ -110,6 +148,12 @@ namespace Mcsg.Realtime.Api.Hubs
         //[Authorize]
         public async Task UpdateReply(UpdateReplyCommentReq req)
         {
+            IReplyService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicReplyService,
+                nameof(MicroService.Story) => _storyReplyService,
+                _ => _replyService
+            };
             // Handle and store the new reply in database
             var resp = await _replyService.UpdateReplyComment(req);
 
@@ -127,6 +171,12 @@ namespace Mcsg.Realtime.Api.Hubs
         //[Authorize]
         public async Task DeleteReply(DeleteReplyCommentReq req)
         {
+            IReplyService service = req.MicroService switch
+            {
+                nameof(MicroService.Comic) => _comicReplyService,
+                nameof(MicroService.Story) => _storyReplyService,
+                _ => _replyService
+            };
             // Handle and store the new reply in database
             var resp = await _replyService.DeleteReplyComment(req);
 

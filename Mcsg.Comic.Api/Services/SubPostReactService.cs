@@ -7,8 +7,8 @@ using Models;
 
 public partial class SubPostReactService : ISubPostReactService
 {
-    private readonly IReactService<SubPostReaction> _reactService;
-    public SubPostReactService(IReactService<SubPostReaction> reactService)
+    private readonly IReactService<ComicSubPostReaction> _reactService;
+    public SubPostReactService(IReactService<ComicSubPostReaction> reactService)
     {
         _reactService = reactService;
     }

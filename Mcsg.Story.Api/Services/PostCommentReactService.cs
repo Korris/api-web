@@ -9,8 +9,8 @@ using Requests;
 
 public partial class PostCommentReactService : IPostCommentReactService
 {
-    private readonly IReactService<PostCommentReaction> _reactService;
-    public PostCommentReactService(IReactService<PostCommentReaction> reactService)
+    private readonly IReactService<StoryPostCommentReaction> _reactService;
+    public PostCommentReactService(IReactService<StoryPostCommentReaction> reactService)
     {
         _reactService = reactService;
     }

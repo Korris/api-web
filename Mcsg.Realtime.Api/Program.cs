@@ -128,8 +128,15 @@ public class Program
         builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddSignalR();
 
-        builder.Services.AddScoped<ICommentService, CommentService>();
-        builder.Services.AddScoped<IReplyService, ReplyService>();
+
+        //builder.Services.AddScoped<ICommentService, CommentService>();
+        //builder.Services.AddScoped<IReplyService, ReplyService>();
+        builder.Services.AddTransient<CommentService>();
+        builder.Services.AddTransient<ComicCommentService>();
+        builder.Services.AddTransient<StoryCommentService>();
+        builder.Services.AddTransient<ReplyService>();
+        builder.Services.AddTransient<ComicReplyService>();
+        builder.Services.AddTransient<StoryReplyService>();
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<IResourceCommentService, ResourceCommentService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
