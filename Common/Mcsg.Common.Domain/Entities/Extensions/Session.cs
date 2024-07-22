@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities;
+namespace Mcsg.Common.Domain.Entities;
 
-using Mcsg.Common.SeedWork.Dtos;
+using SeedWork.Dtos;
 
 public partial class Session
 {

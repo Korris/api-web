@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
-using Lib.Data.Enums;
 
 public class NotificationQueryResult
 {

@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
+using Common.Core.Enums;
 using Common.SeedWork.Responses;
-using Lib.Data.Domain.Entities.Common;
-using Lib.Data.Enums;
+using Mcsg.Common.Domain.Entities.Common;
 using Models;
 using Requests;
 

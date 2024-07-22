@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Function.Job.Services
 {
+    using Common.Domain.Entities;
     using Interfaces;
     using Lib.Data.Constants;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Lib.Data.Wallet;
@@ -14,7 +14,7 @@ namespace Mcsg.Function.Job.Services
     {
         private readonly WalletDbContext _walletDbContext;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Lib.Data.Domain.Entities.SubPost> _subPostRepository;
+        private readonly IRepository<Mcsg.Common.Domain.Entities.SubPost> _subPostRepository;
         public ExclusiveUnlockService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
         {
             _unitOfWork = unitOfWork;

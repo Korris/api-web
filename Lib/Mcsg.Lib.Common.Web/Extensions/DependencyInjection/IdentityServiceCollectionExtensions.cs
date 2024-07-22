@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection;
 
-using Data;
-using Data.Domain.Entities;
+using Mcsg.Common.Domain;
+using Mcsg.Common.Domain.Entities;
 
 public static class IdentityServiceCollectionExtensions
 {

@@ -1,10 +1,10 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-using Mcsg.Common.Core.Interfaces;
-using Mcsg.Common.Core.Rules;
-using Mcsg.Common.SeedWork.Dtos;
-using Mcsg.Common.SeedWork.Extensions;
-using static Mcsg.Common.Core.Constants.Setting;
+using Core.Interfaces;
+using Core.Rules;
+using SeedWork.Dtos;
+using SeedWork.Extensions;
+using static Core.Constants.Setting;
 
 public partial class UserNameHistory
 {

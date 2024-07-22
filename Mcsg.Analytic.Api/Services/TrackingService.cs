@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Analytic.Api.Services
 {
     using Common.Core.Enums;
+    using Common.Domain.Entities;
     using Common.SeedWork.Enums;
     using Common.SeedWork.Exceptions;
     using Lib.Common.Constants;
     using Lib.Common.Helpers;
     using Lib.Data.Analytic;
     using Lib.Data.Analytic.Entities;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Models.DTOs;
     using Models.Request;

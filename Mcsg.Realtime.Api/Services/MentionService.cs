@@ -2,9 +2,9 @@
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Enums;
+    using Common.Domain.Entities;
     using Dtos;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Requests;

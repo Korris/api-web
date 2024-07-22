@@ -7,9 +7,9 @@ namespace Mcsg.Lib.Common.Web.Middlewares;
 
 using Constants;
 using Extensions;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Mcsg.Common.Core.Constants;
+using Mcsg.Common.Domain.Entities;
 using Mcsg.Common.SeedWork.Exceptions;
 
 public class SessionAuthorizationMiddleware

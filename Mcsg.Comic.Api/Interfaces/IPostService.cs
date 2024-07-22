@@ -1,10 +1,10 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
 using Common.Core.Enums;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Dtos;
 using Enums;
-using Lib.Data.Domain.Entities;
 using Models;
 using Models.Earning;
 using Requests;

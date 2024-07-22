@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 
 public partial class UserService : IUserService

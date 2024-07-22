@@ -1,6 +1,4 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Realtime.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services
 {
     public partial class CommentService
     {

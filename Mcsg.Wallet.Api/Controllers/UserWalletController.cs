@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Common.Domain.Entities;
 using Interfaces;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
@@ -234,7 +234,7 @@ public class UserWalletController : ControllerBase
         {
             var result = await _userWalletService.GetUserWalletAddressByUsername(username);
             return Ok(result);
-        }   
+        }
         return BadRequest();
     }
 }

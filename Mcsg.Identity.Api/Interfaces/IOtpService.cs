@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces;
 
-using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
+using Common.Core.Enums;
+using Common.Domain.Entities;
 
 public interface IOtpService
 {

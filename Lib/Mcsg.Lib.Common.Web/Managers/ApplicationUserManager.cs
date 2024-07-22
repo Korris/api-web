@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Lib.Common.Web;
 
-using Data.Domain.Entities;
+using Mcsg.Common.Domain.Entities;
 
 public class ApplicationUserManager : UserManager<User>
 {

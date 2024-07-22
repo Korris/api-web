@@ -1,7 +1,7 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-using Mcsg.Common.Core.Extensions;
-using Mcsg.Common.SeedWork.Extensions;
+using Core.Extensions;
+using SeedWork.Extensions;
 
 public partial class BackgroundMedia
 {

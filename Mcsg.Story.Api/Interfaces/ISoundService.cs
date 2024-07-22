@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Dtos;
-using Lib.Data.Domain.Entities;
 using Requests;
 
 public interface ISoundService

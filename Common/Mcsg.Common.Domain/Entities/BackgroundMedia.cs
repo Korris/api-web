@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
+    using Common;
+
     [Table("BackgroundMedias")]
     public partial class BackgroundMedia : AuditableEntity
     {

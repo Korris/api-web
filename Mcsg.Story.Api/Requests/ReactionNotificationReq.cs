@@ -1,6 +1,6 @@
-﻿using Mcsg.Lib.Data.Enums;
+﻿namespace Mcsg.Story.Api.Requests;
 
-namespace Mcsg.Story.Api.Requests;
+using Common.Core.Enums;
 
 public class ReactionNotificationReq
 {

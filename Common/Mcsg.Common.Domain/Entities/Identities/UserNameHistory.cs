@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-using Lib.Data.Domain.Entities.Common;
+using Common;
 
 public partial class UserNameHistory : AuditableEntity
 {

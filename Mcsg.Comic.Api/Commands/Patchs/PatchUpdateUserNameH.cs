@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Comic.Api.Commands;
 
+using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Interfaces;
 using Requests;
 

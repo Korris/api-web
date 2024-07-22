@@ -1,9 +1,10 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
+    using Common;
+    using Core.Enums;
+
     [Table("CrawComics")]
     public class CrawComic : AuditableEntity
     {

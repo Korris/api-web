@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
     using Common;
 

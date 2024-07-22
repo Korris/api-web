@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Story.Api.Services
+﻿namespace Mcsg.Story.Api.Services
 {
+    using Common.Core.Enums;
+
     public partial class NotificationService
     {
         private string GetNotificationByIdQuery

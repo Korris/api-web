@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Interface;
-
-namespace Mcsg.Lib.Data.Domain.Entities.Common
+﻿namespace Mcsg.Common.Domain.Entities.Common
 {
+    using Interface;
+
     public class AuditableEntity : BaseEntity, IAuditableEntity
     {
         public DateTime CreatedDate { get; set; }

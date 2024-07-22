@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Comic.Api.Services;
 
 using Common.Core.Enums;
+using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
@@ -13,8 +15,6 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;

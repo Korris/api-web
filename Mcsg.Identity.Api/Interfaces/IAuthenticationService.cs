@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces;
 
 using Common.Core.Dtos;
-using Lib.Data.Enums;
+using Common.Core.Enums;
 using Requests;
 using Response;
 

@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
-using Mcsg.Common.Core.Constants;
-using Mcsg.Common.Core.Enums;
-using Mcsg.Common.SeedWork.Extensions;
+using Core.Constants;
+using Core.Enums;
+using SeedWork.Extensions;
 
 public partial class Post
 {

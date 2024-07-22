@@ -11,7 +11,7 @@ namespace Mcsg.Function.Job.Services
     using Extensions;
     using Interfaces;
     using Lib.Common.Models;
-    using Entities = Lib.Data.Domain.Entities;
+    using Entities = Common.Domain.Entities;
 
     public class EmailService : IEmailService
     {

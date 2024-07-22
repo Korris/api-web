@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Comic.Api.Models;
 
-using Lib.Data.Enums;
+using Common.Core.Enums;
 
 public class ReactionsUserModel
 {

@@ -6,11 +6,11 @@ namespace Mcsg.Identity.Api.Services;
 
 using Common.Core;
 using Common.Core.Dtos;
+using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 
 public class TokenService : ITokenService
 {

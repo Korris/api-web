@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities.Common
+﻿namespace Mcsg.Common.Domain.Entities.Common
 {
-    using Mcsg.Common.Core.Enums;
+    using Core.Enums;
 
     public class AuditableHasPrivateEntity : AuditableEntity
     {

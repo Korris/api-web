@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
     using Common;
-    using Enums;
+    using Core.Enums;
 
     [Table("StorySubPostComments")]
     public class StorySubPostComment : AuditableEntity

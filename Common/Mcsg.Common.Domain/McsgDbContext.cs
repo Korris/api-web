@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Lib.Data;
+namespace Mcsg.Common.Domain;
 
-using Common.SeedWork.Extensions;
-using Constants;
+using Core.Constants;
 using Domain.Entities;
 using Domain.Entities.Configurations;
+using SeedWork.Extensions;
 
 /// <summary>
 /// McsgDbContext

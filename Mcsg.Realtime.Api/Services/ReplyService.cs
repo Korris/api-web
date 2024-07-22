@@ -7,13 +7,12 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Constants;
     using Common.Core.Enums;
     using Common.Core.Extensions;
+    using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Interfaces;
     using Lib.Common.Web.Security;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Requests;
     using static Common.SeedWork.Constants.Error;

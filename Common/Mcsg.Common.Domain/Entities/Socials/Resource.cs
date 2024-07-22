@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
     using Common;
-    using Mcsg.Common.Core.Enums;
+    using Core.Enums;
 
     [Table("Resources")]
     public class Resource : AuditableEntity

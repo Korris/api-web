@@ -2,6 +2,7 @@
 
 namespace Mcsg.Admin.Api.Services
 {
+    using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
@@ -9,7 +10,6 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Common.Models;
     using Lib.Common.Web.RealTime.Services;
     using Lib.Common.Web.Security;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Wallet;
     using Lib.Data.Wallet.Entities;

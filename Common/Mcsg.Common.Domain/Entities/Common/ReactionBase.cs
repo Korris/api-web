@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Lib.Data.Domain.Entities.Common
+﻿namespace Mcsg.Common.Domain.Entities.Common
 {
+    using Core.Enums;
+
     public class ReactionBase : AuditableEntity
     {
         public Guid? ParentId { get; set; }
@@ -11,7 +11,6 @@ namespace Mcsg.Lib.Data.Domain.Entities.Common
 
         public ReactionBase() : base()
         {
-
         }
     }
 }

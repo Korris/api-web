@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
-    using Mcsg.Common.Core.Enums;
+    using Core.Enums;
 
     public partial class User : IdentityUser<Guid>
     {

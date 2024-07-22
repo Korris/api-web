@@ -6,11 +6,11 @@ using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
+using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Dtos;
 using Interfaces;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 
 public class JobService : IJobService
 {

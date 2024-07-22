@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
-using Lib.Data.Enums;
+using Common.Core.Enums;
 using Models;
 
 public interface ISubPostReactService

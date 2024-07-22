@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Configurations
+namespace Mcsg.Common.Domain.Entities.Configurations
 {
-    using Mcsg.Lib.Data.Constants;
+    using Core.Constants;
 
     public class ComicSubPostCommentConfiguration : BaseConfiguration<ComicSubPostComment>
     {

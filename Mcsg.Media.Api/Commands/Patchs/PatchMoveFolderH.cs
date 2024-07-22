@@ -6,9 +6,9 @@ namespace Mcsg.Media.Api.Commands;
 using Common.Core.Constants;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Data;
 using Requests;
 
 /// <summary>

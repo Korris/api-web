@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-
-namespace Mcsg.Lib.Data.Domain.Entities
+﻿namespace Mcsg.Common.Domain.Entities
 {
+    using Common;
+
     public class UserFollow : AuditableEntity
     {
         public Guid UserFollowerId { get; set; }

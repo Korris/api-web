@@ -6,7 +6,7 @@ namespace Mcsg.Function.Job.Services
     using Interfaces;
     using Lib.Common.Helpers;
     using Lib.Common.Models;
-    using Entities = Lib.Data.Domain.Entities;
+    using Entities = Common.Domain.Entities;
 
     public class SmsService : ISmsService
     {

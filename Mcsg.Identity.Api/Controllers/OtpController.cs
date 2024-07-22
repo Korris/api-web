@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers;
 
+using Common.Core.Enums;
 using Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Enums;
 using Requests;
 
 /// <summary>

@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Validators;
 
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Lib.Common.Interfaces;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;

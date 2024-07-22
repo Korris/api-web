@@ -1,8 +1,7 @@
 ﻿namespace Mcsg.Lib.Data.Extensions;
 
 using Common.Core.Enums;
-using Domain.Entities;
-using Enums;
+using Mcsg.Common.Domain.Entities;
 
 public static class EnumExtension
 {

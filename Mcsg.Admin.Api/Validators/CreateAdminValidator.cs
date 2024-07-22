@@ -2,12 +2,12 @@
 
 namespace Mcsg.Admin.Api.Validators
 {
+    using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Lib.Common.Constants;
     using Lib.Common.Interfaces;
     using Lib.Common.Mail;
-    using Lib.Data.Domain.Entities;
     using Requests;
 
     public class CreateAdminValidator : IValidator<CreateAdminReq>

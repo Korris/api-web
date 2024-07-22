@@ -1,5 +1,8 @@
-﻿namespace Mcsg.Lib.Data.Constants;
+﻿namespace Mcsg.Common.Core.Constants;
 
+/// <summary>
+/// DB schema
+/// </summary>
 public class DbSchema
 {
     public const string Comic = "comic";

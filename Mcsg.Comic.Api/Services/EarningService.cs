@@ -2,13 +2,13 @@
 
 namespace Mcsg.Comic.Api.Services;
 
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Constants;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Models.Earning;
 using Requests;

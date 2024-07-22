@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Data.Domain.Entities.Interface
+﻿namespace Mcsg.Common.Domain.Entities.Interface
 {
     public interface IEntity
     {

@@ -2,8 +2,8 @@
 
 namespace Mcsg.Realtime.Api.Requests
 {
+    using Common.Core.Enums;
     using Constants;
-    using Lib.Data.Enums;
     using Mappings;
 
     public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>, IMapFrom<ReplyCommentResp>

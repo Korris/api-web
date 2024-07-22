@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Configurations
+namespace Mcsg.Common.Domain.Entities.Configurations
 {
     public class PostConfiguration : BaseConfiguration<Post>
     {

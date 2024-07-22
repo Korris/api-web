@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Lib.Data.Repositories;
 
-using Domain.Entities;
+using Mcsg.Common.Domain.Entities;
 
 public interface IUserSocialRepository : IRepository<UserSocial>
 {

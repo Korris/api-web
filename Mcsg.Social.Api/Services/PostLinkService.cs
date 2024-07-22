@@ -6,12 +6,12 @@ using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Dtos;
 using Extensions;
 using Interfaces;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 
 public partial class PostLinkService : IPostLinkService
 {

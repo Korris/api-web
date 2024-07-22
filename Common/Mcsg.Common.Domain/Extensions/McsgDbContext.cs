@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Data;
+﻿namespace Mcsg.Common.Domain;
 
 using Domain.Entities;
 

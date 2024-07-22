@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
+using Common.Core.Enums;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Models;
 using Requests;
 

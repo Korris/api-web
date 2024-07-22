@@ -4,8 +4,8 @@ namespace Mcsg.Media.Tool
 {
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.Domain.Entities;
     using Interfaces;
-    using Lib.Data.Domain.Entities;
     using Workers;
 
     internal class WorkDistributor

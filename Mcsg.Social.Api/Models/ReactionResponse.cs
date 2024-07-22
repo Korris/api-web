@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
-using Lib.Data.Enums;
+using Common.Core.Enums;
 
 public class ReactionResponse
 {

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Mcsg.Admin.Api.Services
 {
+    using Common.Core.Constants;
     using Common.Core.Enums;
+    using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Common.SeedWork.Responses;
     using Constants;
@@ -13,7 +15,6 @@ namespace Mcsg.Admin.Api.Services
     using Lib.Common.Interfaces;
     using Lib.Common.Web.Security;
     using Lib.Data.Constants;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Requests;
 

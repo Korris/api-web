@@ -1,8 +1,8 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Lib.Data.Domain.Entities
+﻿namespace Mcsg.Common.Domain.Entities
 {
+    using Common;
+    using Core.Enums;
+
     public class UserOtp : AuditableEntity
     {
         public Guid UserId { get; set; }

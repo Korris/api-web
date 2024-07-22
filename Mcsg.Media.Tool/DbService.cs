@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 namespace Mcsg.Media.Tool
 {
     using Common.Core.Enums;
-    using Lib.Data.Domain.Entities;
+    using Common.Domain.Entities;
     using Models;
 
     internal class DbService

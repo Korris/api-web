@@ -6,14 +6,13 @@ namespace Mcsg.Admin.Api.Services
 {
     using Common.Core.Constants;
     using Common.Core.Interfaces;
+    using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
     using Interfaces;
     using Lib.Common.Helpers;
     using Lib.Common.Web.Security;
-    using Lib.Data.Constants;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Requests;

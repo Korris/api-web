@@ -1,8 +1,9 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Interface;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Lib.Data.Domain.Entities.Common
+namespace Mcsg.Common.Domain.Entities.Common
 {
+    using Interface;
+
     public abstract class BaseEntity : IEntity
     {
         [Key]

@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-using Lib.Data.Enums;
+using Common.Core.Enums;
 
 public class FeedReportPostReq
 {

@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Lib.Data.Repositories;
 
-using Domain.Entities;
-using Enums;
+using Mcsg.Common.Core.Enums;
+using Mcsg.Common.Domain.Entities;
 
 public interface IUserOtpRepository : IRepository<UserOtp>
 {

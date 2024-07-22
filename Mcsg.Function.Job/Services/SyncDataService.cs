@@ -6,12 +6,11 @@ namespace Mcsg.Function.Job.Services
 {
     using Common.Core.Enums;
     using Common.Core.Extensions;
+    using Common.Domain.Entities;
     using Common.SeedWork.Extensions;
     using Constants;
     using Interfaces;
-    using Lib.Common.Enums;
     using Lib.Common.Models;
-    using Lib.Data.Domain.Entities;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Lib.Data.Wallet;

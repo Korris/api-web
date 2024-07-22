@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Data.Enums;
+﻿namespace Mcsg.Common.Core.Enums;
 
 public enum NotificationStatus
 {

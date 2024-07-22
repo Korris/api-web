@@ -11,7 +11,7 @@ using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
-using Lib.Data.Domain.Entities;
+using Mcsg.Common.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Lib.Data.Wallet;

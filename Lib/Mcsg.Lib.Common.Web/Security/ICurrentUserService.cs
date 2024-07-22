@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Lib.Common.Web.Security;
 
-using Data.Domain.Entities;
 using Lib.Common.Security.Models;
+using Mcsg.Common.Domain.Entities;
 
 public interface ICurrentUserService
 {

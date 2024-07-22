@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Mcsg.Lib.Data.Domain.Entities
+namespace Mcsg.Common.Domain.Entities
 {
-    using Lib.Data.Domain.Entities.Common;
-    using Lib.Data.Enums;
-    using Mcsg.Common.Core.Enums;
+    using Common;
+    using Core.Enums;
 
     [Table("SmartCountActions")]
     public class SmartCountAction : BaseEntity

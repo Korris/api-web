@@ -3,10 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Mcsg.Lib.Common.Web.Security;
 
-using Data.Domain.Entities;
 using Lib.Common.Security.Models;
 using Lib.Common.Web.Extensions;
 using Mcsg.Common.Core.Constants;
+using Mcsg.Common.Domain.Entities;
 
 public class CurrentUserService : ICurrentUserService
 {

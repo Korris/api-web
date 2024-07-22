@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Common.Domain.Entities;
 using Dtos;
-using Lib.Data.Domain.Entities;
 
 public class SubPostResponseItem
 {

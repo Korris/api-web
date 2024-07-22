@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
+using Common.Domain;
+using Common.Domain.Entities;
 using Dtos;
 using Interfaces;
-using Lib.Data;
-using Lib.Data.Domain.Entities;
 
 public class MetaDataService : IMetaDataService
 {

@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
 using Common.Core.Enums;
-using Lib.Data.Enums;
 
 public interface ISmartCountService
 {

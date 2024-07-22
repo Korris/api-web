@@ -4,18 +4,17 @@ using Npgsql;
 
 namespace Mcsg.Realtime.Api.Services
 {
+    using Common.Core.Enums;
     using Common.Core.Requests;
+    using Common.Domain.Entities;
     using Constants;
     using Dtos;
     using Hubs;
     using Lib.Common.Constants;
     using Lib.Common.Models.RealTime;
     using Lib.Common.Web.Security;
-    using Lib.Data.Domain.Entities;
-    using Lib.Data.Enums;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Mcsg.Common.Core.Enums;
     using Requests;
 
     public interface INotificationService

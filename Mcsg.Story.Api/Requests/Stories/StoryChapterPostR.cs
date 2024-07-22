@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Requests;
 
 using Common.Core.Enums;
-using Lib.Data.Enums;
 
 public class StoryChapterPostR
 {

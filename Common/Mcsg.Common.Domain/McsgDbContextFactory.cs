@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Mcsg.Lib.Data;
+namespace Mcsg.Common.Domain;
 
 /// <summary>
 /// McsgDbContextFactory

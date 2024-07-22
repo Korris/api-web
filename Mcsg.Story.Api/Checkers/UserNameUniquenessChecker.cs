@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Checkers;
 
-using Lib.Data;
+using Common.Domain;
 using Lib.Data.Interfaces;
 
 /// <summary>

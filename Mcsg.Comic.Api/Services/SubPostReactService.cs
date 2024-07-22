@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
+using Common.Core.Enums;
+using Common.Domain.Entities;
 using Interfaces;
-using Lib.Data.Domain.Entities;
-using Lib.Data.Enums;
 using Models;
 
 public partial class SubPostReactService : ISubPostReactService

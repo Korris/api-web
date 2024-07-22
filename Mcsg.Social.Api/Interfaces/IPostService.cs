@@ -4,7 +4,7 @@ using Common.Core.Enums;
 using Common.SeedWork.Responses;
 using Dtos;
 using Enums;
-using Lib.Data.Domain.Entities;
+using Mcsg.Common.Domain.Entities;
 using Models;
 using Models.Earning;
 using Requests;

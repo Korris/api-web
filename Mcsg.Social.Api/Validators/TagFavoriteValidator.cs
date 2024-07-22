@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Validators;
 
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Lib.Common.Interfaces;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 
 public class TagFavoriteValidator : IValidator<TagFavorite>

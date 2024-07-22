@@ -2,7 +2,6 @@
 
 using Common.Core.Enums;
 using Lib.Common.Constants;
-using Lib.Data.Enums;
 using Models;
 
 public static class NotificationExtension

@@ -4,14 +4,13 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain.Entities;
+using Common.Domain.Entities.Common;
 using Common.SeedWork.Responses;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
-using Lib.Data.Domain.Entities;
-using Lib.Data.Domain.Entities.Common;
-using Lib.Data.Enums;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;

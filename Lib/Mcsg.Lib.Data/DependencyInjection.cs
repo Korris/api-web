@@ -6,6 +6,7 @@ using System.Data;
 
 namespace Mcsg.Lib.Data;
 
+using Mcsg.Common.Domain;
 using Repositories;
 using Repositories.Interface;
 

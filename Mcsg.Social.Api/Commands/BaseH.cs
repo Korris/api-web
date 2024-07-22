@@ -14,8 +14,8 @@
 namespace Mcsg.Social.Api.Commands;
 
 using Common.Core.Interfaces;
+using Common.Domain;
 using Interfaces;
-using Lib.Data;
 
 /// <summary>
 /// Base handler

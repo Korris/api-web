@@ -8,6 +8,7 @@ namespace Mcsg.Identity.Api;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Helpers;

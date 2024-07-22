@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
+using Common.Core.Enums;
+using Common.Domain.Entities.Common;
 using Common.SeedWork.Responses;
-using Lib.Data.Domain.Entities.Common;
-using Lib.Data.Enums;
 using Models;
 using Requests;
 

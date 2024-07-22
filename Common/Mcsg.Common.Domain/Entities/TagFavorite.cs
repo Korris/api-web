@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Domain.Entities.Common;
-
-namespace Mcsg.Lib.Data.Domain.Entities
+﻿namespace Mcsg.Common.Domain.Entities
 {
+    using Common;
+
     public class TagFavorite : AuditableEntity
     {
         public Guid TagId { get; set; }

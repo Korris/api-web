@@ -8,6 +8,7 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Dtos;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -17,7 +18,6 @@ using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
-using Lib.Data;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 using Lib.Data.Wallet.Enums;

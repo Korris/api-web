@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
-using Lib.Data.Domain.Entities;
+using Common.Domain.Entities;
 
 public class FeedDto : PostDto
 {

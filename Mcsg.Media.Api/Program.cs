@@ -7,10 +7,10 @@ namespace Mcsg.Media.Api;
 
 using Checkers;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
-using Lib.Data;
 using Lib.Data.Interfaces;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -109,14 +109,6 @@ public class Program
 
         #region -- Setup token --
         builder.Services.AddBearerAuthentication(st.Jwt);
-
-        // Add policy
-        builder.Services.AddAuthorization(p =>
-        {
-            p.AddPolicy(Policy.AppAdmin, q => q.RequireRole(Role.SuperAdmin, Role.Admin));
-            p.AddPolicy(Policy.ClientAdmin, q => q.RequireRole(Role.SuperTenant, Role.Tenant));
-            p.AddPolicy(Policy.Admin, q => q.RequireRole(Role.SuperAdmin, Role.Admin, Role.SuperTenant, Role.Tenant));
-        });
 
         // Cookie name
         builder.Services.ConfigureApplicationCookie(options =>

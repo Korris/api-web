@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Domain.Entities;
-
-namespace Mcsg.Media.Tool.Workers
+﻿namespace Mcsg.Media.Tool.Workers
 {
+    using Common.Domain.Entities;
+
     internal interface IWorker
     {
         void CleanupPool();

@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces;
 
 using Common.Core.Dtos;
-using Lib.Data.Domain.Entities;
+using Common.Domain.Entities;
 
 public interface ITokenService
 {

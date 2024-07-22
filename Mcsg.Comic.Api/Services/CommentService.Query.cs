@@ -1,7 +1,7 @@
-﻿using Mcsg.Lib.Data.Enums;
-
-namespace Mcsg.Comic.Api.Services
+﻿namespace Mcsg.Comic.Api.Services
 {
+    using Common.Core.Enums;
+
     public partial class CommentService
     {
         private string GetReplyByCommentIdQuery = @"SELECT 

@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace Mcsg.Lib.Data;
 
 using Constants;
-using Domain.Entities;
+using Mcsg.Common.Domain.Entities;
 
 internal static class DataSeeder
 {

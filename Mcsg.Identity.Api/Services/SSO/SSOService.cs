@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Domain.Entities;
 using Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Domain.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Response;

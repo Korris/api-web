@@ -7,7 +7,7 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
     using Interfaces;
-    using Lib.Data;
+    using Mcsg.Common.Domain;
     using Requests;
 
     public partial class ResourceCommentService : IResourceCommentService

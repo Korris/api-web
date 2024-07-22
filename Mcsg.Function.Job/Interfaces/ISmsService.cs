@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Function.Job.Interfaces;
 
-using Entities = Lib.Data.Domain.Entities;
+using Common.Domain.Entities;
 
 public interface ISmsService
 {
-    Task SendSmsAsync(Entities.Job job);
+    Task SendSmsAsync(Job job);
 }

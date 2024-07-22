@@ -5,8 +5,8 @@ namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.Domain.Entities;
     using Interfaces;
-    using Lib.Data.Domain.Entities;
 
     internal class ConvertAudioWorker : BaseWorker, IWorker
     {

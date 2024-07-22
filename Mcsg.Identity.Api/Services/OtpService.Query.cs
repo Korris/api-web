@@ -1,7 +1,4 @@
-﻿using Mcsg.Lib.Data.Enums;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-namespace Mcsg.Identity.Api.Services
+﻿namespace Mcsg.Identity.Api.Services
 {
     public partial class OtpService
     {
@@ -18,7 +15,7 @@ namespace Mcsg.Identity.Api.Services
         {
             get
             {
-                return  $"DELETE FROM {_userOtpRepository.TableName} WHERE \"UserId\" = @UserId AND \"OtpType\" = @Type ";
+                return $"DELETE FROM {_userOtpRepository.TableName} WHERE \"UserId\" = @UserId AND \"OtpType\" = @Type ";
             }
         }
         private string GetOtpQuery
