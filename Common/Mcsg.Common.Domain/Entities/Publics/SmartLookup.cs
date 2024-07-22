@@ -6,7 +6,7 @@ using SeedWork;
 using Core.Enums;
 
 [Table("SmartLookups")]
-public class SmartLookup : BaseEntity
+public class SmartLookup : EntityId
 {
     public string? Keyword { get; set; }
     public LookupKeywordType KeywordType { get; set; } = LookupKeywordType.None;

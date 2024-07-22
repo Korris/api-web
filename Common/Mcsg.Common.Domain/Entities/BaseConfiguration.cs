@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork;
 
-public class BaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : BaseEntity
+public class BaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : EntityId
 {
     public void Configure(EntityTypeBuilder<TEntity> builder)
     {

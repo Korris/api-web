@@ -1,12 +1,33 @@
 ﻿namespace Mcsg.Common.SeedWork;
 
-public class TrackingEntity : BaseEntity
+/// <summary>
+/// Tracking entity
+/// </summary>
+public class TrackingEntity : EntityId
 {
-    public DateTime CreatedDate { get; set; }
-    public Guid? CreatedBy { get; set; }
+    #region -- Methods --
 
+    /// <summary>
+    /// Initialize
+    /// </summary>
     public TrackingEntity()
     {
         CreatedDate = DateTime.UtcNow;
     }
+
+    #endregion
+
+    #region -- Properties --
+
+    /// <summary>
+    /// Created date
+    /// </summary>
+    public DateTime CreatedDate { get; set; }
+
+    /// <summary>
+    /// Created by
+    /// </summary>
+    public Guid? CreatedBy { get; set; }
+
+    #endregion
 }

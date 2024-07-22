@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using SeedWork;
 
 [Table("MetaDatas")]
-public class MetaData : BaseEntity
+public class MetaData : EntityId
 {
     public string? Title { get; set; }
     public string? Url { get; set; }

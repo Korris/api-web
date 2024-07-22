@@ -3,7 +3,7 @@
 using Common.SeedWork;
 using Lib.Common.Models;
 
-public interface ICountService<TP, TS> where TP : BaseEntity where TS : BaseEntity, new()
+public interface ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
 {
     Task RefreshAll(SmartCountEntityData smartLookupData);
     Task RunQueue(SmartCountEntityData smartLookupData);

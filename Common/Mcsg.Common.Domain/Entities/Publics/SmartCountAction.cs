@@ -6,7 +6,7 @@ using SeedWork;
 using Core.Enums;
 
 [Table("SmartCountActions")]
-public class SmartCountAction : BaseEntity
+public class SmartCountAction : EntityId
 {
     public EntityType EntityType { get; set; }
     public EntitySubType? SubType { get; set; }

@@ -6,7 +6,7 @@ using SeedWork;
 using Core.Enums;
 
 [Table("ViewHistories")]
-public class ViewHistory : BaseEntity
+public class ViewHistory : EntityId
 {
     public EntityType EntityType { get; set; }
     public EntitySubType? SubType { get; set; }

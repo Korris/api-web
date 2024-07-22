@@ -11,9 +11,7 @@ namespace Mcsg.Function.Job.Services
     using Lib.Data.Repositories.Interface;
     using Entities = Common.Domain.Entities;
 
-    public class CountService<TP, TS> : ICountService<TP, TS>
-        where TP : BaseEntity
-        where TS : BaseEntity, new()
+    public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Entities.SmartCountAction> _smartCountActionRepository;

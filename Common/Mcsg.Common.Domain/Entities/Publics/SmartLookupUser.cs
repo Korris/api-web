@@ -6,7 +6,7 @@ using SeedWork;
 using Core.Enums;
 
 [Table("SmartLookupUsers")]
-public class SmartLookupUser : BaseEntity
+public class SmartLookupUser : EntityId
 {
     public Guid UserId { get; set; }
     public string? Keyword { get; set; }
