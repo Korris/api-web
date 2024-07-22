@@ -14,5 +14,5 @@ public class SmartCountAction : BaseEntity
     public Guid EntityId { get; set; }
     public ActionType ActionType { get; set; }
     public int Count { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTime? ModifiedDate { get; set; }
 }

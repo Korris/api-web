@@ -73,7 +73,7 @@
 	                                SELECT tagpost.""TagId"", COUNT(tagpost.""PostId"") AS ""Count"" 
                                     FROM {_postRepository.TableName} post
 	                                INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
-	                                WHERE tagpost.""LastModifiedDate"" BETWEEN @FromDate AND @ToDate [AddPostType] 
+	                                WHERE tagpost.""ModifiedDate"" BETWEEN @FromDate AND @ToDate [AddPostType] 
                                     AND post.""IsDelete"" = false AND tagpost.""IsDelete"" = false
 	                                GROUP BY tagpost.""TagId""
                                 ) today ON tag.""Id"" = today.""TagId""
@@ -88,7 +88,7 @@
                                     FROM {_postRepository.TableName} post
                                     INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
                                     INNER JOIN {_tagRepository.TableName} tag ON tagpost.""TagId"" = tag.""Id"" 
-                                    WHERE post.""LastModifiedDate"" BETWEEN @FromDate AND @ToDate [AddPostType]
+                                    WHERE post.""ModifiedDate"" BETWEEN @FromDate AND @ToDate [AddPostType]
                                         AND  post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 
                             ) q";
             }

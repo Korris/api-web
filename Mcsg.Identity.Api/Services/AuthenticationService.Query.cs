@@ -24,47 +24,47 @@
             get
             {
                 return @"UPDATE ""Posts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""Id"" = @PostId;
 
 					UPDATE ""Resources""
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE ""Resources"".""SubPostId"" = sp.""Id"";
 	
 					UPDATE ""SubPostReactions"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
 					UPDATE ""SubPostComments"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""PostId"" = sp.""Id"";
 	
 					UPDATE ""SubPostCommentReactions"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
 					UPDATE ""TagPosts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
 					UPDATE ""SubPosts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
 					UPDATE ""PostReactions""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""TargetId"" = @PostId;
 	
 					UPDATE ""PostComments""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;";
             }
         }

@@ -113,7 +113,7 @@ namespace Mcsg.Function.Job.Services
                         ActionType = smartLookupData.ActionType,
                         EntityId = postId,
                         Count = countOfPost,
-                        LastModifiedDate = todayDateTime,
+                        ModifiedDate = todayDateTime,
                         EntityType = EntityType.Post,
                         SubType = (EntitySubType)post.Type,
                         Date = todayDate
@@ -125,7 +125,7 @@ namespace Mcsg.Function.Job.Services
                     ActionType = smartLookupData.ActionType,
                     EntityId = smartLookupData.EntityId,
                     Count = countOfSubPost,
-                    LastModifiedDate = todayDateTime,
+                    ModifiedDate = todayDateTime,
                     EntityType = EntityType.SubPost,
                     Date = todayDate
                 });
@@ -150,7 +150,7 @@ namespace Mcsg.Function.Job.Services
                     ActionType = smartLookupData.ActionType,
                     EntityId = postId,
                     Count = countOfPost,
-                    LastModifiedDate = todayDateTime,
+                    ModifiedDate = todayDateTime,
                     EntityType = smartLookupData.EntityType,
                     SubType = (EntitySubType)post.Type,
                     Date = todayDate
@@ -358,7 +358,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
             get
             {
                 return @"UPDATE {0} AS s
-                                    SET ""Count"" = ""Count"" + 1, ""LastModifiedDate"" = @Date
+                                    SET ""Count"" = ""Count"" + 1, ""ModifiedDate"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
             }
@@ -368,7 +368,7 @@ AND date_trunc('day',pcm.""CreatedDate"") = @Today
             get
             {
                 return @"UPDATE {0} AS s
-                                    SET ""Count"" = ""Count"" - 1, ""LastModifiedDate"" = @Date
+                                    SET ""Count"" = ""Count"" - 1, ""ModifiedDate"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
             }

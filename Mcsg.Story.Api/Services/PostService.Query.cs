@@ -98,7 +98,7 @@ LIMIT 1
             get
             {
                 return @"
-	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedDate"", ""CreatedBy"", ""LastModifiedDate"", ""LastModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"",""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
+	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedDate"", ""CreatedBy"", ""ModifiedDate"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"",""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
 	                FROM ""story"".""StoryPosts""
 	                WHERE ""HashId"" = @HashId;";
             }
@@ -110,7 +110,7 @@ LIMIT 1
             get
             {
                 return @"
-	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedDate"", ""CreatedBy"", ""LastModifiedDate"", ""LastModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"", ""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
+	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedDate"", ""CreatedBy"", ""ModifiedDate"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"", ""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
 	                FROM ""story"".""StoryPosts""
 	                WHERE ""HashId"" = @HashId;
 
@@ -601,15 +601,15 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
         {
             get
             {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""LastModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
+                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
 								 FROM ""story"".""StoryPosts"" qpost1		
 							 	INNER JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false 								
 															
-								GROUP BY qpost1.""Id"", qpost1.""LastModifiedDate""
-								ORDER BY qpost1.""LastModifiedDate"" DESC
+								GROUP BY qpost1.""Id"", qpost1.""ModifiedDate""
+								ORDER BY qpost1.""ModifiedDate"" DESC
 								LIMIT @PageSize
 								OFFSET @Offet";
             }
@@ -671,14 +671,14 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
         {
             get
             {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""LastModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
+                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedDate"" AS ""CreatedDate"", 3 AS ""SelectType""
 								 FROM ""story"".""StoryPosts"" qpost1		
 							 	INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
 								WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false 								
 															
-								GROUP BY qpost1.""Id"", qpost1.""LastModifiedDate""
-								ORDER BY qpost1.""LastModifiedDate"" DESC
+								GROUP BY qpost1.""Id"", qpost1.""ModifiedDate""
+								ORDER BY qpost1.""ModifiedDate"" DESC
 								LIMIT @PageSize
 								OFFSET @Offet";
             }
@@ -705,12 +705,12 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"", ux.""Id"" as ""UserExclusiveId"",
-					sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""LastModifiedDate"", 
-					sp.""LastModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", u.""ProfileName"",
+					sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""ModifiedDate"", 
+					sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", u.""ProfileName"",
 					sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
 					sp.""IsEnableComment"", spcmc.""CommentCount"",
 					rs.""Id"", rs.""AuthorId"", rs.""Title"", rs.""Name"", rs.""Url"", rs.""Type"", rs.""CreatedDate"", 
-					rs.""CreatedBy"", rs.""LastModifiedDate"", rs.""LastModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
+					rs.""CreatedBy"", rs.""ModifiedDate"", rs.""ModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
 					rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order""
 					FROM ""story"".""StorySubPosts"" sp
 					INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
@@ -745,8 +745,8 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"",sp.""HashId"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
-				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""LastModifiedDate"", 
-				sp.""LastModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
+				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""ModifiedDate"", 
+				sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
 sp.""IsEnableComment""
 					FROM ""story"".""StorySubPosts"" sp
@@ -768,8 +768,8 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",ux.""Id"" as ""UserExclusiveId"",
-				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""LastModifiedDate"", 
-				sp.""LastModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
+				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""ModifiedDate"", 
+				sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
 sp.""IsEnableComment"", spcmc.""CommentCount""
 					FROM ""story"".""StorySubPosts"" sp
@@ -921,47 +921,47 @@ LIMIT 1
             get
             {
                 return @"UPDATE ""story"".""StoryPosts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""Id"" = @PostId;
 
 					UPDATE ""story"".""StoryResources""
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE ""story"".""StoryResources"".""SubPostId"" = sp.""Id"";
 	
 					UPDATE ""story"".""StorySubPostReactions"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
 					UPDATE ""story"".""StorySubPostComments"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""PostId"" = sp.""Id"";
 	
 					UPDATE ""story"".""StorySubPostCommentReactions"" spr
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
 						  FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
 					UPDATE ""story"".""StoryTagPosts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
 					UPDATE ""story"".""StorySubPosts""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
 					UPDATE ""story"".""StoryPostReactions""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""TargetId"" = @PostId;
 	
 					UPDATE ""story"".""StoryPostComments""
-					SET ""IsDelete"" = true	, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true	, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;";
             }
         }
@@ -988,8 +988,8 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
-				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""LastModifiedDate"", 
-				sp.""LastModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
+				sp.""Status"", sp.""CreatedDate"", sp.""CreatedBy"", sp.""ModifiedDate"", 
+				sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
 sp.""IsEnableComment""				
 			FROM ""story"".""StorySubPosts"" sp
@@ -1003,23 +1003,23 @@ sp.""IsEnableComment""
             get
             {
                 return @"UPDATE ""story"".""StorySubPosts""
-					SET ""Order"" = 0, ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""Order"" = 0, ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""Id"" = @SubPostId;
 
 					UPDATE ""story"".""StoryResources""
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""SubPostId"" = @SubPostId;
 	
 					UPDATE ""story"".""StorySubPostReactions"" 
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""TargetId"" = @SubPostId;
 	
 					UPDATE ""story"".""StorySubPostComments""
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @SubPostId;
 	
 					UPDATE ""story"".""StorySubPostCommentReactions"" 
-					SET ""IsDelete"" = true, ""LastModifiedDate"" = @Date, ""LastModifiedBy"" = @UserId
+					SET ""IsDelete"" = true, ""ModifiedDate"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""TargetId"" = @SubPostId;";
             }
         }

@@ -6,7 +6,7 @@ public class CommentQueryModel
     public Guid ParentId { get; set; }
     public Guid PostId { get; set; }
     public string Body { get; set; } = string.Empty;
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTime? ModifiedDate { get; set; }
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;

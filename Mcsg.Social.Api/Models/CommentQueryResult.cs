@@ -8,7 +8,7 @@ public class CommentQueryResult
     public string AuthorName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public DateTime? LastModifiedDate { get; set; }
+    public DateTime? ModifiedDate { get; set; }
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceName { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;

@@ -9,7 +9,7 @@
                 return @"SELECT ""Id"", ""ParentId"", 
 				""PostId"", ""AuthorId"", ""Type"",
 				""CreatedDate"", ""CreatedBy"",
-				""LastModifiedDate"", ""LastModifiedBy""
+				""ModifiedDate"", ""ModifiedBy""
 					FROM {0}
 					WHERE ""PostId"" = @PostId
 					AND ""AuthorId"" = @UserId

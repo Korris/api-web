@@ -23,8 +23,8 @@ public partial class User : IdentityUser<Guid>
     public bool IsDelete { get; set; }
     public DateTime CreatedDate { get; set; }
     public Guid? CreatedBy { get; set; }
-    public DateTime? LastModifiedDate { get; set; }
-    public Guid? LastModifiedBy { get; set; }
+    public DateTime? ModifiedDate { get; set; }
+    public Guid? ModifiedBy { get; set; }
     public DateTime? ActivedDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
     public string? StatusReason { get; set; }
@@ -43,7 +43,7 @@ public partial class User : IdentityUser<Guid>
     {
         var now = DateTime.UtcNow;
         CreatedDate = now;
-        LastModifiedDate = now;
+        ModifiedDate = now;
         IsDelete = false;
     }
 }

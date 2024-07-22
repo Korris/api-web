@@ -43,7 +43,7 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", //MyPassword@123
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -56,7 +56,7 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEKr7Nj0sDqfYailaVLg2J+hlUf2FE+Y87N4gqQEuVuoXgW2t8Xf+FErCIkoVEKszQg==",
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -69,7 +69,7 @@ internal static class DataSeeder
                 PasswordHash = "AQAAAAIAAYagAAAAEKr7Nj0sDqfYailaVLg2J+hlUf2FE+Y87N4gqQEuVuoXgW2t8Xf+FErCIkoVEKszQg==",
                 ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             }
         );
 
@@ -336,7 +336,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "bad2ef8d-a7eb-4378-a93f-73cfe75a230e",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -352,7 +352,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "60b25b2d-a341-4d0c-902c-f20f90dc94d8",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -368,7 +368,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "7e8e89df-e5f5-4a30-97fe-12adf3be8c56",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -384,7 +384,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "e2e0302d-a04c-498d-a1a2-d4ea37e75cc1",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -400,7 +400,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "055bd076-992f-4f5c-863d-1930a63eff59",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -416,7 +416,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "13c0ec66-fe60-4830-a62f-59597157e14c",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             },
             new User
             {
@@ -432,7 +432,7 @@ internal static class DataSeeder
                 EmailConfirmed = true,
                 ConcurrencyStamp = "a2e05fe9-cc5e-4111-97ad-1d6f3b134453",
                 CreatedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                LastModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                ModifiedDate = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
             }
         );
     }

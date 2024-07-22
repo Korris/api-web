@@ -1599,7 +1599,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("EntityType")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("LastModifiedDate")
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("SubType")
@@ -2719,12 +2719,6 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("LastModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("LastName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -2736,6 +2730,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")

@@ -138,8 +138,8 @@ namespace Mcsg.Admin.Api.Services
 
             user.Status = request.Status;
             user.StatusReason = request.Reason;
-            user.LastModifiedBy = _currentUserService?.Session?.UserId;
-            user.LastModifiedDate = DateTime.UtcNow;
+            user.ModifiedBy = _currentUserService?.Session?.UserId;
+            user.ModifiedDate = DateTime.UtcNow;
 
             if (user.Status == UserStatus.Active)
             {

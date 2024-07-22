@@ -406,8 +406,8 @@ namespace Mcsg.Realtime.Api.Services
                         new
                         {
                             Id = req.CommentId,
-                            LastModifiedBy = userId,
-                            LastModifiedDate = DateTime.UtcNow,
+                            ModifiedBy = userId,
+                            ModifiedDate = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.PostComment
                         });
 
@@ -439,8 +439,8 @@ namespace Mcsg.Realtime.Api.Services
                             new
                             {
                                 Id = req.CommentId,
-                                LastModifiedBy = userId,
-                                LastModifiedDate = DateTime.UtcNow,
+                                ModifiedBy = userId,
+                                ModifiedDate = DateTime.UtcNow,
                                 LocationType = (int)MentionLocationType.SubPostComment
                             });
 

@@ -56,7 +56,7 @@ public partial class CommentService : ICommentService
                 UserAvatar = result.UserAvatar.ToPublicImageUrl(),
                 Body = result.Body,
                 PostId = result.PostId,
-                LastModifiedDate = result.LastModifiedDate,
+                ModifiedDate = result.ModifiedDate,
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ResourceName, result.ResourceUrl) : "",
                 GifId = result.GifId
@@ -77,7 +77,7 @@ public partial class CommentService : ICommentService
                     AuthorName = result.ReplyAuthorName,
                     UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
                     Body = result.ReplyBody,
-                    LastModifiedDate = result.ReplyLastModifiedDate,
+                    ModifiedDate = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl) : "",
                     ParentId = commentData.Id,
@@ -124,7 +124,7 @@ public partial class CommentService : ICommentService
                 UserAvatar = result.UserAvatar.ToPublicImageUrl(),
                 Body = result.Body,
                 PostId = result.PostId,
-                LastModifiedDate = result.LastModifiedDate,
+                ModifiedDate = result.ModifiedDate,
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ResourceName, result.ResourceUrl) : "",
                 GifId = result.GifId
@@ -145,7 +145,7 @@ public partial class CommentService : ICommentService
                     AuthorName = result.ReplyAuthorName,
                     UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
                     Body = result.ReplyBody,
-                    LastModifiedDate = result.ReplyLastModifiedDate,
+                    ModifiedDate = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl) : "",
                     ParentId = commentData.Id,
@@ -255,7 +255,7 @@ public partial class CommentService : ICommentService
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))
         {
-            request.OrderBy = "LastModifiedDate";
+            request.OrderBy = "ModifiedDate";
         }
         var offset = request.PageSize * (request.PageNumber - 1);
 
@@ -284,7 +284,7 @@ public partial class CommentService : ICommentService
                     UserName = comModel.UserName,
                     UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
                     Body = comModel.Body,
-                    LastModifiedDate = comModel.LastModifiedDate,
+                    ModifiedDate = comModel.ModifiedDate,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId
@@ -307,7 +307,7 @@ public partial class CommentService : ICommentService
                         UserName = repModel.UserName,
                         UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
                         Body = repModel.Body,
-                        LastModifiedDate = repModel.LastModifiedDate,
+                        ModifiedDate = repModel.ModifiedDate,
                         ResourceHashId = repModel.ResourceHashId,
                         ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
                         ParentId = comment.Id,
@@ -346,7 +346,7 @@ public partial class CommentService : ICommentService
 
             if (string.IsNullOrWhiteSpace(request.OrderBy))
             {
-                request.OrderBy = "LastModifiedDate";
+                request.OrderBy = "ModifiedDate";
             }
 
             if (totalSubPost != null && totalSubPost.Count < 2)
@@ -382,7 +382,7 @@ public partial class CommentService : ICommentService
                     AuthorName = comModel.AuthorName,
                     UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
                     Body = comModel.Body,
-                    LastModifiedDate = comModel.LastModifiedDate,
+                    ModifiedDate = comModel.ModifiedDate,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId
@@ -404,7 +404,7 @@ public partial class CommentService : ICommentService
                         AuthorName = repModel.AuthorName,
                         UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
                         Body = repModel.Body,
-                        LastModifiedDate = repModel.LastModifiedDate,
+                        ModifiedDate = repModel.ModifiedDate,
                         ResourceHashId = repModel.ResourceHashId,
                         ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
                         ParentId = comment.Id,

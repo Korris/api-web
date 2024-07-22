@@ -245,7 +245,7 @@ namespace Mcsg.Common.Domain.Migrations
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     ActionType = table.Column<int>(type: "integer", nullable: false),
                     Count = table.Column<int>(type: "integer", nullable: false),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -364,8 +364,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ActivedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastLoginDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StatusReason = table.Column<string>(type: "text", nullable: true),

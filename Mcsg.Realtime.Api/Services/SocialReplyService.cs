@@ -385,8 +385,8 @@ namespace Mcsg.Realtime.Api.Services
                         new
                         {
                             Id = req.ReplyCommentId,
-                            LastModifiedBy = userId,
-                            LastModifiedDate = DateTime.UtcNow,
+                            ModifiedBy = userId,
+                            ModifiedDate = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.PostCommentReply
                         });
 
@@ -417,8 +417,8 @@ namespace Mcsg.Realtime.Api.Services
                             new
                             {
                                 Id = req.ReplyCommentId,
-                                LastModifiedBy = userId,
-                                LastModifiedDate = DateTime.UtcNow,
+                                ModifiedBy = userId,
+                                ModifiedDate = DateTime.UtcNow,
                                 LocationType = (int)MentionLocationType.SubPostCommentReply
                             });
 

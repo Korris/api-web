@@ -10,7 +10,7 @@
             {
                 return @"SELECT ""Id"", ""LoginProvider"", ""LoginDateUtc"", ""ExpiredDateUtc"", ""UserName"", ""Email"", 
                             ""LastName"", ""FirstName"", ""UserId"", ""Roles"", ""Claims"", 
-                            ""LastActionDateUtc"", ""CreatedDate"", ""CreatedBy"", ""LastModifiedDate"", ""LastModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
+                            ""LastActionDateUtc"", ""CreatedDate"", ""CreatedBy"", ""ModifiedDate"", ""ModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
 	                            FROM public.""Sessions""
 	                            WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateNow
 	                            ORDER BY ""CreatedDate"" DESC";

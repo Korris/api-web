@@ -26,7 +26,7 @@ users.""PremiumDate"", users.""Location"",
                             WHEN users.""Status"" = 2 THEN 'Blocked'
                             WHEN users.""Status"" = 3 THEN 'Banned'
                         END AS ""Status"",
-						users.""CreatedDate"", users.""LastModifiedDate""
+						users.""CreatedDate"", users.""ModifiedDate""
 						FROM {0} users
 						LEFT JOIN {1}""UserRoles"" userroles on users.""Id"" = userroles.""UserId""
 						LEFT JOIN {1}""Roles"" roles on userroles.""RoleId"" = roles.""Id""

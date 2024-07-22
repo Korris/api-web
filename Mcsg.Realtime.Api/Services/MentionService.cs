@@ -44,8 +44,8 @@ namespace Mcsg.Realtime.Api.Services
                                             new
                                             {
                                                 LocationId = commentId,
-                                                LastModifiedBy = author.Id,
-                                                LastModifiedDate = DateTime.UtcNow
+                                                ModifiedBy = author.Id,
+                                                ModifiedDate = DateTime.UtcNow
                                             });
 
             var mentionInsert = new List<Mention>();

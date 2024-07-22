@@ -8,8 +8,8 @@
             {
                 return @$"UPDATE {_mentionRepository.TableName}
                                 SET ""IsDelete"" = true,
-                                    ""LastModifiedBy"" = @LastModifiedBy,
-                                    ""LastModifiedDate"" = @LastModifiedDate
+                                    ""ModifiedBy"" = @ModifiedBy,
+                                    ""ModifiedDate"" = @ModifiedDate
                                 WHERE ""LocationId"" = @LocationId  ";
             }
         }

@@ -122,15 +122,15 @@
             get
             {
                 return @$"      WITH RECURSIVE cte AS (
-                                    SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""LastModifiedDate"", ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
+                                    SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""ModifiedDate"", ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
                                     FROM {_postCommentRepository.TableName}
                                     WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
                                     UNION ALL
-                                    SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""LastModifiedDate"", post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
+                                    SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""ModifiedDate"", post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
                                     FROM cte ct
                                     JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
                                     )
-                                SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""LastModifiedDate"", cte.""AuthorId"", 
+                                SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""ModifiedDate"", cte.""AuthorId"", 
                                         (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
                                         , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
                                 FROM cte
@@ -152,18 +152,18 @@
             {
                 return @$"WITH RECURSIVE cte AS (
 	                               SELECT ""Id"", ""ParentId"", ""PostId""
-				                            , ""AuthorId"", ""LastModifiedDate""
+				                            , ""AuthorId"", ""ModifiedDate""
 				                            , ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
 	                               FROM {_subPostCommentRepository.TableName}
 	                               WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
 	                               UNION ALL
 	                               SELECT post.""Id"", post.""ParentId"", post.""PostId""
-				                            , post.""AuthorId"", post.""LastModifiedDate""
+				                            , post.""AuthorId"", post.""ModifiedDate""
 				                            , post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
 	                               FROM cte ct
 	                               JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
 	                            )
-	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""LastModifiedDate""
+	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""ModifiedDate""
 				                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
 											, us.""Avatar"" AS UserAvatar
 				                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
@@ -183,12 +183,12 @@
 		                        , comUser.""Id"" AS AuthorId
 								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
 								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""LastModifiedDate""
+		                        , com.""Body"", com.""ModifiedDate""
 		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
 								, com.""GifId""
 		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
 								, repUser.""Avatar"" AS ReplyUserAvatar	
-								, rep.""Body"" AS ReplyBody, rep.""LastModifiedDate"" AS ReplyLastModifiedDate
+								, rep.""Body"" AS ReplyBody, rep.""ModifiedDate"" AS ReplyLastModifiedDate
 		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
 								, rep.""GifId"" AS ReplyGifId
 								, rep.""QuoteId"" AS ReplyQuoteId
@@ -201,7 +201,7 @@
 		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
 		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
-                        ORDER BY com.""LastModifiedDate"" DESC
+                        ORDER BY com.""ModifiedDate"" DESC
                         LIMIT 1 ";
             }
         }
@@ -214,12 +214,12 @@
 		                        , comUser.""Id"" AS AuthorId
 								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
 								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""LastModifiedDate""
+		                        , com.""Body"", com.""ModifiedDate""
 		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
 								, com.""GifId""
 		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
 								, repUser.""Avatar"" AS ReplyUserAvatar	
-		                        , rep.""Body"" AS ReplyBody, rep.""LastModifiedDate"" AS ReplyLastModifiedDate
+		                        , rep.""Body"" AS ReplyBody, rep.""ModifiedDate"" AS ReplyLastModifiedDate
 		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
 								, rep.""GifId"" AS ReplyGifId
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
@@ -231,7 +231,7 @@
 		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
 		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
-                        ORDER BY com.""LastModifiedDate"" DESC
+                        ORDER BY com.""ModifiedDate"" DESC
                         LIMIT 1 ";
             }
         }
@@ -244,12 +244,12 @@
 		                        , comUser.""Id"" AS AuthorId
 								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
 								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""LastModifiedDate""
+		                        , com.""Body"", com.""ModifiedDate""
 		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
 								, com.""GifId""
 		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
 								, repUser.""Avatar"" AS ReplyUserAvatar	
-		                        , rep.""Body"" AS ReplyBody, rep.""LastModifiedDate"" AS ReplyLastModifiedDate
+		                        , rep.""Body"" AS ReplyBody, rep.""ModifiedDate"" AS ReplyLastModifiedDate
 		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
 								, rep.""GifId"" AS ReplyGifId
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
@@ -261,7 +261,7 @@
 		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
 		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
-                        ORDER BY com.""LastModifiedDate"" DESC
+                        ORDER BY com.""ModifiedDate"" DESC
                         LIMIT 1 ";
             }
         }
