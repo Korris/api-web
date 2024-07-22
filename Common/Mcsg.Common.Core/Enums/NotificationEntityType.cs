@@ -1,20 +1,82 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// NotificationEntity type
+/// </summary>
 public enum NotificationEntityType
 {
-    User = 0,
-    Feed = 1,
-    Comic = 2,
-    Story = 3,
-    PostComment = 4,
-    SubPostComment = 5,
-    PostCommentReply = 6,
-    SubPostCommentReply = 7,
-    PostCommentReaction = 8,
-    SubPostCommentReaction = 9,
-    PostReaction = 10,
-    SubPostReaction = 11,
-    Video = 12,
-    PostCommentMention = 13,
-    SubPostCommentMention = 14
+    /// <summary>
+    /// User
+    /// </summary>
+    User,
+
+    /// <summary>
+    /// Feed
+    /// </summary>
+    Feed,
+
+    /// <summary>
+    /// Comic
+    /// </summary>
+    Comic,
+
+    /// <summary>
+    /// Story
+    /// </summary>
+    Story,
+
+    /// <summary>
+    /// PostComment
+    /// </summary>
+    PostComment,
+
+    /// <summary>
+    /// SubPostComment
+    /// </summary>
+    SubPostComment,
+
+    /// <summary>
+    /// PostCommentReply
+    /// </summary>
+    PostCommentReply,
+
+    /// <summary>
+    /// SubPostCommentReply
+    /// </summary>
+    SubPostCommentReply,
+
+    /// <summary>
+    /// PostCommentReaction
+    /// </summary>
+    PostCommentReaction,
+
+    /// <summary>
+    /// SubPostCommentReaction
+    /// </summary>
+    SubPostCommentReaction,
+
+    /// <summary>
+    /// PostReaction
+    /// </summary>
+    PostReaction,
+
+    /// <summary>
+    /// SubPostReaction
+    /// </summary>
+    SubPostReaction,
+
+    /// <summary>
+    /// Video
+    /// </summary>
+    Video,
+
+    /// <summary>
+    /// PostCommentMention
+    /// </summary>
+    PostCommentMention,
+
+    /// <summary>
+    /// SubPostCommentMention
+    /// </summary>
+    SubPostCommentMention
 }

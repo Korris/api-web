@@ -1,8 +1,22 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Comment status
+/// </summary>
 public enum CommentStatus
 {
-    DRAFT = 0,
-    PUBLIC = 1,
-    INACTIVE = 2
+    /// <summary>
+    /// Draft
+    /// </summary>
+    Draft,
+
+    /// <summary>
+    /// Public
+    /// </summary>
+    Public,
+
+    /// <summary>
+    /// Inactive
+    /// </summary>
+    Inactive
 }

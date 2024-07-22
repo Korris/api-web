@@ -1,9 +1,27 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Craw status
+/// </summary>
 public enum CrawStatus
 {
-    HasNew = 0,
-    InQueue = 1,
-    Processing = 2,
-    Done = 3
+    /// <summary>
+    /// HasNew
+    /// </summary>
+    HasNew,
+
+    /// <summary>
+    /// InQueue
+    /// </summary>
+    InQueue,
+
+    /// <summary>
+    /// Processing
+    /// </summary>
+    Processing,
+
+    /// <summary>
+    /// Done
+    /// </summary>
+    Done
 }

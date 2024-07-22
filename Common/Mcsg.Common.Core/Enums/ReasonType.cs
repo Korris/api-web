@@ -1,13 +1,47 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Reason type
+/// </summary>
 public enum ReasonType
 {
-    None = 0,
-    Violence = 1,
-    Harass = 2,
-    Spam = 3,
-    FakeNew = 4,
-    Terrorism = 5,
-    Porn = 6,
-    Other = 7
+    /// <summary>
+    /// None
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Violence
+    /// </summary>
+    Violence,
+
+    /// <summary>
+    /// Harass
+    /// </summary>
+    Harass,
+
+    /// <summary>
+    /// Spam
+    /// </summary>
+    Spam,
+
+    /// <summary>
+    /// FakeNew
+    /// </summary>
+    FakeNew,
+
+    /// <summary>
+    /// Terrorism
+    /// </summary>
+    Terrorism,
+
+    /// <summary>
+    /// Porn
+    /// </summary>
+    Porn,
+
+    /// <summary>
+    /// Other
+    /// </summary>
+    Other
 }

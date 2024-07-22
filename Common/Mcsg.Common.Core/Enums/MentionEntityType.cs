@@ -1,11 +1,37 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// MentionEntity type
+/// </summary>
 public enum MentionEntityType
 {
-    User = 0,
-    Feed = 1,
-    Comic = 2,
-    Story = 3,
-    Chapter = 4,
-    Group = 5
+    /// <summary>
+    /// User
+    /// </summary>
+    User,
+
+    /// <summary>
+    /// Feed
+    /// </summary>
+    Feed,
+
+    /// <summary>
+    /// Comic
+    /// </summary>
+    Comic,
+
+    /// <summary>
+    /// Story
+    /// </summary>
+    Story,
+
+    /// <summary>
+    /// Chapter
+    /// </summary>
+    Chapter,
+
+    /// <summary>
+    /// Group
+    /// </summary>
+    Group
 }

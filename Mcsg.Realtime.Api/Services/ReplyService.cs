@@ -231,7 +231,7 @@ namespace Mcsg.Realtime.Api.Services
                 ParentId = req.ReplyToCommentId,
                 LastModifiedBy = author.Id,
                 PostId = req.PostId,
-                Status = CommentStatus.PUBLIC,
+                Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId,
                 QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
@@ -268,7 +268,7 @@ namespace Mcsg.Realtime.Api.Services
                 ParentId = req.ReplyToCommentId,
                 LastModifiedBy = author.Id,
                 PostId = req.PostId,
-                Status = CommentStatus.PUBLIC,
+                Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId,
             };

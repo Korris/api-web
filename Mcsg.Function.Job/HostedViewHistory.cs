@@ -150,7 +150,7 @@ public class HostedViewHistory : BackgroundService
 
             var smartLookupData = new SmartCountEntityData
             {
-                ActionType = ActionType.VIEW,
+                ActionType = ActionType.View,
                 EntityId = payload.EntityId,
                 EntityType = payload.EntityType,
                 SubType = payload.SubType,

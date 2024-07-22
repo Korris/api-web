@@ -1,8 +1,22 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Action type
+/// </summary>
 public enum ActionType
 {
-    COMMENT = 0,
-    REACTION = 1,
-    VIEW = 2
+    /// <summary>
+    /// Comment
+    /// </summary>
+    Comment,
+
+    /// <summary>
+    /// Reaction
+    /// </summary>
+    Reaction,
+
+    /// <summary>
+    /// View
+    /// </summary>
+    View
 }

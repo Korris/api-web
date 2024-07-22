@@ -38,7 +38,7 @@ public partial class SmartCountService : ISmartCountService
         {
             Data = new SmartCountEntityData
             {
-                ActionType = ActionType.REACTION,
+                ActionType = ActionType.Reaction,
                 EntityId = entityId,
                 EntityType = type,
                 IsRemove = false
@@ -51,7 +51,7 @@ public partial class SmartCountService : ISmartCountService
         {
             Data = new SmartCountEntityData
             {
-                ActionType = ActionType.REACTION,
+                ActionType = ActionType.Reaction,
                 EntityId = entityId,
                 EntityType = type,
                 IsRemove = true

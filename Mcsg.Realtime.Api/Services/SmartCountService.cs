@@ -41,7 +41,7 @@
             {
                 Data = new SmartCountEntityData
                 {
-                    ActionType = ActionType.COMMENT,
+                    ActionType = ActionType.Comment,
                     EntityId = entityId,
                     EntityType = type,
                     IsRemove = false
@@ -54,7 +54,7 @@
             {
                 Data = new SmartCountEntityData
                 {
-                    ActionType = ActionType.COMMENT,
+                    ActionType = ActionType.Comment,
                     EntityId = entityId,
                     EntityType = type,
                     IsRemove = true

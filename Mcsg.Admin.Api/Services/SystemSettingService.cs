@@ -45,7 +45,7 @@ namespace Mcsg.Admin.Api.Services
 
             _systemSettingHistoryRepo = unitOfWork.GetRepository<SystemSettingHistory>();
 
-            _systemSettingHistoryRepo.TableName = $"{DbSchema.Default}\"{DbSchema.SystemSettingHistories_Table}\"";
+            _systemSettingHistoryRepo.TableName = $"{DbSchema.Default}\"{DbSchema.SystemSettingHistoriesTable}\"";
         }
 
         public async Task<GlobalSettingRespone> GetGlobalSettingAsync()

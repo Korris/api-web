@@ -1,7 +1,17 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Comic external resource
+/// </summary>
 public enum ComicExternalResource
 {
-    None = 0,
-    Nettruyen = 1
+    /// <summary>
+    /// None
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Nettruyen
+    /// </summary>
+    Nettruyen
 }

@@ -1,9 +1,27 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
+/// <summary>
+/// Craw comic chapter status
+/// </summary>
 public enum CrawComicChapterStatus
 {
-    None = 0,
-    Pending = 1,
-    Processing = 2,
-    Done = 3,
+    /// <summary>
+    /// None
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Pending
+    /// </summary>
+    Pending,
+
+    /// <summary>
+    /// Processing
+    /// </summary>
+    Processing,
+
+    /// <summary>
+    /// Done
+    /// </summary>
+    Done
 }

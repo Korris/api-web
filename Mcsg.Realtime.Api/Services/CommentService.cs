@@ -259,7 +259,7 @@ namespace Mcsg.Realtime.Api.Services
                 CreatedBy = author.Id,
                 LastModifiedBy = author.Id,
                 PostId = req.PostId,
-                Status = CommentStatus.PUBLIC,
+                Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId
             };
@@ -293,7 +293,7 @@ namespace Mcsg.Realtime.Api.Services
                 CreatedBy = author.Id,
                 LastModifiedBy = author.Id,
                 PostId = req.PostId,
-                Status = CommentStatus.PUBLIC,
+                Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId
             };
