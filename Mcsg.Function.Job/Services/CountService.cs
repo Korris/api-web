@@ -4,7 +4,6 @@ namespace Mcsg.Function.Job.Services
 {
     using Common.Core.Enums;
     using Common.Domain.Entities;
-    using Common.Domain.Entities.Common;
     using Interfaces;
     using Lib.Common.Models;
     using Lib.Data.Repositories;

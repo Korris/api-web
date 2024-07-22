@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mcsg.Common.Domain.Entities.Common;
+namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork.Interfaces;
 

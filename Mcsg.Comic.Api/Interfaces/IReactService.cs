@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
 using Common.Core.Enums;
-using Common.Domain.Entities.Common;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
