@@ -20,13 +20,6 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public interface ICommentService
-    {
-        Task<PostCommentResp> PostComment(PostCommentReq req);
-        Task<PostCommentResp> UpdateComment(UpdateCommentReq req);
-        Task<PostCommentResp> DeleteComment(DeleteCommentReq req);
-    }
-
     public partial class CommentService : ICommentService
     {
         private readonly ICurrentUserService _currentUserService;

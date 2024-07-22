@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 namespace Mcsg.Realtime.Api.Hubs
 {
     using Common.Core.Enums;
+    using Interfaces;
     using Lib.Common.Constants;
     using Requests;
     using Services;

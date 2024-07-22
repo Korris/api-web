@@ -3,9 +3,9 @@
 namespace Mcsg.Realtime.Api.Controllers
 {
     using Common.Core.Requests;
+    using Interfaces;
     using Lib.Common.Models.RealTime;
     using Requests;
-    using Services;
 
     [ApiController]
     [Route("[controller]")]

@@ -3,17 +3,12 @@
     using Common.Core.Distributor;
     using Common.Core.Enums;
     using Common.Domain.Entities;
+    using Interfaces;
     using Lib.Common.Models;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Models;
 
-    public interface ISmartCountService
-    {
-        Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType);
-        Task QueueAddCommentCount(Guid entityId, EntityType type);
-        Task QueueRemoveCommentCount(Guid entityId, EntityType type);
-    }
     public partial class SmartCountService : ISmartCountService
     {
         private readonly IRepository<SmartCountAction> _smartCountActionRepository;

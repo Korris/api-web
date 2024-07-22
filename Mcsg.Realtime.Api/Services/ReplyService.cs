@@ -18,13 +18,6 @@ namespace Mcsg.Realtime.Api.Services
     using static Common.SeedWork.Constants.Error;
     using static Common.SeedWork.Constants.Message;
 
-    public interface IReplyService
-    {
-        Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req);
-        Task<ReplyCommentResp> UpdateReplyComment(UpdateReplyCommentReq req);
-        Task<ReplyCommentResp> DeleteReplyComment(DeleteReplyCommentReq req);
-    }
-
     public partial class ReplyService : IReplyService
     {
         private readonly ICurrentUserService _currentUserService;

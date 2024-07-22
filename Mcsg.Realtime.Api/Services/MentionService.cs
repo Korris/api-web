@@ -5,15 +5,11 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Enums;
     using Common.Domain.Entities;
     using Dtos;
+    using Interfaces;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
     using Requests;
 
-    public interface IMentionService
-    {
-        Task<MentionResp> AddMention(Guid locationId, MentionLocationType locationType, Guid entityId, MentionEntityType entityType, int length, int offset, string text);
-        Task<bool> AddUserMentionOnComment(Guid commentId, MentionLocationType locationType, AuthorModel author, IEnumerable<MentionDto> mentions, PostDto post);
-    }
     public partial class MentionService : IMentionService
     {
         private readonly IRepository<Mention> _mentionRepository;
