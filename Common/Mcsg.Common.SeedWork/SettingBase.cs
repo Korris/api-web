@@ -119,6 +119,11 @@ public class SettingBase : ISettingBase
     public MinioDto Minio { get; }
 
     /// <summary>
+    /// API
+    /// </summary>
+    public ApiDto Api { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     public string? Origins { get; set; }
@@ -148,6 +153,7 @@ public class SettingBase : ISettingBase
         Queue = new QueueDto();
         Email = new NotificationDto();
         Minio = new MinioDto();
+        Api = new ApiDto();
 
         EncryptKey = string.Empty;
     }

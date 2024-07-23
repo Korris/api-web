@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Media.Tool;
 
-using Common.Core.Dtos;
 using Common.SeedWork;
 using Interfaces;
 
@@ -10,11 +9,6 @@ using Interfaces;
 public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
-
-    /// <summary>
-    /// API
-    /// </summary>
-    public ApiDto Api { get; }
 
     /// <summary>
     /// AppName
@@ -45,7 +39,6 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
-        Api = new ApiDto();
         AppName = "Mcsg.Media.Tool";
         AppVersion = "1.0.0";
         PoolSize = 5;

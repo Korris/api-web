@@ -105,6 +105,11 @@ public interface ISettingBase
     MinioDto Minio { get; }
 
     /// <summary>
+    /// API
+    /// </summary>
+    ApiDto Api { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     string? Origins { get; set; }

@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Social.Api;
 
-using Common.Core.Dtos;
 using Common.SeedWork;
 using Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
@@ -57,11 +56,6 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public bool AllowSendingEmail { get; set; }
 
-    /// <summary>
-    /// API
-    /// </summary>
-    public ApiDto Api { get; }
-
     #endregion
 
     #region -- Methods --
@@ -79,7 +73,6 @@ public class Setting : SettingBase, ISetting
         NotificationQueueSyncData = string.Empty;
         NotificationQueueViewHistory = string.Empty;
         NotificationRoutingKey = string.Empty;
-        Api = new ApiDto();
     }
 
     #endregion
