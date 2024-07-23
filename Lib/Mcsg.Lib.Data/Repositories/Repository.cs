@@ -43,6 +43,11 @@ public partial class Repository<TEntity> : IRepository<TEntity>
         {
             dbSchema = $"{DbSchema.Identity}.";
         }
+        tables = DbSchema.SocialTables.Split(';');
+        if (tables.Contains(table))
+        {
+            dbSchema = $"{DbSchema.Social}.";
+        }
         tables = DbSchema.StoryTables.Split(';');
         if (tables.Contains(table))
         {

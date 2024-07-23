@@ -686,7 +686,7 @@ public partial class PostService : IPostService
 	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
 	                              FROM ""comic"".""ComicPosts""  p
 	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
-	                              LEFT JOIN ""TagPosts"" tp on p.""Id""  = tp.""PostId"" 
+	                              LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" 
 	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
 	                              LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
 	                              LEFT JOIN LATERAL 
@@ -1153,7 +1153,7 @@ public partial class PostService : IPostService
         if (postIdReaded.Any())
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
-                                                                                            from ""TagPosts"" tp 
+                                                                                            from comic.""ComicTagPosts"" tp 
                                                                                             join ""comic"".""ComicPosts""  p on tp.""PostId"" =  p.""Id""
                                                                                             WHERE tp.""PostId"" = ANY (@PostId)
                                                                                             AND tp.""IsDelete"" = false

@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
+using Core.Constants;
+
 public class ResourceConfiguration : BaseConfiguration<Resource>
 {
     public override void CreateEntityConfiguration(EntityTypeBuilder<Resource> builder)
     {
-        builder.ToTable("Resources");
+        builder.ToTable("Resources", DbSchema.Social);
         builder.Property(x => x.HashId).IsRequired();
         builder.HasIndex(x => x.HashId).IsUnique();
         builder.Property(x => x.Name).IsRequired();

@@ -21,7 +21,7 @@
                 return @"SELECT 
 						t.""Name"",COUNT( t.""Id"") as Count
 						FROM ""Tags"" t
-						LEFT JOIN ""TagPosts"" tp ON tp.""TagId"" = t.""Id"" 
+						LEFT JOIN social.""TagPosts"" tp ON tp.""TagId"" = t.""Id"" 
 						WHERE t.""Name"" ILIKE @TagSearch
 						AND t.""IsDelete"" = false 
 						AND tp.""IsDelete"" = false 
@@ -100,9 +100,9 @@
             {
                 return @"   SELECT  t.""Name"", t.""Id"" , COUNT( t.""Id"") 
                             FROM {0} t
-                            LEFT JOIN ""TagPosts"" tp  
+                            LEFT JOIN social.""TagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
-                            LEFT JOIN ""Posts"" p 
+                            LEFT JOIN social.""Posts"" p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
                             AND tp.""IsDelete"" = false 
@@ -125,9 +125,9 @@
             {
                 return @"   SELECT t.""Name"", t.""Id"" , COUNT( t.""Id"") 
                             FROM {0} t
-                            LEFT JOIN ""TagPosts"" tp  
+                            LEFT JOIN social.""TagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
-                            LEFT JOIN ""Posts"" p 
+                            LEFT JOIN social.""Posts"" p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
                             AND tp.""IsDelete"" = false 

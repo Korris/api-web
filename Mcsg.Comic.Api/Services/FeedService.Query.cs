@@ -76,7 +76,7 @@
 						LIMIT @PageSize
 						OFFSET @Offet) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN comic.""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						LEFT JOIN identity.""Users"" u ON u.""Id"" = post.""UserId""
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
@@ -133,7 +133,7 @@
 							md.""Domain"" AS ""MetaDomain""
 							FROM (
 								SELECT DISTINCT qpost.* FROM ""comic"".""ComicPosts""  qpost
-							 	INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+							 	INNER JOIN comic.""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
 								AND qpost.""IsDelete"" = false 
@@ -172,7 +172,7 @@
 							md.""Domain""
 							) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN comic.""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -190,7 +190,7 @@
 
 						SELECT COUNT(*) AS TotalItems 
 						FROM (SELECT DISTINCT qpost.""Id"" FROM {0} qpost
-							 	INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+							 	INNER JOIN comic.""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
 								AND qpost.""IsDelete"" = false) p;";
@@ -287,7 +287,7 @@ LIMIT @PageSize
 							pl.""Type""
 							) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN comic.""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -366,7 +366,7 @@ LIMIT @PageSize
 						pl.""Type""
 						FROM ""comic"".""ComicPosts""  p
 						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+						LEFT JOIN comic.""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 						LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
@@ -536,7 +536,7 @@ LIMIT @PageSize
 								SELECT DISTINCT subqpost.* FROM 
 									(
 										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
-								 		INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+								 		INNER JOIN comic.""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 
@@ -582,7 +582,7 @@ LIMIT @PageSize
 							md.""Domain""
 							) 
 						AS post
-						LEFT JOIN ""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN comic.""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""UserId"",post.""Avatar"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -603,7 +603,7 @@ LIMIT @PageSize
 								SELECT DISTINCT subqpost.* FROM 
 									(
 										SELECT qpost.* FROM ""comic"".""ComicPosts""  qpost
-								 		INNER JOIN ""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+								 		INNER JOIN comic.""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 

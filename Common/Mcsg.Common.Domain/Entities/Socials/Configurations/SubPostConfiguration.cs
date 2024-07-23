@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
+using Core.Constants;
+
 public class SubPostConfiguration : BaseConfiguration<SubPost>
 {
     public override void CreateEntityConfiguration(EntityTypeBuilder<SubPost> builder)
     {
-        builder.ToTable("SubPosts");
+        builder.ToTable("SubPosts", DbSchema.Social);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
         builder.HasOne(typeof(Post)).WithMany().HasForeignKey("PostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");

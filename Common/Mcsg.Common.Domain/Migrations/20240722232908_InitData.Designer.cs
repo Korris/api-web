@@ -1117,7 +1117,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("HashId", "UserId", "Type", "Id")
                         .IsUnique();
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostComment", b =>
@@ -1177,7 +1177,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("PostId", "ParentId", "AuthorId");
 
-                    b.ToTable("PostComments", (string)null);
+                    b.ToTable("PostComments", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostCommentReaction", b =>
@@ -1220,7 +1220,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
-                    b.ToTable("PostCommentReactions", (string)null);
+                    b.ToTable("PostCommentReactions", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostFavorite", b =>
@@ -1344,7 +1344,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
-                    b.ToTable("PostReactions", (string)null);
+                    b.ToTable("PostReactions", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostReport", b =>
@@ -1468,7 +1468,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("SubPostId");
 
-                    b.ToTable("Resources", (string)null);
+                    b.ToTable("Resources", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Role", b =>
@@ -2318,7 +2318,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("PostId", "HashId", "AuthorId")
                         .IsUnique();
 
-                    b.ToTable("SubPosts", (string)null);
+                    b.ToTable("SubPosts", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SubPostComment", b =>
@@ -2375,7 +2375,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("PostId", "ParentId", "AuthorId");
 
-                    b.ToTable("SubPostComments", (string)null);
+                    b.ToTable("SubPostComments", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SubPostCommentReaction", b =>
@@ -2418,7 +2418,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
-                    b.ToTable("SubPostCommentReactions", (string)null);
+                    b.ToTable("SubPostCommentReactions", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SubPostReaction", b =>
@@ -2461,7 +2461,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
-                    b.ToTable("SubPostReactions", (string)null);
+                    b.ToTable("SubPostReactions", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSetting", b =>
@@ -2660,7 +2660,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("TagId", "PostId");
 
-                    b.ToTable("TagPosts", (string)null);
+                    b.ToTable("TagPosts", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>

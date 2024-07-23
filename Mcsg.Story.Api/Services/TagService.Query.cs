@@ -21,7 +21,7 @@
                 return @"SELECT 
 						t.""Name"",COUNT( t.""Id"") as Count
 						FROM ""Tags"" t
-						LEFT JOIN ""TagPosts"" tp ON tp.""TagId"" = t.""Id"" 
+						LEFT JOIN story.""StoryTagPosts"" tp ON tp.""TagId"" = t.""Id"" 
 						WHERE t.""Name"" ILIKE @TagSearch
 						AND t.""IsDelete"" = false 
 						AND tp.""IsDelete"" = false 
@@ -100,7 +100,7 @@
             {
                 return @"   SELECT  t.""Name"", t.""Id"" , COUNT( t.""Id"") 
                             FROM {0} t
-                            LEFT JOIN ""TagPosts"" tp  
+                            LEFT JOIN story.""StoryTagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
                             LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 
@@ -125,7 +125,7 @@
             {
                 return @"   SELECT t.""Name"", t.""Id"" , COUNT( t.""Id"") 
                             FROM {0} t
-                            LEFT JOIN ""TagPosts"" tp  
+                            LEFT JOIN story.""StoryTagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
                             LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 

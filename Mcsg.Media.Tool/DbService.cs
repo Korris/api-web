@@ -56,7 +56,7 @@ namespace Mcsg.Media.Tool
 
         public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string shareUrl)
         {
-            var command = @"UPDATE ""Resources""
+            var command = @"UPDATE social.""Resources""
                             SET ""Status""= @status,
                                  ""Url"" = @url,
                                 ""ShareUrl"" = @shareUrl
@@ -77,10 +77,10 @@ namespace Mcsg.Media.Tool
             var query = @"SELECT res.""Id"", res.""HashId""
 	                    , res.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
 	                    , sub.""PostId"", post.""HashId"" AS ""PostHashId"" 
-	                    FROM public.""Resources"" res
+	                    FROM public.social.""Resources"" res
 	                    LEFT JOIN identity.""Users"" us ON res.""AuthorId"" = us.""Id""
-	                    LEFT JOIN public.""SubPosts"" sub ON res.""SubPostId"" = sub.""Id""
-	                    LEFT JOIN public.""Posts"" post ON sub.""PostId"" = post.""Id""
+	                    LEFT JOIN public.social.""SubPosts"" sub ON res.""SubPostId"" = sub.""Id""
+	                    LEFT JOIN public.social.""Posts"" post ON sub.""PostId"" = post.""Id""
 	                    WHERE res.""HashId"" = @HashId";
 
             using var conn = new NpgsqlConnection(_connectionString);

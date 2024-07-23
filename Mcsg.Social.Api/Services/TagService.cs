@@ -347,9 +347,9 @@ public partial class TagService : ITagService
         var keywords = input.Name.ToLower().Split(' ');
         var query = $@"
                                 SELECT t.""Name"",COUNT( t.""Id"")   from ""Tags"" t 
-                                LEFT JOIN ""TagPosts"" tp  
+                                LEFT JOIN social.""TagPosts"" tp  
                                 ON tp.""TagId""  = t.""Id"" 
-                                LEFT JOIN ""Posts"" p 
+                                LEFT JOIN social.""Posts"" p 
                                 ON p.""Id""  = tp.""PostId"" 
                                 WHERE t.""IsDelete"" = false 
                                 AND tp.""IsDelete"" = false 
@@ -362,8 +362,8 @@ public partial class TagService : ITagService
                                 SELECT COUNT(*) AS TotalItems
                                 FROM (
                                     SELECT distinct  t.""Id""
-                                    FROM ""Posts"" post
-                                    INNER JOIN ""TagPosts"" tagpost ON post.""Id"" = tagpost.""PostId"" 
+                                    FROM social.""Posts"" post
+                                    INNER JOIN social.""TagPosts"" tagpost ON post.""Id"" = tagpost.""PostId"" 
                                     INNER JOIN ""Tags"" t ON tagpost.""TagId"" = t.""Id"" 
                                     WHERE  post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 
                                     [QueryCondition]

@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
+using Core.Constants;
+
 public class SubPostCommentConfiguration : BaseConfiguration<SubPostComment>
 {
     public override void CreateEntityConfiguration(EntityTypeBuilder<SubPostComment> builder)
     {
-        builder.ToTable("SubPostComments");
+        builder.ToTable("SubPostComments", DbSchema.Social);
         builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
         builder.HasOne(typeof(SubPost)).WithMany().HasForeignKey("PostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
