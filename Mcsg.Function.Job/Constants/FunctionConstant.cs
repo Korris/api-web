@@ -16,7 +16,7 @@
         public const string EmailPort = "Function:Email:SmtpPort";
         public const string EmailDisplayFrom = "Function:Email:DisplayFrom";
 
-        public const string LogoUrl = "https://minio.bumcheo.vn/bumcheo-pro-public/images/logo.png";
+        public const string LogoUrl = "https://hcm03.vstorage.vngcloud.vn/v1/AUTH_9b7a1d8050f74dacb2c6f920b9c25853/bumcheo-pro-public/images/logo.png";
 
         public const string OtpEmailTitle = "Verify your email - OTP CODE";
         public const string WithdrawEmailTitle = "Withdraw request";
