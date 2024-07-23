@@ -5,16 +5,16 @@ namespace Mcsg.Common.Domain.Entities.Configurations;
 
 using Core.Constants;
 
-public class ResourceConfiguration : BaseConfiguration<Resource>
+public class SocialResourceConfiguration : BaseConfiguration<SocialResource>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<Resource> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialResource> builder)
     {
-        builder.ToTable("Resources", DbSchema.Social);
+        builder.ToTable("SocialResources", DbSchema.Social);
         builder.Property(x => x.HashId).IsRequired();
         builder.HasIndex(x => x.HashId).IsUnique();
         builder.Property(x => x.Name).IsRequired();
         builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasOne(typeof(SubPost)).WithMany().HasForeignKey("SubPostId");
+        builder.HasOne(typeof(SocialSubPost)).WithMany().HasForeignKey("SubPostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

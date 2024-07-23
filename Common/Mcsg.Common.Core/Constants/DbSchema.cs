@@ -43,7 +43,7 @@ public class DbSchema
     /// <summary>
     /// Social tables
     /// </summary>
-    public const string SocialTables = "PostCommentReactions;PostComments;PostReactions;Posts;Resources;SubPostCommentReactions;SubPostComments;SubPostReactions;SubPosts;TagPosts";
+    public const string SocialTables = "SocialPostCommentReactions;SocialPostComments;SocialPostReactions;SocialPosts;SocialResources;SocialSubPostCommentReactions;SocialSubPostComments;SocialSubPostReactions;SocialSubPosts;SocialTagPosts";
 
     /// <summary>
     /// Story tables

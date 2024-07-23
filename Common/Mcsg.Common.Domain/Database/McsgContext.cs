@@ -171,21 +171,21 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
 
-    public virtual DbSet<Post> Posts { get; set; }
+    public virtual DbSet<SocialPost> Posts { get; set; }
 
-    public virtual DbSet<PostComment> PostComments { get; set; }
+    public virtual DbSet<SocialPostComment> PostComments { get; set; }
 
-    public virtual DbSet<PostCommentReaction> PostCommentReactions { get; set; }
+    public virtual DbSet<SocialPostCommentReaction> PostCommentReactions { get; set; }
 
     public virtual DbSet<PostFavorite> PostFavorites { get; set; }
 
     public virtual DbSet<PostLink> PostLinks { get; set; }
 
-    public virtual DbSet<PostReaction> PostReactions { get; set; }
+    public virtual DbSet<SocialPostReaction> PostReactions { get; set; }
 
     public virtual DbSet<PostReport> PostReports { get; set; }
 
-    public virtual DbSet<Resource> Resources { get; set; }
+    public virtual DbSet<SocialResource> Resources { get; set; }
 
     //public virtual DbSet<Role> Roles { get; set; }
 
@@ -219,13 +219,13 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<StoryTagPost> StoryTagPosts { get; set; }
 
-    public virtual DbSet<SubPost> SubPosts { get; set; }
+    public virtual DbSet<SocialSubPost> SubPosts { get; set; }
 
-    public virtual DbSet<SubPostComment> SubPostComments { get; set; }
+    public virtual DbSet<SocialSubPostComment> SubPostComments { get; set; }
 
-    public virtual DbSet<SubPostCommentReaction> SubPostCommentReactions { get; set; }
+    public virtual DbSet<SocialSubPostCommentReaction> SubPostCommentReactions { get; set; }
 
-    public virtual DbSet<SubPostReaction> SubPostReactions { get; set; }
+    public virtual DbSet<SocialSubPostReaction> SubPostReactions { get; set; }
 
     public virtual DbSet<SystemSetting> SystemSettings { get; set; }
 
@@ -235,7 +235,7 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<TagFavorite> TagFavorites { get; set; }
 
-    public virtual DbSet<TagPost> TagPosts { get; set; }
+    public virtual DbSet<SocialTagPost> TagPosts { get; set; }
 
     //public virtual DbSet<User> Users { get; set; }
 

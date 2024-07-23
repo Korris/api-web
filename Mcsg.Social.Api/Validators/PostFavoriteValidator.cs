@@ -9,8 +9,8 @@ using static Common.SeedWork.Constants.Message;
 
 public class PostFavoriteValidator : IValidator<PostFavorite>
 {
-    private readonly IRepository<Post> _postRepository;
-    public PostFavoriteValidator(IRepository<Post> postRepository)
+    private readonly IRepository<SocialPost> _postRepository;
+    public PostFavoriteValidator(IRepository<SocialPost> postRepository)
     {
         _postRepository = postRepository;
     }

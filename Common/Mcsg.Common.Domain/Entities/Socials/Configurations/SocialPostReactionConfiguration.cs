@@ -5,13 +5,13 @@ namespace Mcsg.Common.Domain.Entities.Configurations;
 
 using Core.Constants;
 
-public class PostReactionConfiguration : BaseConfiguration<PostReaction>
+public class SocialPostReactionConfiguration : BaseConfiguration<SocialPostReaction>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<PostReaction> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostReaction> builder)
     {
-        builder.ToTable("PostReactions", DbSchema.Social);
+        builder.ToTable("SocialPostReactions", DbSchema.Social);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(Post)).WithMany().HasForeignKey("TargetId");
+        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("TargetId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

@@ -14,11 +14,11 @@ namespace Mcsg.Function.Job.Services
     {
         private readonly WalletDbContext _walletDbContext;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Mcsg.Common.Domain.Entities.SubPost> _subPostRepository;
+        private readonly IRepository<Mcsg.Common.Domain.Entities.SocialSubPost> _subPostRepository;
         public ExclusiveUnlockService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
         {
             _unitOfWork = unitOfWork;
-            _subPostRepository = unitOfWork.GetRepository<SubPost>();
+            _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
             _walletDbContext = walletDbContext;
         }
 

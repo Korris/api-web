@@ -2,8 +2,6 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
-
 [Table("ComicPostReactions")]
 public class ComicPostReaction : ReactionBase
 {

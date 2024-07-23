@@ -10,18 +10,18 @@ public static class EnumExtension
         switch (notiEntityType)
         {
             case NotificationEntityType.User: return $"{nameof(User)}s";
-            case NotificationEntityType.Feed: return $"{nameof(Post)}s";
-            case NotificationEntityType.Story: return $"{nameof(Post)}s";
-            case NotificationEntityType.Comic: return $"{nameof(Post)}s";
-            case NotificationEntityType.PostComment: return $"{nameof(PostComment)}s";
-            case NotificationEntityType.PostCommentReply: return $"{nameof(PostComment)}s";
-            case NotificationEntityType.SubPostComment: return $"{nameof(SubPostComment)}s";
-            case NotificationEntityType.SubPostCommentReply: return $"{nameof(SubPostComment)}s";
-            case NotificationEntityType.PostReaction: return $"{nameof(PostReaction)}s";
-            case NotificationEntityType.SubPostReaction: return $"{nameof(SubPostReaction)}s";
-            case NotificationEntityType.PostCommentReaction: return $"{nameof(PostCommentReaction)}s";
-            case NotificationEntityType.SubPostCommentReaction: return $"{nameof(SubPostCommentReaction)}s";
-            case NotificationEntityType.Video: return $"{nameof(Resource)}s";
+            case NotificationEntityType.Feed: return $"{nameof(SocialPost)}s";
+            case NotificationEntityType.Story: return $"{nameof(SocialPost)}s";
+            case NotificationEntityType.Comic: return $"{nameof(SocialPost)}s";
+            case NotificationEntityType.PostComment: return $"{nameof(SocialPostComment)}s";
+            case NotificationEntityType.PostCommentReply: return $"{nameof(SocialPostComment)}s";
+            case NotificationEntityType.SubPostComment: return $"{nameof(SocialSubPostComment)}s";
+            case NotificationEntityType.SubPostCommentReply: return $"{nameof(SocialSubPostComment)}s";
+            case NotificationEntityType.PostReaction: return $"{nameof(SocialPostReaction)}s";
+            case NotificationEntityType.SubPostReaction: return $"{nameof(SocialSubPostReaction)}s";
+            case NotificationEntityType.PostCommentReaction: return $"{nameof(SocialPostCommentReaction)}s";
+            case NotificationEntityType.SubPostCommentReaction: return $"{nameof(SocialSubPostCommentReaction)}s";
+            case NotificationEntityType.Video: return $"{nameof(SocialResource)}s";
 
             default: throw new ArgumentOutOfRangeException("NotificationEntityType");
         }

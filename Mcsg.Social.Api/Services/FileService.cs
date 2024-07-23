@@ -119,7 +119,7 @@ public class FileService : IFileService
         }
 
         // Insert to resource with type is temp
-        var resource = new Resource
+        var resource = new SocialResource
         {
             AuthorId = userId,
             HashId = hashId,
@@ -389,9 +389,9 @@ public class FileService : IFileService
     /// <param name="addSubPost"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    private async Task<Tuple<List<Resource>, List<SubUploadFileDto>>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<SocialResource>, List<SubUploadFileDto>>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
     {
-        var response = new List<Resource>();
+        var response = new List<SocialResource>();
         var subPostResponses = new List<SubUploadFileDto>();
 
         if (string.IsNullOrWhiteSpace(userFolder))
@@ -440,7 +440,7 @@ public class FileService : IFileService
             var subPostId = resource.SubPostId ?? postId;
             if (addSubPost)
             {
-                var subPost = new SubPost
+                var subPost = new SocialSubPost
                 {
                     Title = resource.Title,
                     PostId = postId,
@@ -481,7 +481,7 @@ public class FileService : IFileService
     /// </summary>
     /// <param name="postId">PostId</param>
     /// <returns>Return a query</returns>
-    private IQueryable<Resource> QueryResourceByPostId(Guid postId)
+    private IQueryable<SocialResource> QueryResourceByPostId(Guid postId)
     {
         return from a in _context.ResourceAvailable
                join b in _context.SubPosts

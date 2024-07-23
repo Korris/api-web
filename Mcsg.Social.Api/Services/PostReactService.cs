@@ -9,9 +9,9 @@ using Requests;
 
 public partial class PostReactService : IPostReactService
 {
-    private readonly IReactService<PostReaction> _reactService;
+    private readonly IReactService<SocialPostReaction> _reactService;
 
-    public PostReactService(IReactService<PostReaction> reactService)
+    public PostReactService(IReactService<SocialPostReaction> reactService)
     {
         _reactService = reactService;
     }

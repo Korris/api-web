@@ -47,21 +47,21 @@ partial class McsgContext
 
     public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
 
-    public IQueryable<Post> PostAvailable => Posts.Where(p => !p.IsDelete);
+    public IQueryable<SocialPost> PostAvailable => Posts.Where(p => !p.IsDelete);
 
-    public IQueryable<PostComment> PostCommentAvailable => PostComments.Where(p => !p.IsDelete);
+    public IQueryable<SocialPostComment> PostCommentAvailable => PostComments.Where(p => !p.IsDelete);
 
-    public IQueryable<PostCommentReaction> PostCommentReactionAvailable => PostCommentReactions.Where(p => !p.IsDelete);
+    public IQueryable<SocialPostCommentReaction> PostCommentReactionAvailable => PostCommentReactions.Where(p => !p.IsDelete);
 
     public IQueryable<PostFavorite> PostFavoriteAvailable => PostFavorites.Where(p => !p.IsDelete);
 
     public IQueryable<PostLink> PostLinkAvailable => PostLinks.Where(p => !p.IsDelete);
 
-    public IQueryable<PostReaction> PostReactionAvailable => PostReactions.Where(p => !p.IsDelete);
+    public IQueryable<SocialPostReaction> PostReactionAvailable => PostReactions.Where(p => !p.IsDelete);
 
     public IQueryable<PostReport> PostReportAvailable => PostReports.Where(p => !p.IsDelete);
 
-    public IQueryable<Resource> ResourceAvailable => Resources.Where(p => !p.IsDelete);
+    public IQueryable<SocialResource> ResourceAvailable => Resources.Where(p => !p.IsDelete);
 
     //public IQueryable<Role> RoleAvailable => Roles.Where(p => !p.IsDelete);
 
@@ -95,13 +95,13 @@ partial class McsgContext
 
     public IQueryable<StoryTagPost> StoryTagPostAvailable => StoryTagPosts.Where(p => !p.IsDelete);
 
-    public IQueryable<SubPost> SubPostAvailable => SubPosts.Where(p => !p.IsDelete);
+    public IQueryable<SocialSubPost> SubPostAvailable => SubPosts.Where(p => !p.IsDelete);
 
-    public IQueryable<SubPostComment> SubPostCommentAvailable => SubPostComments.Where(p => !p.IsDelete);
+    public IQueryable<SocialSubPostComment> SubPostCommentAvailable => SubPostComments.Where(p => !p.IsDelete);
 
-    public IQueryable<SubPostCommentReaction> SubPostCommentReactionAvailable => SubPostCommentReactions.Where(p => !p.IsDelete);
+    public IQueryable<SocialSubPostCommentReaction> SubPostCommentReactionAvailable => SubPostCommentReactions.Where(p => !p.IsDelete);
 
-    public IQueryable<SubPostReaction> SubPostReactionAvailable => SubPostReactions.Where(p => !p.IsDelete);
+    public IQueryable<SocialSubPostReaction> SubPostReactionAvailable => SubPostReactions.Where(p => !p.IsDelete);
 
     public IQueryable<SystemSetting> SystemSettingAvailable => SystemSettings.Where(p => !p.IsDelete);
 
@@ -111,7 +111,7 @@ partial class McsgContext
 
     public IQueryable<TagFavorite> TagFavoriteAvailable => TagFavorites.Where(p => !p.IsDelete);
 
-    public IQueryable<TagPost> TagPostAvailable => TagPosts.Where(p => !p.IsDelete);
+    public IQueryable<SocialTagPost> TagPostAvailable => TagPosts.Where(p => !p.IsDelete);
 
     public IQueryable<User> UserAvailable => Users.Where(p => !p.IsDelete);
 

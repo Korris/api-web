@@ -2,8 +2,8 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
+using SeedWork;
 
 [Table("BackgroundMediaPosts")]
 public class BackgroundMediaPost : AuditableEntity

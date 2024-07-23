@@ -33,10 +33,10 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : IPostService
 {
-    private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<PostComment> _postCommentRepository;
+    private readonly IRepository<SocialPost> _postRepository;
+    private readonly IRepository<SocialPostComment> _postCommentRepository;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
+    private readonly IRepository<SocialSubPost> _subPostRepository;
     private readonly IRepository<PostReport> _postReportRepository;
     private readonly IValidator<PostReport> _postReportValidator;
     private readonly IUnitOfWork _unitOfWork;
@@ -64,12 +64,12 @@ public partial class PostService : IPostService
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<PostReport> postReportValidator,
-        IRepository<PostComment> postCommentRepository,
+        IRepository<SocialPostComment> postCommentRepository,
         IRepository<UserViewPost> userViewPostRepository,
         AnalyticDbContext analyticDbContext)
     {
-        _postRepository = unitOfWork.GetRepository<Post>();
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _postRepository = unitOfWork.GetRepository<SocialPost>();
+        _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
         _postReportRepository = unitOfWork.GetRepository<PostReport>();
         _unitOfWork = unitOfWork;
         _tagService = tagService;
@@ -133,7 +133,7 @@ public partial class PostService : IPostService
         //    safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
         //}
 
-        var post = new Post()
+        var post = new SocialPost()
         {
             Title = comicPostReq.Title,
             Type = type,
@@ -256,7 +256,7 @@ public partial class PostService : IPostService
 
         ChapterResponse subpost = null;
         await _subPostRepository
-            .Connection.QueryAsync<ChapterResponse, Resource, ChapterResponse>(query,
+            .Connection.QueryAsync<ChapterResponse, SocialResource, ChapterResponse>(query,
             (subpostdb, resource) =>
             {
                 if (subpostdb == null)
@@ -431,7 +431,7 @@ public partial class PostService : IPostService
         {
             #region Get post
             var queryGetPost = string.Format(GetPostWithHashId, _postRepository.TableName);
-            var post = await _postRepository.Connection.QueryFirstAsync<Post>(queryGetPost, new { HashId = request.HashId });
+            var post = await _postRepository.Connection.QueryFirstAsync<SocialPost>(queryGetPost, new { HashId = request.HashId });
             #endregion
 
             if (post == null)
@@ -767,7 +767,7 @@ public partial class PostService : IPostService
 
         #region Get post
         var query = string.Format(GetPostWithHashId, _postRepository.TableName);
-        var post = await _postRepository.Connection.QueryFirstAsync<Post>
+        var post = await _postRepository.Connection.QueryFirstAsync<SocialPost>
             (query, new { HashId = hashId });
         VerifyPost(post, false);
         #endregion
@@ -881,7 +881,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedOn);
+            loadReq.OrderBy = nameof(SocialPost.CreatedOn);
         }
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
@@ -1269,7 +1269,7 @@ public partial class PostService : IPostService
         }
     }
 
-    public UploadFileDto MappingFile(Resource resources)
+    public UploadFileDto MappingFile(SocialResource resources)
     {
         if (resources == null || resources.Id == Guid.Empty)
         {
@@ -1448,7 +1448,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(SubPost.Order);
+            loadReq.OrderBy = nameof(SocialSubPost.Order);
         }
         var query = GetSeriesChaptersByHashId
             .Replace("[OrderBy]", loadReq.OrderBy);
@@ -1519,7 +1519,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(SubPost.Order);
+            loadReq.OrderBy = nameof(SocialSubPost.Order);
         }
 
         var multi = await _postRepository
@@ -1545,7 +1545,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<SubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
+    public async Task<SocialSubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1556,13 +1556,13 @@ public partial class PostService : IPostService
         var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
         var reader = await _postRepository
             .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
-        var post = (await reader.ReadAsync<Post>().ConfigureAwait(false)).FirstOrDefault();
+        var post = (await reader.ReadAsync<SocialPost>().ConfigureAwait(false)).FirstOrDefault();
         var maxOrder = (await reader.ReadAsync<int>(false)).FirstOrDefault();
         reader.Dispose();
         VerifyPost(post, true);
         #endregion
         var newOrder = maxOrder + 1;
-        var newChapter = new SubPost
+        var newChapter = new SocialSubPost
         {
             AuthorId = post.AuthorId,
             CreatedBy = currentUserId,
@@ -1586,7 +1586,7 @@ public partial class PostService : IPostService
 
         return newChapter;
     }
-    public async Task<SubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
+    public async Task<SocialSubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1596,7 +1596,7 @@ public partial class PostService : IPostService
         #region Get post
         var query = string.Format(GetPostWithHashId, _postRepository.TableName);
         var post = await _postRepository
-            .Connection.QueryFirstAsync<Post>(query, new { HashId = postHashId });
+            .Connection.QueryFirstAsync<SocialPost>(query, new { HashId = postHashId });
         VerifyPost(post, false);
         #endregion
 
@@ -1604,7 +1604,7 @@ public partial class PostService : IPostService
         var querySubpost = string.Format(GetSeriesChapterByHashIdOrder, _postRepository.TableName);
 
         var newChapter = await _subPostRepository
-            .Connection.QueryFirstAsync<SubPost>(querySubpost, new
+            .Connection.QueryFirstAsync<SocialSubPost>(querySubpost, new
             {
                 PostHashId = postHashId,
                 IsAccessPrivate = false,
@@ -1637,7 +1637,7 @@ public partial class PostService : IPostService
         var currentUserId = ss.UserId;
         var profileName = ss.ProfileName;
 
-        var subPost = await _postRepository.Connection.QueryFirstAsync<SubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
+        var subPost = await _postRepository.Connection.QueryFirstAsync<SocialSubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
         if (subPost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, order));
@@ -1668,7 +1668,7 @@ public partial class PostService : IPostService
 
         return listChapter;
     }
-    public ChapterResponse MappingChapterResponse(SubPost newChapter)
+    public ChapterResponse MappingChapterResponse(SocialSubPost newChapter)
     {
         var result = new ChapterResponse();
 
@@ -1698,7 +1698,7 @@ public partial class PostService : IPostService
     {
         var result = new List<ChapterResponse>();
         var subPosts = await _postRepository
-            .Connection.QueryAsync<SubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = postHashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
+            .Connection.QueryAsync<SocialSubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = postHashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
 
         var currentUserId = _currentUserService.Session.UserId;
         var chapter1 = subPosts.Where(x => x.Order == orders?.Order1).FirstOrDefault();
@@ -1737,7 +1737,7 @@ public partial class PostService : IPostService
     #endregion
 
     #region POST - COMMON
-    private void VerifyPost(Post post, bool checkCompleted)
+    private void VerifyPost(SocialPost post, bool checkCompleted)
     {
         var currentUserId = _currentUserService.Session.UserId;
         if (post != null)
@@ -1778,7 +1778,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedOn);
+            loadReq.OrderBy = nameof(SocialPost.CreatedOn);
         }
         return offset;
     }

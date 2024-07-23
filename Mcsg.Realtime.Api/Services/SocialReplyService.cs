@@ -21,12 +21,12 @@ namespace Mcsg.Realtime.Api.Services
     public partial class SocialReplyService : ISocialReplyService
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IRepository<Post> _postRepository;
-        private readonly IRepository<SubPost> _subPostRepository;
-        private readonly IRepository<PostComment> _postCommentRepository;
-        private readonly IRepository<SubPostComment> _subPostCommentRepository;
+        private readonly IRepository<SocialPost> _postRepository;
+        private readonly IRepository<SocialSubPost> _subPostRepository;
+        private readonly IRepository<SocialPostComment> _postCommentRepository;
+        private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
         private readonly IResourceCommentService _resourceCommentService;
-        private readonly IRepository<Resource> _resourceRepository;
+        private readonly IRepository<SocialResource> _resourceRepository;
         private readonly IRepository<Mention> _mentionRepository;
         private readonly INotificationService _notificationService;
         private readonly IMentionService _mentionService;
@@ -34,12 +34,12 @@ namespace Mcsg.Realtime.Api.Services
         private IConfiguration _configuration;
 
         public SocialReplyService(ICurrentUserService currentUserService,
-            IRepository<Post> postRepository,
-            IRepository<SubPost> subPostRepository,
-            IRepository<PostComment> postCommentRepository,
-            IRepository<SubPostComment> subPostCommentRepository,
+            IRepository<SocialPost> postRepository,
+            IRepository<SocialSubPost> subPostRepository,
+            IRepository<SocialPostComment> postCommentRepository,
+            IRepository<SocialSubPostComment> subPostCommentRepository,
             IResourceCommentService resourceCommentService,
-            IRepository<Resource> resourceRepository,
+            IRepository<SocialResource> resourceRepository,
             IRepository<Mention> mentionRepository,
             INotificationService notificationService,
             IMentionService mentionService,
@@ -216,7 +216,7 @@ namespace Mcsg.Realtime.Api.Services
         #region Add New Rely Comment
         private async Task<ReplyCommentResp> ReplyToPostComment(ReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
         {
-            var comment = new PostComment
+            var comment = new SocialPostComment
             {
                 AuthorId = author.Id,
                 Body = req.ReplyText,
@@ -253,7 +253,7 @@ namespace Mcsg.Realtime.Api.Services
 
         private async Task<ReplyCommentResp> ReplyToSubPostComment(ReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
         {
-            var comment = new SubPostComment
+            var comment = new SocialSubPostComment
             {
                 AuthorId = author.Id,
                 Body = req.ReplyText,

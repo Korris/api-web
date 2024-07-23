@@ -17,10 +17,10 @@ using Requests;
 
 public partial class CommentService : ICommentService
 {
-    private readonly IRepository<PostComment> _postCommentRepository;
-    private readonly IRepository<SubPostComment> _subPostCommentRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
-    private readonly IRepository<Resource> _resourceRepository;
+    private readonly IRepository<SocialPostComment> _postCommentRepository;
+    private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
+    private readonly IRepository<SocialSubPost> _subPostRepository;
+    private readonly IRepository<SocialResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<Mention> _mentionRepository;
     private IConfiguration _configuration;
@@ -28,10 +28,10 @@ public partial class CommentService : ICommentService
 
     public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration)
     {
-        _postCommentRepository = unitOfWork.GetRepository<PostComment>();
-        _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
-        _resourceRepository = unitOfWork.GetRepository<Resource>();
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
+        _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
+        _resourceRepository = unitOfWork.GetRepository<SocialResource>();
+        _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
         _userRepository = unitOfWork.GetRepository<User>();
         _mentionRepository = unitOfWork.GetRepository<Mention>();
         _mapper = mapper;

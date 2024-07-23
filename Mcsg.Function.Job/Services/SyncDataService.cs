@@ -23,16 +23,16 @@ namespace Mcsg.Function.Job.Services
         private readonly WalletDbContext _walletDbContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<Post> _postRepository;
-        private readonly IRepository<SubPost> _subPostRepository;
+        private readonly IRepository<SocialPost> _postRepository;
+        private readonly IRepository<SocialSubPost> _subPostRepository;
         private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
 
         public SyncDataService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
         {
             _unitOfWork = unitOfWork;
             _userRepository = unitOfWork.GetRepository<User>();
-            _postRepository = unitOfWork.GetRepository<Post>();
-            _subPostRepository = unitOfWork.GetRepository<SubPost>();
+            _postRepository = unitOfWork.GetRepository<SocialPost>();
+            _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
             _userExclusiveSubPostRepository = unitOfWork.GetRepository<UserExclusiveSubPost>();
             _walletDbContext = walletDbContext;
         }
@@ -320,7 +320,7 @@ namespace Mcsg.Function.Job.Services
                     {
                         return;// Has no comic/story
                     }
-                    var chapters = await _unitOfWork.Connection.QueryAsync<SubPost>(GetSeriesChaptersByPostId, new
+                    var chapters = await _unitOfWork.Connection.QueryAsync<SocialSubPost>(GetSeriesChaptersByPostId, new
                     {
                         PostId = post.Id
                     });

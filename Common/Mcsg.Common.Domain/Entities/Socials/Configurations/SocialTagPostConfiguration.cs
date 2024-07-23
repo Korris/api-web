@@ -5,13 +5,13 @@ namespace Mcsg.Common.Domain.Entities.Configurations;
 
 using Core.Constants;
 
-public class TagPostConfiguration : BaseConfiguration<TagPost>
+public class SocialTagPostConfiguration : BaseConfiguration<SocialTagPost>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<TagPost> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialTagPost> builder)
     {
-        builder.ToTable("TagPosts", DbSchema.Social);
+        builder.ToTable("SocialTagPosts", DbSchema.Social);
         builder.HasIndex(x => new { x.TagId, x.PostId });
         builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
-        builder.HasOne(typeof(Post)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

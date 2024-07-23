@@ -2,11 +2,10 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
 
-[Table("Posts")]
-public partial class Post : AuditableHasPrivateEntity
+[Table("SocialPosts")]
+public partial class SocialPost : AuditableHasPrivateEntity
 {
     public string? Title { get; set; }
     public string? HashId { get; set; }

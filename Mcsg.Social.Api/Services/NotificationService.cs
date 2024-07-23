@@ -25,13 +25,13 @@ public partial class NotificationService : INotificationService
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Notification> _notiRepository;
     private readonly IRepository<NotificationObject> _notiObjRepository;
-    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<User> _userRepository;
 
-    private readonly IRepository<PostReaction> _postReacRepository;
-    private readonly IRepository<SubPostReaction> _subPostReacRepository;
-    private readonly IRepository<PostCommentReaction> _postCommentRepository;
-    private readonly IRepository<SubPostCommentReaction> _subPostCommentRepository;
+    private readonly IRepository<SocialPostReaction> _postReacRepository;
+    private readonly IRepository<SocialSubPostReaction> _subPostReacRepository;
+    private readonly IRepository<SocialPostCommentReaction> _postCommentRepository;
+    private readonly IRepository<SocialSubPostCommentReaction> _subPostCommentRepository;
     private readonly IMapper _mapper;
     private IConfiguration _configuration;
 
@@ -39,17 +39,17 @@ public partial class NotificationService : INotificationService
         , IUnitOfWork unitOfWork
         , IMapper mapper
         , IConfiguration configuration
-        , IRepository<PostReaction> postReacRepository
-        , IRepository<SubPostReaction> subPostReacRepository
-        , IRepository<PostCommentReaction> postCommentRepository
+        , IRepository<SocialPostReaction> postReacRepository
+        , IRepository<SocialSubPostReaction> subPostReacRepository
+        , IRepository<SocialPostCommentReaction> postCommentRepository
         , ISetting setting
-        , IRepository<SubPostCommentReaction> subPostCommentRepository)
+        , IRepository<SocialSubPostCommentReaction> subPostCommentRepository)
     {
         _currentUserService = currentUserService;
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _notiObjRepository = unitOfWork.GetRepository<NotificationObject>();
         _userRepository = unitOfWork.GetRepository<User>();
-        _postRepository = unitOfWork.GetRepository<Post>();
+        _postRepository = unitOfWork.GetRepository<SocialPost>();
         _mapper = mapper;
         _configuration = configuration;
         _postReacRepository = postReacRepository;

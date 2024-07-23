@@ -2,7 +2,6 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
 
 [Table("StorySubPosts")]

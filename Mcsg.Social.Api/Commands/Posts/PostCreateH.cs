@@ -98,7 +98,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
         // Create
-        var ett = Post.Create(request.Title, content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
+        var ett = SocialPost.Create(request.Title, content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
         await _context.Posts.AddAsync(ett);
         await _context.SaveChangesAsync();
 
@@ -124,7 +124,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         if (request.MetaData != null)
         {
             request.MetaData.Description = HttpUtility.HtmlEncode(request.MetaData.Description);
-            result.MetaData = await _metaDataService.AddMetaDataToObject<Post>(request.MetaData, ett.Id);
+            result.MetaData = await _metaDataService.AddMetaDataToObject<SocialPost>(request.MetaData, ett.Id);
         }
         if (request.Tags != null && request.Tags.Count > 0)
         {

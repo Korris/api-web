@@ -18,7 +18,7 @@ public partial class ComicService : IComicService
     private readonly PostType _type;
     private readonly ICurrentUserService _currentUserService;
     private readonly IFileService _fileService;
-    private readonly IRepository<SubPost> _subPostRepository;
+    private readonly IRepository<SocialSubPost> _subPostRepository;
     private readonly IConfiguration _configuration;
     public ComicService(
         IPostService postService, IUnitOfWork unitOfWork,
@@ -28,7 +28,7 @@ public partial class ComicService : IComicService
         IConfiguration configuration)
     {
         _postService = postService;
-        _subPostRepository = unitOfWork.GetRepository<SubPost>();
+        _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
         _fileService = fileService;
         _currentUserService = currentUserService;
         _type = PostType.Comic;

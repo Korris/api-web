@@ -21,9 +21,9 @@ namespace Mcsg.Realtime.Api.Services
     public class NotificationService : INotificationService
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IRepository<Post> _postRepository;
-        private readonly IRepository<PostComment> _postCommentRepository;
-        private readonly IRepository<SubPostComment> _subPostCommentRepository;
+        private readonly IRepository<SocialPost> _postRepository;
+        private readonly IRepository<SocialPostComment> _postCommentRepository;
+        private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
         private readonly IRepository<Notification> _notiRepository;
         private readonly IRepository<NotificationObject> _notiObjectRepository;
         private readonly IHubContext<NotificationHub> _hubcontext;
@@ -34,11 +34,11 @@ namespace Mcsg.Realtime.Api.Services
             IHubContext<NotificationHub> hubcontext)
         {
             _currentUserService = currentUserService;
-            _postRepository = unitOfWork.GetRepository<Post>();
+            _postRepository = unitOfWork.GetRepository<SocialPost>();
             _notiRepository = unitOfWork.GetRepository<Notification>();
             _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();
-            _postCommentRepository = unitOfWork.GetRepository<PostComment>();
-            _subPostCommentRepository = unitOfWork.GetRepository<SubPostComment>();
+            _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
+            _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
             _unitOfWork = unitOfWork;
             _hubcontext = hubcontext;
         }

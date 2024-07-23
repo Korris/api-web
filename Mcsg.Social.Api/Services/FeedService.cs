@@ -59,7 +59,7 @@ public partial class FeedService : IFeedService
         _smartLookupService = smartLookupService;
 
         _unitOfWork = unitOfWork;
-        _postRepository = unitOfWork.GetRepository<Post>();
+        _postRepository = unitOfWork.GetRepository<SocialPost>();
 
         _smartCountService = smartCountService;
         _viewHistoryService = viewHistoryService;
@@ -78,7 +78,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
+                feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
             }
             var query = "";
             if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
@@ -143,7 +143,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
+                feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
             }
             var query = string.Format(GetAllFeedsByTagQuery, _postRepository.TableName, feedLoadReq.OrderBy);
 
@@ -480,7 +480,7 @@ public partial class FeedService : IFeedService
 
             if (feedLoadReq.OrderBy == null)
             {
-                feedLoadReq.OrderBy = nameof(Post.CreatedOn);
+                feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
             }
             var query = string.Format(GetAllFeedByKeyword, _postRepository.TableName, feedLoadReq.OrderBy, keyWord);
 
@@ -810,7 +810,7 @@ public partial class FeedService : IFeedService
     /// </summary>
     private readonly ISmartLookupService _smartLookupService;
 
-    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<SocialPost> _postRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISmartCountService _smartCountService;
     private readonly IViewHistoryService _viewHistoryService;

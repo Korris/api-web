@@ -18,12 +18,12 @@ namespace Mcsg.Admin.Api.Services
 
     public partial class PostService : IPostService
     {
-        private readonly IRepository<Post> _postRepo;
+        private readonly IRepository<SocialPost> _postRepo;
         private readonly ILogger<PostService> _logger;
         private readonly IValidator<CreateAdminReq> _createAdminValidator;
         private readonly ICurrentUserService _currentUserService;
 
-        public PostService(IRepository<Post> postRepo
+        public PostService(IRepository<SocialPost> postRepo
             , ILogger<PostService> logger
             , IValidator<CreateAdminReq> createAdminValidator
             , ICurrentUserService currentUserService)
@@ -51,7 +51,7 @@ namespace Mcsg.Admin.Api.Services
 
                 if (request.OrderBy == null || ignoreOderByColumn.Contains(request.OrderBy, StringComparer.OrdinalIgnoreCase))
                 {
-                    request.OrderBy = nameof(Post.CreatedOn);
+                    request.OrderBy = nameof(SocialPost.CreatedOn);
                 }
                 else
                 {

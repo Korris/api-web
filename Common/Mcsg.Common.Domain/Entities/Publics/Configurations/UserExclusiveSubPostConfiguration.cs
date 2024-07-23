@@ -9,6 +9,6 @@ public class UserExclusiveSubPostConfiguration : BaseConfiguration<UserExclusive
     {
         builder.ToTable("UserExclusiveSubPosts");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        builder.HasOne(typeof(SubPost)).WithMany().HasForeignKey("SubPostId");
+        builder.HasOne(typeof(SocialSubPost)).WithMany().HasForeignKey("SubPostId");
     }
 }

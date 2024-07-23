@@ -24,25 +24,25 @@ public class MetaDataService : IMetaDataService
         switch (typeof(T))
         {
             case
-           var cls when cls == typeof(Post):
+           var cls when cls == typeof(SocialPost):
                 {
                     metaData.PostId = objId;
                     break;
                 }
             case
-            var cls when cls == typeof(SubPost):
+            var cls when cls == typeof(SocialSubPost):
                 {
                     metaData.SubPostId = objId;
                     break;
                 }
             case
-            var cls when cls == typeof(PostComment):
+            var cls when cls == typeof(SocialPostComment):
                 {
                     metaData.PostCommentId = objId;
                     break;
                 }
             case
-            var cls when cls == typeof(SubPostComment):
+            var cls when cls == typeof(SocialSubPostComment):
                 {
                     metaData.SubPostCommentId = objId;
                     break;

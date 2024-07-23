@@ -2,11 +2,11 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
+using SeedWork;
 
-[Table("Resources")]
-public class Resource : AuditableEntity
+[Table("SocialResources")]
+public class SocialResource : AuditableEntity
 {
     public Guid? AuthorId { get; set; }
     public string? HashId { get; set; }

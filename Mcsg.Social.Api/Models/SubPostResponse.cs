@@ -7,7 +7,7 @@ using Dtos;
 public class SubPostResponseItem
 {
     public string HashId { get; set; }
-    public IEnumerable<Resource> Resources { get; set; }
+    public IEnumerable<SocialResource> Resources { get; set; }
 }
 
 public class SubPostFeedQuery : SubPostFeedResponse

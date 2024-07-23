@@ -9,8 +9,8 @@ using static Common.SeedWork.Constants.Message;
 
 public class PostReportValidator : IValidator<PostReport>
 {
-    private readonly IRepository<Post> _postRepository;
-    public PostReportValidator(IRepository<Post> postRepository)
+    private readonly IRepository<SocialPost> _postRepository;
+    public PostReportValidator(IRepository<SocialPost> postRepository)
     {
         _postRepository = postRepository;
     }

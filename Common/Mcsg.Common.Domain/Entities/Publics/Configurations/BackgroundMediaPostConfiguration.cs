@@ -9,6 +9,6 @@ public class BackgroundMediaPostConfiguration : BaseConfiguration<BackgroundMedi
     {
         builder.ToTable("BackgroundMediaPosts");
         builder.HasOne(typeof(BackgroundMedia)).WithMany().HasForeignKey("BackgroundMediaId");
-        builder.HasOne(typeof(Post)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

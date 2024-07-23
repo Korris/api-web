@@ -24,7 +24,7 @@ namespace Mcsg.Media.Tool.Workers
                 try
                 {
                     // load resource
-                    var resourceInfo = JsonConvert.DeserializeObject<Resource>(jobInfo.Data);
+                    var resourceInfo = JsonConvert.DeserializeObject<SocialResource>(jobInfo.Data);
                     var url = HttpUtility.UrlDecode(resourceInfo.Url);
                     var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
 

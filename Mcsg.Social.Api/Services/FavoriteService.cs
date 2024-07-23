@@ -25,13 +25,13 @@ public partial class FavoriteService : IFavoriteService
 
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Tag> _tagRepository;
-    private readonly IRepository<Post> _postRepository;
-    private readonly IRepository<SubPost> _subPostRepository;
-    private readonly IRepository<Resource> _resourceRepository;
+    private readonly IRepository<SocialPost> _postRepository;
+    private readonly IRepository<SocialSubPost> _subPostRepository;
+    private readonly IRepository<SocialResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<MetaData> _metaDataRepository;
     private readonly IRepository<PostLink> _postLinkRepository;
-    private readonly IRepository<TagPost> _tagPostRepository;
+    private readonly IRepository<SocialTagPost> _tagPostRepository;
 
     private readonly IFeedService _feedService;
 
@@ -43,13 +43,13 @@ public partial class FavoriteService : IFavoriteService
         IRepository<TagFavorite> tagFavoriteRepository,
         IRepository<PostFavorite> postFavoriteRepository,
         IRepository<Tag> tagRepository,
-        IRepository<Post> postRepository,
-        IRepository<SubPost> subPostRepository,
-        IRepository<Resource> resourceRepository,
+        IRepository<SocialPost> postRepository,
+        IRepository<SocialSubPost> subPostRepository,
+        IRepository<SocialResource> resourceRepository,
         IRepository<User> userRepository,
         IRepository<MetaData> metaDataRepository,
         IRepository<PostLink> postLinkRepository,
-        IRepository<TagPost> tagPostRepository,
+        IRepository<SocialTagPost> tagPostRepository,
         IFeedService feedService)
     {
         _currentUserService = currentUserService;

@@ -2,11 +2,10 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
 
-[Table("SubPosts")]
-public class SubPost : AuditableHasPrivateEntity
+[Table("SocialSubPosts")]
+public class SocialSubPost : AuditableHasPrivateEntity
 {
     public string? Title { get; set; }
     public string? Name { get; set; }

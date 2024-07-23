@@ -5,13 +5,13 @@ namespace Mcsg.Common.Domain.Entities.Configurations;
 
 using Core.Constants;
 
-public class SubPostConfiguration : BaseConfiguration<SubPost>
+public class SocialSubPostConfiguration : BaseConfiguration<SocialSubPost>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<SubPost> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialSubPost> builder)
     {
-        builder.ToTable("SubPosts", DbSchema.Social);
+        builder.ToTable("SocialSubPosts", DbSchema.Social);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-        builder.HasOne(typeof(Post)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

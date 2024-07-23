@@ -81,7 +81,7 @@ namespace Mcsg.Function.Job.Services
             {
                 countOfSubPost = await GetCountFromSubPost(smartLookupData.EntityId, todayDate);
 
-                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<Post>(GetPostBasicBySubpostId,
+                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicBySubpostId,
                     new
                     {
                         SubPostId = smartLookupData.EntityId
@@ -131,7 +131,7 @@ namespace Mcsg.Function.Job.Services
             }
             if (smartLookupData.EntityType == EntityType.Post)
             {
-                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<Post>(GetPostBasicByPostId,
+                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicByPostId,
                     new
                     {
                         PostId = smartLookupData.EntityId
@@ -162,13 +162,13 @@ namespace Mcsg.Function.Job.Services
             switch (typeof(TP))
             {
                 case
-               var cls when cls == typeof(PostComment):
+               var cls when cls == typeof(SocialPostComment):
                     {
                         query = GetAllCountCommentFromPost;
                         break;
                     }
                 case
-                var cls when cls == typeof(PostReaction):
+                var cls when cls == typeof(SocialPostReaction):
                     {
                         query = GetAllCountReactFromPost;
                         break;
@@ -206,13 +206,13 @@ namespace Mcsg.Function.Job.Services
             switch (typeof(TP))
             {
                 case
-               var cls when cls == typeof(PostComment):
+               var cls when cls == typeof(SocialPostComment):
                     {
                         query = GetAllCountCommentFromSubPost;
                         break;
                     }
                 case
-                var cls when cls == typeof(PostReaction):
+                var cls when cls == typeof(SocialPostReaction):
                     {
                         query = GetAllCountReactFromSubPost;
                         break;

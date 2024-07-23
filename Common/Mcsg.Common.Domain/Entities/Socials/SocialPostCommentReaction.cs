@@ -2,7 +2,7 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-[Table("ComicSubPostReactions")]
-public class ComicSubPostReaction : ReactionBase
+[Table("SocialPostCommentReactions")]
+public class SocialPostCommentReaction : ReactionBase
 {
 }

@@ -2,11 +2,11 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
+using SeedWork;
 
-[Table("SubPostComments")]
-public class SubPostComment : AuditableEntity
+[Table("SocialPostComments")]
+public class SocialPostComment : AuditableEntity
 {
     public Guid? ParentId { get; set; }
     public Guid PostId { get; set; }
@@ -16,4 +16,5 @@ public class SubPostComment : AuditableEntity
     public CommentStatus Status { get; set; }
     public Guid? ResourceId { get; set; }
     public string? GifId { get; set; }
+    public Guid? QuoteId { get; set; }
 }

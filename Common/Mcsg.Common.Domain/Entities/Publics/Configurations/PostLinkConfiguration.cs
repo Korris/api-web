@@ -8,6 +8,6 @@ public class PostLinkConfiguration : BaseConfiguration<PostLink>
     public override void CreateEntityConfiguration(EntityTypeBuilder<PostLink> builder)
     {
         builder.ToTable("PostLinks");
-        builder.HasOne(typeof(Post)).WithMany().HasForeignKey("PostId");
+        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

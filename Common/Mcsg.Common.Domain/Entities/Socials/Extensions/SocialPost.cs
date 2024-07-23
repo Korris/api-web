@@ -4,14 +4,14 @@ using Core.Constants;
 using Core.Enums;
 using SeedWork.Extensions;
 
-public partial class Post
+public partial class SocialPost
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public Post()
+    public SocialPost()
     {
         CreatedOn = DateTime.UtcNow;
     }
@@ -26,11 +26,11 @@ public partial class Post
     /// <param name="customNote">Custom note</param>
     /// <param name="createdBy">Created by</param>
     /// <returns>Return the result</returns>
-    public static Post Create(string? title, string body, string? thumbnailUrl, string? authorName, string? customNote, Guid createdBy)
+    public static SocialPost Create(string? title, string body, string? thumbnailUrl, string? authorName, string? customNote, Guid createdBy)
     {
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
 
-        var res = new Post
+        var res = new SocialPost
         {
             Title = title,
             Type = (int)PostType.Feed,

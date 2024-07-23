@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
 using Core.Enums;
+using SeedWork;
 
 public class PostLink : AuditableEntity
 {

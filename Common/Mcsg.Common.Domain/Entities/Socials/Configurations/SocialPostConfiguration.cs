@@ -5,11 +5,11 @@ namespace Mcsg.Common.Domain.Entities.Configurations;
 
 using Core.Constants;
 
-public class PostConfiguration : BaseConfiguration<Post>
+public class SocialPostConfiguration : BaseConfiguration<SocialPost>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<Post> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPost> builder)
     {
-        builder.ToTable("Posts", DbSchema.Social);
+        builder.ToTable("SocialPosts", DbSchema.Social);
         builder.Property(x => x.HashId).IsRequired();
         builder.HasIndex(x => new { x.HashId, x.UserId, x.Type, x.Id }).IsUnique();
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");

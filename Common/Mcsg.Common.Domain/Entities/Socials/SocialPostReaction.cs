@@ -2,9 +2,8 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
+[Table("SocialPostReactions")]
 
-[Table("SubPostReactions")]
-public class SubPostReaction : ReactionBase
+public class SocialPostReaction : ReactionBase
 {
 }
