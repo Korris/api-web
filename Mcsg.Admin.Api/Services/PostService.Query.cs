@@ -45,7 +45,7 @@ u.""ProfileName"",
  p.""ExternalResource""
 	FROM {0} p 
 LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = p.""Id""
 LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 	WHERE [HashId] [TitleSearch] [FromDate] [ToDate] [PostType] 
 GROUP BY p.""Id"", 

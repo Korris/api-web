@@ -48,7 +48,7 @@ namespace Mcsg.Function.Job.Services
         {
             get
             {
-                return @"UPDATE social.""SubPosts""
+                return @"UPDATE social.""SocialSubPosts""
 	    SET ""IsExclusive"" = false, 
 		    ""ModifiedBy"" = @SystemUser ,
 		    ""ModifiedOn"" = @NowTime

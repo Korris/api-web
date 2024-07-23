@@ -534,7 +534,7 @@ public partial class PostService : IPostService
 
     public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
     {
-        var queryNameListPost = $@"SELECT ""Title"" FROM social.""Posts"" where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
+        var queryNameListPost = $@"SELECT ""Title"" FROM social.""SocialPosts"" where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
         var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
         var smartLookupInserts = new List<SmartLookup>();
         foreach (var name in nameListPost)
@@ -684,15 +684,15 @@ public partial class PostService : IPostService
 	                              END AS Tags,
 	                              COUNT(pc.""Id"") as CommentCount,
 	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
-	                              FROM social.""Posts"" p
+	                              FROM social.""SocialPosts"" p
 	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
-	                              LEFT JOIN social.""TagPosts"" tp on p.""Id""  = tp.""PostId"" 
+	                              LEFT JOIN social.""SocialTagPosts"" tp on p.""Id""  = tp.""PostId"" 
 	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
-	                              LEFT JOIN social.""PostComments"" pc on pc.""PostId""  = p.""Id"" 
+	                              LEFT JOIN social.""SocialPostComments"" pc on pc.""PostId""  = p.""Id"" 
 	                              LEFT JOIN LATERAL 
 										(
 											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
-											FROM social.""SubPosts"" sp 
+											FROM social.""SocialSubPosts"" sp 
 											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
 											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
 											ORDER BY sp.""Order"" DESC
@@ -705,7 +705,7 @@ public partial class PostService : IPostService
                                   LIMIT @PageSize;
 
                                   SELECT COUNT(*) AS TotalCount
-                                  FROM social.""Posts"" p
+                                  FROM social.""SocialPosts"" p
                                   JOIN identity.""Users"" u on p.""CreatedBy"" = u.""Id""
                                   [QueryCondition]";
 
@@ -1056,8 +1056,8 @@ public partial class PostService : IPostService
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
-                    from social.""PostComments"" pc 
-                    left join social.""Posts"" p on  pc.""PostId"" = p.""Id""
+                    from social.""SocialPostComments"" pc 
+                    left join social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
@@ -1080,9 +1080,9 @@ public partial class PostService : IPostService
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
-                        FROM social.""PostComments"" pc 
-                        LEFT JOIN social.""Posts"" p on  pc.""PostId"" = p.""Id""
-						LEFT JOIN social.""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        FROM social.""SocialPostComments"" pc 
+                        LEFT JOIN social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
+						LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
                         AND pc.""CreatedBy"" != @CurrentUserId
@@ -1127,8 +1127,8 @@ public partial class PostService : IPostService
         if (postIdReaded.Any())
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
-                                                                                            from social.""TagPosts"" tp 
-                                                                                            join social.""Posts"" p on tp.""PostId"" =  p.""Id""
+                                                                                            from social.""SocialTagPosts"" tp 
+                                                                                            join social.""SocialPosts"" p on tp.""PostId"" =  p.""Id""
                                                                                             WHERE tp.""PostId"" = ANY (@PostId)
                                                                                             AND tp.""IsDelete"" = false
                                                                                              ", new { PostId = postIdReaded });
@@ -1838,16 +1838,16 @@ public partial class PostService : IPostService
         try
         {
             var query = $@"SELECT sp.""HashId""
-                               FROM social.""SubPosts"" sp
-                               JOIN social.""Posts"" p ON sp.""PostId"" = p.""Id""
-                               JOIN social.""Resources"" r on sp.""Id"" = r.""SubPostId""
+                               FROM social.""SocialSubPosts"" sp
+                               JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
+                               JOIN social.""SocialResources"" r on sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
 	                           AND sp.""IsDelete"" = false
 	                           [QueryByType]
 	                           [IgnoreQuery]
                                AND sp.""Order"" = (
                                                     SELECT MIN(sp_inner.""Order"")
-                                                    FROM social.""SubPosts"" sp_inner
+                                                    FROM social.""SocialSubPosts"" sp_inner
                                                     WHERE sp_inner.""PostId"" = sp.""PostId""
 		                                            AND sp_inner.""IsDelete"" = false
                                                     )
@@ -1872,7 +1872,7 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From social.""Posts"" 
+            var query = @$"SELECT ""HashId"" From social.""SocialPosts"" 
                                 WHERE ""IsDelete"" = false
                                 [QueryByType]
                                 [IgnoreQuery]

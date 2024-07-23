@@ -37,13 +37,13 @@
 							pl.""HashId"" AS ""LinkHashId"",
 							pl.""Url"" AS ""LinkUrl"",
 							pl.""Type"" AS ""LinkType""
-							FROM social.""Posts"" p
+							FROM social.""SocialPosts"" p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM social.""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -52,7 +52,7 @@
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",r.""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId"" AS SubPostHashId 
-								FROM social.""Resources"" r
+								FROM social.""SocialResources"" r
 								WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -76,7 +76,7 @@
 						LIMIT @PageSize
 						OFFSET @Offet) 
 						AS post
-						LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						LEFT JOIN identity.""Users"" u ON u.""Id"" = post.""UserId""
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
@@ -132,8 +132,8 @@
 							md.""Url"" AS ""MetaUrl"",
 							md.""Domain"" AS ""MetaDomain""
 							FROM (
-								SELECT DISTINCT qpost.* FROM social.""Posts"" qpost
-							 	INNER JOIN social.""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+								SELECT DISTINCT qpost.* FROM social.""SocialPosts"" qpost
+							 	INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE  qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
 								AND qpost.""IsDelete"" = false 
@@ -146,7 +146,7 @@
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -155,7 +155,7 @@
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM social.""Resources"" 
+							 	FROM social.""SocialResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id""
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -172,7 +172,7 @@
 							md.""Domain""
 							) 
 						AS post
-						LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -190,7 +190,7 @@
 
 						SELECT COUNT(*) AS TotalItems 
 						FROM (SELECT DISTINCT qpost.""Id"" FROM {0} qpost
-							 	INNER JOIN social.""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+							 	INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 								INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
 								AND qpost.""IsDelete"" = false) p;";
@@ -234,7 +234,7 @@
 							pl.""Type"" AS ""LinkType""
 							FROM (
 								SELECT  smart.""Count"" as commentcount, qpost.*
-								FROM social.""Posts"" qpost
+								FROM social.""SocialPosts"" qpost
 								INNER JOIN LATERAL (
 								SELECT 
 								""EntityType"", 
@@ -258,7 +258,7 @@ LIMIT @PageSize
 							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SubPosts"" sp 
+								SELECT ""Id"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -267,7 +267,7 @@ LIMIT @PageSize
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM social.""Resources"" 
+							 	FROM social.""SocialResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -287,7 +287,7 @@ LIMIT @PageSize
 							pl.""Type""
 							) 
 						AS post
-						LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -308,7 +308,7 @@ LIMIT @PageSize
 
 						SELECT COUNT(*) AS TotalItems 
 						FROM (SELECT  qpost.""Id""
-								FROM social.""Posts"" qpost
+								FROM social.""SocialPosts"" qpost
 								INNER JOIN LATERAL (
 									SELECT 
 									""EntityId""
@@ -364,13 +364,13 @@ LIMIT @PageSize
 						pl.""HashId"",
 						pl.""Url"",
 						pl.""Type""
-						FROM social.""Posts"" p
+						FROM social.""SocialPosts"" p
 						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-						LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = p.""Id""
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
 						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
-						LEFT JOIN social.""SubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
-						LEFT JOIN social.""Resources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false	
+						LEFT JOIN social.""SocialSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
+						LEFT JOIN social.""SocialResources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false	
 						LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
 						WHERE 
 						p.""HashId"" = @HashId AND p.""IsDelete"" = false 
@@ -430,7 +430,7 @@ LIMIT @PageSize
 							)
 						END AS ""Link""
 					FROM
-						social.""Posts"" p
+						social.""SocialPosts"" p
 					LEFT JOIN 
 						identity.""Users"" u ON p.""UserId"" = u.""Id""
 					LEFT JOIN 
@@ -445,7 +445,7 @@ LIMIT @PageSize
 							sp.""Order"",
 							COUNT(*) OVER() AS ""Total""
 						FROM
-							social.""SubPosts"" sp
+							social.""SocialSubPosts"" sp
 						WHERE
 							sp.""PostId"" = p.""Id""
 							AND sp.""IsDelete"" = FALSE
@@ -469,7 +469,7 @@ LIMIT @PageSize
 							spr.""Order"",
 							sp.""HashId"" as SubPostHashId
 						FROM
-							social.""Resources"" spr
+							social.""SocialResources"" spr
 						WHERE
 							spr.""SubPostId"" = sp.""Id""
 							AND spr.""IsDelete"" = FALSE
@@ -535,14 +535,14 @@ LIMIT @PageSize
 							FROM (
 								SELECT DISTINCT subqpost.* FROM 
 									(
-										SELECT qpost.* FROM social.""Posts"" qpost
-								 		INNER JOIN social.""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+										SELECT qpost.* FROM social.""SocialPosts"" qpost
+								 		INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
-										SELECT qpost.* FROM social.""Posts"" qpost
+										SELECT qpost.* FROM social.""SocialPosts"" qpost
 										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
@@ -556,7 +556,7 @@ LIMIT @PageSize
 							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
-								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SubPosts"" sp 
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
@@ -565,7 +565,7 @@ LIMIT @PageSize
 							LEFT JOIN LATERAL
 							(
 								SELECT ""SubPostId"",""Type"",""ShareUrl"",""Status"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
-							 	FROM social.""Resources"" 
+							 	FROM social.""SocialResources"" 
 							 	WHERE ""SubPostId"" = sp.""Id""
 								LIMIT 1
 							) spr ON spr.""SubPostId"" = sp.""Id""
@@ -582,7 +582,7 @@ LIMIT @PageSize
 							md.""Domain""
 							) 
 						AS post
-						LEFT JOIN social.""TagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
 						post.""UserId"",post.""Avatar"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
@@ -602,14 +602,14 @@ LIMIT @PageSize
 						FROM (
 								SELECT DISTINCT subqpost.* FROM 
 									(
-										SELECT qpost.* FROM social.""Posts"" qpost
-								 		INNER JOIN social.""TagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+										SELECT qpost.* FROM social.""SocialPosts"" qpost
+								 		INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
 										INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 										WHERE  qtag.""Name"" ILIKE '%{2}%' AND qpost.""Type"" = @PostType
 										AND qpost.""IsDelete"" = false 
 										--TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
 										UNION
-										SELECT qpost.* FROM social.""Posts"" qpost
+										SELECT qpost.* FROM social.""SocialPosts"" qpost
 										INNER JOIN identity.""Users"" users ON qpost.""UserId"" = users.""Id"" 
 										WHERE users.""ProfileName"" ILIKE '%{2}%'
 										AND users.""IsDelete"" = false 
@@ -623,7 +623,7 @@ LIMIT @PageSize
         {
             get
             {
-                return @"SELECT ""Id"" FROM social.""Posts"" WHERE ""UserId"" = @UserId AND ""Type"" = @PostType LIMIT 1;";
+                return @"SELECT ""Id"" FROM social.""SocialPosts"" WHERE ""UserId"" = @UserId AND ""Type"" = @PostType LIMIT 1;";
             }
         }
     }

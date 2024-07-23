@@ -16,7 +16,7 @@
 												r.""Url"" as ResourceUrl,
 												r.""HashId"" as ResourceHashId
 											   FROM {0} pc
-											   LEFT JOIN social.""Resources"" r on pc.""ResourceId"" = r.""Id""
+											   LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
 											   LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
 											   WHERE pc.""ParentId"" = @CommentId
 											   AND pc.""IsDelete"" = false";
@@ -39,12 +39,12 @@
 													r.""Url"" as ResourceUrl,
 													r.""HashId"" as ResourceHashId,
 													COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
-												FROM social.""PostComments""  pc
-												LEFT JOIN social.""PostComments"" reply on reply.""ParentId"" = pc.""Id""
+												FROM social.""SocialPostComments""  pc
+												LEFT JOIN social.""SocialPostComments"" reply on reply.""ParentId"" = pc.""Id""
 												LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-												LEFT JOIN social.""PostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
-												LEFT JOIN social.""Posts"" p on pc.""PostId"" = p.""Id""												
-												LEFT JOIN social.""Resources"" r on pc.""ResourceId"" = r.""Id""
+												LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+												LEFT JOIN social.""SocialPosts"" p on pc.""PostId"" = p.""Id""												
+												LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
 												AND pc.""IsDelete"" = false
@@ -68,13 +68,13 @@
 													r.""Url"" as ResourceUrl,
 													r.""HashId"" as ResourceHashId,
 													COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
-												FROM social.""SubPostComments"" spc
-												LEFT JOIN social.""SubPostComments"" reply on reply.""ParentId"" = spc.""Id""
+												FROM social.""SocialSubPostComments"" spc
+												LEFT JOIN social.""SocialSubPostComments"" reply on reply.""ParentId"" = spc.""Id""
 												LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
-												LEFT JOIN social.""SubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-												LEFT JOIN social.""SubPosts""  sp ON spc.""PostId"" = sp.""Id""
-												LEFT JOIN social.""Resources"" r on spc.""ResourceId"" = r.""Id""
-												WHERE sp.""PostId"" = (SELECT ""Id"" FROM social.""Posts""  WHERE ""HashId"" =@HashId) 
+												LEFT JOIN social.""SocialSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+												LEFT JOIN social.""SocialSubPosts""  sp ON spc.""PostId"" = sp.""Id""
+												LEFT JOIN social.""SocialResources"" r on spc.""ResourceId"" = r.""Id""
+												WHERE sp.""PostId"" = (SELECT ""Id"" FROM social.""SocialPosts""  WHERE ""HashId"" =@HashId) 
 												AND spc.""ParentId"" is null
 												AND spc.""IsDelete"" = false
 												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
@@ -85,36 +85,36 @@
 
 												SELECT
 													(SELECT COUNT(*)
-													 FROM social.""PostComments""  pc
-													 JOIN social.""Posts"" p ON pc.""PostId""= p.""Id"" 
+													 FROM social.""SocialPostComments""  pc
+													 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id"" 
 													 WHERE p.""HashId"" = @HashId 
 													and ""ParentId"" is null 
 												     AND pc.""IsDelete"" = false) 
 													+
 													(SELECT COUNT(*)
-													 FROM social.""SubPostComments"" spc
-													 JOIN social.""SubPosts"" sp ON spc.""PostId""= sp.""Id""
-													 JOIN social.""Posts"" p ON sp.""PostId""= p.""Id""
+													 FROM social.""SocialSubPostComments"" spc
+													 JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
+													 JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
 													 WHERE p.""HashId"" = @HashId and ""ParentId"" is null
 													 AND spc.""IsDelete"" = false) AS total_comment_count";
 
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
-														 FROM social.""PostComments""  pc
-														 JOIN social.""Posts"" p ON pc.""PostId""= p.""Id""
+														 FROM social.""SocialPostComments""  pc
+														 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND pc.""IsDelete"" = false";
 
         private string GetTotalCommentQuery => $@"SELECT 
 														(SELECT COUNT(*)
-														 FROM social.""PostComments""  pc
-														 JOIN social.""Posts"" p ON pc.""PostId""= p.""Id""
+														 FROM social.""SocialPostComments""  pc
+														 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND pc.""IsDelete"" = false) 
 														+
 														(SELECT COUNT(*)
-														 FROM social.""SubPostComments"" spc
-														 JOIN social.""SubPosts"" sp ON spc.""PostId""= sp.""Id""
-														 JOIN social.""Posts"" p ON sp.""PostId""= p.""Id""
+														 FROM social.""SocialSubPostComments"" spc
+														 JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
+														 JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
 														 WHERE p.""HashId"" = @HashId
 														 AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetCommentOfPostQuery

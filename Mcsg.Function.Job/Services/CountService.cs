@@ -245,7 +245,7 @@ namespace Mcsg.Function.Job.Services
                 return @"SELECT SUM(count)
                 FROM (
 	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""PostComments"" pcm 
+				                FROM social.""SocialPostComments"" pcm 
 				                WHERE pcm.""PostId"" = @PostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
@@ -253,8 +253,8 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
 	                UNION ALL
 
 	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SubPostComments"" pcm 
-				                INNER JOIN social.""SubPosts"" sp ON sp.""Id"" = pcm.""PostId"" AND 
+				                FROM social.""SocialSubPostComments"" pcm 
+				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""PostId"" AND 
 				                sp.""PostId"" = @PostId
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                WHERE  pcm.""IsDelete"" = false 							
@@ -267,7 +267,7 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SubPostComments"" pcm 
+				                FROM social.""SocialSubPostComments"" pcm 
 				                WHERE pcm.""PostId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
@@ -285,7 +285,7 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
                 return @"SELECT SUM(count)
                 FROM (
 	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""PostReactions"" pcm 
+				                FROM social.""SocialPostReactions"" pcm 
 				                WHERE pcm.""TargetId"" = @PostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
@@ -293,8 +293,8 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
 	                UNION ALL
 
 	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SubPostReactions"" pcm 
-				                INNER JOIN social.""SubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedOn"") = @Today AND 
+				                FROM social.""SocialSubPostReactions"" pcm 
+				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedOn"") = @Today AND 
 				                sp.""PostId"" = @PostId
 				                WHERE  pcm.""IsDelete"" = false 							
 				                GROUP BY pcm.""TargetId""
@@ -306,7 +306,7 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SubPostReactions"" pcm 
+				                FROM social.""SocialSubPostReactions"" pcm 
 				                WHERE pcm.""TargetId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
 				                AND pcm.""IsDelete"" = false 							
@@ -329,7 +329,7 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
 
 	                SELECT COUNT(view.""Id"") as count
 				                FROM ""ViewHistories"" view 
-				                INNER JOIN social.""SubPosts"" sp ON sp.""Id"" = view.""EntityId"" AND 
+				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = view.""EntityId"" AND 
 				                sp.""PostId"" = @PostId							
 				                GROUP BY view.""EntityId"" 
 	                ) as tb;";
@@ -377,8 +377,8 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT p.""Id"", p.""Type""
-				                FROM social.""SubPosts"" sp
-INNER JOIN social.""Posts"" p ON sp.""PostId"" = p.""Id""
+				                FROM social.""SocialSubPosts"" sp
+INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
 				                WHERE sp.""Id"" = @SubPostId 
 				                AND p.""IsDelete"" = false 							
 				                LIMIT 1;";
@@ -389,7 +389,7 @@ INNER JOIN social.""Posts"" p ON sp.""PostId"" = p.""Id""
             get
             {
                 return @"SELECT p.""Id"", p.""Type""
-				                FROM social.""Posts"" p
+				                FROM social.""SocialPosts"" p
 				                WHERE p.""Id"" = @PostId 
 				                AND p.""IsDelete"" = false 							
 				                LIMIT 1;";

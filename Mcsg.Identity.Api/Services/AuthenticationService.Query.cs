@@ -14,7 +14,7 @@
         {
             get
             {
-                return @$"SELECT ""Id"" FROM social.""Posts""
+                return @$"SELECT ""Id"" FROM social.""SocialPosts""
                       WHERE ""UserId"" = @UserId AND ""IsDelete"" = false";
             }
         }
@@ -23,47 +23,47 @@
         {
             get
             {
-                return @"UPDATE social.""Posts""
+                return @"UPDATE social.""SocialPosts""
 					SET ""IsDelete"" = true	, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""Id"" = @PostId;
 
-					UPDATE social.""Resources""
+					UPDATE social.""SocialResources""
 					SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
-						  FROM social.""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
-					WHERE social.""Resources"".""SubPostId"" = sp.""Id"";
+						  FROM social.""SocialSubPosts"" WHERE ""PostId"" = @PostId) AS sp
+					WHERE social.""SocialResources"".""SubPostId"" = sp.""Id"";
 	
-					UPDATE social.""SubPostReactions"" spr
+					UPDATE social.""SocialSubPostReactions"" spr
 					SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
-						  FROM social.""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
+						  FROM social.""SocialSubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
-					UPDATE social.""SubPostComments"" spr
+					UPDATE social.""SocialSubPostComments"" spr
 					SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
-						  FROM social.""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
+						  FROM social.""SocialSubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""PostId"" = sp.""Id"";
 	
-					UPDATE social.""SubPostCommentReactions"" spr
+					UPDATE social.""SocialSubPostCommentReactions"" spr
 					SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					FROM (SELECT ""Id""
-						  FROM social.""SubPosts"" WHERE ""PostId"" = @PostId) AS sp
+						  FROM social.""SocialSubPosts"" WHERE ""PostId"" = @PostId) AS sp
 					WHERE spr.""TargetId"" = sp.""Id"";
 	
-					UPDATE social.""TagPosts""
+					UPDATE social.""SocialTagPosts""
 					SET ""IsDelete"" = true	, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
-					UPDATE social.""SubPosts""
+					UPDATE social.""SocialSubPosts""
 					SET ""IsDelete"" = true	, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;
 	
-					UPDATE social.""PostReactions""
+					UPDATE social.""SocialPostReactions""
 					SET ""IsDelete"" = true	, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""TargetId"" = @PostId;
 	
-					UPDATE social.""PostComments""
+					UPDATE social.""SocialPostComments""
 					SET ""IsDelete"" = true	, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
 					WHERE ""PostId"" = @PostId;";
             }
