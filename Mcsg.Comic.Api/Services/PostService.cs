@@ -881,7 +881,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedOn);
+            loadReq.OrderBy = nameof(ComicPost.CreatedOn);
         }
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
@@ -1444,7 +1444,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(SubPost.Order);
+            loadReq.OrderBy = nameof(ComicSubPost.Order);
         }
         var query = GetSeriesChaptersByHashId
             .Replace("[OrderBy]", loadReq.OrderBy);
@@ -1515,7 +1515,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(SubPost.Order);
+            loadReq.OrderBy = nameof(ComicSubPost.Order);
         }
 
         var multi = await _postRepository
@@ -1774,7 +1774,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(Post.CreatedOn);
+            loadReq.OrderBy = nameof(ComicPost.CreatedOn);
         }
         return offset;
     }

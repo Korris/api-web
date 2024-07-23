@@ -440,7 +440,7 @@ public class FileService : IFileService
             var subPostId = resource.SubPostId ?? postId;
             if (addSubPost)
             {
-                var subPost = new SubPost
+                var subPost = new ComicSubPost
                 {
                     Title = resource.Title,
                     PostId = postId,
@@ -455,7 +455,7 @@ public class FileService : IFileService
                     IsExclusive = false
                 };
 
-                await _context.SubPosts.AddAsync(subPost);
+                await _context.ComicSubPosts.AddAsync(subPost);
                 subPostId = subPost.Id;
 
                 subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
