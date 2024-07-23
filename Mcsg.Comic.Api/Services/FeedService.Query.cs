@@ -413,8 +413,8 @@ LIMIT @PageSize
 						u.""ProfileId"",
 						p.""CreatedOn"",
 						sp.""Total"" AS ""TotalResources"",
-						to_jsonb(ARRAY_AGG(sp.*)) AS ""comic"".""ComicSubPosts"",
-						to_jsonb(ARRAY_AGG(spr.*)) AS ""comic"".""ComicResources"",
+						to_jsonb(ARRAY_AGG(sp.*)) AS ""SubPosts"",
+						to_jsonb(ARRAY_AGG(spr.*)) AS ""Resources"",
 						jsonb_build_object(
 							'Description', md.""Description"",
 							'Title', md.""Title"",
