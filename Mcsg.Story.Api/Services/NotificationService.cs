@@ -25,13 +25,13 @@ public partial class NotificationService : INotificationService
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Notification> _notiRepository;
     private readonly IRepository<NotificationObject> _notiObjRepository;
-    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<User> _userRepository;
 
-    private readonly IRepository<PostReaction> _postReacRepository;
-    private readonly IRepository<SubPostReaction> _subPostReacRepository;
-    private readonly IRepository<PostCommentReaction> _postCommentRepository;
-    private readonly IRepository<SubPostCommentReaction> _subPostCommentRepository;
+    private readonly IRepository<StoryPostReaction> _postReacRepository;
+    private readonly IRepository<StorySubPostReaction> _subPostReacRepository;
+    private readonly IRepository<StoryPostCommentReaction> _postCommentRepository;
+    private readonly IRepository<StorySubPostCommentReaction> _subPostCommentRepository;
     private readonly IMapper _mapper;
     private IConfiguration _configuration;
 
@@ -39,17 +39,17 @@ public partial class NotificationService : INotificationService
         , IUnitOfWork unitOfWork
         , IMapper mapper
         , IConfiguration configuration
-        , IRepository<PostReaction> postReacRepository
-        , IRepository<SubPostReaction> subPostReacRepository
-        , IRepository<PostCommentReaction> postCommentRepository
+        , IRepository<StoryPostReaction> postReacRepository
+        , IRepository<StorySubPostReaction> subPostReacRepository
+        , IRepository<StoryPostCommentReaction> postCommentRepository
         , ISetting setting
-        , IRepository<SubPostCommentReaction> subPostCommentRepository)
+        , IRepository<StorySubPostCommentReaction> subPostCommentRepository)
     {
         _currentUserService = currentUserService;
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _notiObjRepository = unitOfWork.GetRepository<NotificationObject>();
         _userRepository = unitOfWork.GetRepository<User>();
-        _postRepository = unitOfWork.GetRepository<Post>();
+        _postRepository = unitOfWork.GetRepository<StoryPost>();
         _mapper = mapper;
         _configuration = configuration;
         _postReacRepository = postReacRepository;

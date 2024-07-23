@@ -24,11 +24,11 @@ using Requests;
 public partial class TagService : ITagService
 {
     private readonly IRepository<Tag> _tagRepository;
-    private readonly IRepository<TagPost> _tagPostRepository;
+    private readonly IRepository<StoryTagPost> _tagPostRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly ISmartLookupService _smartLookupService;
-    private readonly IRepository<Post> _postRepository;
+    private readonly IRepository<StoryPost> _postRepository;
     private readonly IConfiguration _configuration;
 
     public TagService(
@@ -37,12 +37,12 @@ public partial class TagService : ITagService
         IUnitOfWork unitOfWork,
         ISmartLookupService smartLookupService,
         IRepository<SmartLookup> smartLookupRepository,
-        IRepository<Post> postRepository,
+        IRepository<StoryPost> postRepository,
         IConfiguration configuration)
     {
         _context = context;
         _currentUserService = currentUserService;
-        _tagPostRepository = unitOfWork.GetRepository<TagPost>();
+        _tagPostRepository = unitOfWork.GetRepository<StoryTagPost>();
         _tagRepository = unitOfWork.GetRepository<Tag>();
         _smartLookupRepository = smartLookupRepository;
         _smartLookupService = smartLookupService;

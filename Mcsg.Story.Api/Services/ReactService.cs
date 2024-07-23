@@ -215,7 +215,7 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
     private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId)
     {
         Type entityType = typeof(T);
-        if (entityType.Name == nameof(PostReaction))
+        if (entityType.Name == nameof(StoryPostReaction))
         {
             //Send notification when video processing
             var authorName = !string.IsNullOrWhiteSpace(_currentUserService.Session.ProfileName)
@@ -240,13 +240,13 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
         switch (typeof(T))
         {
             case
-           var cls when cls == typeof(PostReaction):
+           var cls when cls == typeof(StoryPostReaction):
                 {
                     await _smartCountService.QueueAddReactionCount(targetId, EntityType.Post);
                     break;
                 }
             case
-            var cls when cls == typeof(SubPostReaction):
+            var cls when cls == typeof(StorySubPostReaction):
                 {
                     await _smartCountService.QueueAddReactionCount(targetId, EntityType.SubPost);
                     break;
@@ -259,13 +259,13 @@ public partial class ReactService<T> : IReactService<T> where T : ReactionBase, 
         switch (typeof(T))
         {
             case
-           var cls when cls == typeof(PostReaction):
+           var cls when cls == typeof(StoryPostReaction):
                 {
                     await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.Post);
                     break;
                 }
             case
-            var cls when cls == typeof(SubPostReaction):
+            var cls when cls == typeof(StorySubPostReaction):
                 {
                     await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.SubPost);
                     break;
