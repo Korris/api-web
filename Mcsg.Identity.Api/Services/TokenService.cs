@@ -48,40 +48,41 @@ public class TokenService : ITokenService
 
     public async Task<RefreshTokenDto?> AddUserRefreshTokenAsync(User user)
     {
-        if (user != null)
+        if (user == null)
         {
-            var userRefreshToken = await _context.UserRefreshTokens.OrderByDescending(p => p.RefreshTokenExpiryTime).FirstOrDefaultAsync(p => p.UserId == user.Id);
-
-            if (userRefreshToken != null)
-            {
-                userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt);
-                await _context.SaveChangesAsync();
-
-                return new RefreshTokenDto
-                {
-                    RefreshToken = userRefreshToken.RefreshToken,
-                    RefreshTokenExpiryTime = userRefreshToken.RefreshTokenExpiryTime.Value
-                };
-            }
-            else
-            {
-                userRefreshToken = new UserRefreshToken
-                {
-                    UserId = user.Id,
-                    RefreshToken = SecurityToken.GenerateToken(),
-                    RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
-                };
-                await _context.UserRefreshTokens.AddAsync(userRefreshToken);
-
-                return new RefreshTokenDto
-                {
-                    RefreshToken = userRefreshToken.RefreshToken,
-                    RefreshTokenExpiryTime = userRefreshToken.RefreshTokenExpiryTime.Value
-                };
-            }
+            return null;
         }
 
-        return null;
+        var userRefreshToken = await _context.UserRefreshTokens.OrderByDescending(p => p.RefreshTokenExpiryTime).FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+        if (userRefreshToken != null)
+        {
+            userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt);
+            await _context.SaveChangesAsync();
+
+            return new RefreshTokenDto
+            {
+                RefreshToken = userRefreshToken.RefreshToken,
+                RefreshTokenExpiryTime = userRefreshToken.RefreshTokenExpiryTime.Value
+            };
+        }
+        else
+        {
+            userRefreshToken = new UserRefreshToken
+            {
+                UserId = user.Id,
+                RefreshToken = SecurityToken.GenerateToken(),
+                RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
+            };
+            await _context.UserRefreshTokens.AddAsync(userRefreshToken);
+            await _context.SaveChangesAsync();
+
+            return new RefreshTokenDto
+            {
+                RefreshToken = userRefreshToken.RefreshToken,
+                RefreshTokenExpiryTime = userRefreshToken.RefreshTokenExpiryTime.Value
+            };
+        }
     }
 
     public TokenDto GenerateAccessToken(Guid sessionId, User user)

@@ -225,12 +225,12 @@ public partial class AuthenticationService : IAuthenticationService
                 response.RefreshToken = refreshToken.RefreshToken;
                 response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
             }
+
             if (user.LastLoginDate != null)
             {
                 user.LastLoginDate = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
 
             return response;
         }
@@ -239,6 +239,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new ForbiddenAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
     }
+
     public async Task<bool> LogOut()
     {
         await _sessionService.ExpireSession(_currentUserService.Session);
