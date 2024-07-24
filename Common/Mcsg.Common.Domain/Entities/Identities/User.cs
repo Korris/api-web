@@ -11,6 +11,11 @@ public partial class User : IdentityUser<Guid>
     /// </summary>
     public string? ProfileName { get; set; }
 
+    /// <summary>
+    /// Store the first username
+    /// </summary>
+    public string? ProfileId { get; set; }
+
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
@@ -30,20 +35,7 @@ public partial class User : IdentityUser<Guid>
     public string? StatusReason { get; set; }
     public string? CoverPhoto { get; set; }
     public string? Location { get; set; }
-
-    /// <summary>
-    /// Store the first username
-    /// </summary>
-    public string? ProfileId { get; set; }
-
     public DateOnly? PremiumDate { get; set; }
     public bool IsActiveEarning { get; set; }
-
-    public User()
-    {
-        var now = DateTime.UtcNow;
-        CreatedOn = now;
-        ModifiedOn = now;
-        IsDelete = false;
-    }
+    public bool IsWalletShowing { get; set; }
 }

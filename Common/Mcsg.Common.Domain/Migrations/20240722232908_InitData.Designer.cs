@@ -3042,6 +3042,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsWalletShowing")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
 

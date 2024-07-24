@@ -398,6 +398,7 @@ namespace Mcsg.Common.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     ProfileName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ProfileId = table.Column<string>(type: "text", nullable: true),
                     FirstName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     LastName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -417,9 +418,9 @@ namespace Mcsg.Common.Domain.Migrations
                     StatusReason = table.Column<string>(type: "text", nullable: true),
                     CoverPhoto = table.Column<string>(type: "text", nullable: true),
                     Location = table.Column<string>(type: "text", nullable: true),
-                    ProfileId = table.Column<string>(type: "text", nullable: true),
                     PremiumDate = table.Column<DateOnly>(type: "date", nullable: true),
                     IsActiveEarning = table.Column<bool>(type: "boolean", nullable: false),
+                    IsWalletShowing = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

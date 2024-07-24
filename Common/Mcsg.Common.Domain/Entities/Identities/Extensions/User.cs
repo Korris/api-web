@@ -9,6 +9,14 @@ public partial class User
     #region -- Methods --
 
     /// <summary>
+    /// Initialize
+    /// </summary>
+    public User()
+    {
+        CreatedOn = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Convert to data transfer object
     /// </summary>
     /// <returns>Return the DTO</returns>
