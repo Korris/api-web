@@ -29,7 +29,7 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
 
     Task<ComicSubPost> SubPostChapterToSeries(string hashId, StoryChapterPostR chapterPostReq);
-    Task<ComicSubPost> SubPostUpdateChapterToSeries(string hashId, int order, StoryChapterPostR chapterPostReq);
+    Task<ComicSubPost> SubPostUpdateChapterToSeries(string hashId, float order, StoryChapterPostR chapterPostReq);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string hashId, int order);
     void VerifyBasicInfo(string title);

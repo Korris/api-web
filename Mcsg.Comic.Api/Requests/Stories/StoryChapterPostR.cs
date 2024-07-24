@@ -13,5 +13,8 @@ public class StoryChapterPostR
     public PostStatus Status { get; set; }
     public DateTime? PublishDate { get; set; }
     public bool IsEnableComment { get; set; }
+    public bool IsPremium { get; set; }
+    public bool IsAutoGenerateOrder { get; set; }
+    public float Order { get; set; }
     #endregion
 }

@@ -541,6 +541,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsExclusive")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
 
@@ -550,8 +553,8 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
+                    b.Property<float>("Order")
+                        .HasColumnType("real");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");
@@ -2435,6 +2438,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsExclusive")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
 
@@ -2444,8 +2450,8 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
+                    b.Property<float>("Order")
+                        .HasColumnType("real");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");

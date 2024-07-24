@@ -21,7 +21,7 @@ public interface IComicService
     Task<PostSeriesResponse> PostComic(ComicPostSeriesR comicPostReq);
     Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR comicPostReq);
     Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR chapterPostReq);
-    Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ComicChapterComicR chapterPostReq);
+    Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR chapterPostReq);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string comicHashId, int order);
     Task<bool> Delete(Guid postId);

@@ -1549,15 +1549,26 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
         #region Get post
+        var newOrder = 0.0f;
         var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
         var reader = await _postRepository
             .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
         var post = (await reader.ReadAsync<StoryPost>().ConfigureAwait(false)).FirstOrDefault();
-        var maxOrder = (await reader.ReadAsync<int>(false)).FirstOrDefault();
         reader.Dispose();
         VerifyPost(post, true);
         #endregion
-        var newOrder = maxOrder + 1;
+
+        if (chapterPostReq.IsAutoGenerateOrder)
+        {
+            var maxOrder = (await reader.ReadAsync<int>(false)).FirstOrDefault();
+            newOrder = maxOrder + 1;
+
+        }
+        else
+        {
+            newOrder = chapterPostReq.Order;
+        }
+
         var newChapter = new StorySubPost
         {
             AuthorId = post.AuthorId,
@@ -1575,6 +1586,7 @@ public partial class PostService : IPostService
             ViewCount = 0,
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
+            IsPremium = chapterPostReq.IsPremium,
         };
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
@@ -1582,7 +1594,7 @@ public partial class PostService : IPostService
 
         return newChapter;
     }
-    public async Task<StorySubPost> SubPostUpdateChapterToSeries(string postHashId, int order, StoryChapterPostR chapterPostReq)
+    public async Task<StorySubPost> SubPostUpdateChapterToSeries(string postHashId, float order, StoryChapterPostR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1619,7 +1631,10 @@ public partial class PostService : IPostService
         //newChapter.CreatorNote = chapterPostReq.CreatorNote;
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
-
+        if (!chapterPostReq.IsAutoGenerateOrder)
+        {
+            newChapter.Order = order;
+        }
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
 

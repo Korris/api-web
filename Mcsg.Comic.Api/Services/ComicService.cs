@@ -131,7 +131,7 @@ public partial class ComicService : IComicService
         return result;
     }
 
-    public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, int order, ComicChapterComicR chapterPostReq)
+    public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR chapterPostReq)
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
