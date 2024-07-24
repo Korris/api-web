@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
 
-[Table("StoryResources")]
 public class StoryResource : AuditableEntity
 {
     public Guid? AuthorId { get; set; }

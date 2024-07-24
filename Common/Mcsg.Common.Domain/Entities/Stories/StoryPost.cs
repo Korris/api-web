@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 
-[Table("StoryPosts")]
 public partial class StoryPost : AuditableHasPrivateEntity
 {
     public string? Title { get; set; }

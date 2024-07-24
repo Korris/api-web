@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
 
-[Table("SocialPostComments")]
 public class SocialPostComment : AuditableEntity
 {
     public Guid? ParentId { get; set; }

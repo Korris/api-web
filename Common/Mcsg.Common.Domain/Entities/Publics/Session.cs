@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork;
 
-[Table("Sessions")]
 public partial class Session : AuditableEntity
 {
     public string? LoginProvider { get; set; }

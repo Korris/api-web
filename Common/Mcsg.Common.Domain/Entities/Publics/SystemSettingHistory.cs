@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork;
 
-[Table("SystemSettingHistories")]
 public class SystemSettingHistory : AuditableEntity
 {
     public Guid SystemSettingId { get; set; }

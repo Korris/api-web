@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
 
-[Table("CrawComicChapters")]
 public class CrawComicChapter : AuditableEntity
 {
     public Guid SourceComic { get; set; }

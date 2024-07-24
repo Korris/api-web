@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
 
-[Table("StoryPostComments")]
 public class StoryPostComment : AuditableEntity
 {
     public Guid? ParentId { get; set; }
