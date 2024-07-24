@@ -3276,7 +3276,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserOtps", (string)null);
+                    b.ToTable("UserOtps", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserRefreshToken", b =>
@@ -3313,7 +3313,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRefreshTokens", (string)null);
+                    b.ToTable("UserRefreshTokens", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserSocial", b =>
@@ -3367,7 +3367,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserSocials", (string)null);
+                    b.ToTable("UserSocials", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ViewHistory", b =>

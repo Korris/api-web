@@ -38,7 +38,7 @@ public class DbSchema
     /// <summary>
     /// Identity tables
     /// </summary>
-    public const string IdentityTables = "Users;UserNameHistories;UserClaims;UserLogins;UserTokens;Roles;RoleClaims;UserRoles";
+    public const string IdentityTables = "RoleClaims;Roles;UserClaims;UserLogins;UserNameHistories;UserOtps;UserRefreshTokens;UserRoles;Users;UserSocials;UserTokens";
 
     /// <summary>
     /// Social tables

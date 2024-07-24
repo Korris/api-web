@@ -350,6 +350,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserOtps",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -372,6 +373,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserRefreshTokens",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -440,6 +442,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserSocials",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -3177,17 +3180,20 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "UserOtps");
+                name: "UserOtps",
+                schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "UserRefreshTokens");
+                name: "UserRefreshTokens",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserRoles",
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "UserSocials");
+                name: "UserSocials",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserTokens",
