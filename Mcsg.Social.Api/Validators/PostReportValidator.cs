@@ -7,7 +7,7 @@ using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public class PostReportValidator : IValidator<PostReport>
+public class PostReportValidator : IValidator<SocialPostReport>
 {
     private readonly IRepository<SocialPost> _postRepository;
     public PostReportValidator(IRepository<SocialPost> postRepository)
@@ -15,7 +15,7 @@ public class PostReportValidator : IValidator<PostReport>
         _postRepository = postRepository;
     }
 
-    public async Task OnValidate(PostReport data)
+    public async Task OnValidate(SocialPostReport data)
     {
         _ = await _postRepository.GetByIdAsync(data.PostId, "\"Id\"") ?? throw new BadRequestException(E204, M204);
     }

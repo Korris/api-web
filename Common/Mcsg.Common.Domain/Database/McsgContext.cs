@@ -143,7 +143,11 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<ComicPostCommentReaction> ComicPostCommentReactions { get; set; }
 
+    public virtual DbSet<ComicPostFavorite> ComicPostFavorites { get; set; }
+
     public virtual DbSet<ComicPostReaction> ComicPostReactions { get; set; }
+
+    public virtual DbSet<ComicPostReport> ComicPostReports { get; set; }
 
     public virtual DbSet<ComicResource> ComicResources { get; set; }
 
@@ -171,11 +175,7 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
 
-    public virtual DbSet<PostFavorite> PostFavorites { get; set; }
-
     public virtual DbSet<PostLink> PostLinks { get; set; }
-
-    public virtual DbSet<PostReport> PostReports { get; set; }
 
     //public virtual DbSet<Role> Roles { get; set; }
 
@@ -195,7 +195,11 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<SocialPostCommentReaction> SocialPostCommentReactions { get; set; }
 
+    public virtual DbSet<SocialPostFavorite> SocialPostFavorites { get; set; }
+
     public virtual DbSet<SocialPostReaction> SocialPostReactions { get; set; }
+
+    public virtual DbSet<SocialPostReport> SocialPostReports { get; set; }
 
     public virtual DbSet<SocialResource> SocialResources { get; set; }
 
@@ -215,7 +219,11 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<StoryPostCommentReaction> StoryPostCommentReactions { get; set; }
 
+    public virtual DbSet<StoryPostFavorite> StoryPostFavorites { get; set; }
+
     public virtual DbSet<StoryPostReaction> StoryPostReactions { get; set; }
+
+    public virtual DbSet<StoryPostReport> StoryPostReports { get; set; }
 
     public virtual DbSet<StoryResource> StoryResources { get; set; }
 

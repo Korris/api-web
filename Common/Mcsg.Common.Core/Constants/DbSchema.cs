@@ -33,7 +33,7 @@ public class DbSchema
     /// <summary>
     /// Comic tables
     /// </summary>
-    public const string ComicTables = "ComicPostCommentReactions;ComicPostComments;ComicPostReactions;ComicPosts;ComicResources;ComicSubPostCommentReactions;ComicSubPostComments;ComicSubPostReactions;ComicSubPosts;ComicTagPosts";
+    public const string ComicTables = "ComicPostCommentReactions;ComicPostComments;ComicPostFavorites;ComicPostReactions;ComicPostReports;ComicPosts;ComicResources;ComicSubPostCommentReactions;ComicSubPostComments;ComicSubPostReactions;ComicSubPosts;ComicTagPosts";
 
     /// <summary>
     /// Identity tables
@@ -43,12 +43,12 @@ public class DbSchema
     /// <summary>
     /// Social tables
     /// </summary>
-    public const string SocialTables = "SocialPostCommentReactions;SocialPostComments;SocialPostReactions;SocialPosts;SocialResources;SocialSubPostCommentReactions;SocialSubPostComments;SocialSubPostReactions;SocialSubPosts;SocialTagPosts";
+    public const string SocialTables = "SocialPostCommentReactions;SocialPostComments;SocialPostFavorites;SocialPostReactions;SocialPostReports;SocialPosts;SocialResources;SocialSubPostCommentReactions;SocialSubPostComments;SocialSubPostReactions;SocialSubPosts;SocialTagPosts";
 
     /// <summary>
     /// Story tables
     /// </summary>
-    public const string StoryTables = "StoryPostCommentReactions;StoryPostComments;StoryPostReactions;StoryPosts;StoryResources;StorySubPostCommentReactions;StorySubPostComments;StorySubPostReactions;StorySubPosts;StoryTagPosts";
+    public const string StoryTables = "StoryPostCommentReactions;StoryPostComments;StoryPostFavorites;StoryPostReactions;StoryPostReports;StoryPosts;StoryResources;StorySubPostCommentReactions;StorySubPostComments;StorySubPostReactions;StorySubPosts;StoryTagPosts";
 
     /// <summary>
     /// SystemSettingHistories table

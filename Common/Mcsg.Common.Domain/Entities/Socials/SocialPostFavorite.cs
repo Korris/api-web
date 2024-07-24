@@ -2,7 +2,7 @@
 
 using SeedWork;
 
-public class PostFavorite : AuditableEntity
+public class SocialPostFavorite : AuditableEntity
 {
     public Guid PostId { get; set; }
     public Guid UserId { get; set; }

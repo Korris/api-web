@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
-public class PostFavoriteConfiguration : BaseConfiguration<PostFavorite>
+using Core.Constants;
+
+public class SocialPostFavoriteConfiguration : BaseConfiguration<SocialPostFavorite>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<PostFavorite> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostFavorite> builder)
     {
-        builder.ToTable("PostFavorites");
+        builder.ToTable("SocialPostFavorites", DbSchema.Social);
         builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }

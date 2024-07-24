@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class PostReport : AuditableEntity
+public class StoryPostReport : AuditableEntity
 {
     public Guid PostId { get; set; }
     public Guid UserId { get; set; }

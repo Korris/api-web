@@ -7,7 +7,7 @@ using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public class PostFavoriteValidator : IValidator<PostFavorite>
+public class PostFavoriteValidator : IValidator<ComicPostFavorite>
 {
     private readonly IRepository<ComicPost> _postRepository;
     public PostFavoriteValidator(IRepository<ComicPost> postRepository)
@@ -15,7 +15,7 @@ public class PostFavoriteValidator : IValidator<PostFavorite>
         _postRepository = postRepository;
     }
 
-    public async Task OnValidate(PostFavorite data)
+    public async Task OnValidate(ComicPostFavorite data)
     {
         _ = await _postRepository.GetByIdAsync(data.PostId, "\"Id\"") ?? throw new BadRequestException(E204, M204);
     }

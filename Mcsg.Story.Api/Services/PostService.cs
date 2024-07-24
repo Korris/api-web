@@ -37,8 +37,8 @@ public partial class PostService : IPostService
     private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<PostReport> _postReportRepository;
-    private readonly IValidator<PostReport> _postReportValidator;
+    private readonly IRepository<StoryPostReport> _postReportRepository;
+    private readonly IValidator<StoryPostReport> _postReportValidator;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITagService _tagService;
     private readonly IUserService _userService;
@@ -63,14 +63,14 @@ public partial class PostService : IPostService
         McsgContext context,
         ISetting setting,
         ISmartLookupService smartLookupService,
-        IValidator<PostReport> postReportValidator,
+        IValidator<StoryPostReport> postReportValidator,
         IRepository<StoryPostComment> postCommentRepository,
         IRepository<UserViewPost> userViewPostRepository,
         AnalyticDbContext analyticDbContext)
     {
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _postReportRepository = unitOfWork.GetRepository<PostReport>();
+        _postReportRepository = unitOfWork.GetRepository<StoryPostReport>();
         _unitOfWork = unitOfWork;
         _tagService = tagService;
         _userService = userService;
@@ -1892,7 +1892,7 @@ public partial class PostService : IPostService
     #region REPORT
     public async Task<bool> ReportPostAsync(FeedReportPostReq req)
     {
-        var postReport = new PostReport
+        var postReport = new StoryPostReport
         {
             PostId = req.PostId,
             UserId = _currentUserService.Session.UserId,

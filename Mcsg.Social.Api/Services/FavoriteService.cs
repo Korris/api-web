@@ -19,9 +19,9 @@ using Requests;
 public partial class FavoriteService : IFavoriteService
 {
     private readonly IRepository<TagFavorite> _tagFavoriteRepository;
-    private readonly IRepository<PostFavorite> _postFavoriteRepository;
+    private readonly IRepository<SocialPostFavorite> _postFavoriteRepository;
     private readonly IValidator<TagFavorite> _tagFavoriteValidator;
-    private readonly IValidator<PostFavorite> _postFavoriteValidator;
+    private readonly IValidator<SocialPostFavorite> _postFavoriteValidator;
 
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Tag> _tagRepository;
@@ -39,9 +39,9 @@ public partial class FavoriteService : IFavoriteService
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         IValidator<TagFavorite> tagFavoriteValidator,
-        IValidator<PostFavorite> postFavoriteValidator,
+        IValidator<SocialPostFavorite> postFavoriteValidator,
         IRepository<TagFavorite> tagFavoriteRepository,
-        IRepository<PostFavorite> postFavoriteRepository,
+        IRepository<SocialPostFavorite> postFavoriteRepository,
         IRepository<Tag> tagRepository,
         IRepository<SocialPost> postRepository,
         IRepository<SocialSubPost> subPostRepository,
@@ -116,7 +116,7 @@ public partial class FavoriteService : IFavoriteService
     #region Post
     public async Task<bool> AddPostToFavoriteAsync(Guid postId)
     {
-        var postFavorite = new PostFavorite
+        var postFavorite = new SocialPostFavorite
         {
             PostId = postId,
             UserId = _currentUserService.Session.UserId,

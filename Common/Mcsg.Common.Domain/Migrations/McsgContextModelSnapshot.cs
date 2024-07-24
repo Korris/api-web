@@ -297,6 +297,43 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("ComicPostCommentReactions", "comic");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostFavorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ComicPostFavorites", "comic");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -338,6 +375,49 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("ComicPostReactions", "comic");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReasonType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ComicPostReports", "comic");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicResource", b =>
@@ -1030,43 +1110,6 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("NotificationObjects", (string)null);
                 });
 
-            modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostFavorite", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostFavorites", (string)null);
-                });
-
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostLink", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1109,49 +1152,6 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("PostLinks", (string)null);
-                });
-
-            modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostReport", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ReasonText")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ReasonType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostReports", (string)null);
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Role", b =>
@@ -1534,6 +1534,43 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("SocialPostCommentReactions", "social");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostFavorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SocialPostFavorites", "social");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1575,6 +1612,49 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("SocialPostReactions", "social");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReasonType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SocialPostReports", "social");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialResource", b =>
@@ -2111,6 +2191,43 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("StoryPostCommentReactions", "story");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostFavorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StoryPostFavorites", "story");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostReaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2152,6 +2269,49 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("TargetId", "ParentId", "AuthorId");
 
                     b.ToTable("StoryPostReactions", "story");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ReasonType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StoryPostReports", "story");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryResource", b =>
@@ -3243,6 +3403,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostFavorite", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", null)
@@ -3254,6 +3429,21 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostReport", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3361,41 +3551,11 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasForeignKey("ReceiverId");
                 });
 
-            modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostFavorite", b =>
-                {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostLink", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
                         .WithMany()
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mcsg.Common.Domain.Entities.PostReport", b =>
-                {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3452,6 +3612,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostFavorite", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", null)
@@ -3463,6 +3638,21 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostReport", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3600,6 +3790,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostFavorite", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostReaction", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", null)
@@ -3611,6 +3816,21 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
                         .WithMany()
                         .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostReport", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

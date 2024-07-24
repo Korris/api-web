@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
-public class PostReportConfiguration : BaseConfiguration<PostReport>
+using Core.Constants;
+
+public class SocialPostReportConfiguration : BaseConfiguration<SocialPostReport>
 {
-    public override void CreateEntityConfiguration(EntityTypeBuilder<PostReport> builder)
+    public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostReport> builder)
     {
-        builder.ToTable("PostReports");
+        builder.ToTable("SocialPostReports", DbSchema.Social);
         builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
         builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }

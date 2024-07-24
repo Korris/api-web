@@ -3,7 +3,6 @@
 namespace Mcsg.Common.Domain.Entities;
 
 [Table("SocialPostReactions")]
-
 public class SocialPostReaction : ReactionBase
 {
 }

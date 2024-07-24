@@ -20,7 +20,11 @@ partial class McsgContext
 
     public IQueryable<ComicPostCommentReaction> ComicPostCommentReactionAvailable => ComicPostCommentReactions.Where(p => !p.IsDelete);
 
+    public IQueryable<ComicPostFavorite> ComicPostFavoriteAvailable => ComicPostFavorites.Where(p => !p.IsDelete);
+
     public IQueryable<ComicPostReaction> ComicPostReactionAvailable => ComicPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPostReport> ComicPostReportAvailable => ComicPostReports.Where(p => !p.IsDelete);
 
     public IQueryable<ComicResource> ComicResourceAvailable => ComicResources.Where(p => !p.IsDelete);
 
@@ -48,11 +52,7 @@ partial class McsgContext
 
     public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
 
-    public IQueryable<PostFavorite> PostFavoriteAvailable => PostFavorites.Where(p => !p.IsDelete);
-
     public IQueryable<PostLink> PostLinkAvailable => PostLinks.Where(p => !p.IsDelete);
-
-    public IQueryable<PostReport> PostReportAvailable => PostReports.Where(p => !p.IsDelete);
 
     public IQueryable<Role> RoleAvailable => Roles.Where(p => true);
 
@@ -72,7 +72,11 @@ partial class McsgContext
 
     public IQueryable<SocialPostCommentReaction> SocialPostCommentReactionAvailable => SocialPostCommentReactions.Where(p => !p.IsDelete);
 
+    public IQueryable<SocialPostFavorite> SocialPostFavoriteAvailable => SocialPostFavorites.Where(p => !p.IsDelete);
+
     public IQueryable<SocialPostReaction> SocialPostReactionAvailable => SocialPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<SocialPostReport> SocialPostReportAvailable => SocialPostReports.Where(p => !p.IsDelete);
 
     public IQueryable<SocialResource> SocialResourceAvailable => SocialResources.Where(p => !p.IsDelete);
 
@@ -92,7 +96,11 @@ partial class McsgContext
 
     public IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable => StoryPostCommentReactions.Where(p => !p.IsDelete);
 
+    public IQueryable<StoryPostFavorite> StoryPostFavoriteAvailable => StoryPostFavorites.Where(p => !p.IsDelete);
+
     public IQueryable<StoryPostReaction> StoryPostReactionAvailable => StoryPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostReport> StoryPostReportAvailable => StoryPostReports.Where(p => !p.IsDelete);
 
     public IQueryable<StoryResource> StoryResourceAvailable => StoryResources.Where(p => !p.IsDelete);
 
