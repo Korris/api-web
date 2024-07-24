@@ -35,6 +35,11 @@ public static class Error
     public const string E100 = "E100";
 
     /// <summary>
+    /// No data response
+    /// </summary>
+    public const string E103 = "E103";
+
+    /// <summary>
     /// Token is expired
     /// </summary>
     public const string E109 = "E109";
@@ -48,6 +53,11 @@ public static class Error
     /// Invalid parent folder
     /// </summary>
     public const string E113 = "E113";
+
+    /// <summary>
+    /// User spam report
+    /// </summary>
+    public const string E115 = "E115";
 
     #endregion
 

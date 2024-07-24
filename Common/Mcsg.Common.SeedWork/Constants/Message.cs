@@ -124,6 +124,11 @@ public static class Message
     /// </summary>
     public const string M113 = "Invalid parent folder";
 
+    /// <summary>
+    /// User spam report
+    /// </summary>
+    public const string M115 = "User spam report";
+
     #endregion
 
     #region -- M2xx --
