@@ -88,7 +88,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
         #region -- Validate on server --
         // Post
-        var ett = await _context.PostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId && p.Type == PostType.Feed, cancellationToken);
+        var ett = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId && p.Type == PostType.Feed, cancellationToken);
         if (ett == null)
         {
             throw new NotFoundException(E204, M204);

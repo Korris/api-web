@@ -294,7 +294,7 @@ public class FileService : IFileService
                                               join b in _context.ComicResourceAvailable
                                                 on a.Id equals b.SubPostId into g1
                                               from b in g1.DefaultIfEmpty()
-                                              join c in _context.Posts
+                                              join c in _context.ComicPosts
                                                 on a.PostId equals c.Id into g2
                                               from c in g2.DefaultIfEmpty()
                                               where c.Id == postId

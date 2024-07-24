@@ -133,7 +133,7 @@ public class FileService : IFileService
             Size = file.Length
         };
 
-        await _context.Resources.AddAsync(resource);
+        await _context.SocialResources.AddAsync(resource);
         await _context.SaveChangesAsync();
 
         var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
@@ -248,7 +248,7 @@ public class FileService : IFileService
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
-        var subPostDB = await _context.SubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var subPostDB = await _context.SocialSubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
 
         //Update
         var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
@@ -290,11 +290,11 @@ public class FileService : IFileService
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
         var subPosts = new List<SubUploadFileDto>();
 
-        var subpostAndResourceHashId = await (from a in _context.SubPostAvailable
-                                              join b in _context.ResourceAvailable
+        var subpostAndResourceHashId = await (from a in _context.SocialSubPostAvailable
+                                              join b in _context.SocialResourceAvailable
                                                 on a.Id equals b.SubPostId into g1
                                               from b in g1.DefaultIfEmpty()
-                                              join c in _context.Posts
+                                              join c in _context.SocialPosts
                                                 on a.PostId equals c.Id into g2
                                               from c in g2.DefaultIfEmpty()
                                               where c.Id == postId
@@ -408,7 +408,7 @@ public class FileService : IFileService
         var subFolder = addSubPost ? "sub-posts" : "posts";
         subFolder = $"{userFolder}/{subFolder}/{postId}";
 
-        var resourceList = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        var resourceList = await _context.SocialResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
         {
             if (resource == null)
@@ -455,7 +455,7 @@ public class FileService : IFileService
                     IsExclusive = false
                 };
 
-                await _context.SubPosts.AddAsync(subPost);
+                await _context.SocialSubPosts.AddAsync(subPost);
                 subPostId = subPost.Id;
 
                 subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
@@ -483,8 +483,8 @@ public class FileService : IFileService
     /// <returns>Return a query</returns>
     private IQueryable<SocialResource> QueryResourceByPostId(Guid postId)
     {
-        return from a in _context.ResourceAvailable
-               join b in _context.SubPosts
+        return from a in _context.SocialResourceAvailable
+               join b in _context.SocialSubPosts
                   on a.SubPostId equals b.Id
                where a.Type != ResourceType.Temp && b.PostId == postId
                select a;
@@ -502,7 +502,7 @@ public class FileService : IFileService
 
         if (hashIds?.Count > 0)
         {
-            var a = await _context.ResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            var a = await _context.SocialResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
             a.ForEach(p => p.IsDelete = true);
 
             willDelete = true;
@@ -510,7 +510,7 @@ public class FileService : IFileService
 
         if (subPostIds?.Count > 0)
         {
-            var b = await _context.SubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
+            var b = await _context.SocialSubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
             b.ForEach(p => p.IsDelete = true);
 
             willDelete = true;

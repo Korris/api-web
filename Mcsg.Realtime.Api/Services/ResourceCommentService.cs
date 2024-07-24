@@ -90,7 +90,7 @@ namespace Mcsg.Realtime.Api.Services
 
         private async Task<ResourceCommentResp?> AddSocialResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
         {
-            var resource = await _context.ResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+            var resource = await _context.SocialResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
             if (resource == null)
             {
                 return null;

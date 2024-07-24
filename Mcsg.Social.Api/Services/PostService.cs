@@ -1803,7 +1803,7 @@ public partial class PostService : IPostService
     {
         var res = new List<RewardDto>();
 
-        var check = await _context.PostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
+        var check = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
             var rewardType = RewardType.FirstFeed;

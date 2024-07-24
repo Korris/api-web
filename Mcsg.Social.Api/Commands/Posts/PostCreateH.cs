@@ -99,7 +99,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
         // Create
         var ett = SocialPost.Create(request.Title, content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
-        await _context.Posts.AddAsync(ett);
+        await _context.SocialPosts.AddAsync(ett);
         await _context.SaveChangesAsync();
 
         var result = new FeedPostDto

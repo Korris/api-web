@@ -217,7 +217,7 @@ public partial class UserService : IUserService
                 };
 
                 await _context.UserNameHistories.AddAsync(userNameHistory);
-                var postToUpdate = await _context.Posts.ToListAsync();
+                var postToUpdate = await _context.SocialPosts.ToListAsync();
 
                 Parallel.ForEach(postToUpdate, post =>
                 {

@@ -53,7 +53,7 @@ public partial class TagService : ITagService
     public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags, Guid userId)
     {
         // Find all tags associated with the post
-        var qTagPost = _context.TagPostAvailable.Where(p => p.PostId == postId);
+        var qTagPost = _context.SocialTagPostAvailable.Where(p => p.PostId == postId);
         var tagsDb = await (from a in _context.TagAvailable
                             join b in qTagPost
                                on a.Id equals b.TagId into g
@@ -118,7 +118,7 @@ public partial class TagService : ITagService
         var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
         if (listRemove.Length > 0)
         {
-            var tagPosts = await _context.TagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
+            var tagPosts = await _context.SocialTagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
             tagPosts.ForEach(p => p.IsDelete = true);
         }
 
@@ -237,7 +237,7 @@ public partial class TagService : ITagService
     public async Task<List<TagViewDto>> GetTagsByPostIdAsync(Guid postId)
     {
         return await (from a in _context.TagAvailable
-                      join b in _context.TagPosts
+                      join b in _context.SocialTagPosts
                           on a.Id equals b.TagId
                       where b.PostId == postId
                       select new TagViewDto
@@ -314,7 +314,7 @@ public partial class TagService : ITagService
             });
         }
 
-        await _context.TagPosts.AddRangeAsync(tagPostsToInsert);
+        await _context.SocialTagPosts.AddRangeAsync(tagPostsToInsert);
 
         return tagPostsToInsert.Select(x => x.Id).ToList();
     }

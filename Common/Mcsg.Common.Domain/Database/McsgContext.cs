@@ -171,21 +171,11 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
 
-    public virtual DbSet<SocialPost> Posts { get; set; }
-
-    public virtual DbSet<SocialPostComment> PostComments { get; set; }
-
-    public virtual DbSet<SocialPostCommentReaction> PostCommentReactions { get; set; }
-
     public virtual DbSet<PostFavorite> PostFavorites { get; set; }
 
     public virtual DbSet<PostLink> PostLinks { get; set; }
 
-    public virtual DbSet<SocialPostReaction> PostReactions { get; set; }
-
     public virtual DbSet<PostReport> PostReports { get; set; }
-
-    public virtual DbSet<SocialResource> Resources { get; set; }
 
     //public virtual DbSet<Role> Roles { get; set; }
 
@@ -198,6 +188,26 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<SmartLookup> SmartLookups { get; set; }
 
     public virtual DbSet<SmartLookupUser> SmartLookupUsers { get; set; }
+
+    public virtual DbSet<SocialPost> SocialPosts { get; set; }
+
+    public virtual DbSet<SocialPostComment> SocialPostComments { get; set; }
+
+    public virtual DbSet<SocialPostCommentReaction> SocialPostCommentReactions { get; set; }
+
+    public virtual DbSet<SocialPostReaction> SocialPostReactions { get; set; }
+
+    public virtual DbSet<SocialResource> SocialResources { get; set; }
+
+    public virtual DbSet<SocialSubPost> SocialSubPosts { get; set; }
+
+    public virtual DbSet<SocialSubPostComment> SocialSubPostComments { get; set; }
+
+    public virtual DbSet<SocialSubPostCommentReaction> SocialSubPostCommentReactions { get; set; }
+
+    public virtual DbSet<SocialSubPostReaction> SocialSubPostReactions { get; set; }
+
+    public virtual DbSet<SocialTagPost> SocialTagPosts { get; set; }
 
     public virtual DbSet<StoryPost> StoryPosts { get; set; }
 
@@ -219,14 +229,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<StoryTagPost> StoryTagPosts { get; set; }
 
-    public virtual DbSet<SocialSubPost> SubPosts { get; set; }
-
-    public virtual DbSet<SocialSubPostComment> SubPostComments { get; set; }
-
-    public virtual DbSet<SocialSubPostCommentReaction> SubPostCommentReactions { get; set; }
-
-    public virtual DbSet<SocialSubPostReaction> SubPostReactions { get; set; }
-
     public virtual DbSet<SystemSetting> SystemSettings { get; set; }
 
     public virtual DbSet<SystemSettingHistory> SystemSettingHistories { get; set; }
@@ -234,8 +236,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<TagFavorite> TagFavorites { get; set; }
-
-    public virtual DbSet<SocialTagPost> TagPosts { get; set; }
 
     //public virtual DbSet<User> Users { get; set; }
 
