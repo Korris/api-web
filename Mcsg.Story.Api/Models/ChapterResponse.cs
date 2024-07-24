@@ -11,6 +11,7 @@ public class ChapterBasicResponse : SubPostBasic
     public bool IsPublicNow { get; set; }
     public bool IsEnableComment { get; set; }
     public Guid? UserExclusiveId { get; set; }
+    public bool IsPremium { get; set; }
 }
 public class ChapterResponse : ChapterBasicResponse
 {
