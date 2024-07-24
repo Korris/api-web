@@ -420,7 +420,7 @@ LIMIT @PageSize
 							'Title', md.""Title"",
 							'Url', md.""Url"",
 							'Domain', md.""Domain""
-						) AS social.""SocialMetaDatas"",
+						) AS ""MetaDatas"",
 						CASE 
 							WHEN pl.""Url"" IS NULL AND pl.""Type"" IS NULL AND pl.""HashId"" IS NULL THEN NULL
 							ELSE jsonb_build_object(
