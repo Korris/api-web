@@ -14,6 +14,8 @@ partial class McsgContext
 
     public IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable => BackgroundMediaPosts.Where(p => !p.IsDelete);
 
+    public IQueryable<ComicMetaData> ComicMetaDataAvailable => ComicMetaDatas.Where(p => true);
+
     public IQueryable<ComicPost> ComicPostAvailable => ComicPosts.Where(p => !p.IsDelete);
 
     public IQueryable<ComicPostComment> ComicPostCommentAvailable => ComicPostComments.Where(p => !p.IsDelete);
@@ -21,6 +23,8 @@ partial class McsgContext
     public IQueryable<ComicPostCommentReaction> ComicPostCommentReactionAvailable => ComicPostCommentReactions.Where(p => !p.IsDelete);
 
     public IQueryable<ComicPostFavorite> ComicPostFavoriteAvailable => ComicPostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<ComicPostLink> ComicPostLinkAvailable => ComicPostLinks.Where(p => !p.IsDelete);
 
     public IQueryable<ComicPostReaction> ComicPostReactionAvailable => ComicPostReactions.Where(p => !p.IsDelete);
 
@@ -46,17 +50,13 @@ partial class McsgContext
 
     public IQueryable<Mention> MentionAvailable => Mentions.Where(p => !p.IsDelete);
 
-    public IQueryable<MetaData> MetaDataAvailable => MetaDatas.Where(p => true);
-
     public IQueryable<Notification> NotificationAvailable => Notifications.Where(p => !p.IsDelete);
 
     public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
 
-    public IQueryable<PostLink> PostLinkAvailable => PostLinks.Where(p => !p.IsDelete);
+    //public IQueryable<Role> RoleAvailable => Roles.Where(p => !p.IsDelete);
 
-    public IQueryable<Role> RoleAvailable => Roles.Where(p => true);
-
-    //public IQueryable<RoleClaim> RoleClaimAvailable => RoleClaims.Where(p => true);
+    //public IQueryable<RoleClaim> RoleClaimAvailable => RoleClaims.Where(p => !p.IsDelete);
 
     public IQueryable<Session> SessionAvailable => Sessions.Where(p => !p.IsDelete);
 
@@ -66,6 +66,8 @@ partial class McsgContext
 
     public IQueryable<SmartLookupUser> SmartLookupUserAvailable => SmartLookupUsers.Where(p => true);
 
+    public IQueryable<SocialMetaData> SocialMetaDataAvailable => SocialMetaDatas.Where(p => true);
+
     public IQueryable<SocialPost> SocialPostAvailable => SocialPosts.Where(p => !p.IsDelete);
 
     public IQueryable<SocialPostComment> SocialPostCommentAvailable => SocialPostComments.Where(p => !p.IsDelete);
@@ -73,6 +75,8 @@ partial class McsgContext
     public IQueryable<SocialPostCommentReaction> SocialPostCommentReactionAvailable => SocialPostCommentReactions.Where(p => !p.IsDelete);
 
     public IQueryable<SocialPostFavorite> SocialPostFavoriteAvailable => SocialPostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<SocialPostLink> SocialPostLinkAvailable => SocialPostLinks.Where(p => !p.IsDelete);
 
     public IQueryable<SocialPostReaction> SocialPostReactionAvailable => SocialPostReactions.Where(p => !p.IsDelete);
 
@@ -90,6 +94,8 @@ partial class McsgContext
 
     public IQueryable<SocialTagPost> SocialTagPostAvailable => SocialTagPosts.Where(p => !p.IsDelete);
 
+    public IQueryable<StoryMetaData> StoryMetaDataAvailable => StoryMetaDatas.Where(p => true);
+
     public IQueryable<StoryPost> StoryPostAvailable => StoryPosts.Where(p => !p.IsDelete);
 
     public IQueryable<StoryPostComment> StoryPostCommentAvailable => StoryPostComments.Where(p => !p.IsDelete);
@@ -97,6 +103,8 @@ partial class McsgContext
     public IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable => StoryPostCommentReactions.Where(p => !p.IsDelete);
 
     public IQueryable<StoryPostFavorite> StoryPostFavoriteAvailable => StoryPostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostLink> StoryPostLinkAvailable => StoryPostLinks.Where(p => !p.IsDelete);
 
     public IQueryable<StoryPostReaction> StoryPostReactionAvailable => StoryPostReactions.Where(p => !p.IsDelete);
 
@@ -124,13 +132,13 @@ partial class McsgContext
 
     public IQueryable<User> UserAvailable => Users.Where(p => !p.IsDelete);
 
-    //public IQueryable<UserClaim> UserClaimAvailable => UserClaims.Where(p => true);
+    //public IQueryable<UserClaim> UserClaimAvailable => UserClaims.Where(p => !p.IsDelete);
 
     public IQueryable<UserExclusiveSubPost> UserExclusiveSubPostAvailable => UserExclusiveSubPosts.Where(p => !p.IsDelete);
 
     public IQueryable<UserFollow> UserFollowAvailable => UserFollows.Where(p => !p.IsDelete);
 
-    //public IQueryable<UserLogin> UserLoginAvailable => UserLogins.Where(p => true);
+    //public IQueryable<UserLogin> UserLoginAvailable => UserLogins.Where(p => !p.IsDelete);
 
     public IQueryable<UserNameHistory> UserNameHistoryAvailable => UserNameHistories.Where(p => !p.IsDelete);
 
@@ -140,7 +148,7 @@ partial class McsgContext
 
     public IQueryable<UserSocial> UserSocialAvailable => UserSocials.Where(p => !p.IsDelete);
 
-    //public IQueryable<UserToken> UserTokenAvailable => UserTokens.Where(p => true);
+    //public IQueryable<UserToken> UserTokenAvailable => UserTokens.Where(p => !p.IsDelete);
 
     public IQueryable<ViewHistory> ViewHistoryAvailable => ViewHistories.Where(p => true);
     #endregion

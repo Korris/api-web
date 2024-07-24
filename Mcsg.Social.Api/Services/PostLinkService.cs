@@ -45,7 +45,7 @@ public partial class PostLinkService : IPostLinkService
                 var lastLink = linkIndexs.MaxBy(x => x.Key);
                 await RemoveLinkAsync(postId);
 
-                var postLink = new PostLink
+                var postLink = new SocialPostLink
                 {
                     HashId = Setting.ResourceConfig.HashLength.GetRandomString(),
                     PostId = postId,
@@ -53,7 +53,7 @@ public partial class PostLinkService : IPostLinkService
                     Type = youtubeLinks.Contains(lastLink.Value) ? PostLinkType.Youtube : PostLinkType.Video,
                     Description = ""
                 };
-                await _context.PostLinks.AddAsync(postLink);
+                await _context.SocialPostLinks.AddAsync(postLink);
 
                 var addResult = await _context.SaveChangesAsync();
                 if (addResult > 0)
@@ -70,7 +70,7 @@ public partial class PostLinkService : IPostLinkService
 
     public async Task<bool> RemoveLinkAsync(Guid postId)
     {
-        var postLinks = await _context.PostLinkAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var postLinks = await _context.SocialPostLinkAvailable.Where(p => p.PostId == postId).ToListAsync();
         postLinks.ForEach(p => p.IsDelete = true);
         var result = await _context.SaveChangesAsync();
 

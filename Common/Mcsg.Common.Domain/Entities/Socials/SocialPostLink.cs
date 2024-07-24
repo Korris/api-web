@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class PostLink : AuditableEntity
+public class SocialPostLink : AuditableEntity
 {
     public Guid PostId { get; set; }
     public string? HashId { get; set; }

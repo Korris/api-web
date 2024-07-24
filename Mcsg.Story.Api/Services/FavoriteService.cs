@@ -29,8 +29,8 @@ public partial class FavoriteService : IFavoriteService
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly IRepository<StoryResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
-    private readonly IRepository<MetaData> _metaDataRepository;
-    private readonly IRepository<PostLink> _postLinkRepository;
+    private readonly IRepository<StoryMetaData> _metaDataRepository;
+    private readonly IRepository<StoryPostLink> _postLinkRepository;
     private readonly IRepository<StoryTagPost> _tagPostRepository;
 
     private readonly IFeedService _feedService;
@@ -47,8 +47,8 @@ public partial class FavoriteService : IFavoriteService
         IRepository<StorySubPost> subPostRepository,
         IRepository<StoryResource> resourceRepository,
         IRepository<User> userRepository,
-        IRepository<MetaData> metaDataRepository,
-        IRepository<PostLink> postLinkRepository,
+        IRepository<StoryMetaData> metaDataRepository,
+        IRepository<StoryPostLink> postLinkRepository,
         IRepository<StoryTagPost> tagPostRepository,
         IFeedService feedService)
     {

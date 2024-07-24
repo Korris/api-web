@@ -14,7 +14,7 @@ public class MetaDataService : IMetaDataService
 
     public async Task<MetaDataDto> AddMetaDataToObject<T>(MetaDataDto request, Guid objId)
     {
-        var metaData = new MetaData
+        var metaData = new StoryMetaData
         {
             Title = request.Title,
             Description = request.Description,
@@ -49,7 +49,7 @@ public class MetaDataService : IMetaDataService
                 }
         }
 
-        await _context.MetaDatas.AddAsync(metaData);
+        await _context.StoryMetaDatas.AddAsync(metaData);
         await _context.SaveChangesAsync();
 
         return new MetaDataDto

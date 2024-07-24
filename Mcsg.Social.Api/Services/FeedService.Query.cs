@@ -39,8 +39,8 @@
 							pl.""Type"" AS ""LinkType""
 							FROM social.""SocialPosts"" p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
-							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
-							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
+							LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
+							LEFT JOIN social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
 								SELECT ""Id"",""HashId"",""PostId"",""Order"",""Body"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
@@ -143,7 +143,7 @@
 								OFFSET @Offet
 							) p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
-							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
+							LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
 								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
@@ -254,8 +254,8 @@ LIMIT @PageSize
 								OFFSET @Offet
 							) p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
-							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
-							LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
+							LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
+							LEFT JOIN social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
 							LEFT JOIN LATERAL 
 							(
 								SELECT ""Id"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
@@ -368,10 +368,10 @@ LIMIT @PageSize
 						LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
 						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = p.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
-						LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
+						LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
 						LEFT JOIN social.""SocialSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
 						LEFT JOIN social.""SocialResources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false	
-						LEFT JOIN ""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
+						LEFT JOIN social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
 						WHERE 
 						p.""HashId"" = @HashId AND p.""IsDelete"" = false 
 						-- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
@@ -420,7 +420,7 @@ LIMIT @PageSize
 							'Title', md.""Title"",
 							'Url', md.""Url"",
 							'Domain', md.""Domain""
-						) AS ""MetaDatas"",
+						) AS social.""SocialMetaDatas"",
 						CASE 
 							WHEN pl.""Url"" IS NULL AND pl.""Type"" IS NULL AND pl.""HashId"" IS NULL THEN NULL
 							ELSE jsonb_build_object(
@@ -434,9 +434,9 @@ LIMIT @PageSize
 					LEFT JOIN 
 						identity.""Users"" u ON p.""UserId"" = u.""Id""
 					LEFT JOIN 
-						""MetaDatas"" md ON md.""PostId"" = p.""Id""
+						social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
 					LEFT JOIN 
-						""PostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = FALSE
+						social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = FALSE
 					LEFT JOIN LATERAL (
 						SELECT
 							sp.""Id"",
@@ -553,7 +553,7 @@ LIMIT @PageSize
 								OFFSET @Offet
 							) p
 							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
-							LEFT JOIN ""MetaDatas"" md ON md.""PostId"" = p.""Id""
+							LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL 
 							(
 								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 

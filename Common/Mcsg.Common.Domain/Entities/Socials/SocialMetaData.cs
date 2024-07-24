@@ -4,8 +4,8 @@ namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork;
 
-[Table("MetaDatas")]
-public class MetaData : EntityId
+[Table("SocialMetaDatas")]
+public class SocialMetaData : EntityId
 {
     public string? Title { get; set; }
     public string? Url { get; set; }
