@@ -5,7 +5,7 @@ namespace Mcsg.Common.Core.Requests;
 /// <summary>
 /// Paginated request
 /// </summary>
-public class PaginatedR
+public class PaginatedR : BaseR
 {
     #region -- Properties --
 

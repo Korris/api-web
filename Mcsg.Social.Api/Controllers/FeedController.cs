@@ -41,6 +41,7 @@ public class FeedController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.ALL);
         return Ok(result);
     }
