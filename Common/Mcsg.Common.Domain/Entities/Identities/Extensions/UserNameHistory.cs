@@ -18,14 +18,19 @@ public partial class UserNameHistory
     /// <returns>Return the result</returns>
     public static UserNameHistory Create(IUniquenessChecker uniquenessChecker, Guid createdBy)
     {
+        // Begin 2 number
+        var headLength = 2;
+        var tailLength = Default.FreeUserNameLength - headLength;
+        var head = headLength.GenerateOtp();
+
         // Generate a new username
-        var userName = Default.FreeUserNameLength.GetRandomString();
+        var userName = head + tailLength.GetRandomString();
         var rule = new MustBeUniqueRule(uniquenessChecker, userName);
 
         // Check for duplicate usernames, then generate a new username and check again in the database to ensure it is unique
         while (rule.IsBroken())
         {
-            userName = Default.FreeUserNameLength.GetRandomString();
+            userName = head + tailLength.GetRandomString();
             rule = new MustBeUniqueRule(uniquenessChecker, userName);
         }
 
