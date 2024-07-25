@@ -99,7 +99,7 @@ LIMIT 1
             {
                 return @"
 	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"",""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
-	                FROM public.social.""SocialPosts""
+	                FROM social.""SocialPosts""
 	                WHERE ""HashId"" = @HashId;";
             }
         }
@@ -111,7 +111,7 @@ LIMIT 1
             {
                 return @"
 	                SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"", ""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
-	                FROM public.social.""SocialPosts""
+	                FROM social.""SocialPosts""
 	                WHERE ""HashId"" = @HashId;
 
 	                SELECT MAX(""Order"")
@@ -712,7 +712,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
 					rs.""Id"", rs.""AuthorId"", rs.""Title"", rs.""Name"", rs.""Url"", rs.""Type"", rs.""CreatedOn"", 
 					rs.""CreatedBy"", rs.""ModifiedOn"", rs.""ModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
 					rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order""
-					FROM public.social.""SocialSubPosts"" sp
+					FROM social.""SocialSubPosts"" sp
 					INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
 INNER JOIN identity.""Users"" u ON u.""Id"" = sp.""CreatedBy""
@@ -749,7 +749,7 @@ LIMIT 1
 				sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
 sp.""IsEnableComment""
-					FROM public.social.""SocialSubPosts"" sp
+					FROM social.""SocialSubPosts"" sp
 					INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN LATERAL (
 								SELECT 
@@ -772,7 +772,7 @@ LIMIT 1
 				sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
 sp.""IsEnableComment"", spcmc.""CommentCount""
-					FROM public.social.""SocialSubPosts"" sp
+					FROM social.""SocialSubPosts"" sp
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
 					INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN LATERAL 
@@ -799,7 +799,7 @@ LIMIT 1
 						SELECT COUNT(*) AS TotalItems 
 						FROM (
 								SELECT sp.""Id""			
-								FROM public.social.""SocialSubPosts"" sp
+								FROM social.""SocialSubPosts"" sp
 								INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 								WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
 							) p;
@@ -812,7 +812,7 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"", sp.""Title"", sp.""Order""
-					FROM public.social.""SocialSubPosts"" sp
+					FROM social.""SocialSubPosts"" sp
 					INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 					WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
 					ORDER BY sp.""Order"";
@@ -820,7 +820,7 @@ LIMIT 1
 						SELECT COUNT(*) AS TotalItems 
 						FROM (
 								SELECT sp.""Id""			
-								FROM public.social.""SocialSubPosts"" sp
+								FROM social.""SocialSubPosts"" sp
 								INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 								WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
 							) p;
@@ -976,7 +976,7 @@ LIMIT 1
             {
                 return @"SELECT sp.""Id"", sp.""PostId"", 
 				sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId""				
-			FROM public.social.""SocialSubPosts"" sp
+			FROM social.""SocialSubPosts"" sp
 			INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
 			WHERE p.""HashId"" = @HashId AND sp.""Order"" = @Order
 			AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
@@ -992,7 +992,7 @@ LIMIT 1
 				sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
 				sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
 sp.""IsEnableComment""				
-			FROM public.social.""SocialSubPosts"" sp
+			FROM social.""SocialSubPosts"" sp
 			INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
 			WHERE p.""HashId"" = @HashId AND (sp.""Order"" = @Order1 OR sp.""Order"" = @Order2 )
 			AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
