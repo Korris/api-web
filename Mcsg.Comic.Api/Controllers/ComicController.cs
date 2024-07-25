@@ -172,6 +172,20 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("get-followed-post")]
+    public async Task<IActionResult> GetFollowedPost([FromQuery] BasePageResultR input)
+    {
+        var result = await _comicService.GetFollowedPost(input);
+        return Ok(result);
+    }
+
+    [HttpPost("follow-post")]
+    public async Task<IActionResult> FollowPost(Guid postId)
+    {
+        var result = await _comicService.FollowPost(postId);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --

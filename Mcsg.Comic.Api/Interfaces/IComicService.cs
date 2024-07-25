@@ -27,4 +27,6 @@ public interface IComicService
     Task<bool> Delete(Guid postId);
     Task<PagedResponse<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input);
+    Task<bool> FollowPost(Guid postId);
 }

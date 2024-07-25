@@ -629,6 +629,33 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
         }
 
         #endregion
+
+        #region Followed Post
+        private string GetMyPostFollowedIdsQuery
+        {
+            get
+            {
+                return @" --My post
+								SELECT qpost.""PostId""
+                                FROM ""comic"".""ComicFollowedPosts""  qpost							 	
+								WHERE qpost.""CreatedBy"" = @UserId AND qpost.""IsDelete"" = false  			
+								ORDER BY ""[OrderBy]"" DESC
+								LIMIT @PageSize
+								OFFSET @Offset";
+            }
+        }
+        private string GetMyPostFollowedCountQuery
+        {
+            get
+            {
+                return @" --My post
+								SELECT qpost.""PostId""
+								FROM ""comic"".""ComicFollowedPosts""  qpost							 	
+								WHERE qpost.""CreatedBy"" = @UserId  AND qpost.""IsDelete"" = false";
+            }
+        }
+        #endregion
+
         #region My series
         private string GetMyPostIdsQuery
         {

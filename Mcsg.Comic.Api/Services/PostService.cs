@@ -872,6 +872,98 @@ public partial class PostService : IPostService
 
         return itemResponse;
     }
+
+    public async Task<bool> FollowPost(Guid postId)
+    {
+        var currentUserId = _currentUserService?.Session?.UserId;
+        var user = await _context.Users.FindAsync(currentUserId);
+
+        if (user == null)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        if (!await _context.StoryPostAvailable.AnyAsync(p => p.Id == postId))
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var followedPost = await _context.ComicFollowedPosts
+                                                        .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
+                                                        .FirstOrDefaultAsync();
+        if (followedPost == null)
+        {
+            await _context.ComicFollowedPosts.AddAsync(new ComicFollowedPost
+            {
+                CreatedBy = user.Id,
+                PostId = postId,
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+                ModifiedBy = user.Id,
+            });
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            followedPost.IsDelete = !followedPost.IsDelete;
+            _context.ComicFollowedPosts.Update(followedPost);
+            await _context.SaveChangesAsync();
+            return followedPost.IsDelete;
+        }
+    }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR loadReq)
+    {
+
+        ValidateTotalItem(loadReq.PageSize);
+        var currentUserId = _currentUserService?.Session?.UserId;
+        PagedResponse<PostSeriesTopResponse> results;
+        var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
+
+        if (loadReq.OrderBy == null)
+        {
+            loadReq.OrderBy = nameof(ComicPost.CreatedOn);
+        }
+        string topSelectPostIdQuery = "";
+        string countTopQuery = PaginationCountResult;
+
+        topSelectPostIdQuery = GetMyPostFollowedIdsQuery;
+        countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostFollowedCountQuery);
+
+        var result = new PostSeriesAllTopResponse();
+
+        var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
+            .Replace("[CountResults]", countTopQuery)
+            .Replace("[OrderBy]", loadReq.OrderBy)
+            .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery);
+
+
+        var multi = await _postRepository
+                .Connection.QueryMultipleAsync(query, new
+                {
+                    IsAccessPrivate = false,
+                    UserId = currentUserId,
+                    PageSize = loadReq.PageSize,
+                    Offset = offset
+                });
+        var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
+
+        var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+        if (items != null && items.Count() > 0)
+        {
+            results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
+            results.Items = MappingTopSeries(items);
+        }
+        else
+        {
+            results = new PagedResponse<PostSeriesTopResponse>(0);
+        }
+        return results;
+
+    }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);

@@ -138,4 +138,14 @@ public partial class StoryService : IStoryService
     {
         return await _postService.GetPostByTagName(_type, request);
     }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input)
+    {
+        return await _postService.GetFollowedPost(input);
+    }
+
+    public async Task<bool> FollowPost(Guid postId)
+    {
+        return await _postService.FollowPost(postId);
+    }
 }

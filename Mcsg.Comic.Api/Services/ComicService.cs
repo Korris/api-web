@@ -173,6 +173,17 @@ public partial class ComicService : IComicService
     {
         return await _postService.SwapChapterOrder(comicHashId, orders);
     }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input)
+    {
+        return await _postService.GetFollowedPost(input);
+    }
+
+    public async Task<bool> FollowPost(Guid postId)
+    {
+        return await _postService.FollowPost(postId);
+    }
+
     #endregion
 
     #region -- Fields --

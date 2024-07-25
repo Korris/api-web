@@ -14,6 +14,8 @@ partial class McsgContext
 
     public IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable => BackgroundMediaPosts.Where(p => !p.IsDelete);
 
+    public IQueryable<ComicFollowedPost> ComicFollowedPostAvailable => ComicFollowedPostAvailable.Where(p => !p.IsDelete);
+
     public IQueryable<ComicMetaData> ComicMetaDataAvailable => ComicMetaDatas.Where(p => true);
 
     public IQueryable<ComicPost> ComicPostAvailable => ComicPosts.Where(p => !p.IsDelete);
@@ -93,6 +95,8 @@ partial class McsgContext
     public IQueryable<SocialSubPostReaction> SocialSubPostReactionAvailable => SocialSubPostReactions.Where(p => !p.IsDelete);
 
     public IQueryable<SocialTagPost> SocialTagPostAvailable => SocialTagPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryFollowedPost> StoryFollowedPostAvailable => StoryFollowedPostAvailable.Where(p => !p.IsDelete);
 
     public IQueryable<StoryMetaData> StoryMetaDataAvailable => StoryMetaDatas.Where(p => true);
 

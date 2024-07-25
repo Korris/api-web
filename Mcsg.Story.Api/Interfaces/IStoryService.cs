@@ -27,4 +27,6 @@ public interface IStoryService
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request);
     Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input);
+    Task<bool> FollowPost(Guid postId);
 }
