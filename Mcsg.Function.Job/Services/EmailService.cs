@@ -6,12 +6,12 @@ namespace Mcsg.Function.Job.Services
 {
     using Common.Core.Enums;
     using Common.Core.Interfaces;
+    using Common.Domain.Entities;
     using Common.SeedWork.Extensions;
     using Constants;
     using Extensions;
     using Interfaces;
     using Lib.Common.Models;
-    using Entities = Common.Domain.Entities;
 
     public class EmailService : IEmailService
     {
@@ -22,7 +22,7 @@ namespace Mcsg.Function.Job.Services
             _sc = sc;
         }
 
-        public async Task SendEmailAsync(Entities.Job job)
+        public async Task SendEmailAsync(Job job)
         {
             var email = JsonConvert.DeserializeObject<Email>(job.Data);
             _ = new StringBuilder();

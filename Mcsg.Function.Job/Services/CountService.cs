@@ -9,19 +9,13 @@ namespace Mcsg.Function.Job.Services
     using Lib.Common.Models;
     using Lib.Data.Repositories;
     using Lib.Data.Repositories.Interface;
-    using Entities = Common.Domain.Entities;
 
     public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Entities.SmartCountAction> _smartCountActionRepository;
-        private readonly IRepository<TP> _postCommentReactRepository;
-        private readonly IRepository<TS> _subPostCommentReactRepository;
-
         public CountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _smartCountActionRepository = _unitOfWork.GetRepository<Entities.SmartCountAction>();
+            _smartCountActionRepository = _unitOfWork.GetRepository<SmartCountAction>();
             _postCommentReactRepository = _unitOfWork.GetRepository<TP>();
             _subPostCommentReactRepository = _unitOfWork.GetRepository<TS>();
 
@@ -396,5 +390,13 @@ INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
             }
         }
 
+        #region -- Fields --
+
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<SmartCountAction> _smartCountActionRepository;
+        private readonly IRepository<TP> _postCommentReactRepository;
+        private readonly IRepository<TS> _subPostCommentReactRepository;
+
+        #endregion
     }
 }

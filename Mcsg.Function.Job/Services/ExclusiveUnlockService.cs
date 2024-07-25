@@ -12,9 +12,6 @@ namespace Mcsg.Function.Job.Services
 
     public class ExclusiveUnlockService : IExclusiveUnlockService
     {
-        private readonly WalletDbContext _walletDbContext;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<Mcsg.Common.Domain.Entities.SocialSubPost> _subPostRepository;
         public ExclusiveUnlockService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
         {
             _unitOfWork = unitOfWork;
@@ -58,5 +55,12 @@ namespace Mcsg.Function.Job.Services
 
         #endregion
 
+        #region -- Fields --
+
+        private readonly WalletDbContext _walletDbContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<SocialSubPost> _subPostRepository;
+
+        #endregion
     }
 }
