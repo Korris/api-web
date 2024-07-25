@@ -61,10 +61,15 @@ public class UserWalletService : IUserWalletService
     {
         var userId = _currentUserService?.Session?.UserId;
         if (userId == null)
-            return new List<UserWalletResp>();
-        var data = await _dbContext.UserWallets
-            .Where(x => x.UserId == _currentUserService.Session.UserId)
-            .AsNoTracking().FirstOrDefaultAsync();
+        {
+            return [];
+        }
+
+        var data = await _dbContext.UserWallets.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+        if (data == null)
+        {
+            return [];
+        }
 
         var user = new UserWalletResp
         {
@@ -74,14 +79,15 @@ public class UserWalletService : IUserWalletService
             TotalPoint = data.Point + data.RewardPoint,
             Owner = _currentUserService.Session.ProfileName
         };
-        //Select premium 
+
+        // Select premium
         var lastPackage = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == data.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
         if (lastPackage != null)
         {
             user.PremiumDate = DateOnly.FromDateTime(lastPackage.EndDate);
         }
 
-        return new List<UserWalletResp> { user };
+        return [user];
     }
 
     public async Task<UserWalletBasicResp> GetUserWalletByAddressAsync(string address)
