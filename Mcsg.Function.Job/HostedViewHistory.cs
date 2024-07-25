@@ -241,7 +241,7 @@ public class HostedViewHistory : BackgroundService
         {
             return @"SELECT ""Id""
                 FROM ""ViewHistories""
-                WHERE ""EntityId"" = @EntityId AND ""UsedId"" = @userid	
+                WHERE ""EntityId"" = @EntityId AND ""UsedId"" = @userid 
                 AND ""EntityType"" = @EntityType AND ""IpAddress"" = @IpAddress ;";
         }
     }

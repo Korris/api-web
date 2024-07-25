@@ -238,22 +238,22 @@ namespace Mcsg.Function.Job.Services
             {
                 return @"SELECT SUM(count)
                 FROM (
-	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialPostComments"" pcm 
-				                WHERE pcm.""PostId"" = @PostId 
+                    SELECT COUNT(pcm.""Id"") as count
+                                FROM social.""SocialPostComments"" pcm 
+                                WHERE pcm.""PostId"" = @PostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
-				                AND pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""PostId""
-	                UNION ALL
+                                AND pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""PostId""
+                    UNION ALL
 
-	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialSubPostComments"" pcm 
-				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""PostId"" AND 
-				                sp.""PostId"" = @PostId
+                    SELECT COUNT(pcm.""Id"") as count
+                                FROM social.""SocialSubPostComments"" pcm 
+                                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""PostId"" AND 
+                                sp.""PostId"" = @PostId
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
-				                WHERE  pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""PostId""
-	                ) as tb;";
+                                WHERE  pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""PostId""
+                    ) as tb;";
             }
         }
         private string GetAllCountCommentFromSubPost
@@ -261,11 +261,11 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialSubPostComments"" pcm 
-				                WHERE pcm.""PostId"" = @SubPostId 
+                                FROM social.""SocialSubPostComments"" pcm 
+                                WHERE pcm.""PostId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
-				                AND pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""PostId"";";
+                                AND pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""PostId"";";
             }
         }
 
@@ -278,21 +278,21 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             {
                 return @"SELECT SUM(count)
                 FROM (
-	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialPostReactions"" pcm 
-				                WHERE pcm.""TargetId"" = @PostId 
+                    SELECT COUNT(pcm.""Id"") as count
+                                FROM social.""SocialPostReactions"" pcm 
+                                WHERE pcm.""TargetId"" = @PostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
-				                AND pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""TargetId""
-	                UNION ALL
+                                AND pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""TargetId""
+                    UNION ALL
 
-	                SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialSubPostReactions"" pcm 
-				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedOn"") = @Today AND 
-				                sp.""PostId"" = @PostId
-				                WHERE  pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""TargetId""
-	                ) as tb;";
+                    SELECT COUNT(pcm.""Id"") as count
+                                FROM social.""SocialSubPostReactions"" pcm 
+                                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = pcm.""TargetId"" AND date_trunc('day',pcm.""CreatedOn"") = @Today AND 
+                                sp.""PostId"" = @PostId
+                                WHERE  pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""TargetId""
+                    ) as tb;";
             }
         }
         private string GetAllCountReactFromSubPost
@@ -300,11 +300,11 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT COUNT(pcm.""Id"") as count
-				                FROM social.""SocialSubPostReactions"" pcm 
-				                WHERE pcm.""TargetId"" = @SubPostId 
+                                FROM social.""SocialSubPostReactions"" pcm 
+                                WHERE pcm.""TargetId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
-				                AND pcm.""IsDelete"" = false 							
-				                GROUP BY pcm.""PostId"";";
+                                AND pcm.""IsDelete"" = false 
+                                GROUP BY pcm.""PostId"";";
             }
         }
 
@@ -315,18 +315,18 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             {
                 return @"SELECT SUM(count)
                 FROM (
-	                SELECT COUNT(view.""Id"") as count
-				                FROM ""ViewHistories"" view 
-				                WHERE view.""EntityId"" = @PostId
-				                GROUP BY view.""EntityId""
-	                UNION ALL
+                    SELECT COUNT(view.""Id"") as count
+                                FROM ""ViewHistories"" view 
+                                WHERE view.""EntityId"" = @PostId
+                                GROUP BY view.""EntityId""
+                    UNION ALL
 
-	                SELECT COUNT(view.""Id"") as count
-				                FROM ""ViewHistories"" view 
-				                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = view.""EntityId"" AND 
-				                sp.""PostId"" = @PostId							
-				                GROUP BY view.""EntityId"" 
-	                ) as tb;";
+                    SELECT COUNT(view.""Id"") as count
+                                FROM ""ViewHistories"" view 
+                                INNER JOIN social.""SocialSubPosts"" sp ON sp.""Id"" = view.""EntityId"" AND 
+                                sp.""PostId"" = @PostId 
+                                GROUP BY view.""EntityId"" 
+                    ) as tb;";
             }
         }
         private string GetAllCountViewFromSubPost
@@ -334,9 +334,9 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT COUNT(view.""Id"") as count
-				                FROM ""ViewHistories"" view 
-				                WHERE view.""EntityId"" = @SubPostId 					
-				                GROUP BY view.""EntityId"";";
+                                FROM ""ViewHistories"" view 
+                                WHERE view.""EntityId"" = @SubPostId 
+                                GROUP BY view.""EntityId"";";
             }
         }
         #endregion
@@ -371,11 +371,11 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
             get
             {
                 return @"SELECT p.""Id"", p.""Type""
-				                FROM social.""SocialSubPosts"" sp
+                                FROM social.""SocialSubPosts"" sp
 INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
-				                WHERE sp.""Id"" = @SubPostId 
-				                AND p.""IsDelete"" = false 							
-				                LIMIT 1;";
+                                WHERE sp.""Id"" = @SubPostId 
+                                AND p.""IsDelete"" = false 
+                                LIMIT 1;";
             }
         }
         private string GetPostBasicByPostId
@@ -383,10 +383,10 @@ INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
             get
             {
                 return @"SELECT p.""Id"", p.""Type""
-				                FROM social.""SocialPosts"" p
-				                WHERE p.""Id"" = @PostId 
-				                AND p.""IsDelete"" = false 							
-				                LIMIT 1;";
+                                FROM social.""SocialPosts"" p
+                                WHERE p.""Id"" = @PostId 
+                                AND p.""IsDelete"" = false 
+                                LIMIT 1;";
             }
         }
 

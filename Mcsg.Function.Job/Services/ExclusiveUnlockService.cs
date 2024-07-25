@@ -46,10 +46,10 @@ namespace Mcsg.Function.Job.Services
             get
             {
                 return @"UPDATE social.""SocialSubPosts""
-	    SET ""IsExclusive"" = false, 
-		    ""ModifiedBy"" = @SystemUser ,
-		    ""ModifiedOn"" = @NowTime
-	    WHERE ""CreatedOn"" < @WeekTime AND ""IsExclusive"" = true AND ""IsDelete"" = false";
+        SET ""IsExclusive"" = false, 
+            ""ModifiedBy"" = @SystemUser ,
+            ""ModifiedOn"" = @NowTime
+        WHERE ""CreatedOn"" < @WeekTime AND ""IsExclusive"" = true AND ""IsDelete"" = false";
             }
         }
 

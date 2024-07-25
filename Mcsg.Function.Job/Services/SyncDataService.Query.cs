@@ -11,9 +11,9 @@
                 return @"SELECT ""Id"", ""LoginProvider"", ""LoginDateUtc"", ""ExpiredDateUtc"", ""UserName"", ""Email"", 
                             ""LastName"", ""FirstName"", ""UserId"", ""Roles"", ""Claims"", 
                             ""LastActionDateUtc"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
-	                            FROM public.""Sessions""
-	                            WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateNow
-	                            ORDER BY ""CreatedOn"" DESC";
+                                FROM public.""Sessions""
+                                WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateNow
+                                ORDER BY ""CreatedOn"" DESC";
             }
         }
 
@@ -36,8 +36,8 @@
             get
             {
                 return @"SELECT ""Id"",""CreatedOn""
-	            FROM public.""UserExclusiveSubPosts""
-	            WHERE ""UserId"" = @UserId AND ""SubPostId"" = @SubPostId AND ""IsDelete"" = false";
+                FROM public.""UserExclusiveSubPosts""
+                WHERE ""UserId"" = @UserId AND ""SubPostId"" = @SubPostId AND ""IsDelete"" = false";
             }
         }
         #endregion
@@ -48,11 +48,11 @@
             get
             {
                 return $@"SELECT ""Id"", ""Title"", ""PublishDate"", ""Permission"", ""Order""
-					FROM {_subPostRepository.TableName} 
-					WHERE ""PostId"" = @PostId 
+                    FROM {_subPostRepository.TableName} 
+                    WHERE ""PostId"" = @PostId 
                             AND ""IsDelete"" = false 
                             AND ""Permission"" <> {(int)PostPermission.Private}
-					ORDER BY ""Order"" ; ";
+                    ORDER BY ""Order"" ; ";
             }
         }
         private string GetUserExclusiveSubPostsList
@@ -60,8 +60,8 @@
             get
             {
                 return @"SELECT ""Id"",""CreatedOn""
-	            FROM public.""UserExclusiveSubPosts""
-	            WHERE ""UserId"" = @UserId AND ""SubPostId"" = ANY(@SubPostIds) AND ""IsDelete"" = false";
+                FROM public.""UserExclusiveSubPosts""
+                WHERE ""UserId"" = @UserId AND ""SubPostId"" = ANY(@SubPostIds) AND ""IsDelete"" = false";
             }
         }
         #endregion
