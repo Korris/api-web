@@ -137,9 +137,9 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
 
     public virtual DbSet<BackgroundMediaPost> BackgroundMediaPosts { get; set; }
 
-    public virtual DbSet<ComicMetaData> ComicMetaDatas { get; set; }
-
     public virtual DbSet<ComicFollowedPost> ComicFollowedPosts { get; set; }
+
+    public virtual DbSet<ComicMetaData> ComicMetaDatas { get; set; }
 
     public virtual DbSet<ComicPost> ComicPosts { get; set; }
 
@@ -278,7 +278,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>
     //public virtual DbSet<UserToken> UserTokens { get; set; }
 
     public virtual DbSet<ViewHistory> ViewHistories { get; set; }
-
 
     #endregion
 }
