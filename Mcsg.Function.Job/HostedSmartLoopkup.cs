@@ -229,7 +229,7 @@ public class HostedSmartLoopkup : BackgroundService
                                     WHERE s.""Keyword"" = c.""ProfileName""
                                     AND s.""Keyword"" = @Name
                                     AND s.""KeywordType"" = @KeywordType;
-                                ", "public.\"SmartLookups\"", "public.\"Posts\"", "identity.\"Users\"");
+                                ", "public.\"SmartLookups\"", "social.\"SocialPosts\"", "identity.\"Users\"");
         }
     }
 
@@ -251,7 +251,7 @@ public class HostedSmartLoopkup : BackgroundService
         {
             return @$"SELECT COUNT(tagpost.""PostId"") AS CountValue
                         FROM {"public.\"Tags\""} tag 
-                        INNER JOIN {"public.\"TagPosts\""} tagpost ON tagpost.""TagId"" = tag.""Id""
+                        INNER JOIN {"social.\"SocialTagPosts\""} tagpost ON tagpost.""TagId"" = tag.""Id""
                         WHERE tag.""Name"" = @tag AND tagpost.""IsDelete"" = false";
         }
     }

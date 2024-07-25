@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
@@ -19,4 +21,10 @@ public class BaseResource : AuditableEntity
     public ResourceType Type { get; set; }
     public ResourceLocationType LocationType { get; set; }
     public ResourceStatus Status { get; set; } = ResourceStatus.Done;
+
+    /// <summary>
+    /// MicroService
+    /// </summary>
+    [NotMapped]
+    public string MicroService { get; set; } = Core.Enums.MicroService.Social.ToString();
 }

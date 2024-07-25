@@ -6,6 +6,7 @@ namespace Mcsg.Media.Tool.Workers
     using Common.Core.Enums;
     using Common.Core.Interfaces;
     using Common.Domain.Entities;
+    using Common.SeedWork.Extensions;
     using Interfaces;
 
     internal class ConvertAudioWorker : BaseWorker, IWorker
@@ -24,9 +25,10 @@ namespace Mcsg.Media.Tool.Workers
                 try
                 {
                     // load resource
-                    var resourceInfo = JsonConvert.DeserializeObject<SocialResource>(jobInfo.Data);
+                    var resourceInfo = JsonConvert.DeserializeObject<BaseResource>(jobInfo.Data);
                     var url = HttpUtility.UrlDecode(resourceInfo.Url);
                     var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
+                    var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
 
                     var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
                     if (File.Exists(targetFile))
@@ -47,7 +49,7 @@ namespace Mcsg.Media.Tool.Workers
                         //update job status
                         await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl);
+                        await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService);
                     }
 
                     //clean up resource

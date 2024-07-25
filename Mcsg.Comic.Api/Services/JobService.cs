@@ -22,6 +22,8 @@ public class JobService : IJobService
 
     public async Task CreateConvertJob(ComicResource resource, string userName, string userAvatar, string blobName)
     {
+        resource.MicroService = MicroService.Comic.ToString();
+
         if (resource.Type == ResourceType.Video)
         {
             await ConvertVideo(resource, userName, userAvatar, blobName);

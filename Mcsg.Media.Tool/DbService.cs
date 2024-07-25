@@ -54,13 +54,21 @@ namespace Mcsg.Media.Tool
                 });
         }
 
-        public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string shareUrl)
+        public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string shareUrl, MicroService microService)
         {
-            var command = @"UPDATE social.""SocialResources""
+            var command = @"UPDATE {0}.""{1}Resources""
                             SET ""Status""= @status,
                                  ""Url"" = @url,
                                 ""ShareUrl"" = @shareUrl
                             WHERE ""Id"" = @id ";
+
+            if (microService != MicroService.Comic && microService != MicroService.Story)
+            {
+                microService = MicroService.Social;
+            }
+            var prefix = microService.ToString();
+            var schema = prefix.ToLower();
+            command = string.Format(command, schema, prefix);
 
             using var conn = new NpgsqlConnection(_connectionString);
             await conn.ExecuteAsync(command, new
@@ -72,16 +80,24 @@ namespace Mcsg.Media.Tool
             });
         }
 
-        public async Task<VideoNotificationModel?> LoadResource(string hashId)
+        public async Task<VideoNotificationModel?> LoadResource(string hashId, MicroService microService)
         {
             var query = @"SELECT res.""Id"", res.""HashId""
-	                    , res.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
-	                    , sub.""PostId"", post.""HashId"" AS ""PostHashId"" 
-	                    FROM social.""SocialResources"" res
-	                    LEFT JOIN identity.""Users"" us ON res.""AuthorId"" = us.""Id""
-	                    LEFT JOIN social.""SocialSubPosts"" sub ON res.""SubPostId"" = sub.""Id""
-	                    LEFT JOIN social.""SocialPosts"" post ON sub.""PostId"" = post.""Id""
-	                    WHERE res.""HashId"" = @HashId";
+                        , res.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
+                        , sub.""PostId"", post.""HashId"" AS ""PostHashId"" 
+                        FROM {0}.""{1}Resources"" res
+                        LEFT JOIN identity.""Users"" us ON res.""AuthorId"" = us.""Id""
+                        LEFT JOIN {0}.""{1}SubPosts"" sub ON res.""SubPostId"" = sub.""Id""
+                        LEFT JOIN {0}.""{1}Posts"" post ON sub.""PostId"" = post.""Id""
+                        WHERE res.""HashId"" = @HashId";
+
+            if (microService != MicroService.Comic && microService != MicroService.Story)
+            {
+                microService = MicroService.Social;
+            }
+            var prefix = microService.ToString();
+            var schema = prefix.ToLower();
+            query = string.Format(query, schema, prefix);
 
             using var conn = new NpgsqlConnection(_connectionString);
             var resource = await conn.QueryFirstOrDefaultAsync<VideoNotificationModel>(query,
