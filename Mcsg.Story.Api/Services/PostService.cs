@@ -1554,20 +1554,21 @@ public partial class PostService : IPostService
         var reader = await _postRepository
             .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
         var post = (await reader.ReadAsync<StoryPost>().ConfigureAwait(false)).FirstOrDefault();
-        reader.Dispose();
         VerifyPost(post, true);
         #endregion
 
         if (chapterPostReq.IsAutoGenerateOrder)
         {
-            var maxOrder = (await reader.ReadAsync<int>(false)).FirstOrDefault();
+            var maxOrder = (await reader.ReadAsync<float>(false)).FirstOrDefault();
             newOrder = maxOrder + 1;
 
         }
         else
         {
-            newOrder = chapterPostReq.Order;
+            newOrder = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : 0;
         }
+
+        reader.Dispose();
 
         var newChapter = new StorySubPost
         {
@@ -1633,7 +1634,7 @@ public partial class PostService : IPostService
         newChapter.Permission = chapterPostReq.Permission;
         if (!chapterPostReq.IsAutoGenerateOrder)
         {
-            newChapter.Order = order;
+            newChapter.Order = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : order;
         }
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;

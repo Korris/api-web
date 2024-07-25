@@ -15,6 +15,6 @@ public class StoryChapterPostR
     public bool IsEnableComment { get; set; }
     public bool IsPremium { get; set; }
     public bool IsAutoGenerateOrder { get; set; }
-    public float Order { get; set; }
+    public float? Order { get; set; }
     #endregion
 }
