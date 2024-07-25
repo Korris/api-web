@@ -96,6 +96,7 @@ public class TokenService : ITokenService
             UserFolder = user.UserFolder,
             UserAvatar = user.Avatar + "",
             IsPremium = user.IsPremium,
+            IsWalletShowing = user.IsWalletShowing,
             SessionId = sessionId
         };
         var st = new SecurityToken(_setting.Jwt, payload);

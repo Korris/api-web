@@ -70,6 +70,11 @@ public class PayloadDto
     public bool IsPremium { get; set; }
 
     /// <summary>
+    /// IsWalletShowing
+    /// </summary>
+    public bool IsWalletShowing { get; set; }
+
+    /// <summary>
     /// 0 Guest, 2 Free, 3 Premium
     /// </summary>
     public byte Type { get; set; }
