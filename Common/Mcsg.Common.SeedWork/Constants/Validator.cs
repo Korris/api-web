@@ -354,4 +354,26 @@ public class Validator
         /// </summary>
         public const string Message = "Location can contain letters, numbers, commas, dots, hyphens, slashes, spaces, and hashes, including Vietnamese characters.";
     }
+
+    /// <summary>
+    /// Title
+    /// </summary>
+    public class Title
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 255;
+    }
+
+    /// <summary>
+    /// Summary
+    /// </summary>
+    public class Summary
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 2000;
+    }
 }

@@ -73,6 +73,14 @@ public class ConfigController : ControllerBase
             {
                 Location.Max,
                 Location.Regex
+            },
+            Summary = new
+            {
+                Summary.Max
+            },
+            Title = new
+            {
+                Title.Max
             }
         };
         res.SetSuccess(nameof(validators), validators);
