@@ -3,4 +3,4 @@ Add-Migration InitData -Args "host=localhost;port=5432;database=local_bumcheo_wa
 
 # Update migration
 CREATE DATABASE local_bumcheo_wallet OWNER local;
-Update-Database InitData -Args "host=localhost;port=5432;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
+Update-Database InitData -Args "host=ntata.postgres;port=5433;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
