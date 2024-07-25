@@ -11,4 +11,5 @@ public class UserProfileUpdateR
     public string? Location { get; set; }
     public string? PhoneNumber { get; set; }
     public bool IsPremium { get; set; }
+    public bool IsWalletShowing { get; set; }
 }

@@ -240,6 +240,7 @@ public partial class UserService : IUserService
         user.Gender = req.Gender != null ? (int)req.Gender : null;
         user.Location = req.Location;
         user.PhoneNumber = req.PhoneNumber;
+        user.IsWalletShowing = req.IsWalletShowing;
 
         await _context.SaveChangesAsync();
 
@@ -278,7 +279,8 @@ public partial class UserService : IUserService
             LastLoginDate = user.LastLoginDate,
             IsPremium = user.IsPremium,
             NumberOfFollowing = followingCount,
-            NumberOfFollowers = followersCount
+            NumberOfFollowers = followersCount,
+            IsWalletShowing = user.IsWalletShowing,
         };
     }
 
@@ -314,7 +316,8 @@ public partial class UserService : IUserService
             IsPremium = user.IsPremium,
             NumberOfFollowing = followingCount,
             NumberOfFollowers = followersCount,
-            IsFollowing = currentUserId == null ? false : await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id)
+            IsFollowing = currentUserId == null ? false : await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id),
+            IsWalletShowing = user.IsWalletShowing
         };
     }
 

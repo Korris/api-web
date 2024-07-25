@@ -31,4 +31,5 @@ public class UserProfileResponse
     public int? NumberOfFollowing { get; set; }
     public int? NumberOfFollowers { get; set; }
     public bool IsFollowing { get; set; } = false;
+    public bool? IsWalletShowing { get; set; }
 }
