@@ -1524,7 +1524,7 @@ public partial class PostService : IPostService
 
     private bool CheckIsPublicNow(DateTime? PublishDate)
     {
-        return (PublishDate != null && PublishDate < DateTime.UtcNow);
+        return (PublishDate != null && PublishDate < DateTime.Now);
     }
 
     #endregion
@@ -1725,10 +1725,8 @@ public partial class PostService : IPostService
         //newChapter.CreatorNote = chapterPostReq.CreatorNote;
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
-        if (!chapterPostReq.IsAutoGenerateOrder)
-        {
-            newChapter.Order = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : order;
-        }
+        newChapter.IsPremium = chapterPostReq.IsPremium;
+        newChapter.Order = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : order;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
 
