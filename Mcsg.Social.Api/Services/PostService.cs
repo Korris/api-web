@@ -27,6 +27,7 @@ using Lib.Data.Repositories.Interface;
 using Models;
 using Models.Earning;
 using Requests;
+using System.Linq;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
@@ -1890,6 +1891,14 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
+    }
+
+    public async Task<Tuple<int, int>> GetFollowedPostCount()
+    {
+        var currentUserId = _currentUserService.Session?.UserId;
+        var followedComicCount = await _context.ComicFollowedPostAvailable.AsNoTracking().Where(p => p.CreatedBy == currentUserId).CountAsync();
+        var followedStoryCount = await _context.StoryFollowedPostAvailable.AsNoTracking().Where(p => p.CreatedBy == currentUserId).CountAsync();
+        return Tuple.Create(followedComicCount, followedStoryCount);
     }
     #endregion
 

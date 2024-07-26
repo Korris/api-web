@@ -246,6 +246,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
+        dbPost.IsFollowing = currentUserId == null ? false : await _context.ComicFollowedPostAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
         return MappingFeedRespone(dbPost);
     }
     public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
@@ -868,6 +869,7 @@ public partial class PostService : IPostService
             EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
             SeriesStatus = item.ToSeriesStatus(),
             TotalComment = item.TotalComment,
+            IsFollowing = item.IsFollowing,
         };
 
         return itemResponse;
@@ -883,7 +885,7 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        if (!await _context.StoryPostAvailable.AnyAsync(p => p.Id == postId))
+        if (!await _context.ComicPostAvailable.AnyAsync(p => p.Id == postId))
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
@@ -909,7 +911,7 @@ public partial class PostService : IPostService
             followedPost.IsDelete = !followedPost.IsDelete;
             _context.ComicFollowedPosts.Update(followedPost);
             await _context.SaveChangesAsync();
-            return followedPost.IsDelete;
+            return !followedPost.IsDelete;
         }
     }
 
@@ -945,7 +947,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     UserId = currentUserId,
                     PageSize = loadReq.PageSize,
-                    Offset = offset
+                    Offet = offset
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 

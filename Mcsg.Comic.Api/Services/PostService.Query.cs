@@ -636,12 +636,13 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @" --My post
-								SELECT qpost.""PostId""
-                                FROM ""comic"".""ComicFollowedPosts""  qpost							 	
-								WHERE qpost.""CreatedBy"" = @UserId AND qpost.""IsDelete"" = false  			
-								ORDER BY ""[OrderBy]"" DESC
+								SELECT qpost.""Id"", 0 AS ""SelectType""
+                                FROM ""comic"".""ComicPosts""  qpost
+								LEFT JOIN ""comic"".""ComicFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
+								WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false 			
+								ORDER BY cfp.""[OrderBy]"" DESC
 								LIMIT @PageSize
-								OFFSET @Offset";
+								OFFSET @Offet";
             }
         }
         private string GetMyPostFollowedCountQuery
@@ -649,9 +650,10 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @" --My post
-								SELECT qpost.""PostId""
-								FROM ""comic"".""ComicFollowedPosts""  qpost							 	
-								WHERE qpost.""CreatedBy"" = @UserId  AND qpost.""IsDelete"" = false";
+								SELECT qpost.""Id""
+								FROM ""comic"".""ComicPosts""  qpost							 	
+								LEFT JOIN ""comic"".""ComicFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
+								WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
         }
         #endregion
@@ -661,13 +663,15 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
         {
             get
             {
-                return @" --My post
-								SELECT qpost.""Id"", 0 AS ""SelectType""
-                                FROM ""comic"".""ComicPosts""  qpost							 	
-								WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false  			
-								ORDER BY ""[OrderBy]"" DESC
-								LIMIT @PageSize
-								OFFSET @Offet";
+                return @"--My post
+
+                                SELECT qpost.""Id"", 0 AS ""SelectType""
+                                FROM ""comic"".""ComicPosts""  qpost
+                                WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false
+
+                                ORDER BY ""[OrderBy]"" DESC
+                                LIMIT @PageSize
+                                OFFSET @Offet";
             }
         }
         private string GetMyPostCountQuery

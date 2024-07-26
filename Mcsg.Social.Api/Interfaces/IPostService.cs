@@ -47,4 +47,5 @@ public interface IPostService
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
+    Task<Tuple<int, int>> GetFollowedPostCount();
 }

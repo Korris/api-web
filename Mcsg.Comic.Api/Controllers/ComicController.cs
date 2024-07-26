@@ -179,7 +179,8 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("follow-post")]
+    [Authorize]
+    [HttpPost("follow-post/{postId}")]
     public async Task<IActionResult> FollowPost(Guid postId)
     {
         var result = await _comicService.FollowPost(postId);

@@ -246,6 +246,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
+        dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryFollowedPostAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
         return MappingFeedRespone(dbPost);
     }
     public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
@@ -868,6 +869,7 @@ public partial class PostService : IPostService
             EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
             SeriesStatus = item.ToSeriesStatus(),
             TotalComment = item.TotalComment,
+            IsFollowing = item.IsFollowing
         };
 
         return itemResponse;
@@ -908,7 +910,7 @@ public partial class PostService : IPostService
             followedPost.IsDelete = !followedPost.IsDelete;
             _context.StoryFollowedPosts.Update(followedPost);
             await _context.SaveChangesAsync();
-            return followedPost.IsDelete;
+            return !followedPost.IsDelete;
         }
     }
 
@@ -944,7 +946,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     UserId = currentUserId,
                     PageSize = loadReq.PageSize,
-                    Offset = offset
+                    Offet = offset
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 

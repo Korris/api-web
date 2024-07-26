@@ -636,12 +636,13 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @" --My post
-								SELECT qpost.""PostId""
-                                FROM ""comic"".""StoryFollowedPosts""  qpost							 	
-								WHERE qpost.""CreatedBy"" = @UserId AND qpost.""IsDelete"" = false  			
-								ORDER BY ""[OrderBy]"" DESC
+								SELECT qpost.""Id"", 0 AS ""SelectType""
+                                FROM ""story"".""StoryPosts""  qpost
+								LEFT JOIN ""story"".""StoryFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
+								WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false 			
+								ORDER BY cfp.""[OrderBy]"" DESC
 								LIMIT @PageSize
-								OFFSET @Offset";
+								OFFSET @Offet";
             }
         }
         private string GetMyPostFollowedCountQuery
@@ -649,9 +650,10 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @" --My post
-								SELECT qpost.""PostId""
-								FROM ""comic"".""StoryFollowedPosts""  qpost							 	
-								WHERE qpost.""CreatedBy"" = @UserId  AND qpost.""IsDelete"" = false";
+								SELECT qpost.""Id""
+								FROM ""story"".""StoryPosts""  qpost								 	
+								LEFT JOIN ""story"".""StoryFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
+								WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
         }
         #endregion

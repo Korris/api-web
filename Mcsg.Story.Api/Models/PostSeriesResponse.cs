@@ -21,6 +21,7 @@ public class PostSeriesResponse : PostDto
     public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
     public string SeriesStatus { get; set; }
     public int TotalComment { get; set; }
+    public bool IsFollowing { get; set; }
 
 }
 public class PostSeriesQueryDbResponse : PostSeriesResponse

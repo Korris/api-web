@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
 using Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Requests;
 
 [ApiController]
@@ -81,6 +82,14 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetNewsFeed([FromQuery] UserNamePagingR input)
     {
         var result = await _postService.GetNewsFeed(input);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("get-followed-post-count")]
+    public async Task<IActionResult> GetFollowedPostCount()
+    {
+        var result = await _postService.GetFollowedPostCount();
         return Ok(result);
     }
 
