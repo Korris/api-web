@@ -176,7 +176,7 @@ public partial class FavoriteService : IFavoriteService
             var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
-                listItemResponse.Add(_feedService.MappingFeedInListRespone(item));
+                listItemResponse.Add(_feedService.MappingFeedInListRespone(item, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 

@@ -17,4 +17,5 @@ public class FeedDto : PostDto
     public int TotalResource { get; set; }
     public List<ResourceDto> Resources { get; set; } = [];
     public BackgroundMedia.SearchDto? BackgroundSound { get; set; }
+    public bool? IsFavorite { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Web;
@@ -111,9 +112,13 @@ public partial class FeedService : IFeedService
                     });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
+
+            var userId = feedLoadReq.UserId;
+            var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
+
             foreach (var item in items)
             {
-                listItemResponse.Add(MappingFeedInListRespone(item));
+                listItemResponse.Add(MappingFeedInListRespone(item, postIds));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -160,7 +165,7 @@ public partial class FeedService : IFeedService
             var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
-                listItemResponse.Add(MappingFeedInListRespone(item));
+                listItemResponse.Add(MappingFeedInListRespone(item, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -496,7 +501,7 @@ public partial class FeedService : IFeedService
             var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
-                listItemResponse.Add(MappingFeedInListRespone(item));
+                listItemResponse.Add(MappingFeedInListRespone(item, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -532,7 +537,7 @@ public partial class FeedService : IFeedService
         return await _postService.ReportPostAsync(req);
     }
 
-    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item)
+    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item, List<Guid>? postIds)
     {
         var itemResponse = new FeedDto()
         {
@@ -549,8 +554,9 @@ public partial class FeedService : IFeedService
             Type = item.Type,
             Status = item.Status,
             UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
-            Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
-            CustomNote = item.CustomNote
+            Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : [],
+            CustomNote = item.CustomNote,
+            IsFavorite = postIds == null ? false : postIds.Contains(item.Id)
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         #region Mapping with db query list
