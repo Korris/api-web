@@ -47,7 +47,6 @@
 								WHERE ""PostId"" = p.""Id"" AND ""IsDelete"" = false
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
-								LIMIT 5
 							) sp ON sp.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL
 							(
