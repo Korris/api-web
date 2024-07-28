@@ -143,6 +143,7 @@ public class Program
 
             p.AddDiPatch();
             p.AddDiPost();
+            p.AddDiPostFavorite();
         });
         #endregion
 

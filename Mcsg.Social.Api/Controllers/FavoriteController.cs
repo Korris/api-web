@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
@@ -13,16 +14,18 @@ public class FavoriteController : ControllerBase
 {
     #region -- Methods --
 
-    public FavoriteController(IFavoriteService favoriteService)
+    public FavoriteController(IMediator mediator, IFavoriteService favoriteService)
     {
+        _mediator = mediator;
         _favoriteService = favoriteService;
     }
 
     [HttpPost("add-post-favorite")]
-    public async Task<IActionResult> AddPostToFavorite([FromBody] Guid postId)
+    public async Task<IActionResult> AddPostToFavorite([FromBody] PostFavoriteUpdateR request)
     {
-        var result = await _favoriteService.AddPostToFavoriteAsync(postId);
-        return Ok(result);
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
     }
 
     [HttpPost("add-tag-favorite")]
@@ -63,6 +66,11 @@ public class FavoriteController : ControllerBase
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly IFavoriteService _favoriteService;
 
