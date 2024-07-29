@@ -114,25 +114,6 @@ public partial class FavoriteService : IFavoriteService
     #endregion
 
     #region Post
-    public async Task<bool> AddPostToFavoriteAsync(Guid postId)
-    {
-        var postFavorite = new SocialPostFavorite
-        {
-            PostId = postId,
-            UserId = _currentUserService.Session.UserId,
-        };
-
-        await _postFavoriteValidator.OnValidate(postFavorite);
-
-        var hasExisted = (await _postFavoriteRepository.GetByCustomQuery(GetPostFavoriteByPostIdAndUserId, new { postId = postFavorite.PostId, userId = postFavorite.UserId })).Any();
-
-        if (hasExisted)
-            return true;
-
-        var iResult = await _postFavoriteRepository.InsertAsync(postFavorite);
-        return iResult > 0;
-    }
-
     public async Task<bool> RemovePostToFavoriteAsync(Guid postId)
     {
         await _tagFavoriteRepository.Connection.ExecuteAsync(DeletePostFavoriteByUserIdAndPostIdQuery, new { postId, userId = _currentUserService.Session.UserId });

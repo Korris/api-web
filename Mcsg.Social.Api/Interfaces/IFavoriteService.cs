@@ -7,7 +7,6 @@ using Requests;
 
 public interface IFavoriteService
 {
-    Task<bool> AddPostToFavoriteAsync(Guid postId);
     Task<bool> AddTagToFavoriteAsync(Guid tagId);
 
     Task<bool> RemovePostToFavoriteAsync(Guid postId);

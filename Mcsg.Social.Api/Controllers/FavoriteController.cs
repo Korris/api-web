@@ -21,11 +21,12 @@ public class FavoriteController : ControllerBase
     }
 
     [HttpPost("add-post-favorite")]
-    public async Task<IActionResult> AddPostToFavorite([FromBody] PostFavoriteUpdateR request)
+    public async Task<IActionResult> AddPostToFavorite([FromBody] Guid postId)
     {
+        var request = new PostFavoriteUpdateR { PostId = postId };
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
-        return Ok(response);
+        return Ok(response.Data);
     }
 
     [HttpPost("add-tag-favorite")]
