@@ -14,7 +14,6 @@ using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Common.Web.RealTime.Services;
-using Lib.Data;
 using Lib.Data.Wallet;
 using Requests;
 using Services;

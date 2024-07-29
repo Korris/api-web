@@ -18,7 +18,6 @@ using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data;
 using Lib.Data.Analytic;
 using Lib.Data.Interfaces;
 using Lib.Data.Wallet;

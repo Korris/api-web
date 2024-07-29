@@ -4,11 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Data;
 
-namespace Mcsg.Lib.Data;
+namespace Mcsg.Common.Core.Extensions;
 
-using Mcsg.Common.Domain;
-using Repositories;
-using Repositories.Interface;
+using Domain;
+using Domain.Interfaces;
+using Mcsg.Lib.Data.Repositories;
+using Mcsg.Lib.Data.Repositories.Interface;
 
 public static class DependencyInjection
 {
@@ -25,8 +26,9 @@ public static class DependencyInjection
                 })
             ;
         });
-        services.AddScoped<IDbConnection>((sp) => new NpgsqlConnection(connectionString));
 
+        services.AddScoped<IMcsgContext>(p => p.GetService<McsgContext>()!);
+        services.AddScoped<IDbConnection>((sp) => new NpgsqlConnection(connectionString));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

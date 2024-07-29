@@ -10,7 +10,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data;
 using Lib.Data.Analytic;
 using Services;
 using static Common.Core.Constants.Setting;

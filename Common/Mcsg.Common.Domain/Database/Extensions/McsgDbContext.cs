@@ -1,11 +1,12 @@
 ﻿namespace Mcsg.Common.Domain;
 
+using Common.Domain.Interfaces;
 using Domain.Entities;
 
 /// <summary>
 /// McsgContext
 /// </summary>
-partial class McsgContext
+partial class McsgContext : IMcsgContext
 {
     #region -- Properties --
 

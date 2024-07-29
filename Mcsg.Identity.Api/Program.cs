@@ -17,7 +17,6 @@ using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data;
 using Lib.Data.Interfaces;
 using Lib.Data.Wallet;
 using Models;
