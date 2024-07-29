@@ -219,6 +219,7 @@ public partial class FeedService : IFeedService
                         SELECT 
                             u.""ProfileName"" AS Fullname,
                             u.""ProfileId"",
+                            u.""UserName"",
                             u.""Avatar"" AS UserAvatar,
                             u.""Id"" AS UserId,
                             p.""HashId"",
