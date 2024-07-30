@@ -230,7 +230,7 @@ public partial class PostService : IPostService
                 HashId = hashId,
                 IsAccessPrivate = false,
                 CurrentDate = DateTime.UtcNow,
-                UserId = currentUserId
+                UserId = currentUserId,
             }, splitOn: "Id, Id");
         //Add view
         if (dbPost == null)
@@ -406,6 +406,7 @@ public partial class PostService : IPostService
                     Offet = offset,
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
                     PostStatus = (int)PostStatus.Public,
+                    PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
                     UserId = currentUserId
                 });
@@ -442,7 +443,7 @@ public partial class PostService : IPostService
 
             var offset = request.PageSize * (request.PageNumber - 1);
 
-            string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
+            string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Permission\" = @PostPermission AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
             var tags = await _tagService.GetTagsByPostIdAsync(post.Id);
             var tagIds = new List<Guid>();
             if (tags != null && tags.Any())
@@ -476,7 +477,8 @@ public partial class PostService : IPostService
                         PostStatus = (int)PostStatus.Public,
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
-                        HashId = request.HashId
+                        HashId = request.HashId,
+                        PostPermission = (int)PostPermission.Public
                     });
 
             var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);

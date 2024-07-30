@@ -422,6 +422,7 @@ LIMIT 1
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 
 								WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+								AND qpost1.""Permission"" = @PostPermission
 								AND qpost1.""IsDelete"" = false 								
 								GROUP BY qpost1.""Id"", psp1.""CreatedOn""
 								ORDER BY psp1.""CreatedOn"" DESC
@@ -471,6 +472,7 @@ LIMIT 1
 								LEFT JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 								LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 								WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+								AND qpost1.""Permission"" = @PostPermission
 								AND qpost1.""IsDelete"" = false 								
 								GROUP BY qpost1.""Id""";
             }

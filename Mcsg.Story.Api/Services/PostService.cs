@@ -406,6 +406,7 @@ public partial class PostService : IPostService
                     Offet = offset,
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
                     PostStatus = (int)PostStatus.Public,
+                    PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
                     UserId = currentUserId
                 });

@@ -1092,6 +1092,7 @@ ranked_story AS (
     WHERE ""IsDelete"" = false
 	AND ""Type"" = 1
     AND ""Status"" = 1
+	AND ""Permission"" = 0
 ),
 ranked_comic AS (
     SELECT ""Id"", ""CreatedOn"", ""HashId"",
@@ -1100,6 +1101,7 @@ ranked_comic AS (
     WHERE ""IsDelete"" = false
     AND ""Type"" = 2
     AND ""Status"" = 1
+	AND ""Permission"" = 0
 ),
 limited_feed AS (
     SELECT ""Id"", ""CreatedOn"", ""HashId""
@@ -1215,12 +1217,14 @@ ORDER BY group_number, random_row_num;
 													(SELECT COUNT(*) 
 												   FROM ""comic"".""ComicPosts""
 												   WHERE ""IsDelete"" = false 
-												   AND ""Status"" = 1)
+												   AND ""Status"" = 1
+												   AND ""Permission"" = 1)
 													+
 													(SELECT COUNT(*) 
 												   FROM ""story"".""StoryPosts""
 												   WHERE ""IsDelete"" = false 
-												   AND ""Status"" = 1)
+												   AND ""Status"" = 1
+												   AND ""Permission"" = 1)
 													+
 													(SELECT COUNT(*)
 												   FROM social.""SocialPosts""
