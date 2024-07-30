@@ -9,6 +9,7 @@ public class FeedBoxResponse : FeedBox
     public List<ResourceDto>? Resources { get; set; } = new List<ResourceDto>();
     public MetaDataDto? MetaData { get; set; }
     public PostLinkDto? Link { get; set; }
+    public bool IsFavorite { get; set; }
 
 }
 

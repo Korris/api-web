@@ -17,5 +17,5 @@ public interface IFeedService
     Task<bool> ReportFeedAsync(FeedReportPostReq req);
     FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item, List<Guid>? postIds);
     Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId);
-    Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds);
+    Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds, Guid userId);
 }

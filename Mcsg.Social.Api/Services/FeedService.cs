@@ -366,7 +366,7 @@ public partial class FeedService : IFeedService
         return MappingFeedRespone(dbFeed, sound);
     }
 
-    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res)
+    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, List<Guid>? postId)
     {
         var itemResponse = new FeedBoxResponse()
         {
@@ -384,7 +384,8 @@ public partial class FeedService : IFeedService
             UserName = res.UserName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Type = res.Type,
-            CustomNote = res.CustomNote
+            CustomNote = res.CustomNote,
+            IsFavorite = postId == null ? false : postId.Contains(res.Id)
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
@@ -455,18 +456,21 @@ public partial class FeedService : IFeedService
         return itemResponse;
     }
 
-    public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds, Guid userId)
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
 
+        var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId)
+                                                                .Select(p => p.PostId)
+                                                                .ToListAsync();
         if (result != null && result.Any())
         {
             var listFeedDetails = new List<FeedBoxResponse>();
 
             foreach (var res in result)
             {
-                listFeedDetails.Add(MappingFeedBoxResponse(res));
+                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds));
             }
 
             return listFeedDetails;
