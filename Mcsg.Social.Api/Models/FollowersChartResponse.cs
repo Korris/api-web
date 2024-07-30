@@ -26,7 +26,6 @@ public class ComicChartResponse
 
 public class FeedChartResponse
 {
-
     public List<ChartResponse> ChartResponseComment { get; set; } = new List<ChartResponse>();
     public List<ChartResponse> ChartResponseReact { get; set; } = new List<ChartResponse>();
     public List<ChartResponse> ChartResponseShare { get; set; } = new List<ChartResponse>();
@@ -35,4 +34,3 @@ public class FeedChartResponse
     public Interactions ShareInteractions { get; set; } = new Interactions();
     public Interactions PostInteractions { get; set; } = new Interactions();
 }
-

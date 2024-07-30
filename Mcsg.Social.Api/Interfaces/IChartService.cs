@@ -1,4 +1,5 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
+
 using Models;
 
 public interface IChartService

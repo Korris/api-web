@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
-using Mcsg.Common.Core.Requests;
 
 [ApiController]
 [Route("[controller]")]
@@ -54,5 +54,6 @@ public class ChartController : ControllerBase
     #region -- Fields --
 
     private readonly IChartService _chartService;
+
     #endregion
 }

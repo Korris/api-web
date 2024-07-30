@@ -124,6 +124,7 @@ public partial class ChartService : IChartService
 
         totalReaction = MapChartData(days, totalReaction);
         #endregion
+
         var interactions = await GetNumberOfInteractionProfile(userId, isGetDataIn7Days);
 
         return new FeedChartResponse
@@ -225,12 +226,10 @@ public partial class ChartService : IChartService
 
             result.ComicReactionInteractions = await GetInteractions(comicReactionsData, comicReactionCompare);
 
-
             var data = comicPostCommentData + comicReactionsData;
             var dataCompare = comicPostCommentCompare + comicReactionCompare;
 
             result.ComicInteractions = await GetInteractions(data, dataCompare);
-
         }
 
         result.CommentChartResponse = await GetComicCommentChart(userId, days, isComic);
@@ -375,7 +374,6 @@ public partial class ChartService : IChartService
         var previousPeriodEnd = nowUtc.AddDays(-days);
 
         #region -- Total Comment --
-
         var countCommentPost = await (
             from posts in _context.SocialPostAvailable
             join comments in _context.SocialPostComments on posts.Id equals comments.PostId
@@ -413,11 +411,9 @@ public partial class ChartService : IChartService
 
         var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
         #endregion
-
         #endregion
 
         #region -- Total Reaction --
-
         var countReact = await (
                 from posts in _context.SocialPostAvailable
                 join reactions in _context.SocialPostReactionAvailable on posts.Id equals reactions.TargetId
@@ -456,7 +452,6 @@ public partial class ChartService : IChartService
         var totalReactBefore = countReactBefore + countReactSubPostBefore;
         #endregion
         var totalReaction = countReact + countReactSubPost;
-
         #endregion
 
         result.CommentInteractions = new Interactions
