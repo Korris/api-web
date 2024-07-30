@@ -168,6 +168,22 @@ public class Validator
         /// Maximum length
         /// </summary>
         public const ushort Max = 34;
+
+        /// <summary>
+        /// Regex
+        /// </summary>
+        public const string Regex = @"^\w+$";
+    }
+
+    /// <summary>
+    /// Mention
+    /// </summary>
+    public class Mention
+    {
+        /// <summary>
+        /// Regex
+        /// </summary>
+        public const string Regex = @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
     }
 
     /// <summary>

@@ -18,6 +18,7 @@ using System.Web;
 
 namespace Mcsg.Common.SeedWork.Extensions;
 
+using static Constants.Validator;
 using static Dtos.ConnectionDto;
 
 /// <summary>
@@ -453,6 +454,36 @@ public static class StringExtension
     public static string UrlEncode(this string? s)
     {
         return HttpUtility.UrlEncode(s + "").Replace("+", "%20");
+    }
+
+    /// <summary>
+    /// Convert the string to a list of GUIDs
+    /// </summary>
+    /// <param name="s">String data</param>
+    /// <returns>Return the result</returns>
+    public static List<Guid> ToGuids(this string? s)
+    {
+        var res = new List<Guid>();
+
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return res;
+        }
+
+        var regex = new Regex(Mention.Regex);
+        var matches = regex.Matches(s);
+
+        foreach (Match match in matches)
+        {
+            if (!Guid.TryParse(match.Value, out Guid guid))
+            {
+                continue;
+            }
+
+            res.Add(guid);
+        }
+
+        return res.Distinct().ToList();
     }
 
     #endregion
