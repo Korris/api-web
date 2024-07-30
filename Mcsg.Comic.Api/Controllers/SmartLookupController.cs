@@ -13,10 +13,9 @@ public class SmartLookupController : ControllerBase
 {
     #region -- Methods --
 
-    public SmartLookupController(ISmartLookupService smartLookupService, IUserService userService)
+    public SmartLookupController(ISmartLookupService smartLookupService)
     {
         _smartLookupService = smartLookupService;
-        _userService = userService;
     }
 
     [HttpPost("search")]
@@ -51,20 +50,11 @@ public class SmartLookupController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("user-list")]
-    public async Task<IActionResult> SearchUserByKeyWord([FromQuery] SmartLookupSearchUserR input)
-    {
-        var result = await _userService.SearchUserbyKeyword(input);
-        return Ok(result);
-    }
-
     #endregion
 
     #region -- Fields --
 
     private readonly ISmartLookupService _smartLookupService;
-
-    private readonly IUserService _userService;
 
     #endregion
 }
