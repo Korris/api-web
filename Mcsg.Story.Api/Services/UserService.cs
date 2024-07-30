@@ -8,8 +8,8 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Constants;
@@ -38,7 +38,7 @@ public partial class UserService : IUserService
         ILogger<UserService> logger,
         IRepository<SmartLookup> smartLookupRepository,
         DistributeManager distributeManager,
-        McsgContext context,
+        IMcsgContext context,
         ISetting setting,
         IStorageClient sc)
     {
@@ -62,7 +62,7 @@ public partial class UserService : IUserService
         if (user.LastLoginDate == null)
         {
             user.LastLoginDate = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
 
         return userRespone;
@@ -111,7 +111,7 @@ public partial class UserService : IUserService
             await _sc.Strategy.PutObject(newFormFile, objectName, null);
             newFormFile.Close();
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {
@@ -149,7 +149,7 @@ public partial class UserService : IUserService
             objectName = $"{Setting.MinioFolder.Image}/{fileName}";
             await _sc.Strategy.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {
@@ -241,7 +241,7 @@ public partial class UserService : IUserService
         user.Location = req.Location;
         user.PhoneNumber = req.PhoneNumber;
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         await SyncWalletUserInfo(user);
 
@@ -730,7 +730,7 @@ public partial class UserService : IUserService
                 userFollow.ModifiedOn = DateTime.UtcNow;
                 userFollow.ModifiedBy = ss.UserId;
                 _context.UserFollows.Update(userFollow);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
                 return true;
             }
         }
@@ -746,7 +746,7 @@ public partial class UserService : IUserService
         };
 
         await _context.UserFollows.AddAsync(userFollow);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         return true;
     }
@@ -782,7 +782,7 @@ public partial class UserService : IUserService
             userFollow.ModifiedOn = DateTime.UtcNow;
             userFollow.ModifiedBy = ss.UserId;
             _context.UserFollows.Update(userFollow);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
             return false;
         }
     }
@@ -812,7 +812,7 @@ public partial class UserService : IUserService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

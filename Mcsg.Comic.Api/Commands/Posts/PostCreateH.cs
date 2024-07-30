@@ -19,8 +19,8 @@ namespace Mcsg.Comic.Api.Commands;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -50,7 +50,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostCreateH(McsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -100,7 +100,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         // Create
         var ett = ComicPost.Create(request.Title, content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
         await _context.ComicPosts.AddAsync(ett);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         var result = new FeedPostDto
         {

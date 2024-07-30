@@ -6,8 +6,8 @@ namespace Mcsg.Comic.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -18,7 +18,7 @@ using Requests;
 
 public partial class SoundService : ISoundService
 {
-    public SoundService(McsgContext context, ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
+    public SoundService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _setting = setting;
@@ -141,7 +141,7 @@ public partial class SoundService : ISoundService
         };
 
         await _context.BackgroundMediaPosts.AddAsync(bgSoundPost);
-        var result = await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync(default);
 
         return result > 0;
     }
@@ -150,7 +150,7 @@ public partial class SoundService : ISoundService
     {
         var backgroundMediaPosts = await _context.BackgroundMediaPostAvailable.Where(p => p.PostId == postId).ToListAsync();
         backgroundMediaPosts.ForEach(p => p.Status = BackgroundMediaPostStatus.Remove);
-        var result = await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync(default);
 
         return result > 0;
     }
@@ -160,7 +160,7 @@ public partial class SoundService : ISoundService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

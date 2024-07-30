@@ -8,8 +8,8 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Constants;
     using Common.Core.Enums;
     using Common.Core.Extensions;
-    using Common.Domain;
     using Common.Domain.Entities;
+    using Common.Domain.Interfaces;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;
@@ -35,7 +35,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly ISmartCountService _smartCountService;
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
-        private readonly McsgContext _context;
+        private readonly IMcsgContext _context;
 
         public SocialCommentService(ICurrentUserService currentUserService,
             IRepository<SocialPost> postRepository,
@@ -51,7 +51,7 @@ namespace Mcsg.Realtime.Api.Services
             IMapper mapper,
             ISetting setting,
             IConfiguration configuration,
-            McsgContext context)
+            IMcsgContext context)
         {
             _currentUserService = currentUserService;
             _postRepository = postRepository;

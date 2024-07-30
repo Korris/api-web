@@ -3,14 +3,14 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Extensions;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Models;
 
 public partial class ChartService : IChartService
 {
-    public ChartService(McsgContext context, ISetting setting)
+    public ChartService(IMcsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -566,7 +566,7 @@ public partial class ChartService : IChartService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

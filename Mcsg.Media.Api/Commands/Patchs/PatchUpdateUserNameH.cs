@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Media.Api.Commands;
 
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Data.Interfaces;
@@ -23,7 +23,7 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="uniquenessChecker">Uniqueness checker</param>
-    public PatchUpdateUserNameH(McsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker)
+    public PatchUpdateUserNameH(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker)
     {
         _context = context;
         _setting = setting;
@@ -56,7 +56,7 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
             user.ProfileId = user.UserName;
         }
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         var data = $"Update {users.Count} record(s)";
         res.SetSuccess(data);
@@ -83,7 +83,7 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

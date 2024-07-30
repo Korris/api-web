@@ -20,7 +20,7 @@ namespace Mcsg.Social.Api.Commands;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -51,7 +51,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostUpdateH(McsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    public PostUpdateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -142,7 +142,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             CustomNote = ett.CustomNote
         };
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         /*if (req.MetaData != null)
         {

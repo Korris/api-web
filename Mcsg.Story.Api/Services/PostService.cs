@@ -7,8 +7,8 @@ namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -60,7 +60,7 @@ public partial class PostService : IPostService
         IViewHistoryService viewHistoryService,
         IConfiguration configuration,
         IMapper mapper,
-        McsgContext context,
+        IMcsgContext context,
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<StoryPostReport> postReportValidator,
@@ -903,14 +903,14 @@ public partial class PostService : IPostService
                 ModifiedOn = DateTime.UtcNow,
                 ModifiedBy = user.Id,
             });
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
             return true;
         }
         else
         {
             followedPost.IsDelete = !followedPost.IsDelete;
             _context.StoryFollowedPosts.Update(followedPost);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
             return !followedPost.IsDelete;
         }
     }
@@ -2025,7 +2025,7 @@ public partial class PostService : IPostService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

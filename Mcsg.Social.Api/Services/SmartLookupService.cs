@@ -7,8 +7,8 @@ using Common.Core.Distributor;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Dtos;
 using Interfaces;
 using Lib.Data.Repositories;
@@ -26,7 +26,7 @@ public partial class SmartLookupService : ISmartLookupService
     /// <param name="tagRepository"></param>
     /// <param name="smartLookupUserRepository"></param>
     /// <param name="smartLookupRepository"></param>
-    public SmartLookupService(McsgContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<SocialTagPost> tagPostRepository, IRepository<User> userRepository)
+    public SmartLookupService(IMcsgContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<SocialTagPost> tagPostRepository, IRepository<User> userRepository)
     {
         _context = context;
         _setting = setting;
@@ -186,7 +186,7 @@ public partial class SmartLookupService : ISmartLookupService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

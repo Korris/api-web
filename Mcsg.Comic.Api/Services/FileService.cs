@@ -6,8 +6,8 @@ using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Dtos;
@@ -27,7 +27,7 @@ public class FileService : IFileService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="jobService">Job service</param>
-    public FileService(McsgContext context, ISetting setting, IStorageClient sc, IJobService jobService)
+    public FileService(IMcsgContext context, ISetting setting, IStorageClient sc, IJobService jobService)
     {
         _context = context;
         _setting = setting;
@@ -134,7 +134,7 @@ public class FileService : IFileService
         };
 
         await _context.ComicResources.AddAsync(resource);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
 
@@ -283,7 +283,7 @@ public class FileService : IFileService
                 subPostByResource.Body = resourceReq.Body;
             }
         }
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         // Map to response for feed service
         var resourcesResult = listResourceAddded.Concat(listResourcesNew);
@@ -465,7 +465,7 @@ public class FileService : IFileService
             resource.Url = targetObjectName;
             resource.SubPostId = subPostId;
             resource.Order = resourceReq.Order;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
 
             await _jobService.CreateConvertJob(resource, userName, userAvatar, targetObjectName);
             response.Add(resource);
@@ -518,7 +518,7 @@ public class FileService : IFileService
 
         if (willDelete)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
     }
 
@@ -527,7 +527,7 @@ public class FileService : IFileService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

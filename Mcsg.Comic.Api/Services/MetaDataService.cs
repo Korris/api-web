@@ -1,13 +1,13 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Dtos;
 using Interfaces;
 
 public class MetaDataService : IMetaDataService
 {
-    public MetaDataService(McsgContext context)
+    public MetaDataService(IMcsgContext context)
     {
         _context = context;
     }
@@ -50,7 +50,7 @@ public class MetaDataService : IMetaDataService
         }
 
         await _context.ComicMetaDatas.AddAsync(metaData);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         return new MetaDataDto
         {
@@ -66,7 +66,7 @@ public class MetaDataService : IMetaDataService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     #endregion
 }

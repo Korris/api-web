@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Commands;
 
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -25,7 +25,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public PostFavoriteUpdateH(McsgContext context) : base(context) { }
+    public PostFavoriteUpdateH(IMcsgContext context) : base(context) { }
 
     /// <summary>
     /// Handle
@@ -73,7 +73,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
             ett.Update(userId);
         }
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         res.SetSuccess(!ett.IsDelete);
 

@@ -6,7 +6,7 @@ namespace Mcsg.Media.Api.Commands;
 using Common.Core.Constants;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
@@ -24,7 +24,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    public PatchMoveFolderH(McsgContext context, ISetting setting, IStorageClient sc)
+    public PatchMoveFolderH(IMcsgContext context, ISetting setting, IStorageClient sc)
     {
         _context = context;
         _setting = setting;
@@ -83,7 +83,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

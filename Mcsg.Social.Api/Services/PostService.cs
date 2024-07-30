@@ -7,8 +7,8 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -61,7 +61,7 @@ public partial class PostService : IPostService
         IViewHistoryService viewHistoryService,
         IConfiguration configuration,
         IMapper mapper,
-        McsgContext context,
+        IMcsgContext context,
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<SocialPostReport> postReportValidator,
@@ -1930,7 +1930,7 @@ public partial class PostService : IPostService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

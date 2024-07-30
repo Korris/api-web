@@ -6,15 +6,15 @@ using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Dtos;
 using Interfaces;
 
 public class JobService : IJobService
 {
-    public JobService(McsgContext context, ISetting setting)
+    public JobService(IMcsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -58,7 +58,7 @@ public class JobService : IJobService
                 Data = JsonConvert.SerializeObject(resource)
             };
             await _context.Jobs.AddAsync(convertJob);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
 
             // Send notification when video process processing
             var notiReq = new VideoNotificationR
@@ -100,7 +100,7 @@ public class JobService : IJobService
                 Data = JsonConvert.SerializeObject(resource),
             };
             await _context.Jobs.AddAsync(convertJob);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
     }
 
@@ -132,7 +132,7 @@ public class JobService : IJobService
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

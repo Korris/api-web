@@ -6,8 +6,8 @@ using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Dtos;
 using Extensions;
@@ -15,7 +15,7 @@ using Interfaces;
 
 public partial class PostLinkService : IPostLinkService
 {
-    public PostLinkService(McsgContext context)
+    public PostLinkService(IMcsgContext context)
     {
         _context = context;
     }
@@ -55,7 +55,7 @@ public partial class PostLinkService : IPostLinkService
                 };
                 await _context.StoryPostLinks.AddAsync(postLink);
 
-                var addResult = await _context.SaveChangesAsync();
+                var addResult = await _context.SaveChangesAsync(default);
                 if (addResult > 0)
                 {
                     result.HashId = postLink.HashId;
@@ -72,7 +72,7 @@ public partial class PostLinkService : IPostLinkService
     {
         var postLinks = await _context.StoryPostLinkAvailable.Where(p => p.PostId == postId).ToListAsync();
         postLinks.ForEach(p => p.IsDelete = true);
-        var result = await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync(default);
 
         return result > 0;
     }
@@ -82,7 +82,7 @@ public partial class PostLinkService : IPostLinkService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     #endregion
 }

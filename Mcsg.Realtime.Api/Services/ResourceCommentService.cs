@@ -6,7 +6,7 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
-    using Common.Domain;
+    using Common.Domain.Interfaces;
     using Interfaces;
     using Requests;
 
@@ -18,7 +18,7 @@ namespace Mcsg.Realtime.Api.Services
         /// <param name="context">DB context</param>
         /// <param name="setting">Setting</param>
         /// <param name="sc">Storage client</param>
-        public ResourceCommentService(McsgContext context, ISetting setting, IStorageClient sc)
+        public ResourceCommentService(IMcsgContext context, ISetting setting, IStorageClient sc)
         {
             _context = context;
             _setting = setting;
@@ -76,7 +76,7 @@ namespace Mcsg.Realtime.Api.Services
                 resource.Type = resource.Name.GetResourceType();
                 resource.Url = targetObjectName;
                 //resource.SubPostId = Guid.Empty;
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
             }
             #endregion
 
@@ -119,7 +119,7 @@ namespace Mcsg.Realtime.Api.Services
                 resource.Type = resource.Name.GetResourceType();
                 resource.Url = targetObjectName;
                 //resource.SubPostId = Guid.Empty;
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
             }
             #endregion
 
@@ -162,7 +162,7 @@ namespace Mcsg.Realtime.Api.Services
                 resource.Type = resource.Name.GetResourceType();
                 resource.Url = targetObjectName;
                 //resource.SubPostId = Guid.Empty;
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
             }
             #endregion
 
@@ -179,7 +179,7 @@ namespace Mcsg.Realtime.Api.Services
         /// <summary>
         /// DB Context
         /// </summary>
-        private readonly McsgContext _context;
+        private readonly IMcsgContext _context;
 
         /// <summary>
         /// Setting

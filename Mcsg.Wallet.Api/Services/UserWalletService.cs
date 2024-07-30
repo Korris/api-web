@@ -8,7 +8,7 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Dtos;
 using Common.Core.Extensions;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -40,7 +40,7 @@ public class UserWalletService : IUserWalletService
         IOptions<ZaloPaySetting> zaloPaySettingOptions,
         IServiceProvider serviceProvider,
         ILogger<UserWalletService> logger,
-        McsgContext context)
+        IMcsgContext context)
     {
         _otpService = otpService;
         _configuration = configuration;
@@ -921,7 +921,7 @@ public class UserWalletService : IUserWalletService
     private readonly ZaloPaySetting _zaloPaySetting;
     private readonly ISignalRService _signalRService;
     private readonly ILogger<UserWalletService> _logger;
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

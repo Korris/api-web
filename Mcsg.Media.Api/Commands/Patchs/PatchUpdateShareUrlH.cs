@@ -5,7 +5,7 @@ using System.Web;
 namespace Mcsg.Media.Api.Commands;
 
 using Common.Core.Constants;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Helpers;
@@ -23,7 +23,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
     /// </summary>
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
-    public PatchUpdateShareUrlH(McsgContext context, ISetting setting)
+    public PatchUpdateShareUrlH(IMcsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -78,7 +78,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
             resource.ShareUrl = $"{mediaContainer}{url}";
         }
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         var data = $"Update {resources.Count} record(s)";
         res.SetSuccess(data);
@@ -93,7 +93,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
     /// <summary>
     /// DB Context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

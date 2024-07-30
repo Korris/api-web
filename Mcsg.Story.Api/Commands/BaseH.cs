@@ -14,7 +14,7 @@
 namespace Mcsg.Story.Api.Commands;
 
 using Common.Core.Interfaces;
-using Common.Domain;
+using Common.Domain.Interfaces;
 using Interfaces;
 
 /// <summary>
@@ -24,14 +24,14 @@ using Interfaces;
 /// Initialize
 /// </remarks>
 /// <param name="context">DB context</param>
-public abstract class BaseH(McsgContext context)
+public abstract class BaseH(IMcsgContext context)
 {
     #region -- Fields --
 
     /// <summary>
     /// DB context
     /// </summary>
-    protected readonly McsgContext _context = context;
+    protected readonly IMcsgContext _context = context;
 
     #endregion
 }
@@ -44,7 +44,7 @@ public abstract class BaseH(McsgContext context)
 /// </remarks>
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
-public abstract class BaseSettingH(McsgContext context, ISetting setting) : BaseH(context)
+public abstract class BaseSettingH(IMcsgContext context, ISetting setting) : BaseH(context)
 {
     #region -- Fields --
 
@@ -65,7 +65,7 @@ public abstract class BaseSettingH(McsgContext context, ISetting setting) : Base
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
 /// <param name="sc">Storage client</param>
-public abstract class BaseMinioH(McsgContext context, ISetting setting, IStorageClient sc) : BaseSettingH(context, setting)
+public abstract class BaseMinioH(IMcsgContext context, ISetting setting, IStorageClient sc) : BaseSettingH(context, setting)
 {
     #region -- Fields --
 

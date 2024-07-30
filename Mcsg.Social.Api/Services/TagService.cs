@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
@@ -32,7 +32,7 @@ public partial class TagService : ITagService
     private readonly IConfiguration _configuration;
 
     public TagService(
-        McsgContext context,
+        IMcsgContext context,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ISmartLookupService smartLookupService,
@@ -80,7 +80,7 @@ public partial class TagService : ITagService
         // Publish for smart lookup calculation
         await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         return tags;
     }
@@ -127,7 +127,7 @@ public partial class TagService : ITagService
         // Publish for smart lookup calculation
         await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
 
         return tags;
     }
@@ -424,7 +424,7 @@ public partial class TagService : ITagService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     #endregion
 }

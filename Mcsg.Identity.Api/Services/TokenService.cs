@@ -6,15 +6,15 @@ namespace Mcsg.Identity.Api.Services;
 
 using Common.Core;
 using Common.Core.Dtos;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Extensions;
 
 public class TokenService : ITokenService
 {
-    public TokenService(McsgContext context, ISetting setting)
+    public TokenService(IMcsgContext context, ISetting setting)
     {
         _context = context;
         _setting = setting;
@@ -32,7 +32,7 @@ public class TokenService : ITokenService
         if (res.RefreshTokenExpiryTime < DateTime.UtcNow)
         {
             _context.UserRefreshTokens.Remove(res);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
 
             return Guid.Empty;
         }
@@ -58,7 +58,7 @@ public class TokenService : ITokenService
         if (userRefreshToken != null)
         {
             userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
 
             return new RefreshTokenDto
             {
@@ -75,7 +75,7 @@ public class TokenService : ITokenService
                 RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
             };
             await _context.UserRefreshTokens.AddAsync(userRefreshToken);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
 
             return new RefreshTokenDto
             {
@@ -109,7 +109,7 @@ public class TokenService : ITokenService
         var userRefreshTokens = await _context.UserRefreshTokens.Where(p => p.UserId == userId).ToListAsync();
 
         _context.UserRefreshTokens.RemoveRange(userRefreshTokens);
-        var count = await _context.SaveChangesAsync();
+        var count = await _context.SaveChangesAsync(default);
 
         return count > 0;
     }
@@ -119,7 +119,7 @@ public class TokenService : ITokenService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

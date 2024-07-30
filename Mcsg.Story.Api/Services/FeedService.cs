@@ -9,8 +9,8 @@ namespace Mcsg.Story.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -30,7 +30,7 @@ public partial class FeedService : IFeedService
     #region -- Methods --
 
     public FeedService(
-        McsgContext context,
+        IMcsgContext context,
         ISetting setting,
         IStorageClient sc,
         IPostService postService,
@@ -763,7 +763,7 @@ public partial class FeedService : IFeedService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

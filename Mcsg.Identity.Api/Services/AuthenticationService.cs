@@ -9,8 +9,8 @@ namespace Mcsg.Identity.Api.Services;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
@@ -61,7 +61,7 @@ public partial class AuthenticationService : IAuthenticationService
         , SSOServiceResolver serviceAccessor
         , IRepository<SmartLookup> smartLookupRepository
         , IUserWalletService userWalletService
-        , McsgContext context
+        , IMcsgContext context
         , ISetting setting,
         IUserNameUniquenessChecker uniquenessChecker)
     {
@@ -229,7 +229,7 @@ public partial class AuthenticationService : IAuthenticationService
             if (user.LastLoginDate != null)
             {
                 user.LastLoginDate = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
             }
 
             return response;
@@ -816,7 +816,7 @@ public partial class AuthenticationService : IAuthenticationService
     {
         var ett = UserNameHistory.Create(_uniquenessChecker, userId);
         await _context.UserNameHistories.AddAsync(ett);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(default);
         return ett.UserName;
     }
 
@@ -827,7 +827,7 @@ public partial class AuthenticationService : IAuthenticationService
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly McsgContext _context;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting
