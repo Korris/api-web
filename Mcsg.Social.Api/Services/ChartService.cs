@@ -3,6 +3,7 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Extensions;
+using Common.Domain.Entities;
 using Common.Domain.Interfaces;
 using Extensions;
 using Interfaces;
@@ -23,11 +24,11 @@ public partial class ChartService : IChartService
         var daysAgoUtc = nowUtc.AddDays(-days);
         DateTime lastDayToGetData = nowUtc.AddDays(-days);
         DateTime lastDayToCompare = nowUtc.AddDays(-days * 2);
+        var qPost = GetSocialPostQuery(userId, daysAgoUtc, nowUtc);
 
         #region -- Comment --
-        var commentCounts = await _context.SocialPostAvailable
-            .Where(post => post.UserId == userId && post.CreatedOn >= daysAgoUtc && post.CreatedOn <= nowUtc)
-            .Join(_context.SocialPostComments, post => post.Id, comment => comment.PostId, (post, comment) => new { Post = post, Comment = comment })
+        var commentCounts = await qPost
+            .Join(_context.SocialPostCommentAvailable, post => post.Id, comment => comment.PostId, (post, comment) => new { Post = post, Comment = comment })
             .GroupBy(x => x.Post.CreatedOn.Date)
             .Select(group => new ChartResponse
             {
@@ -36,10 +37,9 @@ public partial class ChartService : IChartService
             })
             .ToListAsync();
 
-        var subCommentCounts = await _context.SocialPostAvailable
-            .Where(post => post.UserId == userId && post.CreatedOn >= daysAgoUtc && post.CreatedOn <= nowUtc)
+        var subCommentCounts = await qPost
             .Join(_context.SocialSubPostAvailable, post => post.Id, subPost => subPost.PostId, (post, subPost) => new { Post = post, SubPost = subPost })
-            .Join(_context.SocialSubPostCommentAvailable, x => x.SubPost.Id, subComment => subComment.PostId, (x, subComment) => new { Post = x.Post, SubComment = subComment })
+            .Join(_context.SocialSubPostCommentAvailable, x => x.SubPost.Id, subComment => subComment.PostId, (x, subComment) => new { x.Post, SubComment = subComment })
             .GroupBy(x => x.Post.CreatedOn.Date)
             .Select(group => new ChartResponse
             {
@@ -62,9 +62,8 @@ public partial class ChartService : IChartService
 
         #region -- Reaction --
         var postReactionCounts = await (
-            from post in _context.SocialPostAvailable
+            from post in qPost
             join reaction in _context.SocialPostReactionAvailable on post.Id equals reaction.TargetId
-            where post.UserId == userId && post.CreatedOn >= daysAgoUtc && post.CreatedOn <= nowUtc
             group 1 by post.CreatedOn.Date into g
             select new ChartResponse
             {
@@ -74,10 +73,9 @@ public partial class ChartService : IChartService
         ).ToListAsync();
 
         var subPostReactionCounts = await (
-            from post in _context.SocialPostAvailable
+            from post in qPost
             join subPost in _context.SocialSubPostAvailable on post.Id equals subPost.PostId
             join subPostReaction in _context.SocialSubPostReactions on subPost.Id equals subPostReaction.TargetId
-            where post.UserId == userId && post.CreatedOn >= daysAgoUtc && post.CreatedOn <= nowUtc
             group 1 by post.CreatedOn.Date into g
             select new ChartResponse
             {
@@ -341,25 +339,25 @@ public partial class ChartService : IChartService
         var nowUtc = DateTime.Today.ToUniversalTime();
         var days = isGetDataIn7Days ? 7 : 30;
         var daysAgoUtc = nowUtc.AddDays(-days);
+        var qPost = GetSocialPostQuery(userId, daysAgoUtc, nowUtc);
 
         int previousDays = days == 7 ? 7 : 30;
         var previousPeriodStart = nowUtc.AddDays(-days - previousDays); // Start of the previous period
         var previousPeriodEnd = nowUtc.AddDays(-days);
+        var qPostPreviousPeriod = GetSocialPostQuery(userId, previousPeriodStart, previousPeriodEnd);
 
         #region -- Total Comment --
         var countCommentPost = await (
-            from posts in _context.SocialPostAvailable
+            from posts in qPost
             join comments in _context.SocialPostComments on posts.Id equals comments.PostId
-            where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
             select 1
             )
             .CountAsync();
 
         var countCommentSubPost = await (
-            from posts in _context.SocialPostAvailable
+            from posts in qPost
             join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
             join subPostComments in _context.SocialSubPostCommentAvailable on subPosts.Id equals subPostComments.PostId
-            where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
             select 1
             )
             .CountAsync();
@@ -368,17 +366,15 @@ public partial class ChartService : IChartService
 
         #region -- Comment in the previous 7-day period --
         var countCommentPostBefore = await (
-            from posts in _context.SocialPostAvailable
+            from posts in qPostPreviousPeriod
             join comments in _context.SocialPostComments on posts.Id equals comments.PostId
-            where posts.UserId == userId && posts.CreatedOn >= previousPeriodStart && posts.CreatedOn <= previousPeriodEnd
             select 1
         ).CountAsync();
 
         var countCommentSubPostBefore = await (
-            from posts in _context.SocialPostAvailable
+            from posts in qPostPreviousPeriod
             join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
             join subPostComments in _context.SocialSubPostCommentAvailable on subPosts.Id equals subPostComments.PostId
-            where posts.UserId == userId && posts.CreatedOn >= previousPeriodStart && posts.CreatedOn <= previousPeriodEnd
             select 1
         ).CountAsync();
 
@@ -388,7 +384,7 @@ public partial class ChartService : IChartService
 
         #region -- Total Reaction --
         var countReact = await (
-                from posts in _context.SocialPostAvailable
+                from posts in qPost
                 join reactions in _context.SocialPostReactionAvailable on posts.Id equals reactions.TargetId
                 where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
                 select 1
@@ -396,28 +392,25 @@ public partial class ChartService : IChartService
             .CountAsync();
 
         var countReactSubPost = await (
-                from posts in _context.SocialPostAvailable
+                from posts in qPost
                 join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
                 join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
-                where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
                 select 1
                 )
                 .CountAsync();
 
         #region -- Reaction in the previous 7-day period --
         var countReactBefore = await (
-                from posts in _context.SocialPostAvailable
+                from posts in qPostPreviousPeriod
                 join reactions in _context.SocialPostReactionAvailable on posts.Id equals reactions.TargetId
-                where posts.UserId == userId && posts.CreatedOn >= previousPeriodStart && posts.CreatedOn <= previousPeriodEnd
                 select 1
             )
             .CountAsync();
 
         var countReactSubPostBefore = await (
-                from posts in _context.SocialPostAvailable
+                from posts in qPostPreviousPeriod
                 join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
                 join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
-                where posts.UserId == userId && posts.CreatedOn >= previousPeriodStart && posts.CreatedOn <= previousPeriodEnd
                 select 1
             )
             .CountAsync();
@@ -478,7 +471,6 @@ public partial class ChartService : IChartService
 
     private async Task<Interactions> GetFeedInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-
         var postCommentLast14Days = from post in _context.SocialPostAvailable
                                     join postComment in _context.SocialPostCommentAvailable
                                     on post.Id equals postComment.PostId
@@ -504,7 +496,6 @@ public partial class ChartService : IChartService
 
     private async Task<Interactions> GetComicStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-
         var comicPostCommentLast14Days = from post in _context.ComicPostAvailable
                                          join postComment in _context.ComicPostCommentAvailable
                                          on post.Id equals postComment.PostId
@@ -559,6 +550,11 @@ public partial class ChartService : IChartService
             Percent = dataToCompare > 0 ? Math.Abs(((double)(data - dataToCompare) / dataToCompare) * 100) : 0,
             IsIncrease = data > dataToCompare
         });
+    }
+
+    private IQueryable<SocialPost> GetSocialPostQuery(Guid? userId, DateTime fr, DateTime to)
+    {
+        return _context.SocialPostAvailable.Where(p => p.UserId == userId && fr <= p.CreatedOn && p.CreatedOn <= to);
     }
 
     #region -- Fields --
