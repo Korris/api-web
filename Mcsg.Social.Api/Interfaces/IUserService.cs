@@ -22,4 +22,6 @@ public interface IUserService
     Task<bool> FollowUserAsync(Guid userId);
     Task<bool> UnFollowUserAsync(Guid userId);
     Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req);
+    Task<GeneralInfoResponse> GetGeneralInfo();
+    Task<FollowersChartResponse> GetFollowersChartInfo(bool isGetDataIn7Days);
 }

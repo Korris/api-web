@@ -17,6 +17,7 @@ using Interfaces;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
+using Mcsg.Social.Api.Extensions;
 using Models;
 using Requests;
 using Validators;
@@ -753,6 +754,248 @@ public partial class UserService : IUserService
 
         return true;
     }
+
+    public async Task<GeneralInfoResponse> GetGeneralInfo()
+    {
+        var result = new GeneralInfoResponse();
+        var userId = _currentUserService.Session?.UserId;
+        var today = DateTime.Today;
+
+        DateTime dateToGetData = today.AddDays(-7);
+        DateTime dateToCompare = today.AddDays(-14);
+
+        result.Followers = await GetFollowerInteractionsAsync(dateToCompare, dateToGetData);
+
+        result.PostInteraction = await GetFeedInteractionsAsync(dateToCompare, dateToGetData);
+
+        result.ComicStoryInteraction = await GetComicStoryInteractionsAsync(dateToCompare, dateToGetData);
+
+        result.PostCount = await _context.SocialPostAvailable.Where(p => p.CreatedBy == userId).CountAsync();
+        result.ComicCount = await _context.ComicPostAvailable.Where(p => p.CreatedBy == userId).CountAsync();
+        result.StoryCount = await _context.StoryPostAvailable.Where(p => p.CreatedBy == userId).CountAsync();
+
+        return result;
+    }
+
+    public async Task<FollowersChartResponse> GetComicOrStoryChartInfo(bool isGetDataIn7Days)
+    {
+        var userId = _currentUserService.Session?.UserId;
+        var days = isGetDataIn7Days ? 7 : 30;
+        DateTime lastDayToGetData = DateTime.Today.AddDays(-days);
+        DateTime lastDayToCompare = DateTime.Today.AddDays(-days * 2);
+        var userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                    .Where(p => p.UserFollowerId == userId)
+                                                                    .Select(p => p.UserFollowingId)
+                                                                    .ToListAsync();
+
+        var userFollowingThisUserForChart = _context.UserFollowAvailable
+                                                .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
+                                                .GroupBy(p => p.CreatedOn)
+                                                .Select(g => new ChartResponse
+                                                {
+                                                    Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                                                    Quantity = g.Count()
+                                                })
+                                                .ToList();
+
+        var userFollowing = from a in _context.UserAvailable
+                            join b in _context.UserFollowAvailable
+                              on a.Id equals b.UserFollowerId
+                            where b.UserFollowingId == userId
+                            && b.CreatedOn >= lastDayToGetData
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName,
+                                IsFollowing = userFollowingIds.Contains(a.Id)
+                            };
+
+        foreach (var i in userFollowing)
+        {
+            i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+        }
+
+        return new FollowersChartResponse
+        {
+            UserFollowedResponses = await userFollowing.ToListAsync(),
+            ChartResponse = GetFollowersChart(days, userFollowingThisUserForChart),
+            FollowerInteractions = await GetFollowerInteractionsAsync(lastDayToCompare, lastDayToGetData)
+        };
+    }
+
+
+    public async Task<FollowersChartResponse> GetFollowersChartInfo(bool isGetDataIn7Days)
+    {
+        var userId = _currentUserService.Session?.UserId;
+        var days = isGetDataIn7Days ? 7 : 30;
+        DateTime lastDayToGetData = DateTime.Today.AddDays(-days);
+        DateTime lastDayToCompare = DateTime.Today.AddDays(-days * 2);
+        var userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+                                                                    .Where(p => p.UserFollowerId == userId)
+                                                                    .Select(p => p.UserFollowingId)
+                                                                    .ToListAsync();
+
+        var userFollowingThisUserForChart = _context.UserFollowAvailable
+                                                .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
+                                                .GroupBy(p => p.CreatedOn)
+                                                .Select(g => new ChartResponse
+                                                {
+                                                    Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                                                    Quantity = g.Count()
+                                                })
+                                                .ToList();
+
+        var userFollowing = from a in _context.UserAvailable
+                            join b in _context.UserFollowAvailable
+                              on a.Id equals b.UserFollowerId
+                            where b.UserFollowingId == userId
+                            && b.CreatedOn >= lastDayToGetData
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName,
+                                IsFollowing = userFollowingIds.Contains(a.Id)
+                            };
+
+        foreach (var i in userFollowing)
+        {
+            i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
+        }
+
+        return new FollowersChartResponse
+        {
+            UserFollowedResponses = await userFollowing.ToListAsync(),
+            ChartResponse = GetFollowersChart(days, userFollowingThisUserForChart),
+            FollowerInteractions = await GetFollowerInteractionsAsync(lastDayToCompare, lastDayToGetData)
+        };
+    }
+
+    private List<ChartResponse> GetFollowersChart(int days, List<ChartResponse> data)
+    {
+        var result = new List<ChartResponse>();
+
+        for (int i = 0; i < days; i++)
+        {
+            DateTime date = DateTime.Today.AddDays(-i);
+            var label = new DateTime(date.Year, date.Month, date.Day).ToLabel("dd MMMM");
+            var quantity = data.FirstOrDefault(p => p.Label == label);
+            result.Add(new ChartResponse
+            {
+                Label = label,
+                Quantity = quantity?.Quantity ?? 0,
+            });
+        }
+        return result;
+    }
+
+    private async Task<Interactions> GetFollowerInteractionsAsync(DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var userId = _currentUserService.Session?.UserId;
+
+        var userFollowing = from repository in _context.UserFollowAvailable
+                            where repository.UserFollowingId == userId &&
+                            repository.CreatedOn >= dateToCompare
+                            select repository;
+
+        int userFollowingToShow = await userFollowing.Where(p => p.CreatedOn >= dateToGetData).CountAsync();
+
+        int userFollowingToCompare = await userFollowing.Where(p => p.CreatedOn < dateToGetData).CountAsync();
+
+        return await GetInteractions(userFollowingToShow, userFollowingToCompare);
+    }
+
+    private async Task<Interactions> GetFeedInteractionsAsync(DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var userId = _currentUserService.Session?.UserId;
+        var postCommentLast14Days = from post in _context.SocialPostAvailable
+                                    join postComment in _context.SocialPostCommentAvailable
+                                    on post.Id equals postComment.PostId
+                                    where post.UserId == userId
+                                    && postComment.CreatedOn >= dateToCompare
+                                    select postComment;
+
+
+
+        var postReactionsLast14Days = from post in _context.SocialPostAvailable
+                                      join postReaction in _context.SocialPostReactionAvailable
+                                      on post.Id equals postReaction.TargetId
+                                      where post.UserId == userId
+                                      && postReaction.CreatedOn >= dateToCompare
+                                      select postReaction;
+
+
+        int reactionsLast7Days = await postCommentLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync()
+                                    + await postReactionsLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync();
+
+        int reactionsPreviousLast7Days = await postCommentLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync()
+                                + await postReactionsLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync();
+
+        return await GetInteractions(reactionsLast7Days, reactionsPreviousLast7Days);
+    }
+
+    private async Task<Interactions> GetComicStoryInteractionsAsync(DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var userId = _currentUserService.Session?.UserId;
+        var comicPostCommentLast14Days = from post in _context.ComicPostAvailable
+                                         join postComment in _context.ComicPostCommentAvailable
+                                         on post.Id equals postComment.PostId
+                                         where post.UserId == userId
+                                         && postComment.CreatedOn >= dateToCompare
+                                         select postComment;
+
+        var comicReactionsLast14Days = from post in _context.ComicPostAvailable
+                                       join postReaction in _context.ComicPostReactionAvailable
+                                       on post.Id equals postReaction.TargetId
+                                       where post.UserId == userId
+                                         && postReaction.CreatedOn >= dateToCompare
+                                       select postReaction;
+
+        int totalComicReactionsLast7Days = await comicPostCommentLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync()
+                                    + await comicReactionsLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync();
+
+        int totalComicReactionsPreviousLast7Days = await comicPostCommentLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync()
+                                + await comicReactionsLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync();
+
+        var storyPostCommentLast14Days = from post in _context.StoryPostAvailable
+                                         join postComment in _context.StoryPostCommentAvailable
+                                         on post.Id equals postComment.PostId
+                                         where post.UserId == userId
+                                         && postComment.CreatedOn >= dateToCompare
+                                         select postComment;
+
+        var storyReactionsLast14Days = from post in _context.StoryPostAvailable
+                                       join postReaction in _context.StoryPostReactionAvailable
+                                       on post.Id equals postReaction.TargetId
+                                       where post.UserId == userId
+                                         && postReaction.CreatedOn >= dateToCompare
+                                       select postReaction;
+
+        int totalStoryReactionsLast7Days = await storyPostCommentLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync()
+                               + await storyReactionsLast14Days.Where(p => p.CreatedOn >= dateToGetData).CountAsync();
+
+        int totalStoryReactionsPreviousLast7Days = await storyPostCommentLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync()
+                                + await storyReactionsLast14Days.Where(p => p.CreatedOn < dateToGetData).CountAsync();
+
+        var totalComicStoryReactionsLast7Days = totalStoryReactionsLast7Days + totalComicReactionsLast7Days;
+        var totalComicStoryReactionsPreviousLast7Days = totalStoryReactionsPreviousLast7Days + totalComicReactionsPreviousLast7Days;
+
+        return await GetInteractions(totalComicStoryReactionsLast7Days, totalComicStoryReactionsPreviousLast7Days);
+    }
+
+    private Task<Interactions> GetInteractions(int data, int dataToCompare)
+    {
+        return Task.FromResult(new Interactions
+        {
+            Count = data,
+            Percent = dataToCompare > 0 ? Math.Abs(((double)(data - dataToCompare) / dataToCompare) * 100) : 0,
+            IsIncrease = data > dataToCompare
+        });
+    }
+
 
     public async Task<bool> UnFollowUserAsync(Guid userId)
     {

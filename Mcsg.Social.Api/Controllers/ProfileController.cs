@@ -69,6 +69,20 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("general-info")]
+    public async Task<IActionResult> GetGeneralInfo()
+    {
+        var result = await _userService.GetGeneralInfo();
+        return Ok(result);
+    }
+
+    [HttpGet("followers-chart-info")]
+    public async Task<IActionResult> GeGetFollowersChartInfot(bool isGetDataIn7Days)
+    {
+        var result = await _userService.GetFollowersChartInfo(isGetDataIn7Days);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
