@@ -2,45 +2,18 @@
 
 namespace Mcsg.Social.Api.Services;
 
-using Common.Core.Distributor;
 using Common.Core.Extensions;
-using Common.Core.Interfaces;
 using Common.Domain;
-using Common.Domain.Entities;
 using Extensions;
 using Interfaces;
-using Lib.Common.Web.Security;
-using Lib.Data.Repositories;
 using Models;
 
 public partial class ChartService : IChartService
 {
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private IConfiguration _configuration;
-    private readonly DistributeManager _distributeManager;
-    private readonly ILogger<UserService> _logger;
-
-    public ChartService(IRepository<User> userRepository,
-        ICurrentUserService currentUserService,
-        IConfiguration configuration,
-        ILogger<UserService> logger,
-        IRepository<SmartLookup> smartLookupRepository,
-        DistributeManager distributeManager,
-        McsgContext context,
-        ISetting setting,
-        IStorageClient sc)
+    public ChartService(McsgContext context, ISetting setting)
     {
-        _userRepository = userRepository;
-        _currentUserService = currentUserService;
-        _configuration = configuration;
-        _logger = logger;
-        _smartLookupRepository = smartLookupRepository;
-        _distributeManager = distributeManager;
         _context = context;
         _setting = setting;
-        _sc = sc;
     }
 
     public async Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, bool isGetDataIn7Days)
@@ -599,11 +572,6 @@ public partial class ChartService : IChartService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
-
-    /// <summary>
-    /// Storage client
-    /// </summary>
-    private readonly IStorageClient _sc;
 
     #endregion
 }
