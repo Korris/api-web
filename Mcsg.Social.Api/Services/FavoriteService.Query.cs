@@ -120,7 +120,7 @@
 							pl.""Url"" AS ""LinkUrl"",
 							pl.""Type"" AS ""LinkType""
 							FROM {_postRepository.TableName} p
-							INNER JOIN {_postFavoriteRepository.TableName} pf ON p.""Id"" = pf.""PostId""
+							INNER JOIN {_postFavoriteRepository.TableName} pf ON p.""Id"" = pf.""PostId""AND pf.""IsDelete"" = false
 							LEFT JOIN {_userRepository.TableName} u ON p.""UserId"" = u.""Id""						
 							LEFT JOIN {_metaDataRepository.TableName} md ON md.""PostId"" = p.""Id""
 							LEFT JOIN {_postLinkRepository.TableName} pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
@@ -181,7 +181,7 @@
 
                         SELECT count(postFavorites.*) AS TotalItems 
                         FROM {_postRepository.TableName} post 
-                        INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
+                        INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" AND postFavorites.""IsDelete"" = false
                         WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false ;
                         ";
             }

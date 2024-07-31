@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -36,6 +38,7 @@ public partial class FavoriteService : IFavoriteService
     private readonly IFeedService _feedService;
 
     public FavoriteService(
+        IMcsgContext context,
         ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         IValidator<TagFavorite> tagFavoriteValidator,
@@ -52,6 +55,7 @@ public partial class FavoriteService : IFavoriteService
         IRepository<SocialTagPost> tagPostRepository,
         IFeedService feedService)
     {
+        _context = context;
         _currentUserService = currentUserService;
         _tagFavoriteRepository = tagFavoriteRepository;
         _tagFavoriteValidator = tagFavoriteValidator;
@@ -155,9 +159,12 @@ public partial class FavoriteService : IFavoriteService
                         });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
+
+            var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
+
             foreach (var item in items)
             {
-                listItemResponse.Add(_feedService.MappingFeedInListRespone(item, null));
+                listItemResponse.Add(_feedService.MappingFeedInListRespone(item, postIds));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -178,5 +185,14 @@ public partial class FavoriteService : IFavoriteService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
+
     #endregion
 }
