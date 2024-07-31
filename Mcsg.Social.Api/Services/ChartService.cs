@@ -17,7 +17,7 @@ public partial class ChartService : IChartService
         _setting = setting;
     }
 
-    public async Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, bool isGetDataIn7Days)
+    public async Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
     {
         var nowUtc = DateTime.Today.ToUniversalTime();
         var days = isGetDataIn7Days ? 7 : 30;
@@ -57,7 +57,7 @@ public partial class ChartService : IChartService
             })
             .ToList();
 
-        totalComment = MapChartData(days, totalComment);
+        totalComment = MapChartData(days, timezoneOffset, totalComment);
         #endregion
 
         #region -- Reaction --
@@ -93,7 +93,7 @@ public partial class ChartService : IChartService
             })
             .ToList();
 
-        totalReaction = MapChartData(days, totalReaction);
+        totalReaction = MapChartData(days, timezoneOffset, totalReaction);
         #endregion
 
         var interactions = await GetNumberOfInteractionProfile(userId, isGetDataIn7Days);
@@ -127,7 +127,7 @@ public partial class ChartService : IChartService
         return result;
     }
 
-    public async Task<ComicChartResponse> GetComicOrStoryChartInfo(Guid? userId, bool isGetDataIn7Days, bool isComic = false)
+    public async Task<ComicChartResponse> GetComicOrStoryChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days, bool isComic)
     {
         var result = new ComicChartResponse();
 
@@ -201,12 +201,12 @@ public partial class ChartService : IChartService
             result.ComicInteractions = await GetInteractions(data, dataCompare);
         }
 
-        result.CommentChartResponse = await GetComicCommentChart(userId, days, isComic);
-        result.ReactionChartResponse = await GetComicReactionChart(userId, days, isComic);
+        result.CommentChartResponse = await GetComicCommentChart(userId, timezoneOffset, days, isComic);
+        result.ReactionChartResponse = await GetComicReactionChart(userId, timezoneOffset, days, isComic);
         return result;
     }
 
-    public async Task<List<ChartResponse>> GetComicReactionChart(Guid? userId, int days, bool isComic)
+    public async Task<List<ChartResponse>> GetComicReactionChart(Guid? userId, int timezoneOffset, int days, bool isComic)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
@@ -241,10 +241,10 @@ public partial class ChartService : IChartService
                     };
 
         }
-        return MapChartData(days, await query.ToListAsync());
+        return MapChartData(days, timezoneOffset, await query.ToListAsync());
     }
 
-    public async Task<List<ChartResponse>> GetComicCommentChart(Guid? userId, int days, bool isComic)
+    public async Task<List<ChartResponse>> GetComicCommentChart(Guid? userId, int timezoneOffset, int days, bool isComic)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
@@ -279,10 +279,10 @@ public partial class ChartService : IChartService
                     };
 
         }
-        return MapChartData(days, await query.ToListAsync());
+        return MapChartData(days, timezoneOffset, await query.ToListAsync());
     }
 
-    public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, bool isGetDataIn7Days)
+    public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
     {
 
         var days = isGetDataIn7Days ? 7 : 30;
@@ -326,7 +326,7 @@ public partial class ChartService : IChartService
         return new FollowersChartResponse
         {
             UserFollowedResponses = await userFollowing.ToListAsync(),
-            ChartResponse = MapChartData(days, userFollowingThisUserForChart),
+            ChartResponse = MapChartData(days, timezoneOffset, userFollowingThisUserForChart),
             FollowerInteractions = await GetFollowerInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
         };
     }
@@ -435,10 +435,10 @@ public partial class ChartService : IChartService
         return result;
     }
 
-    private List<ChartResponse> MapChartData(int days, List<ChartResponse> data)
+    private List<ChartResponse> MapChartData(int days, int timezoneOffset, List<ChartResponse> data)
     {
         var result = new List<ChartResponse>();
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.Today.ToUniversalTime().AddMinutes(-timezoneOffset);
         for (int i = 0; i < days; i++)
         {
             DateTime date = today.AddDays(-i);

@@ -30,7 +30,7 @@ public class ChartController : ControllerBase
     public async Task<IActionResult> GetFollowersChartInfo(bool isGetDataIn7Days)
     {
         var req = new BaseR(HttpContext);
-        var result = await _chartService.GetFollowersChartInfo(req.UserId, isGetDataIn7Days);
+        var result = await _chartService.GetFollowersChartInfo(req.UserId, req.TimezoneOffset, isGetDataIn7Days);
         return Ok(result);
     }
 
@@ -38,7 +38,7 @@ public class ChartController : ControllerBase
     public async Task<IActionResult> GetComicOrStoryChartInfo(bool isGetDataIn7Days, bool isComic)
     {
         var req = new BaseR(HttpContext);
-        var result = await _chartService.GetComicOrStoryChartInfo(req.UserId, isGetDataIn7Days, isComic);
+        var result = await _chartService.GetComicOrStoryChartInfo(req.UserId, req.TimezoneOffset, isGetDataIn7Days, isComic);
         return Ok(result);
     }
 
@@ -46,7 +46,7 @@ public class ChartController : ControllerBase
     public async Task<IActionResult> GetInteractionChartInfo(bool isGetDataIn7Days)
     {
         var req = new BaseR(HttpContext);
-        var result = await _chartService.GetInteractionChartInfo(req.UserId, isGetDataIn7Days);
+        var result = await _chartService.GetInteractionChartInfo(req.UserId, req.TimezoneOffset, isGetDataIn7Days);
         return Ok(result);
     }
     #endregion
