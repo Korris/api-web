@@ -104,22 +104,20 @@ public partial class ChartService : IChartService
             ChartResponseReact = totalReaction,
             CommentInteractions = interactions.CommentInteractions,
             ReactionInteractions = interactions.ReactionInteractions,
-            PostInteractions = await GetFeedInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
+            PostInteractions = await GetSocialInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
         };
     }
 
     public async Task<GeneralInfoResponse> GetGeneralInfo(Guid? userId)
     {
         var result = new GeneralInfoResponse();
-        var today = DateTime.Today.ToUniversalTime();
 
-        DateTime dateToGetData = today.AddDays(-7);
-        DateTime dateToCompare = today.AddDays(-14);
+        var today = DateTime.Today.ToUniversalTime();
+        var dateToGetData = today.AddDays(-7);
+        var dateToCompare = today.AddDays(-14);
 
         result.Followers = await GetFollowerInteractionsAsync(userId, dateToCompare, dateToGetData);
-
-        result.PostInteraction = await GetFeedInteractionsAsync(userId, dateToCompare, dateToGetData);
-
+        result.PostInteraction = await GetSocialInteractionsAsync(userId, dateToCompare, dateToGetData);
         result.ComicStoryInteraction = await GetComicStoryInteractionsAsync(userId, dateToCompare, dateToGetData);
 
         result.PostCount = await _context.SocialPostAvailable.CountAsync(p => p.CreatedBy == userId);
@@ -457,19 +455,43 @@ public partial class ChartService : IChartService
 
     private async Task<Interactions> GetFollowerInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var userFollowing = from repository in _context.UserFollowAvailable
-                            where repository.UserFollowingId == userId &&
-                            repository.CreatedOn >= dateToCompare
-                            select repository;
+        var userFollowing = from a in _context.UserFollowAvailable
+                            where a.UserFollowingId == userId &&
+                            a.CreatedOn >= dateToCompare
+                            select a;
 
-        int userFollowingToShow = await userFollowing.CountAsync(p => p.CreatedOn >= dateToGetData);
-
-        int userFollowingToCompare = await userFollowing.CountAsync(p => p.CreatedOn < dateToGetData);
+        var userFollowingToShow = await userFollowing.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var userFollowingToCompare = await userFollowing.CountAsync(p => p.CreatedOn < dateToGetData);
 
         return await GetInteractions(userFollowingToShow, userFollowingToCompare);
     }
 
-    private async Task<Interactions> GetFeedInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
+    private async Task<Reaction> GetComicInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var postCommentLast14Days = from post in _context.ComicPostAvailable
+                                    join postComment in _context.ComicPostCommentAvailable
+                                    on post.Id equals postComment.PostId
+                                    where post.UserId == userId
+                                    && postComment.CreatedOn >= dateToCompare
+                                    select postComment;
+
+        var postReactionsLast14Days = from post in _context.ComicPostAvailable
+                                      join postReaction in _context.ComicPostReactionAvailable
+                                      on post.Id equals postReaction.TargetId
+                                      where post.UserId == userId
+                                      && postReaction.CreatedOn >= dateToCompare
+                                      select postReaction;
+
+        int reactionsLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
+                                    + await postReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
+
+        int reactionsPreviousLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
+                                + await postReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
+
+        return new Reaction(reactionsLast7Days, reactionsPreviousLast7Days);
+    }
+
+    private async Task<Interactions> GetSocialInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
         var postCommentLast14Days = from post in _context.SocialPostAvailable
                                     join postComment in _context.SocialPostCommentAvailable
@@ -494,52 +516,40 @@ public partial class ChartService : IChartService
         return await GetInteractions(reactionsLast7Days, reactionsPreviousLast7Days);
     }
 
+    private async Task<Reaction> GetStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var postCommentLast14Days = from post in _context.StoryPostAvailable
+                                    join postComment in _context.StoryPostCommentAvailable
+                                    on post.Id equals postComment.PostId
+                                    where post.UserId == userId
+                                    && postComment.CreatedOn >= dateToCompare
+                                    select postComment;
+
+        var postReactionsLast14Days = from post in _context.StoryPostAvailable
+                                      join postReaction in _context.StoryPostReactionAvailable
+                                      on post.Id equals postReaction.TargetId
+                                      where post.UserId == userId
+                                      && postReaction.CreatedOn >= dateToCompare
+                                      select postReaction;
+
+        int reactionsLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
+                                    + await postReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
+
+        int reactionsPreviousLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
+                                + await postReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
+
+        return new Reaction(reactionsLast7Days, reactionsPreviousLast7Days);
+    }
+
     private async Task<Interactions> GetComicStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var comicPostCommentLast14Days = from post in _context.ComicPostAvailable
-                                         join postComment in _context.ComicPostCommentAvailable
-                                         on post.Id equals postComment.PostId
-                                         where post.UserId == userId
-                                         && postComment.CreatedOn >= dateToCompare
-                                         select postComment;
+        var comic = await GetComicInteractionsAsync(userId, dateToCompare, dateToGetData);
+        var story = await GetStoryInteractionsAsync(userId, dateToCompare, dateToGetData);
 
-        var comicReactionsLast14Days = from post in _context.ComicPostAvailable
-                                       join postReaction in _context.ComicPostReactionAvailable
-                                       on post.Id equals postReaction.TargetId
-                                       where post.UserId == userId
-                                         && postReaction.CreatedOn >= dateToCompare
-                                       select postReaction;
+        var totalReactionsLast7Days = comic.Last7Days + story.Last7Days;
+        var totalReactionsPreviousLast7Days = comic.PreviousLast7Days + story.PreviousLast7Days;
 
-        int totalComicReactionsLast7Days = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
-                                    + await comicReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
-
-        int totalComicReactionsPreviousLast7Days = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
-                                + await comicReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
-
-        var storyPostCommentLast14Days = from post in _context.StoryPostAvailable
-                                         join postComment in _context.StoryPostCommentAvailable
-                                         on post.Id equals postComment.PostId
-                                         where post.UserId == userId
-                                         && postComment.CreatedOn >= dateToCompare
-                                         select postComment;
-
-        var storyReactionsLast14Days = from post in _context.StoryPostAvailable
-                                       join postReaction in _context.StoryPostReactionAvailable
-                                       on post.Id equals postReaction.TargetId
-                                       where post.UserId == userId
-                                         && postReaction.CreatedOn >= dateToCompare
-                                       select postReaction;
-
-        int totalStoryReactionsLast7Days = await storyPostCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
-                               + await storyReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
-
-        int totalStoryReactionsPreviousLast7Days = await storyPostCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
-                                + await storyReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
-
-        var totalComicStoryReactionsLast7Days = totalStoryReactionsLast7Days + totalComicReactionsLast7Days;
-        var totalComicStoryReactionsPreviousLast7Days = totalStoryReactionsPreviousLast7Days + totalComicReactionsPreviousLast7Days;
-
-        return await GetInteractions(totalComicStoryReactionsLast7Days, totalComicStoryReactionsPreviousLast7Days);
+        return await GetInteractions(totalReactionsLast7Days, totalReactionsPreviousLast7Days);
     }
 
     private Task<Interactions> GetInteractions(int data, int dataToCompare)

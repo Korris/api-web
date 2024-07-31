@@ -16,3 +16,15 @@ public class Interactions
     public double Percent { get; set; }
     public bool IsIncrease { get; set; }
 }
+
+public class Reaction
+{
+    public Reaction(int last7Days, int previousLast7Days)
+    {
+        Last7Days = last7Days;
+        PreviousLast7Days = previousLast7Days;
+    }
+
+    public int Last7Days { get; set; }
+    public int PreviousLast7Days { get; set; }
+}
