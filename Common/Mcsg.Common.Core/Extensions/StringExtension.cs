@@ -291,16 +291,6 @@ public static class StringExtension
         return $"{mediaApiUrl}/{url}";
     }
 
-    /// <summary>
-    /// Clean HTML
-    /// </summary>
-    /// <param name="html">HTML</param>
-    /// <returns></returns>
-    public static string CleanHtml(this string? html)
-    {
-        return new Regex("style=\"[^\"]*\"").Replace(html + "", "");
-    }
-
     #endregion
 
     #region -- HTML --

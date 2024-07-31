@@ -46,7 +46,7 @@ public class BusinessBodyText : IBusinessBodyText
             var user = users.Find(u => u.Id == guid);
             if (user != null)
             {
-                return $"<a href=\"/{user.UserName}\">{user.ProfileName}</a>";
+                return $"<a href=\"/user/profile?userName={user.UserName}\">{user.ProfileName}</a>";
             }
             return match.Value; // Return the GUID if no user is found
         });

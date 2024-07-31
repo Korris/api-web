@@ -13,7 +13,6 @@
 
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Web;
 
 namespace Mcsg.Story.Api.Commands;
 
@@ -115,8 +114,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var userAvatar = request.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        var cleanHtml = request.Content.CleanHtml();
-        var content = HttpUtility.HtmlEncode(cleanHtml);
+        var content = request.Content;
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
@@ -132,7 +130,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             ThumbnailUrl = ett.ThumbnailUrl,
             CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
-            Body = cleanHtml,
+            Body = content,
             FullName = profileName,
             AuthorName = profileName,
             IsCurrentUserIsAuthor = true,
