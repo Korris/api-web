@@ -172,7 +172,7 @@ public class Validator
         /// <summary>
         /// Regex
         /// </summary>
-        public const string Regex = @"^\w+$";
+        public const string Regex = @"#(\w+)";
     }
 
     /// <summary>
@@ -183,7 +183,7 @@ public class Validator
         /// <summary>
         /// Regex
         /// </summary>
-        public const string Regex = @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+        public const string Regex = @"(?<=@)([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})";
     }
 
     /// <summary>

@@ -41,6 +41,7 @@ public partial class FeedService : IFeedService
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
+        IBusinessBodyText businessBodyText,
         IUnitOfWork unitOfWork,
         ISmartCountService smartCountService,
         IViewHistoryService viewHistoryService,
@@ -58,6 +59,7 @@ public partial class FeedService : IFeedService
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
+        _businessText = businessBodyText;
 
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
@@ -118,6 +120,7 @@ public partial class FeedService : IFeedService
 
             foreach (var item in items)
             {
+                item.Body = await _businessText.Process(item.Body);
                 listItemResponse.Add(MappingFeedInListRespone(item, postIds));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
@@ -347,14 +350,14 @@ public partial class FeedService : IFeedService
                 IsAccessPrivate = false,
             }, splitOn: "Id, Id, Id, Id, Id");
 
-        // Will map later
-        var sound = await _soundService.GetSoundByPostAsync(dbFeed.Id);
-
         //Add view
         if (dbFeed == null)
         {
             throw new NotFoundException(E204, M204);
         }
+
+        // Will map later
+        var sound = await _soundService.GetSoundByPostAsync(dbFeed.Id);
 
         //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
 
@@ -362,6 +365,8 @@ public partial class FeedService : IFeedService
         {
             throw new NotFoundException(E204, M204);
         }
+
+        dbFeed.Body = await _businessText.Process(dbFeed.Body);
 
         return MappingFeedRespone(dbFeed, sound);
     }
@@ -470,6 +475,7 @@ public partial class FeedService : IFeedService
 
             foreach (var res in result)
             {
+                res.Body = await _businessText.Process(res.Body);
                 listFeedDetails.Add(MappingFeedBoxResponse(res, postIds));
             }
 
@@ -820,6 +826,11 @@ public partial class FeedService : IFeedService
     /// SmartLookup service
     /// </summary>
     private readonly ISmartLookupService _smartLookupService;
+
+    /// <summary>
+    /// Business text
+    /// </summary>
+    private readonly IBusinessBodyText _businessText;
 
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IUnitOfWork _unitOfWork;

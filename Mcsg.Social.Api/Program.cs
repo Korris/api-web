@@ -10,6 +10,8 @@ using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain.Entities;
+using Common.Domain.Implements;
+using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -101,6 +103,9 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // Business
+        builder.Services.AddScoped<IBusinessBodyText, BusinessBodyText>();
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
