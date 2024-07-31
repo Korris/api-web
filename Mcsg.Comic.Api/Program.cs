@@ -9,9 +9,8 @@ using Attributes;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Implements;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -105,7 +104,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // Business
-        builder.Services.AddScoped<IBusinessBodyText, BusinessBodyText>();
+        builder.Services.AddScoped<IBusinessText, BusinessText>();
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();

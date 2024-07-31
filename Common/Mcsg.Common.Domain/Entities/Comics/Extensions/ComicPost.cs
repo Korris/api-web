@@ -26,7 +26,7 @@ public partial class ComicPost
     /// <param name="customNote">Custom note</param>
     /// <param name="createdBy">Created by</param>
     /// <returns>Return the result</returns>
-    public static ComicPost Create(string? title, string body, string? thumbnailUrl, string? authorName, string? customNote, Guid createdBy)
+    public static ComicPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid createdBy)
     {
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
 
@@ -55,7 +55,7 @@ public partial class ComicPost
     /// <param name="thumbnailUrl">Thumbnail URL</param>
     /// <param name="customNote">Custom note</param>
     /// <param name="modifiedBy">Modified by</param>
-    public void Update(string? title, string body, string? thumbnailUrl, string? customNote, Guid modifiedBy)
+    public void Update(string? title, string? body, string? thumbnailUrl, string? customNote, Guid modifiedBy)
     {
         Title = title;
         Body = body;

@@ -5,8 +5,8 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
@@ -27,7 +27,7 @@ public partial class CommentService : ICommentService
     private IConfiguration _configuration;
     protected readonly IMapper _mapper;
 
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessBodyText businessBodyText)
+    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText)
     {
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
@@ -203,6 +203,7 @@ public partial class CommentService : ICommentService
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
+
                 item.Body = await _businessText.Process(item.Body);
             }
             results = items.ToList();
@@ -248,6 +249,7 @@ public partial class CommentService : ICommentService
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
+
                 item.Body = await _businessText.Process(item.Body);
             }
 
@@ -463,7 +465,7 @@ public partial class CommentService : ICommentService
     /// <summary>
     /// Business text
     /// </summary>
-    private readonly IBusinessBodyText _businessText;
+    private readonly IBusinessText _businessText;
 
     #endregion
 }

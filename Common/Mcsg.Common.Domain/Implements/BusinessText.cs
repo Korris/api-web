@@ -2,33 +2,33 @@
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace Mcsg.Common.Domain.Implements;
+namespace Mcsg.Common.Domain;
 
 using Interfaces;
 using SeedWork.Extensions;
 using static SeedWork.Constants.Validator;
 
 /// <summary>
-/// BusinessBodyText
+/// BusinessText
 /// </summary>
-public class BusinessBodyText : IBusinessBodyText
+public class BusinessText : IBusinessText
 {
     #region -- Implements --
 
     /// <summary>
     /// Process
     /// </summary>
-    /// <param name="bodyText">Body text</param>
+    /// <param name="text">Text</param>
     /// <returns>Return the result</returns>
-    public async Task<string?> Process(string? bodyText)
+    public async Task<string> Process(string? text)
     {
-        if (string.IsNullOrWhiteSpace(bodyText))
+        if (string.IsNullOrWhiteSpace(text))
         {
-            return bodyText;
+            return string.Empty;
         }
 
         // Decode body text
-        var res = HttpUtility.HtmlDecode(bodyText);
+        var res = HttpUtility.HtmlDecode(text);
 
         // Wrap linebreak
         res = res.Replace("\n", "<br/>");
@@ -42,20 +42,20 @@ public class BusinessBodyText : IBusinessBodyText
         // Wrap GUIDs
         res = Regex.Replace(res, Mention.Regex, match =>
         {
-            var guid = Guid.Parse(match.Value.Replace("@", "")); // Extract the GUID
+            var guid = Guid.Parse(match.Value.Replace("@", "")); // extract the GUID
             var user = users.Find(u => u.Id == guid);
             if (user != null)
             {
                 return $"<a href=\"/user/profile?userName={user.UserName}\">{user.ProfileName}</a>";
             }
-            return match.Value; // Return the GUID if no user is found
+            return match.Value; // return the GUID if no user is found
         });
         res = res.Replace("@", "");
 
         // Wrap hashtags
         res = Regex.Replace(res, Hashtag.Regex, match =>
         {
-            var hashtag = match.Value.Substring(1); // Remove the leading '#'
+            var hashtag = match.Value.Substring(1); // remove the leading '#'
             return $"<a href=\"/search?key={hashtag}&type=Tag\">#{hashtag}</a>";
         });
 
@@ -70,7 +70,7 @@ public class BusinessBodyText : IBusinessBodyText
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public BusinessBodyText(IMcsgContext context)
+    public BusinessText(IMcsgContext context)
     {
         _context = context;
     }

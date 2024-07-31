@@ -10,6 +10,7 @@ namespace Mcsg.Social.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
@@ -41,7 +42,7 @@ public partial class FeedService : IFeedService
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
-        IBusinessBodyText businessBodyText,
+        IBusinessText businessBodyText,
         IUnitOfWork unitOfWork,
         ISmartCountService smartCountService,
         IViewHistoryService viewHistoryService,
@@ -830,7 +831,7 @@ public partial class FeedService : IFeedService
     /// <summary>
     /// Business text
     /// </summary>
-    private readonly IBusinessBodyText _businessText;
+    private readonly IBusinessText _businessText;
 
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IUnitOfWork _unitOfWork;

@@ -114,12 +114,10 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var userAvatar = request.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        var content = request.Content;
-
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
-        ett.Update(request.Title, content, request.ThumbnailUrl, request.CustomNote, userId);
+        ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, userId);
 
         var result = new FeedPostDto
         {
@@ -130,7 +128,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             ThumbnailUrl = ett.ThumbnailUrl,
             CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
-            Body = content,
+            Body = request.Content,
             FullName = profileName,
             AuthorName = profileName,
             IsCurrentUserIsAuthor = true,

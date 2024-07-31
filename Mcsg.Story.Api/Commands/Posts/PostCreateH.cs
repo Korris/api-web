@@ -91,13 +91,11 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var userAvatar = request.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        var content = request.Content;
-
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
         // Create
-        var ett = StoryPost.Create(request.Title, content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
+        var ett = StoryPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
         await _context.StoryPosts.AddAsync(ett);
         await _context.SaveChangesAsync(default);
 
@@ -110,7 +108,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             ThumbnailUrl = ett.ThumbnailUrl,
             CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
-            Body = content,
+            Body = request.Content,
             FullName = profileName,
             AuthorName = profileName,
             IsCurrentUserIsAuthor = true,
