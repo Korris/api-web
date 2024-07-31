@@ -8,7 +8,6 @@ namespace Mcsg.Identity.Api;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
-using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Helpers;
@@ -96,15 +95,11 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDbContext<McsgContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
-        builder.Services.AddDbContext<WalletDbContext>(p => p.UseNpgsql(csDbWallet!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddWalletDbContext(csDbWallet);
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
-
-        // DbContext
-        builder.Services.AddDataLibrary(csDb); // TODO - will remove later
-        builder.Services.AddWalletDbContext(csDbWallet); // TODO - will remove later
 
         // Storage
         builder.Services.AddStorage(p =>
