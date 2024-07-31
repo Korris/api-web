@@ -9,6 +9,40 @@ public class StringExtensionTest
     {
     }
 
+    #region -- ToPlural --
+    [Test]
+    public void ToPlural_01()
+    {
+        var a = "book".ToPlural();
+        Assert.That(a, Is.EqualTo("books"));
+
+        a = "box".ToPlural();
+        Assert.That(a, Is.EqualTo("boxes"));
+    }
+
+    [Test]
+    public void ToPlural_02()
+    {
+        var a = "BOOK".ToPlural();
+        Assert.That(a, Is.EqualTo("BOOKS"));
+
+        a = "BOX".ToPlural();
+        Assert.That(a, Is.EqualTo("BOXES"));
+    }
+    #endregion
+
+    #region -- IsLowerLastCharacter --
+    [Test]
+    public void IsLowerLastCharacter_02()
+    {
+        var a = "".IsLowerLastCharacter();
+        Assert.That(a, Is.EqualTo(false));
+
+        a = "a".IsLowerLastCharacter();
+        Assert.That(a, Is.EqualTo(true));
+    }
+    #endregion
+
     #region -- ToGuids --
     #region -- ValidationPass --
     [TestCase(null, "")]

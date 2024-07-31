@@ -125,6 +125,11 @@ public static class Message
     public const string M113 = "Invalid parent folder";
 
     /// <summary>
+    /// User can not follow yourself
+    /// </summary>
+    public const string M114 = "User can not follow yourself";
+
+    /// <summary>
     /// User spam report
     /// </summary>
     public const string M115 = "User spam report";

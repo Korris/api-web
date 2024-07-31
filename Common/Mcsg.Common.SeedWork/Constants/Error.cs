@@ -55,6 +55,11 @@ public static class Error
     public const string E113 = "E113";
 
     /// <summary>
+    /// User can not follow yourself
+    /// </summary>
+    public const string E114 = "E114";
+
+    /// <summary>
     /// User spam report
     /// </summary>
     public const string E115 = "E115";
