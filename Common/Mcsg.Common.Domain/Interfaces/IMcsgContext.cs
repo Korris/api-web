@@ -197,6 +197,8 @@ public interface IMcsgContext
 
     DbSet<UserOtp> UserOtps { get; set; }
 
+    DbSet<UserReferral> UserReferrals { get; set; }
+
     DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
     DbSet<UserSocial> UserSocials { get; set; }
@@ -344,6 +346,8 @@ public interface IMcsgContext
     IQueryable<UserNameHistory> UserNameHistoryAvailable { get; }
 
     IQueryable<UserOtp> UserOtpAvailable { get; }
+
+    IQueryable<UserReferral> UserReferralAvailable { get; }
 
     IQueryable<UserRefreshToken> UserRefreshTokenAvailable { get; }
 

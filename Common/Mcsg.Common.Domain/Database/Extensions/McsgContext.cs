@@ -206,6 +206,8 @@ partial class McsgContext
 
     public IQueryable<UserOtp> UserOtpAvailable => UserOtps.Where(p => !p.IsDelete);
 
+    public IQueryable<UserReferral> UserReferralAvailable => UserReferrals.Where(p => !p.IsDelete);
+
     public IQueryable<UserRefreshToken> UserRefreshTokenAvailable => UserRefreshTokens.Where(p => !p.IsDelete);
 
     public IQueryable<UserSocial> UserSocialAvailable => UserSocials.Where(p => !p.IsDelete);

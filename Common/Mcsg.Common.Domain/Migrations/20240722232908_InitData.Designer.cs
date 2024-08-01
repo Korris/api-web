@@ -3351,6 +3351,43 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("UserOtps", "identity");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserRefereeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserReferrerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserRefereeId");
+
+                    b.HasIndex("UserReferrerId");
+
+                    b.ToTable("UserReferrals", "identity");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserRefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4262,6 +4299,21 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasOne("Mcsg.Common.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserFollowingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserRefereeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserReferrerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

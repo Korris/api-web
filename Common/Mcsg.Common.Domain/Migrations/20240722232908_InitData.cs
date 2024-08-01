@@ -805,6 +805,39 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserReferrals",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserReferrerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserRefereeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserReferrals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserReferrals_Users_UserRefereeId",
+                        column: x => x.UserRefereeId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserReferrals_Users_UserReferrerId",
+                        column: x => x.UserReferrerId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserRoles",
                 schema: "identity",
                 columns: table => new
@@ -3039,6 +3072,18 @@ namespace Mcsg.Common.Domain.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserReferrals_UserRefereeId",
+                schema: "identity",
+                table: "UserReferrals",
+                column: "UserRefereeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReferrals_UserReferrerId",
+                schema: "identity",
+                table: "UserReferrals",
+                column: "UserReferrerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
                 schema: "identity",
                 table: "UserRoles",
@@ -3254,6 +3299,10 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserOtps",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "UserReferrals",
                 schema: "identity");
 
             migrationBuilder.DropTable(
