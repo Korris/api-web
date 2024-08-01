@@ -4302,17 +4302,21 @@ namespace Mcsg.Common.Domain.Migrations
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferee")
+                        .WithMany("UserReferralUserReferees")
                         .HasForeignKey("UserRefereeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferrer")
+                        .WithMany("UserReferralUserReferrers")
                         .HasForeignKey("UserReferrerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserReferee");
+
+                    b.Navigation("UserReferrer");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ViewHistory", b =>
@@ -4371,6 +4375,13 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserReferralUserReferees");
+
+                    b.Navigation("UserReferralUserReferrers");
                 });
 #pragma warning restore 612, 618
         }

@@ -50,6 +50,12 @@ partial class User
 
     #region -- Properties --
 
+    [InverseProperty("UserReferee")]
+    public virtual ICollection<UserReferral> UserReferralUserReferees { get; set; } = [];
+
+    [InverseProperty("UserReferrer")]
+    public virtual ICollection<UserReferral> UserReferralUserReferrers { get; set; } = [];
+
     /// <summary>
     /// Host
     /// </summary>
