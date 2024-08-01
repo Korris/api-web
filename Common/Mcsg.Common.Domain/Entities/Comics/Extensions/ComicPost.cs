@@ -4,7 +4,7 @@ using Core.Constants;
 using Core.Enums;
 using SeedWork.Extensions;
 
-public partial class ComicPost
+partial class ComicPost
 {
     #region -- Methods --
 

@@ -3,7 +3,7 @@
 using Core.Extensions;
 using SeedWork.Extensions;
 
-public partial class BackgroundMedia
+partial class BackgroundMedia
 {
     #region -- Methods --
 

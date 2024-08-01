@@ -6,7 +6,7 @@ using SeedWork.Dtos;
 using SeedWork.Extensions;
 using static Core.Constants.Setting;
 
-public partial class UserNameHistory
+partial class UserNameHistory
 {
     #region -- Methods --
 

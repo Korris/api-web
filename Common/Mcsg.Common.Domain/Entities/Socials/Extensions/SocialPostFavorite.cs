@@ -2,7 +2,7 @@
 
 using SeedWork.Dtos;
 
-public partial class SocialPostFavorite
+partial class SocialPostFavorite
 {
     #region -- Methods --
 
