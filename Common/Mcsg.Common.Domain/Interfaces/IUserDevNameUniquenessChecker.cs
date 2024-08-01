@@ -11,7 +11,7 @@
  */
 #endregion
 
-namespace Mcsg.Common.Domain.Interfaces;
+namespace Mcsg.Common.Domain;
 
 using Common.Interfaces;
 

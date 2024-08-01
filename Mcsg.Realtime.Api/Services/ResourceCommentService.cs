@@ -6,7 +6,7 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Enums;
     using Common.Core.Extensions;
     using Common.Core.Interfaces;
-    using Common.Domain.Interfaces;
+    using Common.Domain;
     using Interfaces;
     using Requests;
 

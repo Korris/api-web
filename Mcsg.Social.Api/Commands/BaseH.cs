@@ -14,7 +14,7 @@
 namespace Mcsg.Social.Api.Commands;
 
 using Common.Core.Interfaces;
-using Common.Domain.Interfaces;
+using Common.Domain;
 using Interfaces;
 
 /// <summary>

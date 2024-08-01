@@ -7,7 +7,6 @@ using System.Data;
 namespace Mcsg.Common.Core.Extensions;
 
 using Domain;
-using Domain.Interfaces;
 using Mcsg.Lib.Data.Repositories;
 using Mcsg.Lib.Data.Repositories.Interface;
 

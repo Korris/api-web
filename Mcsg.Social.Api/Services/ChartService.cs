@@ -3,8 +3,8 @@
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Models;

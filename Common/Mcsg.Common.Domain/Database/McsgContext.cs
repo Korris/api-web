@@ -12,7 +12,7 @@ using SeedWork.Extensions;
 /// <summary>
 /// McsgContext
 /// </summary>
-public partial class McsgContext : IdentityDbContext<User, Role, Guid>
+public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgContext
 {
     #region -- Overrides --
 

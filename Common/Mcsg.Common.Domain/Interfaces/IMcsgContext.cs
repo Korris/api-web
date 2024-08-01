@@ -14,7 +14,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Mcsg.Common.Domain.Interfaces;
+namespace Mcsg.Common.Domain;
 
 using Domain.Entities;
 
@@ -37,6 +37,17 @@ public interface IMcsgContext
     /// </summary>
     /// <returns>The number of state entries written to the database</returns>
     int SaveChanges();
+
+    /// <summary>
+    /// Make serial number
+    /// </summary>
+    /// <param name="q">Queryable</param>
+    /// <param name="sOrderBy">Selector for OrderBy statement</param>
+    /// <param name="sSelect">Selector for Select statement</param>
+    /// <param name="prefix">Prefix</param>
+    /// <param name="useDateTime">Use DateTime</param>
+    /// <returns>Return the result</returns>
+    string MakeNo<T>(IQueryable<T> q, Func<T, ulong> sOrderBy, Func<T, string> sSelect, string prefix, bool useDateTime = false);
 
     #endregion
 

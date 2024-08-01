@@ -8,7 +8,7 @@ namespace Mcsg.Media.Api;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Domain;
-using Common.Domain.Interfaces;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;

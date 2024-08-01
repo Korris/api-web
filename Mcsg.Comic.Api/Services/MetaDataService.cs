@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Dtos;
 using Interfaces;
 

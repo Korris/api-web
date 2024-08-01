@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;

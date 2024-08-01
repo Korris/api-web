@@ -8,8 +8,8 @@ namespace Mcsg.Realtime.Api.Services
     using Common.Core.Constants;
     using Common.Core.Enums;
     using Common.Core.Extensions;
+    using Common.Domain;
     using Common.Domain.Entities;
-    using Common.Domain.Interfaces;
     using Common.SeedWork.Exceptions;
     using Constants;
     using Dtos;

@@ -8,7 +8,7 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Dtos;
 using Common.Core.Extensions;
-using Common.Domain.Interfaces;
+using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;

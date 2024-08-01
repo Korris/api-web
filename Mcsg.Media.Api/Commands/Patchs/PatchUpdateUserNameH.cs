@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Media.Api.Commands;
 
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Data.Interfaces;

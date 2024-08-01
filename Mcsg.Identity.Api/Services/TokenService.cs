@@ -6,8 +6,8 @@ namespace Mcsg.Identity.Api.Services;
 
 using Common.Core;
 using Common.Core.Dtos;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Extensions;

@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;

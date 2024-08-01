@@ -6,8 +6,8 @@ namespace Mcsg.Comic.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Domain.Interfaces;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
