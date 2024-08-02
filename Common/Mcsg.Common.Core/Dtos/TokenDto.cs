@@ -28,11 +28,6 @@ public class TokenDto
     public DateTime RefreshTokenExpiredDate { get; set; }
 
     /// <summary>
-    /// Subscription key
-    /// </summary>
-    public string SubscriptionKey { get; set; } = default!;
-
-    /// <summary>
     /// Roles
     /// </summary>
     public string Roles { get; set; } = default!;

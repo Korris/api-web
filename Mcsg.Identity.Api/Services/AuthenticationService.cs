@@ -1,6 +1,4 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -42,17 +40,15 @@ public partial class AuthenticationService : IAuthenticationService
     /// <param name="unitOfWork"></param>
     /// <param name="sessionService"></param>
     /// <param name="tokenService"></param>
-    /// <param name="passwordHasher"></param>
     /// <param name="userService"></param>
     /// <param name="currentUserService"></param>
-    /// <param name="sendMailService"></param>
     /// <param name="otpService"></param>
     /// <param name="configuration"></param>
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
     /// <param name="smartLookupRepository"></param>
     /// <param name="userWalletService"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, RoleManager<Role> roleManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IPasswordHasher<User> passwordHasher, IUserService userService, ICurrentUserService currentUserService, IEmailSender sendMailService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository, IUserWalletService userWalletService)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository, IUserWalletService userWalletService)
     {
         _context = context;
         _setting = setting;
@@ -61,17 +57,12 @@ public partial class AuthenticationService : IAuthenticationService
         _userManager = userManager;
         _userRepository = unitOfWork.GetRepository<User>();
         _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
-        _userRefreshTokenRepository = unitOfWork.GetRepository<UserRefreshToken>();
         _sessionService = sessionService;
         _tokenService = tokenService;
-        _passwordHasher = passwordHasher;
         _userService = userService;
         _currentUserService = currentUserService;
-        _sendMailService = sendMailService;
-        _roleManager = roleManager;
         _serviceAccessor = serviceAccessor;
         _otpService = otpService;
-        _configuration = configuration;
         _smartLookupRepository = smartLookupRepository;
         _userWalletService = userWalletService;
     }
@@ -223,7 +214,6 @@ public partial class AuthenticationService : IAuthenticationService
             var session = await _sessionService.CreateSessionAsync(user, "");
             var response = _tokenService.GenerateAccessToken(session.Id, user);
             response.Roles = session.Roles;
-            response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
             if (refreshToken != null)
@@ -515,7 +505,6 @@ public partial class AuthenticationService : IAuthenticationService
                 var session = await _sessionService.CreateSessionAsync(user, "");
                 var response = _tokenService.GenerateAccessToken(session.Id, user);
                 response.Roles = session.Roles;
-                response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
                 var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
                 if (refreshToken != null)
@@ -591,7 +580,6 @@ public partial class AuthenticationService : IAuthenticationService
 
                 var session = await _sessionService.CreateSessionAsync(user, "");
                 var response = _tokenService.GenerateAccessToken(session.Id, user);
-                response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
                 response.IsFirstTimeLoginBySocial = true;
 
                 var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
@@ -703,7 +691,6 @@ public partial class AuthenticationService : IAuthenticationService
             AccessToken = accessToken.AccessToken,
             ExpiredDate = accessToken.ExpiredDate,
             RefreshToken = userRefreshToken.RefreshToken,
-            SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"],
             RefreshTokenExpiredDate = userRefreshToken.RefreshTokenExpiryTime,
         };
     }
@@ -810,7 +797,6 @@ public partial class AuthenticationService : IAuthenticationService
         var session = await _sessionService.CreateSessionAsync(user, "");
         TokenDto response = _tokenService.GenerateAccessToken(session.Id, user);
         response.Roles = session.Roles;
-        response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
         var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
         if (refreshToken != null)
@@ -850,19 +836,14 @@ public partial class AuthenticationService : IAuthenticationService
     private readonly IUserNameUniquenessChecker _uniquenessChecker;
 
     private readonly ApplicationUserManager _userManager;
-    private readonly RoleManager<Role> _roleManager;
-    private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly IRepository<UserRefreshToken> _userRefreshTokenRepository;
     private readonly ITokenService _tokenService;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserOtp> _userOtpRepository;
     private readonly ISessionService _sessionService;
     private readonly IUserService _userService;
     private readonly ICurrentUserService _currentUserService;
-    private readonly IEmailSender _sendMailService;
     private readonly SSOServiceResolver _serviceAccessor;
     private readonly IOtpService _otpService;
-    private readonly IConfiguration _configuration;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IUserWalletService _userWalletService;
 
