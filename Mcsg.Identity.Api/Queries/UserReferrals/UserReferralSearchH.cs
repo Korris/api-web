@@ -68,11 +68,8 @@ public class UserReferralSearchH : BaseSettingH, IRequestHandler<UserReferralSea
                 if (ft.FromDate != null && ft.ToDate != null)
                 {
                     var tz = request.TimezoneOffset;
-                    var fromDate = ft.FromDate.Value.StartOfDay();
-                    var toDate = ft.ToDate.Value.EndOfDay();
-
-                    fromDate = fromDate.AddMinutes(tz);
-                    toDate = toDate.AddMinutes(tz);
+                    var fromDate = ft.FromDate.Value.StartOfDay(tz);
+                    var toDate = ft.ToDate.Value.EndOfDay(tz);
 
                     if (ft.FromDate != null)
                     {

@@ -36,20 +36,22 @@ public static class DateTimeExtension
     /// Start of day
     /// </summary>
     /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
     /// <returns>Return first day at 00:00:00</returns>
-    public static DateTime StartOfDay(this DateTime d)
+    public static DateTime StartOfDay(this DateTime d, int timezoneOffset = 0)
     {
-        return d.Date;
+        return d.Date.AddMinutes(timezoneOffset);
     }
 
     /// <summary>
     /// End of day
     /// </summary>
     /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
     /// <returns>Return end day at 23:59:59</returns>
-    public static DateTime EndOfDay(this DateTime d)
+    public static DateTime EndOfDay(this DateTime d, int timezoneOffset = 0)
     {
-        return d.Date.AddDays(1).AddSeconds(-1);
+        return d.Date.AddDays(1).AddSeconds(-1).AddMinutes(timezoneOffset);
     }
 
     #endregion
