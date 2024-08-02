@@ -32,6 +32,11 @@ public class BaseFilter
         /// </summary>
         public List<string>? Names { get; set; }
 
+        /// <summary>
+        /// Keyword
+        /// </summary>
+        public string? Keyword { get; set; }
+
         #endregion
     }
 
