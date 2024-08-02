@@ -553,7 +553,8 @@ public partial class AuthenticationService : IAuthenticationService
                 {
                     user.LastLoginDate = DateTime.UtcNow;
                 }
-                await _userRepository.UpdateAsync(user);
+                await _context.SaveChangesAsync(default);
+
                 return response;
             }
         }
@@ -617,6 +618,7 @@ public partial class AuthenticationService : IAuthenticationService
                 var session = await _sessionService.CreateSessionAsync(user, "");
                 var response = _tokenService.GenerateAccessToken(session.Id, user);
                 response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
+                response.IsFirstTimeLoginBySocial = true;
 
                 var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
                 if (refreshToken != null)
@@ -628,8 +630,9 @@ public partial class AuthenticationService : IAuthenticationService
                 {
                     user.LastLoginDate = DateTime.UtcNow;
                 }
-                await _userRepository.UpdateAsync(user);
-                response.IsFirstTimeLoginBySocial = true;
+
+                await _context.SaveChangesAsync(default);
+
                 return response;
             }
         }
