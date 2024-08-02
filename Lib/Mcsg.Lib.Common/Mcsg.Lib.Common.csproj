@@ -17,7 +17,7 @@
         <PackageReference Include="Hangfire.PostgreSql" Version="1.20.9" />
         <PackageReference Include="Hangfire.SqlServer" Version="1.8.14" />
         <PackageReference Include="HD.ZaloPay" Version="1.0.0" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.62" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
         <PackageReference Include="PuppeteerSharp" Version="18.0.5" />
