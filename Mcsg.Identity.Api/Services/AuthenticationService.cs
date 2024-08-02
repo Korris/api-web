@@ -29,42 +29,35 @@ using static SSORegister;
 
 public partial class AuthenticationService : IAuthenticationService
 {
-    private readonly ApplicationUserManager _userManager;
-    private readonly RoleManager<Role> _roleManager;
-    private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly IRepository<UserRefreshToken> _userRefreshTokenRepository;
-    private readonly ITokenService _tokenService;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<UserOtp> _userOtpRepository;
-    private readonly ISessionService _sessionService;
-    private readonly IUserService _userService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IEmailSender _sendMailService;
-    private readonly SSOServiceResolver _serviceAccessor;
-    private readonly IOtpService _otpService;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<AuthenticationService> _logger;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IUserWalletService _userWalletService;
-    public AuthenticationService(ApplicationUserManager userManager,
-        RoleManager<Role> roleManager
-        , IUnitOfWork unitOfWork
-        , ISessionService sessionService
-        , ITokenService tokenService
-        , IPasswordHasher<User> passwordHasher
-        , IUserService userService
-        , ICurrentUserService currentUserService
-        , IEmailSender sendMailService
-        , IOtpService otpService
-        , IConfiguration configuration
-        , ILogger<AuthenticationService> logger
-        , SSOServiceResolver serviceAccessor
-        , IRepository<SmartLookup> smartLookupRepository
-        , IUserWalletService userWalletService
-        , IMcsgContext context
-        , ISetting setting,
-        IUserNameUniquenessChecker uniquenessChecker)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="uniquenessChecker"></param>
+    /// <param name="userManager"></param>
+    /// <param name="roleManager"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="sessionService"></param>
+    /// <param name="tokenService"></param>
+    /// <param name="passwordHasher"></param>
+    /// <param name="userService"></param>
+    /// <param name="currentUserService"></param>
+    /// <param name="sendMailService"></param>
+    /// <param name="otpService"></param>
+    /// <param name="configuration"></param>
+    /// <param name="logger"></param>
+    /// <param name="serviceAccessor"></param>
+    /// <param name="smartLookupRepository"></param>
+    /// <param name="userWalletService"></param>
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, RoleManager<Role> roleManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IPasswordHasher<User> passwordHasher, IUserService userService, ICurrentUserService currentUserService, IEmailSender sendMailService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository, IUserWalletService userWalletService)
     {
+        _context = context;
+        _setting = setting;
+        _uniquenessChecker = uniquenessChecker;
+
         _userManager = userManager;
         _userRepository = unitOfWork.GetRepository<User>();
         _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
@@ -75,16 +68,12 @@ public partial class AuthenticationService : IAuthenticationService
         _userService = userService;
         _currentUserService = currentUserService;
         _sendMailService = sendMailService;
-        _logger = logger;
         _roleManager = roleManager;
         _serviceAccessor = serviceAccessor;
         _otpService = otpService;
         _configuration = configuration;
         _smartLookupRepository = smartLookupRepository;
         _userWalletService = userWalletService;
-        _context = context;
-        _setting = setting;
-        _uniquenessChecker = uniquenessChecker;
     }
 
     public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
@@ -191,11 +180,10 @@ public partial class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(RegisterUser), request);
             throw new BadRequestException(E500, ex.Message);
         }
-
     }
+
     public async Task<TokenDto> LoginUser(LoginUserReq request)
     {
         var vr = new AuthenticationLoginUserV().Validate(request);
@@ -373,23 +361,6 @@ public partial class AuthenticationService : IAuthenticationService
         return response;
     }
 
-    private async Task<TokenDto> CreateAccessToken(User user)
-    {
-        var session = await _sessionService.CreateSessionAsync(user, "");
-        TokenDto response = _tokenService.GenerateAccessToken(session.Id, user);
-        response.Roles = session.Roles;
-        response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
-
-        var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-        if (refreshToken != null)
-        {
-            response.RefreshToken = refreshToken.RefreshToken;
-            response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-        }
-
-        return response;
-    }
-
     public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
     {
         var response = new TokenDto();
@@ -443,17 +414,20 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else if (!string.IsNullOrEmpty(phone))
         {
-            var user = await _userRepository.Connection.QueryFirstOrDefaultAsync<User>(GetUserByPhoneQuery, new { Phone = phone });
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.PhoneNumber == phone);
             if (user == null)
             {
                 throw new NotFoundException(E203, M203);
             }
+
             var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.ResetByPhone);
             response.Token = userOtp.Token;
             response.IsPhone = true;
         }
+
         return response;
     }
+
     public async Task<bool> ResetPassword(ResetPasswordReq request)
     {
         var user = await GetUserByEmailOrPhone(request.Type, request.Email, request.Phone) ?? throw new NotFoundException(E203, M203);
@@ -734,7 +708,40 @@ public partial class AuthenticationService : IAuthenticationService
         };
     }
 
-    #region Private method
+    public async Task<bool> DeleteAccount(DeleteUserReq request)
+    {
+        var session = await _currentUserService.GetCurrentUserAsync();
+        var user = await _userManager.FindByIdAsync(session.UserId.ToString());
+        var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
+        if (signinResult == false)
+        {
+            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+        }
+        user.IsDelete = true;
+
+        try
+        {
+            //Get all post id
+            var postIds = await _userRepository.Connection.QueryAsync<Guid>(GeAllPostsIdByUser, new { UserId = user.Id });
+            var now = DateTime.UtcNow;
+            foreach (var postId in postIds)
+            {
+                await _userRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = now, UserId = user.Id });
+            }
+            user.Email = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.Email}";
+            user.UserName = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.UserName}";
+            user.PhoneNumber = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.PhoneNumber}";
+            await _userManager.UpdateAsync(user);
+
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ErrorCodes.DefaultError, ErrorMessage.DefaultError);
+        }
+
+        return true;
+    }
+
     private bool IsAccountExisted(string email, string phoneNumber, out string code, out string message)
     {
         message = string.Empty;
@@ -760,10 +767,11 @@ public partial class AuthenticationService : IAuthenticationService
                 message = ErrorMessage.EmailExist;
             }
         }
+
         return accountExisted;
     }
 
-    public async Task<User?> GetUserByEmailOrPhoneNumber(string email, string phoneNumber)
+    private async Task<User?> GetUserByEmailOrPhoneNumber(string email, string phoneNumber)
     {
         var qUserAvailable = _context.Users.Where(p => !p.IsDelete);
 
@@ -797,41 +805,21 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<bool> DeleteAccount(DeleteUserReq request)
+    private async Task<TokenDto> CreateAccessToken(User user)
     {
-        var session = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(session.UserId.ToString());
-        var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
-        if (signinResult == false)
-        {
-            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
-        }
-        user.IsDelete = true;
+        var session = await _sessionService.CreateSessionAsync(user, "");
+        TokenDto response = _tokenService.GenerateAccessToken(session.Id, user);
+        response.Roles = session.Roles;
+        response.SubscriptionKey = _configuration["Ocp-Apim-Subscription-Key"];
 
-        try
+        var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
+        if (refreshToken != null)
         {
-            //Get all post id
-            var postIds = await _userRepository.Connection.QueryAsync<Guid>(GeAllPostsIdByUser, new { UserId = user.Id });
-            var now = DateTime.UtcNow;
-            foreach (var postId in postIds)
-            {
-                await _userRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = now, UserId = user.Id });
-            }
-            user.Email = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.Email}";
-            user.UserName = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.UserName}";
-            user.PhoneNumber = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.PhoneNumber}";
-            await _userManager.UpdateAsync(user);
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            throw new BadRequestException(ErrorCodes.DefaultError, ErrorMessage.DefaultError);
+            response.RefreshToken = refreshToken.RefreshToken;
+            response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
         }
 
-
-        return true;
-
+        return response;
     }
 
     private async Task<string?> GenerateUserName(Guid userId)
@@ -860,6 +848,23 @@ public partial class AuthenticationService : IAuthenticationService
     /// Uniqueness checker
     /// </summary>
     private readonly IUserNameUniquenessChecker _uniquenessChecker;
+
+    private readonly ApplicationUserManager _userManager;
+    private readonly RoleManager<Role> _roleManager;
+    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IRepository<UserRefreshToken> _userRefreshTokenRepository;
+    private readonly ITokenService _tokenService;
+    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<UserOtp> _userOtpRepository;
+    private readonly ISessionService _sessionService;
+    private readonly IUserService _userService;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IEmailSender _sendMailService;
+    private readonly SSOServiceResolver _serviceAccessor;
+    private readonly IOtpService _otpService;
+    private readonly IConfiguration _configuration;
+    private readonly IRepository<SmartLookup> _smartLookupRepository;
+    private readonly IUserWalletService _userWalletService;
 
     #endregion
 }
