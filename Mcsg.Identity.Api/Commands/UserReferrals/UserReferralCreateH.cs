@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Social.Api.Commands;
+namespace Mcsg.Identity.Api.Commands;
 
 using Common.Core.Extensions;
 using Common.Domain;

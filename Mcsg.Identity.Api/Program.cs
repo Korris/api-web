@@ -111,6 +111,14 @@ public class Program
             p.AccessKey = st.Minio.AccessKey;
             p.SecrectKey = st.Minio.SecrectKey;
         });
+
+        // MediatR
+        builder.Services.AddMediatR(p =>
+        {
+            p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiUserReferral();
+        });
         #endregion
 
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));

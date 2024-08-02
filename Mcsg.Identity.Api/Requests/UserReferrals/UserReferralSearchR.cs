@@ -11,21 +11,13 @@
  */
 #endregion
 
-namespace Mcsg.Social.Api.Requests;
+namespace Mcsg.Identity.Api.Requests;
 
 using Common.Core.Requests;
 
 /// <summary>
 /// Request
 /// </summary>
-public class UserReferralCreateR : BaseR
+public class UserReferralSearchR : PagingR
 {
-    #region -- Properties --
-
-    /// <summary>
-    /// Referral code
-    /// </summary>
-    public string? ReferralCode { get; set; }
-
-    #endregion
 }

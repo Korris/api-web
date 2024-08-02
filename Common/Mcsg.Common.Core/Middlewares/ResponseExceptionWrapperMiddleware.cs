@@ -45,7 +45,12 @@ public class ResponseExceptionWrapperMiddleware
                 try
                 {
                     await _next.Invoke(context);
-                    await HandleRequestAsync(context);
+
+                    var isV1 = (context.Request.Path.Value + "").Contains("v1");
+                    if (!isV1)
+                    {
+                        await HandleRequestAsync(context);
+                    }
                 }
                 catch (Exception ex)
                 {

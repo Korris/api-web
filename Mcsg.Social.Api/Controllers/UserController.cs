@@ -102,14 +102,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("add-referral-code"), Authorize]
-    public async Task<IActionResult> AddReferralCode([FromBody] UserReferralCreateR request)
-    {
-        request.Analyze(HttpContext);
-        var response = await _mediator.Send(request);
-        return Ok();
-    }
-
     #endregion
 
     #region -- Fields --

@@ -71,14 +71,6 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("get-report-referral")]
-    public async Task<IActionResult> GetReportReferral([FromQuery] UserReferralSearchR request)
-    {
-        request.Analyze(HttpContext);
-        var response = await _mediator.Send(request);
-        return Ok(response.Data);
-    }
-
     #endregion
 
     #region -- Fields --

@@ -13,7 +13,7 @@
 
 using FluentValidation;
 
-namespace Mcsg.Social.Api.Validators;
+namespace Mcsg.Identity.Api.Validators;
 
 using Requests;
 using static Common.SeedWork.Constants.Validator;

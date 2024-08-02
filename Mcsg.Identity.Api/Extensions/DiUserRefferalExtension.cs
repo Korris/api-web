@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Mcsg.Social.Api.Extensions;
+namespace Mcsg.Identity.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;

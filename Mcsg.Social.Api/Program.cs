@@ -146,7 +146,6 @@ public class Program
 
             p.AddDiPost();
             p.AddDiPostFavorite();
-            p.AddDiUserReferral();
         });
         #endregion
 

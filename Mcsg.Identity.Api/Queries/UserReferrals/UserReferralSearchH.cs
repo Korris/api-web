@@ -14,16 +14,16 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Social.Api.Queries;
+namespace Mcsg.Identity.Api.Queries;
 
 using Commands;
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Filters;
 using Interfaces;
-using Mcsg.Common.Domain.Entities;
 using Requests;
 
 /// <summary>
@@ -68,19 +68,19 @@ public class UserReferralSearchH : BaseSettingH, IRequestHandler<UserReferralSea
                 if (ft.FromDate != null && ft.ToDate != null)
                 {
                     var tz = request.TimezoneOffset;
-                    var startOfDay = ft.FromDate.Value.StartOfDay();
-                    var endOfDay = ft.ToDate.Value.StartOfDay();
+                    var fromDate = ft.FromDate.Value.StartOfDay();
+                    var toDate = ft.ToDate.Value.EndOfDay();
 
-                    var startOfDayUtc = startOfDay.AddMinutes(tz);
-                    var endOfDayUtc = endOfDay.AddMinutes(tz);
+                    fromDate = fromDate.AddMinutes(tz);
+                    toDate = toDate.AddMinutes(tz);
 
                     if (ft.FromDate != null)
                     {
-                        q = q.Where(p => startOfDayUtc <= p.CreatedOn);
+                        q = q.Where(p => fromDate <= p.CreatedOn);
                     }
                     if (ft.ToDate != null)
                     {
-                        q = q.Where(p => p.CreatedOn <= endOfDayUtc);
+                        q = q.Where(p => p.CreatedOn <= toDate);
                     }
                 }
             }
