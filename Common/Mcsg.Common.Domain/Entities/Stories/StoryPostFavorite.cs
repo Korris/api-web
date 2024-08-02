@@ -1,9 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
-
-public class StoryPostFavorite : AuditableEntity
+public partial class StoryPostFavorite : BasePostFavorite
 {
-    public Guid PostId { get; set; }
-    public Guid UserId { get; set; }
 }

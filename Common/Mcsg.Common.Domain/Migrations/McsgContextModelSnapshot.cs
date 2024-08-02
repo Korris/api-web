@@ -282,6 +282,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
                     b.Property<string>("GifId")
                         .HasColumnType("text");
 
@@ -718,6 +721,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
 
                     b.Property<string>("GifId")
                         .HasColumnType("text");
@@ -1522,6 +1528,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
                     b.Property<string>("GifId")
                         .HasColumnType("text");
 
@@ -1956,6 +1965,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
                     b.Property<string>("GifId")
                         .HasColumnType("text");
 
@@ -2291,6 +2303,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
 
                     b.Property<string>("GifId")
                         .HasColumnType("text");
@@ -2728,6 +2743,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
 
                     b.Property<string>("GifId")
                         .HasColumnType("text");

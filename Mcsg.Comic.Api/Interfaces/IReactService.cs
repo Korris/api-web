@@ -6,7 +6,7 @@ using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
-public interface IReactService<T> where T : ReactionBase, new()
+public interface IReactService<T> where T : BaseReaction, new()
 {
     Task<bool> AddReaction(Guid targetId, ReactionType type);
     Task<bool> RemoveReaction(Guid targetId);

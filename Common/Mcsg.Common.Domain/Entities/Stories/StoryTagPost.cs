@@ -1,9 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
-
-public class StoryTagPost : AuditableEntity
+public class StoryTagPost : BaseTagPost
 {
-    public Guid TagId { get; set; }
-    public Guid PostId { get; set; }
 }

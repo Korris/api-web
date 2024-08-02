@@ -1,8 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-using SeedWork;
-
-public class ComicFollowedPost : AuditableEntity
+public class ComicFollowedPost : BaseFollowedPost
 {
-    public Guid PostId { get; set; }
 }

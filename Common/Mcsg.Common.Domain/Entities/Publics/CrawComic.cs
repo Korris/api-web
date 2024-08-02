@@ -18,7 +18,7 @@ public class CrawComic : AuditableEntity
     public int TotalChapter { get; set; }
     public string? Avatar { get; set; }
     public string? ExternalCode { get; set; }
-    public ComicExternalResource ExternalResource { get; set; }
+    public ExternalResource ExternalResource { get; set; }
     public string? ExternalLastedUpdate { get; set; }
     public CrawStatus CrawStatus { get; set; }
 }

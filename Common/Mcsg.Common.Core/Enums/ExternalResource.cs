@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// Comic external resource
+/// External resource
 /// </summary>
-public enum ComicExternalResource
+public enum ExternalResource
 {
     /// <summary>
     /// None

@@ -15,7 +15,7 @@ using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 
-public partial class ReactService<T> : IReactService<T> where T : ReactionBase, new()
+public partial class ReactService<T> : IReactService<T> where T : BaseReaction, new()
 {
     private readonly IRepository<T> _reactRepository;
     private readonly ICurrentUserService _currentUserService;
