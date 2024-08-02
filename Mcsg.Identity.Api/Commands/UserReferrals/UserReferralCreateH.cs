@@ -65,8 +65,8 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
             throw new BadRequestException(E116, M116);
         }
 
-        var hasUserSocial = await _context.UserSocialAvailable.AnyAsync(p => p.Id == request.UserId, cancellationToken);
-        if (!hasUserSocial)
+        var isUserSocial = await _context.UserSocialAvailable.AnyAsync(p => p.UserId == request.UserId, cancellationToken);
+        if (!isUserSocial)
         {
             throw new BadRequestException(E117, M117);
         }
