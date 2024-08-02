@@ -752,6 +752,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserFollows",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -3057,11 +3058,13 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFollows_UserFollowerId",
+                schema: "identity",
                 table: "UserFollows",
                 column: "UserFollowerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFollows_UserFollowingId",
+                schema: "identity",
                 table: "UserFollows",
                 column: "UserFollowingId");
 
@@ -3287,7 +3290,8 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "UserExclusiveSubPosts");
 
             migrationBuilder.DropTable(
-                name: "UserFollows");
+                name: "UserFollows",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserLogins",

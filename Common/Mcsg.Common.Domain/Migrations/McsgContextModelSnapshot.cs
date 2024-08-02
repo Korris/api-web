@@ -3267,7 +3267,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("UserFollowingId");
 
-                    b.ToTable("UserFollows", (string)null);
+                    b.ToTable("UserFollows", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserNameHistory", b =>
