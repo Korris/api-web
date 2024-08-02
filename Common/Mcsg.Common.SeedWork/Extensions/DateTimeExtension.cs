@@ -32,5 +32,25 @@ public static class DateTimeExtension
         return (long)timeSpan.TotalSeconds;
     }
 
+    /// <summary>
+    /// Start of day
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <returns>Return first day at 00:00:00</returns>
+    public static DateTime StartOfDay(this DateTime d)
+    {
+        return d.Date;
+    }
+
+    /// <summary>
+    /// End of day
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <returns>Return end day at 23:59:59</returns>
+    public static DateTime EndOfDay(this DateTime d)
+    {
+        return d.Date.AddDays(1).AddSeconds(-1);
+    }
+
     #endregion
 }

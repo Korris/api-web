@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
@@ -14,8 +15,9 @@ public class UserController : ControllerBase
 {
     #region -- Methods --
 
-    public UserController(IUserService userService)
+    public UserController(IMediator mediator, IUserService userService)
     {
+        _mediator = mediator;
         _userService = userService;
     }
 
@@ -100,9 +102,22 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("add-referral-code"), Authorize]
+    public async Task<IActionResult> AddReferralCode([FromBody] UserReferralCreateR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok();
+    }
+
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly IUserService _userService;
 

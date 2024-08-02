@@ -37,5 +37,10 @@ public class TokenDto
     /// </summary>
     public string Roles { get; set; } = default!;
 
+    /// <summary>
+    /// Check user is register by social account
+    /// </summary>
+    public bool IsFirstTimeLoginBySocial { get; set; }
+
     #endregion
 }

@@ -55,12 +55,12 @@ partial class UserReferral
         return new T
         {
             Id = Id,
-            UserReferrer = new UserDto
+            UserReferree = new UserDto
             {
-                Id = UserReferrerId,
-                ProfileName = UserReferrer?.ProfileName,
-                UserAvatar = mediaApiUrl.ToPublicImageUrl(UserReferrer?.Avatar + ""),
-                UserName = UserReferrer?.UserName
+                Id = UserReferee.Id,
+                ProfileName = UserReferee?.ProfileName,
+                UserAvatar = mediaApiUrl.ToPublicImageUrl(UserReferee?.Avatar + ""),
+                UserName = UserReferee?.UserName
             },
             CreatedOn = CreatedOn
         };
@@ -85,14 +85,14 @@ partial class UserReferral
     /// <summary>
     /// Base
     /// </summary>
-    public class BaseDto : DevNameDto
+    public class BaseDto : IdDto
     {
         #region -- Properties --
 
         /// <summary>
-        /// UserReferrer
+        /// UserReferree
         /// </summary>
-        public UserDto? UserReferrer { get; set; }
+        public UserDto? UserReferree { get; set; }
 
         /// <summary>
         /// CreatedOn

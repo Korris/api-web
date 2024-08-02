@@ -102,6 +102,20 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(code, message);
         }
 
+        var userReferrerId = Guid.Empty;
+        if (!string.IsNullOrWhiteSpace(request.ReferralCode))
+        {
+            userReferrerId = await _userManager.Users.AsNoTracking()
+                .Where(p => p.ReferralCode == request.ReferralCode)
+                .Select(p => p.Id)
+                .FirstOrDefaultAsync();
+            if (userReferrerId == Guid.Empty)
+            {
+                var t = vr.Errors.ToValue();
+                throw new BadRequestException(E116, M116);
+            }
+        }
+
         var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone);
         if (user == null)
         {
@@ -125,6 +139,10 @@ public partial class AuthenticationService : IAuthenticationService
                 var createError = createResult.Errors.FirstOrDefault();
                 throw new BadRequestException(createError?.Code, createError?.Description);
             }
+
+            var ettUserReferral = UserReferral.Create(userReferrerId, user.Id);
+            await _context.UserReferrals.AddAsync(ettUserReferral);
+            await _context.SaveChangesAsync(default);
 
             //Init smart lookup for user
             await _smartLookupRepository.InsertAsync(new SmartLookup
@@ -611,6 +629,7 @@ public partial class AuthenticationService : IAuthenticationService
                     user.LastLoginDate = DateTime.UtcNow;
                 }
                 await _userRepository.UpdateAsync(user);
+                response.IsFirstTimeLoginBySocial = true;
                 return response;
             }
         }

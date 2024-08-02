@@ -134,6 +134,21 @@ public static class Message
     /// </summary>
     public const string M115 = "User spam report";
 
+    /// <summary>
+    /// User enter referral code not existed
+    /// </summary>
+    public const string M116 = "Referral code is not found";
+
+    /// <summary>
+    /// Referral code only for social register
+    /// </summary>
+    public const string M117 = "Referral code only for social register";
+
+    /// <summary>
+    /// User already is Referee
+    /// </summary>
+    public const string M118 = "You have entered the referral code.";
+
     #endregion
 
     #region -- M2xx --

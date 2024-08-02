@@ -64,6 +64,21 @@ public static class Error
     /// </summary>
     public const string E115 = "E115";
 
+    /// <summary>
+    /// Referral code is not existed
+    /// </summary>
+    public const string E116 = "E116";
+
+    /// <summary>
+    /// Referral only for social register account
+    /// </summary>
+    public const string E117 = "E117";
+
+    /// <summary>
+    /// User already is Referee
+    /// </summary>
+    public const string E118 = "E118";
+
     #endregion
 
     #region -- E2xx --

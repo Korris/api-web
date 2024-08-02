@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
@@ -14,8 +15,9 @@ public class ProfileController : ControllerBase
 {
     #region -- Methods --
 
-    public ProfileController(IUserService userService, IPostService postService, IFeedService feedService)
+    public ProfileController(IMediator mediator, IUserService userService, IPostService postService, IFeedService feedService)
     {
+        _mediator = mediator;
         _userService = userService;
         _postService = postService;
         _feedService = feedService;
@@ -69,9 +71,22 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("get-report-referral")]
+    public async Task<IActionResult> GetReportReferral([FromQuery] UserReferralSearchR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
+    }
+
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly IUserService _userService;
 
