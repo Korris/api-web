@@ -55,7 +55,7 @@ partial class UserReferral
         return new T
         {
             Id = Id,
-            UserReferree = new UserDto
+            UserReferee = new UserDto
             {
                 Id = UserReferee.Id,
                 ProfileName = UserReferee?.ProfileName,
@@ -90,9 +90,9 @@ partial class UserReferral
         #region -- Properties --
 
         /// <summary>
-        /// UserReferree
+        /// UserReferee
         /// </summary>
-        public UserDto? UserReferree { get; set; }
+        public UserDto? UserReferee { get; set; }
 
         /// <summary>
         /// CreatedOn
