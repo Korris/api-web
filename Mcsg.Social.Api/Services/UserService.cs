@@ -281,6 +281,7 @@ public partial class UserService : IUserService
             NumberOfFollowing = followingCount,
             NumberOfFollowers = followersCount,
             IsWalletShowing = user.IsWalletShowing,
+            ReferralCode = user.ReferralCode,
         };
     }
 
