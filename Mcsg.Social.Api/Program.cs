@@ -144,7 +144,6 @@ public class Program
         {
             p.RegisterServicesFromAssembly(me.Assembly);
 
-            p.AddDiPatch();
             p.AddDiPost();
             p.AddDiPostFavorite();
         });

@@ -43,7 +43,6 @@ public static class DiPatchExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddPatchQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
-        //TODO
     }
 
     #endregion
