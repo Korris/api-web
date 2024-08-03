@@ -24,4 +24,5 @@ public class BasicCommentResponse
     public string GifId { get; set; }
     public Guid PostId { get; set; }
     public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
+    public string? CustomNote { get; set; }
 }

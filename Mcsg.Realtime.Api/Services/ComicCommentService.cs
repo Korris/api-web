@@ -33,6 +33,7 @@ namespace Mcsg.Realtime.Api.Services
         private readonly INotificationService _notificationService;
         private readonly IMentionService _mentionService;
         private readonly ISmartCountService _smartCountService;
+        private readonly IBusinessText businessBodyText;
         private readonly IMapper _mapper;
         private IConfiguration _configuration;
         private readonly IMcsgContext _context;
@@ -48,6 +49,7 @@ namespace Mcsg.Realtime.Api.Services
             INotificationService notificationService,
             IMentionService mentionService,
             ISmartCountService smartCountService,
+            IBusinessText businessBodyText,
             IMapper mapper,
             ISetting setting,
             IConfiguration configuration,
@@ -64,6 +66,7 @@ namespace Mcsg.Realtime.Api.Services
             _notificationService = notificationService;
             _mentionService = mentionService;
             _smartCountService = smartCountService;
+            _businessText = businessBodyText;
             _mapper = mapper;
             _setting = setting;
             _configuration = configuration;
@@ -158,6 +161,8 @@ namespace Mcsg.Realtime.Api.Services
             }
 
             response.UserAvatar = userAvatar;
+            response.CommentText = await _businessText.Process(req.CommentText);
+            response.CustomNote = req.CustomNote;
 
             return response;
         }
@@ -216,6 +221,7 @@ namespace Mcsg.Realtime.Api.Services
 
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
+            response.CustomNote = req.CustomNote;
 
             return response;
         }
@@ -254,7 +260,8 @@ namespace Mcsg.Realtime.Api.Services
                 PostId = req.PostId,
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
-                GifId = req.GifId
+                GifId = req.GifId,
+                CustomNote = req.CustomNote
             };
 
             await _postCommentRepository.InsertAsync(comment);
@@ -288,7 +295,8 @@ namespace Mcsg.Realtime.Api.Services
                 PostId = req.PostId,
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
-                GifId = req.GifId
+                GifId = req.GifId,
+                CustomNote = req.CustomNote
             };
             await _subPostCommentRepository.InsertAsync(comment);
             //PING COUNT
@@ -331,6 +339,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
+            comment.CustomNote = req.CustomNote;
             await _postCommentRepository.UpdateAsync(comment);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
@@ -367,6 +376,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
+            comment.CustomNote = req.CustomNote;
             await _subPostCommentRepository.UpdateAsync(comment);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
@@ -474,6 +484,11 @@ namespace Mcsg.Realtime.Api.Services
         /// Setting
         /// </summary>
         private readonly ISetting _setting;
+
+        /// <summary>
+        /// Business text
+        /// </summary>
+        private readonly IBusinessText _businessText;
 
         #endregion
     }

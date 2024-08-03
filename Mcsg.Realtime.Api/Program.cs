@@ -6,6 +6,7 @@ namespace Mcsg.Realtime.Api;
 
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Hubs;
@@ -88,6 +89,9 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // Business
+        builder.Services.AddScoped<IBusinessText, BusinessText>();
 
         // Storage
         builder.Services.AddStorage(p =>

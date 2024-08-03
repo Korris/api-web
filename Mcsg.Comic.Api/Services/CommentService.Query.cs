@@ -25,6 +25,7 @@
 													pc.""CreatedBy"" as AuthorId,
 													pc.""Id"",
 													pc.""Body"",
+                                                    pc.""CustomNote"",
 													pc.""CreatedOn"",
 													pc.""GifId"",
 													pc.""PostId"",
@@ -48,12 +49,13 @@
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
 												AND pc.""IsDelete"" = false
-												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												UNION
 												SELECT 
 													spc.""CreatedBy"" as AuthorId,
 													spc.""Id"",
 													spc.""Body"",
+                                                    spc.""CustomNote"",
 													spc.""CreatedOn"",
 													spc.""GifId"",
 													spc.""PostId"",
@@ -77,7 +79,7 @@
 												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""comic"".""ComicPosts""   WHERE ""HashId"" =@HashId) 
 												AND spc.""ParentId"" is null
 												AND spc.""IsDelete"" = false
-												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												ORDER BY reaction_count desc,
 												""CreatedOn"" desc
 												OFFSET @Offset

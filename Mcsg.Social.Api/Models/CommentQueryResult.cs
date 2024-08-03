@@ -24,4 +24,5 @@ public class CommentQueryResult
     public string GifId { get; set; } = string.Empty;
     public string ReplyGifId { get; set; } = string.Empty;
     public int TotalRecord { get; set; } = 0;
+    public string CustomNote { get; set; }
 }

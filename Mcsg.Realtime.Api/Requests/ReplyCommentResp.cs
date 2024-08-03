@@ -19,6 +19,7 @@
         public Guid? QuoteId { get; set; }
         public string AuthorName { get; set; }
         public string UserAvatar { get; set; }
+        public string? CustomNote { get; set; }
         public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
     }
 }

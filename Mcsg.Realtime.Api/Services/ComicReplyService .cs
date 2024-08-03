@@ -128,6 +128,8 @@ namespace Mcsg.Realtime.Api.Services
                 await _notificationService.AddReplyNotification(commentNotiRequest);
             }
 
+            response.CustomNote = req.CustomNote;
+
             return response;
         }
         public async Task<ReplyCommentResp> UpdateReplyComment(UpdateReplyCommentReq req)
@@ -187,6 +189,7 @@ namespace Mcsg.Realtime.Api.Services
 
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
+            response.CustomNote = req.CustomNote;
 
             return response;
         }
@@ -228,6 +231,7 @@ namespace Mcsg.Realtime.Api.Services
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId,
                 QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
+                CustomNote = req.CustomNote
             };
 
             await _postCommentRepository.InsertAsync(comment);
@@ -264,6 +268,7 @@ namespace Mcsg.Realtime.Api.Services
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId,
+                CustomNote = req.CustomNote
             };
 
             await _subPostCommentRepository.InsertAsync(comment);
@@ -307,6 +312,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
+            comment.CustomNote = req.CustomNote;
             await _postCommentRepository.UpdateAsync(comment);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostCommentReply, author, req.Mentions, post);
@@ -345,6 +351,7 @@ namespace Mcsg.Realtime.Api.Services
             comment.ModifiedOn = DateTime.UtcNow;
             comment.ResourceId = resource?.Id ?? null;
             comment.GifId = req.GifId;
+            comment.CustomNote = req.CustomNote;
             await _subPostCommentRepository.UpdateAsync(comment);
 
             await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostCommentReply, author, req.Mentions, post);

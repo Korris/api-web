@@ -12,5 +12,6 @@ public class ReplyCommentReq
     public string ResourceHashId { get; set; }
     public string GifId { get; set; }
     public Guid? QuoteId { get; set; }
+    public string? CustomNote { get; set; }
     public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
 }
