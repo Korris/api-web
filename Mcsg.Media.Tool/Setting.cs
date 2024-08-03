@@ -42,7 +42,7 @@ public class Setting : SettingBase, ISetting
         AppName = "Mcsg.Media.Tool";
         AppVersion = "1.0.0";
         PoolSize = 5;
-        DefaultConnection = "Server={DbServer};Database={DbName};Port={DbPort};User Id={DbUser};Password={DbPassword};";
+        DefaultConnection = "Server={DbServer};Database={DbName};Port={DbPort};User Id={DbUser};Password={DbPassword};MaxPoolSize=100;MinPoolSize=10;ConnectionLifetime=300;";
     }
 
     #endregion
