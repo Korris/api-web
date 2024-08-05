@@ -22,13 +22,9 @@ using Extensions;
 /// <summary>
 /// Security Advanced Encryption Standard
 /// </summary>
-/// <remarks>
-/// Initialize
-/// </remarks>
-/// <param name="passphrase">Passphrase</param>
-public class SecurityAes(string passphrase)
+public class SecurityAes : ISecurityAes
 {
-    #region -- Methods --
+    #region -- Implements --
 
     /// <summary>
     /// Encrypt text
@@ -36,7 +32,7 @@ public class SecurityAes(string passphrase)
     /// <param name="plainText">Plain text</param>
     /// <param name="urlEncode">URL encode</param>
     /// <returns>Return the cipher text</returns>
-    public string EncryptText(string plainText, bool urlEncode = false)
+    public string? EncryptText(string? plainText, bool urlEncode = false)
     {
         return EncryptText(plainText, urlEncode, _passphrase);
     }
@@ -47,9 +43,29 @@ public class SecurityAes(string passphrase)
     /// <param name="cipherText">Cipher text</param>
     /// <param name="urlDecode">URL decode</param>
     /// <returns>Return the plain text</returns>
-    public string DecryptText(string cipherText, bool urlDecode = false)
+    public string? DecryptText(string? cipherText, bool urlDecode = false)
     {
-        return DecryptText(cipherText, urlDecode, _passphrase);
+        try
+        {
+            return DecryptText(cipherText, urlDecode, _passphrase);
+        }
+        catch
+        {
+            return cipherText;
+        }
+    }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="passphrase">Passphrase</param>
+    public SecurityAes(string passphrase)
+    {
+        _passphrase = passphrase;
     }
 
     /// <summary>
@@ -59,8 +75,13 @@ public class SecurityAes(string passphrase)
     /// <param name="urlEncode">URL encode</param>
     /// <param name="passphrase">Passphrase</param>
     /// <returns>Return the cipher text</returns>
-    public static string EncryptText(string plainText, bool urlEncode = false, string passphrase = Passphrase)
+    public static string? EncryptText(string? plainText, bool urlEncode = false, string passphrase = Passphrase)
     {
+        if (string.IsNullOrEmpty(plainText))
+        {
+            return plainText;
+        }
+
         var salt = Encoding.UTF8.GetBytes(passphrase.Length.ToString());
 
         using var aesAlg = Aes.Create();
@@ -88,8 +109,13 @@ public class SecurityAes(string passphrase)
     /// <param name="urlDecode">URL decode</param>
     /// <param name="passphrase">Passphrase</param>
     /// <returns>Return the plain text</returns>
-    public static string DecryptText(string cipherText, bool urlDecode = false, string passphrase = Passphrase)
+    public static string? DecryptText(string? cipherText, bool urlDecode = false, string passphrase = Passphrase)
     {
+        if (string.IsNullOrEmpty(cipherText))
+        {
+            return cipherText;
+        }
+
         if (urlDecode)
         {
             cipherText = HttpUtility.UrlDecode(cipherText);
@@ -214,7 +240,7 @@ public class SecurityAes(string passphrase)
     /// <summary>
     /// Passphrase
     /// </summary>
-    private readonly string _passphrase = passphrase;
+    private readonly string _passphrase;
 
     #endregion
 

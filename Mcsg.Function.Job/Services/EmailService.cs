@@ -7,6 +7,7 @@ namespace Mcsg.Function.Job.Services;
 using Common.Core.Enums;
 using Common.Core.Interfaces;
 using Common.Domain.Entities;
+using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Constants;
 using Extensions;
@@ -15,18 +16,39 @@ using Lib.Common.Models;
 
 public class EmailService : IEmailService
 {
-    public EmailService(IEmailSender emailSender, ISetting setting, IStorageClient sc)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="emailSender"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="aes"></param>
+    public EmailService(IEmailSender emailSender, ISetting setting, IStorageClient sc, ISecurityAes aes)
     {
         _emailSender = emailSender;
         _setting = setting;
         _sc = sc;
+        _aes = aes;
     }
 
     public async Task SendEmailAsync(Job job)
     {
+        if (job.Data == null)
+        {
+            return;
+        }
+
         var email = JsonConvert.DeserializeObject<Email>(job.Data);
-        _ = new StringBuilder();
+
+        if (email == null)
+        {
+            return;
+        }
+
         StringBuilder template;
+
+        email.To = _aes.DecryptText(email.To) + "";
+
         switch (job.JobType)
         {
             case JobType.VerifyByEmailOtp:
@@ -40,21 +62,25 @@ public class EmailService : IEmailService
                 email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
                 email.Body = template.RenderEmailOtpBody(email);
                 break;
+
             case JobType.ConfirmEmailOtp:
                 template = await DownloadEmailTemplateAsync("common-email-otp.html");
                 email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
                 email.Body = template.RenderEmailOtpBody(email);
                 break;
+
             case JobType.WithDrawNoti:
                 template = await DownloadEmailTemplateAsync("withdraw-noti.html");
                 email.Subject = _setting.Information + FunctionConstant.WithdrawEmailTitle;
                 email.Body = template.RenderEmailNotiAction(email);
                 break;
+
             case JobType.DepositNoti:
                 template = await DownloadEmailTemplateAsync("deposit-noti.html");
                 email.Subject = _setting.Information + FunctionConstant.DepositEmailTitle;
                 email.Body = template.RenderEmailNotiAction(email);
                 break;
+
             default:
                 throw new NotSupportedException();
         }
@@ -85,6 +111,11 @@ public class EmailService : IEmailService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// SecurityAes
+    /// </summary>
+    private readonly ISecurityAes _aes;
 
     #endregion
 }

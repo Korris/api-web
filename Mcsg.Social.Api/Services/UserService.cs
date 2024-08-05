@@ -10,6 +10,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Constants;
@@ -51,6 +52,7 @@ public partial class UserService : IUserService
         _context = context;
         _setting = setting;
         _sc = sc;
+        _aes = new SecurityAes(_setting.EncryptKey);
     }
 
     public async Task<UserProfileResponse> GetCurrentUserAsync()
@@ -255,13 +257,15 @@ public partial class UserService : IUserService
         {
             return new UserProfileResponse();
         }
+
         var followingCount = await GetFollowingCountAsync(user.Id);
         var followersCount = await GetFollowerCountAsync(user.Id);
+
         return new UserProfileResponse
         {
             Id = user.Id,
             AvatarUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.Avatar),
-            Email = user.Email,
+            Email = _aes.DecryptText(user.Email) + "",
             JoinDate = user.CreatedOn,
             ProfileName = user.ProfileName,
             UserName = user.UserName,
@@ -292,13 +296,15 @@ public partial class UserService : IUserService
         {
             return new UserProfileResponse();
         }
+
         var followingCount = await GetFollowingCountAsync(user.Id);
         var followersCount = await GetFollowerCountAsync(user.Id);
+
         return new UserProfileResponse
         {
             Id = user.Id,
             AvatarUrl = _setting.Minio.MediaApiUrl.ToPublicImageUrl(user.Avatar),
-            Email = user.Email,
+            Email = _aes.DecryptText(user.Email) + "",
             JoinDate = user.CreatedOn,
             ProfileName = user.ProfileName,
             UserName = user.UserName,
@@ -755,7 +761,6 @@ public partial class UserService : IUserService
         return true;
     }
 
-
     public async Task<bool> UnFollowUserAsync(Guid userId)
     {
         var ss = _currentUserService.Session;
@@ -828,6 +833,11 @@ public partial class UserService : IUserService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// SecurityAes
+    /// </summary>
+    private readonly ISecurityAes _aes;
 
     #endregion
 }

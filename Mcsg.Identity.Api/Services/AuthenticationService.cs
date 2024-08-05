@@ -9,6 +9,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
@@ -53,6 +54,7 @@ public partial class AuthenticationService : IAuthenticationService
         _context = context;
         _setting = setting;
         _uniquenessChecker = uniquenessChecker;
+        _aes = new SecurityAes(_setting.EncryptKey);
 
         _userManager = userManager;
         _userRepository = unitOfWork.GetRepository<User>();
@@ -102,8 +104,8 @@ public partial class AuthenticationService : IAuthenticationService
             user = new User
             {
                 Id = Guid.NewGuid(),
-                Email = request.Email ?? "",
-                PhoneNumber = request.Phone ?? "",
+                Email = _aes.EncryptText(request.Email),
+                PhoneNumber = _aes.EncryptText(request.Phone),
                 EmailConfirmed = false,
                 PhoneNumberConfirmed = false,
                 ReferralCode = _userService.GenerateReferralCode()
@@ -533,7 +535,7 @@ public partial class AuthenticationService : IAuthenticationService
                 //  Case 2 : Can GET email in social token => register
                 var user = new User
                 {
-                    Email = socialEmail,
+                    Email = _aes.EncryptText(socialEmail),
                     PhoneNumber = string.Empty,
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = false,
@@ -565,12 +567,12 @@ public partial class AuthenticationService : IAuthenticationService
                 //setup wallet
                 await _userWalletService.InitUserWalletAsync(user);
 
-                var socialInfo = new UserSocial()
+                var socialInfo = new UserSocial
                 {
                     UserId = user.Id,
                     SocialId = socialId,
                     Type = socialType,
-                    Email = socialEmail,
+                    Email = _aes.EncryptText(socialEmail),
                     FirstName = verifyTokenResponse.Profile.FirstName,
                     LastName = verifyTokenResponse.Profile.LastName,
                     IsRegisterBySocial = true,
@@ -733,28 +735,31 @@ public partial class AuthenticationService : IAuthenticationService
     {
         var res = false;
 
+        var encryptedEmail = _aes.EncryptText(email);
+        var encryptedPhone = _aes.EncryptText(phone);
+
         message = string.Empty;
         code = string.Empty;
 
         var qUser = _context.Users.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(phone))
-        {
-            if (qUser.Any(p => p.PhoneNumber == phone && p.PhoneNumberConfirmed))
-            {
-                res = true;
-                code = ErrorCodes.DuplicateUserPhone;
-                message = ErrorMessage.MobileNumberExist;
-            }
-        }
-
         if (!string.IsNullOrWhiteSpace(email))
         {
-            if (qUser.Any(p => p.Email == email && p.EmailConfirmed))
+            if (qUser.Any(p => (p.Email == encryptedEmail || p.Email == email) && p.EmailConfirmed))
             {
                 res = true;
                 code = ErrorCodes.DuplicateUser;
                 message = ErrorMessage.EmailExist;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            if (qUser.Any(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone) && p.PhoneNumberConfirmed))
+            {
+                res = true;
+                code = ErrorCodes.DuplicateUserPhone;
+                message = ErrorMessage.MobileNumberExist;
             }
         }
 
@@ -763,6 +768,9 @@ public partial class AuthenticationService : IAuthenticationService
 
     private async Task<User?> GetUserByEmailOrPhone(string? email, string? phone, bool forRegister)
     {
+        var encryptedEmail = _aes.EncryptText(email);
+        var encryptedPhone = _aes.EncryptText(phone);
+
         var qUser = _context.UserAvailable.AsNoTracking();
 
         User? user = null;
@@ -773,7 +781,7 @@ public partial class AuthenticationService : IAuthenticationService
             // Find by UserName
             user = await (from a in qUser
                           join b in qUserNameHistory on a.Id equals b.UserId
-                          where !string.IsNullOrEmpty(b.UserName) && b.UserName == email
+                          where !string.IsNullOrEmpty(b.UserName) && (b.UserName == encryptedEmail || b.UserName == email)
                           select a
                           ).FirstOrDefaultAsync();
         }
@@ -781,22 +789,25 @@ public partial class AuthenticationService : IAuthenticationService
         // Find by Email or PhoneNumber
         if (user == null)
         {
-            user = await qUser.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && p.Email == email)
-                || (!string.IsNullOrEmpty(p.PhoneNumber) && p.PhoneNumber == phone));
+            user = await qUser.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.Email == email))
+                || (!string.IsNullOrEmpty(p.PhoneNumber) && (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone)));
         }
 
         return user;
     }
 
-    private async Task<User> GetUserByEmailOrPhone(UserOtpType type, string email, string phoneNumber)
+    private async Task<User?> GetUserByEmailOrPhone(UserOtpType type, string? email, string? phone)
     {
+        var encryptedEmail = _aes.EncryptText(email);
+        var encryptedPhone = _aes.EncryptText(phone);
+
         if (type == UserOtpType.VerifyEmail || type == UserOtpType.ResetByEmail)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(x => !string.IsNullOrEmpty(x.Email) && x.Email == email && !x.IsDelete);
+            return await _userManager.Users.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.Email == email));
         }
         else
         {
-            return await _userManager.Users.FirstOrDefaultAsync(x => !string.IsNullOrEmpty(x.PhoneNumber) && x.PhoneNumber == phoneNumber && !x.IsDelete);
+            return await _userManager.Users.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.PhoneNumber) && (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone));
         }
     }
 
@@ -842,6 +853,11 @@ public partial class AuthenticationService : IAuthenticationService
     /// Uniqueness checker
     /// </summary>
     private readonly IUserNameUniquenessChecker _uniquenessChecker;
+
+    /// <summary>
+    /// SecurityAes
+    /// </summary>
+    private readonly ISecurityAes _aes;
 
     private readonly ApplicationUserManager _userManager;
     private readonly ITokenService _tokenService;

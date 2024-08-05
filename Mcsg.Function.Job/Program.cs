@@ -9,6 +9,7 @@ using System.Text;
 namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
+using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -90,6 +91,9 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // SecurityAes
+        builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
