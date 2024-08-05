@@ -96,7 +96,7 @@ public partial class AuthenticationService : IAuthenticationService
             }
         }
 
-        var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone);
+        var user = await GetUserByEmailOrPhone(request.Email, request.Phone, true);
         if (user == null)
         {
             user = new User
@@ -184,7 +184,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(M000, t);
         }
 
-        var user = await GetUserByEmailOrPhoneNumber(request.Email, request.Phone) ?? throw new NotFoundException(E203, M203);
+        var user = await GetUserByEmailOrPhone(request.Email, request.Phone, false) ?? throw new NotFoundException(E203, M203);
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
         {
@@ -194,6 +194,7 @@ public partial class AuthenticationService : IAuthenticationService
         {
             throw new ForbiddenAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
         }
+
         if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
         {
             if (user.Status == UserStatus.Suspended)
@@ -205,7 +206,6 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
             }
-
         }
 
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
@@ -729,52 +729,60 @@ public partial class AuthenticationService : IAuthenticationService
         return true;
     }
 
-    private bool IsAccountExisted(string email, string phoneNumber, out string code, out string message)
+    private bool IsAccountExisted(string? email, string? phone, out string code, out string message)
     {
+        var res = false;
+
         message = string.Empty;
         code = string.Empty;
-        bool accountExisted = false;
 
-        if (!string.IsNullOrEmpty(phoneNumber))
+        var qUser = _context.Users.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(phone))
         {
-            if (_userManager.Users.Any(x => x.PhoneNumber == phoneNumber && x.PhoneNumberConfirmed && !x.IsDelete))
+            if (qUser.Any(p => p.PhoneNumber == phone && p.PhoneNumberConfirmed))
             {
-                accountExisted = true;
+                res = true;
                 code = ErrorCodes.DuplicateUserPhone;
                 message = ErrorMessage.MobileNumberExist;
             }
         }
 
-        if (!string.IsNullOrEmpty(email))
+        if (!string.IsNullOrWhiteSpace(email))
         {
-            if (_userManager.Users.Any(x => x.Email == email && x.EmailConfirmed && !x.IsDelete))
+            if (qUser.Any(p => p.Email == email && p.EmailConfirmed))
             {
-                accountExisted = true;
+                res = true;
                 code = ErrorCodes.DuplicateUser;
                 message = ErrorMessage.EmailExist;
             }
         }
 
-        return accountExisted;
+        return res;
     }
 
-    private async Task<User?> GetUserByEmailOrPhoneNumber(string email, string phoneNumber)
+    private async Task<User?> GetUserByEmailOrPhone(string? email, string? phone, bool forRegister)
     {
-        var qUserAvailable = _context.Users.Where(p => !p.IsDelete);
+        var qUser = _context.UserAvailable.AsNoTracking();
 
-        // Find by UserName
-        var qUser = from a in qUserAvailable
-                    join b in _context.UserNameHistories on a.Id equals b.UserId
-                    where !string.IsNullOrEmpty(b.UserName) && b.UserName == email
-                    select a;
+        User? user = null;
+        if (forRegister)
+        {
+            var qUserNameHistory = _context.UserNameHistoryAvailable.AsNoTracking();
 
-        var user = await qUser.FirstOrDefaultAsync();
+            // Find by UserName
+            user = await (from a in qUser
+                          join b in qUserNameHistory on a.Id equals b.UserId
+                          where !string.IsNullOrEmpty(b.UserName) && b.UserName == email
+                          select a
+                          ).FirstOrDefaultAsync();
+        }
 
         // Find by Email or PhoneNumber
         if (user == null)
         {
-            user = await qUserAvailable.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && p.Email == email)
-                || (!string.IsNullOrEmpty(p.PhoneNumber) && p.PhoneNumber == phoneNumber));
+            user = await qUser.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && p.Email == email)
+                || (!string.IsNullOrEmpty(p.PhoneNumber) && p.PhoneNumber == phone));
         }
 
         return user;
