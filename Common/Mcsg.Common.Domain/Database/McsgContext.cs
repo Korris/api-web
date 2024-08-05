@@ -149,6 +149,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<ComicPostFavorite> ComicPostFavorites { get; set; }
 
+    public virtual DbSet<ComicPostHide> ComicPostHides { get; set; }
+
     public virtual DbSet<ComicPostLink> ComicPostLinks { get; set; }
 
     public virtual DbSet<ComicPostReaction> ComicPostReactions { get; set; }
@@ -201,6 +203,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<SocialPostFavorite> SocialPostFavorites { get; set; }
 
+    public virtual DbSet<SocialPostHide> SocialPostHides { get; set; }
+
     public virtual DbSet<SocialPostLink> SocialPostLinks { get; set; }
 
     public virtual DbSet<SocialPostReaction> SocialPostReactions { get; set; }
@@ -230,6 +234,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<StoryPostCommentReaction> StoryPostCommentReactions { get; set; }
 
     public virtual DbSet<StoryPostFavorite> StoryPostFavorites { get; set; }
+
+    public virtual DbSet<StoryPostHide> StoryPostHides { get; set; }
 
     public virtual DbSet<StoryPostLink> StoryPostLinks { get; set; }
 

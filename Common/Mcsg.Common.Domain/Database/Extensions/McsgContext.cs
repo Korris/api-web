@@ -84,6 +84,8 @@ partial class McsgContext
 
     public IQueryable<ComicPostFavorite> ComicPostFavoriteAvailable => ComicPostFavorites.Where(p => !p.IsDelete);
 
+    public IQueryable<ComicPostHide> ComicPostHideAvailable => ComicPostHides.Where(p => !p.IsDelete);
+
     public IQueryable<ComicPostLink> ComicPostLinkAvailable => ComicPostLinks.Where(p => !p.IsDelete);
 
     public IQueryable<ComicPostReaction> ComicPostReactionAvailable => ComicPostReactions.Where(p => !p.IsDelete);
@@ -136,6 +138,8 @@ partial class McsgContext
 
     public IQueryable<SocialPostFavorite> SocialPostFavoriteAvailable => SocialPostFavorites.Where(p => !p.IsDelete);
 
+    public IQueryable<SocialPostHide> SocialPostHideAvailable => SocialPostHides.Where(p => !p.IsDelete);
+
     public IQueryable<SocialPostLink> SocialPostLinkAvailable => SocialPostLinks.Where(p => !p.IsDelete);
 
     public IQueryable<SocialPostReaction> SocialPostReactionAvailable => SocialPostReactions.Where(p => !p.IsDelete);
@@ -165,6 +169,8 @@ partial class McsgContext
     public IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable => StoryPostCommentReactions.Where(p => !p.IsDelete);
 
     public IQueryable<StoryPostFavorite> StoryPostFavoriteAvailable => StoryPostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<StoryPostHide> StoryPostHideAvailable => StoryPostHides.Where(p => !p.IsDelete);
 
     public IQueryable<StoryPostLink> StoryPostLinkAvailable => StoryPostLinks.Where(p => !p.IsDelete);
 

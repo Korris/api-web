@@ -75,6 +75,8 @@ public interface IMcsgContext
 
     DbSet<ComicPostFavorite> ComicPostFavorites { get; set; }
 
+    DbSet<ComicPostHide> ComicPostHides { get; set; }
+
     DbSet<ComicPostLink> ComicPostLinks { get; set; }
 
     DbSet<ComicPostReaction> ComicPostReactions { get; set; }
@@ -127,6 +129,8 @@ public interface IMcsgContext
 
     DbSet<SocialPostFavorite> SocialPostFavorites { get; set; }
 
+    DbSet<SocialPostHide> SocialPostHides { get; set; }
+
     DbSet<SocialPostLink> SocialPostLinks { get; set; }
 
     DbSet<SocialPostReaction> SocialPostReactions { get; set; }
@@ -156,6 +160,8 @@ public interface IMcsgContext
     DbSet<StoryPostCommentReaction> StoryPostCommentReactions { get; set; }
 
     DbSet<StoryPostFavorite> StoryPostFavorites { get; set; }
+
+    DbSet<StoryPostHide> StoryPostHides { get; set; }
 
     DbSet<StoryPostLink> StoryPostLinks { get; set; }
 
@@ -225,6 +231,8 @@ public interface IMcsgContext
 
     IQueryable<ComicPostFavorite> ComicPostFavoriteAvailable { get; }
 
+    IQueryable<ComicPostHide> ComicPostHideAvailable { get; }
+
     IQueryable<ComicPostLink> ComicPostLinkAvailable { get; }
 
     IQueryable<ComicPostReaction> ComicPostReactionAvailable { get; }
@@ -277,6 +285,8 @@ public interface IMcsgContext
 
     IQueryable<SocialPostFavorite> SocialPostFavoriteAvailable { get; }
 
+    IQueryable<SocialPostHide> SocialPostHideAvailable { get; }
+
     IQueryable<SocialPostLink> SocialPostLinkAvailable { get; }
 
     IQueryable<SocialPostReaction> SocialPostReactionAvailable { get; }
@@ -306,6 +316,8 @@ public interface IMcsgContext
     IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable { get; }
 
     IQueryable<StoryPostFavorite> StoryPostFavoriteAvailable { get; }
+
+    IQueryable<StoryPostHide> StoryPostHideAvailable { get; }
 
     IQueryable<StoryPostLink> StoryPostLinkAvailable { get; }
 
