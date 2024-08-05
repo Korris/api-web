@@ -25,7 +25,7 @@ public static class DiPostFavoriteExtension
     }
 
     /// <summary>
-    /// AddPost commands handler
+    /// Add commands handler
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
@@ -35,7 +35,7 @@ public static class DiPostFavoriteExtension
     }
 
     /// <summary>
-    /// AddPost queries handler
+    /// Add queries handler
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>

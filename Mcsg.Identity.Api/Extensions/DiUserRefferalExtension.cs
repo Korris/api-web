@@ -26,7 +26,7 @@ public static class DiUserReferralExtension
     }
 
     /// <summary>
-    /// AddPost commands handler
+    /// Add commands handler
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
@@ -36,7 +36,7 @@ public static class DiUserReferralExtension
     }
 
     /// <summary>
-    /// AddPost queries handler
+    /// Add queries handler
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
