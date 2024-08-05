@@ -58,6 +58,13 @@ public class BusinessText : IBusinessText
             return $"<a href=\"/search?key={hashtag}&type=Tag\">#{hashtag}</a>";
         });
 
+        // Wrap links
+        res = Regex.Replace(res, Link.Regex, match =>
+        {
+            string url = match.Value;
+            return $"<a href=\"{url}\">{url}</a>";
+        });
+
         return res;
     }
 

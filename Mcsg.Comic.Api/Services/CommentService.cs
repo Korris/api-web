@@ -5,6 +5,7 @@ namespace Mcsg.Comic.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Enums;
@@ -26,7 +27,7 @@ public partial class CommentService : ICommentService
     private IConfiguration _configuration;
     protected readonly IMapper _mapper;
 
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration)
+    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText)
     {
         _postCommentRepository = unitOfWork.GetRepository<ComicPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<ComicSubPostComment>();
@@ -37,6 +38,7 @@ public partial class CommentService : ICommentService
         _mapper = mapper;
         _setting = setting;
         _configuration = configuration;
+        _businessText = businessBodyText;
     }
 
     public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -62,6 +64,8 @@ public partial class CommentService : ICommentService
                 GifId = result.GifId
             };
 
+            commentData.Body = await _businessText.Process(commentData.Body);
+
             var replies = new ReplyResponse()
             {
                 TotalReply = (result.ReplyId != Guid.Empty) ? 1 : 0,
@@ -84,6 +88,8 @@ public partial class CommentService : ICommentService
                     GifId = result.ReplyGifId,
                     QuoteId = result?.ReplyQuoteId == Guid.Empty ? null : result.ReplyQuoteId
                 };
+
+                replyData.Body = await _businessText.Process(replyData.Body);
 
                 replies.Data.Add(replyData);
             }
@@ -130,6 +136,8 @@ public partial class CommentService : ICommentService
                 GifId = result.GifId
             };
 
+            commentData.Body = await _businessText.Process(commentData.Body);
+
             var replies = new ReplyResponse()
             {
                 TotalReply = (result.ReplyId != Guid.Empty) ? 1 : 0,
@@ -151,6 +159,8 @@ public partial class CommentService : ICommentService
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId
                 };
+
+                replyData.Body = await _businessText.Process(replyData.Body);
 
                 replies.Data.Add(replyData);
             }
@@ -193,6 +203,8 @@ public partial class CommentService : ICommentService
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
+
+                item.Body = await _businessText.Process(item.Body);
             }
             results = items.ToList();
             return results;
@@ -237,6 +249,8 @@ public partial class CommentService : ICommentService
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
+
+                item.Body = await _businessText.Process(item.Body);
             }
 
             results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
@@ -290,6 +304,8 @@ public partial class CommentService : ICommentService
                     GifId = comModel.GifId
                 };
 
+                comment.Body = await _businessText.Process(comment.Body);
+
                 var replyModels = result.Where(x => x.ParentId == comModel.Id
                                     && x.CommentLevel == (int)CommentLevel.Reply).ToList();
 
@@ -314,6 +330,9 @@ public partial class CommentService : ICommentService
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId
                     };
+
+                    replyData.Body = await _businessText.Process(replyData.Body);
+
                     replies.Data.Add(replyData);
                 }
                 comment.Replies = replies;
@@ -388,6 +407,8 @@ public partial class CommentService : ICommentService
                     GifId = comModel.GifId
                 };
 
+                comment.Body = await _businessText.Process(comment.Body);
+
                 var replyModels = result.Where(x => x.ParentId == comModel.Id
                                     && x.CommentLevel == (int)CommentLevel.Reply).ToList();
 
@@ -410,6 +431,9 @@ public partial class CommentService : ICommentService
                         ParentId = comment.Id,
                         GifId = repModel.GifId
                     };
+
+                    replyData.Body = await _businessText.Process(replyData.Body);
+
                     replies.Data.Add(replyData);
                 }
                 comment.Replies = replies;
@@ -437,6 +461,11 @@ public partial class CommentService : ICommentService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// Business text
+    /// </summary>
+    private readonly IBusinessText _businessText;
 
     #endregion
 }

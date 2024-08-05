@@ -187,6 +187,17 @@ public class Validator
     }
 
     /// <summary>
+    /// Link
+    /// </summary>
+    public class Link
+    {
+        /// <summary>
+        /// Regex
+        /// </summary>
+        public const string Regex = @"(http|https):\/\/[^\s/$.?#].[^\s]*";
+    }
+
+    /// <summary>
     /// Email
     /// </summary>
     public class Email
