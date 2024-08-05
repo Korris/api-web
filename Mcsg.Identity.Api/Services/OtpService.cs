@@ -15,14 +15,20 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 
+/// <summary>
+/// OtpService
+/// </summary>
 public partial class OtpService : IOtpService
 {
-    private readonly IRepository<UserOtp> _userOtpRepository;
-    private readonly OtpSetting _otpSetting;
-    private readonly DistributeManager _distributeManager;
-    public OtpService(IUnitOfWork unitOfWork
-        , DistributeManager distributeManager
-        , IOptions<OtpSetting> otpConfiguration)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="unitOfWork"></param>
+    /// <param name="distributeManager"></param>
+    /// <param name="otpConfiguration"></param>
+    public OtpService(IUnitOfWork unitOfWork, DistributeManager distributeManager, IOptions<OtpSetting> otpConfiguration)
     {
         _distributeManager = distributeManager;
         _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
@@ -97,6 +103,7 @@ public partial class OtpService : IOtpService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
     public async Task<UserOtp> GetAsync(string otpToken, UserOtpType otpType)
     {
         try
@@ -118,6 +125,7 @@ public partial class OtpService : IOtpService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
     public async Task<UserOtp> GetValidTokendAsync(string otpToken, UserOtpType otpType)
     {
         try
@@ -151,30 +159,39 @@ public partial class OtpService : IOtpService
         var emailJob = new EmailJobDistributeItem
         {
             Email = new Email { To = to, Body = userOtp.Code },
-            JobType = OtpJobTypeMapper[type]
+            JobType = _otpJobTypeMapper[type]
         };
 
         await _distributeManager.Deliver(emailJob);
     }
+
     private async Task CreateSmsOtpAsync(string to, UserOtpType type, UserOtp userOtp)
     {
         var smsJob = new SmsJobDistributeItem
         {
             Sms = new Sms { To = to, Body = userOtp.Code },
-            JobType = OtpJobTypeMapper[type]
+            JobType = _otpJobTypeMapper[type]
         };
 
         await _distributeManager.Deliver(smsJob);
     }
 
-    private readonly IDictionary<UserOtpType, JobType> OtpJobTypeMapper =
-        new Dictionary<UserOtpType, JobType>
-    {
-       {  UserOtpType.VerifyEmail, JobType.VerifyByEmailOtp },
-       {  UserOtpType.ResetByEmail, JobType.ResetByEmailOtp },
-       {  UserOtpType.ConfirmEmail, JobType.ConfirmEmailOtp },
-       {  UserOtpType.VerifyPhone, JobType.SmsOtp },
-       {  UserOtpType.ResetByPhone, JobType.SmsOtp },
-       {  UserOtpType.ConfirmPhone, JobType.SmsOtp },
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IRepository<UserOtp> _userOtpRepository;
+    private readonly OtpSetting _otpSetting;
+    private readonly DistributeManager _distributeManager;
+
+    private readonly IDictionary<UserOtpType, JobType> _otpJobTypeMapper = new Dictionary<UserOtpType, JobType> {
+        { UserOtpType.VerifyEmail, JobType.VerifyByEmailOtp },
+        { UserOtpType.ResetByEmail, JobType.ResetByEmailOtp },
+        { UserOtpType.ConfirmEmail, JobType.ConfirmEmailOtp },
+        { UserOtpType.VerifyPhone, JobType.SmsOtp },
+        { UserOtpType.ResetByPhone, JobType.SmsOtp },
+        { UserOtpType.ConfirmPhone, JobType.SmsOtp }
     };
+
+    #endregion
 }
