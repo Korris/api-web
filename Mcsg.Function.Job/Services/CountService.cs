@@ -1,242 +1,242 @@
 ﻿using Dapper;
 
-namespace Mcsg.Function.Job.Services
+namespace Mcsg.Function.Job.Services;
+
+using Common.Core.Enums;
+using Common.Domain.Entities;
+using Common.SeedWork;
+using Interfaces;
+using Lib.Common.Models;
+using Lib.Data.Repositories;
+using Lib.Data.Repositories.Interface;
+
+public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
 {
-    using Common.Core.Enums;
-    using Common.Domain.Entities;
-    using Common.SeedWork;
-    using Interfaces;
-    using Lib.Common.Models;
-    using Lib.Data.Repositories;
-    using Lib.Data.Repositories.Interface;
-
-    public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
+    public CountService(IUnitOfWork unitOfWork)
     {
-        public CountService(IUnitOfWork unitOfWork)
+        _unitOfWork = unitOfWork;
+        _smartCountActionRepository = _unitOfWork.GetRepository<SmartCountAction>();
+        _postCommentReactRepository = _unitOfWork.GetRepository<TP>();
+        _subPostCommentReactRepository = _unitOfWork.GetRepository<TS>();
+
+    }
+    public async Task RunQueue(SmartCountEntityData smartLookupData)
+    {
+        var smartTable = _smartCountActionRepository.TableName;
+        if (smartLookupData.IsRemove)
         {
-            _unitOfWork = unitOfWork;
-            _smartCountActionRepository = _unitOfWork.GetRepository<SmartCountAction>();
-            _postCommentReactRepository = _unitOfWork.GetRepository<TP>();
-            _subPostCommentReactRepository = _unitOfWork.GetRepository<TS>();
-
-        }
-        public async Task RunQueue(SmartCountEntityData smartLookupData)
-        {
-            var smartTable = _smartCountActionRepository.TableName;
-            if (smartLookupData.IsRemove)
-            {
-                //Remove by comment id
-                if (smartLookupData.EntityType == EntityType.SubPost)
-                {
-                    smartLookupData.EntityId = (await _subPostCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
-                }
-                if (smartLookupData.EntityType == EntityType.Post)
-                {
-                    smartLookupData.EntityId = (await _postCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
-                }
-            }
-
-            var query = smartLookupData.IsRemove ? UpdateSmartRemoveCountReactionSingleActionCommand : UpdateSmartAddCountReactionSingleActionCommand;
-            if (typeof(TP) != typeof(ViewHistory))
-            {
-                query = query.Replace("[WithDate]", @"AND ""Date"" = @Today");
-            }
-            else
-            {
-                query = query.Replace("[WithDate]", "");
-            }
-            query = string.Format(query,
-                _smartCountActionRepository.TableName);
-
-            var id = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<Guid?>(query,
-            new
-            {
-                EntityId = smartLookupData.EntityId,
-                Date = DateTime.UtcNow,
-                Today = DateOnly.FromDateTime(DateTime.UtcNow),
-                ActionType = smartLookupData.ActionType
-            });
-            //If not exist, create new
-            if (id == null)
-            {
-                await RefreshAll(smartLookupData);
-            }
-        }
-        public async Task RefreshAll(SmartCountEntityData smartLookupData)
-        {
-            //Refresh all
-            int countOfPost = 0;
-            int countOfSubPost = 0;
-            var postId = smartLookupData.EntityId;
-            var todayDateTime = DateTime.UtcNow;
-            var todayDate = DateOnly.FromDateTime(todayDateTime);
-
+            //Remove by comment id
             if (smartLookupData.EntityType == EntityType.SubPost)
             {
-                countOfSubPost = await GetCountFromSubPost(smartLookupData.EntityId, todayDate);
-
-                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicBySubpostId,
-                    new
-                    {
-                        SubPostId = smartLookupData.EntityId
-                    });
-
-                if (post == null)
-                {
-                    return;
-                }
-
-                postId = post.Id;
-                var smartCountActions = await _smartCountActionRepository.GetByPredicateAsync(x => x.EntityId == postId);
-                if (smartCountActions.Any())
-                {
-                    var smartCountAction = smartCountActions.FirstOrDefault();
-                    if (smartCountAction != null)
-                    {
-                        smartCountAction.Count++;
-                        await _smartCountActionRepository.UpdateAsync(smartCountAction);
-                    }
-                }
-                else
-                {
-                    countOfPost = await GetCountFromPost(postId, todayDate);
-                    await _smartCountActionRepository.InsertAsync(new SmartCountAction
-                    {
-                        ActionType = smartLookupData.ActionType,
-                        EntityId = postId,
-                        Count = countOfPost,
-                        ModifiedOn = todayDateTime,
-                        EntityType = EntityType.Post,
-                        SubType = (EntitySubType)post.Type,
-                        Date = todayDate
-                    });
-                }
-                //Insert subpost type
-                await _smartCountActionRepository.InsertAsync(new SmartCountAction
-                {
-                    ActionType = smartLookupData.ActionType,
-                    EntityId = smartLookupData.EntityId,
-                    Count = countOfSubPost,
-                    ModifiedOn = todayDateTime,
-                    EntityType = EntityType.SubPost,
-                    Date = todayDate
-                });
-
+                smartLookupData.EntityId = (await _subPostCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
             }
             if (smartLookupData.EntityType == EntityType.Post)
             {
-                var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicByPostId,
-                    new
-                    {
-                        PostId = smartLookupData.EntityId
-                    });
+                smartLookupData.EntityId = (await _postCommentReactRepository.GetByIdAsync(smartLookupData.EntityId))?.Id ?? Guid.Empty;
+            }
+        }
 
-                if (post == null)
+        var query = smartLookupData.IsRemove ? UpdateSmartRemoveCountReactionSingleActionCommand : UpdateSmartAddCountReactionSingleActionCommand;
+        if (typeof(TP) != typeof(ViewHistory))
+        {
+            query = query.Replace("[WithDate]", @"AND ""Date"" = @Today");
+        }
+        else
+        {
+            query = query.Replace("[WithDate]", "");
+        }
+        query = string.Format(query,
+            _smartCountActionRepository.TableName);
+
+        var id = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<Guid?>(query,
+        new
+        {
+            EntityId = smartLookupData.EntityId,
+            Date = DateTime.UtcNow,
+            Today = DateOnly.FromDateTime(DateTime.UtcNow),
+            ActionType = smartLookupData.ActionType
+        });
+        //If not exist, create new
+        if (id == null)
+        {
+            await RefreshAll(smartLookupData);
+        }
+    }
+    public async Task RefreshAll(SmartCountEntityData smartLookupData)
+    {
+        //Refresh all
+        int countOfPost = 0;
+        int countOfSubPost = 0;
+        var postId = smartLookupData.EntityId;
+        var todayDateTime = DateTime.UtcNow;
+        var todayDate = DateOnly.FromDateTime(todayDateTime);
+
+        if (smartLookupData.EntityType == EntityType.SubPost)
+        {
+            countOfSubPost = await GetCountFromSubPost(smartLookupData.EntityId, todayDate);
+
+            var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicBySubpostId,
+                new
                 {
-                    return;
-                }
+                    SubPostId = smartLookupData.EntityId
+                });
 
-                countOfPost = await GetCountFromPost(smartLookupData.EntityId, todayDate);
+            if (post == null)
+            {
+                return;
+            }
+
+            postId = post.Id;
+            var smartCountActions = await _smartCountActionRepository.GetByPredicateAsync(x => x.EntityId == postId);
+            if (smartCountActions.Any())
+            {
+                var smartCountAction = smartCountActions.FirstOrDefault();
+                if (smartCountAction != null)
+                {
+                    smartCountAction.Count++;
+                    await _smartCountActionRepository.UpdateAsync(smartCountAction);
+                }
+            }
+            else
+            {
+                countOfPost = await GetCountFromPost(postId, todayDate);
                 await _smartCountActionRepository.InsertAsync(new SmartCountAction
                 {
                     ActionType = smartLookupData.ActionType,
                     EntityId = postId,
                     Count = countOfPost,
                     ModifiedOn = todayDateTime,
-                    EntityType = smartLookupData.EntityType,
+                    EntityType = EntityType.Post,
                     SubType = (EntitySubType)post.Type,
                     Date = todayDate
                 });
             }
-        }
-
-        private async Task<int> GetCountFromPost(Guid postId, DateOnly date)
-        {
-            var query = "";
-            switch (typeof(TP))
+            //Insert subpost type
+            await _smartCountActionRepository.InsertAsync(new SmartCountAction
             {
-                case
-               var cls when cls == typeof(SocialPostComment):
-                    {
-                        query = GetAllCountCommentFromPost;
-                        break;
-                    }
-                case
-                var cls when cls == typeof(SocialPostReaction):
-                    {
-                        query = GetAllCountReactFromPost;
-                        break;
-                    }
-                case
-           var cls when cls == typeof(ViewHistory):
-                    {
-                        query = GetAllCountViewFromPost;
-                        break;
-                    }
-
-            }
-            try
-            {
-
-                var count = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<int?>(query,
-                    new
-                    {
-                        PostId = postId,
-                        Today = date.ToDateTime(TimeOnly.MinValue)
-                    });
-                return count ?? 0;
-            }
-            catch (Exception e)
-            {
-
-                throw;
-            }
-
-        }
-
-        private async Task<int> GetCountFromSubPost(Guid subPostId, DateOnly date)
-        {
-            var query = "";
-            switch (typeof(TP))
-            {
-                case
-               var cls when cls == typeof(SocialPostComment):
-                    {
-                        query = GetAllCountCommentFromSubPost;
-                        break;
-                    }
-                case
-                var cls when cls == typeof(SocialPostReaction):
-                    {
-                        query = GetAllCountReactFromSubPost;
-                        break;
-                    }
-                case
-                var cls when cls == typeof(ViewHistory):
-                    {
-                        query = GetAllCountViewFromSubPost;
-                        break;
-                    }
-
-            }
-            var count = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<int?>(query,
-            new
-            {
-                SubPostId = subPostId,
-                Today = date.ToDateTime(TimeOnly.MinValue)
+                ActionType = smartLookupData.ActionType,
+                EntityId = smartLookupData.EntityId,
+                Count = countOfSubPost,
+                ModifiedOn = todayDateTime,
+                EntityType = EntityType.SubPost,
+                Date = todayDate
             });
 
-            return count ?? 0;
+        }
+        if (smartLookupData.EntityType == EntityType.Post)
+        {
+            var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicByPostId,
+                new
+                {
+                    PostId = smartLookupData.EntityId
+                });
+
+            if (post == null)
+            {
+                return;
+            }
+
+            countOfPost = await GetCountFromPost(smartLookupData.EntityId, todayDate);
+            await _smartCountActionRepository.InsertAsync(new SmartCountAction
+            {
+                ActionType = smartLookupData.ActionType,
+                EntityId = postId,
+                Count = countOfPost,
+                ModifiedOn = todayDateTime,
+                EntityType = smartLookupData.EntityType,
+                SubType = (EntitySubType)post.Type,
+                Date = todayDate
+            });
+        }
+    }
+
+    private async Task<int> GetCountFromPost(Guid postId, DateOnly date)
+    {
+        var query = "";
+        switch (typeof(TP))
+        {
+            case
+           var cls when cls == typeof(SocialPostComment):
+                {
+                    query = GetAllCountCommentFromPost;
+                    break;
+                }
+            case
+            var cls when cls == typeof(SocialPostReaction):
+                {
+                    query = GetAllCountReactFromPost;
+                    break;
+                }
+            case
+       var cls when cls == typeof(ViewHistory):
+                {
+                    query = GetAllCountViewFromPost;
+                    break;
+                }
 
         }
-
-        #region Query Comment
-
-        private string GetAllCountCommentFromPost
+        try
         {
-            get
-            {
-                return @"SELECT SUM(count)
+
+            var count = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<int?>(query,
+                new
+                {
+                    PostId = postId,
+                    Today = date.ToDateTime(TimeOnly.MinValue)
+                });
+            return count ?? 0;
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+
+    }
+
+    private async Task<int> GetCountFromSubPost(Guid subPostId, DateOnly date)
+    {
+        var query = "";
+        switch (typeof(TP))
+        {
+            case
+           var cls when cls == typeof(SocialPostComment):
+                {
+                    query = GetAllCountCommentFromSubPost;
+                    break;
+                }
+            case
+            var cls when cls == typeof(SocialPostReaction):
+                {
+                    query = GetAllCountReactFromSubPost;
+                    break;
+                }
+            case
+            var cls when cls == typeof(ViewHistory):
+                {
+                    query = GetAllCountViewFromSubPost;
+                    break;
+                }
+
+        }
+        var count = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<int?>(query,
+        new
+        {
+            SubPostId = subPostId,
+            Today = date.ToDateTime(TimeOnly.MinValue)
+        });
+
+        return count ?? 0;
+
+    }
+
+    #region Query Comment
+
+    private string GetAllCountCommentFromPost
+    {
+        get
+        {
+            return @"SELECT SUM(count)
                 FROM (
                     SELECT COUNT(pcm.""Id"") as count
                                 FROM social.""SocialPostComments"" pcm 
@@ -254,29 +254,29 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
                                 WHERE  pcm.""IsDelete"" = false 
                                 GROUP BY pcm.""PostId""
                     ) as tb;";
-            }
         }
-        private string GetAllCountCommentFromSubPost
+    }
+    private string GetAllCountCommentFromSubPost
+    {
+        get
         {
-            get
-            {
-                return @"SELECT COUNT(pcm.""Id"") as count
+            return @"SELECT COUNT(pcm.""Id"") as count
                                 FROM social.""SocialSubPostComments"" pcm 
                                 WHERE pcm.""PostId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
                                 AND pcm.""IsDelete"" = false 
                                 GROUP BY pcm.""PostId"";";
-            }
         }
+    }
 
-        #endregion
+    #endregion
 
-        #region Reaction
-        private string GetAllCountReactFromPost
+    #region Reaction
+    private string GetAllCountReactFromPost
+    {
+        get
         {
-            get
-            {
-                return @"SELECT SUM(count)
+            return @"SELECT SUM(count)
                 FROM (
                     SELECT COUNT(pcm.""Id"") as count
                                 FROM social.""SocialPostReactions"" pcm 
@@ -293,27 +293,27 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
                                 WHERE  pcm.""IsDelete"" = false 
                                 GROUP BY pcm.""TargetId""
                     ) as tb;";
-            }
         }
-        private string GetAllCountReactFromSubPost
+    }
+    private string GetAllCountReactFromSubPost
+    {
+        get
         {
-            get
-            {
-                return @"SELECT COUNT(pcm.""Id"") as count
+            return @"SELECT COUNT(pcm.""Id"") as count
                                 FROM social.""SocialSubPostReactions"" pcm 
                                 WHERE pcm.""TargetId"" = @SubPostId 
 AND date_trunc('day',pcm.""CreatedOn"") = @Today
                                 AND pcm.""IsDelete"" = false 
                                 GROUP BY pcm.""PostId"";";
-            }
         }
+    }
 
-        #region View
-        private string GetAllCountViewFromPost
+    #region View
+    private string GetAllCountViewFromPost
+    {
+        get
         {
-            get
-            {
-                return @"SELECT SUM(count)
+            return @"SELECT SUM(count)
                 FROM (
                     SELECT COUNT(view.""Id"") as count
                                 FROM ""ViewHistories"" view 
@@ -327,76 +327,75 @@ AND date_trunc('day',pcm.""CreatedOn"") = @Today
                                 sp.""PostId"" = @PostId 
                                 GROUP BY view.""EntityId"" 
                     ) as tb;";
-            }
         }
-        private string GetAllCountViewFromSubPost
+    }
+    private string GetAllCountViewFromSubPost
+    {
+        get
         {
-            get
-            {
-                return @"SELECT COUNT(view.""Id"") as count
+            return @"SELECT COUNT(view.""Id"") as count
                                 FROM ""ViewHistories"" view 
                                 WHERE view.""EntityId"" = @SubPostId 
                                 GROUP BY view.""EntityId"";";
-            }
         }
-        #endregion
+    }
+    #endregion
 
 
-        #endregion
+    #endregion
 
-        #region Update
-        private string UpdateSmartAddCountReactionSingleActionCommand
+    #region Update
+    private string UpdateSmartAddCountReactionSingleActionCommand
+    {
+        get
         {
-            get
-            {
-                return @"UPDATE {0} AS s
+            return @"UPDATE {0} AS s
                                     SET ""Count"" = ""Count"" + 1, ""ModifiedOn"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
-            }
         }
-        private string UpdateSmartRemoveCountReactionSingleActionCommand
+    }
+    private string UpdateSmartRemoveCountReactionSingleActionCommand
+    {
+        get
         {
-            get
-            {
-                return @"UPDATE {0} AS s
+            return @"UPDATE {0} AS s
                                     SET ""Count"" = ""Count"" - 1, ""ModifiedOn"" = @Date
                                     WHERE s.""EntityId"" = @EntityId [WithDate]
                                     AND s.""ActionType"" = @ActionType RETURNING ""Id"";";
-            }
         }
-        #endregion
-        private string GetPostBasicBySubpostId
+    }
+    #endregion
+    private string GetPostBasicBySubpostId
+    {
+        get
         {
-            get
-            {
-                return @"SELECT p.""Id"", p.""Type""
+            return @"SELECT p.""Id"", p.""Type""
                                 FROM social.""SocialSubPosts"" sp
 INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
                                 WHERE sp.""Id"" = @SubPostId 
                                 AND p.""IsDelete"" = false 
                                 LIMIT 1;";
-            }
         }
-        private string GetPostBasicByPostId
+    }
+    private string GetPostBasicByPostId
+    {
+        get
         {
-            get
-            {
-                return @"SELECT p.""Id"", p.""Type""
+            return @"SELECT p.""Id"", p.""Type""
                                 FROM social.""SocialPosts"" p
                                 WHERE p.""Id"" = @PostId 
                                 AND p.""IsDelete"" = false 
                                 LIMIT 1;";
-            }
         }
-
-        #region -- Fields --
-
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IRepository<SmartCountAction> _smartCountActionRepository;
-        private readonly IRepository<TP> _postCommentReactRepository;
-        private readonly IRepository<TS> _subPostCommentReactRepository;
-
-        #endregion
     }
+
+    #region -- Fields --
+
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepository<SmartCountAction> _smartCountActionRepository;
+    private readonly IRepository<TP> _postCommentReactRepository;
+    private readonly IRepository<TS> _subPostCommentReactRepository;
+
+    #endregion
 }
