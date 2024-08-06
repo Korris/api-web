@@ -438,6 +438,12 @@ public partial class ChartService : IChartService
     private List<ChartResponse> MapChartData(int days, int timezoneOffset, List<ChartResponse> data)
     {
         var result = new List<ChartResponse>();
+
+        if (data.Count == 0)
+        {
+            return result;
+        }
+
         var today = DateTime.Today.ToUniversalTime().AddMinutes(-timezoneOffset);
         for (int i = 0; i < days; i++)
         {
