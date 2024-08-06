@@ -107,11 +107,6 @@ partial class UserReferral
     /// </summary>
     public class SearchDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>
@@ -119,11 +114,6 @@ partial class UserReferral
     /// </summary>
     public class ViewDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>

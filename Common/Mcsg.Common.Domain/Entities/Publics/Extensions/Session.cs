@@ -63,11 +63,6 @@ partial class Session
     /// </summary>
     public class BaseDto : DevNameDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>
@@ -75,11 +70,6 @@ partial class Session
     /// </summary>
     public class SearchDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>
@@ -87,11 +77,6 @@ partial class Session
     /// </summary>
     public class ViewDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     #endregion

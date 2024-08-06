@@ -79,11 +79,6 @@ partial class User
     /// </summary>
     public class BaseDto : DevNameDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>
@@ -91,11 +86,6 @@ partial class User
     /// </summary>
     public class SearchDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     /// <summary>
@@ -103,11 +93,6 @@ partial class User
     /// </summary>
     public class ViewDto : BaseDto
     {
-        #region -- Properties --
-
-        //TODO
-
-        #endregion
     }
 
     #endregion
