@@ -12,12 +12,12 @@ public interface IAuthenticationService
     Task<TokenDto> LoginUser(LoginUserReq request);
     Task<TokenDto> LoginSocial(string socialType, string socialToken);
     Task<bool> LogOut();
-    Task<VerifyUserResponse> ForgotPassword(string email, string phone);
+    Task<VerifyUserResponse> ForgotPassword(string? email, string? phone);
     Task<bool> ResetPassword(ResetPasswordReq request);
     Task<TokenDto> SetUserPassword(string password, string confirmPassword);
-    Task<bool> CreateNewUserPassword(string email, string phone, string otp, string otpToken, string password, string confirmPassword);
+    Task<bool> CreateNewUserPassword(string? email, string? phone, string otp, string otpToken, string password, string confirmPassword);
     Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword);
-    Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string email, string phone, string otp, string otpToken);
+    Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string? email, string? phone, string otp, string otpToken);
     Task<RefreshTokenResponse> VerifyRefreshToken(string refreshToken);
     Task<bool> DeleteAccount(DeleteUserReq request);
 }

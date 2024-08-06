@@ -544,12 +544,20 @@ public partial class AuthenticationService : IAuthenticationService
         return response;
     }
 
-    public async Task<VerifyUserResponse> ForgotPassword(string email, string phone)
+    public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
     {
+        var encryptedEmail = _aes.EncryptText(email);
+        var encryptedPhone = _aes.EncryptText(phone);
+
         var response = new VerifyUserResponse();
         if (!string.IsNullOrEmpty(email))
         {
-            var user = await _userManager.FindByEmailAsync(email) ?? throw new NotFoundException(E203, M203);
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.Email == encryptedEmail || p.Email == phone));
+            if (user == null)
+            {
+                throw new NotFoundException(E203, M203);
+            }
+
             var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.ResetByEmail);
             response.Token = userOtp.Token;
             response.IsEmail = true;
@@ -557,7 +565,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else if (!string.IsNullOrEmpty(phone))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.PhoneNumber == phone);
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone));
             if (user == null)
             {
                 throw new NotFoundException(E203, M203);
@@ -602,7 +610,7 @@ public partial class AuthenticationService : IAuthenticationService
         return resetPass.Succeeded;
     }
 
-    public async Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string email, string phone, string otp, string otpToken)
+    public async Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string? email, string? phone, string otp, string otpToken)
     {
         var valid = await _otpService.VerifyAsync(otpToken, otp, type);
         if (valid)
@@ -621,12 +629,14 @@ public partial class AuthenticationService : IAuthenticationService
                 response.RefreshToken = refreshToken.RefreshToken;
                 response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
             }
+
             return response;
         }
+
         throw new BadRequestException(ErrorCodes.InvalidToken, ErrorMessage.TokenInCorrect);
     }
 
-    public async Task<bool> CreateNewUserPassword(string email, string phone, string otp, string otpToken, string password, string confirmPassword)
+    public async Task<bool> CreateNewUserPassword(string? email, string? phone, string otp, string otpToken, string password, string confirmPassword)
     {
         var otpType = !string.IsNullOrEmpty(email) ? UserOtpType.VerifyEmail : UserOtpType.VerifyPhone;
         var valid = await _otpService.VerifyAsync(otpToken, otp, otpType);
