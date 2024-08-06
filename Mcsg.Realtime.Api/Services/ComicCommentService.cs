@@ -222,6 +222,7 @@ namespace Mcsg.Realtime.Api.Services
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
             response.CustomNote = req.CustomNote;
+            response.CommentText = await _businessText.Process(req.CommentText);
 
             return response;
         }
