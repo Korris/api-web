@@ -123,9 +123,12 @@ public partial class AuthenticationService : IAuthenticationService
                 throw new BadRequestException(createError?.Code, createError?.Description);
             }
 
-            var ettUserReferral = UserReferral.Create(userReferrerId, user.Id);
-            await _context.UserReferrals.AddAsync(ettUserReferral);
-            await _context.SaveChangesAsync(default);
+            if (userReferrerId != Guid.Empty)
+            {
+                var ettUserReferral = UserReferral.Create(userReferrerId, user.Id);
+                await _context.UserReferrals.AddAsync(ettUserReferral);
+                await _context.SaveChangesAsync(default);
+            }
 
             //Init smart lookup for user
             await _smartLookupRepository.InsertAsync(new SmartLookup
