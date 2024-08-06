@@ -1,42 +1,31 @@
-﻿using Dapper;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Mcsg.Identity.Api.Services;
 
-using Common.Domain.Entities;
 using Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Response;
 
-public abstract partial class SSOService : ISSOService
+public abstract class SSOService : ISSOService
 {
-    protected JsonSerializerSettings serializerSettings = new();
-    protected ILogger<SSOService> _logger;
-    private readonly IRepository<UserSocial> _userSocialRepository;
-    protected readonly ISecurityService _securityService;
+    #region -- Methods --
 
-    public SSOService(ILogger<SSOService> logger, IUnitOfWork unitOfWork, ISecurityService securityService)
+    public SSOService(ILogger<SSOService> logger, ISecurityService securityService)
     {
-        serializerSettings.TypeNameHandling = TypeNameHandling.All;
         _logger = logger;
-        _userSocialRepository = unitOfWork.GetRepository<UserSocial>();
         _securityService = securityService;
-
-    }
-
-    public async Task<UserSocial> GetUserSocialBySocialId(string socialType, string socialId)
-    {
-        return await _userSocialRepository
-                    .Connection.QueryFirstOrDefaultAsync<UserSocial>(GetUserSocialQuery, new { SocialId = socialId, Type = socialType.ToLower() });
-    }
-
-    public async Task<bool> AddUserSocial(UserSocial userSocial)
-    {
-        var iResult = await _userSocialRepository.InsertAsync(userSocial);
-        return iResult > 0;
+        serializerSettings.TypeNameHandling = TypeNameHandling.All;
     }
 
     public abstract Task<SocialTokenResponse> VerifyToken(string socialToken);
+
+    #endregion
+
+    #region -- Properties --
+
+    protected ILogger<SSOService> _logger;
+    protected readonly ISecurityService _securityService;
+    protected JsonSerializerSettings serializerSettings = new();
+
+    #endregion
 }

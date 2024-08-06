@@ -8,17 +8,12 @@ using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
-using Lib.Data.Repositories.Interface;
 using Response;
 
 public class AppleOAuthService : SSOService
 {
-    public AppleOAuthService(ILogger<AppleOAuthService> logger
-        , IUnitOfWork unitOfWork
-        , ISecurityService securityService) : base(logger, unitOfWork, securityService)
-    {
+    public AppleOAuthService(ILogger<AppleOAuthService> logger, ISecurityService securityService) : base(logger, securityService) { }
 
-    }
     public override async Task<SocialTokenResponse> VerifyToken(string socialToken)
     {
         try

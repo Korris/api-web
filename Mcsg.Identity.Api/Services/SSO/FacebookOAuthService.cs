@@ -6,16 +6,11 @@ namespace Mcsg.Identity.Api.Services;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Lib.Common.Web.Security;
-using Lib.Data.Repositories.Interface;
 using Response;
 
 public class FacebookOAuthService : SSOService
 {
-    public FacebookOAuthService(ILogger<FacebookOAuthService> logger
-        , IUnitOfWork unitOfWork
-        , ISecurityService securityService) : base(logger, unitOfWork, securityService)
-    {
-    }
+    public FacebookOAuthService(ILogger<FacebookOAuthService> logger, ISecurityService securityService) : base(logger, securityService) { }
 
     public override async Task<SocialTokenResponse> VerifyToken(string socialToken)
     {

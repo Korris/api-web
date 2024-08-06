@@ -252,21 +252,22 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(ErrorCodes.SocialPlatformNotSupport, ErrorMessage.SocialPlatformNotSupport);
         }
 
-        //verify token
+        // Verify token
         var _ssoService = _serviceAccessor(socialType);
         var verifyTokenResponse = await _ssoService.VerifyToken(socialToken) ?? throw new BadRequestException(ErrorCodes.InvalidSocialToken, ErrorMessage.SocialIdNotPublic);
         if (verifyTokenResponse.Error.Count > 0)
         {
             throw new BadRequestException(ErrorCodes.InvalidSocialToken, verifyTokenResponse.Error.FirstOrDefault());
         }
+
         var socialId = verifyTokenResponse.Profile.Id;
         var socialEmail = verifyTokenResponse.Profile.Email;
-
-        // Check user exist ?
+        var encryptedSocialId = _aes.EncryptText(socialId);
+        var encryptedSocialEmail = _aes.EncryptText(socialEmail);
         var existUserId = Guid.Empty;
 
         // Check user exist with socialId
-        var userSocial = await _ssoService.GetUserSocialBySocialId(socialType, socialId);
+        var userSocial = await _context.UserSocialAvailable.FirstOrDefaultAsync(p => (p.SocialId == encryptedSocialId || p.SocialId == socialId) && p.Type == socialType);
         if (userSocial != null)
         {
             existUserId = userSocial.UserId;
@@ -275,12 +276,13 @@ public partial class AuthenticationService : IAuthenticationService
         // Check user exist with email
         if (existUserId == Guid.Empty)
         {
-            var existUser = await _userManager.FindByEmailAsync(socialEmail);
-            if (existUser != null && !existUser.IsDelete)
+            var existUser = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.Email == encryptedSocialEmail || p.Email == socialEmail));
+            if (existUser != null)
             {
                 existUserId = existUser.Id;
             }
         }
+
         // Social user linked to db. Should return access token
         if (existUserId != Guid.Empty)
         {
@@ -354,18 +356,18 @@ public partial class AuthenticationService : IAuthenticationService
                 //setup wallet
                 await _userWalletService.InitUserWalletAsync(user);
 
-                var socialInfo = new UserSocial
+                var ettUserSocial = new UserSocial
                 {
                     UserId = user.Id,
-                    SocialId = socialId,
+                    SocialId = encryptedSocialId,
                     Type = socialType,
-                    Email = _aes.EncryptText(socialEmail),
+                    Email = encryptedSocialEmail,
                     FirstName = verifyTokenResponse.Profile.FirstName,
                     LastName = verifyTokenResponse.Profile.LastName,
                     IsRegisterBySocial = true,
                     RegisterBySocialPlatform = socialType
                 };
-                await _ssoService.AddUserSocial(socialInfo);
+                await _context.UserSocials.AddAsync(ettUserSocial);
 
                 var session = await _sessionService.CreateSessionAsync(user, "");
                 var response = _tokenService.GenerateAccessToken(session.Id, user);
@@ -552,7 +554,7 @@ public partial class AuthenticationService : IAuthenticationService
         var response = new VerifyUserResponse();
         if (!string.IsNullOrEmpty(email))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.Email == encryptedEmail || p.Email == phone));
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == phone);
             if (user == null)
             {
                 throw new NotFoundException(E203, M203);
@@ -565,7 +567,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else if (!string.IsNullOrEmpty(phone))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone));
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone);
             if (user == null)
             {
                 throw new NotFoundException(E203, M203);

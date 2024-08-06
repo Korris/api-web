@@ -7,16 +7,11 @@ namespace Mcsg.Identity.Api.Services;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
 using Lib.Common.Web.Security;
-using Lib.Data.Repositories.Interface;
 using Response;
 
 public class GoogleOAuthService : SSOService
 {
-    public GoogleOAuthService(ILogger<GoogleOAuthService> logger
-        , IUnitOfWork unitOfWork
-        , ISecurityService securityService) : base(logger, unitOfWork, securityService)
-    {
-    }
+    public GoogleOAuthService(ILogger<GoogleOAuthService> logger, ISecurityService securityService) : base(logger, securityService) { }
 
     public override async Task<SocialTokenResponse> VerifyToken(string socialToken)
     {
