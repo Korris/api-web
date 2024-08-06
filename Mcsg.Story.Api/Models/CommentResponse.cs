@@ -20,6 +20,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
     public string GifId { get; set; } = string.Empty;
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
     public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
+    public string? CustomNote { get; set; }
     public void Mapping(Profile profile)
     {
         profile.CreateMap<CommentQueryModel, CommentResponse>()
@@ -30,6 +31,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
             .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
             .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
             .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
+            .ForMember(d => d.CustomNote, opt => opt.MapFrom(s => s.CustomNote))
             .ForMember(d => d.ModifiedOn, opt => opt.MapFrom(s => s.ModifiedOn))
             .ForMember(d => d.ResourceUrl, opt => opt.Ignore())
             .ForMember(d => d.Replies, opt => opt.Ignore())

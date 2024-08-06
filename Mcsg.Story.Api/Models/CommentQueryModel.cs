@@ -18,4 +18,5 @@ public class CommentQueryModel
     public string GifId { get; set; } = string.Empty;
     public int CommentLevel { get; set; } = 0;
     public Guid? QuoteId { get; set; }
+    public string? CustomNote { get; set; }
 }

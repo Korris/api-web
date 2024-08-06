@@ -19,4 +19,5 @@ public class ReplyData
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;
     public Guid? QuoteId { get; set; } = null;
+    public string? CustomNote { get; set; }
 }

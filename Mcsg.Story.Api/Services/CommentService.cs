@@ -317,7 +317,8 @@ public partial class CommentService : ICommentService
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
-                    GifId = comModel.GifId
+                    GifId = comModel.GifId,
+                    CustomNote = comModel.CustomNote
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -344,7 +345,8 @@ public partial class CommentService : ICommentService
                         ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
-                        QuoteId = repModel.QuoteId
+                        QuoteId = repModel.QuoteId,
+                        CustomNote = repModel.CustomNote
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);
@@ -420,7 +422,8 @@ public partial class CommentService : ICommentService
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
-                    GifId = comModel.GifId
+                    GifId = comModel.GifId,
+                    CustomNote = comModel.CustomNote
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -445,7 +448,8 @@ public partial class CommentService : ICommentService
                         ResourceHashId = repModel.ResourceHashId,
                         ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
                         ParentId = comment.Id,
-                        GifId = repModel.GifId
+                        GifId = repModel.GifId,
+                        CustomNote = repModel.CustomNote
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);

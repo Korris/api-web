@@ -7,6 +7,7 @@
         private string GetReplyByCommentIdQuery = @"SELECT 
 												pc.""CreatedBy"" as AuthorId,
 												pc.""Body"",
+                                                pc.""CustomNote"",
 												pc.""Id"",
 												pc.""CreatedOn"",
 												u.""Avatar"" as UserAvatar,
@@ -25,6 +26,7 @@
 													pc.""CreatedBy"" as AuthorId,
 													pc.""Id"",
 													pc.""Body"",
+													pc.""CustomNote"",
 													pc.""CreatedOn"",
 													pc.""GifId"",
 													pc.""PostId"",
@@ -48,12 +50,13 @@
 												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
 												AND p.""IsDelete"" = false
 												AND pc.""IsDelete"" = false
-												GROUP BY pc.""CreatedBy"",pc.""Id"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												UNION
 												SELECT 
 													spc.""CreatedBy"" as AuthorId,
 													spc.""Id"",
 													spc.""Body"",
+													spc.""CustomNote"",
 													spc.""CreatedOn"",
 													spc.""GifId"",
 													spc.""PostId"",
@@ -77,7 +80,7 @@
 												WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""story"".""StoryPosts""   WHERE ""HashId"" =@HashId) 
 												AND spc.""ParentId"" is null
 												AND spc.""IsDelete"" = false
-												GROUP BY spc.""CreatedBy"", spc.""Id"",  sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+												GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
 												ORDER BY reaction_count desc,
 												""CreatedOn"" desc
 												OFFSET @Offset
@@ -122,15 +125,15 @@
             get
             {
                 return @$"      WITH RECURSIVE cte AS (
-                                    SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""ModifiedOn"", ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
+                                    SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""ModifiedOn"", ""Body"", ""CustomNote"" ,""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId"", 1 AS CommentLevel
                                     FROM {_postCommentRepository.TableName}
                                     WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
                                     UNION ALL
-                                    SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""ModifiedOn"", post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
+                                    SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""ModifiedOn"", post.""Body"", post.""CustomNote"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
                                     FROM cte ct
                                     JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
                                     )
-                                SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""ModifiedOn"", cte.""AuthorId"", 
+                                SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"" ,cte.""ModifiedOn"", cte.""AuthorId"", 
                                         (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
                                         , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
                                 FROM cte
@@ -153,17 +156,17 @@
                 return @$"WITH RECURSIVE cte AS (
 	                               SELECT ""Id"", ""ParentId"", ""PostId""
 				                            , ""AuthorId"", ""ModifiedOn""
-				                            , ""Body"", ""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
+				                            , ""Body"", ""CustomNote"",""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
 	                               FROM {_subPostCommentRepository.TableName}
 	                               WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
 	                               UNION ALL
 	                               SELECT post.""Id"", post.""ParentId"", post.""PostId""
 				                            , post.""AuthorId"", post.""ModifiedOn""
-				                            , post.""Body"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
+				                            , post.""Body"", post.""CustomNote"" ,post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
 	                               FROM cte ct
 	                               JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
 	                            )
-	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""ModifiedOn""
+	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"",cte.""ModifiedOn""
 				                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
 											, us.""Avatar"" AS UserAvatar
 				                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
