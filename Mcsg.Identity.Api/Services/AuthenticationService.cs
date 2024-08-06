@@ -24,6 +24,7 @@ using Response;
 using Validators;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
+using static Constants.SocialMediaConstants;
 using static SSORegister;
 
 public partial class AuthenticationService : IAuthenticationService
@@ -454,11 +455,7 @@ public partial class AuthenticationService : IAuthenticationService
     public async Task<TokenDto> SocialLogin(string socialType, string socialToken)
     {
         socialType = socialType.ToLower();
-        List<string> socialMedias = new() {
-            SocialMediaConstants.Facebook.MediaCode
-            , SocialMediaConstants.Google.MediaCode
-            , SocialMediaConstants.Apple.MediaCode
-        };
+        var socialMedias = new List<string> { Facebook.MediaCode, Google.MediaCode, Apple.MediaCode };
 
         if (string.IsNullOrEmpty(socialType) || !socialMedias.Contains(socialType))
         {
