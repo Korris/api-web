@@ -197,7 +197,15 @@ public partial class CommentService : ICommentService
         var items = await _postCommentRepository.Connection.QueryAsync<BasicCommentResponse>(query, new { CommentId = input.CommentId });
         if (items != null && items.Count() > 0)
         {
+            var body = "";
+            foreach (var i in items)
+            {
+                body += i.Body + " ";
+            }
+            var profiles = await _businessText.GetProfiles(body);
+
             var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
+
             foreach (var item in items)
             {
                 item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar);
@@ -208,8 +216,9 @@ public partial class CommentService : ICommentService
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
 
-                item.Body = await _businessText.Process(item.Body);
+                item.Body = await _businessText.Process(item.Body, profiles);
             }
+
             results = items.ToList();
             return results;
         }
@@ -241,6 +250,13 @@ public partial class CommentService : ICommentService
 
         if (items != null && items.Count() > 0)
         {
+            var body = "";
+            foreach (var i in items)
+            {
+                body += i.Body + " ";
+            }
+            var profiles = await _businessText.GetProfiles(body);
+
             var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
 
             foreach (var item in items)
@@ -254,7 +270,7 @@ public partial class CommentService : ICommentService
                     item.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
                 }
 
-                item.Body = await _businessText.Process(item.Body);
+                item.Body = await _businessText.Process(item.Body, profiles);
             }
 
             results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);

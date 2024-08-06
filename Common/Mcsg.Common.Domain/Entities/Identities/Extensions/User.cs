@@ -95,5 +95,25 @@ partial class User
     {
     }
 
+    /// <summary>
+    /// Profile
+    /// </summary>
+    public class ProfileDto : IdDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// UserName
+        /// </summary>
+        public string? UserName { get; set; }
+
+        /// <summary>
+        /// ProfileName
+        /// </summary>
+        public string? ProfileName { get; set; }
+
+        #endregion
+    }
+
     #endregion
 }

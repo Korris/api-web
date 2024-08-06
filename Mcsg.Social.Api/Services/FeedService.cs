@@ -118,11 +118,19 @@ public partial class FeedService : IFeedService
             var userId = feedLoadReq.UserId;
             var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
 
+            var body = "";
+            foreach (var i in items)
+            {
+                body += i.Body + " ";
+            }
+            var profiles = await _businessText.GetProfiles(body);
+
             foreach (var item in items)
             {
-                item.Body = await _businessText.Process(item.Body);
+                item.Body = await _businessText.Process(item.Body, profiles);
                 listItemResponse.Add(MappingFeedInListRespone(item, postIds));
             }
+
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             if (items != null && items.Count() > 0)

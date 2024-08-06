@@ -18,12 +18,18 @@ public class BusinessText : IBusinessText
     /// Process
     /// </summary>
     /// <param name="text">Text</param>
+    /// <param name="profiles">Profiles</param>
     /// <returns>Return the result</returns>
-    public async Task<string> Process(string? text)
+    public async Task<string> Process(string? text, List<Entities.User.ProfileDto>? profiles = null)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
             return string.Empty;
+        }
+
+        if (profiles == null)
+        {
+            profiles = await GetProfiles(text);
         }
 
         // Decode body text
@@ -32,17 +38,11 @@ public class BusinessText : IBusinessText
         // Wrap linebreak
         res = res.Replace("\n", "<br/>");
 
-        var userIds = res.ToGuids();
-        var users = await _context.UserAvailable
-            .Where(p => userIds.Contains(p.Id))
-            .Select(p => new { p.Id, p.UserName, p.ProfileName })
-            .ToListAsync();
-
         // Wrap GUIDs
         res = Regex.Replace(res, Mention.Regex, match =>
         {
             var guid = Guid.Parse(match.Value.Replace("@", "")); // extract the GUID
-            var user = users.Find(u => u.Id == guid);
+            var user = profiles.Find(u => u.Id == guid);
             if (user != null)
             {
                 return $"<a href=\"/user/profile?userName={user.UserName}\">{user.ProfileName}</a>";
@@ -66,6 +66,25 @@ public class BusinessText : IBusinessText
         });
 
         return res;
+    }
+
+    /// <summary>
+    /// Get profiles
+    /// </summary>
+    /// <param name="text">Text</param>
+    /// <returns>Return the result</returns>
+    public async Task<List<Entities.User.ProfileDto>> GetProfiles(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return [];
+        }
+
+        var userIds = text.ToGuids();
+        return await _context.UserAvailable
+            .Where(p => userIds.Contains(p.Id))
+            .Select(p => new Entities.User.ProfileDto { Id = p.Id, UserName = p.UserName, ProfileName = p.ProfileName })
+            .ToListAsync();
     }
 
     #endregion
