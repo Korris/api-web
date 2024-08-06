@@ -13,7 +13,7 @@ using Requests;
 /// <summary>
 /// Handler
 /// </summary>
-public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, SingleResponse>
+public class PatchUpdateUserNameH : BaseSettingH, IRequestHandler<PatchUpdateUserNameR, SingleResponse>
 {
     #region -- Methods --
 
@@ -23,10 +23,8 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="uniquenessChecker">Uniqueness checker</param>
-    public PatchUpdateUserNameH(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker)
+    public PatchUpdateUserNameH(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker) : base(context, setting)
     {
-        _context = context;
-        _setting = setting;
         _uniquenessChecker = uniquenessChecker;
     }
 
@@ -79,16 +77,6 @@ public class PatchUpdateUserNameH : IRequestHandler<PatchUpdateUserNameR, Single
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// DB Context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     /// <summary>
     /// Uniqueness checker

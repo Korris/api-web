@@ -14,7 +14,7 @@ using Requests;
 /// <summary>
 /// Handler
 /// </summary>
-public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse>
+public class PatchMoveFolderH : BaseMinioH, IRequestHandler<PatchMoveFolderR, SingleResponse>
 {
     #region -- Methods --
 
@@ -24,12 +24,7 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    public PatchMoveFolderH(IMcsgContext context, ISetting setting, IStorageClient sc)
-    {
-        _context = context;
-        _setting = setting;
-        _sc = sc;
-    }
+    public PatchMoveFolderH(IMcsgContext context, ISetting setting, IStorageClient sc) : base(context, setting, sc) { }
 
     /// <summary>
     /// Handle
@@ -75,25 +70,6 @@ public class PatchMoveFolderH : IRequestHandler<PatchMoveFolderR, SingleResponse
 
         return res;
     }
-
-    #endregion
-
-    #region -- Fields --
-
-    /// <summary>
-    /// DB Context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
-    /// Storage client
-    /// </summary>
-    private readonly IStorageClient _sc;
 
     #endregion
 }

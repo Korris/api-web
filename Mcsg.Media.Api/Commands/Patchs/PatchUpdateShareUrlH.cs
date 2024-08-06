@@ -14,7 +14,7 @@ using Requests;
 /// <summary>
 /// Handler
 /// </summary>
-public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, SingleResponse>
+public class PatchUpdateShareUrlH : BaseSettingH, IRequestHandler<PatchUpdateShareUrlR, SingleResponse>
 {
     #region -- Methods --
 
@@ -23,11 +23,7 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
     /// </summary>
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
-    public PatchUpdateShareUrlH(IMcsgContext context, ISetting setting)
-    {
-        _context = context;
-        _setting = setting;
-    }
+    public PatchUpdateShareUrlH(IMcsgContext context, ISetting setting) : base(context, setting) { }
 
     /// <summary>
     /// Handle
@@ -85,20 +81,6 @@ public class PatchUpdateShareUrlH : IRequestHandler<PatchUpdateShareUrlR, Single
 
         return res;
     }
-
-    #endregion
-
-    #region -- Fields --
-
-    /// <summary>
-    /// DB Context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     #endregion
 }
