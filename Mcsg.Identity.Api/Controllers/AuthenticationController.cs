@@ -38,7 +38,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("social-login")]
     public async Task<IActionResult> LoginSocial(LoginSocialReq request)
     {
-        var result = await _authenticationService.SocialLogin(request.SocialType, request.SocialToken);
+        var result = await _authenticationService.LoginSocial(request.SocialType, request.SocialToken);
         return Ok(result);
     }
 

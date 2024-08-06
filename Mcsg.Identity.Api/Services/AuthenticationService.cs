@@ -242,6 +242,153 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
+    public async Task<TokenDto> LoginSocial(string socialType, string socialToken)
+    {
+        socialType = socialType.ToLower();
+        var socialMedias = new List<string> { Facebook.MediaCode, Google.MediaCode, Apple.MediaCode };
+
+        if (string.IsNullOrEmpty(socialType) || !socialMedias.Contains(socialType))
+        {
+            throw new BadRequestException(ErrorCodes.SocialPlatformNotSupport, ErrorMessage.SocialPlatformNotSupport);
+        }
+
+        //verify token
+        var _ssoService = _serviceAccessor(socialType);
+        var verifyTokenResponse = await _ssoService.VerifyToken(socialToken) ?? throw new BadRequestException(ErrorCodes.InvalidSocialToken, ErrorMessage.SocialIdNotPublic);
+        if (verifyTokenResponse.Error.Count > 0)
+        {
+            throw new BadRequestException(ErrorCodes.InvalidSocialToken, verifyTokenResponse.Error.FirstOrDefault());
+        }
+        var socialId = verifyTokenResponse.Profile.Id;
+        var socialEmail = verifyTokenResponse.Profile.Email;
+
+        // Check user exist ?
+        var existUserId = Guid.Empty;
+
+        // Check user exist with socialId
+        var userSocial = await _ssoService.GetUserSocialBySocialId(socialType, socialId);
+        if (userSocial != null)
+        {
+            existUserId = userSocial.UserId;
+        }
+
+        // Check user exist with email
+        if (existUserId == Guid.Empty)
+        {
+            var existUser = await _userManager.FindByEmailAsync(socialEmail);
+            if (existUser != null && !existUser.IsDelete)
+            {
+                existUserId = existUser.Id;
+            }
+        }
+        // Social user linked to db. Should return access token
+        if (existUserId != Guid.Empty)
+        {
+            var user = await _userManager.FindByIdAsync(existUserId.ToString());
+            if (user == null)
+            {
+                throw new NotFoundException(E203, M203);
+            }
+            else
+            {
+                var session = await _sessionService.CreateSessionAsync(user, "");
+                var response = _tokenService.GenerateAccessToken(session.Id, user);
+                response.Roles = session.Roles;
+
+                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
+                if (refreshToken != null)
+                {
+                    response.RefreshToken = refreshToken.RefreshToken;
+                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+                }
+                if (user.LastLoginDate != null)
+                {
+                    user.LastLoginDate = DateTime.UtcNow;
+                }
+                await _context.SaveChangesAsync(default);
+
+                return response;
+            }
+        }
+        else
+        {
+            // Case 1 : Can NOT GET email in social token => return error
+            if (string.IsNullOrEmpty(socialEmail))
+            {
+                throw new BadRequestException(ErrorCodes.SocialEmailNotPublic, ErrorMessage.SocialEmailNotPublic);
+            }
+            else
+            {
+                //  Case 2 : Can GET email in social token => register
+                var user = new User
+                {
+                    Email = _aes.EncryptText(socialEmail),
+                    PhoneNumber = string.Empty,
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = false,
+                    ReferralCode = _userService.GenerateReferralCode(),
+                    ActivedDate = DateTime.UtcNow,
+                };
+
+                user.UserName = await GenerateUserName(user.Id);
+                user.ProfileName = user.UserName;
+                user.ProfileId = user.UserName;
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    var createError = createResult.Errors.FirstOrDefault();
+                    throw new BadRequestException(createError?.Code, createError?.Description);
+                }
+
+                //Init smart lookup for user
+                await _smartLookupRepository.InsertAsync(new SmartLookup
+                {
+                    CountCriteria = 0,
+                    Keyword = user.ProfileName,
+                    KeywordType = LookupKeywordType.People
+                });
+
+                await _userManager.AddToRoleAsync(user, RoleNames.User);
+
+                //setup wallet
+                await _userWalletService.InitUserWalletAsync(user);
+
+                var socialInfo = new UserSocial
+                {
+                    UserId = user.Id,
+                    SocialId = socialId,
+                    Type = socialType,
+                    Email = _aes.EncryptText(socialEmail),
+                    FirstName = verifyTokenResponse.Profile.FirstName,
+                    LastName = verifyTokenResponse.Profile.LastName,
+                    IsRegisterBySocial = true,
+                    RegisterBySocialPlatform = socialType
+                };
+                await _ssoService.AddUserSocial(socialInfo);
+
+                var session = await _sessionService.CreateSessionAsync(user, "");
+                var response = _tokenService.GenerateAccessToken(session.Id, user);
+                response.IsFirstTimeLoginBySocial = true;
+
+                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
+                if (refreshToken != null)
+                {
+                    response.RefreshToken = refreshToken.RefreshToken;
+                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+                }
+                if (user.LastLoginDate != null)
+                {
+                    user.LastLoginDate = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync(default);
+
+                return response;
+            }
+        }
+    }
+
     public async Task<bool> LogOut()
     {
         await _sessionService.ExpireSession(_currentUserService.Session);
@@ -453,153 +600,6 @@ public partial class AuthenticationService : IAuthenticationService
         }
         await _otpService.ClearAllUserOtpAsync(user.Id, request.Type);
         return resetPass.Succeeded;
-    }
-
-    public async Task<TokenDto> SocialLogin(string socialType, string socialToken)
-    {
-        socialType = socialType.ToLower();
-        var socialMedias = new List<string> { Facebook.MediaCode, Google.MediaCode, Apple.MediaCode };
-
-        if (string.IsNullOrEmpty(socialType) || !socialMedias.Contains(socialType))
-        {
-            throw new BadRequestException(ErrorCodes.SocialPlatformNotSupport, ErrorMessage.SocialPlatformNotSupport);
-        }
-
-        //verify token
-        var _ssoService = _serviceAccessor(socialType);
-        var verifyTokenResponse = await _ssoService.VerifyToken(socialToken) ?? throw new BadRequestException(ErrorCodes.InvalidSocialToken, ErrorMessage.SocialIdNotPublic);
-        if (verifyTokenResponse.Error.Count > 0)
-        {
-            throw new BadRequestException(ErrorCodes.InvalidSocialToken, verifyTokenResponse.Error.FirstOrDefault());
-        }
-        var socialId = verifyTokenResponse.Profile.Id;
-        var socialEmail = verifyTokenResponse.Profile.Email;
-
-        // Check user exist ?
-        var existUserId = Guid.Empty;
-
-        // Check user exist with socialId
-        var userSocial = await _ssoService.GetUserSocialBySocialId(socialType, socialId);
-        if (userSocial != null)
-        {
-            existUserId = userSocial.UserId;
-        }
-
-        // Check user exist with email
-        if (existUserId == Guid.Empty)
-        {
-            var existUser = await _userManager.FindByEmailAsync(socialEmail);
-            if (existUser != null && !existUser.IsDelete)
-            {
-                existUserId = existUser.Id;
-            }
-        }
-        // Social user linked to db. Should return access token
-        if (existUserId != Guid.Empty)
-        {
-            var user = await _userManager.FindByIdAsync(existUserId.ToString());
-            if (user == null)
-            {
-                throw new NotFoundException(E203, M203);
-            }
-            else
-            {
-                var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id, user);
-                response.Roles = session.Roles;
-
-                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-                if (refreshToken != null)
-                {
-                    response.RefreshToken = refreshToken.RefreshToken;
-                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-                }
-                if (user.LastLoginDate != null)
-                {
-                    user.LastLoginDate = DateTime.UtcNow;
-                }
-                await _context.SaveChangesAsync(default);
-
-                return response;
-            }
-        }
-        else
-        {
-            // Case 1 : Can NOT GET email in social token => return error
-            if (string.IsNullOrEmpty(socialEmail))
-            {
-                throw new BadRequestException(ErrorCodes.SocialEmailNotPublic, ErrorMessage.SocialEmailNotPublic);
-            }
-            else
-            {
-                //  Case 2 : Can GET email in social token => register
-                var user = new User
-                {
-                    Email = _aes.EncryptText(socialEmail),
-                    PhoneNumber = string.Empty,
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = false,
-                    ReferralCode = _userService.GenerateReferralCode(),
-                    ActivedDate = DateTime.UtcNow,
-                };
-
-                user.UserName = await GenerateUserName(user.Id);
-                user.ProfileName = user.UserName;
-                user.ProfileId = user.UserName;
-
-                var createResult = await _userManager.CreateAsync(user);
-                if (!createResult.Succeeded)
-                {
-                    var createError = createResult.Errors.FirstOrDefault();
-                    throw new BadRequestException(createError?.Code, createError?.Description);
-                }
-
-                //Init smart lookup for user
-                await _smartLookupRepository.InsertAsync(new SmartLookup
-                {
-                    CountCriteria = 0,
-                    Keyword = user.ProfileName,
-                    KeywordType = LookupKeywordType.People
-                });
-
-                await _userManager.AddToRoleAsync(user, RoleNames.User);
-
-                //setup wallet
-                await _userWalletService.InitUserWalletAsync(user);
-
-                var socialInfo = new UserSocial
-                {
-                    UserId = user.Id,
-                    SocialId = socialId,
-                    Type = socialType,
-                    Email = _aes.EncryptText(socialEmail),
-                    FirstName = verifyTokenResponse.Profile.FirstName,
-                    LastName = verifyTokenResponse.Profile.LastName,
-                    IsRegisterBySocial = true,
-                    RegisterBySocialPlatform = socialType
-                };
-                await _ssoService.AddUserSocial(socialInfo);
-
-                var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id, user);
-                response.IsFirstTimeLoginBySocial = true;
-
-                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-                if (refreshToken != null)
-                {
-                    response.RefreshToken = refreshToken.RefreshToken;
-                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-                }
-                if (user.LastLoginDate != null)
-                {
-                    user.LastLoginDate = DateTime.UtcNow;
-                }
-
-                await _context.SaveChangesAsync(default);
-
-                return response;
-            }
-        }
     }
 
     public async Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string email, string phone, string otp, string otpToken)
