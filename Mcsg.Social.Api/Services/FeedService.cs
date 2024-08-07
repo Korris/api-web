@@ -612,11 +612,6 @@ public partial class FeedService : IFeedService
         return await _postService.Delete(postId);
     }
 
-    public async Task<bool> ReportFeedAsync(FeedReportPostReq req)
-    {
-        return await _postService.ReportPostAsync(req);
-    }
-
     public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item, List<Guid>? postIds)
     {
         var itemResponse = new FeedDto()

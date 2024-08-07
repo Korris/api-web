@@ -1247,25 +1247,6 @@ ORDER BY group_number, random_row_num;
             }
         }
 
-        #region Report post
-        private string GetPostReportByPostIdAndUserId
-        {
-            get
-            {
-                return $@"SELECT ""Id"" FROM {_postReportRepository.TableName}
-                          WHERE ""PostId"" = @postId AND ""UserId"" = @userId";
-            }
-        }
-        private string GetPostReportByPostId
-        {
-            get
-            {
-                return $@"SELECT ""Id"" FROM {_postReportRepository.TableName}
-                          WHERE ""PostId"" = @postId";
-            }
-        }
-        #endregion
-
         private string GetPostRandomIdsQuery
         {
             get
