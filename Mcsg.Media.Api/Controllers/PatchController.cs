@@ -30,8 +30,32 @@ public class PatchController : ControllerBase
     }
 
     /// <summary>
+    /// Encrypt the Email, Phone, and SocialId in the Users and UserSocials tables
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("EncryptEmail")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> EncryptEmail([FromBody] PatchEncryptEmailR request)
+    {
+        if (request.Otp != CommonPrefix)
+        {
+            return Unauthorized();
+        }
+
+        request.Analyze(HttpContext);
+        request.DetectMobileCall(_setting.MobileUserAgent);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = request.GetAbsoluteUri(_setting.Domain);
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// Update the ShareUrl in the Resources table
     /// </summary>
+    /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
     [HttpPost("UpdateShareUrl")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
@@ -54,6 +78,7 @@ public class PatchController : ControllerBase
     /// <summary>
     /// Update the UserName in the Users table
     /// </summary>
+    /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
     [HttpPost("UpdateUserName")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
@@ -76,6 +101,7 @@ public class PatchController : ControllerBase
     /// <summary>
     /// Move the folder in MinIO to match the user who owns it
     /// </summary>
+    /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
     [HttpPost("MoveFolder")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]

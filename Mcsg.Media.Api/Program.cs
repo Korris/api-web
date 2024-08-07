@@ -8,7 +8,7 @@ namespace Mcsg.Media.Api;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Domain;
-using Common.Domain;
+using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -81,6 +81,9 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // SecurityAes
+        builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
 
         // DbContext
         builder.Services.AddDbContext<McsgContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
