@@ -196,6 +196,95 @@
             }
         }
 
+        private string GetAllFeedsByCondition
+        {
+            get
+            {
+                return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
+						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Status"", post.""Type"",
+						post.""CreatedOn"",
+						post.""TotalResource"",
+						post.""SubPostStr"",
+						post.""SubPostResourceStr"",
+						post.""MetaTitle"",
+						post.""MetaDescription"",
+						post.""MetaUrl"",
+						post.""MetaDomain"", 
+						post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+							(SELECT  p.""Id"",
+							p.""Title"", p.""Body"",  
+							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
+							p.""Status"", p.""Type"", 
+							p.""CreatedOn"",
+							p.""CustomNote"", --sp.""Id"" as ""SPID"",
+							sp.""Total"" AS ""TotalResource"",
+							to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
+							to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
+							md.""Title"" AS ""MetaTitle"",
+							md.""Description"" AS ""MetaDescription"",
+							md.""Url"" AS ""MetaUrl"",
+							md.""Domain"" AS ""MetaDomain""
+							FROM (
+								SELECT DISTINCT qpost.* FROM social.""SocialPosts"" qpost
+								[QueryCondition]
+								-- TODO AND (@IsAccessPrivate = true OR qpost.""IsPrivate"" = false )
+								ORDER BY qpost.""{1}"" DESC
+								LIMIT @PageSize
+								OFFSET @Offet
+							) p
+							LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""						
+							LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
+							LEFT JOIN LATERAL 
+							(
+								SELECT ""Id"",""HashId"",""PostId"",""Order"", count(*) OVER() AS ""Total"" FROM social.""SocialSubPosts"" sp 
+								WHERE ""PostId"" = p.""Id""
+								GROUP BY ""Id"", ""PostId""
+								ORDER BY ""Order""
+								LIMIT 5
+							) sp ON sp.""PostId"" = p.""Id""
+							LEFT JOIN LATERAL
+							(
+								SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+							 	FROM social.""SocialResources"" 
+							 	WHERE ""SubPostId"" = sp.""Id""
+								LIMIT 1
+							) spr ON spr.""SubPostId"" = sp.""Id""
+							
+							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
+							u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
+							p.""Status"", p.""Type"",
+							p.""CreatedOn"",
+							p.""CustomNote"",
+							sp.""Total"",
+							md.""Title"",
+							md.""Description"",
+							md.""Url"",
+							md.""Domain""
+							) 
+						AS post
+						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
+						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
+						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
+						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Status"", post.""Type"", 
+						post.""CreatedOn"",
+						post.""TotalResource"",
+						post.""SubPostStr"",
+						post.""SubPostResourceStr"",
+						post.""MetaTitle"",
+						post.""MetaDescription"",
+						post.""MetaUrl"",
+						post.""MetaDomain"",
+						post.""CustomNote""
+						ORDER BY post.""{1}"" DESC;
+
+						SELECT COUNT(*) AS TotalItems 
+						FROM (SELECT DISTINCT qpost.""Id"" FROM {0} qpost
+								[QueryCondition]) p;";
+            }
+        }
+
         private string GetAllFeedsWithTopCommentQuery
         {
             get

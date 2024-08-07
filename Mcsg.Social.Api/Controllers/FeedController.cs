@@ -138,6 +138,13 @@ public class FeedController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("search-by-profileName")]
+    public async Task<IActionResult> GetSearchFeed([FromQuery] FeedPostByProFileNameR input)
+    {
+        var result = await _feedService.GetFeedByUserNameOrKeyword(input);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --

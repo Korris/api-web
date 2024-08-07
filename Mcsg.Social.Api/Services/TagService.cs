@@ -345,29 +345,7 @@ public partial class TagService : ITagService
             return new PagedResponse<TagSearchResponse>(0);
         }
         var keywords = input.Name.ToLower().Split(' ');
-        var query = $@"
-                                SELECT t.""Name"",COUNT( t.""Id"")   from ""Tags"" t 
-                                LEFT JOIN social.""SocialTagPosts"" tp  
-                                ON tp.""TagId""  = t.""Id"" 
-                                LEFT JOIN social.""SocialPosts"" p 
-                                ON p.""Id""  = tp.""PostId"" 
-                                WHERE t.""IsDelete"" = false 
-                                AND tp.""IsDelete"" = false 
-                                [QueryCondition]
-                                GROUP BY t.""Name"", t.""Id""
-                                ORDER BY Count DESC
-                                OFFSET @Offset
-                                LIMIT @PageSize;
-                                
-                                SELECT COUNT(*) AS TotalItems
-                                FROM (
-                                    SELECT distinct  t.""Id""
-                                    FROM social.""SocialPosts"" post
-                                    INNER JOIN social.""SocialTagPosts"" tagpost ON post.""Id"" = tagpost.""PostId"" 
-                                    INNER JOIN ""Tags"" t ON tagpost.""TagId"" = t.""Id"" 
-                                    WHERE  post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 
-                                    [QueryCondition]
-                                    ) q";
+        var query = SearchTagWithPostCount;
 
         bool first = true;
         var queryCondition = "";
@@ -375,7 +353,7 @@ public partial class TagService : ITagService
         {
             if (first)
             {
-                queryCondition += $@"AND t.""Name"" ILIKE '%{word}%'";
+                queryCondition += $@"WHERE t.""Name"" ILIKE '%{word}%'";
                 first = false;
             }
             else

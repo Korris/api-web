@@ -137,5 +137,62 @@
             }
         }
 
+        private string SearchTagWithPostCount
+        {
+            get
+            {
+                return @"SELECT t.""Name"",
+                                COALESCE(tp.post_count, 0) + COALESCE(tc.comic_count, 0) + COALESCE(stp.story_count, 0) AS Count
+                        FROM ""Tags"" t
+                        LEFT JOIN (
+                            SELECT  tp.""TagId"", COUNT(*) AS post_count
+                            FROM social.""SocialTagPosts"" tp
+                            JOIN social.""SocialPosts"" p ON tp.""PostId"" = p.""Id""
+                            WHERE tp.""IsDelete"" = false AND p.""IsDelete"" = false
+                            GROUP BY tp.""TagId""
+                        ) tp ON t.""Id"" = tp.""TagId""
+                        LEFT JOIN (
+                        SELECT ""TagId"", COUNT(*) AS comic_count
+                        FROM comic.""ComicTagPosts""
+                        WHERE ""IsDelete"" = false
+                        GROUP BY  ""TagId""
+                        ) tc ON t.""Id"" = tc.""TagId""
+                        LEFT JOIN (
+                        SELECT stp.""TagId"", COUNT(*) AS story_count
+                        FROM story.""StoryTagPosts"" stp
+                        JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
+                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false
+                        GROUP BY stp.""TagId""
+                        ) stp ON t.""Id"" = stp.""TagId""
+                        [QueryCondition]
+                        OFFSET @Offset
+                        LIMIT @PageSize;
+                        
+                        SELECT COUNT(*)
+                        FROM ""Tags"" t
+                        LEFT JOIN (
+                            SELECT  tp.""TagId""
+                            FROM social.""SocialTagPosts"" tp
+                            JOIN social.""SocialPosts"" p ON tp.""PostId"" = p.""Id""
+                            WHERE tp.""IsDelete"" = false AND p.""IsDelete"" = false
+                            GROUP BY tp.""TagId""
+                        ) tp ON t.""Id"" = tp.""TagId""
+                        LEFT JOIN (
+                        SELECT ""TagId""
+                        FROM comic.""ComicTagPosts""
+                        WHERE ""IsDelete"" = false
+                        GROUP BY  ""TagId""
+                        ) tc ON t.""Id"" = tc.""TagId""
+                        LEFT JOIN (
+                        SELECT stp.""TagId""
+                        FROM story.""StoryTagPosts"" stp
+                        JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
+                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false
+                        GROUP BY stp.""TagId""
+                        ) stp ON t.""Id"" = stp.""TagId""
+                        [QueryCondition]
+                        ";
+            }
+        }
     }
 }

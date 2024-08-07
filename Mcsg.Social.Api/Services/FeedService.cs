@@ -150,6 +150,67 @@ public partial class FeedService : IFeedService
         }
     }
 
+    public async Task<PagedResponse<FeedDto>> GetFeedByUserNameOrKeyword(FeedPostByProFileNameR feedLoadReq)
+    {
+        PagedResponse<FeedDto> results;
+        var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
+
+        var queryCondition = "";
+
+        if (feedLoadReq.SearchBy == "ProfileName")
+        {
+            queryCondition = $@"LEFT JOIN identity.""Users"" u
+                                ON qpost.""UserId"" = u.""Id""
+                                WHERE u.""ProfileName""=@ProfileName 
+                                   AND qpost.""Type""=@PostType
+                                   AND qpost.""Status""=@PostStatus
+                                   AND qpost.""IsDelete""=false";
+        }
+        else
+        {
+            queryCondition = $@" WHERE qpost.""Body"" ILIKE '%{feedLoadReq.Keyword}%'
+                                     AND qpost.""Type""=@PostType
+                                     AND qpost.""Status""=@PostStatus
+                                     AND qpost.""IsDelete""=false";
+        }
+
+        if (feedLoadReq.OrderBy == null)
+        {
+            feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
+        }
+
+        var query = string.Format(GetAllFeedsByCondition, _postRepository.TableName, feedLoadReq.OrderBy);
+        query = query.Replace("[QueryCondition]", queryCondition);
+        var multi = await _postRepository
+                   .Connection.QueryMultipleAsync(query, new
+                   {
+                       PostType = (int)PostType.Feed,
+                       IsAccessPrivate = false,
+                       PageSize = feedLoadReq.PageSize,
+                       Offet = offset,
+                       ProfileName = feedLoadReq.Keyword,
+                       PostStatus = (int)PostStatus.Public
+                   });
+        var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+        var listItemResponse = new List<FeedDto>();
+        foreach (var item in items)
+        {
+            listItemResponse.Add(MappingFeedInListRespone(item, null));
+        }
+        var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
+        if (items != null && items.Count() > 0)
+        {
+            results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+            results.Items = listItemResponse;
+        }
+        else
+        {
+            results = new PagedResponse<FeedDto>(0);
+        }
+        return results;
+    }
+
     public async Task<PagedResponse<FeedDto>> GetFeedsByTagAsync(string tagName, FeedLoadReq feedLoadReq)
     {
         try
