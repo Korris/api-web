@@ -820,10 +820,10 @@ public partial class AuthenticationService : IAuthenticationService
                           ).FirstOrDefaultAsync();
         }
 
-        // Find by Email or PhoneNumber
+        // Find by Email, UserName or PhoneNumber
         if (user == null)
         {
-            user = await qUser.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.Email == email))
+            user = await qUser.FirstOrDefaultAsync(p => (!string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.UserName == email || p.Email == email))
                 || (!string.IsNullOrEmpty(p.PhoneNumber) && (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone)));
         }
 
