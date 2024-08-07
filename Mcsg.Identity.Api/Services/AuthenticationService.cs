@@ -713,27 +713,49 @@ public partial class AuthenticationService : IAuthenticationService
     {
         var session = await _currentUserService.GetCurrentUserAsync();
         var user = await _userManager.FindByIdAsync(session.UserId.ToString());
+
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult == false)
         {
             throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
-        user.IsDelete = true;
 
         try
         {
-            //Get all post id
-            var postIds = await _userRepository.Connection.QueryAsync<Guid>(GeAllPostsIdByUser, new { UserId = user.Id });
-            var now = DateTime.UtcNow;
-            foreach (var postId in postIds)
-            {
-                await _userRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = now, UserId = user.Id });
-            }
-            user.Email = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.Email}";
-            user.UserName = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.UserName}";
-            user.PhoneNumber = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}_{user.PhoneNumber}";
-            await _userManager.UpdateAsync(user);
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
 
+            var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            var now = DateTime.UtcNow;
+            var sql = "CALL comic.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            foreach (var i in postIds)
+            {
+                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var data = await connection.QueryAsync(sql, param);
+            }
+
+            postIds = await _context.SocialPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            now = DateTime.UtcNow;
+            sql = "CALL social.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            foreach (var i in postIds)
+            {
+                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var data = await connection.QueryAsync(sql, param);
+            }
+
+            postIds = await _context.StoryPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            now = DateTime.UtcNow;
+            sql = "CALL story.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            foreach (var i in postIds)
+            {
+                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var data = await connection.QueryAsync(sql, param);
+            }
+
+            await connection.CloseAsync();
+
+            user.IsDelete = true;
+            await _userManager.UpdateAsync(user);
         }
         catch (Exception ex)
         {
