@@ -50,7 +50,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    /// <param name="businessText">BusinessText service</param>
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -59,6 +60,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
+        _businessText = businessText;
     }
 
     /// <summary>
@@ -98,6 +100,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
         await _context.SocialPosts.AddAsync(ett);
         await _context.SaveChangesAsync(default);
+
+        request.Content = await _businessText.Process(request.Content);
 
         var result = new FeedPostDto
         {
@@ -230,6 +234,11 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// SmartLookup service
     /// </summary>
     private readonly ISmartLookupService _smartLookupService;
+
+    /// <summary>
+    /// BusinessText service
+    /// </summary>
+    private readonly IBusinessText _businessText;
 
     #endregion
 }
