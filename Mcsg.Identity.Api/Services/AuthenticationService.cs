@@ -70,6 +70,35 @@ public partial class AuthenticationService : IAuthenticationService
         _userWalletService = userWalletService;
     }
 
+    public async Task CheckRegisterUser(RegisterUserReq request)
+    {
+        var vr = new AuthenticationRegisterUserV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
+        VerifyUserResponse response = new();
+        if (IsAccountExisted(request.Email, request.Phone, out string code, out string message))
+        {
+            throw new BadRequestException(code, message);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ReferralCode))
+        {
+            var userReferrerId = await _userManager.Users.AsNoTracking()
+                .Where(p => p.ReferralCode == request.ReferralCode)
+                .Select(p => p.Id)
+                .FirstOrDefaultAsync();
+            if (userReferrerId == Guid.Empty)
+            {
+                var t = vr.Errors.ToValue();
+                throw new BadRequestException(E116, M116);
+            }
+        }
+    }
+
     public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
     {
         var vr = new AuthenticationRegisterUserV().Validate(request);

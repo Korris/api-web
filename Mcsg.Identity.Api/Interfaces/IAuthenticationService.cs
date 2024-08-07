@@ -20,4 +20,5 @@ public interface IAuthenticationService
     Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string? email, string? phone, string otp, string otpToken);
     Task<RefreshTokenResponse> VerifyRefreshToken(string refreshToken);
     Task<bool> DeleteAccount(DeleteUserReq request);
+    Task CheckRegisterUser(RegisterUserReq request);
 }

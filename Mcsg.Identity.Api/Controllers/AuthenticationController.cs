@@ -21,6 +21,13 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authenticationService;
     }
 
+    [HttpPost("check-register-info")]
+    public async Task<IActionResult> CheckRegisterUser(RegisterUserReq request)
+    {
+        await _authenticationService.CheckRegisterUser(request);
+        return Ok();
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserReq request)
     {
