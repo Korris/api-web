@@ -128,15 +128,29 @@ public partial class SmartLookupService : ISmartLookupService
     {
         var tag = nameof(LookupKeywordType.Tag);
         var people = nameof(LookupKeywordType.People);
-        var q = _context.SmartLookupUserAvailable.Where(p => p.UserId == userId).OrderByDescending(x => x.CreatedOn).Take(6)
-            .Select(p => new RecentSearchResponse
-            {
-                Id = p.Id,
-                Keyword = p.Keyword + "",
-                KeywordType = p.KeywordType == LookupKeywordType.Tag ? tag : p.KeywordType == LookupKeywordType.People ? people : string.Empty
-            });
+        var q = from slu in _context.SmartLookupUserAvailable
+                join u in _context.UserAvailable on slu.Keyword equals u.ProfileName into userGroup
+                from u in userGroup.DefaultIfEmpty()
+                where slu.UserId == userId
+                orderby slu.CreatedOn descending
+                select new RecentSearchResponse
+                {
+                    Id = slu.Id,
+                    Keyword = slu.Keyword + "",
+                    KeywordType = slu.KeywordType == LookupKeywordType.Tag ? tag
+                        : slu.KeywordType == LookupKeywordType.People ? people
+                        : string.Empty,
+                    Avatar = u != null ? u.Avatar : null
+                };
 
-        return await q.ToListAsync();
+        var items = await q.Take(6).ToListAsync();
+
+        foreach (var item in items)
+        {
+            item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar + "");
+        }
+
+        return items;
     }
 
     public async Task<bool> DeleteRecentSearchAsync(Guid id)

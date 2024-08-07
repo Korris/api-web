@@ -1,7 +1,6 @@
 ﻿namespace Mcsg.Social.Api.Requests;
-
-using Models;
-
-public class SmartLookupAddRecentSearchR : SmartLookupResponse
+public class SmartLookupAddRecentSearchR
 {
+    public string Keyword { get; set; }
+    public string KeywordType { get; set; }
 }

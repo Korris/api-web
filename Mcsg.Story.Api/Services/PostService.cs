@@ -679,7 +679,8 @@ public partial class PostService : IPostService
 	                              p.""IsMature"", 
 	                              p.""HashId"",
                                   p.""Type"",
-	                              u.""ProfileName"",  
+	                              u.""ProfileName"",
+                                  u.""UserName"",
 	                              CASE 
 	                              WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
 	                              ELSE NULL 
@@ -701,7 +702,7 @@ public partial class PostService : IPostService
 											LIMIT 2
 										) sp ON sp.""PostId"" = p.""Id""	
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"" 
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName""  
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -1415,6 +1416,7 @@ public partial class PostService : IPostService
         return posts.Select(x => new PostBoxResposne
         {
             ProfileName = x.ProfileName,
+            UserName = x.UserName,
             Title = x.Title,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
             Body = System.Web.HttpUtility.HtmlDecode(x.Body),

@@ -70,6 +70,7 @@ public class PostBoxResposne
     public string Title { get; set; }
     public string Body { get; set; }
     public string ProfileName { get; set; }
+    public string UserName { get; set; }
     public string[] Tags { get; set; }
     public string ThumbnailUrl { get; set; }
     public int CommentCount { get; set; }

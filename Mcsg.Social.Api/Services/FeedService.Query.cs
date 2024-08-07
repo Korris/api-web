@@ -106,7 +106,7 @@
             get
             {
                 return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"", u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
 						post.""CreatedOn"",
 						post.""TotalResource"",
@@ -119,7 +119,7 @@
 						post.""CustomNote"", array_agg(tag.""Name"") as Tags from
 							(SELECT  p.""Id"",
 							p.""Title"", p.""Body"",  
-							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
+							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"", 
 							p.""CreatedOn"",
 							p.""CustomNote"", --sp.""Id"" as ""SPID"",
@@ -149,7 +149,6 @@
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
-								LIMIT 5
 							) sp ON sp.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL
 							(
@@ -160,7 +159,7 @@
 							) spr ON spr.""SubPostId"" = sp.""Id""
 							
 							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-							u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
+							u.""Avatar"",u.""ProfileName"",u.""UserName"", u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"",
 							p.""CreatedOn"",
 							p.""CustomNote"",
@@ -171,10 +170,11 @@
 							md.""Domain""
 							) 
 						AS post
+						LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
 						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
-						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Avatar"",post.""UserId"",post.""ProfileName"",u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"", 
 						post.""CreatedOn"",
 						post.""TotalResource"",
@@ -201,7 +201,7 @@
             get
             {
                 return @"SELECT post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"",u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"",
 						post.""CreatedOn"",
 						post.""TotalResource"",
@@ -214,7 +214,7 @@
 						post.""CustomNote"", array_agg(tag.""Name"") as Tags from
 							(SELECT  p.""Id"",
 							p.""Title"", p.""Body"",  
-							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
+							p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"", 
 							p.""CreatedOn"",
 							p.""CustomNote"", --sp.""Id"" as ""SPID"",
@@ -241,7 +241,6 @@
 								WHERE ""PostId"" = p.""Id""
 								GROUP BY ""Id"", ""PostId""
 								ORDER BY ""Order""
-								LIMIT 5
 							) sp ON sp.""PostId"" = p.""Id""
 							LEFT JOIN LATERAL
 							(
@@ -252,7 +251,7 @@
 							) spr ON spr.""SubPostId"" = sp.""Id""
 							
 							GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-							u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
+							u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"", 
 							p.""Status"", p.""Type"",
 							p.""CreatedOn"",
 							p.""CustomNote"",
@@ -263,10 +262,11 @@
 							md.""Domain""
 							) 
 						AS post
+						LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
 						LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
 						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
 						GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
-						post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
+						post.""Avatar"",post.""UserId"",post.""ProfileName"",u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
 						post.""Status"", post.""Type"", 
 						post.""CreatedOn"",
 						post.""TotalResource"",

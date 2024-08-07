@@ -413,6 +413,7 @@ public partial class UserService : IUserService
         var query = $@"SELECT ""ProfileName"",
                                   ""ProfileId"",
                                   ""Avatar"",
+                                  ""UserName"",
                                   ""Id""
                           FROM identity.""Users"" 
                           [QueryCondition]
