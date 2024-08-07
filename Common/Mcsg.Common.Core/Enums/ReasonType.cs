@@ -6,9 +6,9 @@
 public enum ReasonType
 {
     /// <summary>
-    /// None
+    /// Backbite
     /// </summary>
-    None,
+    Backbite,
 
     /// <summary>
     /// Violence
@@ -16,14 +16,19 @@ public enum ReasonType
     Violence,
 
     /// <summary>
+    /// Insult
+    /// </summary>
+    Insult,
+
+    /// <summary>
     /// Harass
     /// </summary>
     Harass,
 
     /// <summary>
-    /// Spam
+    /// Harm
     /// </summary>
-    Spam,
+    Harm,
 
     /// <summary>
     /// FakeNew
@@ -31,14 +36,14 @@ public enum ReasonType
     FakeNew,
 
     /// <summary>
+    /// ChildAbuse
+    /// </summary>
+    ChildAbuse,
+
+    /// <summary>
     /// Terrorism
     /// </summary>
     Terrorism,
-
-    /// <summary>
-    /// Porn
-    /// </summary>
-    Porn,
 
     /// <summary>
     /// Other
