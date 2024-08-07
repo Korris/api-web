@@ -691,7 +691,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @"SELECT qpost1.""Id""
 								 FROM social.""SocialPosts"" qpost1
 							 	INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""								
-								WHERE  user1.""ProfileName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+								WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
 								AND qpost1.""IsDelete"" = false
 								GROUP BY qpost1.""Id""";
             }
