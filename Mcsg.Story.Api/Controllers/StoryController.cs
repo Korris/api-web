@@ -175,9 +175,9 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
+    public async Task<IActionResult> GetUserStory(string userName, [FromQuery] ComicTopPostR loadReq)
     {
-        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
         return Ok(result);
     }
 
