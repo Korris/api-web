@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Comic.Api.Controllers;
 
+using Common.Core.Enums;
 using Interfaces;
 using Requests;
 
@@ -12,8 +13,9 @@ public class ComicController : ControllerBase
 {
     #region -- Methods --
 
-    public ComicController(IComicService comicService)
+    public ComicController(IComicService comicService, IPostService postService)
     {
+        _postService = postService;
         _comicService = comicService;
     }
 
@@ -187,11 +189,20 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("post/{userName}")]
+    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
+    {
+        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
 
     private readonly IComicService _comicService;
+
+    private readonly IPostService _postService;
 
     #endregion
 }

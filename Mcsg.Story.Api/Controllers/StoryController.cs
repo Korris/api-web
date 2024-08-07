@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Story.Api.Controllers;
 
+using Common.Core.Enums;
 using Interfaces;
 using Requests;
 
@@ -12,9 +13,10 @@ public class StoryController : ControllerBase
 {
     #region -- Methods --
 
-    public StoryController(IStoryService storyService)
+    public StoryController(IStoryService storyService, IPostService postService)
     {
         _storyService = storyService;
+        _postService = postService;
     }
 
     [HttpPost]
@@ -172,11 +174,10 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
-    [HttpPost("follow-post/{postId}")]
-    public async Task<IActionResult> FollowPost(Guid postId)
+    [HttpGet("post/{userName}")]
+    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
     {
-        var result = await _storyService.FollowPost(postId);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
         return Ok(result);
     }
 
@@ -185,6 +186,8 @@ public class StoryController : ControllerBase
     #region -- Fields --
 
     private readonly IStoryService _storyService;
+
+    private readonly IPostService _postService;
 
     #endregion
 }

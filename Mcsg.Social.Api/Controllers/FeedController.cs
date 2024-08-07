@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Requests;
+using Enums;
 using Interfaces;
 using Requests;
 
@@ -126,6 +127,14 @@ public class FeedController : ControllerBase
         var req = new BaseR(HttpContext);
         req.Analyze(HttpContext);
         var result = await _feedService.GetFeedsByIds(hashIds, req.UserId ?? Guid.Empty);
+        return Ok(result);
+    }
+
+    [HttpGet("post/{userName}")]
+    public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq loadReq)
+    {
+        loadReq.UserName = userName;
+        var result = await _feedService.GetFeedsAsync(loadReq, LoadFeedType.ALL);
         return Ok(result);
     }
 
