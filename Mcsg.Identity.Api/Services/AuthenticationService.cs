@@ -554,7 +554,7 @@ public partial class AuthenticationService : IAuthenticationService
         var response = new VerifyUserResponse();
         if (!string.IsNullOrEmpty(email))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == phone);
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == email);
             if (user == null)
             {
                 throw new NotFoundException(E203, M203);
