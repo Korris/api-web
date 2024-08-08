@@ -25,11 +25,6 @@ public partial class User : IdentityUser<Guid>
     public string? ReferralCode { get; set; }
     public string? Avatar { get; set; }
     public UserStatus Status { get; set; } = UserStatus.Active;
-    public bool IsDelete { get; set; }
-    public DateTime CreatedOn { get; set; }
-    public Guid? CreatedBy { get; set; }
-    public DateTime? ModifiedOn { get; set; }
-    public Guid? ModifiedBy { get; set; }
     public DateTime? ActivedDate { get; set; }
     public DateTime? LastLoginDate { get; set; }
     public string? StatusReason { get; set; }
@@ -38,4 +33,39 @@ public partial class User : IdentityUser<Guid>
     public DateOnly? PremiumDate { get; set; }
     public bool IsActiveEarning { get; set; }
     public bool IsWalletShowing { get; set; }
+
+    /// <summary>
+    /// Created by
+    /// </summary>
+    public Guid? CreatedBy { get; set; }
+
+    /// <summary>
+    /// Created on
+    /// </summary>
+    public DateTime CreatedOn { get; set; }
+
+    /// <summary>
+    /// Modified by
+    /// </summary>
+    public Guid? ModifiedBy { get; set; }
+
+    /// <summary>
+    /// Modified date
+    /// </summary>
+    public DateTime? ModifiedOn { get; set; }
+
+    /// <summary>
+    /// The scheduled time for the job will be deleted in the future
+    /// </summary>
+    public DateTime? DeletedAt { get; set; }
+
+    /// <summary>
+    /// Deleted by
+    /// </summary>
+    public Guid? DeletedBy { get; set; }
+
+    /// <summary>
+    /// Is delete
+    /// </summary>
+    public bool IsDelete { get; set; }
 }
