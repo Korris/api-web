@@ -191,11 +191,13 @@ public partial class UserService : IUserService
 
         if (user.ProfileName != profileName)
         {
-            var smartLookup = await _context.SmartLookups.FirstOrDefaultAsync(p => p.Keyword == user.ProfileName && p.KeywordType == LookupKeywordType.People);
-            if (smartLookup != null)
-            {
-                smartLookup.Keyword = profileName;
-            }
+            await _context.SmartLookups
+                .Where(p => p.Keyword == user.ProfileName && p.KeywordType == LookupKeywordType.People)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Keyword, profileName));
+
+            await _context.SmartLookupUsers
+                .Where(p => p.Keyword == user.ProfileName && p.KeywordType == LookupKeywordType.People)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Keyword, profileName));
 
             user.ProfileName = profileName;
         }
