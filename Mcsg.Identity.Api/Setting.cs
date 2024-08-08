@@ -41,6 +41,11 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// The time in minutes after which the account will be deleted
+    /// </summary>
+    public uint AccountDeletedAfter { get; set; }
+
     #endregion
 
     #region -- Methods --

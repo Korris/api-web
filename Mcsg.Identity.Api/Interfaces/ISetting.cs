@@ -40,5 +40,10 @@ public interface ISetting : ISettingBase
     /// </summary>
     bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// The time in minutes after which the account will be deleted
+    /// </summary>
+    uint AccountDeletedAfter { get; set; }
+
     #endregion
 }

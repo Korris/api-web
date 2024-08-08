@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Mcsg.Identity.Api.Services;
@@ -741,7 +740,7 @@ public partial class AuthenticationService : IAuthenticationService
     public async Task<bool> DeleteAccount(DeleteUserReq request)
     {
         var session = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(session.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(session.UserId.ToString()) ?? throw new NotFoundException(E203, M203);
 
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult == false)
@@ -749,47 +748,9 @@ public partial class AuthenticationService : IAuthenticationService
             throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
         }
 
-        try
-        {
-            var connection = _context.Database.GetDbConnection();
-            await connection.OpenAsync();
-
-            var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
-            var now = DateTime.UtcNow;
-            var sql = "CALL comic.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-            foreach (var i in postIds)
-            {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
-                var data = await connection.QueryAsync(sql, param);
-            }
-
-            postIds = await _context.SocialPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
-            now = DateTime.UtcNow;
-            sql = "CALL social.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-            foreach (var i in postIds)
-            {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
-                var data = await connection.QueryAsync(sql, param);
-            }
-
-            postIds = await _context.StoryPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
-            now = DateTime.UtcNow;
-            sql = "CALL story.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-            foreach (var i in postIds)
-            {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
-                var data = await connection.QueryAsync(sql, param);
-            }
-
-            await connection.CloseAsync();
-
-            user.IsDelete = true;
-            await _userManager.UpdateAsync(user);
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.DefaultError, ErrorMessage.DefaultError);
-        }
+        user.DeletedAt = DateTime.UtcNow.AddMinutes(_setting.AccountDeletedAfter);
+        user.DeletedBy = session.UserId;
+        await _userManager.UpdateAsync(user);
 
         return true;
     }
