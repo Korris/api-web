@@ -18,5 +18,15 @@ public enum LookupKeywordType
     /// <summary>
     /// Tag
     /// </summary>
-    Tag
+    Tag,
+
+    /// <summary>
+    /// Comic
+    /// </summary>
+    Comic,
+
+    /// <summary>
+    /// Story
+    /// </summary>
+    Story
 }

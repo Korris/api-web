@@ -114,7 +114,7 @@ public partial class SmartLookupService : ISmartLookupService
 
             if (result != null && result.Count() > 0)
             {
-                foreach (var item in result)
+                foreach (var item in result.Where(p => p.KeywordType == LookupKeywordType.People.ToString()))
                 {
                     item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
                 }

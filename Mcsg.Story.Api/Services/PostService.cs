@@ -174,6 +174,14 @@ public partial class PostService : IPostService
         try
         {
             await _postRepository.InsertAsync(post);
+
+            await _smartLookupRepository.InsertAsync(new SmartLookup
+            {
+                CountCriteria = 0,
+                Keyword = comicPostReq.Title,
+                KeywordType = LookupKeywordType.Story
+            });
+
             if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
             {
                 result.Tags = (await _tagService.AddTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
@@ -780,6 +788,7 @@ public partial class PostService : IPostService
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
 
+        var currentTitle = post.Title;
         post.Title = comicPostReq.Title;
         post.HashId = hashId;
         post.AuthorId = comicPostReq.IsCurrentUserIsAuthor ? currentUserId : null;
@@ -814,6 +823,17 @@ public partial class PostService : IPostService
         try
         {
             await _postRepository.UpdateAsync(post);
+
+            if (currentTitle != comicPostReq.Title)
+            {
+                var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Story && p.Keyword == currentTitle);
+                if (currentEntity != null)
+                {
+                    currentEntity.Keyword = comicPostReq.Title;
+                    await _smartLookupRepository.UpdateAsync(currentEntity);
+                }
+            }
+
             if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
             {
                 result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
