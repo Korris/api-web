@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Analytic.Api", "Mcsg.Analytic.Api\Mcsg.Analytic.Api.csproj", "{A514B65F-33A1-468B-B026-54A916E92ED4}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{A1152CA1-B444-4676-B59D-06093C823044}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{63A43195-F5B8-48B1-8073-6A7D77FFB884}"
@@ -14,8 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Analytic", "Lib\Mcsg.Lib.Data.Analytic\Mcsg.Lib.Data.Analytic.csproj", "{54C9182A-D4D8-4499-9495-FD9547B8E7DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data.Wallet", "Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj", "{4CD39EC9-A8E7-44D8-80C2-B4EA46F412BF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Analytic.Api", "Mcsg.Analytic.Api\Mcsg.Analytic.Api.csproj", "{A514B65F-33A1-468B-B026-54A916E92ED4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Social.Api", "Mcsg.Social.Api\Mcsg.Social.Api.csproj", "{EEC2B46C-4B06-4F90-852A-AECECB5DA293}"
 EndProject
