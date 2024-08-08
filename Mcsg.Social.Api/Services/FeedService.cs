@@ -193,8 +193,18 @@ public partial class FeedService : IFeedService
                    });
         var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
         var listItemResponse = new List<FeedDto>();
+
+        var body = "";
+
+        foreach (var i in items)
+        {
+            body += i.Body + " ";
+        }
+        var profiles = await _businessText.GetProfiles(body);
+
         foreach (var item in items)
         {
+            item.Body = await _businessText.Process(item.Body, profiles);
             listItemResponse.Add(MappingFeedInListRespone(item, null));
         }
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
@@ -235,8 +245,18 @@ public partial class FeedService : IFeedService
                     });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
+
+            var body = "";
+
+            foreach (var i in items)
+            {
+                body += i.Body + " ";
+            }
+            var profiles = await _businessText.GetProfiles(body);
+
             foreach (var item in items)
             {
+                item.Body = await _businessText.Process(item.Body, profiles);
                 listItemResponse.Add(MappingFeedInListRespone(item, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
