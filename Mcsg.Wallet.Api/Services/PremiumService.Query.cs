@@ -6,7 +6,7 @@
         {
             get
             {
-                return @"UPDATE ""Sessions""
+                return @"UPDATE identity.""Sessions""
                                     SET ""PremiumDate"" = @PremiumDate
                                     WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateTimeNow;
                         UPDATE identity.""Users""

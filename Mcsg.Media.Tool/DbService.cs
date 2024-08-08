@@ -19,7 +19,7 @@ namespace Mcsg.Media.Tool
 
         public async Task LoadActiveJobs(ConcurrentQueue<Job> currentQueue)
         {
-            var query = @"SELECT ""Id"", ""Status"",""Data"", ""JobType"" FROM ""Jobs""
+            var query = @"SELECT ""Id"", ""Status"",""Data"", ""JobType"" FROM system.""Jobs""
                          WHERE ""JobCategory"" = @jobCategory AND ""Status"" = @jobStatus";
 
             using var conn = new NpgsqlConnection(_connectionString);
@@ -42,7 +42,7 @@ namespace Mcsg.Media.Tool
 
         public async Task UpdateJobStatus(Guid jobId, JobStatus jobStatus, string error)
         {
-            var command = @"UPDATE ""Jobs"" SET ""Status"" = @status, ""Error"" = @error WHERE ""Id"" = @id ";
+            var command = @"UPDATE system.""Jobs"" SET ""Status"" = @status, ""Error"" = @error WHERE ""Id"" = @id ";
 
             using var conn = new NpgsqlConnection(_connectionString);
             await conn.ExecuteAsync(command,

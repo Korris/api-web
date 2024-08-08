@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mcsg.Common.Domain.Entities.Configurations;
 
+using Core.Constants;
+
 public class SessionConfiguration : BaseConfiguration<Session>
 {
     public override void CreateEntityConfiguration(EntityTypeBuilder<Session> builder)
     {
-        builder.ToTable("Sessions");
+        builder.ToTable("Sessions", DbSchema.Identity);
         builder.Property(x => x.LoginProvider).IsRequired();
         builder.Property(x => x.LoginDateUtc);
         builder.Property(x => x.ExpiredDateUtc);

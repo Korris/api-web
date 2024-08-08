@@ -11,7 +11,7 @@
                 return @"SELECT ""Id"", ""LoginProvider"", ""LoginDateUtc"", ""ExpiredDateUtc"", ""UserName"", ""Email"", 
                             ""LastName"", ""FirstName"", ""UserId"", ""Roles"", ""Claims"", 
                             ""LastActionDateUtc"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""ProfileName"", ""ProfileId"", ""UserAvatar"", ""PremiumDate""
-                                FROM public.""Sessions""
+                                FROM identity.""Sessions""
                                 WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateNow
                                 ORDER BY ""CreatedOn"" DESC";
             }
@@ -21,7 +21,7 @@
         {
             get
             {
-                return @"UPDATE ""Sessions""
+                return @"UPDATE identity.""Sessions""
                                     SET ""PremiumDate"" = @PremiumDate
                                     WHERE ""UserId"" = @UserId AND ""ExpiredDateUtc"" > @DateTimeNow;
                         UPDATE identity.""Users""

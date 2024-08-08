@@ -45,7 +45,7 @@ namespace Mcsg.Analytic.Api.Services
             {
                 var postAndUserId = await _sessionRepository.Connection.QueryFirstOrDefaultAsync<UserAndPostDto>(@"SELECT ss.""UserId"", 
                 ss.""ExpiredDateUtc"",  ss.""PremiumDate"", sp.""PostId"", post.""Type"", post.""UserId"" as ""AuthorId""
-                    FROM public.""Sessions"" ss, social.""SocialSubPosts"" sp
+                    FROM identity.""Sessions"" ss, social.""SocialSubPosts"" sp
                     LEFT JOIN social.""SocialPosts"" post ON  sp.""PostId"" =  post.""Id""
 	                WHERE ss.""Id""=@SesionId AND sp.""Id"" = @SubpostId
                     LIMIT 1
