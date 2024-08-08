@@ -19,7 +19,7 @@ namespace Mcsg.Common.Domain;
 using Domain.Entities;
 
 /// <summary>
-/// Interface Mcsg context
+/// Interface McsgContext
 /// </summary>
 public interface IMcsgContext
 {
@@ -207,6 +207,8 @@ public interface IMcsgContext
 
     DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
+    DbSet<UserRelation> UserRelations { get; set; }
+
     DbSet<UserSocial> UserSocials { get; set; }
 
     //DbSet<UserToken> UserTokens { get; set; }
@@ -362,6 +364,8 @@ public interface IMcsgContext
     IQueryable<UserReferral> UserReferralAvailable { get; }
 
     IQueryable<UserRefreshToken> UserRefreshTokenAvailable { get; }
+
+    IQueryable<UserRelation> UserRelationAvailable { get; }
 
     IQueryable<UserSocial> UserSocialAvailable { get; }
 

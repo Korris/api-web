@@ -1097,7 +1097,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Jobs", (string)null);
+                    b.ToTable("Jobs", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Mention", b =>
@@ -1185,7 +1185,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("ReceiverId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.NotificationObject", b =>
@@ -1233,7 +1233,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationObjects", (string)null);
+                    b.ToTable("NotificationObjects", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Role", b =>
@@ -1339,7 +1339,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SmartCountAction", b =>
@@ -3059,7 +3059,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("Key")
                         .IsUnique();
 
-                    b.ToTable("SystemSettings", (string)null);
+                    b.ToTable("SystemSettings", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSettingHistory", b =>
@@ -3102,7 +3102,7 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SystemSettingHistories", (string)null);
+                    b.ToTable("SystemSettingHistories", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Tag", b =>
@@ -3552,6 +3552,46 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserRefreshTokens", "identity");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId2")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId1");
+
+                    b.HasIndex("UserId2");
+
+                    b.ToTable("UserRelations", "identity");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserSocial", b =>
@@ -4494,6 +4534,21 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("UserReferee");
 
                     b.Navigation("UserReferrer");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserRelation", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId2")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ViewHistory", b =>

@@ -16,6 +16,9 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "comic");
 
             migrationBuilder.EnsureSchema(
+                name: "system");
+
+            migrationBuilder.EnsureSchema(
                 name: "identity");
 
             migrationBuilder.EnsureSchema(
@@ -126,6 +129,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Jobs",
+                schema: "system",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -170,6 +174,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "NotificationObjects",
+                schema: "system",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -209,6 +214,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Sessions",
+                schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -312,6 +318,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SystemSettings",
+                schema: "system",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -534,6 +541,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Notifications",
+                schema: "system",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -552,6 +560,7 @@ namespace Mcsg.Common.Domain.Migrations
                     table.ForeignKey(
                         name: "FK_Notifications_NotificationObjects_NotificationObjectId",
                         column: x => x.NotificationObjectId,
+                        principalSchema: "system",
                         principalTable: "NotificationObjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -671,6 +680,7 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SystemSettingHistories",
+                schema: "system",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
@@ -690,6 +700,7 @@ namespace Mcsg.Common.Domain.Migrations
                     table.ForeignKey(
                         name: "FK_SystemSettingHistories_SystemSettings_SystemSettingId",
                         column: x => x.SystemSettingId,
+                        principalSchema: "system",
                         principalTable: "SystemSettings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -832,6 +843,40 @@ namespace Mcsg.Common.Domain.Migrations
                     table.ForeignKey(
                         name: "FK_UserReferrals_Users_UserReferrerId",
                         column: x => x.UserReferrerId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRelations",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId2 = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRelations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRelations_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRelations_Users_UserId2",
+                        column: x => x.UserId2,
                         principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -2725,11 +2770,13 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_NotificationObjectId",
+                schema: "system",
                 table: "Notifications",
                 column: "NotificationObjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_ReceiverId",
+                schema: "system",
                 table: "Notifications",
                 column: "ReceiverId");
 
@@ -3146,16 +3193,19 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemSettingHistories_SystemSettingId",
+                schema: "system",
                 table: "SystemSettingHistories",
                 column: "SystemSettingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemSettingHistories_UserId",
+                schema: "system",
                 table: "SystemSettingHistories",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SystemSettings_Key",
+                schema: "system",
                 table: "SystemSettings",
                 column: "Key",
                 unique: true);
@@ -3226,6 +3276,18 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "identity",
                 table: "UserReferrals",
                 column: "UserReferrerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRelations_UserId1",
+                schema: "identity",
+                table: "UserRelations",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRelations_UserId2",
+                schema: "identity",
+                table: "UserRelations",
+                column: "UserId2");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -3321,20 +3383,23 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "CrawComics");
 
             migrationBuilder.DropTable(
-                name: "Jobs");
+                name: "Jobs",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "Mentions");
 
             migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "Notifications",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "Sessions");
+                name: "Sessions",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "SmartCountActions");
@@ -3430,7 +3495,8 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "story");
 
             migrationBuilder.DropTable(
-                name: "SystemSettingHistories");
+                name: "SystemSettingHistories",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "TagFavorites");
@@ -3467,6 +3533,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
+                name: "UserRelations",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
                 name: "UserRoles",
                 schema: "identity");
 
@@ -3493,7 +3563,8 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
-                name: "NotificationObjects");
+                name: "NotificationObjects",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "SocialPostComments",
@@ -3512,7 +3583,8 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "story");
 
             migrationBuilder.DropTable(
-                name: "SystemSettings");
+                name: "SystemSettings",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "Tags");

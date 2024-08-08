@@ -280,6 +280,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
+    public virtual DbSet<UserRelation> UserRelations { get; set; }
+
     public virtual DbSet<UserSocial> UserSocials { get; set; }
 
     //public virtual DbSet<UserToken> UserTokens { get; set; }

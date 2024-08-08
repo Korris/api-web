@@ -17,7 +17,7 @@ using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 
 /// <summary>
-/// Mcsg context
+/// McsgContext
 /// </summary>
 partial class McsgContext
 {
@@ -215,6 +215,8 @@ partial class McsgContext
     public IQueryable<UserReferral> UserReferralAvailable => UserReferrals.Where(p => !p.IsDelete);
 
     public IQueryable<UserRefreshToken> UserRefreshTokenAvailable => UserRefreshTokens.Where(p => !p.IsDelete);
+
+    public IQueryable<UserRelation> UserRelationAvailable => UserRelations.Where(p => !p.IsDelete);
 
     public IQueryable<UserSocial> UserSocialAvailable => UserSocials.Where(p => !p.IsDelete);
 
