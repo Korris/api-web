@@ -4,5 +4,5 @@ using Common.Domain.Entities;
 
 public interface IUserWalletService
 {
-    Task InitUserWalletAsync(User user);
+    Task InitUserWalletAsync(User user, bool createWalletTransaction);
 }

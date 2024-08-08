@@ -21,7 +21,7 @@ public class UserWalletService : IUserWalletService
         _walletDbContext = walletDbContext;
     }
 
-    public async Task InitUserWalletAsync(User user)
+    public async Task InitUserWalletAsync(User user, bool createWalletTransaction)
     {
         var wallet = await _walletDbContext.UserWallets.AddAsync(new UserWallet
         {
@@ -30,7 +30,7 @@ public class UserWalletService : IUserWalletService
             ModifiedOn = DateTime.UtcNow,
             Id = Guid.NewGuid(),
             Point = 0,
-            RewardPoint = SystemConfig.DefaultRewardPoint,
+            RewardPoint = createWalletTransaction ? SystemConfig.DefaultRewardPoint : 0,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             ProfileName = user.ProfileName,
@@ -38,6 +38,12 @@ public class UserWalletService : IUserWalletService
             UserId = user.Id,
             WalletSettingId = (await _walletDbContext.WalletSettings.FirstOrDefaultAsync()).Id
         });
+
+        if (!createWalletTransaction)
+        {
+            await _walletDbContext.SaveChangesAsync();
+            return;
+        }
 
         await _walletDbContext.WalletTransactions.AddAsync(new WalletTransaction
         {

@@ -168,7 +168,7 @@ public partial class AuthenticationService : IAuthenticationService
             await _userManager.AddToRoleAsync(user, RoleNames.User);
 
             //setup wallet
-            await _userWalletService.InitUserWalletAsync(user);
+            await _userWalletService.InitUserWalletAsync(user, false);
         }
         try
         {
@@ -382,7 +382,7 @@ public partial class AuthenticationService : IAuthenticationService
                 await _userManager.AddToRoleAsync(user, RoleNames.User);
 
                 //setup wallet
-                await _userWalletService.InitUserWalletAsync(user);
+                await _userWalletService.InitUserWalletAsync(user, false);
 
                 var ettUserSocial = new UserSocial
                 {
