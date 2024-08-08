@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class ComicPostReport : BasePostReport
+public partial class ComicPostReport : BasePostReport
 {
 }

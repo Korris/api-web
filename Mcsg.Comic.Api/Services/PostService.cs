@@ -2001,29 +2001,6 @@ public partial class PostService : IPostService
     }
     #endregion
 
-    #region REPORT
-    public async Task<bool> ReportPostAsync(FeedReportPostReq req)
-    {
-        var postReport = new ComicPostReport
-        {
-            PostId = req.PostId,
-            UserId = _currentUserService.Session.UserId,
-            ReasonType = req.ReasonType,
-            ReasonText = req.ReasonText ?? ""
-        };
-
-        await _postReportValidator.OnValidate(postReport);
-
-        var hasExisted = (await _postReportRepository.GetByCustomQuery(GetPostReportByPostIdAndUserId, new { postId = postReport.PostId, userId = postReport.UserId })).Any();
-
-        if (hasExisted)
-            return true;
-
-        var iResult = await _postReportRepository.InsertAsync(postReport);
-        return iResult > 0;
-    }
-    #endregion
-
     #region -- Fields --
 
     /// <summary>

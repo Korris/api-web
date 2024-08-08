@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class StoryPostReport : BasePostReport
+public partial class StoryPostReport : BasePostReport
 {
 }

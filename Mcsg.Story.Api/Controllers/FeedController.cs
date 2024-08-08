@@ -111,14 +111,6 @@ public class FeedController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("report")]
-    [Authorize]
-    public async Task<IActionResult> ReportFeed([FromBody] FeedReportPostReq request)
-    {
-        var result = await _feedService.ReportFeedAsync(request);
-        return Ok(result);
-    }
-
     [HttpGet("get-feed-by-list-id")]
     public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
     {

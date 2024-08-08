@@ -36,7 +36,6 @@ public interface IPostService
     ChapterResponse MappingChapterResponse(ComicSubPost newChapter);
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
     Task<List<MyPostSeriesResponse>> GetMyAllSeries();
-    Task<bool> ReportPostAsync(FeedReportPostReq req);
     Task UpdateKeyWordForComicAndStoryToSmartLookup();
     Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input);
     Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input);
