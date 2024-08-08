@@ -85,6 +85,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             throw new BadRequestException(M109);
         }
 
+        request.Tags = request.Content?.ExtractHashtags();
+
         var userName = request.UserName;
         var userId = request.UserId.Value;
         var profileName = request.ProfileName;

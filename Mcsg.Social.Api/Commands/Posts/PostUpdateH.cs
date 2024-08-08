@@ -107,6 +107,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         }
         #endregion
 
+        request.Tags = request.Content?.ExtractHashtags();
+
         var userName = request.UserName;
         var profileName = request.ProfileName;
         var profileId = request.ProfileId;

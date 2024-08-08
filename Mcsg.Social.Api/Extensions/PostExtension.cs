@@ -3,6 +3,7 @@
 using Constants;
 using Enums;
 using Models;
+using System.Text.RegularExpressions;
 
 public static class PostExtension
 {
@@ -24,5 +25,25 @@ public static class PostExtension
             true => PostConst.PostSeriesStatus.Completed,
             _ => PostConst.PostSeriesStatus.Latest,
         };
+    }
+    public static List<string> ExtractHashtags(this string content)
+    {
+        var result = new List<string>();
+        if (string.IsNullOrEmpty(content))
+        {
+            return result;
+        }
+
+        // Use regular expression to find all hashtags
+        Regex regex = new Regex(@"#(\w+)");
+        MatchCollection matches = regex.Matches(content);
+
+        List<string> hashtags = new List<string>();
+        foreach (Match match in matches)
+        {
+            result.Add(match.Groups[1].Value);
+        }
+
+        return result;
     }
 }
