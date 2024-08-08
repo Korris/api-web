@@ -1947,8 +1947,6 @@ public partial class PostService : IPostService
                     break;
             }
 
-            await _userService.SyncWalletUserReward(userId, Default.RewardPoint, rewardType);
-
             res.Add(new RewardDto
             {
                 Type = rewardType,
