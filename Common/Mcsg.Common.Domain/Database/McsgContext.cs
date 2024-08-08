@@ -74,7 +74,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
         builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles", DbSchema.Identity));
 
-        //Seed data
         //DataSeeder.Seed(builder);
     }
 

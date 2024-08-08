@@ -164,9 +164,7 @@ public class Program
         // Add policy
         builder.Services.AddAuthorization(p =>
         {
-            p.AddPolicy(Policy.AppAdmin, q => q.RequireRole(Role.SuperAdmin, Role.Admin));
-            p.AddPolicy(Policy.ClientAdmin, q => q.RequireRole(Role.SuperTenant, Role.Tenant));
-            p.AddPolicy(Policy.Admin, q => q.RequireRole(Role.SuperAdmin, Role.Admin, Role.SuperTenant, Role.Tenant));
+            p.AddPolicy(Policy.Admin, q => q.RequireRole(McsgRole.SysAdmin, McsgRole.Admin));
         });
 
         // Cookie name

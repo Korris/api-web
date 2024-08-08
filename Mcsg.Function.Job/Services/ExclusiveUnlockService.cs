@@ -5,10 +5,10 @@ namespace Mcsg.Function.Job.Services;
 
 using Common.Domain.Entities;
 using Interfaces;
-using Lib.Data.Constants;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Lib.Data.Wallet;
+using static Common.SeedWork.Constants.Setting;
 
 public class ExclusiveUnlockService : IExclusiveUnlockService
 {
@@ -28,7 +28,7 @@ public class ExclusiveUnlockService : IExclusiveUnlockService
             var weekTime = nowTime.AddDays(-7);
             await _subPostRepository.Connection.ExecuteAsync(UpdateIsExclusive, new
             {
-                SystemUser = DbSystemConst.SystemUserId,
+                SystemUser = CreatedBy.System,
                 NowTime = nowTime,
                 WeekTime = weekTime
             });

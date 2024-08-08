@@ -22,7 +22,7 @@ namespace Mcsg.Common.Core.Requests;
 
 using Common.SeedWork.Constants;
 using Common.SeedWork.Responses;
-using static Common.SeedWork.Constants.Setting.Role;
+using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
 /// Base request
@@ -259,19 +259,13 @@ public class BaseR : IRequest<SingleResponse>
     /// Is role admin
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleAdmin => _hc?.User?.IsInRole(SuperAdmin) == true || _hc?.User?.IsInRole(Admin) == true;
+    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true || _hc?.User?.IsInRole(McsgRole.Admin) == true;
 
     /// <summary>
-    /// Is role tenant
+    /// Is role user
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleTenant => _hc?.User?.IsInRole(SuperTenant) == true || _hc?.User?.IsInRole(Tenant) == true;
-
-    /// <summary>
-    /// Is role customer
-    /// </summary>
-    [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleCustomer => _hc?.User?.IsInRole(Customer) == true;
+    public bool IsRoleUser => _hc?.User?.IsInRole(McsgRole.User) == true;
 
     /// <summary>
     /// UT mode (automatically rollback data when the test is done)

@@ -43,32 +43,22 @@ public class Setting
     /// <summary>
     /// Role
     /// </summary>
-    public class Role
+    public class McsgRole
     {
+        /// <summary>
+        /// Customer
+        /// </summary>
+        public const string User = "Mcsg.User";
+
         /// <summary>
         /// SuperAdmin
         /// </summary>
-        public const string SuperAdmin = "SuperAdmin";
+        public const string SysAdmin = "Mcsg.SysAdmin";
 
         /// <summary>
         /// Admin
         /// </summary>
-        public const string Admin = "Admin";
-
-        /// <summary>
-        /// SuperTenant
-        /// </summary>
-        public const string SuperTenant = "SuperTenant";
-
-        /// <summary>
-        /// Tenant
-        /// </summary>
-        public const string Tenant = "Tenant";
-
-        /// <summary>
-        /// Customer
-        /// </summary>
-        public const string Customer = "Customer";
+        public const string Admin = "Mcsg.Admin";
     }
 
     /// <summary>
@@ -76,16 +66,6 @@ public class Setting
     /// </summary>
     public class Policy
     {
-        /// <summary>
-        /// AppAdmin
-        /// </summary>
-        public const string AppAdmin = "AppAdmin";
-
-        /// <summary>
-        /// ClientAdmin
-        /// </summary>
-        public const string ClientAdmin = "ClientAdmin";
-
         /// <summary>
         /// Admin
         /// </summary>
@@ -100,12 +80,7 @@ public class Setting
         /// <summary>
         /// System
         /// </summary>
-        public const string System = "System";
-
-        /// <summary>
-        /// gRPC
-        /// </summary>
-        public const string Grpc = "gRPC";
+        public static Guid System = new("00000000-0000-0000-0000-000000000001");
     }
 
     #endregion
