@@ -50,7 +50,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostUpdateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService) : base(context, setting, sc)
+    public PostUpdateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -59,6 +59,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
+        _businessText = businessText;
     }
 
     /// <summary>
@@ -116,7 +117,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var userAvatar = request.UserAvatar;
         userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
-        var content = request.Content;
+        var content = await _businessText.Process(request.Content);
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
@@ -267,6 +268,11 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// SmartLookup service
     /// </summary>
     private readonly ISmartLookupService _smartLookupService;
+
+    /// <summary>
+    /// BusinessText service
+    /// </summary>
+    private readonly IBusinessText _businessText;
 
     #endregion
 }

@@ -65,6 +65,8 @@ public class BusinessText : IBusinessText
             return $"<a href=\"{url}\">{url}</a>";
         });
 
+        res = Regex.Replace(res, @"<(?!\/?a(?=>|\s.*>)|br\s*\/?>)\/?.*?>", "", RegexOptions.IgnoreCase);
+
         return res;
     }
 
