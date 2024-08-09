@@ -40,6 +40,7 @@ public class PatchEncryptEmailH : BaseH, IRequestHandler<PatchEncryptEmailR, Sin
         {
             var email = _aes.DecryptText(i.Email);
             i.Email = _aes.EncryptText(email);
+            i.NormalizedEmail = (i.Email + "").ToUpper();
 
             var phone = _aes.DecryptText(i.PhoneNumber);
             i.PhoneNumber = _aes.EncryptText(phone);
