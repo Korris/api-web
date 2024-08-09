@@ -1215,7 +1215,7 @@ ORDER BY group_number, random_row_num;
                     p.""ViewCount"",
 					p.""IsMature"",
 					p.""CreatedOn"",
-                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""StorySubPosts"",
+                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
 				    to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""story"".""StoryPosts"" p
                 LEFT JOIN ""story"".""StoryTagPosts"" tp ON p.""Id"" = tp.""PostId""

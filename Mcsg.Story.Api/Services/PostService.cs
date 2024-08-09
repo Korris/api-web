@@ -1362,7 +1362,7 @@ public partial class PostService : IPostService
                     ViewCount = res.ViewCount,
                     Tags = res.Tags != null ? JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()) : new List<string>(),
                     Chapters = chapters,
-                    ChapterCount = res.ChapterCount,
+                    ChapterCount = chapters?.Count ?? 0,
                     Type = res.Type,
                     HashId = res.HashId,
                     CreatedOn = res.CreatedOn,
