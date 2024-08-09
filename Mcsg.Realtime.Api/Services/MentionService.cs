@@ -20,7 +20,7 @@ namespace Mcsg.Realtime.Api.Services
             _notificationService = notificationService;
         }
 
-        public async Task<MentionResp> AddMention(Guid locationId, MentionLocationType locationType, Guid entityId, MentionEntityType entityType, int length, int offset, string text)
+        public async Task<MentionResp> AddMention(Guid locationId, MentionLocationType locationType, Guid entityId, EntityType entityType, int length, int offset, string text)
         {
             var mention = new Mention()
             {
@@ -56,7 +56,7 @@ namespace Mcsg.Realtime.Api.Services
                     LocationId = commentId,
                     LocationType = locationType,
                     EntityId = item.EntityId,
-                    EntityType = MentionEntityType.User,
+                    EntityType = EntityType.User,
                     Length = item.Length,
                     Offset = item.Offset,
                     Text = item.Text

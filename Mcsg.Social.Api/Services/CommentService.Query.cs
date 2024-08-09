@@ -295,8 +295,8 @@
 						, men.""Length"", men.""Offset"", men.""Text""
 						FROM public.""Mentions"" men 
 						LEFT JOIN identity.""Users"" use ON men.""EntityId"" = use.""Id"" 
-														AND men.""EntityType"" = {(int)MentionEntityType.User}
-						WHERE men.""EntityType"" = {(int)MentionEntityType.User} 
+														AND men.""EntityType"" = {(int)EntityType.User}
+						WHERE men.""EntityType"" = {(int)EntityType.User} 
 								AND men.""LocationId"" = ANY(@LocationIds) AND men.""IsDelete"" = false";
             }
         }

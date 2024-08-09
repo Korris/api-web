@@ -5,6 +5,8 @@ using SeedWork;
 
 public class SmartLookupUser : EntityId
 {
+    public Guid EntityId { get; set; }
+    public EntityType EntityType { get; set; }
     public Guid UserId { get; set; }
     public string? Keyword { get; set; }
     public LookupKeywordType KeywordType { get; set; }

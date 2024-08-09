@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class StorySubPostComment : BaseSubPostComment
+public class StorySubPostComment : BasePostComment
 {
 }
