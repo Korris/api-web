@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
-
-using Common.Core.Enums;
-using Enums;
 using Interfaces;
 using Requests;
 
@@ -23,13 +20,6 @@ public class ProfileController : ControllerBase
         _feedService = feedService;
     }
 
-    [HttpGet("current-user")]
-    [Authorize]
-    public async Task<IActionResult> GetCurrentUser()
-    {
-        var result = await _userService.GetCurrentUserAsync();
-        return Ok(result);
-    }
     [HttpGet("info/{userName}")]
     public async Task<IActionResult> GetUser(string userName)
     {
@@ -37,25 +27,6 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("feeds/{userName}")]
-    public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq loadReq)
-    {
-        loadReq.UserName = userName;
-        var result = await _feedService.GetFeedsAsync(loadReq, LoadFeedType.ALL);
-        return Ok(result);
-    }
-    [HttpGet("comics/{userName}")]
-    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
-    {
-        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
-        return Ok(result);
-    }
-    [HttpGet("stories/{userName}")]
-    public async Task<IActionResult> GetUserStories(string userName, [FromQuery] ComicTopPostR loadReq)
-    {
-        var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
-        return Ok(result);
-    }
     [AllowAnonymous]
     [HttpGet("following")]
     public async Task<IActionResult> GetFollowingProfiles([FromQuery] UserNamePagingR request)

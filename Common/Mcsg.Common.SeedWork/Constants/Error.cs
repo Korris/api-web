@@ -104,6 +104,51 @@ public static class Error
     /// </summary>
     public const string E118 = "E118";
 
+    /// <summary>
+    /// User not found
+    /// </summary>
+    public const string E119 = "E119";
+
+    /// <summary>
+    /// User can not follow themselves
+    /// </summary>
+    public const string E120 = "E120";
+
+    /// <summary>
+    /// You are already following this user.
+    /// </summary>
+    public const string E121 = "E121";
+
+    /// <summary>
+    /// Avatar image is not null
+    /// </summary>
+    public const string E122 = "E122";
+
+    /// <summary>
+    ///    File should be image
+    /// </summary>
+    public const string E123 = "E123";
+
+    /// <summary>
+    ///  Need Premium Account To Edit
+    /// </summary>
+    public const string E124 = "E124";
+
+    /// <summary>
+    ///  Duplicate username
+    /// </summary>
+    public const string E125 = "E124";
+
+    /// <summary>
+    ///  Cover photo image is not null"
+    /// </summary>
+    public const string E126 = "E126";
+
+    /// <summary>
+    ///  Profile name is empty
+    /// </summary>
+    public const string E127 = "E127";
+
     #endregion
 
     #region -- E2xx --

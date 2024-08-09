@@ -149,6 +149,51 @@ public static class Message
     /// </summary>
     public const string M118 = "You have entered the referral code.";
 
+    /// <summary>
+    /// User not found
+    /// </summary>
+    public const string M119 = "User not found";
+
+    /// <summary>
+    /// User can not follow themselves
+    /// </summary>
+    public const string M120 = "User can not follow themselves";
+
+    /// <summary>
+    /// You are already following this user.
+    /// </summary>
+    public const string M121 = "You are already following this user.";
+
+    /// <summary>
+    /// Avatar image is not null
+    /// </summary>
+    public const string M122 = "Avatar image is not null";
+
+    /// <summary>
+    /// Avatar should be image
+    /// </summary>
+    public const string M123 = "File should be image";
+
+    /// <summary>
+    ///  Need Premium Account To Edit
+    /// </summary>
+    public const string M124 = "You need to upgrade to a premium account to edit username";
+
+    /// <summary>
+    ///  Duplicate username
+    /// </summary>
+    public const string M125 = "Duplicate username";
+
+    /// <summary>
+    ///  Cover photo image is not null
+    /// </summary>
+    public const string M126 = "Cover photo image is not null";
+
+    /// <summary>
+    ///  Profile name is empty
+    /// </summary>
+    public const string M127 = "Profile name is empty";
+
     #endregion
 
     #region -- M2xx --
