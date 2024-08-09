@@ -14,16 +14,17 @@ using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
-using Identity.Api.Requests;
-using Identity.Api.Response;
-using Identity.Api.Validators.User;
 using Interfaces;
 using Lib.Common.Models;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
+using Requests;
+using Response;
+using Validators.User;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 using SettingCore = Common.Core.Constants.Setting;
+
 public partial class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
@@ -46,7 +47,6 @@ public partial class UserService : IUserService
         IStorageClient sc,
         ILogger<UserService> logger,
         DistributeManager distributeManager
-
         )
     {
         _currentUserService = currentUserService;
@@ -253,7 +253,6 @@ public partial class UserService : IUserService
                  .Take(5)
                  .ToListAsync();
         }
-
         else
         {
             var userId = await _context.Users.AsNoTracking()

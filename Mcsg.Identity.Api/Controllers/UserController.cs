@@ -8,9 +8,8 @@ using Identity.Api.Interfaces;
 using Requests;
 
 /// <summary>
-/// UserReferral controller
+/// User controller
 /// </summary>
-/// 
 [Route("[controller]")]
 [ApiController]
 public class UserController : ControllerBase
@@ -20,10 +19,9 @@ public class UserController : ControllerBase
     /// <summary>
     /// Initialize
     /// </summary>
-    /// <param name="mediator">Mediator</param>
+    /// <param name="userService"></param>
     public UserController(IUserService userService)
     {
-
         _userService = userService;
     }
 
@@ -34,7 +32,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [AllowAnonymous]
     [HttpGet("following")]
     public async Task<IActionResult> GetFollowingProfiles([FromQuery] UserNamePagingR request)
     {
@@ -93,10 +90,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
     [HttpGet("similar-name-mention")]
     public async Task<IActionResult> GetSimilarProfileNamesMention(string? name)
     {
@@ -127,6 +120,9 @@ public class UserController : ControllerBase
 
     #endregion
 
+    #region -- Fields --
+
     private readonly IUserService _userService;
 
+    #endregion
 }
