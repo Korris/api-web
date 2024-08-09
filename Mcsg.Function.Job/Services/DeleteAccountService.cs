@@ -1,12 +1,10 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Function.Job.Services;
 
 using Common.Core.Extensions;
 using Common.Domain;
 using Interfaces;
-using static Common.SeedWork.Constants.Setting;
 
 public class DeleteAccountService : IDeleteAccountService
 {
@@ -25,44 +23,17 @@ public class DeleteAccountService : IDeleteAccountService
                 return;
             }
 
-            var connection = _context.Database.GetDbConnection();
-            await connection.OpenAsync();
-
-            var userIds = users.Select(p => p.Id).ToList();
-            foreach (var userId in userIds)
+            foreach (var user in users)
             {
-                var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
-                var now = DateTime.UtcNow;
-                var sql = "CALL comic.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-                foreach (var postId in postIds)
-                {
-                    var param = new { PostId = postId, ModifiedBy = CreatedBy.System, ModifiedOn = now };
-                    var data = await connection.QueryAsync(sql, param);
-                }
-
-                postIds = await _context.SocialPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
-                now = DateTime.UtcNow;
-                sql = "CALL social.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-                foreach (var postId in postIds)
-                {
-                    var param = new { PostId = postId, ModifiedBy = CreatedBy.System, ModifiedOn = now };
-                    var data = await connection.QueryAsync(sql, param);
-                }
-
-                postIds = await _context.StoryPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
-                now = DateTime.UtcNow;
-                sql = "CALL story.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
-                foreach (var postId in postIds)
-                {
-                    var param = new { PostId = postId, ModifiedBy = CreatedBy.System, ModifiedOn = now };
-                    var data = await connection.QueryAsync(sql, param);
-                }
+                var prefix = $"d_{user.CreatedOn.Month}{user.CreatedOn.Day}{user.CreatedOn.Hour}{user.CreatedOn.Minute}";
+                user.Email = $"{prefix}_{user.Email}";
+                user.NormalizedEmail = user.Email.ToUpper();
+                user.UserName = $"{prefix}_{user.UserName}";
+                user.NormalizedUserName = user.UserName.ToUpper();
+                user.PhoneNumber = $"{prefix}_{user.PhoneNumber}";
             }
 
-            users.ForEach(p => p.IsDelete = true);
             await _context.SaveChangesAsync(default);
-
-            await connection.CloseAsync();
         }
         catch (Exception ex)
         {
