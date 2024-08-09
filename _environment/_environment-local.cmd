@@ -117,6 +117,7 @@ setx Bumcheo_Ide_DevMode "TRUE"
 setx Bumcheo_Ide_Protocols "Http1_54105;Http2_54205"
 setx Bumcheo_Ide_Origins "http://localhost:3000"
 setx Bumcheo_Ide_AccountDeletedAfter "1"
+setx Bumcheo_Ide_AccountCreatedAfter "1"
 
 setx Bumcheo_Med_Db_Host "localhost"
 setx Bumcheo_Med_Db_Port "5432"

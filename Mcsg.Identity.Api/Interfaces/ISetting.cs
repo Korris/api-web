@@ -45,5 +45,10 @@ public interface ISetting : ISettingBase
     /// </summary>
     uint AccountDeletedAfter { get; set; }
 
+    /// <summary>
+    /// The time in minutes after which the account can be created
+    /// </summary>
+    uint AccountCreatedAfter { get; set; }
+
     #endregion
 }
