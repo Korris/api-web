@@ -154,10 +154,10 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    LocationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LocationType = table.Column<int>(type: "integer", nullable: false),
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
+                    LocationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
                     Length = table.Column<int>(type: "integer", nullable: false),
                     Offset = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: true),
@@ -249,10 +249,10 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
                     SubType = table.Column<int>(type: "integer", nullable: true),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     ActionType = table.Column<int>(type: "integer", nullable: false),
                     Count = table.Column<int>(type: "integer", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -267,6 +267,8 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityType = table.Column<int>(type: "integer", nullable: false),
                     Keyword = table.Column<string>(type: "text", nullable: true),
                     KeywordType = table.Column<int>(type: "integer", nullable: false),
                     CountCriteria = table.Column<int>(type: "integer", nullable: false)
@@ -579,6 +581,8 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EntityType = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Keyword = table.Column<string>(type: "text", nullable: false),
                     KeywordType = table.Column<int>(type: "integer", nullable: false),
@@ -2140,7 +2144,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
-                    GifId = table.Column<string>(type: "text", nullable: true)
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2233,7 +2238,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
-                    GifId = table.Column<string>(type: "text", nullable: true)
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2326,7 +2332,8 @@ namespace Mcsg.Common.Domain.Migrations
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
-                    GifId = table.Column<string>(type: "text", nullable: true)
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {

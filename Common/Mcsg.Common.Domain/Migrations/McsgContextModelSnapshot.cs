@@ -783,6 +783,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("QuoteId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("ResourceId")
                         .HasColumnType("uuid");
 
@@ -1385,6 +1388,12 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("CountCriteria")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Keyword")
                         .HasColumnType("text");
 
@@ -1405,6 +1414,12 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Keyword")
                         .IsRequired()
@@ -2061,6 +2076,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("QuoteId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ResourceId")
@@ -2877,6 +2895,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("QuoteId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ResourceId")
