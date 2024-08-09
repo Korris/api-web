@@ -221,6 +221,11 @@ public partial class AuthenticationService : IAuthenticationService
 
         var user = await GetUserByEmailOrPhone(request.Email, request.Phone, false) ?? throw new NotFoundException(E203, M203);
 
+        if (user.IsDelete)
+        {
+            throw new ForbiddenAccessException(E003, M003);
+        }
+
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
         {
             throw new ForbiddenAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
@@ -807,12 +812,13 @@ public partial class AuthenticationService : IAuthenticationService
         code = string.Empty;
 
         var qUser = _context.Users.AsNoTracking();
+        User? user = null;
 
         if (!string.IsNullOrWhiteSpace(email))
         {
-            if (qUser.Any(p => (p.Email == encryptedEmail || p.Email == email) && p.EmailConfirmed))
+            user = qUser.FirstOrDefault(p => (p.Email == encryptedEmail || p.Email == email) && p.EmailConfirmed);
+            if (user != null)
             {
-                res = true;
                 code = ErrorCodes.DuplicateUser;
                 message = ErrorMessage.EmailExist;
             }
@@ -820,11 +826,22 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!string.IsNullOrWhiteSpace(phone))
         {
-            if (qUser.Any(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone) && p.PhoneNumberConfirmed))
+            user = qUser.FirstOrDefault(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone) && p.PhoneNumberConfirmed);
+            if (user != null)
             {
-                res = true;
                 code = ErrorCodes.DuplicateUserPhone;
                 message = ErrorMessage.MobileNumberExist;
+            }
+        }
+
+        if (user != null)
+        {
+            res = true;
+
+            if (user.IsDelete)
+            {
+                code = E003;
+                message = M003;
             }
         }
 
@@ -836,7 +853,7 @@ public partial class AuthenticationService : IAuthenticationService
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
-        var qUser = _context.UserAvailable.AsNoTracking();
+        var qUser = _context.Users.AsNoTracking();
 
         User? user = null;
         if (forRegister)

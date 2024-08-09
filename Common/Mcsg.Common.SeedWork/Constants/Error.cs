@@ -21,9 +21,34 @@ public static class Error
     #region -- E0xx --
 
     /// <summary>
+    /// Request error
+    /// </summary>
+    public const string E000 = "E000";
+
+    /// <summary>
+    /// Create error
+    /// </summary>
+    public const string E001 = "E001";
+
+    /// <summary>
     /// Not found
     /// </summary>
     public const string E002 = "E002";
+
+    /// <summary>
+    /// Data deleted
+    /// </summary>
+    public const string E003 = "E003";
+
+    /// <summary>
+    /// Update error
+    /// </summary>
+    public const string E004 = "E004";
+
+    /// <summary>
+    /// Delete error
+    /// </summary>
+    public const string E005 = "E005";
 
     #endregion
 

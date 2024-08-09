@@ -16,7 +16,12 @@ public enum UserStatus
     Suspended,
 
     /// <summary>
-    /// 
+    /// Banned
     /// </summary>
-    Banned
+    Banned,
+
+    /// <summary>
+    /// Deleted (cannot restore)
+    /// </summary>
+    Deleted
 }
