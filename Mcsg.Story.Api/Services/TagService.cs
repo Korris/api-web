@@ -102,24 +102,43 @@ public partial class TagService : ITagService
             var listNewTagId = await AddNewTags(listTagNotCreated, userId);
             listTagNeedToAdd.AddRange(listNewTagId);
         }
-
-        // Find all tag with post (TagPost)
-        var tagsPostDb = await GetTagsByPostIdAsync(postId);
-
-        // Update tag to post
-        var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).Except(listTagNotCreated.Select(y => y)).ToList();
-        if (listTagExistNotAdd.Count > 0)
+        else
         {
-            var tagExistNotAddIds = tagsDb.Where(x => listTagExistNotAdd.Contains(x.Name)).Select(x => x.Id).ToList();
-            listTagNeedToAdd.AddRange(tagExistNotAddIds);
-        }
+            // Find all tag with post (TagPost)
+            var tagsPostDb = await GetTagsByPostIdAsync(postId);
 
-        // Remove tag to post
-        var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
-        if (listRemove.Length > 0)
-        {
-            var tagPosts = await _context.StoryTagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
-            tagPosts.ForEach(p => p.IsDelete = true);
+            // add tag to post
+            var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).ToList();
+            if (listTagExistNotAdd.Count > 0)
+            {
+                var idTagExist = _context.TagAvailable.Where(p => listTagExistNotAdd.Contains(p.Name)).Select(x => x.Id).ToArray();
+                listTagNeedToAdd.AddRange(idTagExist);
+            }
+            else
+            {
+                // update tag to post
+                var tagsToUpdateShow = tags.Intersect(tagsPostDb.Select(x => x.Name)).ToList();
+                var tagsToUpdateHidden = tagsPostDb.Select(x => x.Name).Except(tags).ToList();
+
+                var idTagsToUpdateShow = await _context.TagAvailable
+                    .Where(x => tagsToUpdateShow.Contains(x.Name))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                await _context.StoryTagPosts
+                    .Where(p => idTagsToUpdateShow.Contains(p.TagId) && p.PostId == postId)
+                    .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
+
+                // Update tags to hide
+                var idTagsToUpdateHidden = await _context.TagAvailable
+                    .Where(x => tagsToUpdateHidden.Contains(x.Name))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                await _context.StoryTagPosts
+                    .Where(p => idTagsToUpdateHidden.Contains(p.TagId) && p.PostId == postId)
+                    .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
+            }
         }
 
         await AddTagsToPost(postId, listTagNeedToAdd, userId);

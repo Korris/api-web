@@ -55,7 +55,7 @@
                         sp.""IsEnableComment""
                         FROM ""story"".""StoryPosts"" p
                         LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-                        LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = p.""Id""
+                        LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = p.""Id"" AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
                         LEFT JOIN ""story"".""StorySubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false [WithPermission]  [Not-load-chapter]    
                         LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
@@ -275,7 +275,7 @@ LIMIT 1
                             ) 
                         AS post
                         LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
-                        LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
+                        LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id"" AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
