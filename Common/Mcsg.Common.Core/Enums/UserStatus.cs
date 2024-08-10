@@ -1,27 +1,32 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// User status
+/// Represents the different statuses a user can have.
 /// </summary>
 public enum UserStatus
 {
     /// <summary>
-    /// Active
+    /// The user is currently active.
     /// </summary>
     Active = 1,
 
     /// <summary>
-    /// Suspended
+    /// The user is suspended and cannot use the service.
     /// </summary>
     Suspended,
 
     /// <summary>
-    /// Banned
+    /// The user is banned and cannot access the service.
     /// </summary>
     Banned,
 
     /// <summary>
-    /// Deleted (cannot restore)
+    /// The user is scheduled for deletion.
+    /// </summary>
+    WillDelete,
+
+    /// <summary>
+    /// The user is deleted and cannot be restored.
     /// </summary>
     Deleted
 }

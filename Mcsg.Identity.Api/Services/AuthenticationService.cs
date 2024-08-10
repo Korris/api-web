@@ -682,7 +682,9 @@ public partial class AuthenticationService : IAuthenticationService
         {
             await DeleteRestoreAccount(user.Id, false);
 
+            user.Status = UserStatus.Active;
             user.IsDelete = false;
+
             await _userManager.UpdateAsync(user);
         }
 
@@ -816,9 +818,12 @@ public partial class AuthenticationService : IAuthenticationService
 
         await DeleteRestoreAccount(user.Id, true);
 
+        user.Status = UserStatus.WillDelete;
         user.IsDelete = true;
-        user.DeletedAt = DateTime.UtcNow.AddMinutes(_setting.AccountDeletedAfter);
+
+        user.DeletedAt = DateTime.UtcNow.AddMinutes(_setting.AccountDeletedAfter); // then, HostedDeleteAccount in Function.Job will update the status to UserStatus.Deleted
         user.DeletedBy = session.UserId;
+
         await _userManager.UpdateAsync(user);
 
         return true;

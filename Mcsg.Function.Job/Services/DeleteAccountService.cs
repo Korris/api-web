@@ -18,7 +18,7 @@ public class DeleteAccountService : IDeleteAccountService
     {
         try
         {
-            var users = await _context.Users.Where(p => p.IsDelete && p.Status != UserStatus.Deleted && p.DeletedAt < DateTime.UtcNow).Take(3).ToListAsync();
+            var users = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.WillDelete && p.DeletedAt < DateTime.UtcNow).Take(3).ToListAsync();
             if (users.Count == 0)
             {
                 return;
