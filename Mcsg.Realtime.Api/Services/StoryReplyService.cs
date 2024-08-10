@@ -68,7 +68,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null || string.IsNullOrWhiteSpace(user.SessionId))
             {
-                throw new NotFoundException(E203, M203);
+                throw new NotFoundException(E303, M303);
             }
 
             if (!ValidReplyComment(req))
@@ -137,7 +137,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null)
             {
-                throw new NotFoundException(E203, M203);
+                throw new NotFoundException(E303, M303);
             }
 
             if (!ValidReplyComment(req))
@@ -198,7 +198,7 @@ namespace Mcsg.Realtime.Api.Services
             var user = await _currentUserService.GetCurrentUserAsync();
             if (user == null)
             {
-                throw new NotFoundException(E203, M203);
+                throw new NotFoundException(E303, M303);
             }
 
             if (req.ReplyCommentId == Guid.Empty)

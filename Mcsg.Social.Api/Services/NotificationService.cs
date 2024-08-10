@@ -70,7 +70,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
@@ -109,7 +109,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
@@ -147,7 +147,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
 
@@ -166,7 +166,7 @@ public partial class NotificationService : INotificationService
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
         var notification = await _notiRepository.GetByIdAsync(id);

@@ -154,11 +154,6 @@ public static class Error
     #region -- E2xx --
 
     /// <summary>
-    /// Invalid access token
-    /// </summary>
-    public const string E200 = "ERR_AUTH_00003";
-
-    /// <summary>
     /// Not file upload
     /// </summary>
     public const string E201 = "ERR_API_000002";
@@ -169,11 +164,6 @@ public static class Error
     public const string E202 = "ERR_API_000006";
 
     /// <summary>
-    /// Not existed user
-    /// </summary>
-    public const string E203 = "ERR_AUTH_00011";
-
-    /// <summary>
     /// Post does not exist
     /// </summary>
     public const string E204 = "ERR_API_200001";
@@ -182,6 +172,20 @@ public static class Error
     /// This post has deleted
     /// </summary>
     public const string E205 = "ERR_API_200003";
+
+    #endregion
+
+    #region -- E3xx --
+
+    /// <summary>
+    /// Invalid access token
+    /// </summary>
+    public const string E300 = "ERR_AUTH_00003";
+
+    /// <summary>
+    /// Not existed user
+    /// </summary>
+    public const string E303 = "ERR_AUTH_00011";
 
     #endregion
 

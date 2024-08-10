@@ -199,24 +199,14 @@ public static class Message
     #region -- M2xx --
 
     /// <summary>
-    /// Invalid access token
-    /// </summary>
-    public const string M200 = "Invalid access token";
-
-    /// <summary>
     /// No file uploaded
     /// </summary>
-    public const string M201 = "No file uploaded.";
+    public const string M201 = "No file uploaded";
 
     /// <summary>
     /// Only image files are allowed
     /// </summary>
-    public const string M202 = "Only image files are allowed.";
-
-    /// <summary>
-    /// Account does not exist
-    /// </summary>
-    public const string M203 = "Account does not exist";
+    public const string M202 = "Only image files are allowed";
 
     /// <summary>
     /// Post does not exist
@@ -227,6 +217,20 @@ public static class Message
     /// This post has deleted
     /// </summary>
     public const string M205 = "This post has deleted";
+
+    #endregion
+
+    #region -- M3xx --
+
+    /// <summary>
+    /// Invalid access token
+    /// </summary>
+    public const string M300 = "Invalid access token";
+
+    /// <summary>
+    /// Account does not exist
+    /// </summary>
+    public const string M303 = "Account does not exist";
 
     #endregion
 }

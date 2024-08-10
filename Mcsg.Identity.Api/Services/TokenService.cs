@@ -42,7 +42,7 @@ public class TokenService : ITokenService
 
     public Guid GetSessionIdFromToken(string accessToken)
     {
-        ClaimsPrincipal principal = SecurityToken.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(Common.SeedWork.Constants.Error.E200);
+        ClaimsPrincipal principal = SecurityToken.GetPrincipalFromToken(accessToken, _setting.Jwt.Signing) ?? throw new ForbiddenAccessException(Common.SeedWork.Constants.Error.E300);
         return principal.FindFirstValue(JwtRegisteredClaimNames.Sid).ToGuid();
     }
 

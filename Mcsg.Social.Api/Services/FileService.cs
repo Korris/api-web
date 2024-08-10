@@ -73,7 +73,7 @@ public class FileService : IFileService
         var user = await _context.Users.FindAsync(userId);
         if (user == null)
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
         // Upload to temp folder
@@ -244,7 +244,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
@@ -345,7 +345,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
@@ -396,7 +396,7 @@ public class FileService : IFileService
 
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(E203, M203);
+            throw new NotFoundException(E303, M303);
         }
 
         var hashIds = req.Select(x => x.HashId).ToList();
