@@ -605,37 +605,41 @@ public partial class AuthenticationService : IAuthenticationService
 
     public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
     {
+        var res = new VerifyUserResponse();
+
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
-        var response = new VerifyUserResponse();
+        var qUser = _context.Users.AsNoTracking();
+        User? user = null;
+
         if (!string.IsNullOrEmpty(email))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == email);
+            user = await qUser.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == email);
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
             }
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.ResetByEmail);
-            response.Token = userOtp.Token;
-            response.IsEmail = true;
-
+            res.Token = userOtp.Token;
+            res.IsEmail = true;
         }
-        else if (!string.IsNullOrEmpty(phone))
+
+        if (!string.IsNullOrEmpty(phone))
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone);
+            user = await qUser.FirstOrDefaultAsync(p => p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone);
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
             }
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.ResetByPhone);
-            response.Token = userOtp.Token;
-            response.IsPhone = true;
+            res.Token = userOtp.Token;
+            res.IsPhone = true;
         }
 
-        return response;
+        return res;
     }
 
     public async Task<bool> ResetPassword(ResetPasswordReq request)
@@ -670,7 +674,18 @@ public partial class AuthenticationService : IAuthenticationService
             var createError = resetPass.Errors.FirstOrDefault();
             throw new BadRequestException(createError?.Code, createError?.Description);
         }
+
         await _otpService.ClearAllUserOtpAsync(user.Id, request.Type);
+
+        // To restore the account that has been deleted
+        if (user.IsDelete)
+        {
+            await DeleteRestoreAccount(user.Id, false);
+
+            user.IsDelete = false;
+            await _userManager.UpdateAsync(user);
+        }
+
         return resetPass.Succeeded;
     }
 
@@ -799,42 +814,49 @@ public partial class AuthenticationService : IAuthenticationService
             throw new UnauthorizedAccessException(E304, M304);
         }
 
+        await DeleteRestoreAccount(user.Id, true);
+
+        user.IsDelete = true;
+        user.DeletedAt = DateTime.UtcNow.AddMinutes(_setting.AccountDeletedAfter);
+        user.DeletedBy = session.UserId;
+        await _userManager.UpdateAsync(user);
+
+        return true;
+    }
+
+    private async Task DeleteRestoreAccount(Guid userId, bool isDelete)
+    {
         try
         {
             var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
 
-            var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             var now = DateTime.UtcNow;
-            var sql = "CALL comic.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            var sql = "CALL comic.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
             {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var param = new { PostId = i, ModifiedBy = userId, ModifiedOn = now, IsDelete = isDelete };
                 var data = await connection.QueryAsync(sql, param);
             }
 
-            postIds = await _context.SocialPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            postIds = await _context.SocialPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             now = DateTime.UtcNow;
-            sql = "CALL social.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            sql = "CALL social.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
             {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var param = new { PostId = i, ModifiedBy = userId, ModifiedOn = now, IsDelete = isDelete };
                 var data = await connection.QueryAsync(sql, param);
             }
 
-            postIds = await _context.StoryPostAvailable.Where(p => p.UserId == user.Id).Select(p => p.Id).ToListAsync();
+            postIds = await _context.StoryPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             now = DateTime.UtcNow;
-            sql = "CALL story.sp_delete_post_and_related_data(@PostId, @ModifiedBy, @ModifiedOn);";
+            sql = "CALL story.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
             {
-                var param = new { PostId = i, ModifiedBy = user.Id, ModifiedOn = now };
+                var param = new { PostId = i, ModifiedBy = userId, ModifiedOn = now, IsDelete = isDelete };
                 var data = await connection.QueryAsync(sql, param);
             }
-
-            user.IsDelete = true;
-            user.DeletedAt = DateTime.UtcNow.AddMinutes(_setting.AccountDeletedAfter);
-            user.DeletedBy = session.UserId;
-            await _userManager.UpdateAsync(user);
 
             await connection.CloseAsync();
         }
@@ -842,8 +864,6 @@ public partial class AuthenticationService : IAuthenticationService
         {
             throw new BadRequestException(ErrorCodes.DefaultError, ex.Message);
         }
-
-        return true;
     }
 
     private bool IsAccountExisted(string? email, string? phone, out string code, out string message)
