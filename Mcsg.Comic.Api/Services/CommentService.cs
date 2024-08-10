@@ -449,6 +449,7 @@ public partial class CommentService : ICommentService
                         ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
+                        QuoteId = repModel.QuoteId,
                         CustomNote = repModel.CustomNote
                     };
 

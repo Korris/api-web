@@ -268,6 +268,7 @@ namespace Mcsg.Realtime.Api.Services
                 Status = CommentStatus.Public,
                 ResourceId = resource?.Id ?? null,
                 GifId = req.GifId,
+                QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
                 CustomNote = req.CustomNote
             };
 
@@ -287,7 +288,8 @@ namespace Mcsg.Realtime.Api.Services
                 ResourceUrl = resource?.Url ?? null,
                 AuthorId = comment.AuthorId,
                 GifId = comment.GifId,
-                Mentions = req.Mentions
+                Mentions = req.Mentions,
+                QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId
             };
         }
         #endregion
@@ -329,7 +331,8 @@ namespace Mcsg.Realtime.Api.Services
                 ResourceUrl = resource?.Url ?? null,
                 AuthorId = comment.AuthorId,
                 GifId = comment.GifId,
-                Mentions = req.Mentions
+                Mentions = req.Mentions,
+                QuoteId = comment?.QuoteId == Guid.Empty ? null : comment.QuoteId
             };
         }
         private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
@@ -368,7 +371,8 @@ namespace Mcsg.Realtime.Api.Services
                 ResourceUrl = resource?.Url ?? null,
                 AuthorId = comment.AuthorId,
                 GifId = comment.GifId,
-                Mentions = req.Mentions
+                Mentions = req.Mentions,
+                QuoteId = comment?.QuoteId == Guid.Empty ? null : comment.QuoteId
             };
         }
         #endregion
