@@ -225,9 +225,16 @@ public partial class AuthenticationService : IAuthenticationService
             throw new NotFoundException(E303, M303);
         }
 
+        // Account has been deleted
         if (user.IsDelete)
         {
             throw new ForbiddenAccessException(E305, M305);
+        }
+
+        // Account has been logged into the social network
+        if (string.IsNullOrEmpty(user.PasswordHash))
+        {
+            throw new ForbiddenAccessException(E306, M306);
         }
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
@@ -330,6 +337,7 @@ public partial class AuthenticationService : IAuthenticationService
                 throw new NotFoundException(E303, M303);
             }
 
+            // Account has been deleted
             if (user.IsDelete)
             {
                 throw new ForbiddenAccessException(E305, M305);

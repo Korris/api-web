@@ -252,5 +252,10 @@ public static class Message
     /// </summary>
     public const string M305 = "Account has been deleted";
 
+    /// <summary>
+    /// Account has been logged into the social network
+    /// </summary>
+    public const string M306 = "Account has been logged into the social network";
+
     #endregion
 }

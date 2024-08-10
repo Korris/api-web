@@ -207,6 +207,11 @@ public static class Error
     /// </summary>
     public const string E305 = "E305";
 
+    /// <summary>
+    /// Account has been logged into the social network
+    /// </summary>
+    public const string E306 = "E306";
+
     #endregion
 
     #region -- E4xx --
