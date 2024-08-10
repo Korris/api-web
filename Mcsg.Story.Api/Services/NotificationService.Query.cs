@@ -41,7 +41,7 @@
                             WHERE noti.""ReceiverId"" = @ReceiverId 
                             ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
-						    OFFSET @Offet ;
+                            OFFSET @Offet ;
 
                             SELECT COUNT(""Id"") FROM {_notiRepository.TableName} 
                             WHERE ""ReceiverId"" = @ReceiverId ;";
@@ -68,7 +68,7 @@
                             WHERE noti.""ReceiverId"" = @ReceiverId AND noti.""Status"" = 0 
                             ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
-						    OFFSET @Offet ;
+                            OFFSET @Offet ;
 
                             SELECT COUNT(""Id"") FROM {_notiRepository.TableName} 
                             WHERE ""ReceiverId"" = @ReceiverId  AND ""Status"" = 0 ;";
@@ -79,8 +79,8 @@
             get
             {
                 return @$"UPDATE {_notiRepository.TableName}
-	                            SET ""Status"" = @Status
-	                            WHERE ""ReceiverId"" = @ReceiverId ";
+                                SET ""Status"" = @Status
+                                WHERE ""ReceiverId"" = @ReceiverId ";
             }
         }
     }

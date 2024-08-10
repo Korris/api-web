@@ -47,7 +47,7 @@ namespace Mcsg.Analytic.Api.Services
                 ss.""ExpiredDateUtc"",  ss.""PremiumDate"", sp.""PostId"", post.""Type"", post.""UserId"" as ""AuthorId""
                     FROM identity.""Sessions"" ss, social.""SocialSubPosts"" sp
                     LEFT JOIN social.""SocialPosts"" post ON  sp.""PostId"" =  post.""Id""
-	                WHERE ss.""Id""=@SesionId AND sp.""Id"" = @SubpostId
+                    WHERE ss.""Id""=@SesionId AND sp.""Id"" = @SubpostId
                     LIMIT 1
                 ", new
                 {
@@ -68,9 +68,9 @@ namespace Mcsg.Analytic.Api.Services
             {
 
                 var postId = await _sessionRepository.Connection.QueryFirstOrDefaultAsync<UserAndPostDto?>(@"SELECT  sp.""PostId"", post.""Type"",  post.""UserId""
-	                FROM social.""SocialSubPosts"" sp
+                    FROM social.""SocialSubPosts"" sp
                     LEFT JOIN social.""SocialPosts"" post ON  sp.""PostId"" =  post.""Id""
-	                WHERE sp.""Id"" = @SubpostId
+                    WHERE sp.""Id"" = @SubpostId
                     LIMIT 1
                 ", new
                 {
@@ -147,9 +147,9 @@ namespace Mcsg.Analytic.Api.Services
 
             //POST
             var postId = await _sessionRepository.Connection.QueryFirstOrDefaultAsync<UserAndPostDto?>(@"SELECT  sp.""PostId"", post.""Type"",  post.""UserId""
-	                FROM social.""SocialSubPosts"" sp
+                    FROM social.""SocialSubPosts"" sp
                     LEFT JOIN social.""SocialPosts"" post ON  sp.""PostId"" =  post.""Id""
-	                WHERE sp.""Id"" = @SubpostId
+                    WHERE sp.""Id"" = @SubpostId
                     LIMIT 1
                 ", new
             {

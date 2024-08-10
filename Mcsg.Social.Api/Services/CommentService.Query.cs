@@ -5,121 +5,121 @@
     public partial class CommentService
     {
         private string GetReplyByCommentIdQuery = @"SELECT 
-												pc.""CreatedBy"" as AuthorId,
-												pc.""Body"",
+                                                pc.""CreatedBy"" as AuthorId,
+                                                pc.""Body"",
                                                 pc.""CustomNote"",
-												pc.""Id"",
-												pc.""CreatedOn"",
-												u.""Avatar"" as UserAvatar,
-											    u.""ProfileName"" as AuthorName,
-												u.""ProfileId"",
-												r.""Name"" as ResourceName,
-												r.""Url"" as ResourceUrl,
-												r.""HashId"" as ResourceHashId
-											   FROM {0} pc
-											   LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
-											   LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-											   WHERE pc.""ParentId"" = @CommentId
-											   AND pc.""IsDelete"" = false";
+                                                pc.""Id"",
+                                                pc.""CreatedOn"",
+                                                u.""Avatar"" as UserAvatar,
+                                                u.""ProfileName"" as AuthorName,
+                                                u.""ProfileId"",
+                                                r.""Name"" as ResourceName,
+                                                r.""Url"" as ResourceUrl,
+                                                r.""HashId"" as ResourceHashId
+                                               FROM {0} pc
+                                               LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                               WHERE pc.""ParentId"" = @CommentId
+                                               AND pc.""IsDelete"" = false";
         private string GetCommentWithMostReactionQuery = $@"
-												SELECT 
-													pc.""CreatedBy"" as AuthorId,
-													pc.""Id"",
-													pc.""Body"",
-													pc.""CreatedOn"",
-													pc.""GifId"",
-													pc.""PostId"",
+                                                SELECT 
+                                                    pc.""CreatedBy"" as AuthorId,
+                                                    pc.""Id"",
+                                                    pc.""Body"",
+                                                    pc.""CreatedOn"",
+                                                    pc.""GifId"",
+                                                    pc.""PostId"",
                                                     pc.""CustomNote"",
-													p.""Title"",
-													NULL as Order,
-													u.""Avatar"" as UserAvatar,
-													u.""ProfileName"" as AuthorName,
-													u.""UserName"" as UserName,
-													u.""ProfileId"",
-													COUNT(reply.*) as ReplyCount, 
-													r.""Name"" as ResourceName,
-													r.""Url"" as ResourceUrl,
-													r.""HashId"" as ResourceHashId,
-													COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
-												FROM social.""SocialPostComments""  pc
-												LEFT JOIN social.""SocialPostComments"" reply on reply.""ParentId"" = pc.""Id""
-												LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-												LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
-												LEFT JOIN social.""SocialPosts"" p on pc.""PostId"" = p.""Id""												
-												LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
-												WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
-												AND p.""IsDelete"" = false
-												AND pc.""IsDelete"" = false
-												GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
-												UNION
-												SELECT 
-													spc.""CreatedBy"" as AuthorId,
-													spc.""Id"",
-													spc.""Body"",
-													spc.""CreatedOn"",
-													spc.""GifId"",
-													spc.""PostId"",
+                                                    p.""Title"",
+                                                    NULL as Order,
+                                                    u.""Avatar"" as UserAvatar,
+                                                    u.""ProfileName"" as AuthorName,
+                                                    u.""UserName"" as UserName,
+                                                    u.""ProfileId"",
+                                                    COUNT(reply.*) as ReplyCount, 
+                                                    r.""Name"" as ResourceName,
+                                                    r.""Url"" as ResourceUrl,
+                                                    r.""HashId"" as ResourceHashId,
+                                                    COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
+                                                FROM social.""SocialPostComments""  pc
+                                                LEFT JOIN social.""SocialPostComments"" reply on reply.""ParentId"" = pc.""Id""
+                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                                LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                                                LEFT JOIN social.""SocialPosts"" p on pc.""PostId"" = p.""Id""                                                
+                                                LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
+                                                WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
+                                                AND p.""IsDelete"" = false
+                                                AND pc.""IsDelete"" = false
+                                                GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+                                                UNION
+                                                SELECT 
+                                                    spc.""CreatedBy"" as AuthorId,
+                                                    spc.""Id"",
+                                                    spc.""Body"",
+                                                    spc.""CreatedOn"",
+                                                    spc.""GifId"",
+                                                    spc.""PostId"",
                                                     spc.""CustomNote"",
-													sp.""Title"",
-													sp.""Order"",
-													u.""Avatar"",
-													u.""ProfileName"",
-													u.""UserName"" as UserName,
-													u.""ProfileId"",
-													COUNT(reply.*) ReplyCount,
-													r.""Name"" as ResourceName,
-													r.""Url"" as ResourceUrl,
-													r.""HashId"" as ResourceHashId,
-													COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
-												FROM social.""SocialSubPostComments"" spc
-												LEFT JOIN social.""SocialSubPostComments"" reply on reply.""ParentId"" = spc.""Id""
-												LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
-												LEFT JOIN social.""SocialSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-												LEFT JOIN social.""SocialSubPosts""  sp ON spc.""PostId"" = sp.""Id""
-												LEFT JOIN social.""SocialResources"" r on spc.""ResourceId"" = r.""Id""
-												WHERE sp.""PostId"" = (SELECT ""Id"" FROM social.""SocialPosts""  WHERE ""HashId"" =@HashId) 
-												AND spc.""ParentId"" is null
-												AND spc.""IsDelete"" = false
-												GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
-												ORDER BY reaction_count desc,
-												""CreatedOn"" desc
-												OFFSET @Offset
-												LIMIT @PageSize;
+                                                    sp.""Title"",
+                                                    sp.""Order"",
+                                                    u.""Avatar"",
+                                                    u.""ProfileName"",
+                                                    u.""UserName"" as UserName,
+                                                    u.""ProfileId"",
+                                                    COUNT(reply.*) ReplyCount,
+                                                    r.""Name"" as ResourceName,
+                                                    r.""Url"" as ResourceUrl,
+                                                    r.""HashId"" as ResourceHashId,
+                                                    COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
+                                                FROM social.""SocialSubPostComments"" spc
+                                                LEFT JOIN social.""SocialSubPostComments"" reply on reply.""ParentId"" = spc.""Id""
+                                                LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
+                                                LEFT JOIN social.""SocialSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+                                                LEFT JOIN social.""SocialSubPosts""  sp ON spc.""PostId"" = sp.""Id""
+                                                LEFT JOIN social.""SocialResources"" r on spc.""ResourceId"" = r.""Id""
+                                                WHERE sp.""PostId"" = (SELECT ""Id"" FROM social.""SocialPosts""  WHERE ""HashId"" =@HashId) 
+                                                AND spc.""ParentId"" is null
+                                                AND spc.""IsDelete"" = false
+                                                GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+                                                ORDER BY reaction_count desc,
+                                                ""CreatedOn"" desc
+                                                OFFSET @Offset
+                                                LIMIT @PageSize;
 
-												SELECT
-													(SELECT COUNT(*)
-													 FROM social.""SocialPostComments""  pc
-													 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id"" 
-													 WHERE p.""HashId"" = @HashId 
-													and ""ParentId"" is null 
-												     AND pc.""IsDelete"" = false) 
-													+
-													(SELECT COUNT(*)
-													 FROM social.""SocialSubPostComments"" spc
-													 JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
-													 JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
-													 WHERE p.""HashId"" = @HashId and ""ParentId"" is null
-													 AND spc.""IsDelete"" = false) AS total_comment_count";
+                                                SELECT
+                                                    (SELECT COUNT(*)
+                                                     FROM social.""SocialPostComments""  pc
+                                                     JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id"" 
+                                                     WHERE p.""HashId"" = @HashId 
+                                                    and ""ParentId"" is null 
+                                                     AND pc.""IsDelete"" = false) 
+                                                    +
+                                                    (SELECT COUNT(*)
+                                                     FROM social.""SocialSubPostComments"" spc
+                                                     JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
+                                                     JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
+                                                     WHERE p.""HashId"" = @HashId and ""ParentId"" is null
+                                                     AND spc.""IsDelete"" = false) AS total_comment_count";
 
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
-														 FROM social.""SocialPostComments""  pc
-														 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId
-														 AND pc.""IsDelete"" = false";
+                                                         FROM social.""SocialPostComments""  pc
+                                                         JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
+                                                         WHERE p.""HashId"" = @HashId
+                                                         AND pc.""IsDelete"" = false";
 
         private string GetTotalCommentQuery => $@"SELECT 
-														(SELECT COUNT(*)
-														 FROM social.""SocialPostComments""  pc
-														 JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId
-														 AND pc.""IsDelete"" = false) 
-														+
-														(SELECT COUNT(*)
-														 FROM social.""SocialSubPostComments"" spc
-														 JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
-														 JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
-														 WHERE p.""HashId"" = @HashId
-														 AND spc.""IsDelete"" = false) AS total_comment_count";
+                                                        (SELECT COUNT(*)
+                                                         FROM social.""SocialPostComments""  pc
+                                                         JOIN social.""SocialPosts"" p ON pc.""PostId""= p.""Id""
+                                                         WHERE p.""HashId"" = @HashId
+                                                         AND pc.""IsDelete"" = false) 
+                                                        +
+                                                        (SELECT COUNT(*)
+                                                         FROM social.""SocialSubPostComments"" spc
+                                                         JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
+                                                         JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
+                                                         WHERE p.""HashId"" = @HashId
+                                                         AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetCommentOfPostQuery
         {
             get
@@ -154,28 +154,28 @@
             get
             {
                 return @$"WITH RECURSIVE cte AS (
-	                               SELECT ""Id"", ""ParentId"", ""PostId""
-				                            , ""AuthorId"", ""ModifiedOn""
-				                            , ""Body"", ""CustomNote"", ""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
-	                               FROM {_subPostCommentRepository.TableName}
-	                               WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
-	                               UNION ALL
-	                               SELECT post.""Id"", post.""ParentId"", post.""PostId""
-				                            , post.""AuthorId"", post.""ModifiedOn""
-				                            , post.""Body"", post.""CustomNote"" ,post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
-	                               FROM cte ct
-	                               JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
-	                            )
-	                            SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"",cte.""ModifiedOn""
-				                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
-											, us.""Avatar"" AS UserAvatar
-				                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
-				                            , cte.CommentLevel
-	                            FROM cte
-	                            LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
-	                            LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+                                   SELECT ""Id"", ""ParentId"", ""PostId""
+                                            , ""AuthorId"", ""ModifiedOn""
+                                            , ""Body"", ""CustomNote"", ""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
+                                   FROM {_subPostCommentRepository.TableName}
+                                   WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId
+                                   UNION ALL
+                                   SELECT post.""Id"", post.""ParentId"", post.""PostId""
+                                            , post.""AuthorId"", post.""ModifiedOn""
+                                            , post.""Body"", post.""CustomNote"" ,post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
+                                   FROM cte ct
+                                   JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
+                                )
+                                SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"",cte.""ModifiedOn""
+                                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
+                                            , us.""Avatar"" AS UserAvatar
+                                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
+                                            , cte.CommentLevel
+                                FROM cte
+                                LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
+                                LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
                                 WHERE cte.""IsDelete"" = false
-	                            ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
+                                ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
             }
         }
         private string GetCommentByPostInHomePageQuery
@@ -183,27 +183,27 @@
             get
             {
                 return @$"SELECT com.""Id"", com.""PostId""
-		                        , comUser.""Id"" AS AuthorId
-								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
-								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""ModifiedOn""
-		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
-								, com.""GifId""
+                                , comUser.""Id"" AS AuthorId
+                                , (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
+                                , comUser.""Avatar"" AS UserAvatar
+                                , com.""Body"", com.""ModifiedOn""
+                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+                                , com.""GifId""
                                 , com.""CustomNote""
-		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
-								, repUser.""Avatar"" AS ReplyUserAvatar	
-								, rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
-		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
-								, rep.""GifId"" AS ReplyGifId
-								, rep.""QuoteId"" AS ReplyQuoteId
+                                , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
+                                , repUser.""Avatar"" AS ReplyUserAvatar    
+                                , rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
+                                , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
+                                , rep.""GifId"" AS ReplyGifId
+                                , rep.""QuoteId"" AS ReplyQuoteId
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_postCommentRepository.TableName}
-	                                    WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
-		                        FROM {_postCommentRepository.TableName} com
-		                        LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-		                        LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
-		                        LEFT JOIN {_postCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                        WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
+                                FROM {_postCommentRepository.TableName} com
+                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN {_postCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
+                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -215,26 +215,26 @@
             get
             {
                 return @$"SELECT com.""Id"", com.""PostId""
-		                        , comUser.""Id"" AS AuthorId
-								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
-								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""ModifiedOn""
-		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
-								, com.""GifId""
+                                , comUser.""Id"" AS AuthorId
+                                , (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
+                                , comUser.""Avatar"" AS UserAvatar
+                                , com.""Body"", com.""ModifiedOn""
+                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+                                , com.""GifId""
                                 , com.""CustomNote""
-		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
-								, repUser.""Avatar"" AS ReplyUserAvatar	
-		                        , rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
-		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
-								, rep.""GifId"" AS ReplyGifId
+                                , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
+                                , repUser.""Avatar"" AS ReplyUserAvatar    
+                                , rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
+                                , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
+                                , rep.""GifId"" AS ReplyGifId
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
-	                                    WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
-		                        FROM {_subPostCommentRepository.TableName} com
-		                        LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-		                        LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
-		                        LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                        WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
+                                FROM {_subPostCommentRepository.TableName} com
+                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
+                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -246,25 +246,25 @@
             get
             {
                 return @$"SELECT com.""Id"", com.""PostId""
-		                        , comUser.""Id"" AS AuthorId
-								, (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
-								, comUser.""Avatar"" AS UserAvatar
-		                        , com.""Body"", com.""ModifiedOn""
-		                        , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
-								, com.""GifId""
-		                        , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
-								, repUser.""Avatar"" AS ReplyUserAvatar	
-		                        , rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
-		                        , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
-								, rep.""GifId"" AS ReplyGifId
+                                , comUser.""Id"" AS AuthorId
+                                , (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
+                                , comUser.""Avatar"" AS UserAvatar
+                                , com.""Body"", com.""ModifiedOn""
+                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+                                , com.""GifId""
+                                , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
+                                , repUser.""Avatar"" AS ReplyUserAvatar    
+                                , rep.""Body"" AS ReplyBody, rep.""ModifiedOn"" AS ReplyLastModifiedDate
+                                , repRes.""HashId"" AS ReplyResourceHashId, repRes.""Name"" AS ReplyResourceName, repRes.""Url"" AS ReplyResourceUrl
+                                , rep.""GifId"" AS ReplyGifId
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
-	                                    WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
-		                        FROM {_subPostCommentRepository.TableName} com
-		                        LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-		                        LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
-		                        LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-		                        LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-		                        LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                        WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
+                                FROM {_subPostCommentRepository.TableName} com
+                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
+                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -276,11 +276,11 @@
             get
             {
                 return $@"SELECT T1.""PostId"", COUNT (DISTINCT T1.""Id"") AS ""Count"" 
-						FROM {_subPostRepository.TableName} T1
-						LEFT JOIN {_subPostRepository.TableName} T2
-						ON T1.""PostId"" = T2.""PostId""
-						WHERE T2.""Id"" = @PostId AND T2.""IsDelete"" = false 
-						GROUP BY T1.""PostId"" ";
+                        FROM {_subPostRepository.TableName} T1
+                        LEFT JOIN {_subPostRepository.TableName} T2
+                        ON T1.""PostId"" = T2.""PostId""
+                        WHERE T2.""Id"" = @PostId AND T2.""IsDelete"" = false 
+                        GROUP BY T1.""PostId"" ";
             }
         }
         private string GetUserMentionsInComments
@@ -288,16 +288,16 @@
             get
             {
                 return $@"SELECT men.""Id""
-						, men.""LocationId"", men.""LocationType""
-						, men.""EntityId"", men.""EntityType""
-						, (CASE WHEN use.""ProfileName"" IS NULL THEN use.""UserName"" ELSE use.""ProfileName"" END) AS ProfileName
-						, use.""UserName"" as UserName
-						, men.""Length"", men.""Offset"", men.""Text""
-						FROM public.""Mentions"" men 
-						LEFT JOIN identity.""Users"" use ON men.""EntityId"" = use.""Id"" 
-														AND men.""EntityType"" = {(int)EntityType.User}
-						WHERE men.""EntityType"" = {(int)EntityType.User} 
-								AND men.""LocationId"" = ANY(@LocationIds) AND men.""IsDelete"" = false";
+                        , men.""LocationId"", men.""LocationType""
+                        , men.""EntityId"", men.""EntityType""
+                        , (CASE WHEN use.""ProfileName"" IS NULL THEN use.""UserName"" ELSE use.""ProfileName"" END) AS ProfileName
+                        , use.""UserName"" as UserName
+                        , men.""Length"", men.""Offset"", men.""Text""
+                        FROM public.""Mentions"" men 
+                        LEFT JOIN identity.""Users"" use ON men.""EntityId"" = use.""Id"" 
+                                                        AND men.""EntityType"" = {(int)EntityType.User}
+                        WHERE men.""EntityType"" = {(int)EntityType.User} 
+                                AND men.""LocationId"" = ANY(@LocationIds) AND men.""IsDelete"" = false";
             }
         }
     }

@@ -7,13 +7,13 @@
             get
             {
                 return @"SELECT ""Id"", ""ParentId"", 
-				""TargetId"", ""AuthorId"", ""Type"",
-				""CreatedOn"", ""CreatedBy"",
-				""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
-					FROM {0}
-					WHERE ""TargetId"" = @TargetId
-					AND ( ""AuthorId"" IS NULL OR ""AuthorId"" = @AuthorId)
-					AND ""Type"" = @Type";
+                ""TargetId"", ""AuthorId"", ""Type"",
+                ""CreatedOn"", ""CreatedBy"",
+                ""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
+                    FROM {0}
+                    WHERE ""TargetId"" = @TargetId
+                    AND ( ""AuthorId"" IS NULL OR ""AuthorId"" = @AuthorId)
+                    AND ""Type"" = @Type";
             }
         }
         private string GetReactByUsersQuery
@@ -21,12 +21,12 @@
             get
             {
                 return @"SELECT ""Id"", ""ParentId"", 
-				""TargetId"", ""AuthorId"", ""Type"",
-				""CreatedOn"", ""CreatedBy"",
-				""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
-					FROM {0}
-					WHERE ""TargetId"" = @TargetId
-					AND ""AuthorId"" = @AuthorId";
+                ""TargetId"", ""AuthorId"", ""Type"",
+                ""CreatedOn"", ""CreatedBy"",
+                ""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
+                    FROM {0}
+                    WHERE ""TargetId"" = @TargetId
+                    AND ""AuthorId"" = @AuthorId";
             }
         }
         private string GetReactByTargetQuery
@@ -38,12 +38,12 @@
                       WHEN ""AuthorId"" = @UserId THEN 1
                       ELSE 0
                      END AS ""ReactByCurrent""
-					FROM {0}
-					
-					WHERE ""TargetId"" = @TargetId
-					AND ""IsDelete"" = false
-                    GROUP BY ""Type"", ""AuthorId"") react					
-					GROUP BY ""Type"" 
+                    FROM {0}
+                    
+                    WHERE ""TargetId"" = @TargetId
+                    AND ""IsDelete"" = false
+                    GROUP BY ""Type"", ""AuthorId"") react                    
+                    GROUP BY ""Type"" 
                     ORDER BY ""Count"" DESC";
             }
         }
@@ -60,7 +60,7 @@
                             AND r.""Type"" = (CASE WHEN @Type IS NULL THEN r.""Type"" ELSE @Type END)
                             ORDER BY r.""ModifiedOn"" DESC 
                             LIMIT @PageSize
-						    OFFSET @Offet ;
+                            OFFSET @Offet ;
 
                             SELECT COUNT(""Id"") FROM {0} r
                             WHERE r.""TargetId"" = @TargetId AND r.""IsDelete"" = false

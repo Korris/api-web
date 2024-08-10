@@ -682,34 +682,34 @@ public partial class PostService : IPostService
         }
 
         var query = $@"SELECT p.""Id"",
-	                              p.""Title"",
-	                              p.""ThumbnailUrl"",
-	                              p.""Body"",
-	                              p.""IsMature"", 
-	                              p.""HashId"",
+                                  p.""Title"",
+                                  p.""ThumbnailUrl"",
+                                  p.""Body"",
+                                  p.""IsMature"", 
+                                  p.""HashId"",
                                   p.""Type"",
-	                              u.""ProfileName"",
+                                  u.""ProfileName"",
                                   u.""UserName"",
-	                              CASE 
-	                              WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
-	                              ELSE NULL 
-	                              END AS Tags,
-	                              COUNT(pc.""Id"") as CommentCount,
-	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
-	                              FROM ""comic"".""ComicPosts""  p
-	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
-	                              LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" 
-	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
-	                              LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
-	                              LEFT JOIN LATERAL 
-										(
-											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
-											FROM ""comic"".""ComicSubPosts"" sp 
-											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
-											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
-											ORDER BY sp.""Order"" DESC
-											LIMIT 2
-										) sp ON sp.""PostId"" = p.""Id""	
+                                  CASE 
+                                  WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
+                                  ELSE NULL 
+                                  END AS Tags,
+                                  COUNT(pc.""Id"") as CommentCount,
+                                  to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
+                                  FROM ""comic"".""ComicPosts""  p
+                                  JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
+                                  LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" 
+                                  LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
+                                  LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
+                                  LEFT JOIN LATERAL 
+                                        (
+                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
+                                            FROM ""comic"".""ComicSubPosts"" sp 
+                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false                                 
+                                            GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
+                                            ORDER BY sp.""Order"" DESC
+                                            LIMIT 2
+                                        ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
                                   GROUP BY p.""Id"" ,u.""ProfileName"",u.""UserName""
                                   ORDER BY p.""CreatedOn"" desc  
@@ -1213,30 +1213,30 @@ public partial class PostService : IPostService
                          RANDOM() AS sort_key
                         FROM ""comic"".""ComicPostComments"" pc 
                         LEFT JOIN ""comic"".""ComicPosts""  p on  pc.""PostId"" = p.""Id""
-						LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
                         AND pc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
-						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
+                        GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
                         UNION 
                         SELECT u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"",
                         p.""HashId"" as HashPostId,
                         TRUE as IsSubPost, sp.""Order"",
-						COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
+                        COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count,
                         RANDOM() AS sort_key
                         FROM ""comic"".""ComicSubPostComments"" spc 
                         LEFT join ""comic"".""ComicSubPosts"" sp on  spc.""PostId"" = sp.""Id""
-					    LEFT JOIN ""comic"".""ComicSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
+                        LEFT JOIN ""comic"".""ComicSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
                         LEFT JOIN ""comic"".""ComicPosts""  p on p.""Id"" = sp.""PostId""
                         LEFT join ""identity"".""Users"" u on spc.""CreatedBy"" = u.""Id""
-                        WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds]) 	
+                        WHERE spc.""Id"" <> ALL (ARRAY[@CommentIds])     
                         AND spc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND sp.""IsDelete"" = false
                         AND spc.""IsDelete"" = false
-					    GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"",sp.""Order""
+                        GROUP BY p.""HashId"",u.""Avatar"",u.""UserName"",u.""ProfileName"",spc.""Body"",spc.""PostId"",spc.""Id"",spc.""CreatedOn"",p.""Type"",sp.""Order""
                         ORDER BY sort_key
                         LIMIT @Limit";
 
@@ -1968,14 +1968,14 @@ public partial class PostService : IPostService
                                JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id""
                                JOIN ""comic"".""ComicResources"" r on sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
-	                           AND sp.""IsDelete"" = false
-	                           [QueryByType]
-	                           [IgnoreQuery]
+                               AND sp.""IsDelete"" = false
+                               [QueryByType]
+                               [IgnoreQuery]
                                AND sp.""Order"" = (
                                                     SELECT MIN(sp_inner.""Order"")
                                                     FROM ""comic"".""ComicSubPosts"" sp_inner
                                                     WHERE sp_inner.""PostId"" = sp.""PostId""
-		                                            AND sp_inner.""IsDelete"" = false
+                                                    AND sp_inner.""IsDelete"" = false
                                                     )
                                ORDER BY RANDOM()
                                LIMIT @PageSize";

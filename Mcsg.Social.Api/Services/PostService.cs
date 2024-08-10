@@ -672,34 +672,34 @@ public partial class PostService : IPostService
         }
 
         var query = $@"SELECT p.""Id"",
-	                              p.""Title"",
-	                              p.""ThumbnailUrl"",
-	                              p.""Body"",
-	                              p.""IsMature"", 
-	                              p.""HashId"",
+                                  p.""Title"",
+                                  p.""ThumbnailUrl"",
+                                  p.""Body"",
+                                  p.""IsMature"", 
+                                  p.""HashId"",
                                   p.""Type"",
-	                              u.""ProfileName"",
+                                  u.""ProfileName"",
                                   u.""UserName""  
-	                              CASE 
-	                              WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
-	                              ELSE NULL 
-	                              END AS Tags,
-	                              COUNT(pc.""Id"") as CommentCount,
-	                              to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
-	                              FROM social.""SocialPosts"" p
-	                              JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
-	                              LEFT JOIN social.""SocialTagPosts"" tp on p.""Id""  = tp.""PostId"" 
-	                              LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
-	                              LEFT JOIN social.""SocialPostComments"" pc on pc.""PostId""  = p.""Id"" 
-	                              LEFT JOIN LATERAL 
-										(
-											SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
-											FROM social.""SocialSubPosts"" sp 
-											WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 								
-											GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
-											ORDER BY sp.""Order"" DESC
-											LIMIT 2
-										) sp ON sp.""PostId"" = p.""Id""	
+                                  CASE 
+                                  WHEN COUNT(t.""Name"") > 0 THEN array_agg(DISTINCT t.""Name"") 
+                                  ELSE NULL 
+                                  END AS Tags,
+                                  COUNT(pc.""Id"") as CommentCount,
+                                  to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
+                                  FROM social.""SocialPosts"" p
+                                  JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
+                                  LEFT JOIN social.""SocialTagPosts"" tp on p.""Id""  = tp.""PostId"" 
+                                  LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
+                                  LEFT JOIN social.""SocialPostComments"" pc on pc.""PostId""  = p.""Id"" 
+                                  LEFT JOIN LATERAL 
+                                        (
+                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
+                                            FROM social.""SocialSubPosts"" sp 
+                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false                                 
+                                            GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
+                                            ORDER BY sp.""Order"" DESC
+                                            LIMIT 2
+                                        ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
                                   GROUP BY p.""Id"" ,u.""ProfileName"",u.""UserName""  
                                   ORDER BY p.""CreatedOn"" desc  
@@ -1084,14 +1084,14 @@ public partial class PostService : IPostService
                          RANDOM() AS sort_key
                         FROM social.""SocialPostComments"" pc 
                         LEFT JOIN social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
-						LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
                         AND pc.""CreatedBy"" != @CurrentUserId
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
                         AND pc.""CreatedOn"" > @FromDate
-						GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
+                        GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
                       
                         ORDER BY sort_key
                         LIMIT @Limit";
@@ -1843,14 +1843,14 @@ public partial class PostService : IPostService
                                JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
                                JOIN social.""SocialResources"" r on sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
-	                           AND sp.""IsDelete"" = false
-	                           [QueryByType]
-	                           [IgnoreQuery]
+                               AND sp.""IsDelete"" = false
+                               [QueryByType]
+                               [IgnoreQuery]
                                AND sp.""Order"" = (
                                                     SELECT MIN(sp_inner.""Order"")
                                                     FROM social.""SocialSubPosts"" sp_inner
                                                     WHERE sp_inner.""PostId"" = sp.""PostId""
-		                                            AND sp_inner.""IsDelete"" = false
+                                                    AND sp_inner.""IsDelete"" = false
                                                     )
                                ORDER BY RANDOM()
                                LIMIT @PageSize";
