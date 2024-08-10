@@ -3,6 +3,6 @@
 public class SubPostDto
 {
     public string? Title { get; set; }
-    public int Order { get; set; }
+    public float Order { get; set; }
     public DateTime CreatedOn { get; set; }
 }
