@@ -5,21 +5,12 @@ namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Dtos;
 using Extensions;
+using Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Enums;
 using Models.Earning;
 
-public interface IWalletService
-{
-    Task<int> GetTotalPurchaseOfChapterAsync(Guid chapterId, DateTime? date = null);
-    Task<List<ChapterPurchaseDto>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
-    Task<UserPurchaseData> GetRevenueSaleChapterOfUserAsync(Guid userId, DateTime? date = null);
-    Task<List<RevenueChartData>> GetRevenueSaleChapterByYearAsync(Guid userId, int year);
-    Task<List<RevenueChartData>> GetRevenueSaleChapterByMonthAsync(Guid userId, int month);
-    Task<List<CountChartData>> GetNumberOfSaleChapterByYearAsync(Guid userId, int year);
-    Task<List<CountChartData>> GetNumberOfSaleChapterByMonthAsync(Guid userId, int month);
-}
 public class WalletService : IWalletService
 {
     private readonly WalletDbContext _walletDbContext;
@@ -27,6 +18,7 @@ public class WalletService : IWalletService
     private IConfiguration _configuration;
     private readonly ILogger<WalletService> _logger;
     private readonly IMapper _mapper;
+
     public WalletService(WalletDbContext walletDbContext
         , ICurrentUserService currentUserService
         , IConfiguration configuration

@@ -5,21 +5,14 @@ namespace Mcsg.Social.Api.Services;
 using Common.Core.Dtos;
 using Common.SeedWork.Enums;
 using Extensions;
+using Interfaces;
 using Lib.Data.Analytic;
 using Models.Earning;
 
-public interface IUserViewService
-{
-    Task<EarningDataModel> GetGuestsViewAsync(Guid userId, DateTime? date = null);
-    Task<EarningDataModel> GetPremiumViewAsync(Guid userId, DateTime? date = null);
-    Task<int> GetViewByChapterAsync(Guid chapterId, DateTime? date = null);
-    Task<List<ChapterViewDto>> GetViewByChaptersAsync(List<Guid> chapterIds, DateTime? date = null);
-    Task<List<PerformanceChartTotalViewData>> GetTotalViewChartByYear(Guid userId, int year);
-    Task<List<PerformanceChartTotalViewData>> GetTotalViewChartByMonth(Guid userId, int month);
-}
 public class UserViewService : IUserViewService
 {
     private readonly AnalyticDbContext _dbAnalystContext;
+
     public UserViewService(AnalyticDbContext dbAnalystContext)
     {
         _dbAnalystContext = dbAnalystContext;
