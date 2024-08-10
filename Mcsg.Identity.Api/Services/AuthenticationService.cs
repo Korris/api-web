@@ -505,7 +505,7 @@ public partial class AuthenticationService : IAuthenticationService
             }
             else
             {
-                throw new NotFoundException(ErrorCodes.InvalidToken, ErrorMessage.TokenInCorrect);
+                throw new NotFoundException(E301, M301);
             }
         }
         return verifyUserModel;
@@ -645,7 +645,7 @@ public partial class AuthenticationService : IAuthenticationService
         var valid = await _otpService.VerifyAsync(request.OtpToken, request.OtpCode, request.Type);
         if (!valid)
         {
-            throw new BadRequestException(ErrorCodes.InvalidToken, ErrorMessage.TokenInCorrect);
+            throw new BadRequestException(E301, M301);
         }
 
         if (request.Password != request.RetypePassword)
@@ -698,7 +698,7 @@ public partial class AuthenticationService : IAuthenticationService
             return response;
         }
 
-        throw new BadRequestException(ErrorCodes.InvalidToken, ErrorMessage.TokenInCorrect);
+        throw new BadRequestException(E301, M301);
     }
 
     public async Task<bool> CreateNewUserPassword(string? email, string? phone, string otp, string otpToken, string password, string confirmPassword)
@@ -707,7 +707,7 @@ public partial class AuthenticationService : IAuthenticationService
         var valid = await _otpService.VerifyAsync(otpToken, otp, otpType);
         if (!valid)
         {
-            throw new BadRequestException(ErrorCodes.InvalidToken, ErrorMessage.TokenInCorrect);
+            throw new BadRequestException(E301, M301);
         }
 
         //EmailConfirmed user
@@ -758,7 +758,7 @@ public partial class AuthenticationService : IAuthenticationService
         var userId = await _tokenService.IsValidRefreshTokenAsync(refreshToken);
         if (userId == Guid.Empty)
         {
-            throw new UnauthorizedAccessException(ErrorCodes.InvalidRefreshToken, ErrorMessage.TokenInCorrect);
+            throw new UnauthorizedAccessException(E302, M302);
         }
 
         var user = await _userRepository.GetByIdAsync(userId);

@@ -15,7 +15,6 @@ public static class ErrorMessage
     public const string PassShouldEqualConfirmPass = "Xác nhận mật khẩu không đúng";
     public const string SocialIdNotPublic = "Tài khoản mạng xã hội của bạn không công khai";
     public const string TokenNotFound = "Không tìm thấy OTP token này {0} hoặc sai loại";
-    public const string TokenInCorrect = "Token hoặc OTP không đúng";
     public const string OtpGenerateFail = "Không thể tạo mã OTP";
     public const string SocialEmailNotPublic = "Email mạng xã hội của bạn không được công khai";
     public const string SocialPlatformNotSupport = "Hệ thống chưa hỗ trợ mạng xã hội này";

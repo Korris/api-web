@@ -228,6 +228,16 @@ public static class Message
     public const string M300 = "Invalid access token";
 
     /// <summary>
+    /// Token or OTP is incorrect
+    /// </summary>
+    public const string M301 = "Token or OTP is incorrect";
+
+    /// <summary>
+    /// Invalid refresh token
+    /// </summary>
+    public const string M302 = "Invalid refresh token";
+
+    /// <summary>
     /// Account does not exist
     /// </summary>
     public const string M303 = "Account does not exist";

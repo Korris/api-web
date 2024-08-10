@@ -5,7 +5,6 @@ public class ErrorCodes
     //Authentication Error
     public const string InvalidUserOrPass = "ERR_AUTH_00001";
     public const string InvalidUser = "ERR_AUTH_00002";
-    public const string InvalidRefreshToken = "ERR_AUTH_00004";
     public const string InvalidSession = "ERR_AUTH_00005";
     public const string ErrorCreateResetPasswordToken = "ERR_AUTH_00006";
     public const string InvalidResetPasswordToken = "ERR_AUTH_00007";
@@ -15,7 +14,6 @@ public class ErrorCodes
     public const string InvalidSocialToken = "ERR_AUTH_00012";
     public const string SocialEmailNotPublic = "ERR_AUTH_00013";
     public const string PassShouldEqualConfirmPass = "ERR_AUTH_00015";
-    public const string InvalidToken = "ERR_AUTH_00016";
     public const string SocialPlatformNotSupport = "ERR_AUTH_00017";
     public const string EmailNotConfirmed = "ERR_AUTH_00018";
     public const string MobileNotConfirmed = "ERR_AUTH_00019";

@@ -180,17 +180,27 @@ public static class Error
     /// <summary>
     /// Invalid access token
     /// </summary>
-    public const string E300 = "ERR_AUTH_00003";
+    public const string E300 = "E300";
+
+    /// <summary>
+    /// Token or OTP is incorrect
+    /// </summary>
+    public const string E301 = "E301";
+
+    /// <summary>
+    /// Invalid refresh token
+    /// </summary>
+    public const string E302 = "E302";
 
     /// <summary>
     /// Account does not exist
     /// </summary>
-    public const string E303 = "ERR_AUTH_00011";
+    public const string E303 = "E303";
 
     /// <summary>
     /// Incorrect password
     /// </summary>
-    public const string E304 = "ERR_AUTH_00014";
+    public const string E304 = "E304";
 
     #endregion
 
