@@ -14,7 +14,6 @@ public class ErrorCodes
     public const string DuplicateUser = "ERR_AUTH_00010";
     public const string InvalidSocialToken = "ERR_AUTH_00012";
     public const string SocialEmailNotPublic = "ERR_AUTH_00013";
-    public const string PasswordInCorrect = "ERR_AUTH_00014";
     public const string PassShouldEqualConfirmPass = "ERR_AUTH_00015";
     public const string InvalidToken = "ERR_AUTH_00016";
     public const string SocialPlatformNotSupport = "ERR_AUTH_00017";

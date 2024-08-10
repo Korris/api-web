@@ -276,7 +276,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
         else
         {
-            throw new ForbiddenAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+            throw new ForbiddenAccessException(E304, M304);
         }
     }
 
@@ -792,7 +792,7 @@ public partial class AuthenticationService : IAuthenticationService
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult == false)
         {
-            throw new UnauthorizedAccessException(ErrorCodes.PasswordInCorrect, ErrorMessage.PasswordInCorrect);
+            throw new UnauthorizedAccessException(E304, M304);
         }
 
         try

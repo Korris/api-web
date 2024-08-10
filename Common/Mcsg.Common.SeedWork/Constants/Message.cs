@@ -232,5 +232,10 @@ public static class Message
     /// </summary>
     public const string M303 = "Account does not exist";
 
+    /// <summary>
+    /// Incorrect password
+    /// </summary>
+    public const string M304 = "Incorrect password";
+
     #endregion
 }

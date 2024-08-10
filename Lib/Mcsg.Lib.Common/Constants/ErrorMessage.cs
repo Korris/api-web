@@ -11,7 +11,6 @@ public static class ErrorMessage
     public const string NewPasswordShouldDifferentCurrent = "Mật khẩu mới phải khác mật khẩu cũ.";
     public const string AccountNotAllowed = "Tài khoản của bạn chưa được xác thực";
     public const string AccountLockedOut = "Tài khoản đang bị khóa";
-    public const string PasswordInCorrect = "Mật khẩu không đúng";
     public const string EmailConfirmed = "Tài khoản đã xác nhận email trước đó";
     public const string PassShouldEqualConfirmPass = "Xác nhận mật khẩu không đúng";
     public const string SocialIdNotPublic = "Tài khoản mạng xã hội của bạn không công khai";

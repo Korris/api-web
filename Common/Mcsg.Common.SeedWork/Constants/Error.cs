@@ -183,9 +183,14 @@ public static class Error
     public const string E300 = "ERR_AUTH_00003";
 
     /// <summary>
-    /// Not existed user
+    /// Account does not exist
     /// </summary>
     public const string E303 = "ERR_AUTH_00011";
+
+    /// <summary>
+    /// Incorrect password
+    /// </summary>
+    public const string E304 = "ERR_AUTH_00014";
 
     #endregion
 
