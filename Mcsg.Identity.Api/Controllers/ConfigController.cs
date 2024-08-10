@@ -49,6 +49,9 @@ public class ConfigController : ControllerBase
 
         res.SetSuccess(nameof(s.Api).ToCamelCase(), s.Api);
 
+        res.SetSuccess(nameof(s.AccountDeletedAfter).ToCamelCase(), s.AccountDeletedAfter);
+        res.SetSuccess(nameof(s.AccountCreatedAfter).ToCamelCase(), s.AccountCreatedAfter);
+
         var validators = new
         {
             ProfileName = new

@@ -77,6 +77,16 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public ZaloPayDto ZaloPay { get; }
 
+    /// <summary>
+    /// The time in minutes after which the account will be deleted
+    /// </summary>
+    public uint AccountDeletedAfter { get; set; }
+
+    /// <summary>
+    /// The time in minutes after which the account can be created
+    /// </summary>
+    public uint AccountCreatedAfter { get; set; }
+
     #endregion
 
     #region -- Methods --

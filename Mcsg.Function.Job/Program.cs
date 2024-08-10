@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Text;
 namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -143,7 +145,7 @@ public class Program
 
         #region -- Setup token --
         // JWT
-        var key = Encoding.UTF8.GetBytes(st.Jwt.Signing);
+        var signing = Encoding.UTF8.GetBytes(st.Jwt.Signing);
         builder.Services.AddAuthentication(p =>
         {
             p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -155,7 +157,7 @@ public class Program
             p.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                IssuerSigningKey = new SymmetricSecurityKey(signing),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
@@ -217,6 +219,22 @@ public class Program
         builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
 
         var app = builder.Build();
+
+        #region -- Load settings --
+        using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var systemSettings = context.SystemSettings.ToList();
+
+            var key = nameof(st.AccountDeletedAfter);
+            var value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.AccountDeletedAfter = Convert.ToUInt32(value);
+
+            key = nameof(st.AccountCreatedAfter);
+            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.AccountCreatedAfter = Convert.ToUInt32(value);
+        }
+        #endregion
 
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.

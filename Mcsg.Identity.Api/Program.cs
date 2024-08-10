@@ -8,6 +8,7 @@ namespace Mcsg.Identity.Api;
 using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Helpers;
@@ -150,6 +151,22 @@ public class Program
         builder.Services.AddScoped<IUserWalletService, UserWalletService>();
 
         var app = builder.Build();
+
+        #region -- Load settings --
+        using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var systemSettings = context.SystemSettings.ToList();
+
+            var key = nameof(st.AccountDeletedAfter);
+            var value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.AccountDeletedAfter = Convert.ToUInt32(value);
+
+            key = nameof(st.AccountCreatedAfter);
+            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.AccountCreatedAfter = Convert.ToUInt32(value);
+        }
+        #endregion
 
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
