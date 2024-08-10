@@ -6,47 +6,52 @@
 public enum UserRelationStatus
 {
     /// <summary>
-    /// Pending
+    /// None -> (Pending | Blocked)
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// Pending -> (Declined | Friend | Blocked | None)
     /// </summary>
     Pending,
 
     /// <summary>
-    /// Friend
+    /// Declined -> (Pending | Blocked)
+    /// </summary>
+    Declined,
+
+    /// <summary>
+    /// Friend -> (None | Blocked | Muted | Family | Colleague | Acquaintance | CloseFriend)
     /// </summary>
     Friend,
 
     /// <summary>
-    /// Blocked
+    /// Blocked -> (All)
     /// </summary>
     Blocked,
 
     /// <summary>
-    /// Muted
+    /// Muted -> (All)
     /// </summary>
     Muted,
 
     /// <summary>
-    /// Family
+    /// Family -> (None | Blocked | Friend | Colleague | Accquaintance | CloseFriend)
     /// </summary>
     Family,
 
     /// <summary>
-    /// Colleague
+    /// Colleague -> (None | Blocked | Friend | Family | Accquaintance | CloseFriend)
     /// </summary>
     Colleague,
 
     /// <summary>
-    /// Acquaintance
+    /// Acquaintance -> (None | Blocked | Friend | Family | Colleague | CloseFriend)
     /// </summary>
     Acquaintance,
 
     /// <summary>
-    /// CloseFriend
+    /// CloseFriend -> (None | Blocked | Friend | Family | Colleague | Acquaintance)
     /// </summary>
-    CloseFriend,
-
-    /// <summary>
-    /// Unknown
-    /// </summary>
-    Unknown
+    CloseFriend
 }
