@@ -247,5 +247,10 @@ public static class Message
     /// </summary>
     public const string M304 = "Incorrect password";
 
+    /// <summary>
+    /// Account has been deleted
+    /// </summary>
+    public const string M305 = "Account has been deleted";
+
     #endregion
 }

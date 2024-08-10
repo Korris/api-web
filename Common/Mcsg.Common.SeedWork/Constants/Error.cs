@@ -202,6 +202,11 @@ public static class Error
     /// </summary>
     public const string E304 = "E304";
 
+    /// <summary>
+    /// Account has been deleted
+    /// </summary>
+    public const string E305 = "E305";
+
     #endregion
 
     #region -- E4xx --

@@ -227,7 +227,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (user.IsDelete)
         {
-            throw new ForbiddenAccessException(E003, M003);
+            throw new ForbiddenAccessException(E305, M305);
         }
 
         if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
@@ -329,26 +329,30 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 throw new NotFoundException(E303, M303);
             }
-            else
+
+            if (user.IsDelete)
             {
-                var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id, user);
-                response.Roles = session.Roles;
-
-                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-                if (refreshToken != null)
-                {
-                    response.RefreshToken = refreshToken.RefreshToken;
-                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-                }
-                if (user.LastLoginDate != null)
-                {
-                    user.LastLoginDate = DateTime.UtcNow;
-                }
-                await _context.SaveChangesAsync(default);
-
-                return response;
+                throw new ForbiddenAccessException(E305, M305);
             }
+
+            var session = await _sessionService.CreateSessionAsync(user, "");
+            var response = _tokenService.GenerateAccessToken(session.Id, user);
+            response.Roles = session.Roles;
+
+            var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
+            if (refreshToken != null)
+            {
+                response.RefreshToken = refreshToken.RefreshToken;
+                response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+            }
+            if (user.LastLoginDate != null)
+            {
+                user.LastLoginDate = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync(default);
+
+            return response;
+
         }
         else
         {
@@ -881,8 +885,8 @@ public partial class AuthenticationService : IAuthenticationService
 
             if (user.IsDelete)
             {
-                code = E003;
-                message = M003;
+                code = E305;
+                message = M305;
             }
         }
 
