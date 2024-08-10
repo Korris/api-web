@@ -7,46 +7,65 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Interfaces;
 
+/// <summary>
+/// DeleteAccount service
+/// </summary>
 public class DeleteAccountService : IDeleteAccountService
 {
-    public DeleteAccountService(IMcsgContext context)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context">DB context</param>
+    /// <param name="setting">Setting</param>
+    public DeleteAccountService(IMcsgContext context, ISetting setting)
     {
         _context = context;
+        _setting = setting;
     }
 
+    /// <summary>
+    /// Run
+    /// </summary>
+    /// <returns>Return the result</returns>
     public async Task Run()
     {
         try
         {
-            var users = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.WillDelete && p.DeletedAt < DateTime.UtcNow).Take(3).ToListAsync();
-            if (users.Count == 0)
+            var take = 5;
+
+            // Change status from WillDelete to Deleted
+            var utc = DateTime.UtcNow.AddMinutes(-_setting.AccountDeletedAfter);
+            var willDeleteUsers = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.WillDelete && p.DeletedAt < utc).Take(take).ToListAsync();
+            foreach (var i in willDeleteUsers)
             {
-                return;
+                i.Status = UserStatus.Deleted;
             }
 
-            foreach (var i in users)
+            // Add a prefix to email and phone numbers to allow users to create new accounts
+            utc = DateTime.UtcNow.AddMinutes(-_setting.AccountCreatedAfter);
+            var deletedUsers = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.Deleted && p.DeletedAt < utc).Take(take).ToListAsync();
+            foreach (var i in deletedUsers)
             {
                 var prefix = $"d_{i.CreatedOn.Month}{i.CreatedOn.Day}{i.CreatedOn.Hour}{i.CreatedOn.Minute}";
 
                 var email = i.Email + "";
-                var userName = i.UserName + "";
                 var phone = i.PhoneNumber + "";
 
                 email = email.Replace(prefix, "");
-                userName = userName.Replace(prefix, "");
                 phone = phone.Replace(prefix, "");
 
                 i.Email = $"{prefix}_{email}";
-                i.UserName = $"{prefix}_{userName}";
                 i.PhoneNumber = $"{prefix}_{phone}";
 
                 i.NormalizedEmail = i.Email.ToUpper();
-                i.NormalizedUserName = i.UserName.ToUpper();
-
-                i.Status = UserStatus.Deleted;
             }
 
-            await _context.SaveChangesAsync(default);
+            if (willDeleteUsers.Count > 0 || deletedUsers.Count > 0)
+            {
+                await _context.SaveChangesAsync(default);
+            }
         }
         catch (Exception ex)
         {
@@ -54,12 +73,19 @@ public class DeleteAccountService : IDeleteAccountService
         }
     }
 
+    #endregion
+
     #region -- Fields --
 
     /// <summary>
     /// DB context
     /// </summary>
     private readonly IMcsgContext _context;
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
 
     #endregion
 }
