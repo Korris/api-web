@@ -122,7 +122,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
-        ett.Update(request.Title, content, request.ThumbnailUrl, request.CustomNote, userId);
+        ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, userId);
 
         var result = new FeedPostDto
         {
