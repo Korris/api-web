@@ -13,7 +13,7 @@ using Lib.Data.Repositories;
 using Models.Earning;
 using Requests;
 
-public partial class EarningService : IEarningService
+public class EarningService : IEarningService
 {
     private readonly IRepository<User> _userRepository;
     private readonly ICurrentUserService _currentUserService;

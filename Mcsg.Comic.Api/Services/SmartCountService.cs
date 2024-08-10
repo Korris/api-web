@@ -9,7 +9,7 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 
-public partial class SmartCountService : ISmartCountService
+public class SmartCountService : ISmartCountService
 {
     private readonly IRepository<SmartCountAction> _smartCountActionRepository;
     private readonly IUnitOfWork _unitOfWork;
