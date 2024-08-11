@@ -825,6 +825,12 @@ public partial class AuthenticationService : IAuthenticationService
             throw new NotFoundException(E303, M303);
         }
 
+        // Account has been logged into the social network
+        if (string.IsNullOrEmpty(user.PasswordHash))
+        {
+            throw new ForbiddenAccessException(E306, M306);
+        }
+
         var ok = await _userManager.CheckPasswordAsync(user, request.Password + "");
         if (!ok)
         {
