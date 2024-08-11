@@ -11,8 +11,6 @@
     <ItemGroup>
         <PackageReference Include="HD.ZaloPay" Version="1.0.0" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.62" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     </ItemGroup>
 
     <ItemGroup>
