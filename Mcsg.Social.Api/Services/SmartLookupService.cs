@@ -140,7 +140,9 @@ public partial class SmartLookupService : ISmartLookupService
                     KeywordType = slu.KeywordType == LookupKeywordType.Tag ? tag
                         : slu.KeywordType == LookupKeywordType.People ? people
                         : string.Empty,
-                    Avatar = u != null ? u.Avatar : null
+                    EntityType = slu.EntityType.ToString(),
+                    EntityId = slu.EntityId,
+                    Avatar = u.Avatar ?? string.Empty
                 };
 
         var items = await q.Take(6).ToListAsync();
@@ -160,11 +162,29 @@ public partial class SmartLookupService : ISmartLookupService
 
     public async Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res, Guid userId)
     {
+        var entityType = EntityType.Post;
+        var keywordType = Enum.Parse<LookupKeywordType>(res.KeywordType);
+
+        switch (keywordType)
+        {
+            case LookupKeywordType.Tag:
+                entityType = EntityType.Tag;
+                break;
+            case LookupKeywordType.Comic:
+            case LookupKeywordType.Story:
+                entityType = EntityType.Post;
+                break;
+            default:
+                entityType = EntityType.User;
+                break;
+        }
+
         var smartLookupObj = new SmartLookupUser()
         {
             Id = Guid.NewGuid(),
             Keyword = res.Keyword,
             UserId = userId,
+            EntityType = entityType,
             CreatedOn = DateTime.UtcNow
         };
 
@@ -177,12 +197,25 @@ public partial class SmartLookupService : ISmartLookupService
             smartLookupObj.KeywordType = Enum.Parse<LookupKeywordType>(res.KeywordType);
         }
 
+        smartLookupObj.EntityId = entityType switch
+        {
+            EntityType.Post => _context.SocialPosts
+                .Where(p => EF.Functions.ILike(p.Title, res.Keyword))
+                .Select(p => p.Id).FirstOrDefault(),
+            EntityType.User => _context.UserAvailable.Where(p => p.ProfileName == res.Keyword).Select(p => p.Id)
+                .FirstOrDefault(),
+            EntityType.Tag => _context.TagAvailable.Where(p => p.Name == res.Keyword).Select(p => p.Id)
+                .FirstOrDefault(),
+            _ => smartLookupObj.EntityId
+        };
+
         var existKeyword = (await _smartLookupUserRepository.Connection
             .QueryAsync<SmartLookupUser>(GetSmartLookupUserByKeywordAndTypeQuery, new
             {
                 keyword = smartLookupObj.Keyword,
                 type = smartLookupObj.KeywordType,
-                userid = userId
+                userid = userId,
+                entityId = smartLookupObj.EntityId
             })).FirstOrDefault();
 
         if (existKeyword != null)

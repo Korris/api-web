@@ -40,7 +40,7 @@
             get
             {
                 return @$"SELECT ""Id"" FROM {_smartLookupUserRepository.TableName}
-                          WHERE ""Keyword"" = @keyword AND ""KeywordType"" = @type AND ""UserId"" = @userid";
+                          WHERE ""Keyword"" = @keyword AND ""KeywordType"" = @type AND ""UserId"" = @userid AND ""EntityId"" = @entityId";
             }
         }
     }
