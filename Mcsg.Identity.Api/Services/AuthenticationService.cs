@@ -619,7 +619,7 @@ public partial class AuthenticationService : IAuthenticationService
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
-        var qUser = _context.Users.AsNoTracking();
+        var qUser = _context.UserAvailable.AsNoTracking();
         User? user = null;
 
         if (!string.IsNullOrEmpty(email))
@@ -693,6 +693,8 @@ public partial class AuthenticationService : IAuthenticationService
 
             user.Status = UserStatus.Active;
             user.IsDelete = false;
+            user.DeletedAt = null;
+            user.DeletedBy = null;
 
             await _userManager.UpdateAsync(user);
         }
@@ -839,9 +841,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         await DeleteRestoreUserAsync(user.Id, true);
 
-        user.Status = UserStatus.WillDelete;
         user.IsDelete = true;
-
         user.DeletedAt = DateTime.UtcNow; // then, HostedDeleteAccount in Function.Job will update the status to UserStatus.Deleted
         user.DeletedBy = request.UserId;
 
@@ -909,7 +909,7 @@ public partial class AuthenticationService : IAuthenticationService
         message = string.Empty;
         code = string.Empty;
 
-        var qUser = _context.Users.AsNoTracking();
+        var qUser = _context.Users.Where(p => p.Status != UserStatus.Deleted).AsNoTracking();
         User? user = null;
 
         if (!string.IsNullOrWhiteSpace(email))
@@ -951,7 +951,7 @@ public partial class AuthenticationService : IAuthenticationService
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
-        var qUser = _context.Users.AsNoTracking();
+        var qUser = _context.UserAvailable.AsNoTracking();
 
         User? user = null;
         if (forRegister)

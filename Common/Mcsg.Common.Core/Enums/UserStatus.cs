@@ -21,12 +21,12 @@ public enum UserStatus
     Banned,
 
     /// <summary>
-    /// The user is scheduled for deletion.
+    /// The user is scheduled for deletion (not allowed to register a new account).
     /// </summary>
     WillDelete,
 
     /// <summary>
-    /// The user is deleted and cannot be restored.
+    /// The user is deleted and cannot be restored (allowed to register a new account).
     /// </summary>
     Deleted
 }

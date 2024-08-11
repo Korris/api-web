@@ -34,21 +34,22 @@ public class DeleteAccountService : IDeleteAccountService
         try
         {
             var take = 5;
+            var q = _context.Users.Where(p => p.IsDelete);
 
             // Change status from WillDelete to Deleted
             var utc = DateTime.UtcNow.AddMinutes(-_setting.AccountDeletedAfter);
-            var willDeleteUsers = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.WillDelete && p.DeletedAt < utc).Take(take).ToListAsync();
+            var willDeleteUsers = await q.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted && p.DeletedAt < utc).Take(take).ToListAsync();
             foreach (var i in willDeleteUsers)
             {
-                i.Status = UserStatus.Deleted;
+                i.Status = UserStatus.WillDelete;
             }
 
             // Add a prefix to email and phone numbers to allow users to create new accounts
             utc = DateTime.UtcNow.AddMinutes(-_setting.AccountCreatedAfter);
-            var deletedUsers = await _context.Users.Where(p => p.IsDelete && p.Status == UserStatus.Deleted && p.DeletedAt < utc).Take(take).ToListAsync();
+            var deletedUsers = await q.Where(p => p.Status == UserStatus.WillDelete && p.DeletedAt < utc).Take(take).ToListAsync();
             foreach (var i in deletedUsers)
             {
-                var prefix = $"d_{i.CreatedOn.Month}{i.CreatedOn.Day}{i.CreatedOn.Hour}{i.CreatedOn.Minute}";
+                var prefix = $"d_{i.CreatedOn.Month}{i.CreatedOn.Day}{i.CreatedOn.Hour}{i.CreatedOn.Minute}_";
 
                 var email = i.Email + "";
                 var phone = i.PhoneNumber + "";
@@ -56,10 +57,12 @@ public class DeleteAccountService : IDeleteAccountService
                 email = email.Replace(prefix, "");
                 phone = phone.Replace(prefix, "");
 
-                i.Email = $"{prefix}_{email}";
-                i.PhoneNumber = $"{prefix}_{phone}";
+                i.Email = $"{prefix}{email}";
+                i.PhoneNumber = $"{prefix}{phone}";
 
                 i.NormalizedEmail = i.Email.ToUpper();
+
+                i.Status = UserStatus.Deleted;
             }
 
             if (willDeleteUsers.Count > 0 || deletedUsers.Count > 0)

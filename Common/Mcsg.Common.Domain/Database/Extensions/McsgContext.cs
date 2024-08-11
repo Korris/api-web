@@ -13,6 +13,7 @@
 
 namespace Mcsg.Common.Domain;
 
+using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 
@@ -198,7 +199,7 @@ partial class McsgContext
 
     public IQueryable<TagFavorite> TagFavoriteAvailable => TagFavorites.Where(p => !p.IsDelete);
 
-    public IQueryable<User> UserAvailable => Users.Where(p => !p.IsDelete);
+    public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
 
     //public IQueryable<UserClaim> UserClaimAvailable => UserClaims;
 
