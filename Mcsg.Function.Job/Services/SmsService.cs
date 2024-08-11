@@ -4,9 +4,7 @@ namespace Mcsg.Function.Job.Services;
 
 using Common.Domain.Entities;
 using Common.SeedWork;
-using Extensions;
 using Interfaces;
-using Lib.Common.Helpers;
 using Lib.Common.Models;
 
 public class SmsService : ISmsService
@@ -38,9 +36,9 @@ public class SmsService : ISmsService
 
         sms.To = _aes.DecryptText(sms.To) + "";
 
-        var result = SmsHelper.SendSms(sms.To, sms.Body.RenderSmsOtpBody());
+        //var result = SmsHelper.SendSms(sms.To, sms.Body.RenderSmsOtpBody());
 
-        _logger.LogInformation($"SMS Service - To: {sms.To} - Body : {sms.Body.RenderSmsOtpBody()} - Result : {result}");
+        //_logger.LogInformation($"SMS Service - To: {sms.To} - Body : {sms.Body.RenderSmsOtpBody()} - Result : {result}");
     }
 
     #region -- Fields --

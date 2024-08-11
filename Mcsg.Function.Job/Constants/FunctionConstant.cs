@@ -22,9 +22,6 @@ internal class FunctionConstant
     public const string WithdrawEmailTitle = "Withdraw request";
     public const string DepositEmailTitle = "Deposit request";
 
-    public const string TwilioAccountSid = "Function:Twilio:AccountSid";
-    public const string TwilioAuthToken = "Function:Twilio:AuthToken";
-    public const string TwilioPhoneNumber = "Function:Twilio:PhoneNumber";
     public const string ExclusiveUnlockCron = "%Function:ExclusiveUnlockCron%";
 
     public const string ZaloPayAppId = "Function:ZaloPay:AppId";
