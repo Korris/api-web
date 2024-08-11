@@ -105,11 +105,11 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
-    [HttpDelete("delete-account")]
-    public async Task<IActionResult> DeleteAccount(DeleteUserReq request)
+    [HttpDelete("delete-account"), Authorize]
+    public async Task<IActionResult> DeleteUser(AuthenticationDeleteUserR request)
     {
-        var result = await _authenticationService.DeleteAccount(request);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.DeleteUser(request);
         return Ok(result);
     }
 

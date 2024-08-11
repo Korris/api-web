@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -688,7 +689,7 @@ public partial class AuthenticationService : IAuthenticationService
         // To restore the account that has been deleted
         if (user.IsDelete)
         {
-            await DeleteRestoreAccount(user.Id, false);
+            await DeleteRestoreUserAsync(user.Id, false);
 
             user.Status = UserStatus.Active;
             user.IsDelete = false;
@@ -809,35 +810,48 @@ public partial class AuthenticationService : IAuthenticationService
         };
     }
 
-    public async Task<bool> DeleteAccount(DeleteUserReq request)
+    public async Task<bool> DeleteUser(AuthenticationDeleteUserR request)
     {
-        var session = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(session.UserId.ToString());
+        var vr = new AuthenticationDeleteUserV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(E000, t);
+        }
+
+        var user = await _userManager.FindByIdAsync(request.UserId + "");
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
         }
 
-        var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
-        if (signinResult == false)
+        var ok = await _userManager.CheckPasswordAsync(user, request.Password + "");
+        if (!ok)
         {
             throw new UnauthorizedAccessException(E304, M304);
         }
 
-        await DeleteRestoreAccount(user.Id, true);
+        await DeleteRestoreUserAsync(user.Id, true);
 
         user.Status = UserStatus.WillDelete;
         user.IsDelete = true;
 
         user.DeletedAt = DateTime.UtcNow; // then, HostedDeleteAccount in Function.Job will update the status to UserStatus.Deleted
-        user.DeletedBy = session.UserId;
+        user.DeletedBy = request.UserId;
 
         await _userManager.UpdateAsync(user);
 
         return true;
     }
 
-    private async Task DeleteRestoreAccount(Guid userId, bool isDelete)
+    /// <summary>
+    /// Asynchronously deletes or restores a user
+    /// </summary>
+    /// <param name="userId">The ID of the user</param>
+    /// <param name="isDelete">true to delete the user; false to restore the user</param>
+    /// <returns>Returns the result</returns>
+    /// <exception cref="BadRequestException">Thrown when the request is invalid</exception>
+    private async Task DeleteRestoreUserAsync(Guid userId, bool isDelete)
     {
         try
         {
