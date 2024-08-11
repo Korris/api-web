@@ -210,6 +210,9 @@ public class Program
 
         var app = builder.Build();
 
+        // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment() || st.SwaggerEnabled)
@@ -252,7 +255,6 @@ public class Program
         app.UseAuthorization();
         app.MapControllers();
         app.UseResponseCaching();
-        app.EnableNpgsqlLegacyTime();
 
         app.Run();
     }
