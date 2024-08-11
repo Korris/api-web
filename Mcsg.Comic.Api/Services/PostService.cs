@@ -20,8 +20,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Analytic;
-using Lib.Data.Analytic.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -48,8 +46,6 @@ public partial class PostService : IPostService
     private readonly IViewHistoryService _viewHistoryService;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
-    private readonly IRepository<UserViewPost> _userViewPostRepository;
-    private readonly AnalyticDbContext _analyticDbContext;
 
     public PostService(IUnitOfWork unitOfWork,
         ITagService tagService,
@@ -64,9 +60,7 @@ public partial class PostService : IPostService
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<ComicPostReport> postReportValidator,
-        IRepository<ComicPostComment> postCommentRepository,
-        IRepository<UserViewPost> userViewPostRepository,
-        AnalyticDbContext analyticDbContext)
+        IRepository<ComicPostComment> postCommentRepository)
     {
         _postRepository = unitOfWork.GetRepository<ComicPost>();
         _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
@@ -85,8 +79,6 @@ public partial class PostService : IPostService
         _postReportValidator = postReportValidator;
         _smartLookupRepository = smartLookupRepository;
         _postCommentRepository = postCommentRepository;
-        _userViewPostRepository = userViewPostRepository;
-        _analyticDbContext = analyticDbContext;
     }
 
     public async Task<bool> Delete(Guid postId)
@@ -1266,7 +1258,7 @@ public partial class PostService : IPostService
                                                 .FirstOrDefaultAsync();
 
         var offset = input.PageSize * (input.PageNumber - 1);
-        var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking().Where(p => p.UserId == currentUserId).GroupBy(p => p.PostId).Select(g => g.First().PostId).ToListAsync();
+        var postIdReaded = new List<Guid> { Guid.Empty }; //TODO Analytic
         if (postIdReaded.Any())
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 

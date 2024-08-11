@@ -20,8 +20,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
-using Lib.Data.Analytic;
-using Lib.Data.Analytic.Entities;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -49,8 +47,6 @@ public partial class PostService : IPostService
     private readonly IViewHistoryService _viewHistoryService;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
-    private readonly IRepository<UserViewPost> _userViewPostRepository;
-    private readonly AnalyticDbContext _analyticDbContext;
 
     public PostService(IUnitOfWork unitOfWork,
         ITagService tagService,
@@ -65,9 +61,7 @@ public partial class PostService : IPostService
         ISetting setting,
         ISmartLookupService smartLookupService,
         IValidator<SocialPostReport> postReportValidator,
-        IRepository<SocialPostComment> postCommentRepository,
-        IRepository<UserViewPost> userViewPostRepository,
-        AnalyticDbContext analyticDbContext)
+        IRepository<SocialPostComment> postCommentRepository)
     {
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
@@ -86,8 +80,6 @@ public partial class PostService : IPostService
         _postReportValidator = postReportValidator;
         _smartLookupRepository = smartLookupRepository;
         _postCommentRepository = postCommentRepository;
-        _userViewPostRepository = userViewPostRepository;
-        _analyticDbContext = analyticDbContext;
     }
 
     public async Task<bool> Delete(Guid postId)
@@ -1122,10 +1114,7 @@ public partial class PostService : IPostService
                                                 .FirstOrDefaultAsync();
 
         var offset = input.PageSize * (input.PageNumber - 1);
-        var postIdReaded = await _analyticDbContext.UserViewPosts.AsNoTracking()
-                                                                .Where(p => p.UserId == currentUserId)
-                                                                .GroupBy(p => p.PostId)
-                                                                .Select(g => g.First().PostId).ToListAsync();
+        var postIdReaded = new List<Guid> { Guid.Empty }; //TODO Analytic
         if (postIdReaded.Any())
         {
             var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
@@ -1152,16 +1141,7 @@ public partial class PostService : IPostService
             }
             else
             {
-                var postIdHaveHightestViewCount = await _analyticDbContext.UserViewPosts.AsNoTracking()
-                                                                                        .GroupBy(p => p.PostId)
-                                                                                        .Select(g => new
-                                                                                        {
-                                                                                            Count = g.Count(),
-                                                                                            Id = g.Key
-                                                                                        })
-                                                                                        .OrderByDescending(g => g.Count)
-                                                                                        .Select(g => g.Id)
-                                                                                        .ToListAsync();
+                var postIdHaveHightestViewCount = new List<Guid> { Guid.Empty }; //TODO Analytic
                 var queryTakeAll = GetRelatedBoxPostQuery;
                 queryTakeAll = queryTakeAll.Replace("[QueryCondition]", @"AND p.""Id"" = ANY(@PostId)");
                 var amountNeedToTake = dataQuery != null ? input.PageSize - dataQuery.Count() : input.PageSize;

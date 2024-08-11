@@ -19,7 +19,6 @@ using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data.Analytic;
 using Lib.Data.Interfaces;
 using Lib.Data.Wallet;
 using Models;
@@ -122,7 +121,6 @@ public class Program
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddAnalyticDbContext(csDbAnalytic);
         builder.Services.AddWalletDbContext(csDbWallet);
 
         // Attribute
@@ -185,7 +183,6 @@ public class Program
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IViewHistoryService, ViewHistoryService>();
         builder.Services.AddScoped<IEarningService, EarningService>();
-        builder.Services.AddScoped<IUserViewService, UserViewService>();
         builder.Services.AddScoped<IAffiliateService, AffiliateService>();
         builder.Services.AddScoped<IWalletService, WalletService>();
 
