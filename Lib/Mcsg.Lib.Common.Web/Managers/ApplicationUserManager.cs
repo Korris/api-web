@@ -15,8 +15,14 @@ public class ApplicationUserManager : UserManager<User>
     public override async Task<User?> FindByIdAsync(string userId)
     {
         var id = Guid.Parse(userId);
-        return await Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted).FirstOrDefaultAsync(u => u.Id == id);
+        return await UserAvailable.FirstOrDefaultAsync(u => u.Id == id);
     }
+
+    #endregion
+
+    #region -- Properties --
+
+    public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
 
     #endregion
 

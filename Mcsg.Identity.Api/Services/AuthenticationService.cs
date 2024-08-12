@@ -87,7 +87,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!string.IsNullOrWhiteSpace(request.ReferralCode))
         {
-            var userReferrerId = await _userManager.Users.AsNoTracking()
+            var userReferrerId = await _userManager.UserAvailable.AsNoTracking()
                 .Where(p => p.ReferralCode == request.ReferralCode)
                 .Select(p => p.Id)
                 .FirstOrDefaultAsync();
@@ -117,7 +117,7 @@ public partial class AuthenticationService : IAuthenticationService
         var userReferrerId = Guid.Empty;
         if (!string.IsNullOrWhiteSpace(request.ReferralCode))
         {
-            userReferrerId = await _userManager.Users.AsNoTracking()
+            userReferrerId = await _userManager.UserAvailable.AsNoTracking()
                 .Where(p => p.ReferralCode == request.ReferralCode)
                 .Select(p => p.Id)
                 .FirstOrDefaultAsync();
@@ -982,11 +982,11 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (type == UserOtpType.VerifyEmail || type == UserOtpType.ResetByEmail)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.Email == email));
+            return await _userManager.UserAvailable.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.Email) && (p.Email == encryptedEmail || p.Email == email));
         }
         else
         {
-            return await _userManager.Users.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.PhoneNumber) && (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone));
+            return await _userManager.UserAvailable.FirstOrDefaultAsync(p => !string.IsNullOrEmpty(p.PhoneNumber) && (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone));
         }
     }
 
