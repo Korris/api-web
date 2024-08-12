@@ -5,22 +5,17 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Lib.Common.Web;
 
+using Mcsg.Common.Core.Enums;
 using Mcsg.Common.Domain.Entities;
 
 public class ApplicationUserManager : UserManager<User>
 {
     #region -- Overrides --
 
-    public override async Task<User> FindByEmailAsync(string email)
+    public override async Task<User?> FindByIdAsync(string userId)
     {
-        // Implement your custom logic here
-        // For example, filter out users with IsDeleted = false
-        return await Users.FirstOrDefaultAsync(u => u.Email == email && !u.IsDelete);
-    }
-    public override async Task<User> FindByIdAsync(string id)
-    {
-        var idGuid = Guid.Parse(id);
-        return await Users.FirstOrDefaultAsync(u => u.Id == idGuid && !u.IsDelete);
+        var id = Guid.Parse(userId);
+        return await Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted).FirstOrDefaultAsync(u => u.Id == id);
     }
 
     #endregion

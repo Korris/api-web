@@ -39,7 +39,6 @@ public partial class AuthenticationService : IAuthenticationService
     /// <param name="setting"></param>
     /// <param name="uniquenessChecker"></param>
     /// <param name="userManager"></param>
-    /// <param name="roleManager"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="sessionService"></param>
     /// <param name="tokenService"></param>
@@ -331,7 +330,7 @@ public partial class AuthenticationService : IAuthenticationService
         // Social user linked to db. Should return access token
         if (existUserId != Guid.Empty)
         {
-            var user = await _userManager.FindByIdAsync(existUserId.ToString());
+            var user = await _userManager.FindByIdAsync(existUserId + "");
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -455,7 +454,7 @@ public partial class AuthenticationService : IAuthenticationService
         if (string.IsNullOrEmpty(otpToken))
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
-            var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(currentUser.UserId + "");
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -570,7 +569,7 @@ public partial class AuthenticationService : IAuthenticationService
         var response = new TokenDto();
 
         var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(currentUser.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(currentUser.UserId + "");
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
