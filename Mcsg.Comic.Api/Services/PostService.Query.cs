@@ -276,7 +276,7 @@ LIMIT 1
                             ) 
                         AS post
                         LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
-                        LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
+                        LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
                         LEFT JOIN ""comic"".""ComicPostComments"" comment ON comment.""PostId"" = post.""Id"" AND comment.""IsDelete"" = false
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
