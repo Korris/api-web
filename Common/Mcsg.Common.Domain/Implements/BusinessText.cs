@@ -49,7 +49,7 @@ public class BusinessText : IBusinessText
             }
             return match.Value; // return the GUID if no user is found
         });
-        res = res.Replace("@", "");
+        res = Regex.Replace(res, @"@(?=<a\b[^>]*>)", "");
 
         // Wrap hashtags
         res = Regex.Replace(res, Hashtag.Regex, match =>
