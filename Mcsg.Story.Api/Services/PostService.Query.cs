@@ -7,14 +7,16 @@
         private string GetTotalCommentQuery => $@"SELECT 
                                                         (SELECT COUNT(*)
                                                          FROM ""story"".""StoryPostComments""  pc
-                                                         JOIN ""story"".""StoryPosts"" p ON pc.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId) 
+                                                         JOIN ""story"".""StoryPosts"" p ON pc.""PostId""= p.""Id"" 
+                                                         WHERE p.""HashId"" = @HashId
+                                                         And pc.""IsDelete"" = false) 
                                                         +
                                                         (SELECT COUNT(*)
                                                          FROM ""story"".""StorySubPostComments"" spc
                                                          JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId""= sp.""Id""
-                                                         JOIN ""story"".""StoryPosts"" p ON sp.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId) AS total_comment_count";
+                                                         JOIN ""story"".""StoryPosts"" p ON sp.""PostId""= p.""Id"" 
+                                                         WHERE p.""HashId"" = @HashId
+                                                         AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetSeriesQuery
         {
             get
