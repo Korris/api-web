@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Comic.Api", "Mcsg.Comic.Api\Mcsg.Comic.Api.csproj", "{E04A08F4-2FFC-44C8-84F6-D2E7C546C75E}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{A1152CA1-B444-4676-B59D-06093C823044}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{63A43195-F5B8-48B1-8073-6A7D77FFB884}"
@@ -44,8 +46,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{CACE9927-6542-4C49-BF7B-2CBD43A58993}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.Core.Test", "Common\Test\Mcsg.Common.Core.Test\Mcsg.Common.Core.Test.csproj", "{9C775BFC-A9DB-4A4D-9BDB-84DC5158C98A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Comic.Api", "Mcsg.Comic.Api\Mcsg.Comic.Api.csproj", "{E04A08F4-2FFC-44C8-84F6-D2E7C546C75E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Comic.Api.Test", "Test\Mcsg.Comic.Api.Test\Mcsg.Comic.Api.Test.csproj", "{9D69D4BB-2B9A-4809-8579-95DEEC944412}"
 EndProject
