@@ -1234,7 +1234,7 @@ ORDER BY group_number, random_row_num;
                            ROW_NUMBER() OVER (PARTITION BY ""PostId"" ORDER BY ""Order"" desc) AS rn
                     FROM ""story"".""StorySubPosts""
                     WHERE ""IsDelete"" = false
-                ) sp ON p.""Id"" = sp.""PostId"" AND sp.rn <= 2 
+                ) sp ON p.""Id"" = sp.""PostId""
                 WHERE p.""HashId"" = ANY(@HashIds)
                 GROUP BY  
                           p.""HashId"",
