@@ -29,4 +29,5 @@ public class PostBox
     public PostType Type { get; set; }
     public DateTime? CreatedOn { get; set; }
     public string? ProfileName { get; set; }
+    public Guid UserId { get; set; }
 }
