@@ -191,22 +191,28 @@ public class Program
 
         builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 
-        builder.Services.Configure<IISServerOptions>(options =>
+        #region -- Max request body --
+        var bodySize = 256 * 1024 * 1024; // 256MB
+        var bufferSize = 10 * 1024 * 1024; // 10MB
+        var lengthLimit = 128 * 1024 * 1024; // 128MB
+
+        builder.Services.Configure<IISServerOptions>(p =>
         {
-            options.MaxRequestBodySize = int.MaxValue;
-            options.MaxRequestBodyBufferSize = 10 * 1024 * 1024;
+            p.MaxRequestBodySize = bodySize;
+            p.MaxRequestBodyBufferSize = bufferSize;
         });
 
-        builder.Services.Configure<KestrelServerOptions>(options =>
+        builder.Services.Configure<KestrelServerOptions>(p =>
         {
-            options.Limits.MaxRequestBodySize = int.MaxValue;
-            options.Limits.MaxRequestBufferSize = 10 * 1024 * 1024;
+            p.Limits.MaxRequestBodySize = bodySize;
+            p.Limits.MaxRequestBufferSize = bufferSize;
         });
 
-        builder.Services.Configure<FormOptions>(options =>
+        builder.Services.Configure<FormOptions>(p =>
         {
-            options.MultipartBodyLengthLimit = int.MaxValue;
+            p.MultipartBodyLengthLimit = lengthLimit;
         });
+        #endregion
 
         var app = builder.Build();
 
