@@ -189,6 +189,13 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("latest-order")]
+    public async Task<IActionResult> GetLatestOrder([FromQuery] string hashPostId)
+    {
+        var result = await _storyService.GetLatestOrderChapter(hashPostId);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --

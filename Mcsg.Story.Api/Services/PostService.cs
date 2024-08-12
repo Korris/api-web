@@ -1670,7 +1670,7 @@ public partial class PostService : IPostService
         if (chapterPostReq.IsAutoGenerateOrder)
         {
             var maxOrder = (await reader.ReadAsync<float>(false)).FirstOrDefault();
-            newOrder = maxOrder + 1;
+            newOrder = (int)maxOrder + 1;
 
         }
         else

@@ -1,8 +1,13 @@
-﻿namespace Mcsg.Comic.Api.Services;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace Mcsg.Comic.Api.Services;
+
+using Api.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
@@ -20,12 +25,14 @@ public partial class ComicService : IComicService
     private readonly IFileService _fileService;
     private readonly IRepository<ComicSubPost> _subPostRepository;
     private readonly IConfiguration _configuration;
+    private readonly IMcsgContext _context;
     public ComicService(
         IPostService postService, IUnitOfWork unitOfWork,
         IFileService fileService,
         ICurrentUserService currentUserService,
         ISetting setting,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IMcsgContext context)
     {
         _postService = postService;
         _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
@@ -34,6 +41,7 @@ public partial class ComicService : IComicService
         _type = PostType.Comic;
         _setting = setting;
         _configuration = configuration;
+        _context = context;
     }
 
     #region Load data
@@ -182,6 +190,27 @@ public partial class ComicService : IComicService
     public async Task<bool> FollowPost(Guid postId)
     {
         return await _postService.FollowPost(postId);
+    }
+
+    public async Task<float> GetLatestOrderChapter(string hashPostId)
+    {
+        var postId = await _context.ComicPostAvailable.AsNoTracking()
+            .Where(p => p.HashId == hashPostId)
+            .Select(p => p.Id)
+            .FirstOrDefaultAsync();
+
+        if (postId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var latestOrder = await _context.ComicSubPostAvailable.AsNoTracking()
+            .Where(p => p.PostId == postId)
+            .OrderByDescending(p => p.Order)
+            .Select(p => p.Order)
+            .FirstOrDefaultAsync();
+
+        return (int)latestOrder + 1;
     }
 
     #endregion

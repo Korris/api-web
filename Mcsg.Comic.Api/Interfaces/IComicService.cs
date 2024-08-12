@@ -29,4 +29,5 @@ public interface IComicService
     Task<PagedResponse<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input);
     Task<bool> FollowPost(Guid postId);
+    Task<float> GetLatestOrderChapter(string hashPostId);
 }

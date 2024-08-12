@@ -1,7 +1,12 @@
-﻿namespace Mcsg.Story.Api.Services;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace Mcsg.Story.Api.Services;
+
+using Api.Constants;
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
@@ -17,15 +22,18 @@ public partial class StoryService : IStoryService
     private readonly PostType _type;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IMcsgContext _context;
     public StoryService(
         IUnitOfWork unitOfWork,
         IPostService postService,
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        IMcsgContext context)
     {
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _postService = postService;
         _type = PostType.Story;
         _currentUserService = currentUserService;
+        _context = context;
     }
     public async Task<PostSeriesResponse> PostStory(ComicPostSeriesR comicPostReq)
     {
@@ -147,5 +155,26 @@ public partial class StoryService : IStoryService
     public async Task<bool> FollowPost(Guid postId)
     {
         return await _postService.FollowPost(postId);
+    }
+
+    public async Task<float> GetLatestOrderChapter(string hashPostId)
+    {
+        var postId = await _context.StoryPostAvailable.AsNoTracking()
+            .Where(p => p.HashId == hashPostId)
+            .Select(p => p.Id)
+            .FirstOrDefaultAsync();
+
+        if (postId == Guid.Empty)
+        {
+            throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
+        }
+
+        var latestOrder = await _context.StorySubPostAvailable.AsNoTracking()
+            .Where(p => p.PostId == postId)
+            .OrderByDescending(p => p.Order)
+            .Select(p => p.Order)
+            .FirstOrDefaultAsync();
+
+        return (int)latestOrder + 1;
     }
 }

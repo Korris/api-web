@@ -196,6 +196,13 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("latest-order")]
+    public async Task<IActionResult> GetLatestOrder([FromQuery] string hashPostId)
+    {
+        var result = await _comicService.GetLatestOrderChapter(hashPostId);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
