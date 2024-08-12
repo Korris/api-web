@@ -176,7 +176,6 @@ public class Program
         builder.Services.AddScoped<ISubPostCommentReactService, SubPostCommentReactService>();
         builder.Services.AddScoped(typeof(IReactService<>), typeof(ReactService<>));
         builder.Services.AddScoped<IComicService, ComicService>();
-        builder.Services.AddScoped<IStoryService, StoryService>();
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
         builder.Services.AddScoped<IViewHistoryService, ViewHistoryService>();
