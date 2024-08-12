@@ -359,7 +359,6 @@ public partial class AuthenticationService : IAuthenticationService
             await _context.SaveChangesAsync(default);
 
             return response;
-
         }
         else
         {
@@ -448,7 +447,7 @@ public partial class AuthenticationService : IAuthenticationService
 
     public async Task<VerifyUserResponse> ResendOtp(UserOtpType type, string otpToken = "")
     {
-        var verifyUserModel = new VerifyUserResponse();
+        var res = new VerifyUserResponse();
 
         //Case current user
         if (string.IsNullOrEmpty(otpToken))
@@ -467,8 +466,8 @@ public partial class AuthenticationService : IAuthenticationService
                     throw new BadRequestException(ErrorCodes.EmailConfirmed, ErrorMessage.EmailConfirmed);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.Email, type);
-                verifyUserModel.Token = userOtp.Token;
-                verifyUserModel.IsEmail = true;
+                res.Token = userOtp.Token;
+                res.IsEmail = true;
             }
             else if (type == UserOtpType.ResetByEmail)
             {
@@ -477,8 +476,8 @@ public partial class AuthenticationService : IAuthenticationService
                     throw new BadRequestException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, user.Email));
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.Email, type);
-                verifyUserModel.Token = userOtp.Token;
-                verifyUserModel.IsEmail = true;
+                res.Token = userOtp.Token;
+                res.IsEmail = true;
             }
             else if (type == UserOtpType.VerifyPhone)
             {
@@ -487,8 +486,8 @@ public partial class AuthenticationService : IAuthenticationService
                     throw new BadRequestException(IdentityErrorCodes.MobileConfirmed, ApiMessages.MobileConfirmed);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, type);
-                verifyUserModel.Token = userOtp.Token;
-                verifyUserModel.IsPhone = true;
+                res.Token = userOtp.Token;
+                res.IsPhone = true;
             }
             else if (type == UserOtpType.ResetByPhone)
             {
@@ -497,8 +496,8 @@ public partial class AuthenticationService : IAuthenticationService
                     throw new BadRequestException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, user.PhoneNumber));
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, type);
-                verifyUserModel.Token = userOtp.Token;
-                verifyUserModel.IsPhone = true;
+                res.Token = userOtp.Token;
+                res.IsPhone = true;
             }
         }
         else
@@ -507,9 +506,9 @@ public partial class AuthenticationService : IAuthenticationService
             if (otp != null)
             {
                 var userOtp = await _otpService.CreateAsync(otp.UserId, otp.Destination, otp.OtpType);
-                verifyUserModel.Token = userOtp.Token;
-                verifyUserModel.IsEmail = otp.OtpType == UserOtpType.VerifyEmail;
-                verifyUserModel.IsPhone = otp.OtpType == UserOtpType.VerifyPhone;
+                res.Token = userOtp.Token;
+                res.IsEmail = otp.OtpType == UserOtpType.VerifyEmail;
+                res.IsPhone = otp.OtpType == UserOtpType.VerifyPhone;
 
                 //Clear old
                 await _userOtpRepository.DeleteAsync(otp.Id);
@@ -519,7 +518,8 @@ public partial class AuthenticationService : IAuthenticationService
                 throw new NotFoundException(E301, M301);
             }
         }
-        return verifyUserModel;
+
+        return res;
     }
 
     public async Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
@@ -548,25 +548,26 @@ public partial class AuthenticationService : IAuthenticationService
 
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
 
-        TokenDto response;
+        TokenDto res;
         if (changePasswordResult.Succeeded)
         {
             await LogOut();
             await _tokenService.DeleteRefreshTokenAsync(user.Id);
 
-            response = await CreateAccessToken(user);
+            res = await CreateAccessToken(user);
         }
         else
         {
             var createError = changePasswordResult.Errors.FirstOrDefault();
             throw new BadRequestException(createError?.Code, createError?.Description);
         }
-        return response;
+
+        return res;
     }
 
     public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
     {
-        var response = new TokenDto();
+        var res = new TokenDto();
 
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         var user = await _userManager.FindByIdAsync(currentUser.UserId + "");
@@ -597,17 +598,17 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (currentUser != null)
         {
-            response = _tokenService.GenerateAccessToken(Guid.Parse(currentUser.SessionId), user);
+            res = _tokenService.GenerateAccessToken(Guid.Parse(currentUser.SessionId), user);
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
             if (refreshToken != null)
             {
-                response.RefreshToken = refreshToken.RefreshToken;
-                response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+                res.RefreshToken = refreshToken.RefreshToken;
+                res.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
                 user.RefreshToken = refreshToken.RefreshToken;
             }
         }
 
-        return response;
+        return res;
     }
 
     public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
@@ -834,7 +835,7 @@ public partial class AuthenticationService : IAuthenticationService
         var ok = await _userManager.CheckPasswordAsync(user, request.Password + "");
         if (!ok)
         {
-            throw new UnauthorizedAccessException(E304, M304);
+            throw new ForbiddenAccessException(E304, M304);
         }
 
         await DeleteRestoreUserAsync(user.Id, true);
