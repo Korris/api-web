@@ -230,20 +230,20 @@ LIMIT 1
             get
             {
                 return @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-						post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
-						post.""ChapterCount"",
-						post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
-						post.""CreatedOn"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
-						post.""SubPostStr"", 
-						array_agg(tag.""Name"") as Tags from
-							(SELECT  p.""Id"",
-							p.""Title"", p.""Body"",  
-							p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
-							u.""ProfileName"",u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
-							p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-							 postid.""SelectType"",
-							p.""Status"", p.""Type"", postview.""ViewCount"",
-							p.""CreatedOn"",--sp.""Id"" as ""SPID"",
+                        post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
+                        post.""ChapterCount"",
+                        post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
+                        post.""CreatedOn"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
+                        post.""SubPostStr"", 
+                        array_agg(tag.""Name"") as Tags from
+                            (SELECT  p.""Id"",
+                            p.""Title"", p.""Body"",  
+                            p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
+                            u.""ProfileName"",u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
+                             postid.""SelectType"",
+                            p.""Status"", p.""Type"", postview.""ViewCount"",
+                            p.""CreatedOn"",--sp.""Id"" as ""SPID"",
 SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
@@ -264,28 +264,28 @@ LEFT JOIN LATERAL (
                                     FROM ""SmartCountActions"" 
                                 WHERE ""EntityId"" = p.""Id"" AND ""EntityType"" = 0 AND ""ActionType"" = 2
 LIMIT 1
-								) postview ON postview.""EntityId"" = p.""Id""
-							
-							GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-							p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-							sp.""Total"",
-							u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
-							p.""Status"", p.""Type"",postview.""ViewCount"",
-							p.""CreatedOn""
-							) 
-						AS post
-						LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
-						LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
-						LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-						LEFT JOIN ""story"".""StoryPostComments"" comment ON comment.""PostId"" = post.""Id"" AND comment.""IsDelete"" = false
-						GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
-						post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
-						post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"",post.""TotalSubPostComment"",
-						post.""Status"", post.""Type"", post.""ViewCount"",
-						post.""CreatedOn"",
-						post.""SubPostStr"",
-						u.""UserName""
-						ORDER BY ""[OrderBy]"" desc;
+                                ) postview ON postview.""EntityId"" = p.""Id""
+                            
+                            GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
+                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
+                            sp.""Total"",
+                            u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+                            p.""Status"", p.""Type"",postview.""ViewCount"",
+                            p.""CreatedOn""
+                            ) 
+                        AS post
+                        LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
+                        LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
+                        LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
+                        LEFT JOIN ""story"".""StoryPostComments"" comment ON comment.""PostId"" = post.""Id"" AND comment.""IsDelete"" = false
+                        GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
+                        post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
+                        post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"",post.""TotalSubPostComment"",
+                        post.""Status"", post.""Type"", post.""ViewCount"",
+                        post.""CreatedOn"",
+                        post.""SubPostStr"",
+                        u.""UserName""
+                        ORDER BY ""[OrderBy]"" desc;
 
                         [CountResults] ";
             }
@@ -1213,7 +1213,7 @@ ORDER BY group_number, random_row_num;
                     p.""Title"",
                     p.""AuthorId"",
                     p.""AuthorName"",
-					u.""ProfileName"",
+                    u.""ProfileName"",
                     p.""ViewCount"",
                     p.""IsMature"",
                     p.""CreatedOn"",
@@ -1222,7 +1222,7 @@ ORDER BY group_number, random_row_num;
                 FROM ""story"".""StoryPosts"" p
                 LEFT JOIN ""story"".""StoryTagPosts"" tp ON p.""Id"" = tp.""PostId""
                 LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id""
-				LEFT JOIN identity.""Users"" u on u.""Id"" = p.""UserId""
+                LEFT JOIN identity.""Users"" u on u.""Id"" = p.""UserId""
                 LEFT JOIN (
                     SELECT ""PostId"",
                            ""Title"",
@@ -1234,15 +1234,15 @@ ORDER BY group_number, random_row_num;
                 ) sp ON p.""Id"" = sp.""PostId"" AND sp.rn <= 2 
                 WHERE p.""HashId"" = ANY(@HashIds)
                 GROUP BY  
-					      p.""HashId"",
-						  p.""Id"",
-						  p.""ThumbnailUrl"",
-						  p.""Body"",
-						  p.""Title"",
-						  p.""AuthorId"",
-						  p.""AuthorName"",
-						  u.""ProfileName"",
-						  p.""ViewCount""
+                          p.""HashId"",
+                          p.""Id"",
+                          p.""ThumbnailUrl"",
+                          p.""Body"",
+                          p.""Title"",
+                          p.""AuthorId"",
+                          p.""AuthorName"",
+                          u.""ProfileName"",
+                          p.""ViewCount""
             ";
             }
         }
