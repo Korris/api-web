@@ -15,7 +15,7 @@ public interface IPostService
     Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR postReq);
     Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR postReq);
     Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters);
-    Task<ChapterResponse> GetSeriesChapter(string hashId, int order);
+    Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
     Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq);

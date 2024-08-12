@@ -30,6 +30,7 @@ public static class ApiErrorCode
     public const string NOT_FOUND = "ERR_API_300006";
     public const string DUPLICATE_USERNAME = "ERR_API_300007";
     public const string NEED_PREMIUM_TO_EDIT = "ERR_API_300008";
+    public const string CHAPTER_EXISTED = "ERR_API_300009";
 
     // User
     public const string ALREADY_EXISTS = "ERR_API_300001";

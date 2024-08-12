@@ -30,6 +30,7 @@ public static class ApiErrorMessage
     public const string NOT_FOUND = "Not found";
     public const string DUPLICATE_USERNAME = "Duplicate username";
     public const string NEED_PREMIUM_TO_EDIT = "You need to upgrade to a premium account to edit username";
+    public const string CHAPTER_EXISTED = "This chapter already exists.";
 
     //User
     public const string ALREADY_EXISTS = "You are already following this user.";

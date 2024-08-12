@@ -45,6 +45,7 @@
                         sp.""Title"",
                         sp.""Order"",
                         sp.""Status"",
+                        sp.""IsPremium"",
                         sp.""Permission"",
                         COUNT(DISTINCT spcm.""Id"") as ""CommentCount"",
                         subpostview.""ViewCount"",
@@ -84,7 +85,7 @@ LIMIT 1
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
                         p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
-                        p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"",ux.""Id"",
+                        p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"", ux.""Id"",
                         sp.""Permission"",subpostview.""ViewCount"",
                         sp.""PublishDate""
                         ORDER BY sp.""Order""

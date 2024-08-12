@@ -65,7 +65,7 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetSeries(hashId, isLoadChapters);
     }
-    public async Task<ChapterResponse> GetChapter(string hashId, int order)
+    public async Task<ChapterResponse> GetChapter(string hashId, float order)
     {
         return await _postService.GetSeriesChapter(hashId, order);
     }

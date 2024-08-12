@@ -16,7 +16,7 @@ public interface IStoryService
     Task<bool> DeleteChapter(string comicHashId, int order);
     Task<bool> Delete(Guid postId);
 
-    Task<ChapterResponse> GetChapter(string hashId, int order);
+    Task<ChapterResponse> GetChapter(string hashId, float order);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
     Task<PostSeriesAllTopResponse> GetTopStory();
     Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request);

@@ -7,7 +7,7 @@ using Requests;
 public interface IComicService
 {
     Task<PostSeriesResponse> GetComic(string hashId, bool isLoadChapters);
-    Task<ChapterResponse> GetChapter(string hashId, int order);
+    Task<ChapterResponse> GetChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
     Task<PostSeriesAllTopResponse> GetTopComic();

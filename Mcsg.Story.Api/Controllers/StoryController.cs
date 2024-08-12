@@ -115,7 +115,7 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("{storyHashId}/chapter/{chapterOrder}")]
-    public async Task<IActionResult> GetChapter(string storyHashId, int chapterOrder)
+    public async Task<IActionResult> GetChapter(string storyHashId, float chapterOrder)
     {
         var result = await _storyService.GetChapter(storyHashId, chapterOrder);
         return Ok(result);

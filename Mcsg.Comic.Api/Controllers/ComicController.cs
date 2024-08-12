@@ -92,7 +92,7 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("{hashId}/chapter/{order}")]
-    public async Task<IActionResult> GetChapter(string hashId, int order)
+    public async Task<IActionResult> GetChapter(string hashId, float order)
     {
         var result = await _comicService.GetChapter(hashId, order);
         return Ok(result);

@@ -21,8 +21,8 @@ public class ChapterResponse : ChapterBasicResponse
 }
 public class ChapterTOCResponse
 {
-    public int Order { get; set; }
-    public string Title { get; set; }
+    public float Order { get; set; }
+    public string? Title { get; set; }
     public Guid Id { get; set; }
 }
 public class ChapterTOCExtendResponse : ChapterTOCResponse

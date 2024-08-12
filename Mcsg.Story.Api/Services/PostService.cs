@@ -249,7 +249,7 @@ public partial class PostService : IPostService
         dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryFollowedPostAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
         return MappingFeedRespone(dbPost);
     }
-    public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
+    public async Task<ChapterResponse> GetSeriesChapter(string hashId, float order)
     {
         var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
         var userIsPremium = _currentUserService?.Session?.IsPremium ?? false;
@@ -1667,6 +1667,11 @@ public partial class PostService : IPostService
         VerifyPost(post, true);
         #endregion
 
+        if (await _context.StorySubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == chapterPostReq.Order))
+        {
+            throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
+        }
+
         if (chapterPostReq.IsAutoGenerateOrder)
         {
             var maxOrder = (await reader.ReadAsync<float>(false)).FirstOrDefault();
@@ -1729,6 +1734,11 @@ public partial class PostService : IPostService
                 IsAccessPrivate = false,
                 SubPostOrder = order,
             });
+
+        if (await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == chapterPostReq.Order && p.Id != newChapter.Id))
+        {
+            throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
+        }
 
         newChapter.PublishDate = chapterPostReq.IsPublicNow ? DateTime.UtcNow : TimeZoneInfo.ConvertTimeToUtc(chapterPostReq.PublishDate ?? DateTime.Now);
         newChapter.Title = chapterPostReq.Title;
