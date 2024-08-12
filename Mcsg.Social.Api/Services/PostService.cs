@@ -1031,7 +1031,7 @@ public partial class PostService : IPostService
     public async Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input)
     {
 
-        var user = await _context.Users.AsNoTracking()
+        var user = await _context.UserAvailable.AsNoTracking()
                                         .Where(p => p.UserName == input.UserName)
                                         .FirstOrDefaultAsync();
         if (user == null)
@@ -1108,7 +1108,7 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var currentUserId = await _context.Users.AsNoTracking()
+        var currentUserId = await _context.UserAvailable.AsNoTracking()
                                                 .Where(p => p.UserName == input.UserName)
                                                 .Select(p => p.Id)
                                                 .FirstOrDefaultAsync();

@@ -70,7 +70,7 @@ public class FileService : IFileService
             throw new NotFoundException(E201, M201);
         }
 
-        var user = await _context.Users.FindAsync(userId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);

@@ -71,7 +71,7 @@ public partial class UserService : IUserService
     }
     public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(p => p.UserName == userName);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.UserName == userName);
         return await CreateUserResponeByUsername(user);
     }
 
@@ -183,7 +183,13 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.PROFILE_NAME_NOT_EMPTY, ApiErrorMessage.PROFILE_NAME_NOT_EMPTY);
         }
 
-        var user = await _context.Users.FindAsync(_currentUserService.Session.UserId);
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(E119, M119);
+        }
+
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -521,7 +527,7 @@ public partial class UserService : IUserService
 
     public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
     {
-        var currentIdProfileWatching = await _context.Users.AsNoTracking()
+        var currentIdProfileWatching = await _context.UserAvailable.AsNoTracking()
                                                     .Where(p => p.UserName == userName)
                                                     .Select(p => p.Id)
                                                     .FirstOrDefaultAsync();
@@ -547,7 +553,7 @@ public partial class UserService : IUserService
 
         else
         {
-            var userId = await _context.Users.AsNoTracking()
+            var userId = await _context.UserAvailable.AsNoTracking()
                                             .Where(p => p.Id == userIdLoggedIn)
                                             .Select(p => p.Id)
                                             .FirstOrDefaultAsync();
@@ -591,7 +597,7 @@ public partial class UserService : IUserService
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
     {
-        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
+        var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -652,7 +658,7 @@ public partial class UserService : IUserService
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req)
     {
 
-        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
+        var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -719,7 +725,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -776,7 +782,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(ApiErrorCode.INVALID_OPERATION, ApiErrorMessage.INVALID_OPERATION);
         }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);

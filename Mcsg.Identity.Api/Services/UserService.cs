@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
@@ -16,6 +15,7 @@ using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Models;
+using Lib.Common.Web;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
@@ -27,7 +27,7 @@ using SettingCore = Common.Core.Constants.Setting;
 
 public partial class UserService : IUserService
 {
-    private readonly UserManager<User> _userManager;
+    private readonly ApplicationUserManager _userManager;
     private readonly IRepository<User> _userRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly ISetting _setting;
@@ -38,7 +38,7 @@ public partial class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly DistributeManager _distributeManager;
 
-    public UserService(UserManager<User> userManager,
+    public UserService(ApplicationUserManager userManager,
         IRepository<User> userRepository,
         ICurrentUserService currentUserService,
         ISetting setting,
@@ -67,7 +67,7 @@ public partial class UserService : IUserService
         do
         {
             referralCode = 8.GetRandomString();
-        } while (_userManager.Users.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
+        } while (_userManager.UserAvailable.FirstOrDefault(x => x.ReferralCode == referralCode) != null);
 
         return referralCode;
     }
@@ -111,13 +111,13 @@ public partial class UserService : IUserService
 
     public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(p => p.UserName == userName);
+        var user = await _userManager.UserAvailable.FirstOrDefaultAsync(p => p.UserName == userName);
         return await CreateUserResponeByUsername(user);
     }
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
     {
-        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
+        var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
@@ -183,7 +183,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(E119, M119);
         }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
@@ -230,7 +230,7 @@ public partial class UserService : IUserService
 
     public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
     {
-        var currentIdProfileWatching = await _context.Users.AsNoTracking()
+        var currentIdProfileWatching = await _context.UserAvailable.AsNoTracking()
                                                     .Where(p => p.UserName == userName)
                                                     .Select(p => p.Id)
                                                     .FirstOrDefaultAsync();
@@ -255,7 +255,7 @@ public partial class UserService : IUserService
         }
         else
         {
-            var userId = await _context.Users.AsNoTracking()
+            var userId = await _context.UserAvailable.AsNoTracking()
                                             .Where(p => p.Id == userIdLoggedIn)
                                             .Select(p => p.Id)
                                             .FirstOrDefaultAsync();
@@ -342,7 +342,7 @@ public partial class UserService : IUserService
             throw new BadRequestException(E120, M120);
         }
 
-        var user = await _context.Users.FindAsync(ss.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
@@ -381,7 +381,13 @@ public partial class UserService : IUserService
             throw new BadRequestException(E127, M127);
         }
 
-        var user = await _context.Users.FindAsync(_currentUserService.Session.UserId);
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(E119, M119);
+        }
+
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
@@ -458,7 +464,7 @@ public partial class UserService : IUserService
             return GetDefaultUser();
         }
 
-        return await _userManager.Users.AsNoTracking()
+        return await _userManager.UserAvailable.AsNoTracking()
             .Where(p => p.Id == userId)
             .Select(p => new UserProfileAvatarResponse
             {
@@ -559,7 +565,7 @@ public partial class UserService : IUserService
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req)
     {
 
-        var user = await _context.Users.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
+        var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
