@@ -19,14 +19,12 @@ public class EarningService : IEarningService
     private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     private readonly ILogger<EarningService> _logger;
-    private readonly IUserViewService _userViewService;
     private readonly IAffiliateService _affiliateService;
     private readonly IPostService _postService;
     private readonly IWalletService _walletService;
     private readonly IMapper _mapper;
     public EarningService(IRepository<User> userRepository,
         ICurrentUserService currentUserService,
-        IUserViewService userViewService,
         IAffiliateService affiliateService,
         IPostService postService,
         IWalletService walletService,
@@ -36,7 +34,6 @@ public class EarningService : IEarningService
     {
         _userRepository = userRepository;
         _currentUserService = currentUserService;
-        _userViewService = userViewService;
         _affiliateService = affiliateService;
         _postService = postService;
         _walletService = walletService;
@@ -65,10 +62,10 @@ public class EarningService : IEarningService
         var userId = _currentUserService.Session.UserId;
 
         //Get Total Guest View
-        var totalGuestView = await _userViewService.GetGuestsViewAsync(userId, DateTime.Now);
+        var totalGuestView = new EarningDataModel { Amount = 0 }; //TODO Analytic await _userViewService.GetGuestsViewAsync(userId, DateTime.Now);
 
         //Get Total Premium View
-        var totalPremiumView = await _userViewService.GetPremiumViewAsync(userId, DateTime.Now);
+        var totalPremiumView = new EarningDataModel { Amount = 0 }; //TODO Analytic await _userViewService.GetPremiumViewAsync(userId, DateTime.Now);
 
         //Get Sale Affiliate
         var saleAffiliate = await _affiliateService.GetSaleAffiliateAsync(userId, DateTime.Now);
@@ -119,7 +116,7 @@ public class EarningService : IEarningService
             var dtos = _mapper.Map<List<ReportSeriesData>>(chapters);
 
             var chapterIds = dtos.Select(i => i.Id).ToList();
-            // Get View of chapters
+            /* Get View of chapters //TODO Analytic
             var chapterViews = await _userViewService.GetViewByChaptersAsync(chapterIds);
             if (chapterViews != null)
             {
@@ -128,7 +125,7 @@ public class EarningService : IEarningService
                     var chapterData = dtos.FirstOrDefault(x => x.Id == chapterView.ChapterId);
                     chapterData.Views = chapterView.Views;
                 }
-            }
+            }*/
 
             // Get Purchase of chapters
             var chapterPurchases = await _walletService.GetPurchaseOfChaptersAsync(chapterIds);
@@ -195,10 +192,11 @@ public class EarningService : IEarningService
             months.Add(dt.ToLabel("dd MMMM"));
         }
 
+        //TODO Analytic
         report.TotalView = new PerformanceChartTotalView()
         {
-            YearData = await _userViewService.GetTotalViewChartByYear(userId, currentDate.Year),
-            MonthData = await _userViewService.GetTotalViewChartByMonth(userId, currentDate.Month)
+            YearData = [],// await _userViewService.GetTotalViewChartByYear(userId, currentDate.Year),
+            MonthData = []// await _userViewService.GetTotalViewChartByMonth(userId, currentDate.Month)
         };
 
         report.TotalPurchase = new PerformanceChartTotalPurchase()
