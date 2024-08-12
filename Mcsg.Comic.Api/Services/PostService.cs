@@ -1420,6 +1420,7 @@ public partial class PostService : IPostService
             Permission = x.Permission,
             Status = x.Status,
             UserId = x.UserId,
+            TotalComment = x.TotalComment,
             //"AuthorName", "CoverUrl","CreatedOn", "IsMature", "Id", "Permission", "Status", "UserId"
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
