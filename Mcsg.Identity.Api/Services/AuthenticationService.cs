@@ -134,7 +134,6 @@ public partial class AuthenticationService : IAuthenticationService
         {
             user = new User
             {
-                Id = Guid.NewGuid(),
                 Email = _aes.EncryptText(request.Email),
                 PhoneNumber = _aes.EncryptText(request.Phone),
                 EmailConfirmed = false,

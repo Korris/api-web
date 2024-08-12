@@ -13,6 +13,7 @@ partial class User
     /// </summary>
     public User()
     {
+        Id = Guid.NewGuid();
         CreatedOn = DateTime.UtcNow;
     }
 
