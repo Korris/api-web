@@ -174,6 +174,14 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
+    [HttpPost("follow-post/{postId}")]
+    public async Task<IActionResult> FollowPost(Guid postId)
+    {
+        var result = await _storyService.FollowPost(postId);
+        return Ok(result);
+    }
+
     [HttpGet("post/{userName}")]
     public async Task<IActionResult> GetUserStory(string userName, [FromQuery] ComicTopPostR loadReq)
     {

@@ -1360,6 +1360,7 @@ public partial class PostService : IPostService
                     Type = res.Type,
                     HashId = res.HashId,
                     CreatedOn = res.CreatedOn,
+                    ProfileName = res.ProfileName
 
                 };
 

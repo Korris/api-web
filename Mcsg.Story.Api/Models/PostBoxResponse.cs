@@ -28,4 +28,5 @@ public class PostBox
     public int ChapterCount { get; set; }
     public PostType Type { get; set; }
     public DateTime? CreatedOn { get; set; }
+    public string? ProfileName { get; set; }
 }
