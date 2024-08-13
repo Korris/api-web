@@ -169,7 +169,7 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// ProcessFeedFiles async
+    /// ProcessFiles async
     /// </summary>
     /// <param name="req">Request</param>
     /// <param name="userId">UserId</param>
@@ -179,7 +179,7 @@ public class FileService : IFileService
     /// <param name="postId">PostId</param>
     /// <param name="postHashId">PostHashId</param>
     /// <returns>Return the result</returns>
-    public async Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> ProcessFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
     {
         var subPosts = new List<SubUploadFileDto>();
 
@@ -248,7 +248,7 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// UpdateFeedFiles async
+    /// UpdateFiles async
     /// </summary>
     /// <param name="req">Request</param>
     /// <param name="userId">UserId</param>
@@ -259,7 +259,7 @@ public class FileService : IFileService
     /// <param name="postHashId">PostHashId</param>
     /// <returns>Return the result</returns>
     /// <exception cref="NotFoundException">NotFoundException</exception>
-    public async Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> UpdateFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {

@@ -24,7 +24,7 @@ public interface IFileService
     Task<UploadFileDto> UploadFileAsync(FileCreateR request);
 
     /// <summary>
-    /// ProcessFeedFiles async
+    /// ProcessFiles async
     /// </summary>
     /// <param name="req">Request</param>
     /// <param name="userId">UserId</param>
@@ -34,7 +34,7 @@ public interface IFileService
     /// <param name="postId">PostId</param>
     /// <param name="postHashId">PostHashId</param>
     /// <returns>Return the result</returns>
-    Task<List<SubUploadFileDto>> ProcessFeedFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
+    Task<List<SubUploadFileDto>> ProcessFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
 
     /// <summary>
     /// ProcessComicFiles async
@@ -49,7 +49,7 @@ public interface IFileService
     Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid subPostId);
 
     /// <summary>
-    /// UpdateFeedFiles async
+    /// UpdateFiles async
     /// </summary>
     /// <param name="req">Request</param>
     /// <param name="userId">UserId</param>
@@ -59,7 +59,7 @@ public interface IFileService
     /// <param name="postId">PostId</param>
     /// <param name="postHashId">PostHashId</param>
     /// <returns>Return the result</returns>
-    Task<List<SubUploadFileDto>> UpdateFeedFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
+    Task<List<SubUploadFileDto>> UpdateFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
 
     /// <summary>
     /// RemoveFile async
