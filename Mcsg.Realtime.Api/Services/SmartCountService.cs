@@ -1,61 +1,60 @@
-﻿namespace Mcsg.Realtime.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services;
+
+using Common.Core.Distributor;
+using Common.Core.Enums;
+using Common.Domain.Entities;
+using Interfaces;
+using Lib.Common.Models;
+using Lib.Data.Repositories;
+using Lib.Data.Repositories.Interface;
+using Models;
+
+public partial class SmartCountService : ISmartCountService
 {
-    using Common.Core.Distributor;
-    using Common.Core.Enums;
-    using Common.Domain.Entities;
-    using Interfaces;
-    using Lib.Common.Models;
-    using Lib.Data.Repositories;
-    using Lib.Data.Repositories.Interface;
-    using Models;
+    private readonly IRepository<SmartCountAction> _smartCountActionRepository;
+    private readonly DistributeManager _distributeManager;
 
-    public partial class SmartCountService : ISmartCountService
+    public SmartCountService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider, DistributeManager distributeManager)
     {
-        private readonly IRepository<SmartCountAction> _smartCountActionRepository;
-        private readonly DistributeManager _distributeManager;
-
-        public SmartCountService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider, DistributeManager distributeManager)
-        {
-            _smartCountActionRepository = unitOfWork.GetRepository<SmartCountAction>();
-            _distributeManager = distributeManager;
-        }
-        public async Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType)
-        {
-            var smartCountPostAction = new SmartCountAction
-            {
-                ActionType = actionType,
-                Count = 0,
-                EntityType = type,
-                EntityId = entityId
-            };
-            await _smartCountActionRepository.InsertAsync(smartCountPostAction);
-        }
-        public async Task QueueAddCommentCount(Guid entityId, EntityType type)
-        {
-            await _distributeManager.Deliver(new SmartCountDistributeItem
-            {
-                Data = new SmartCountEntityData
-                {
-                    ActionType = ActionType.Comment,
-                    EntityId = entityId,
-                    EntityType = type,
-                    IsRemove = false
-                }
-            });
-        }
-        public async Task QueueRemoveCommentCount(Guid entityId, EntityType type)
-        {
-            await _distributeManager.Deliver(new SmartCountDistributeItem
-            {
-                Data = new SmartCountEntityData
-                {
-                    ActionType = ActionType.Comment,
-                    EntityId = entityId,
-                    EntityType = type,
-                    IsRemove = true
-                }
-            });
-        }
-
+        _smartCountActionRepository = unitOfWork.GetRepository<SmartCountAction>();
+        _distributeManager = distributeManager;
     }
+    public async Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType)
+    {
+        var smartCountPostAction = new SmartCountAction
+        {
+            ActionType = actionType,
+            Count = 0,
+            EntityType = type,
+            EntityId = entityId
+        };
+        await _smartCountActionRepository.InsertAsync(smartCountPostAction);
+    }
+    public async Task QueueAddCommentCount(Guid entityId, EntityType type)
+    {
+        await _distributeManager.Deliver(new SmartCountDistributeItem
+        {
+            Data = new SmartCountEntityData
+            {
+                ActionType = ActionType.Comment,
+                EntityId = entityId,
+                EntityType = type,
+                IsRemove = false
+            }
+        });
+    }
+    public async Task QueueRemoveCommentCount(Guid entityId, EntityType type)
+    {
+        await _distributeManager.Deliver(new SmartCountDistributeItem
+        {
+            Data = new SmartCountEntityData
+            {
+                ActionType = ActionType.Comment,
+                EntityId = entityId,
+                EntityType = type,
+                IsRemove = true
+            }
+        });
+    }
+
 }

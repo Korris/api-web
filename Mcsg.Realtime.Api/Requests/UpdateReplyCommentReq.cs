@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Realtime.Api.Requests
+﻿namespace Mcsg.Realtime.Api.Requests;
+
+public class UpdateReplyCommentReq : ReplyCommentReq
 {
-    public class UpdateReplyCommentReq : ReplyCommentReq
-    {
-        public Guid ReplyCommentId { get; set; }
-    }
+    public Guid ReplyCommentId { get; set; }
 }

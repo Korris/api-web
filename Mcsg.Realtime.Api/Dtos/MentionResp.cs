@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Realtime.Api.Dtos
+﻿namespace Mcsg.Realtime.Api.Dtos;
+
+public class MentionResp
 {
-    public class MentionResp
-    {
-        public Guid EntityId { get; set; }
-        public string EntityType { get; set; }
-        public Guid LocationId { get; set; }
-        public string LocationType { get; set; }
-    }
+    public Guid EntityId { get; set; }
+    public string EntityType { get; set; }
+    public Guid LocationId { get; set; }
+    public string LocationType { get; set; }
 }

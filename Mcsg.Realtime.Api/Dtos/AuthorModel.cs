@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Realtime.Api.Dtos
+﻿namespace Mcsg.Realtime.Api.Dtos;
+
+public class AuthorModel
 {
-    public class AuthorModel
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Avatar { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Avatar { get; set; }
 }

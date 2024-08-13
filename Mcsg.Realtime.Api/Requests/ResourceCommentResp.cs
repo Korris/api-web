@@ -1,10 +1,9 @@
-﻿namespace Mcsg.Realtime.Api.Requests
+﻿namespace Mcsg.Realtime.Api.Requests;
+
+public class ResourceCommentResp
 {
-    public class ResourceCommentResp
-    {
-        public Guid Id { get; set; }
-        public Guid CommentId { get; set; }
-        public string HashId { get; set; }
-        public string Url { get; set; }
-    }
+    public Guid Id { get; set; }
+    public Guid CommentId { get; set; }
+    public string HashId { get; set; }
+    public string Url { get; set; }
 }

@@ -1,189 +1,188 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
-namespace Mcsg.Realtime.Api.Hubs
+namespace Mcsg.Realtime.Api.Hubs;
+
+using Common.Core.Enums;
+using Interfaces;
+using Lib.Common.Constants;
+using Requests;
+
+/// <summary>
+/// Comment hub
+/// </summary>
+public class CommentHub : Hub
 {
-    using Common.Core.Enums;
-    using Interfaces;
-    using Lib.Common.Constants;
-    using Requests;
+    #region -- Methods --
 
     /// <summary>
-    /// Comment hub
+    /// Initialize
     /// </summary>
-    public class CommentHub : Hub
+    /// <param name="comicCommentService"></param>
+    /// <param name="comicReplyService"></param>
+    /// <param name="socialCommentService"></param>
+    /// <param name="socialReplyService"></param>
+    /// <param name="storyCommentService"></param>
+    /// <param name="storyReplyService"></param>
+    public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
     {
-        #region -- Methods --
+        _comicCommentService = comicCommentService;
+        _comicReplyService = comicReplyService;
 
-        /// <summary>
-        /// Initialize
-        /// </summary>
-        /// <param name="comicCommentService"></param>
-        /// <param name="comicReplyService"></param>
-        /// <param name="socialCommentService"></param>
-        /// <param name="socialReplyService"></param>
-        /// <param name="storyCommentService"></param>
-        /// <param name="storyReplyService"></param>
-        public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
-        {
-            _comicCommentService = comicCommentService;
-            _comicReplyService = comicReplyService;
+        _socialCommentService = socialCommentService;
+        _socialReplyService = socialReplyService;
 
-            _socialCommentService = socialCommentService;
-            _socialReplyService = socialReplyService;
-
-            _storyCommentService = storyCommentService;
-            _storyReplyService = storyReplyService;
-        }
-
-        /// <summary>
-        /// OnConnected async
-        /// </summary>
-        /// <returns></returns>
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
-        }
-
-        /// <summary>
-        /// Send comment to post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task SendComment(PostCommentReq req)
-        {
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicCommentService,
-                nameof(MicroService.Story) => _storyCommentService,
-                _ => _socialCommentService
-            };
-            // Handle and store the new comment in database
-
-            var resp = await service.PostComment(req);
-            // Then broadcast the comment to all connected clients
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveComment, JsonConvert.SerializeObject(resp));
-        }
-
-        /// <summary>
-        /// Update comment to post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task UpdateComment(UpdateCommentReq req)
-        {
-            // Handle and update comment in database
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicCommentService,
-                nameof(MicroService.Story) => _storyCommentService,
-                _ => _socialCommentService
-            };
-            var resp = await service.UpdateComment(req);
-
-            // Then broadcast the comment to all connected clients
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateComment, JsonConvert.SerializeObject(resp));
-        }
-
-        /// <summary>
-        /// Delete comment in post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task DeleteComment(DeleteCommentReq req)
-        {
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicCommentService,
-                nameof(MicroService.Story) => _storyCommentService,
-                _ => _socialCommentService
-            };
-            // Handle and update comment in database
-            var resp = await service.DeleteComment(req);
-
-            // Then broadcast the comment to all connected clients
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteComment, JsonConvert.SerializeObject(resp));
-        }
-
-        /// <summary>
-        /// Reply comment to comment in post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task SendReply(ReplyCommentReq req)
-        {
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicReplyService,
-                nameof(MicroService.Story) => _storyReplyService,
-                _ => _socialReplyService
-            };
-            // Handle and store the new reply in database
-            var resp = await service.ReplyComment(req);
-
-            // Then broadcast the reply to the clients of the comment
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveReply, JsonConvert.SerializeObject(resp));
-        }
-
-        /// <summary>
-        /// Update reply comment to comment in post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task UpdateReply(UpdateReplyCommentReq req)
-        {
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicReplyService,
-                nameof(MicroService.Story) => _storyReplyService,
-                _ => _socialReplyService
-            };
-            // Handle and store the new reply in database
-            var resp = await service.UpdateReplyComment(req);
-
-            // Then broadcast the reply to the clients of the comment
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateReply, JsonConvert.SerializeObject(resp));
-        }
-
-        /// <summary>
-        /// Reply comment to comment in post / subpost
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        //[Authorize]
-        public async Task DeleteReply(DeleteReplyCommentReq req)
-        {
-            var service = req.MicroService switch
-            {
-                nameof(MicroService.Comic) => _comicReplyService,
-                nameof(MicroService.Story) => _storyReplyService,
-                _ => _socialReplyService
-            };
-            // Handle and store the new reply in database
-            var resp = await service.DeleteReplyComment(req);
-
-            // Then broadcast the reply to the clients of the comment
-            await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteReply, JsonConvert.SerializeObject(resp));
-        }
-
-        #endregion
-
-        #region -- Fields --
-
-        private readonly IComicCommentService _comicCommentService;
-        private readonly IComicReplyService _comicReplyService;
-
-        private readonly ISocialCommentService _socialCommentService;
-        private readonly ISocialReplyService _socialReplyService;
-
-        private readonly IStoryCommentService _storyCommentService;
-        private readonly IStoryReplyService _storyReplyService;
-
-        #endregion
+        _storyCommentService = storyCommentService;
+        _storyReplyService = storyReplyService;
     }
+
+    /// <summary>
+    /// OnConnected async
+    /// </summary>
+    /// <returns></returns>
+    public override async Task OnConnectedAsync()
+    {
+        await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
+    }
+
+    /// <summary>
+    /// Send comment to post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task SendComment(PostCommentReq req)
+    {
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicCommentService,
+            nameof(MicroService.Story) => _storyCommentService,
+            _ => _socialCommentService
+        };
+        // Handle and store the new comment in database
+
+        var resp = await service.PostComment(req);
+        // Then broadcast the comment to all connected clients
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveComment, JsonConvert.SerializeObject(resp));
+    }
+
+    /// <summary>
+    /// Update comment to post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task UpdateComment(UpdateCommentReq req)
+    {
+        // Handle and update comment in database
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicCommentService,
+            nameof(MicroService.Story) => _storyCommentService,
+            _ => _socialCommentService
+        };
+        var resp = await service.UpdateComment(req);
+
+        // Then broadcast the comment to all connected clients
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateComment, JsonConvert.SerializeObject(resp));
+    }
+
+    /// <summary>
+    /// Delete comment in post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task DeleteComment(DeleteCommentReq req)
+    {
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicCommentService,
+            nameof(MicroService.Story) => _storyCommentService,
+            _ => _socialCommentService
+        };
+        // Handle and update comment in database
+        var resp = await service.DeleteComment(req);
+
+        // Then broadcast the comment to all connected clients
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteComment, JsonConvert.SerializeObject(resp));
+    }
+
+    /// <summary>
+    /// Reply comment to comment in post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task SendReply(ReplyCommentReq req)
+    {
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicReplyService,
+            nameof(MicroService.Story) => _storyReplyService,
+            _ => _socialReplyService
+        };
+        // Handle and store the new reply in database
+        var resp = await service.ReplyComment(req);
+
+        // Then broadcast the reply to the clients of the comment
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveReply, JsonConvert.SerializeObject(resp));
+    }
+
+    /// <summary>
+    /// Update reply comment to comment in post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task UpdateReply(UpdateReplyCommentReq req)
+    {
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicReplyService,
+            nameof(MicroService.Story) => _storyReplyService,
+            _ => _socialReplyService
+        };
+        // Handle and store the new reply in database
+        var resp = await service.UpdateReplyComment(req);
+
+        // Then broadcast the reply to the clients of the comment
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveUpdateReply, JsonConvert.SerializeObject(resp));
+    }
+
+    /// <summary>
+    /// Reply comment to comment in post / subpost
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    //[Authorize]
+    public async Task DeleteReply(DeleteReplyCommentReq req)
+    {
+        var service = req.MicroService switch
+        {
+            nameof(MicroService.Comic) => _comicReplyService,
+            nameof(MicroService.Story) => _storyReplyService,
+            _ => _socialReplyService
+        };
+        // Handle and store the new reply in database
+        var resp = await service.DeleteReplyComment(req);
+
+        // Then broadcast the reply to the clients of the comment
+        await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteReply, JsonConvert.SerializeObject(resp));
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IComicCommentService _comicCommentService;
+    private readonly IComicReplyService _comicReplyService;
+
+    private readonly ISocialCommentService _socialCommentService;
+    private readonly ISocialReplyService _socialReplyService;
+
+    private readonly IStoryCommentService _storyCommentService;
+    private readonly IStoryReplyService _storyReplyService;
+
+    #endregion
 }

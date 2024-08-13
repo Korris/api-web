@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Realtime.Api.Dtos
+﻿namespace Mcsg.Realtime.Api.Dtos;
+
+public class NotificationDto
 {
-    public class NotificationDto
-    {
-        public Guid Id { get; set; }
-        public string Status { get; set; }
-        public Guid NotificationObjectId { get; set; }
-        public Guid ReceiverId { get; set; }
-        public Guid ActorId { get; set; }
-        public string Message { get; set; }
-        public DateTime CreatedOn { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Status { get; set; }
+    public Guid NotificationObjectId { get; set; }
+    public Guid ReceiverId { get; set; }
+    public Guid ActorId { get; set; }
+    public string Message { get; set; }
+    public DateTime CreatedOn { get; set; }
 }

@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Mcsg.Realtime.Api.Controllers
+namespace Mcsg.Realtime.Api.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class HomeController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class HomeController : ControllerBase
+    [HttpGet]
+    public IActionResult Index()
     {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("I am realtime service");
-        }
+        return Ok("I am realtime service");
     }
 }
