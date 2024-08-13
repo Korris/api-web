@@ -1,6 +1,23 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class UserAvatarUpdateR
+using Common.Core.Requests;
+
+/// <summary>
+/// Request
+/// </summary>
+public class UserAvatarUpdateR : BaseR
 {
-    public IFormFile Avatar { get; set; }
+    #region -- Properties --
+
+    /// <summary>
+    /// Avatar
+    /// </summary>
+    public IFormFile? Avatar { get; set; }
+
+    /// <summary>
+    /// Type
+    /// </summary>
+    public string? Type { get; set; } = "Avatar";
+
+    #endregion
 }

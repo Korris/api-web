@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
-using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -12,6 +11,7 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Constants;
 using Interfaces;
@@ -23,6 +23,7 @@ using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
+using SettingCore = Common.Core.Constants.Setting;
 
 public partial class UserService : IUserService
 {
@@ -75,91 +76,111 @@ public partial class UserService : IUserService
         return await CreateUserResponeByUsername(user);
     }
 
-    public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest)
+    public async Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR request)
     {
-        if (userAvatarUpdateRequest?.Avatar == null)
-            throw new BadRequestException(ApiErrorCode.INVALID_AVATAR_IMAGE, ApiErrorMessage.INVALID_AVATAR_IMAGE);
+        var file = request?.Avatar;
+        if (request == null || file == null)
+        {
+            throw new BadRequestException(E122, M122);
+        }
 
-        var fileExtension = Path.GetExtension(userAvatarUpdateRequest.Avatar.FileName);
+        var fileExtension = Path.GetExtension(file.FileName);
+        if (!SettingCore.FileExt.Images.Any(p => p == fileExtension.ToLower()))
+        {
+            throw new BadRequestException(E123, M123);
+        }
 
-        if (!Setting.FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
-            throw new BadRequestException(ApiErrorCode.INVALID_FILE_TYPE, ApiErrorMessage.INVALID_AVATAR_FILE_TYPE);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
+        if (user == null)
+        {
+            throw new NotFoundException(E303, M303);
+        }
 
-        string fileName = string.Empty;
+        var bucketName = _sc.Strategy.BucketNamePublic;
+        var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
+        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
+
+        var fileName = string.Empty;
         try
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
-
-            var objectName = $"{Setting.MinioFolder.Image}/{userAvatarUpdateRequest.Avatar.FileName}";
-            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
+            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, bucketName);
             if (isExistFile != null)
             {
-                fileName = GenerateNewFileName(userAvatarUpdateRequest.Avatar.FileName);
+                fileName = GenerateNewFileName(file.FileName);
             }
             else
             {
-                fileName = userAvatarUpdateRequest.Avatar.FileName;
+                fileName = file.FileName;
             }
+            user.Avatar = _setting.Minio.GetPublicUrl(bucketName, objectName);
 
-            user.Avatar = fileName;
-
-            Stream newFormFile = null;
-            using (var imageContent = userAvatarUpdateRequest.Avatar.OpenReadStream())
+            Stream? newFormFile = null;
+            using (var imageContent = file.OpenReadStream())
             {
                 newFormFile = imageContent.ResizeImage(180, 180);
             }
 
-            objectName = $"{Setting.MinioFolder.Image}/{fileName}";
-            await _sc.Strategy.PutObject(newFormFile, objectName, null);
+            await _sc.Strategy.PutObject(newFormFile, objectName, bucketName);
             newFormFile.Close();
 
             await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(UpdateUserAvatar), userAvatarUpdateRequest);
             throw new BadRequestException(E500, ex.Message);
         }
 
-        return new UserAvatarUpdateResponse() { Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };
+        return new UserAvatarUpdateResponse { Avatar = user.Avatar };
     }
 
-    public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR userCoverPhotoUpdateRequest)
+    public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR request)
     {
-        if (userCoverPhotoUpdateRequest?.CoverPhoto == null)
-            throw new BadRequestException(ApiErrorCode.INVALID_COVER_PHOTO_IMAGE, ApiErrorMessage.INVALID_COVER_PHOTO_IMAGE);
+        var file = request?.CoverPhoto;
+        if (request == null || file == null)
+        {
+            throw new BadRequestException(E122, M122);
+        }
 
-        var fileExtension = Path.GetExtension(userCoverPhotoUpdateRequest.CoverPhoto.FileName);
-        if (!Setting.FileExt.Images.Any(ext => ext == fileExtension.ToLower()))
-            throw new BadRequestException(ApiErrorCode.INVALID_FILE_TYPE, ApiErrorMessage.INVALID_COVER_PHOTO_FILE_TYPE);
+        var fileExtension = Path.GetExtension(file.FileName);
+        if (!SettingCore.FileExt.Images.Any(p => p == fileExtension.ToLower()))
+        {
+            throw new BadRequestException(E123, M123);
+        }
 
-        string fileName = string.Empty;
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
+        if (user == null)
+        {
+            throw new NotFoundException(E303, M303);
+        }
+
+        var bucketName = _sc.Strategy.BucketNamePublic;
+        var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
+        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
+
+        var fileName = string.Empty;
         try
         {
-            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
-            var objectName = $"{Setting.MinioFolder.Image}/{userCoverPhotoUpdateRequest.CoverPhoto.FileName}";
-            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, null);
+            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, bucketName);
             if (isExistFile != null)
             {
-                fileName = GenerateNewFileName(userCoverPhotoUpdateRequest.CoverPhoto.FileName);
+                fileName = GenerateNewFileName(file.FileName);
             }
             else
             {
-                fileName = userCoverPhotoUpdateRequest.CoverPhoto.FileName;
+                fileName = file.FileName;
             }
-            user.CoverPhoto = fileName;
-            objectName = $"{Setting.MinioFolder.Image}/{fileName}";
-            await _sc.Strategy.PutObject(userCoverPhotoUpdateRequest.CoverPhoto.OpenReadStream(), objectName, null);
+            user.CoverPhoto = _setting.Minio.GetPublicUrl(bucketName, objectName);
+
+            await _sc.Strategy.PutObject(file.OpenReadStream(), objectName, bucketName);
 
             await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(UpdateUserCoverPhoto), userCoverPhotoUpdateRequest);
             throw new BadRequestException(E500, ex.Message);
         }
 
-        return new UserCoverPhotoUpdateResponse() { CoverPhoto = _setting.Minio.MediaApiUrl.ToPublicImageUrl(fileName) };
+        return new UserCoverPhotoUpdateResponse { CoverPhoto = user.CoverPhoto };
     }
 
     /// <summary>
