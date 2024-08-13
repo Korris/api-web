@@ -642,8 +642,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @" --My post
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
                                 FROM ""comic"".""ComicPosts""  qpost
-                                LEFT JOIN ""comic"".""ComicFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
+ư                                LEFT JOIN ""comic"".""ComicPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
                                 ORDER BY cfp.""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -656,8 +656,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @" --My post
                                 SELECT qpost.""Id""
                                 FROM ""comic"".""ComicPosts""  qpost                                 
-                                LEFT JOIN ""comic"".""ComicFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
+                                LEFT JOIN ""comic"".""ComicPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
         }
         #endregion

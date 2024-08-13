@@ -661,7 +661,8 @@ public partial class PostService : IPostService
         {
             queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
                                    AND p.""Type""=@PostType
-                                   AND p.""Status""=@PostStatus
+                                   AND p.""Status""=@PostStatus                                   
+                                   AND p.""Permission""=@Permission
                                    AND p.""IsDelete""=false";
         }
         else
@@ -669,6 +670,7 @@ public partial class PostService : IPostService
             queryCondition = $@" WHERE p.""Title"" ILIKE '%{input.Keyword}%'
                                      AND p.""Type""=@PostType
                                      AND p.""Status""=@PostStatus
+                                     AND p.""Permission""=@Permission
                                      AND p.""IsDelete""=false";
         }
 
@@ -721,6 +723,7 @@ public partial class PostService : IPostService
                     PageSize = input.PageSize,
                     Offset = offset,
                     PostStatus = (int)PostStatus.Public,
+                    Permission = (int)PostPermission.Public,
                     ProfileName = input.Keyword
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -903,13 +906,14 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var followedPost = await _context.StoryFollowedPosts
+        var followedPost = await _context.StoryPostFavorites
                                                         .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
                                                         .FirstOrDefaultAsync();
         if (followedPost == null)
         {
-            await _context.StoryFollowedPosts.AddAsync(new StoryFollowedPost
+            await _context.StoryPostFavorites.AddAsync(new StoryPostFavorite
             {
+                UserId = user.Id,
                 CreatedBy = user.Id,
                 PostId = postId,
                 CreatedOn = DateTime.UtcNow,
@@ -922,7 +926,7 @@ public partial class PostService : IPostService
         else
         {
             followedPost.IsDelete = !followedPost.IsDelete;
-            _context.StoryFollowedPosts.Update(followedPost);
+            _context.StoryPostFavorites.Update(followedPost);
             await _context.SaveChangesAsync(default);
             return !followedPost.IsDelete;
         }

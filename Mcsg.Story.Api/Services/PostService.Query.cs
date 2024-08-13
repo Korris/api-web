@@ -644,8 +644,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @" --My post
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
                                 FROM ""story"".""StoryPosts""  qpost
-                                LEFT JOIN ""story"".""StoryFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
+                                LEFT JOIN ""story"".""StoryPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
                                 ORDER BY cfp.""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -658,8 +658,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @" --My post
                                 SELECT qpost.""Id""
                                 FROM ""story"".""StoryPosts""  qpost                                     
-                                LEFT JOIN ""story"".""StoryFollowedPosts"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""CreatedBy"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
+                                LEFT JOIN ""story"".""StoryPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
         }
         #endregion
