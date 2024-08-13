@@ -64,12 +64,33 @@ public abstract class StorageDto
     /// </summary>
     public class MinioDto : StorageDto
     {
+        #region -- Methods --
+
+        /// <summary>
+        /// Get public URL
+        /// </summary>
+        /// <param name="bucketName">Bucket name</param>
+        /// <param name="objectName">Object name</param>
+        /// <returns>Returns the result</returns>
+        public string GetPublicUrl(string? bucketName, string? objectName)
+        {
+            var path = $"/{PublicPrefix}/{bucketName}/{objectName}".Replace("//", "/");
+            return $"{PublicUrl}{path}";
+        }
+
+        #endregion
+
         #region -- Properties --
 
         /// <summary>
         /// Bucket name
         /// </summary>
         public string BucketName { get; set; } = default!;
+
+        /// <summary>
+        /// Public prefix
+        /// </summary>
+        public string? PublicPrefix { get; set; }
 
         /// <summary>
         /// Location

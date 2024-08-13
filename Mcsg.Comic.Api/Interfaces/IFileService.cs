@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
 using Dtos;
+using Requests;
 
 /// <summary>
 /// Interface FileService
@@ -10,18 +11,17 @@ public interface IFileService
     /// <summary>
     /// UploadImage async
     /// </summary>
-    /// <param name="file">File</param>
+    /// <param name="request">Request</param>
     /// <param name="userId">UserId</param>
     /// <returns>Return the result</returns>
-    Task<UploadFileDto> UploadImageAsync(IFormFile file, Guid? userId);
+    Task<UploadFileDto> UploadImageAsync(FileCreateR request);
 
     /// <summary>
     /// UploadFile async
     /// </summary>
-    /// <param name="file">File</param>
-    /// <param name="userId">UserId</param>
+    /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
-    Task<UploadFileDto> UploadFileAsync(IFormFile file, Guid? userId);
+    Task<UploadFileDto> UploadFileAsync(FileCreateR request);
 
     /// <summary>
     /// ProcessFeedFiles async

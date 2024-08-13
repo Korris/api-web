@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Comic.Api.Controllers;
 
 using Attributes;
-using Common.Core.Requests;
 using Interfaces;
+using Requests;
 
 [ApiController]
 [Route("[controller]"), Authorize]
@@ -21,20 +21,20 @@ public class FileController : ControllerBase
     [DisableRequestSizeLimit]
     [ServiceFilter(typeof(MediaOnlyAttribute))]
     [HttpPost("upload-media")]
-    public async Task<IActionResult> UploadMedia(IFormFile file)
+    public async Task<IActionResult> UploadMedia([FromForm] FileCreateR request)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _fileService.UploadFileAsync(file, req.UserId);
+        request.Analyze(HttpContext);
+        var result = await _fileService.UploadFileAsync(request);
         return Ok(result);
     }
 
     [DisableRequestSizeLimit]
     [ServiceFilter(typeof(MediaOnlyAttribute))]
     [HttpPost("upload-images")]
-    public async Task<IActionResult> UploadImage(IFormFile file)
+    public async Task<IActionResult> UploadImage([FromForm] FileCreateR request)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _fileService.UploadImageAsync(file, req.UserId);
+        request.Analyze(HttpContext);
+        var result = await _fileService.UploadImageAsync(request);
         return Ok(result);
     }
 
