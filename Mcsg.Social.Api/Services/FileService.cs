@@ -12,6 +12,7 @@ using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Dtos;
 using Interfaces;
+using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -38,39 +39,39 @@ public class FileService : IFileService
     /// <summary>
     /// UploadImage async
     /// </summary>
-    /// <param name="file">File</param>
+    /// <param name="request">Request</param>
     /// <param name="userId">UserId</param>
     /// <returns>Return the result</returns>
     /// <exception cref="NotFoundException">NotFoundException</exception>
-    public async Task<UploadFileDto> UploadImageAsync(IFormFile file, Guid? userId)
+    public async Task<UploadFileDto> UploadImageAsync(FileCreateR request)
     {
-        if (file == null || file.Length == 0)
+        if (request.File == null || request.File.Length == 0)
         {
             throw new NotFoundException(E201, M201);
         }
-        if (!file.IsImageType())
+        if (!request.File.IsImageType())
         {
             throw new NotFoundException(E202, M202);
         }
 
-        return await UploadFileAsync(file, userId);
+        return await UploadFileAsync(request);
     }
 
     /// <summary>
     /// UploadFile async
     /// </summary>
-    /// <param name="file">File</param>
-    /// <param name="userId">UserId</param>
+    /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
     /// <exception cref="NotFoundException">NotFoundException</exception>
-    public async Task<UploadFileDto> UploadFileAsync(IFormFile file, Guid? userId)
+    public async Task<UploadFileDto> UploadFileAsync(FileCreateR request)
     {
+        var file = request.File;
         if (file == null || file.Length == 0)
         {
             throw new NotFoundException(E201, M201);
         }
 
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -79,25 +80,36 @@ public class FileService : IFileService
         // Upload to temp folder
         var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
         var hashFileName = file.GetHashName(hashId);
-        var tempBlobName = "";
-        var objectName = "";
         var fileTitle = file.FileName;
         var imgWidth = 0;
         var imgHeight = 0;
+        var bucketName = _setting.Minio.BucketName;
+        var objectName = "";
+
+        if (request.IsPublic == true)
+        {
+            bucketName = _sc.Strategy.BucketNamePublic;
+            var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
+            objectName = $"{Setting.MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
+        }
+        else
+        {
+            var tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
+            objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
+        }
 
         if (file.IsImage() && !file.IsGifAnimated())
         {
             hashFileName = hashFileName.ToJpg();
             fileTitle = fileTitle.ToJpg();
-            tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
 
             var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
             imgWidth = compressedImage.Width;
             imgHeight = compressedImage.Height;
+
             using (var stream = compressedImage.Image.OpenReadStream())
             {
-                objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
-                await _sc.Strategy.PutObject(stream, objectName, null);
+                await _sc.Strategy.PutObject(stream, objectName, bucketName);
             }
         }
         else
@@ -110,24 +122,23 @@ public class FileService : IFileService
                 imgWidth = ratio.Width;
             }
 
-            tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
             using (var stream = file.OpenReadStream())
             {
-                objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
-                await _sc.Strategy.PutObject(stream, objectName, null);
+                await _sc.Strategy.PutObject(stream, objectName, bucketName);
             }
         }
 
         // Insert to resource with type is temp
         var resource = new SocialResource
         {
-            AuthorId = userId,
+            AuthorId = request.UserId,
             HashId = hashId,
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
             Url = objectName,
+            BucketName = bucketName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
-            CreatedBy = userId,
+            CreatedBy = request.UserId,
             Width = imgWidth,
             Height = imgHeight,
             Size = file.Length
@@ -136,9 +147,17 @@ public class FileService : IFileService
         await _context.SocialResources.AddAsync(resource);
         await _context.SaveChangesAsync(default);
 
-        var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+        var shareUrl = "";
+        if (request.IsPublic == true)
+        {
+            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, resource.Url);
+        }
+        else
+        {
+            shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+        }
 
-        return new UploadFileDto()
+        return new UploadFileDto
         {
             HashId = hashId,
             Url = shareUrl,
