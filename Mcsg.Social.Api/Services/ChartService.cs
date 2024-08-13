@@ -318,11 +318,6 @@ public partial class ChartService : IChartService
                                 IsFollowing = userFollowingIds.Contains(a.Id)
                             };
 
-        foreach (var i in userFollowing)
-        {
-            i.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(i.Avatar + "");
-        }
-
         return new FollowersChartResponse
         {
             UserFollowedResponses = await userFollowing.ToListAsync(),

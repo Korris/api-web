@@ -2,7 +2,6 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using Common.Core.Extensions;
 using SeedWork.Dtos;
 
 partial class UserReferral
@@ -59,7 +58,7 @@ partial class UserReferral
             {
                 Id = UserReferee.Id,
                 ProfileName = UserReferee?.ProfileName,
-                UserAvatar = mediaApiUrl.ToPublicImageUrl(UserReferee?.Avatar + ""),
+                UserAvatar = UserReferee?.Avatar,
                 UserName = UserReferee?.UserName
             },
             CreatedOn = CreatedOn

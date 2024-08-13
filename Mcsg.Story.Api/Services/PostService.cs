@@ -866,7 +866,7 @@ public partial class PostService : IPostService
             ProfileId = item.ProfileId,
             UserName = item.UserName,
             ProfileName = item.ProfileName,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
+            UserAvatar = item.UserAvatar,
             Type = item.Type,
             IsMature = item.IsMature,
             IsCompleted = item.IsCompleted,
@@ -1239,13 +1239,7 @@ public partial class PostService : IPostService
             CurrentUserId = user.Id
         });
 
-        var result = data.Concat(dataNeedToTake).ToList();
-        foreach (var item in result)
-        {
-            item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar + "");
-
-        }
-        return result;
+        return data.Concat(dataNeedToTake).ToList();
     }
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
@@ -1400,7 +1394,7 @@ public partial class PostService : IPostService
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
             UserName = x.UserName,
-            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
+            UserAvatar = x.UserAvatar,
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
@@ -1452,7 +1446,7 @@ public partial class PostService : IPostService
             ProfileId = x.ProfileId,
             ProfileName = x.ProfileName,
             UserName = x.UserName,
-            UserAvatar = string.IsNullOrEmpty(x.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(x.UserAvatar),
+            UserAvatar = x.UserAvatar,
             Title = x.Title,
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,

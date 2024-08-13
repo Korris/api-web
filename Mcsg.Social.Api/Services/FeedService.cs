@@ -377,7 +377,7 @@ public partial class FeedService : IFeedService
                 item.Url = _setting.Minio.MediaApiUrl.GetMediaPath(item.Name, item.Url);
             }
         }
-        data.UserAvatar = string.IsNullOrEmpty(data.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(data.UserAvatar);
+
         data.SubPosts.Add(new SubUploadFileDto
         {
             Files = new List<UploadFileDto>()
@@ -475,7 +475,7 @@ public partial class FeedService : IFeedService
             UserId = res.UserId,
             MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataDto>(res.MetaDatas) : null,
             TotalResources = res.TotalResources,
-            UserAvatar = res.UserAvatar != null ? _setting.Minio.MediaApiUrl.ToPublicImageUrl(res.UserAvatar) : null,
+            UserAvatar = res.UserAvatar,
             FullName = res.FullName,
             UserName = res.UserName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
@@ -650,7 +650,7 @@ public partial class FeedService : IFeedService
             TotalResource = item.TotalResource,
             Type = item.Type,
             Status = item.Status,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
+            UserAvatar = item.UserAvatar,
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : [],
             CustomNote = item.CustomNote,
             IsFavorite = postIds == null ? false : postIds.Contains(item.Id)
@@ -738,7 +738,7 @@ public partial class FeedService : IFeedService
             ProfileId = item.ProfileId,
             Type = item.Type,
             Status = item.Status,
-            UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
+            UserAvatar = item.UserAvatar,
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             Body = HttpUtility.HtmlDecode(item.Body),
             CustomNote = item.CustomNote,

@@ -111,14 +111,6 @@ public partial class SmartLookupService : ISmartLookupService
 
             string query = string.Format(GetSmartLookupQuery, whereCondition);
             result = await _smartLookupRepository.Connection.QueryAsync<SmartLookupResponse>(query);
-
-            if (result != null && result.Count() > 0)
-            {
-                foreach (var item in result)
-                {
-                    item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
-                }
-            }
         }
 
         return result;

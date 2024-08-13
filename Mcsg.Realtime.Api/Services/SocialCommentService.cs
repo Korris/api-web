@@ -94,7 +94,6 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = payload?.ProfileName;
             var userFolder = payload?.UserFolder;
             var userAvatar = payload?.UserAvatar;
-            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
@@ -186,7 +185,6 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = payload?.ProfileName;
             var userFolder = payload?.UserFolder;
             var userAvatar = payload?.UserAvatar;
-            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };

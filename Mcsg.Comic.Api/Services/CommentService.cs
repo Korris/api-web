@@ -204,7 +204,6 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
-                item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar);
                 item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(item.ResourceName, item.ResourceUrl) : "";
                 if (mentions != null && mentions.Any())
                 {
@@ -257,7 +256,6 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
-                item.UserAvatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar);
                 item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(item.ResourceName, item.ResourceUrl) : "";
 
                 if (mentions != null && mentions.Any())

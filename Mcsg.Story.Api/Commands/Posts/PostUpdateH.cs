@@ -23,7 +23,6 @@ using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
-using Extensions;
 using Interfaces;
 using Requests;
 using Validators;
@@ -112,7 +111,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var profileId = request.ProfileId;
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
-        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);

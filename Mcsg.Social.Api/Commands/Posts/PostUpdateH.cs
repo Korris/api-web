@@ -115,7 +115,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var profileId = request.ProfileId;
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
-        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
         var content = await _businessText.Process(request.Content);
 

@@ -89,10 +89,7 @@ public partial class NotificationService : INotificationService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-            foreach (var item in resDto)
-            {
-                item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
-            }
+
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -126,10 +123,7 @@ public partial class NotificationService : INotificationService
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-            foreach (var item in resDto)
-            {
-                item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
-            }
+
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 

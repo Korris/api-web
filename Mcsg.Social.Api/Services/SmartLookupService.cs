@@ -111,14 +111,6 @@ public partial class SmartLookupService : ISmartLookupService
 
             string query = string.Format(GetSmartLookupQuery, whereCondition);
             result = await _smartLookupRepository.Connection.QueryAsync<SmartLookupResponse>(query);
-
-            if (result != null && result.Count() > 0)
-            {
-                foreach (var item in result.Where(p => p.KeywordType == LookupKeywordType.People.ToString()))
-                {
-                    item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar);
-                }
-            }
         }
 
         return result;
@@ -145,14 +137,7 @@ public partial class SmartLookupService : ISmartLookupService
                     Avatar = u.Avatar ?? string.Empty
                 };
 
-        var items = await q.Take(6).ToListAsync();
-
-        foreach (var item in items)
-        {
-            item.Avatar = _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.Avatar + "");
-        }
-
-        return items;
+        return await q.Take(6).ToListAsync();
     }
 
     public async Task<bool> DeleteRecentSearchAsync(Guid id)

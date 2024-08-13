@@ -6,7 +6,6 @@ namespace Mcsg.Realtime.Api.Services
 {
     using Common.Core.Constants;
     using Common.Core.Enums;
-    using Common.Core.Extensions;
     using Common.Domain.Entities;
     using Common.SeedWork.Exceptions;
     using Constants;
@@ -83,7 +82,6 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = payload?.ProfileName;
             var userFolder = payload?.UserFolder;
             var userAvatar = payload?.UserAvatar;
-            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
@@ -152,7 +150,6 @@ namespace Mcsg.Realtime.Api.Services
             var profileName = payload?.ProfileName;
             var userFolder = payload?.UserFolder;
             var userAvatar = payload?.UserAvatar;
-            userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
             var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
             var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };

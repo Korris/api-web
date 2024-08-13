@@ -93,7 +93,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var profileId = request.ProfileId;
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
-        userAvatar = string.IsNullOrEmpty(userAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(userAvatar);
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);

@@ -4,7 +4,6 @@ namespace Mcsg.Comic.Api.Services;
 
 using Api.Constants;
 using Common.Core.Enums;
-using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -123,7 +122,6 @@ public partial class ComicService : IComicService
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentProfileId = ss.ProfileId;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -133,7 +131,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, subPost.Id);
+            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
         }
 
         return result;
@@ -147,7 +145,6 @@ public partial class ComicService : IComicService
         var userFolder = ss.UserFolder;
         var currentUserAvatar = ss.UserAvatar;
         var currentProfileId = ss.ProfileId;
-        var currentUserAvatarUrl = string.IsNullOrEmpty(currentUserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(currentUserAvatar);
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -159,7 +156,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatarUrl, currentUserName, subPost.Id);
+            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
         }
 
         return result;
