@@ -35,7 +35,7 @@ public class PatchUpdateShareUrlH : BaseSettingH, IRequestHandler<PatchUpdateSha
     {
         var res = new SingleResponse();
 
-        var resources = await _context.SocialResources.Where(p => p.ShareUrl == null).ToListAsync(cancellationToken);
+        var resources = await _context.SocialResources.Where(p => p.BucketName == null).ToListAsync(cancellationToken);
         var users = await _context.Users.Select(p => new { p.Id, p.Email, p.ProfileId }).ToListAsync(cancellationToken);
         var dicUsers = users.ToDictionary(p => p.Id, q => q.ProfileId);
 
@@ -71,7 +71,7 @@ public class PatchUpdateShareUrlH : BaseSettingH, IRequestHandler<PatchUpdateSha
             }
 
             resource.Url = url;
-            resource.ShareUrl = $"{mediaContainer}{url}";
+            resource.BucketName = $"{mediaContainer}{url}";
         }
 
         await _context.SaveChangesAsync(default);

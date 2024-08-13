@@ -13,7 +13,7 @@ public class BaseResource : AuditableEntity
     public string? Title { get; set; }
     public string? Name { get; set; }
     public string? Url { get; set; }
-    public string? ShareUrl { get; set; }
+    public string? BucketName { get; set; }
     public int Order { get; set; }
     public double Size { get; set; } // bytes
     public int Width { get; set; }
