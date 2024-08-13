@@ -20,7 +20,7 @@ using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using Response;
-using Validators.User;
+using Validators;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 using SettingCore = Common.Core.Constants.Setting;
@@ -511,7 +511,7 @@ public partial class UserService : IUserService
             {
                 fileName = file.FileName;
             }
-            user.Avatar = fileName;
+            user.Avatar = _setting.Minio.GetPublicUrl(bucketName, objectName);
 
             Stream? newFormFile = null;
             using (var imageContent = file.OpenReadStream())
@@ -526,11 +526,10 @@ public partial class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(UpdateUserAvatar), request);
             throw new BadRequestException(E500, ex.Message);
         }
 
-        return new UserAvatarUpdateResponse { Avatar = _setting.Minio.GetPublicUrl(bucketName, objectName) };
+        return new UserAvatarUpdateResponse { Avatar = user.Avatar };
     }
 
     public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR request)
@@ -569,7 +568,7 @@ public partial class UserService : IUserService
             {
                 fileName = file.FileName;
             }
-            user.CoverPhoto = fileName;
+            user.CoverPhoto = _setting.Minio.GetPublicUrl(bucketName, objectName);
 
             await _sc.Strategy.PutObject(file.OpenReadStream(), objectName, bucketName);
 
@@ -577,11 +576,10 @@ public partial class UserService : IUserService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(UpdateUserAvatar), request);
             throw new BadRequestException(E500, ex.Message);
         }
 
-        return new UserCoverPhotoUpdateResponse { CoverPhoto = _setting.Minio.GetPublicUrl(bucketName, objectName) };
+        return new UserCoverPhotoUpdateResponse { CoverPhoto = user.CoverPhoto };
     }
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req)
