@@ -455,6 +455,8 @@ public partial class FeedService : IFeedService
             throw new NotFoundException(E204, M204);
         }
 
+        dbFeed.IsFollowing = await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userId && p.UserFollowingId == dbFeed.UserId);
+
         dbFeed.Body = await _businessText.Process(dbFeed.Body);
 
         return MappingFeedRespone(dbFeed, sound);
@@ -739,7 +741,8 @@ public partial class FeedService : IFeedService
             UserAvatar = string.IsNullOrEmpty(item.UserAvatar) ? string.Empty : _setting.Minio.MediaApiUrl.ToPublicImageUrl(item.UserAvatar),
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             Body = HttpUtility.HtmlDecode(item.Body),
-            CustomNote = item.CustomNote
+            CustomNote = item.CustomNote,
+            IsFollowing = item.IsFollowing
         };
 
         #region Mapping with db query single
