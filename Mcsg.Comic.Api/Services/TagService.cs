@@ -85,27 +85,39 @@ public partial class TagService : ITagService
         return tags;
     }
 
-    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags, Guid userId)
+    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string>? tags, Guid userId)
     {
-        // Validate tags
-        tags.ForEach(t => { t = ValidateTag(t); });
-
-        // Find all tag in database
-        var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
-
-        var listTagNeedToAdd = new List<Guid>();
-
-        // Check if tag not created, should create tag first.
-        var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
-        if (listTagNotCreated.Count > 0)
+        // check tags null 
+        if (tags == null)
         {
-            var listNewTagId = await AddNewTags(listTagNotCreated, userId);
-            listTagNeedToAdd.AddRange(listNewTagId);
+            await _context.ComicTagPosts
+                .Where(p => p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
         }
         else
         {
+            // Validate tags
+            tags.ForEach(t => { t = ValidateTag(t); });
+
             // Find all tag with post (TagPost)
             var tagsPostDb = await GetTagsByPostIdAsync(postId);
+
+            // update tag to post
+            var tagsToUpdateShow = tags.Intersect(tagsPostDb.Select(x => x.Name)).ToList();
+            var tagsToUpdateHidden = tagsPostDb.Select(x => x.Name).Except(tags).ToList();
+
+            var listTagNeedToAdd = new List<Guid>();
+
+            // Find all tag in database
+            var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
+
+            // Check if tag not created, should create tag first.
+            var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
+            if (listTagNotCreated.Count > 0)
+            {
+                var listNewTagId = await AddNewTags(listTagNotCreated, userId);
+                listTagNeedToAdd.AddRange(listNewTagId);
+            }
 
             // add tag to post
             var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).ToList();
@@ -114,40 +126,32 @@ public partial class TagService : ITagService
                 var idTagExist = _context.TagAvailable.Where(p => listTagExistNotAdd.Contains(p.Name)).Select(x => x.Id).ToArray();
                 listTagNeedToAdd.AddRange(idTagExist);
             }
-            else
-            {
-                // update tag to post
-                var tagsToUpdateShow = tags.Intersect(tagsPostDb.Select(x => x.Name)).ToList();
-                var tagsToUpdateHidden = tagsPostDb.Select(x => x.Name).Except(tags).ToList();
 
-                var idTagsToUpdateShow = await _context.TagAvailable
-                    .Where(x => tagsToUpdateShow.Contains(x.Name))
-                    .Select(x => x.Id)
-                    .ToListAsync();
+            var idTagsToUpdateShow = await _context.TagAvailable
+                .Where(x => tagsToUpdateShow.Contains(x.Name))
+                .Select(x => x.Id)
+                .ToListAsync();
 
-                await _context.ComicTagPosts
-                    .Where(p => idTagsToUpdateShow.Contains(p.TagId) && p.PostId == postId)
-                    .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
+            await _context.ComicTagPosts
+                .Where(p => idTagsToUpdateShow.Contains(p.TagId) && p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
 
-                // Update tags to hide
-                var idTagsToUpdateHidden = await _context.TagAvailable
-                    .Where(x => tagsToUpdateHidden.Contains(x.Name))
-                    .Select(x => x.Id)
-                    .ToListAsync();
+            // Update tags to hide
+            var idTagsToUpdateHidden = await _context.TagAvailable
+                .Where(x => tagsToUpdateHidden.Contains(x.Name))
+                .Select(x => x.Id)
+                .ToListAsync();
 
-                await _context.ComicTagPosts
-                    .Where(p => idTagsToUpdateHidden.Contains(p.TagId) && p.PostId == postId)
-                    .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
-            }
+            await _context.ComicTagPosts
+                .Where(p => idTagsToUpdateHidden.Contains(p.TagId) && p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
+
+            await AddTagsToPost(postId, listTagNeedToAdd, userId);
+            // Publish for smart lookup calculation
+            await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
         }
 
-        await AddTagsToPost(postId, listTagNeedToAdd, userId);
-
-        // Publish for smart lookup calculation
-        await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
-
         await _context.SaveChangesAsync(default);
-
         return tags;
     }
 

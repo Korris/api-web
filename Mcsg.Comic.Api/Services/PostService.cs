@@ -830,10 +830,7 @@ public partial class PostService : IPostService
                 }
             }
 
-            if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
-            {
-                result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
-            }
+            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
         }
         catch (Exception e)
         {
