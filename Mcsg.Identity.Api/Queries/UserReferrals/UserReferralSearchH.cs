@@ -23,13 +23,12 @@ using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Filters;
-using Interfaces;
 using Requests;
 
 /// <summary>
 /// Handler
 /// </summary>
-public class UserReferralSearchH : BaseSettingH, IRequestHandler<UserReferralSearchR, SingleResponse>
+public class UserReferralSearchH : BaseH, IRequestHandler<UserReferralSearchR, SingleResponse>
 {
     #region -- Methods --
 
@@ -37,8 +36,7 @@ public class UserReferralSearchH : BaseSettingH, IRequestHandler<UserReferralSea
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    /// <param name="setting">Setting</param>
-    public UserReferralSearchH(IMcsgContext context, ISetting setting) : base(context, setting) { }
+    public UserReferralSearchH(IMcsgContext context) : base(context) { }
 
     /// <summary>
     /// Handle
@@ -112,7 +110,7 @@ public class UserReferralSearchH : BaseSettingH, IRequestHandler<UserReferralSea
                     ProfileName = p.UserReferee.ProfileName,
                     Avatar = p.UserReferee.Avatar
                 }
-            }).ToSearchDto(_setting.Minio.MediaApiUrl))
+            }).ToSearchDto())
             .ToListAsync(cancellationToken);
 
         res.SetSuccess(data);

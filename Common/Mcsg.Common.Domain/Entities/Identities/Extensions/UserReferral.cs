@@ -27,29 +27,26 @@ partial class UserReferral
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
-    /// <param name="mediaApiUrl">Media API URL</param>
     /// <returns>Return the DTO</returns>
-    public SearchDto ToSearchDto(string mediaApiUrl)
+    public SearchDto ToSearchDto()
     {
-        return ToBaseDto<SearchDto>(mediaApiUrl);
+        return ToBaseDto<SearchDto>();
     }
 
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
-    /// <param name="mediaApiUrl">Media API URL</param>
     /// <returns>Return the DTO</returns>
-    public ViewDto ToViewDto(string mediaApiUrl)
+    public ViewDto ToViewDto()
     {
-        return ToBaseDto<ViewDto>(mediaApiUrl);
+        return ToBaseDto<ViewDto>();
     }
 
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
-    /// <param name="mediaApiUrl">Media API URL</param>
     /// <returns>Return the DTO</returns>
-    public T ToBaseDto<T>(string mediaApiUrl) where T : BaseDto, new()
+    public T ToBaseDto<T>() where T : BaseDto, new()
     {
         return new T
         {
