@@ -1876,8 +1876,8 @@ public partial class PostService : IPostService
     public async Task<Tuple<int, int>> GetFollowedPostCount()
     {
         var currentUserId = _currentUserService.Session?.UserId;
-        var followedComicCount = await _context.ComicFollowedPostAvailable.AsNoTracking().Where(p => p.CreatedBy == currentUserId).CountAsync();
-        var followedStoryCount = await _context.StoryFollowedPostAvailable.AsNoTracking().Where(p => p.CreatedBy == currentUserId).CountAsync();
+        var followedComicCount = await _context.ComicPostFavoriteAvailable.AsNoTracking().CountAsync(p => p.UserId == currentUserId);
+        var followedStoryCount = await _context.StoryPostFavoriteAvailable.AsNoTracking().CountAsync(p => p.UserId == currentUserId);
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
     #endregion

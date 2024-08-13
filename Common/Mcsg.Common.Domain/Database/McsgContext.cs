@@ -136,8 +136,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<BackgroundMediaPost> BackgroundMediaPosts { get; set; }
 
-    public virtual DbSet<ComicFollowedPost> ComicFollowedPosts { get; set; }
-
     public virtual DbSet<ComicMetaData> ComicMetaDatas { get; set; }
 
     public virtual DbSet<ComicPost> ComicPosts { get; set; }
@@ -221,8 +219,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<SocialSubPostReaction> SocialSubPostReactions { get; set; }
 
     public virtual DbSet<SocialTagPost> SocialTagPosts { get; set; }
-
-    public virtual DbSet<StoryFollowedPost> StoryFollowedPosts { get; set; }
 
     public virtual DbSet<StoryMetaData> StoryMetaDatas { get; set; }
 

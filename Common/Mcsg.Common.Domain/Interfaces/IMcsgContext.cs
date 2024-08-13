@@ -63,8 +63,6 @@ public interface IMcsgContext
 
     DbSet<BackgroundMediaPost> BackgroundMediaPosts { get; set; }
 
-    DbSet<ComicFollowedPost> ComicFollowedPosts { get; set; }
-
     DbSet<ComicMetaData> ComicMetaDatas { get; set; }
 
     DbSet<ComicPost> ComicPosts { get; set; }
@@ -149,8 +147,6 @@ public interface IMcsgContext
 
     DbSet<SocialTagPost> SocialTagPosts { get; set; }
 
-    DbSet<StoryFollowedPost> StoryFollowedPosts { get; set; }
-
     DbSet<StoryMetaData> StoryMetaDatas { get; set; }
 
     DbSet<StoryPost> StoryPosts { get; set; }
@@ -220,8 +216,6 @@ public interface IMcsgContext
     IQueryable<BackgroundMedia> BackgroundMediaAvailable { get; }
 
     IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable { get; }
-
-    IQueryable<ComicFollowedPost> ComicFollowedPostAvailable { get; }
 
     IQueryable<ComicMetaData> ComicMetaDataAvailable { get; }
 
@@ -306,8 +300,6 @@ public interface IMcsgContext
     IQueryable<SocialSubPostReaction> SocialSubPostReactionAvailable { get; }
 
     IQueryable<SocialTagPost> SocialTagPostAvailable { get; }
-
-    IQueryable<StoryFollowedPost> StoryFollowedPostAvailable { get; }
 
     IQueryable<StoryMetaData> StoryMetaDataAvailable { get; }
 
