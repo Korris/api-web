@@ -671,7 +671,7 @@ public partial class PostService : IPostService
             queryCondition = $@" WHERE p.""Title"" ILIKE '%{input.Keyword}%'
                                      AND p.""Type""=@PostType
                                      AND p.""Status""=@PostStatus
-                                     AND p.""Permission""=@Permwission
+                                     AND p.""Permission""=@Permission
                                      AND p.""IsDelete""=false";
         }
 
