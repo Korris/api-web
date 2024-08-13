@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Comic.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -13,8 +14,9 @@ public class ComicController : ControllerBase
 {
     #region -- Methods --
 
-    public ComicController(IComicService comicService, IPostService postService)
+    public ComicController(ISetting setting, IComicService comicService, IPostService postService)
     {
+        _setting = setting;
         _postService = postService;
         _comicService = comicService;
     }
@@ -44,7 +46,16 @@ public class ComicController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetAllTopComic([FromQuery] ComicPostListSeriesR request)
     {
+        var req = new BaseR(HttpContext);
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _comicService.GetTopComicAsync(request);
+
+        if (req.FromMobile)
+        {
+            result.Items = result.Items.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 
@@ -206,6 +217,11 @@ public class ComicController : ControllerBase
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
 
     private readonly IComicService _comicService;
 
