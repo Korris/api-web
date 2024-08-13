@@ -217,37 +217,6 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// ProcessComicFiles async
-    /// </summary>
-    /// <param name="req">Request</param>
-    /// <param name="userId">UserId</param>
-    /// <param name="userFolder">User folder</param>
-    /// <param name="userAvatar">User avatar</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="subPostId">SubPostId</param>
-    /// <returns>Return the result</returns>
-    public async Task<List<UploadFileDto>> ProcessComicFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid subPostId)
-    {
-        var files = new List<UploadFileDto>();
-
-        // Complete resource files
-        var (resources, subPostResponses) = await CompleteFilesAsync(req, userId, userName, userFolder, userAvatar, subPostId, false);
-
-        // Map to response for comic service
-        foreach (var resource in resources)
-        {
-            files.Add(new UploadFileDto()
-            {
-                HashId = resource.HashId,
-                Order = resource.Order,
-                Url = _setting.Minio.MediaApiUrl.GetMediaPath(resource.Name, resource.Url)
-            });
-        }
-
-        return files;
-    }
-
-    /// <summary>
     /// UpdateFiles async
     /// </summary>
     /// <param name="req">Request</param>
