@@ -39,7 +39,18 @@ public class ComicController : ControllerBase
     [HttpGet("top")]
     public async Task<IActionResult> GetTopComic()
     {
+        var req = new BaseR(HttpContext);
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _comicService.GetTopComic();
+
+        if (req.FromMobile)
+        {
+            result.TopCompleted = result.TopCompleted.Where(p => !p.IsMature).ToList();
+            result.TopHits = result.TopHits.Where(p => !p.IsMature).ToList();
+            result.TopLatest = result.TopLatest.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 
@@ -62,7 +73,16 @@ public class ComicController : ControllerBase
     [HttpGet("relation")]
     public async Task<IActionResult> GetRelationComics([FromQuery] ComicRelationPostSeriesR request)
     {
+        var req = new BaseR();
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _comicService.GetRelationComicsAsync(request);
+
+        if (req.FromMobile)
+        {
+            result.Items = result.Items.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Story.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -13,8 +14,9 @@ public class StoryController : ControllerBase
 {
     #region -- Methods --
 
-    public StoryController(IStoryService storyService, IPostService postService)
+    public StoryController(ISetting setting, IStoryService storyService, IPostService postService)
     {
+        _setting = setting;
         _storyService = storyService;
         _postService = postService;
     }
@@ -61,21 +63,50 @@ public class StoryController : ControllerBase
     [HttpGet("top")]
     public async Task<IActionResult> GetTopStory()
     {
+        var req = new BaseR(HttpContext);
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _storyService.GetTopStory();
+
+        if (req.FromMobile)
+        {
+            result.TopCompleted = result.TopCompleted.Where(p => !p.IsMature).ToList();
+            result.TopHits = result.TopHits.Where(p => !p.IsMature).ToList();
+            result.TopLatest = result.TopLatest.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 
     [HttpGet("list")]
     public async Task<IActionResult> GetAllTopStory([FromQuery] ComicPostListSeriesR request)
     {
+        var req = new BaseR();
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _storyService.GetTopStoryAsync(request);
+
+        if (req.FromMobile)
+        {
+            result.Items = result.Items.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 
     [HttpGet("relation")]
     public async Task<IActionResult> GetRelationStories([FromQuery] ComicRelationPostSeriesR request)
     {
+        var req = new BaseR();
+        req.DetectMobileCall(_setting.MobileUserAgent);
+
         var result = await _storyService.GetRelationStoriesAsync(request);
+
+        if (req.FromMobile)
+        {
+            result.Items = result.Items.Where(p => !p.IsMature).ToList();
+        }
+
         return Ok(result);
     }
 
@@ -199,6 +230,11 @@ public class StoryController : ControllerBase
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
 
     private readonly IStoryService _storyService;
 
