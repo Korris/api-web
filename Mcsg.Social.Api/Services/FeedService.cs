@@ -294,7 +294,7 @@ public partial class FeedService : IFeedService
                                 'Url', r.""Url"",
                                 'Height', r.""Height"",
                                 'Width', r.""Width"",
-                                'ShareUrl', r.""ShareUrl"",
+                                'BucketName', r.""BucketName"",
                                 'Type', r.""Type"",
                                 'Name', r.""Name"",
                                 'Order',r.""Order"",

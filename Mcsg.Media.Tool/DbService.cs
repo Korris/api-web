@@ -59,7 +59,7 @@ namespace Mcsg.Media.Tool
             var command = @"UPDATE {0}.""{1}Resources""
                             SET ""Status""= @status,
                                  ""Url"" = @url,
-                                ""ShareUrl"" = @shareUrl
+                                ""BucketName"" = @shareUrl
                             WHERE ""Id"" = @id ";
 
             if (microService != MicroService.Comic && microService != MicroService.Story)

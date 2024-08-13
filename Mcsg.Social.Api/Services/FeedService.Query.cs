@@ -50,7 +50,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",r.""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId"" AS SubPostHashId 
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",r.""HashId"",""Width"",""Height"",sp.""Order"",sp.""Body"",sp.""HashId"" AS SubPostHashId 
                                 FROM social.""SocialResources"" r
                                 WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
@@ -152,7 +152,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1
@@ -244,7 +244,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1
@@ -354,7 +354,7 @@ LIMIT @PageSize
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""ShareUrl"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
@@ -437,7 +437,7 @@ LIMIT @PageSize
                         spr.""Id"", 
                         spr.""Type"",
                         spr.""Url"",
-                        spr.""ShareUrl"",
+                        spr.""BucketName"",
                         spr.""HashId"",
                         spr.""Name"",
                         spr.""Width"",
@@ -469,7 +469,7 @@ LIMIT @PageSize
                         sp.""Id"",sp.""HashId"",sp.""Title"", sp.""Status"",sp.""CreatedOn"",
                         sp.""Permission"",sp.""PublishDate"",sp.""Order"",
                         spr.""Id"",
-                        spr.""Type"",spr.""HashId"",spr.""ShareUrl"",spr.""Url"",spr.""Name"",md.""Title"",
+                        spr.""Type"",spr.""HashId"",spr.""BucketName"",spr.""Url"",spr.""Name"",md.""Title"",
                         md.""Id"",
                         md.""Description"",
                         md.""Url"",
@@ -548,7 +548,7 @@ LIMIT @PageSize
                             spr.""SubPostId"",
                             spr.""Type"",
                             spr.""Status"",
-                            spr.""ShareUrl"",
+                            spr.""BucketName"",
                             spr.""Url"",
                             spr.""Name"",
                             spr.""HashId"",
@@ -652,7 +652,7 @@ LIMIT @PageSize
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""ShareUrl"",""Status"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""BucketName"",""Status"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1
