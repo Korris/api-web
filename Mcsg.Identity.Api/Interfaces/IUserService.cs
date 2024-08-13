@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces;
 
 using Common.SeedWork.Responses;
-using Identity.Api.Requests;
-using Identity.Api.Response;
-using Identity.Api.Services;
+using Requests;
+using Response;
+using Services;
 
 public interface IUserService
 {
@@ -17,10 +17,10 @@ public interface IUserService
     Task<bool> FollowUserAsync(Guid userId);
     Task<bool> UnFollowUserAsync(Guid userId);
     Task<UserProfileAvatarResponse?> GetUserAvatar(Guid userId);
-    Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR userAvatarUpdateRequest);
+    Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR request);
+    Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR request);
     Task<List<SimilarProfilesMention>> GetSimilarProfilesMentionAsync(string? name);
     Task<List<SimilarProfile>> GetSimilarNameAsync(string name);
     Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName);
-    Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR userCoverPhotoUpdateRequest);
     Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateR req);
 }

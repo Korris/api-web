@@ -372,5 +372,10 @@ public class Setting : SeedWork.Constants.Setting
         /// Image
         /// </summary>
         public const string Image = "images";
+
+        /// <summary>
+        /// User
+        /// </summary>
+        public const string User = "users";
     }
 }

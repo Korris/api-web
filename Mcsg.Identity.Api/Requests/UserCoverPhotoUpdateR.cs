@@ -1,6 +1,23 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
-public class UserCoverPhotoUpdateR
+using Common.Core.Requests;
+
+/// <summary>
+/// Request
+/// </summary>
+public class UserCoverPhotoUpdateR : BaseR
 {
-    public IFormFile CoverPhoto { get; set; }
+    #region -- Properties --
+
+    /// <summary>
+    /// CoverPhoto
+    /// </summary>
+    public IFormFile? CoverPhoto { get; set; }
+
+    /// <summary>
+    /// Type
+    /// </summary>
+    public string? Type { get; set; } = "Cover";
+
+    #endregion
 }

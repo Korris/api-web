@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Identity.Api.Controllers;
 
 using Common.Core.Requests;
-using Identity.Api.Interfaces;
+using Interfaces;
 using Requests;
 
 /// <summary>
@@ -70,16 +70,18 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("avatar"), Authorize]
-    public async Task<IActionResult> UpdateUserAvatar([FromForm] UserAvatarUpdateR userAvatarUpdateRequest)
+    public async Task<IActionResult> UpdateUserAvatar([FromForm] UserAvatarUpdateR request)
     {
-        var result = await _userService.UpdateUserAvatar(userAvatarUpdateRequest);
+        request.Analyze(HttpContext);
+        var result = await _userService.UpdateUserAvatar(request);
         return Ok(result);
     }
 
     [HttpPut("cover-photo"), Authorize]
-    public async Task<IActionResult> UpdateUserCoverPhoto([FromForm] UserCoverPhotoUpdateR userCoverPhotoUpdateRequest)
+    public async Task<IActionResult> UpdateUserCoverPhoto([FromForm] UserCoverPhotoUpdateR request)
     {
-        var result = await _userService.UpdateUserCoverPhoto(userCoverPhotoUpdateRequest);
+        request.Analyze(HttpContext);
+        var result = await _userService.UpdateUserCoverPhoto(request);
         return Ok(result);
     }
 
