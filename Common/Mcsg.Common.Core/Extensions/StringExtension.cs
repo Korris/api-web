@@ -272,27 +272,6 @@ public static class StringExtension
 
     #endregion
 
-    #region -- Image URL --
-
-    /// <summary>
-    /// Get public image URL
-    /// </summary>
-    /// <param name="mediaApiUrl">Media API URL</param>
-    /// <param name="mediaName">media name</param>
-    /// <returns>Return the public image URL</returns>
-    public static string ToPublicImageUrl(this string mediaApiUrl, string mediaName)
-    {
-        if (string.IsNullOrWhiteSpace(mediaName))
-        {
-            return string.Empty;
-        }
-
-        var url = string.Format(MediaConfig.PublicImageUrlPath, mediaName);
-        return $"{mediaApiUrl}/{url}";
-    }
-
-    #endregion
-
     #region -- HTML --
 
     /// <summary>

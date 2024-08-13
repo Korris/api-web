@@ -2,7 +2,6 @@
 
 namespace Mcsg.Story.Api.Models;
 
-using Extensions;
 using Mappings;
 
 public class CommentResponse : IMapFrom<CommentQueryModel>
@@ -29,7 +28,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
             .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
             .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
             .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
-            .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar.ToPublicImageUrl()))
+            .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar))
             .ForMember(d => d.Body, opt => opt.MapFrom(s => s.Body))
             .ForMember(d => d.CustomNote, opt => opt.MapFrom(s => s.CustomNote))
             .ForMember(d => d.ModifiedOn, opt => opt.MapFrom(s => s.ModifiedOn))

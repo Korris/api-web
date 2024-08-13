@@ -486,5 +486,15 @@ public static class StringExtension
         return res.Distinct().ToList();
     }
 
+    /// <summary>
+    /// Converts a string to an integer
+    /// </summary>
+    /// <param name="text">The string to convert</param>
+    /// <returns>The converted integer value, or 0 if the conversion fails</returns>
+    public static int ToInt(this string text)
+    {
+        return int.TryParse(text, out int res) ? res : 0;
+    }
+
     #endregion
 }

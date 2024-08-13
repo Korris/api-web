@@ -9,7 +9,6 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Enums;
-using Extensions;
 using Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -55,7 +54,7 @@ public partial class CommentService : ICommentService
                 Id = result.Id,
                 AuthorId = result.AuthorId,
                 AuthorName = result.AuthorName,
-                UserAvatar = result.UserAvatar.ToPublicImageUrl(),
+                UserAvatar = result.UserAvatar,
                 Body = result.Body,
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
@@ -79,7 +78,7 @@ public partial class CommentService : ICommentService
                     Id = result.ReplyId,
                     AuthorId = result.AuthorId,
                     AuthorName = result.ReplyAuthorName,
-                    UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
+                    UserAvatar = result.ReplyUserAvatar,
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
@@ -127,7 +126,7 @@ public partial class CommentService : ICommentService
                 Id = result.Id,
                 AuthorId = result.AuthorId,
                 AuthorName = result.AuthorName,
-                UserAvatar = result.UserAvatar.ToPublicImageUrl(),
+                UserAvatar = result.UserAvatar,
                 Body = result.Body,
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
@@ -151,7 +150,7 @@ public partial class CommentService : ICommentService
                     Id = result.ReplyId,
                     AuthorId = result.AuthorId,
                     AuthorName = result.ReplyAuthorName,
-                    UserAvatar = result.ReplyUserAvatar.ToPublicImageUrl(),
+                    UserAvatar = result.ReplyUserAvatar,
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
@@ -310,7 +309,7 @@ public partial class CommentService : ICommentService
                     AuthorId = comModel.AuthorId,
                     AuthorName = comModel.AuthorName,
                     UserName = comModel.UserName,
-                    UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
+                    UserAvatar = comModel.UserAvatar,
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
@@ -336,7 +335,7 @@ public partial class CommentService : ICommentService
                         AuthorId = repModel.AuthorId,
                         AuthorName = repModel.AuthorName,
                         UserName = repModel.UserName,
-                        UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
+                        UserAvatar = repModel.UserAvatar,
                         Body = repModel.Body,
                         ModifiedOn = repModel.ModifiedOn,
                         ResourceHashId = repModel.ResourceHashId,
@@ -415,7 +414,7 @@ public partial class CommentService : ICommentService
                     PostId = comModel.PostId,
                     AuthorId = comModel.AuthorId,
                     AuthorName = comModel.AuthorName,
-                    UserAvatar = comModel.UserAvatar.ToPublicImageUrl(),
+                    UserAvatar = comModel.UserAvatar,
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
@@ -440,7 +439,7 @@ public partial class CommentService : ICommentService
                         Id = repModel.Id,
                         AuthorId = repModel.AuthorId,
                         AuthorName = repModel.AuthorName,
-                        UserAvatar = repModel.UserAvatar.ToPublicImageUrl(),
+                        UserAvatar = repModel.UserAvatar,
                         Body = repModel.Body,
                         ModifiedOn = repModel.ModifiedOn,
                         ResourceHashId = repModel.ResourceHashId,
