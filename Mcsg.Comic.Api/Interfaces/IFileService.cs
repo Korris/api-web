@@ -12,7 +12,6 @@ public interface IFileService
     /// UploadImage async
     /// </summary>
     /// <param name="request">Request</param>
-    /// <param name="userId">UserId</param>
     /// <returns>Return the result</returns>
     Task<UploadFileDto> UploadImageAsync(FileCreateR request);
 

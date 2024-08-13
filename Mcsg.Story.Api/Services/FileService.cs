@@ -40,7 +40,6 @@ public class FileService : IFileService
     /// UploadImage async
     /// </summary>
     /// <param name="request">Request</param>
-    /// <param name="userId">UserId</param>
     /// <returns>Return the result</returns>
     /// <exception cref="NotFoundException">NotFoundException</exception>
     public async Task<UploadFileDto> UploadImageAsync(FileCreateR request)
