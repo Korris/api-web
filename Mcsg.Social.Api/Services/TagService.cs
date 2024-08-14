@@ -171,7 +171,6 @@ public partial class TagService : ITagService
     public async Task<PagedResponse<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
     {
         var query = GetPopularTagsQuery;
-        var a = popularTagReq.PostType;
         if (popularTagReq.PostType == null)
         {
             query = query.Replace("[AddPostType]", "");

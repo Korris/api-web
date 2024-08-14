@@ -1162,7 +1162,7 @@ ORDER BY group_number, row_num;
     SELECT p.""Id"", p.""Type"", p.""CreatedOn"", p.""HashId"",
            ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedOn"" DESC) AS type_rank
     FROM social.""SocialPosts"" p
-LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId""                
+LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId""AND tp.""IsDelete"" = false 
 LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
     WHERE ""Type"" IN (0, 1, 2)
     AND t.""Name"" ILIKE @ExactKeyword   
@@ -1234,7 +1234,7 @@ ORDER BY group_number, random_row_num;
 
         private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
                                                    FROM social.""SocialPosts"" p
-                                                   LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId""
+                                                   LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
                                                    LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
                                                    WHERE p.""IsDelete"" = false 
                                                    AND p.""Status"" = {(int)PostStatus.Public}
