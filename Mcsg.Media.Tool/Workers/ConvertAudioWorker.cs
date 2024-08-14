@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Web;
 
 namespace Mcsg.Media.Tool.Workers
 {
@@ -26,7 +25,7 @@ namespace Mcsg.Media.Tool.Workers
                 {
                     // load resource
                     var resourceInfo = JsonConvert.DeserializeObject<BaseResource>(jobInfo.Data);
-                    var url = HttpUtility.UrlDecode(resourceInfo.Url);
+                    var url = resourceInfo.Url;
                     var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
                     var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
 
