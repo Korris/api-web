@@ -860,7 +860,7 @@ public partial class PostService : IPostService
             HashId = item.HashId,
             UserId = item.UserId,
             AuthorName = item.AuthorName,
-            IsCurrentUserIsAuthor = currentUserId == item.AuthorId,
+            IsCurrentUserIsAuthor = currentUserId == item.UserId,
             ThumbnailUrl = item.ThumbnailUrl,
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
@@ -1442,6 +1442,8 @@ public partial class PostService : IPostService
 
     private List<PostSeriesTopResponse> MapTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
     {
+        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
+
         return posts.Select(x => new PostSeriesTopResponse
         {
             ProfileId = x.ProfileId,
@@ -1456,6 +1458,7 @@ public partial class PostService : IPostService
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
+            IsCurrentUserIsAuthor = currentUserId == x.UserId,
             AuthorId = x.AuthorId,
             CoverUrl = x.CoverUrl,
             ThumbnailUrl = x.ThumbnailUrl,

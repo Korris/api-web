@@ -838,7 +838,7 @@ public partial class PostService : IPostService
             HashId = item.HashId,
             UserId = item.UserId,
             AuthorName = item.AuthorName,
-            IsCurrentUserIsAuthor = currentUserId == item.AuthorId,
+            IsCurrentUserIsAuthor = currentUserId == item.UserId,
             ThumbnailUrl = item.ThumbnailUrl,
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
