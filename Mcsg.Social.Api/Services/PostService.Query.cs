@@ -1279,6 +1279,7 @@ ORDER BY group_number, random_row_num;
                     p.""Body"",
                     p.""Title"",
                     p.""AuthorId"",
+                    p.""UserId"",
                     p.""AuthorName"",
                     p.""ViewCount"",
                     p.""IsMature"",
@@ -1305,6 +1306,7 @@ ORDER BY group_number, random_row_num;
                           p.""Body"",
                           p.""Title"",
                           p.""AuthorId"",
+                          p.""UserId"",
                           p.""AuthorName"",
                           p.""ViewCount""
             ";

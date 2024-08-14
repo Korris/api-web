@@ -22,10 +22,12 @@ public class PostBox
     public string? Body { get; set; }
     public string? Title { get; set; }
     public Guid AuthorId { get; set; }
+    public Guid UserId { get; set; }
     public string? AuthorName { get; set; }
     public int ViewCount { get; set; }
     public bool IsMature { get; set; }
     public int ChapterCount { get; set; }
     public PostType Type { get; set; }
     public DateTime? CreatedOn { get; set; }
+    public bool IsCurrentUserAuthor { get; set; }
 }

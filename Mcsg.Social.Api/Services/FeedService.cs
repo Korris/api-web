@@ -19,6 +19,7 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
+using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -38,6 +39,7 @@ public partial class FeedService : IFeedService
         IMetaDataService metaDataService,
         ITagService tagService,
         IFileService fileService,
+        ICurrentUserService currentUserService,
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
@@ -56,6 +58,7 @@ public partial class FeedService : IFeedService
         _metaDataService = metaDataService;
         _tagService = tagService;
         _fileService = fileService;
+        _currentUserService = currentUserService;
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
@@ -462,7 +465,7 @@ public partial class FeedService : IFeedService
         return MappingFeedRespone(dbFeed, sound);
     }
 
-    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, List<Guid>? postId)
+    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, List<Guid>? postId, Guid? currentUserId)
     {
         var itemResponse = new FeedBoxResponse()
         {
@@ -481,7 +484,8 @@ public partial class FeedService : IFeedService
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Type = res.Type,
             CustomNote = res.CustomNote,
-            IsFavorite = postId == null ? false : postId.Contains(res.Id)
+            IsFavorite = postId == null ? false : postId.Contains(res.Id),
+            IsCurrentUserAuthor = res.UserId == currentUserId
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
@@ -556,6 +560,7 @@ public partial class FeedService : IFeedService
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
+        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
         var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId)
                                                                 .Select(p => p.PostId)
@@ -567,7 +572,7 @@ public partial class FeedService : IFeedService
             foreach (var res in result)
             {
                 res.Body = await _businessText.Process(res.Body);
-                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds));
+                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds, currentUserId));
             }
 
             return listFeedDetails;
@@ -898,6 +903,11 @@ public partial class FeedService : IFeedService
     /// File service
     /// </summary>
     private readonly IFileService _fileService;
+
+    /// <summary>
+    /// CurrentUser service
+    /// </summary>
+    private readonly ICurrentUserService _currentUserService;
 
     /// <summary>
     /// Sound service

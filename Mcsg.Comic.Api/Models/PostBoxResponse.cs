@@ -25,6 +25,7 @@ public class PostBox
     public string? AuthorName { get; set; }
     public int ViewCount { get; set; }
     public bool IsMature { get; set; }
+    public bool IsCurrentUserAuthor { get; set; }
     public int ChapterCount { get; set; }
     public PostType Type { get; set; }
     public DateTime? CreatedOn { get; set; }

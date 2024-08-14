@@ -1326,6 +1326,7 @@ public partial class PostService : IPostService
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
+        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
         if (result != null && result.Any())
         {
@@ -1342,6 +1343,7 @@ public partial class PostService : IPostService
                 {
                     Id = res.Id,
                     IsMature = res.IsMature,
+                    IsCurrentUserAuthor = res.UserId == currentUserId,
                     ThumbnailUrl = res.ThumbnailUrl,
                     Body = res.Body,
                     Title = res.Title,

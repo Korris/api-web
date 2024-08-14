@@ -30,4 +30,5 @@ public class PostBox
     public DateTime? CreatedOn { get; set; }
     public string? ProfileName { get; set; }
     public Guid UserId { get; set; }
+    public bool IsCurrentUserAuthor { get; set; }
 }

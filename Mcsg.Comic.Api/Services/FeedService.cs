@@ -18,6 +18,7 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
+using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -37,6 +38,7 @@ public partial class FeedService : IFeedService
         IMetaDataService metaDataService,
         ITagService tagService,
         IFileService fileService,
+        ICurrentUserService _currentUserService,
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
@@ -54,6 +56,7 @@ public partial class FeedService : IFeedService
         _metaDataService = metaDataService;
         _tagService = tagService;
         _fileService = fileService;
+        _currentUserService = _currentUserService;
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
@@ -360,7 +363,7 @@ public partial class FeedService : IFeedService
         return MappingFeedRespone(dbFeed, sound);
     }
 
-    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res)
+    public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, Guid? currentUserId)
     {
         var itemResponse = new FeedBoxResponse()
         {
@@ -378,7 +381,8 @@ public partial class FeedService : IFeedService
             UserName = res.UserName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Type = res.Type,
-            CustomNote = res.CustomNote
+            CustomNote = res.CustomNote,
+            IsCurrentUserAuthor = res.UserId == currentUserId
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
@@ -453,6 +457,7 @@ public partial class FeedService : IFeedService
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
+        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
         if (result != null && result.Any())
         {
@@ -460,7 +465,7 @@ public partial class FeedService : IFeedService
 
             foreach (var res in result)
             {
-                listFeedDetails.Add(MappingFeedBoxResponse(res));
+                listFeedDetails.Add(MappingFeedBoxResponse(res, currentUserId));
             }
 
             return listFeedDetails;
@@ -789,6 +794,11 @@ public partial class FeedService : IFeedService
     /// File service
     /// </summary>
     private readonly IFileService _fileService;
+
+    /// <summary>
+    /// CurrentUser service
+    /// </summary>
+    private readonly ICurrentUserService _currentUserService;
 
     /// <summary>
     /// Sound service

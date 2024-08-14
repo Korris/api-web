@@ -1325,6 +1325,7 @@ public partial class PostService : IPostService
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
+        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
         if (result != null && result.Any())
         {
@@ -1346,6 +1347,7 @@ public partial class PostService : IPostService
                     Title = res.Title,
                     AuthorId = res.AuthorId,
                     AuthorName = res.AuthorName,
+                    IsCurrentUserAuthor = res.UserId == currentUserId,
                     ViewCount = res.ViewCount,
                     Tags = res.Tags != null ? JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()) : new List<string>(),
                     Chapters = chapters,

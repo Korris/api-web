@@ -42,4 +42,5 @@ public class FeedBox
     public PostType Type { get; set; }
     public string? Link { get; set; }
     public string? CustomNote { get; set; }
+    public bool IsCurrentUserAuthor { get; set; }
 }
