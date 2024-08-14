@@ -11,11 +11,6 @@ public interface ISetting : ISettingBase
     #region -- Properties --
 
     /// <summary>
-    /// Database Analytic
-    /// </summary>
-    DatabaseDto DbAnalytic { get; }
-
-    /// <summary>
     /// Database Wallet
     /// </summary>
     DatabaseDto DbWallet { get; }

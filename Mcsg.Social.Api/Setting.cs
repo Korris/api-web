@@ -12,11 +12,6 @@ public class Setting : SettingBase, ISetting
     #region -- Implements --
 
     /// <summary>
-    /// Database Analytic
-    /// </summary>
-    public DatabaseDto DbAnalytic { get; }
-
-    /// <summary>
     /// Database Wallet
     /// </summary>
     public DatabaseDto DbWallet { get; }
@@ -65,7 +60,6 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
-        DbAnalytic = new DatabaseDto();
         DbWallet = new DatabaseDto();
         NotificationExchange = string.Empty;
         NotificationQueuePostReact = string.Empty;

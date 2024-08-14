@@ -60,7 +60,6 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
-        var csDbAnalytic = cs.SetDbParams(st.DbAnalytic);
         var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
