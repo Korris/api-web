@@ -396,17 +396,6 @@ public static class StringExtension
     }
 
     /// <summary>
-    /// Convert other file extensions to .jpg
-    /// </summary>
-    /// <param name="fileName">The full file name, including the extension</param>
-    /// <returns>Return the result</returns>
-    public static string ToJpg(this string fileName)
-    {
-        var extension = Path.GetExtension(fileName);
-        return fileName.Replace(extension, ".jpg");
-    }
-
-    /// <summary>
     /// Get temp blob name
     /// </summary>
     /// <param name="fileName">The full file name, including the extension</param>

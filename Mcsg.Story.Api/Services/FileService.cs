@@ -99,9 +99,6 @@ public class FileService : IFileService
 
         if (file.IsImage() && !file.IsGifAnimated())
         {
-            hashFileName = hashFileName.ToJpg();
-            fileTitle = fileTitle.ToJpg();
-
             var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
             imgWidth = compressedImage.Width;
             imgHeight = compressedImage.Height;

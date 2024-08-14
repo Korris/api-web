@@ -169,7 +169,7 @@ public static class IFormFileExtension
                             var output = new MemoryStream();
                             image.Save(output, new JpegEncoder { Quality = quality });
                             output.Seek(0, SeekOrigin.Begin);
-                            var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName.ToJpg());
+                            var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName);
 
                             return new CompressImage
                             {
