@@ -132,7 +132,7 @@
                             md.""Domain"" AS ""MetaDomain""
                             FROM (
                                 SELECT DISTINCT qpost.* FROM social.""SocialPosts"" qpost
-                                 INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+                                 INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
                                 AND qpost.""IsDelete"" = false 
@@ -189,7 +189,7 @@
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (SELECT DISTINCT qpost.""Id"" FROM {0} qpost
-                                 INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""
+                                 INNER JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost.""Id""AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE qtag.""Name"" = @TagName AND qpost.""Type"" = @PostType
                                 AND qpost.""IsDelete"" = false) p;";

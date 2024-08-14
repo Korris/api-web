@@ -85,50 +85,73 @@ public partial class TagService : ITagService
         return tags;
     }
 
-    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string> tags, Guid userId)
+    public async Task<List<string>> UpdateTagsToPost(Guid postId, List<string>? tags, Guid userId)
     {
-        // Validate tags
-        tags.ForEach(t => { t = ValidateTag(t); });
-
-        // Find all tag in database
-        var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
-
-        var listTagNeedToAdd = new List<Guid>();
-
-        // Check if tag not created, should create tag first.
-        var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
-        if (listTagNotCreated.Count > 0)
+        // check tags null 
+        if (tags == null)
         {
-            var listNewTagId = await AddNewTags(listTagNotCreated, userId);
-            listTagNeedToAdd.AddRange(listNewTagId);
+            await _context.SocialTagPosts
+                .Where(p => p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
         }
-
-        // Find all tag with post (TagPost)
-        var tagsPostDb = await GetTagsByPostIdAsync(postId);
-
-        // Update tag to post
-        var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).Except(listTagNotCreated.Select(y => y)).ToList();
-        if (listTagExistNotAdd.Count > 0)
+        else
         {
-            var tagExistNotAddIds = tagsDb.Where(x => listTagExistNotAdd.Contains(x.Name)).Select(x => x.Id).ToList();
-            listTagNeedToAdd.AddRange(tagExistNotAddIds);
+            // Validate tags
+            tags.ForEach(t => { t = ValidateTag(t); });
+
+            // Find all tag with post (TagPost)
+            var tagsPostDb = await GetTagsByPostIdAsync(postId);
+
+            // update tag to post
+            var tagsToUpdateShow = tags.Intersect(tagsPostDb.Select(x => x.Name)).ToList();
+            var tagsToUpdateHidden = tagsPostDb.Select(x => x.Name).Except(tags).ToList();
+
+            var listTagNeedToAdd = new List<Guid>();
+
+            // Find all tag in database
+            var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
+
+            // Check if tag not created, should create tag first.
+            var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
+            if (listTagNotCreated.Count > 0)
+            {
+                var listNewTagId = await AddNewTags(listTagNotCreated, userId);
+                listTagNeedToAdd.AddRange(listNewTagId);
+            }
+
+            // add tag to post
+            var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).ToList();
+            if (listTagExistNotAdd.Count > 0)
+            {
+                var idTagExist = _context.TagAvailable.Where(p => listTagExistNotAdd.Contains(p.Name)).Select(x => x.Id).ToArray();
+                listTagNeedToAdd.AddRange(idTagExist);
+            }
+
+            var idTagsToUpdateShow = await _context.TagAvailable
+                .Where(x => tagsToUpdateShow.Contains(x.Name))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            await _context.SocialTagPosts
+                .Where(p => idTagsToUpdateShow.Contains(p.TagId) && p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
+
+            // Update tags to hide
+            var idTagsToUpdateHidden = await _context.TagAvailable
+                .Where(x => tagsToUpdateHidden.Contains(x.Name))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            await _context.SocialTagPosts
+                .Where(p => idTagsToUpdateHidden.Contains(p.TagId) && p.PostId == postId)
+                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, true));
+
+            await AddTagsToPost(postId, listTagNeedToAdd, userId);
+            // Publish for smart lookup calculation
+            await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
         }
-
-        // Remove tag to post
-        var listRemove = tagsPostDb.Where(x => !tags.Any(y => x.Name == y)).Select(x => x.Id).ToArray();
-        if (listRemove.Length > 0)
-        {
-            var tagPosts = await _context.SocialTagPostAvailable.Where(p => listRemove.Contains(p.Id)).ToListAsync();
-            tagPosts.ForEach(p => p.IsDelete = true);
-        }
-
-        await AddTagsToPost(postId, listTagNeedToAdd, userId);
-
-        // Publish for smart lookup calculation
-        await _smartLookupService.CalculateSmartLookupForTagAsync(tags);
 
         await _context.SaveChangesAsync(default);
-
         return tags;
     }
 
@@ -148,6 +171,7 @@ public partial class TagService : ITagService
     public async Task<PagedResponse<PopularTagResponse>> GetPopularTags(TagPopularR popularTagReq)
     {
         var query = GetPopularTagsQuery;
+        var a = popularTagReq.PostType;
         if (popularTagReq.PostType == null)
         {
             query = query.Replace("[AddPostType]", "");

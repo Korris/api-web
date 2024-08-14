@@ -151,10 +151,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         }*/
 
         // Add tag to feed
-        if (request.Tags != null && request.Tags.Count > 0)
-        {
-            result.Tags = (await _tagService.UpdateTagsToPost(ett.Id, request.Tags, userId)).ToArray();
-        }
+        result.Tags = (await _tagService.UpdateTagsToPost(ett.Id, request.Tags, userId)).ToArray();
 
         // Add file to feed
         if (request.Files != null && request.Files.Count > 0)

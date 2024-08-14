@@ -106,9 +106,9 @@
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
                             AND tp.""IsDelete"" = false 
-                            AND ""Name"" LIKE @ExactKeyword  
+                            AND (""Name"" LIKE @ExactKeyword  
                                 OR ""Name"" LIKE @StartsWithKeyword 
-                                OR ""Name"" LIKE @ContainsKeyword 
+                                OR ""Name"" LIKE @ContainsKeyword )
                             GROUP BY t.""Name"", t.""Id""
                             ORDER BY CASE 
                                 WHEN ""Name"" LIKE @ExactKeyword THEN 0 
