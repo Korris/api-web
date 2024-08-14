@@ -196,25 +196,24 @@ public class Program
         builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
 
         #region -- Max request body --
-        var bodySize = 256 * 1024 * 1024; // 256MB
+        var maxFileSize = 1024 * 1024 * 1024; // 1024MB
         var bufferSize = 10 * 1024 * 1024; // 10MB
-        var lengthLimit = 128 * 1024 * 1024; // 128MB
 
         builder.Services.Configure<IISServerOptions>(p =>
         {
-            p.MaxRequestBodySize = bodySize;
+            p.MaxRequestBodySize = maxFileSize;
             p.MaxRequestBodyBufferSize = bufferSize;
         });
 
         builder.Services.Configure<KestrelServerOptions>(p =>
         {
-            p.Limits.MaxRequestBodySize = bodySize;
+            p.Limits.MaxRequestBodySize = maxFileSize;
             p.Limits.MaxRequestBufferSize = bufferSize;
         });
 
         builder.Services.Configure<FormOptions>(p =>
         {
-            p.MultipartBodyLengthLimit = lengthLimit;
+            p.MultipartBodyLengthLimit = maxFileSize;
         });
         #endregion
 
