@@ -381,7 +381,7 @@ public partial class FeedService : IFeedService
             UserName = res.UserName,
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Type = res.Type,
-            CustomNote = res.CustomNote,
+            CustomNote = res.CustomNote.ForLexical(),
             IsCurrentUserAuthor = res.UserId == currentUserId
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
@@ -550,7 +550,7 @@ public partial class FeedService : IFeedService
             Status = item.Status,
             UserAvatar = item.UserAvatar,
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
-            CustomNote = item.CustomNote
+            CustomNote = item.CustomNote.ForLexical()
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         #region Mapping with db query list
@@ -638,7 +638,7 @@ public partial class FeedService : IFeedService
             UserAvatar = item.UserAvatar,
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             Body = HttpUtility.HtmlDecode(item.Body),
-            CustomNote = item.CustomNote
+            CustomNote = item.CustomNote.ForLexical()
         };
 
         #region Mapping with db query single

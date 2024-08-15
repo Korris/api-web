@@ -61,7 +61,7 @@ public partial class CommentService : ICommentService
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ResourceName, result.ResourceUrl) : "",
                 GifId = result.GifId,
-                CustomNote = result.CustomNote
+                CustomNote = result.CustomNote.ForLexical()
             };
 
             commentData.Body = await _businessText.Process(commentData.Body);
@@ -87,7 +87,7 @@ public partial class CommentService : ICommentService
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId,
                     QuoteId = result?.ReplyQuoteId == Guid.Empty ? null : result.ReplyQuoteId,
-                    CustomNote = result.CustomNote
+                    CustomNote = result.CustomNote.ForLexical()
                 };
 
                 replyData.Body = await _businessText.Process(replyData.Body);
@@ -135,7 +135,7 @@ public partial class CommentService : ICommentService
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ResourceName, result.ResourceUrl) : "",
                 GifId = result.GifId,
-                CustomNote = result.CustomNote
+                CustomNote = result.CustomNote.ForLexical()
             };
 
             commentData.Body = await _businessText.Process(commentData.Body);
@@ -160,7 +160,7 @@ public partial class CommentService : ICommentService
                     ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl) : "",
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId,
-                    CustomNote = result.CustomNote
+                    CustomNote = result.CustomNote.ForLexical()
                 };
 
                 replyData.Body = await _businessText.Process(replyData.Body);
@@ -319,7 +319,7 @@ public partial class CommentService : ICommentService
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId,
-                    CustomNote = comModel.CustomNote
+                    CustomNote = comModel.CustomNote.ForLexical()
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -347,7 +347,7 @@ public partial class CommentService : ICommentService
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
-                        CustomNote = repModel.CustomNote
+                        CustomNote = repModel.CustomNote.ForLexical()
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);
@@ -424,7 +424,7 @@ public partial class CommentService : ICommentService
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId,
-                    CustomNote = comModel.CustomNote
+                    CustomNote = comModel.CustomNote.ForLexical()
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -451,7 +451,7 @@ public partial class CommentService : ICommentService
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
-                        CustomNote = repModel.CustomNote
+                        CustomNote = repModel.CustomNote.ForLexical()
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);

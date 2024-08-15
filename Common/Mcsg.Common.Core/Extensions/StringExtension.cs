@@ -584,4 +584,14 @@ public static class StringExtension
     public static readonly Regex HyperlinkRegex = new Regex("http(s)?://([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?", RegexOptions.IgnoreCase); //http://weblogs.asp.net/farazshahkhan/regex-to-find-url-within-text-and-make-them-as-link
 
     #endregion
+
+    /// <summary>
+    /// Returns a default custom note if the input text is null or empty
+    /// </summary>
+    /// <param name="text">The input text</param>
+    /// <returns>Returns the default custom note if the input text is null or empty; otherwise, returns the input text</returns>
+    public static string ForLexical(this string? text)
+    {
+        return string.IsNullOrEmpty(text) ? Default.CustomNote : text;
+    }
 }

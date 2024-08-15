@@ -315,7 +315,7 @@ public partial class CommentService : ICommentService
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId,
-                    CustomNote = comModel.CustomNote
+                    CustomNote = comModel.CustomNote.ForLexical()
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -343,7 +343,7 @@ public partial class CommentService : ICommentService
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
-                        CustomNote = repModel.CustomNote
+                        CustomNote = repModel.CustomNote.ForLexical()
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);
@@ -420,7 +420,7 @@ public partial class CommentService : ICommentService
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Minio.MediaApiUrl.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
                     GifId = comModel.GifId,
-                    CustomNote = comModel.CustomNote
+                    CustomNote = comModel.CustomNote.ForLexical()
                 };
 
                 comment.Body = await _businessText.Process(comment.Body);
@@ -447,7 +447,7 @@ public partial class CommentService : ICommentService
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
-                        CustomNote = repModel.CustomNote
+                        CustomNote = repModel.CustomNote.ForLexical()
                     };
 
                     replyData.Body = await _businessText.Process(replyData.Body);

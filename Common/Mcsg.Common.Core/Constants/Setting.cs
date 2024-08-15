@@ -102,6 +102,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Reward point
         /// </summary>
         public const int RewardPoint = 1000;
+
+        /// <summary>
+        /// Custom note
+        /// </summary>
+        public static string CustomNote = "{\"root\":{\"children\":[{\"children\":[],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1}],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}";
     }
 
     /// <summary>
