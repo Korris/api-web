@@ -63,9 +63,9 @@ public class UserController : ControllerBase
     /// <summary>
     /// UpdateUserName
     /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    [HttpPut("username"), Authorize]
+    /// <param name="request">Request</param>
+    /// <returns>Returns the result</returns>
+    [HttpPost("v1/UpdateUserName"), Authorize]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UpdateUserName([FromBody] UserNameUpdateR request)
     {

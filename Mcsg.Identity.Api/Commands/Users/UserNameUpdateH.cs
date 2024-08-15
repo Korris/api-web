@@ -68,7 +68,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
 
         var timePassed = mostRecentHistory.AddHours(24) - DateTime.UtcNow;
         var timeRemaining = TimeSpan.FromHours(timePassed.TotalHours);
-        var time = timeRemaining.ToString(@"d\:hh\:mm\:ss");
+        var time = timeRemaining.ToString(@"hh\:mm\:ss");
         var canUpdateUserName = timePassed.TotalHours <= 0;
 
         // UserNameHistory
@@ -105,7 +105,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
 
             if (!canUpdateUserName)
             {
-                res.SetError(E128, $"{M128} {time}");
+                res.SetError(E128, $"{M128}{time}");
             }
 
             return res;
