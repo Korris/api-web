@@ -119,6 +119,7 @@ public class Program
             p.RegisterServicesFromAssembly(me.Assembly);
 
             p.AddDiUserReferral();
+            p.AddDiUser();
         });
         #endregion
 

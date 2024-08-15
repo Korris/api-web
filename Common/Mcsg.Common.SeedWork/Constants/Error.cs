@@ -140,7 +140,7 @@ public static class Error
     public const string E125 = "E124";
 
     /// <summary>
-    ///  Cover photo image is not null"
+    ///  Cover photo image is not null
     /// </summary>
     public const string E126 = "E126";
 
@@ -148,6 +148,16 @@ public static class Error
     ///  Profile name is empty
     /// </summary>
     public const string E127 = "E127";
+
+    /// <summary>
+    ///  Buy rename package to edit username
+    /// </summary>
+    public const string E128 = "E128";
+
+    /// <summary>
+    ///  Wait time for edit username
+    /// </summary>
+    public const string E129 = "E129";
 
     #endregion
 

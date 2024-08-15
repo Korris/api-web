@@ -194,6 +194,16 @@ public static class Message
     /// </summary>
     public const string M127 = "Profile name is empty";
 
+    /// <summary>
+    ///  Buy rename package to edit username
+    /// </summary>
+    public const string M128 = "Buy rename package to edit username";
+
+    /// <summary>
+    ///  Wait time for edit username
+    /// </summary>
+    public const string M129 = "Wait time for edit username : ";
+
     #endregion
 
     #region -- M2xx --

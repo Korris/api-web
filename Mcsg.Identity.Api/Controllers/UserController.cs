@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Mcsg.Identity.Api.Controllers;
 
 using Common.Core.Requests;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
 
@@ -19,9 +22,13 @@ public class UserController : ControllerBase
     /// <summary>
     /// Initialize
     /// </summary>
+    /// <param name="mediator"></param>
+    /// <param name="setting"></param>
     /// <param name="userService"></param>
-    public UserController(IUserService userService)
+    public UserController(IMediator mediator, ISetting setting, IUserService userService)
     {
+        _mediator = mediator;
+        _setting = setting;
         _userService = userService;
     }
 
@@ -51,6 +58,23 @@ public class UserController : ControllerBase
     {
         var result = await _userService.GetCurrentUserAsync();
         return Ok(result);
+    }
+
+    /// <summary>
+    /// UpdateUserName
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPut("username"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UpdateUserName([FromBody] UserNameUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        request.DetectMobileCall(_setting.MobileUserAgent);
+
+        var response = await _mediator.Send(request);
+
+        return Ok(response);
     }
 
     [HttpPut("profile"), Authorize]
@@ -124,6 +148,19 @@ public class UserController : ControllerBase
 
     #region -- Fields --
 
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
+
+    /// <summary>
+    /// User service
+    /// </summary>
     private readonly IUserService _userService;
 
     #endregion
