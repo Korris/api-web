@@ -1733,7 +1733,7 @@ public partial class PostService : IPostService
                 SubPostOrder = order,
             });
 
-        if (await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == chapterPostReq.Order && p.Id != newChapter.Id))
+        if (await _context.StorySubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == chapterPostReq.Order && p.Id != newChapter.Id))
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
