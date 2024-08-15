@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.SeedWork;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.SeedWork;
 
 /// <summary>
 /// Auditable entity
@@ -27,6 +29,7 @@ public class AuditableEntity : TrackingEntity
     /// <summary>
     /// Modified date
     /// </summary>
+    [Column(TypeName = "timestamp")]
     public DateTime? ModifiedOn { get; set; }
 
     /// <summary>

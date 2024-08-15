@@ -36,7 +36,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("DurationSeconds")
                         .HasColumnType("integer");
@@ -48,7 +48,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -81,7 +81,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -90,7 +90,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -166,7 +166,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -194,7 +194,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");
@@ -247,7 +247,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -262,7 +262,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -307,7 +307,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -316,7 +316,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -347,7 +347,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -356,7 +356,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -384,7 +384,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -393,7 +393,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -421,7 +421,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -436,7 +436,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -468,7 +468,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -477,7 +477,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -508,7 +508,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -517,7 +517,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -557,7 +557,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -576,7 +576,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -638,7 +638,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CreatorNote")
                         .HasColumnType("text");
@@ -668,7 +668,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -724,7 +724,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -739,7 +739,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -784,7 +784,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -793,7 +793,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -827,7 +827,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -836,7 +836,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -867,7 +867,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -876,7 +876,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -919,7 +919,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -943,7 +943,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -979,7 +979,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("ExternalCode")
                         .HasColumnType("text");
@@ -997,7 +997,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -1036,7 +1036,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Data")
                         .HasColumnType("text");
@@ -1057,7 +1057,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -1078,7 +1078,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uuid");
@@ -1102,7 +1102,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Offset")
                         .HasColumnType("integer");
@@ -1126,7 +1126,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1135,7 +1135,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("NotificationObjectId")
                         .HasColumnType("uuid");
@@ -1172,7 +1172,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("EntityHashId")
                         .HasColumnType("text");
@@ -1196,7 +1196,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.HasKey("Id");
 
@@ -1248,7 +1248,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1280,7 +1280,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<DateOnly?>("PremiumDate")
                         .HasColumnType("date");
@@ -1464,7 +1464,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -1492,7 +1492,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");
@@ -1545,7 +1545,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -1560,7 +1560,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -1605,7 +1605,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1614,7 +1614,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -1645,7 +1645,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1654,7 +1654,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -1682,7 +1682,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1691,7 +1691,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -1719,7 +1719,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -1734,7 +1734,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -1766,7 +1766,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1775,7 +1775,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -1806,7 +1806,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1815,7 +1815,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -1855,7 +1855,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -1874,7 +1874,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1936,7 +1936,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CreatorNote")
                         .HasColumnType("text");
@@ -1963,7 +1963,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -2019,7 +2019,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -2034,7 +2034,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -2079,7 +2079,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2088,7 +2088,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2122,7 +2122,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2131,7 +2131,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2162,7 +2162,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2171,7 +2171,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2247,7 +2247,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -2275,7 +2275,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");
@@ -2328,7 +2328,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -2343,7 +2343,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -2388,7 +2388,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2397,7 +2397,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2428,7 +2428,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2437,7 +2437,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2465,7 +2465,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2474,7 +2474,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2502,7 +2502,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -2517,7 +2517,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2549,7 +2549,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2558,7 +2558,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2589,7 +2589,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2598,7 +2598,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2638,7 +2638,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -2657,7 +2657,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -2719,7 +2719,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CreatorNote")
                         .HasColumnType("text");
@@ -2749,7 +2749,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -2805,7 +2805,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("CustomNote")
                         .HasColumnType("text");
@@ -2820,7 +2820,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -2865,7 +2865,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2874,7 +2874,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2908,7 +2908,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2917,7 +2917,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
@@ -2948,7 +2948,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2957,7 +2957,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
@@ -2985,7 +2985,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -3001,7 +3001,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -3025,7 +3025,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3034,7 +3034,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("NewValue")
                         .HasColumnType("text");
@@ -3071,7 +3071,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3080,7 +3080,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -3110,7 +3110,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3119,7 +3119,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -3297,7 +3297,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3306,7 +3306,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("SubPostId")
                         .HasColumnType("uuid");
@@ -3334,7 +3334,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3343,7 +3343,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("UserFollowerId")
                         .HasColumnType("uuid");
@@ -3371,7 +3371,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3380,7 +3380,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3407,7 +3407,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Destination")
                         .HasColumnType("text");
@@ -3422,7 +3422,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("OtpType")
                         .HasColumnType("integer");
@@ -3449,7 +3449,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3458,7 +3458,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("UserRefereeId")
                         .HasColumnType("uuid");
@@ -3486,7 +3486,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3495,7 +3495,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
@@ -3523,7 +3523,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3532,7 +3532,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -3563,7 +3563,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -3584,7 +3584,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
@@ -4460,13 +4460,13 @@ namespace Mcsg.Common.Domain.Migrations
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferee")
-                        .WithMany("UserReferralUserReferees")
+                        .WithMany()
                         .HasForeignKey("UserRefereeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferrer")
-                        .WithMany("UserReferralUserReferrers")
+                        .WithMany()
                         .HasForeignKey("UserReferrerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -4547,13 +4547,6 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
-                {
-                    b.Navigation("UserReferralUserReferees");
-
-                    b.Navigation("UserReferralUserReferrers");
                 });
 #pragma warning restore 612, 618
         }

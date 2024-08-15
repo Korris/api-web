@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.SeedWork;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.SeedWork;
 
 /// <summary>
 /// Tracking entity
@@ -27,6 +29,7 @@ public class TrackingEntity : EntityId
     /// <summary>
     /// Created on
     /// </summary>
+    [Column(TypeName = "timestamp")]
     public DateTime CreatedOn { get; set; }
 
     #endregion
