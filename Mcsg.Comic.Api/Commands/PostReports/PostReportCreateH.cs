@@ -57,7 +57,7 @@ public class PostReportCreateH : BaseH, IRequestHandler<PostReportCreateR, Singl
         var hasPostReport = await _context.ComicPostReports.AnyAsync(p => p.PostId == request.PostId && p.UserId == userId, cancellationToken);
         if (hasPostReport)
         {
-            res.SetError(E115);
+            res.SetError(E115, M115);
             return res;
         }
         #endregion

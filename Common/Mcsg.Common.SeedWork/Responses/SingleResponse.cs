@@ -61,11 +61,12 @@ public class SingleResponse
     /// Set error
     /// </summary>
     /// <param name="errors">Errors</param>
+    /// <param name="code">Error code</param>
     /// <param name="message">Error message</param>
-    public void SetError(object? errors, string? message)
+    public void SetError(string code, string? message, object? errors)
     {
         Errors = errors;
-        SetError(message);
+        SetError(code, message);
     }
 
     /// <summary>
@@ -73,7 +74,7 @@ public class SingleResponse
     /// </summary>
     /// <param name="code">Error code</param>
     /// <param name="message">Error message</param>
-    public void SetErrorCode(string code, string? message)
+    public void SetError(string code, string? message)
     {
         Code = code;
         SetError(message);

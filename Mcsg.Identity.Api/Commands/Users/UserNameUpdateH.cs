@@ -12,6 +12,7 @@ using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Requests;
 using Validators;
+using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
 /// <summary>
@@ -42,7 +43,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            res.SetError(t, M000);
+            res.SetError(E000, M000, t);
             return res;
         }
 
@@ -57,7 +58,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
         if (user == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.UserId).ToCamelCase(), Value = request.UserId + "" } };
-            res.SetError(t, M002);
+            res.SetError(E002, M002, t);
             return res;
         }
 
@@ -74,7 +75,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
         var hasUserNameHistory = await _context.UserNameHistoryAvailable.Where(p => p.UserId != request.UserId).AnyAsync(p => p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
-            res.SetError(M107);
+            res.SetError(E107, M107);
             return res;
         }
         #endregion
@@ -84,7 +85,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
         {
             if (!user.IsPremium && newUserName.Length < Common.SeedWork.Constants.Validator.UserNameFree.Min)
             {
-                res.SetError(M124);
+                res.SetError(E124, M124);
                 return res;
             }
 
@@ -100,17 +101,19 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
 
         if (modifiedCount > 1)
         {
-            res.SetError(M128);
+            res.SetError(E124, M124);
+
             if (!canUpdateUserName)
             {
-                res.SetError($"{M129} {time} or {M128}");
+                res.SetError(E128, $"{M128} {time}");
             }
+
             return res;
         }
 
         if (userNameHistory.UserId != user.Id)
         {
-            res.SetError(M125);
+            res.SetError(E125, M125);
             return res;
         }
 

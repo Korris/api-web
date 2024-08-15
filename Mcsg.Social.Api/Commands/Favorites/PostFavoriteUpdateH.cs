@@ -12,6 +12,7 @@ using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Requests;
 using Validators;
+using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
 /// <summary>
@@ -55,7 +56,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
         if (!hasPost)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.PostId).ToCamelCase(), Value = request.PostId } };
-            res.SetError(t, M002);
+            res.SetError(E002, M002, t);
             return res;
         }
         #endregion

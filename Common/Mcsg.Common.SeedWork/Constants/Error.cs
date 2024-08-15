@@ -65,6 +65,11 @@ public static class Error
     public const string E103 = "E103";
 
     /// <summary>
+    /// This data already exists
+    /// </summary>
+    public const string E107 = "E107";
+
+    /// <summary>
     /// Token is expired
     /// </summary>
     public const string E109 = "E109";
@@ -150,14 +155,9 @@ public static class Error
     public const string E127 = "E127";
 
     /// <summary>
-    ///  Buy rename package to edit username
-    /// </summary>
-    public const string E128 = "E128";
-
-    /// <summary>
     ///  Wait time for edit username
     /// </summary>
-    public const string E129 = "E129";
+    public const string E128 = "E129";
 
     #endregion
 
