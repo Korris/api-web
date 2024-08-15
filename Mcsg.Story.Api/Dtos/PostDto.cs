@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Story.Api.Dtos;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Story.Api.Dtos;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 
 public class PostDto
 {
@@ -13,7 +16,10 @@ public class PostDto
     public bool IsCurrentUserIsAuthor { get; set; }
     public string ThumbnailUrl { get; set; }
     public string UserAvatar { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public PostType Type { get; set; }
     public string Body { get; set; }
     public string[] Tags { get; set; }

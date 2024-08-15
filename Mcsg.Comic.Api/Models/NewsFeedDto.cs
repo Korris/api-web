@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Comic.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Comic.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 
 public class NewsFeedDto
 {
@@ -11,7 +14,10 @@ public class NewsFeedDto
     public string? HashPostId { get; set; }
     public string? ProfileName { get; set; }
     public bool IsSubPost { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public PostType Type { get; set; }
     public Guid Id { get; set; }
     public int? Order { get; set; }

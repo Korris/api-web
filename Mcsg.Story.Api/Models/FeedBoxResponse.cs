@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Story.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Story.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 using Dtos;
 
 public class FeedBoxResponse : FeedBox
@@ -9,6 +12,7 @@ public class FeedBoxResponse : FeedBox
     public List<ResourceDto>? Resources { get; set; } = new List<ResourceDto>();
     public MetaDataDto? MetaData { get; set; }
     public PostLinkDto? Link { get; set; }
+    public bool IsFavorite { get; set; }
 
 }
 
@@ -29,7 +33,10 @@ public class FeedBoxQueryResponse : FeedBox
 public class FeedBox
 {
     public Guid Id { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public Guid UserId { get; set; }
     public string? UserAvatar { get; set; }
     public string? Body { get; set; }

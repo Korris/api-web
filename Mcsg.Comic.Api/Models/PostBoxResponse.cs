@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Comic.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Comic.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 using Dtos;
 
 public class PostBoxResponse : PostBox
@@ -28,7 +31,10 @@ public class PostBox
     public bool IsCurrentUserAuthor { get; set; }
     public int ChapterCount { get; set; }
     public PostType Type { get; set; }
-    public DateTime? CreatedOn { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime CreatedOn { get; set; }
+
     public string? ProfileName { get; set; }
     public Guid UserId { get; set; }
 }
