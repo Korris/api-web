@@ -1,4 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Models;
+
+using Common.SeedWork.Converters;
 
 public class MostReactionCommentResponse : BasicCommentResponse
 {
@@ -17,6 +21,7 @@ public class BasicCommentResponse
     public string ProfileId { get; set; }
     public string AuthorName { get; set; }
     public string? UserName { get; set; }
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
     public string ResourceName { get; set; }
     public string ResourceUrl { get; set; }

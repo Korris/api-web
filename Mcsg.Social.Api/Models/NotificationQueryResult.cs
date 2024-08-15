@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 
 public class NotificationQueryResult
 {
@@ -13,7 +16,10 @@ public class NotificationQueryResult
     public Guid? EntityId { get; set; }
     public string EntityHashId { get; set; }
     public NotificationAction Action { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public Guid ActorId { get; set; }
     public string ActorName { get; set; }
     public string Avatar { get; set; }

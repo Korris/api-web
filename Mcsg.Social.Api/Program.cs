@@ -11,6 +11,7 @@ using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork.Converters;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
@@ -151,7 +152,11 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
-        builder.Services.AddControllers();
+
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new IsoDateTimeConverter());
+        });
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

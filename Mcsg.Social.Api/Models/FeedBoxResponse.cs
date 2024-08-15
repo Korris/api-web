@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 using Dtos;
 
 public class FeedBoxResponse : FeedBox
@@ -30,7 +33,10 @@ public class FeedBoxQueryResponse : FeedBox
 public class FeedBox
 {
     public Guid Id { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public Guid UserId { get; set; }
     public string? UserAvatar { get; set; }
     public string? Body { get; set; }

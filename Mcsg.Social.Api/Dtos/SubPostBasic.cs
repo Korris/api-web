@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Social.Api.Dtos;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 
 public class SubPostBasic
 {
@@ -10,7 +13,10 @@ public class SubPostBasic
     public string Name { get; set; }
     public PostPermission Permission { get; set; }
     public PostStatus Status { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public DateTime? PublishDate { get; set; }
     public Guid? CreatedBy { get; set; }
     public Guid? UserId { get; set; }

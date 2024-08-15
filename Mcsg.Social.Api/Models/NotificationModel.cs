@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using System.Text.Json.Serialization;
 
 namespace Mcsg.Social.Api.Models;
 
+using Common.SeedWork.Converters;
 using Extensions;
 using Mappings;
 
@@ -17,7 +19,10 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public string Message { get; set; }
     public Guid ActorId { get; set; }
     public string ActorName { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
     public string NotificationType { get; set; }
     public string Avatar { get; set; }
     public int? ReactionType { get; set; }
