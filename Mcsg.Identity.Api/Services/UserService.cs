@@ -406,15 +406,6 @@ public partial class UserService : IUserService
                 };
 
                 await _context.UserNameHistories.AddAsync(userNameHistory);
-                var postToUpdate = await _context.SocialPosts.ToListAsync();
-
-                Parallel.ForEach(postToUpdate, post =>
-                {
-                    if (post.Body != null && user.UserName != null)
-                    {
-                        post.Body = post.Body.ReplaceMentionUserNameInHtml(user.UserName, userName);
-                    }
-                });
             }
             else if (userNameHistory.UserId != user.Id)
             {

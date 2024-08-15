@@ -239,7 +239,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
-        return MappingFeedRespone(dbPost);
+        return MappingFeedRespone(dbPost, currentUserId);
     }
     public async Task<ChapterResponse> GetSeriesChapter(string hashId, int order)
     {
@@ -819,7 +819,7 @@ public partial class PostService : IPostService
         return result;
 
     }
-    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item)
+    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item, Guid? currentUserId)
     {
         if (item == null)
             return new PostSeriesResponse();
