@@ -236,7 +236,7 @@ LIMIT 1
                         post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
                         post.""SubPostStr"", 
-                        array_agg(tag.""Name"") as Tags from
+                        array_agg(DISTINCT tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
