@@ -7,13 +7,13 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
+using Lib.Common.Constants;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Mcsg.Common.SeedWork.Exceptions;
-using Mcsg.Lib.Common.Constants;
 using Models;
 using Requests;
 

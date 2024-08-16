@@ -4,7 +4,7 @@ namespace Mcsg.Story.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
-using Mcsg.Story.Api.Requests;
+using Requests;
 
 /// <summary>
 /// DI extension
