@@ -125,6 +125,8 @@ public partial class StoryCommentService : IStoryCommentService
                 pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
 
                 response = await CommentToSubPost(req, author, resource, pDto);
+                response.Order = subPost.Order;
+                response.PostIdOfPost = subPost.PostId;
             };
         }
 

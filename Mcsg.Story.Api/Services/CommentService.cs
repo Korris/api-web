@@ -196,6 +196,7 @@ public partial class CommentService : ICommentService
             var offset = input.PageSize * (input.PageNumber - 1);
             var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, new { CommentId = input.CommentId, PageSize = input.PageSize, Offset = offset });
             var items = await multi.ReadAsync<BasicCommentResponse>().ConfigureAwait(false);
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var body = "";
             foreach (var i in items)
@@ -218,7 +219,6 @@ public partial class CommentService : ICommentService
                 item.Body = await _businessText.Process(item.Body, profiles);
             }
 
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             if (items != null && items.Count() > 0)
             {
