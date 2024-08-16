@@ -193,7 +193,8 @@ public partial class CommentService : ICommentService
             PagedResponse<BasicCommentResponse> results;
 
             var query = string.Format(GetReplyByCommentIdQuery, input.IsSubPost ? _subPostCommentRepository.TableName : _postCommentRepository.TableName);
-            var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, new { CommentId = input.CommentId });
+            var offset = input.PageSize * (input.PageNumber - 1);
+            var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, new { CommentId = input.CommentId, PageSize = input.PageSize, Offset = offset });
             var items = await multi.ReadAsync<BasicCommentResponse>().ConfigureAwait(false);
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 

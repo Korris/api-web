@@ -35,4 +35,5 @@ public class BasicCommentResponse
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
     public Guid QuoteId { get; set; }
     public DateTime? ModifiedOn { get; set; }
+    public Guid? ParentId { get; set; }
 }
