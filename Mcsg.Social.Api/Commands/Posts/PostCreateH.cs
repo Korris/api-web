@@ -120,7 +120,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             ProfileId = profileId,
             UserAvatar = userAvatar,
             Rewards = rewards,
-            CustomNote = ett.CustomNote
+            CustomNote = ett.CustomNote,
+            UserName = userName
         };
 
         if (request.MetaData != null)
