@@ -20,6 +20,13 @@
                                                LEFT JOIN ""story"".""StoryResources"" r on pc.""ResourceId"" = r.""Id""
                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
                                                WHERE pc.""ParentId"" = @CommentId
+                                               AND pc.""IsDelete"" = false;
+                                                
+                                               SELECT COUNT(pc.*)
+                                               FROM {0} pc
+                                               LEFT JOIN ""story"".""StoryResources"" r on pc.""ResourceId"" = r.""Id""
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                               WHERE pc.""ParentId"" = @CommentId
                                                AND pc.""IsDelete"" = false";
         private string GetCommentWithMostReactionQuery = $@"
                                                 SELECT 

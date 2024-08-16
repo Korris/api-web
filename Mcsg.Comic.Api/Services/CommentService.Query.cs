@@ -7,6 +7,7 @@
         private string GetReplyByCommentIdQuery = @"SELECT 
                                                 pc.""CreatedBy"" as AuthorId,
                                                 pc.""Body"",
+                                                pc.""CustomNote"",
                                                 pc.""Id"",
                                                 pc.""CreatedOn"",
                                                 u.""Avatar"" as UserAvatar,
@@ -15,6 +16,13 @@
                                                 r.""Name"" as ResourceName,
                                                 r.""Url"" as ResourceUrl,
                                                 r.""HashId"" as ResourceHashId
+                                               FROM {0} pc
+                                               LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                               WHERE pc.""ParentId"" = @CommentId
+                                               AND pc.""IsDelete"" = false;
+                                                
+                                               SELECT COUNT(pc.*)
                                                FROM {0} pc
                                                LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
@@ -29,6 +37,7 @@
                                                     pc.""CreatedOn"",
                                                     pc.""GifId"",
                                                     pc.""PostId"",
+                                                    pc.""ModifiedOn"",
                                                     p.""Title"",
                                                     NULL as Order,
                                                     u.""Avatar"" as UserAvatar,
@@ -59,6 +68,7 @@
                                                     spc.""CreatedOn"",
                                                     spc.""GifId"",
                                                     spc.""PostId"",
+                                                    spc.""ModifiedOn"",
                                                     sp.""Title"",
                                                     sp.""Order"",
                                                     u.""Avatar"",

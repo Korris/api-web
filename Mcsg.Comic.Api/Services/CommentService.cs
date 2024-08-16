@@ -12,6 +12,8 @@ using Enums;
 using Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
+using Mcsg.Common.SeedWork.Exceptions;
+using Mcsg.Lib.Common.Constants;
 using Models;
 using Requests;
 
@@ -184,14 +186,17 @@ public partial class CommentService : ICommentService
         return response;
     }
 
-    public async Task<List<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input)
+    public async Task<PagedResponse<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input)
     {
-        List<BasicCommentResponse> results;
-
-        var query = string.Format(GetReplyByCommentIdQuery, input.IsSubPost ? _subPostCommentRepository.TableName : _postCommentRepository.TableName);
-        var items = await _postCommentRepository.Connection.QueryAsync<BasicCommentResponse>(query, new { CommentId = input.CommentId });
-        if (items != null && items.Count() > 0)
+        try
         {
+            PagedResponse<BasicCommentResponse> results;
+
+            var query = string.Format(GetReplyByCommentIdQuery, input.IsSubPost ? _subPostCommentRepository.TableName : _postCommentRepository.TableName);
+            var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, new { CommentId = input.CommentId });
+            var items = await multi.ReadAsync<BasicCommentResponse>().ConfigureAwait(false);
+            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+
             var body = "";
             foreach (var i in items)
             {
@@ -213,12 +218,21 @@ public partial class CommentService : ICommentService
                 item.Body = await _businessText.Process(item.Body, profiles);
             }
 
-            results = items.ToList();
+
+            if (items != null && items.Count() > 0)
+            {
+                results = new PagedResponse<BasicCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+                results.Items = items;
+            }
+            else
+            {
+                results = new PagedResponse<BasicCommentResponse>(0);
+            }
             return results;
         }
-        else
+        catch (Exception ex)
         {
-            return null;
+            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
 
