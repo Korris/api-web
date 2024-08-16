@@ -184,6 +184,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Hide")
+                        .HasColumnType("integer");
+
                     b.Property<bool?>("IsCompleted")
                         .HasColumnType("boolean");
 
@@ -1482,6 +1485,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Hide")
+                        .HasColumnType("integer");
+
                     b.Property<bool?>("IsCompleted")
                         .HasColumnType("boolean");
 
@@ -2264,6 +2270,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("HashId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Hide")
+                        .HasColumnType("integer");
 
                     b.Property<bool?>("IsCompleted")
                         .HasColumnType("boolean");

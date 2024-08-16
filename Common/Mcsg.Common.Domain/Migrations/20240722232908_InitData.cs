@@ -529,7 +529,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -628,7 +629,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -670,7 +672,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

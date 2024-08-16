@@ -21,4 +21,5 @@ public partial class BasePost : AuditableHasPrivateEntity
     public int ViewCount { get; set; }
     public string? ExternalCode { get; set; }
     public ExternalResource ExternalResource { get; set; }
+    public HideOption Hide { get; set; }
 }
