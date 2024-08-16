@@ -43,7 +43,7 @@
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM social.""SocialPostComments""  pc
-                                                LEFT JOIN social.""SocialPostComments"" reply on reply.""ParentId"" = pc.""Id""
+                                                LEFT JOIN social.""SocialPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
                                                 LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                                                 LEFT JOIN social.""SocialPosts"" p on pc.""PostId"" = p.""Id""                                                

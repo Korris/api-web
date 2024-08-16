@@ -54,7 +54,7 @@
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM ""comic"".""ComicPostComments""  pc
-                                                LEFT JOIN ""comic"".""ComicPostComments"" reply on reply.""ParentId"" = pc.""Id""
+                                                LEFT JOIN ""comic"".""ComicPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
                                                 LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                                                 LEFT JOIN ""comic"".""ComicPosts""  p on pc.""PostId"" = p.""Id""                                                

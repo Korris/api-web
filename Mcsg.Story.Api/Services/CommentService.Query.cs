@@ -41,6 +41,7 @@
                                                     pc.""CreatedOn"",
                                                     pc.""GifId"",
                                                     pc.""PostId"",
+                                                    pc.""ModifiedOn"",
                                                     p.""Title"",
                                                     NULL as Order,
                                                     u.""Avatar"" as UserAvatar,
@@ -53,7 +54,7 @@
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM ""story"".""StoryPostComments""  pc
-                                                LEFT JOIN ""story"".""StoryPostComments"" reply on reply.""ParentId"" = pc.""Id""
+                                                LEFT JOIN ""story"".""StoryPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
                                                 LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""story"".""StoryPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                                                 LEFT JOIN ""story"".""StoryPosts""  p on pc.""PostId"" = p.""Id""                                                
@@ -71,6 +72,7 @@
                                                     spc.""CreatedOn"",
                                                     spc.""GifId"",
                                                     spc.""PostId"",
+                                                    spc.""ModifiedOn"",
                                                     sp.""Title"",
                                                     sp.""Order"",
                                                     u.""Avatar"",

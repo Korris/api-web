@@ -33,7 +33,7 @@ public class BasicCommentResponse
     public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
     public string? CustomNote { get; set; }
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
-    public Guid QuoteId { get; set; }
+    public Guid? QuoteId { get; set; }
     public DateTime? ModifiedOn { get; set; }
     public Guid? ParentId { get; set; }
 }
