@@ -129,7 +129,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             Body = request.Content,
             FullName = profileName,
             AuthorName = profileName,
-            IsCurrentUserIsAuthor = true,
+            IsCurrentUserAuthor = true,
             ProfileId = profileId,
             UserAvatar = userAvatar,
             Rewards = rewards,

@@ -131,8 +131,8 @@ public partial class PostService : IPostService
             Type = type,
             HashId = hashId,
             UserId = currentUserId,
-            AuthorId = comicPostReq.IsCurrentUserIsAuthor ? currentUserId : null,
-            AuthorName = comicPostReq.IsCurrentUserIsAuthor ? currentFullName : comicPostReq.AuthorName,
+            AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null,
+            AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName,
             Body = comicPostReq.Summary,
             ThumbnailUrl = comicPostReq.ThumbnailUrl,
             CoverUrl = comicPostReq.CoverUrl,
@@ -160,7 +160,7 @@ public partial class PostService : IPostService
             Permission = comicPostReq.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserIsAuthor = comicPostReq.IsCurrentUserIsAuthor,
+            IsCurrentUserAuthor = comicPostReq.IsCurrentUserAuthor,
             Rewards = rewards
         };
         try
@@ -787,8 +787,8 @@ public partial class PostService : IPostService
         var currentTitle = post.Title;
         post.Title = comicPostReq.Title;
         post.HashId = hashId;
-        post.AuthorId = comicPostReq.IsCurrentUserIsAuthor ? currentUserId : null;
-        post.AuthorName = comicPostReq.IsCurrentUserIsAuthor ? currentFullName : comicPostReq.AuthorName;
+        post.AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null;
+        post.AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName;
         post.Body = comicPostReq.Summary;
         post.ThumbnailUrl = comicPostReq.ThumbnailUrl;
         post.CoverUrl = comicPostReq.CoverUrl;
@@ -813,7 +813,7 @@ public partial class PostService : IPostService
             Permission = comicPostReq.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserIsAuthor = comicPostReq.IsCurrentUserIsAuthor,
+            IsCurrentUserAuthor = comicPostReq.IsCurrentUserAuthor,
             IsCompleted = comicPostReq.IsCompleted
         };
         try
@@ -860,7 +860,7 @@ public partial class PostService : IPostService
             HashId = item.HashId,
             UserId = item.UserId,
             AuthorName = item.AuthorName,
-            IsCurrentUserIsAuthor = currentUserId == item.UserId,
+            IsCurrentUserAuthor = currentUserId == item.UserId,
             ThumbnailUrl = item.ThumbnailUrl,
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
@@ -1460,7 +1460,7 @@ public partial class PostService : IPostService
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
-            IsCurrentUserIsAuthor = currentUserId == x.UserId,
+            IsCurrentUserAuthor = currentUserId == x.UserId,
             AuthorId = x.AuthorId,
             CoverUrl = x.CoverUrl,
             ThumbnailUrl = x.ThumbnailUrl,
