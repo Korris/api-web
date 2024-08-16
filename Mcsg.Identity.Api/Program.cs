@@ -169,6 +169,14 @@ public class Program
             key = nameof(st.AccountCreatedAfter);
             value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
             st.AccountCreatedAfter = Convert.ToUInt32(value);
+
+            key = nameof(st.UserNameChangedInRemaining);
+            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.UserNameChangedInRemaining = Convert.ToUInt32(value);
+
+            key = nameof(st.UserNameWaitingChangedAfter);
+            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
+            st.UserNameWaitingChangedAfter = Convert.ToUInt32(value);
         }
         #endregion
 

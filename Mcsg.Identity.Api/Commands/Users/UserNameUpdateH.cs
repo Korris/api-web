@@ -10,6 +10,7 @@ using Common.SeedWork.Dtos;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
+using Interfaces;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
@@ -18,7 +19,7 @@ using static Common.SeedWork.Constants.Message;
 /// <summary>
 /// Handler
 /// </summary>
-public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleResponse>
+public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, SingleResponse>
 {
     #region -- Methods --
 
@@ -26,7 +27,8 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public UserNameUpdateH(IMcsgContext context) : base(context) { }
+    /// <param name="setting">Setting</param>
+    public UserNameUpdateH(IMcsgContext context, ISetting setting) : base(context, setting) { }
 
     /// <summary>
     /// Handle
@@ -66,7 +68,7 @@ public class UserNameUpdateH : BaseH, IRequestHandler<UserNameUpdateR, SingleRes
         var mostRecentHistory = createdOns.OrderByDescending(p => p).FirstOrDefault();
         int modifiedCount = createdOns.Count;
 
-        var timePassed = mostRecentHistory.AddHours(24) - DateTime.UtcNow;
+        var timePassed = mostRecentHistory.AddMinutes(_setting.UserNameChangedInRemaining) - DateTime.UtcNow;
         var timeRemaining = TimeSpan.FromHours(timePassed.TotalHours);
         var time = timeRemaining.ToString(@"hh\:mm\:ss");
         var canUpdateUserName = timePassed.TotalHours <= 0;

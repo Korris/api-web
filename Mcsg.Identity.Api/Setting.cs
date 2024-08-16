@@ -51,6 +51,16 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public uint AccountCreatedAfter { get; set; }
 
+    /// <summary>
+    /// The remaining time in minutes after which the username can be changed
+    /// </summary>
+    public uint UserNameChangedInRemaining { get; set; }
+
+    /// <summary>
+    /// The waiting time in minutes before the username can be changed
+    /// </summary>
+    public uint UserNameWaitingChangedAfter { get; set; }
+
     #endregion
 
     #region -- Methods --
