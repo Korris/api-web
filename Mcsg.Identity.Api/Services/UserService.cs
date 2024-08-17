@@ -9,6 +9,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Enums;
 using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -388,7 +389,7 @@ public partial class UserService : IUserService
         }
 
         user.DateOfBirth = req.DateOfBirth;
-        user.Gender = req.Gender != null ? (int)req.Gender : null;
+        user.Gender = (int)(req.Gender + "").ToEnum(GenderType.Other);
         user.Location = req.Location;
         user.PhoneNumber = req.PhoneNumber;
         user.IsWalletShowing = req.IsWalletShowing;
