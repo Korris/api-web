@@ -182,7 +182,7 @@ public static class Error
     /// <summary>
     ///  Wait time for edit username
     /// </summary>
-    public const string E128 = "E129";
+    public const string E128 = "E128";
 
     #endregion
 

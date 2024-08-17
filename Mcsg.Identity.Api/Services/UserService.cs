@@ -387,35 +387,6 @@ public partial class UserService : IUserService
             user.ProfileName = profileName;
         }
 
-        var userName = req.UserName?.Trim();
-        if (!string.IsNullOrWhiteSpace(userName))
-        {
-            var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == userName);
-            if (userNameHistory == null)
-            {
-                if (!user.IsPremium && userName.Length < Common.SeedWork.Constants.Validator.UserNameFree.Min)
-                {
-                    throw new BadRequestException(E124, M124);
-                }
-
-                userNameHistory = new UserNameHistory
-                {
-                    UserId = user.Id,
-                    UserName = userName,
-                    CreatedBy = user.Id
-                };
-
-                await _context.UserNameHistories.AddAsync(userNameHistory);
-            }
-            else if (userNameHistory.UserId != user.Id)
-            {
-                throw new BadRequestException(E125, M125);
-            }
-
-            user.UserName = userName;
-            user.NormalizedUserName = userName.ToUpper();
-        }
-
         user.DateOfBirth = req.DateOfBirth;
         user.Gender = req.Gender != null ? (int)req.Gender : null;
         user.Location = req.Location;

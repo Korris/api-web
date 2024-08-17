@@ -71,9 +71,7 @@ public class UserController : ControllerBase
     {
         request.Analyze(HttpContext);
         request.DetectMobileCall(_setting.MobileUserAgent);
-
         var response = await _mediator.Send(request);
-
         return Ok(response);
     }
 
@@ -81,7 +79,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR request)
     {
         var req = new BaseR(HttpContext);
-        request.IsPremium = req.IsPremium == true;
         var result = await _userService.UpdateUserProfile(request);
         return Ok(result);
     }

@@ -26,28 +26,6 @@ public class UserProfileUpdateV : AbstractValidator<UserProfileUpdateR>
             .MaximumLength(ProfileName.Max).WithMessage($"{t} {MaximumLength} {ProfileName.Max}")
             .Matches(ProfileName.Regex).WithMessage($"{t} {ProfileName.Message}");
 
-        When(p => p.IsPremium, () =>
-        {
-            t = nameof(UserNamePremium);
-            RuleFor(p => p.UserName.Triz())
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage($"{t} {NotEmpty}")
-                .MinimumLength(UserNamePremium.Min).WithMessage($"{t} {MinimumLength} {UserNamePremium.Min}")
-                .MaximumLength(UserNamePremium.Max).WithMessage($"{t} {MaximumLength} {UserNamePremium.Max}")
-                .Matches(UserNamePremium.Regex).WithMessage($"{t} {UserNamePremium.Message}");
-        });
-
-        When(p => !p.IsPremium, () =>
-        {
-            t = nameof(UserNameFree);
-            RuleFor(p => p.UserName.Triz())
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty().WithMessage($"{t} {NotEmpty}")
-                .MinimumLength(UserNameFree.Min).WithMessage($"{t} {MinimumLength} {UserNameFree.Min}")
-                .MaximumLength(UserNameFree.Max).WithMessage($"{t} {MaximumLength} {UserNameFree.Max}")
-                .Matches(UserNameFree.Regex).WithMessage($"{t} {UserNameFree.Message}");
-        });
-
         t = nameof(Location);
         RuleFor(p => p.Location.Triz())
             .Cascade(CascadeMode.Stop)
