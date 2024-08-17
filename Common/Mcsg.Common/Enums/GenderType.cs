@@ -21,7 +21,7 @@ public enum GenderType
     /// <summary>
     /// Male
     /// </summary>
-    Male = 1,
+    Male,
 
     /// <summary>
     /// Female
