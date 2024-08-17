@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
-public class BaseUserReq
+using Common.Core.Requests;
+
+public class BaseUserReq : BaseR
 {
     public string? Email { get; set; }
 

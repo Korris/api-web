@@ -2,7 +2,9 @@
 
 using Common.Core.Enums;
 
-public class ResendOtpReq
+using Common.Core.Requests;
+
+public class ResendOtpReq : BaseR
 {
     public UserOtpType Type { get; set; }
     public string OtpToken { get; set; }

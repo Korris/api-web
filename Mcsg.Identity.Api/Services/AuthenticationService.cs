@@ -143,6 +143,7 @@ public partial class AuthenticationService : IAuthenticationService
             user.UserName = await GenerateUserName(user.Id);
             user.ProfileName = user.UserName;
             user.ProfileId = user.UserName;
+            user.CreatedIp = request.RemoteIp;
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -286,9 +287,10 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<TokenDto> LoginSocial(string socialType, string socialToken)
+    public async Task<TokenDto> LoginSocial(LoginSocialReq request)
     {
-        socialType = socialType.ToLower();
+        var socialType = request.SocialType.ToLower();
+        var socialToken = request.SocialToken;
         var socialMedias = new List<string> { Facebook.MediaCode, Google.MediaCode, Apple.MediaCode };
 
         if (string.IsNullOrEmpty(socialType) || !socialMedias.Contains(socialType))
@@ -383,6 +385,7 @@ public partial class AuthenticationService : IAuthenticationService
                 user.UserName = await GenerateUserName(user.Id);
                 user.ProfileName = user.UserName;
                 user.ProfileId = user.UserName;
+                user.CreatedIp = request.RemoteIp;
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)

@@ -2,7 +2,9 @@
 
 namespace Mcsg.Identity.Api.Requests;
 
-public class RefreshTokenReq
+using Common.Core.Requests;
+
+public class RefreshTokenReq : BaseR
 {
     [Required]
     public string RefreshToken { get; set; }

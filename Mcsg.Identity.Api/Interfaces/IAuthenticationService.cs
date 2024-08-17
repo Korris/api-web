@@ -10,7 +10,7 @@ public interface IAuthenticationService
     Task<VerifyUserResponse> RegisterUser(RegisterUserReq request);
     Task<VerifyUserResponse> ResendOtp(UserOtpType type, string otpToken = "");
     Task<TokenDto> LoginUser(LoginUserReq request);
-    Task<TokenDto> LoginSocial(string socialType, string socialToken);
+    Task<TokenDto> LoginSocial(LoginSocialReq request);
     Task<bool> LogOut();
     Task<VerifyUserResponse> ForgotPassword(string? email, string? phone);
     Task<bool> ResetPassword(ResetPasswordReq request);

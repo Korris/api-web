@@ -2,7 +2,9 @@
 
 namespace Mcsg.Identity.Api.Requests;
 
-public class ChangePasswordReq
+using Common.Core.Requests;
+
+public class ChangePasswordReq : BaseR
 {
     [Required]
     public string OldPassword { get; set; }

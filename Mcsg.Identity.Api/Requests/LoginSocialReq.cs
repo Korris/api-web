@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
-public class LoginSocialReq
+using Common.Core.Requests;
+
+public class LoginSocialReq : BaseR
 {
     public string SocialType { get; set; }
     public string SocialToken { get; set; }

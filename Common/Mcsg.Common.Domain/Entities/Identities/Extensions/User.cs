@@ -3,6 +3,7 @@
 namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork.Dtos;
+using SeedWork.Enums;
 
 partial class User
 {
@@ -14,6 +15,7 @@ partial class User
     public User()
     {
         Id = Guid.NewGuid();
+        Type = UserType.Guest;
         CreatedOn = DateTime.UtcNow;
     }
 

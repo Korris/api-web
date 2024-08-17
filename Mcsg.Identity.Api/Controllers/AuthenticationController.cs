@@ -24,6 +24,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("check-register-info")]
     public async Task<IActionResult> CheckRegisterUser(RegisterUserReq request)
     {
+        request.Analyze(HttpContext);
         await _authenticationService.CheckRegisterUser(request);
         return Ok();
     }
@@ -31,6 +32,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.RegisterUser(request);
         return Ok(result);
     }
@@ -38,6 +40,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginUserReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.LoginUser(request);
         return Ok(result);
     }
@@ -45,7 +48,8 @@ public class AuthenticationController : ControllerBase
     [HttpPost("social-login")]
     public async Task<IActionResult> LoginSocial(LoginSocialReq request)
     {
-        var result = await _authenticationService.LoginSocial(request.SocialType, request.SocialToken);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginSocial(request);
         return Ok(result);
     }
 
@@ -60,18 +64,20 @@ public class AuthenticationController : ControllerBase
     /// <summary>
     /// ResendOtp with Auth no need token
     /// </summary>
-    /// <param name="resendOtpReq"></param>
+    /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("resend-otp")]
-    public async Task<IActionResult> ResendOtp(ResendOtpReq resendOtpReq)
+    public async Task<IActionResult> ResendOtp(ResendOtpReq request)
     {
-        var result = await _authenticationService.ResendOtp(resendOtpReq.Type, resendOtpReq.OtpToken);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ResendOtp(request.Type, request.OtpToken);
         return Ok(result);
     }
 
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(RefreshTokenReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.VerifyRefreshToken(request.RefreshToken);
         return Ok(result);
     }
@@ -79,6 +85,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.ForgotPassword(request.Email, request.Phone);
         return Ok(result);
     }
@@ -86,6 +93,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(ResetPasswordReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.ResetPassword(request);
         return Ok(result);
     }
@@ -94,6 +102,7 @@ public class AuthenticationController : ControllerBase
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.ChangePassword(request.OldPassword, request.NewPassword, request.ConfirmPassword);
         return Ok(result);
     }
@@ -101,6 +110,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("create-new-user-password")]
     public async Task<IActionResult> CreateNewUserPassword(CreateNewUserPasswordReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _authenticationService.CreateNewUserPassword(request.Email, request.Phone, request.Otp, request.OtpToken, request.Password, request.ConfirmPassword);
         return Ok(result);
     }
