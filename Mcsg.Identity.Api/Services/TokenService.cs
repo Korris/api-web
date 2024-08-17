@@ -11,13 +11,15 @@ using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Interfaces;
 using Lib.Common.Extensions;
+using Lib.Common.Web;
 
 public class TokenService : ITokenService
 {
-    public TokenService(IMcsgContext context, ISetting setting)
+    public TokenService(IMcsgContext context, ISetting setting, ApplicationUserManager userManager)
     {
         _context = context;
         _setting = setting;
+        _userManager = userManager;
     }
 
     public async Task<Guid> IsValidRefreshTokenAsync(string refreshToken)
@@ -97,7 +99,8 @@ public class TokenService : ITokenService
             UserAvatar = user.Avatar + "",
             IsPremium = user.IsPremium,
             IsWalletShowing = user.IsWalletShowing,
-            SessionId = sessionId
+            SessionId = sessionId,
+            Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult()
         };
         var st = new SecurityToken(_setting.Jwt, payload);
 
@@ -125,6 +128,11 @@ public class TokenService : ITokenService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// User manager
+    /// </summary>
+    private readonly ApplicationUserManager _userManager;
 
     #endregion
 }
