@@ -1,5 +1,12 @@
-﻿namespace Mcsg.Identity.Api.Test.Controllers;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
+namespace Mcsg.Identity.Api.Test.Controllers;
+
+using Common.SeedWork.Constants;
+using Extensions;
 using Requests;
 using Validators;
 
@@ -8,7 +15,29 @@ public class UserControllerTest
     [SetUp]
     public void Setup()
     {
-        //TODO
+        // Get assembly name
+        var me = typeof(UserControllerTest);
+        var assembly = me.Assembly.GetName().Name;
+
+        var services = Initialize.Init("Ide");
+
+        #region -- Setup DI --
+        // MediatR
+        services.AddMediatR(p =>
+        {
+            p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiUser();
+        });
+        #endregion
+
+        var serviceProvider = services.BuildServiceProvider();
+        _mediator = serviceProvider.GetRequiredService<IMediator>();
+
+        // Mock the HttpContext
+        var payload = "{\"id\":\"733e917b-eddc-4b3d-8973-335299e6d8c8\",\"userName\":\"minh123456789121\",\"profileName\":\"01LAbDRxO4n0GhX6\",\"profileId\":\"01LAbDRxO4n0GhX6\",\"userFolder\":\"01LAbDRxO4n0GhX6\",\"userAvatar\":\"\",\"isPremium\":false,\"isWalletShowing\":false,\"type\":0,\"roles\":[\"Mcsg.ContentAdmin\"]}";
+        var identity = new ClaimsIdentity([new Claim(ClaimTypes.Name, "minh123456789121"), new Claim(Setting.Payload, payload)]);
+        _hc = new DefaultHttpContext { User = new ClaimsPrincipal(identity) };
     }
 
     #region -- UpdateUserProfile --
@@ -177,7 +206,6 @@ public class UserControllerTest
         UpdateUserProfile(profileName, userName, location, expected);
     }
 
-
     /// <summary>
     /// Test case pass for location
     /// </summary>
@@ -205,5 +233,44 @@ public class UserControllerTest
     private const string _sShort = "abc";
     private const string _sLong60 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. N";
     private const string _sLong259 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis dolor sit amet sem venenatis, nec auctor libero aliquam. Vivamus nec urna ut neque bibendum ultrices. Aenean volutpat, urna euismod. Curabitur quis massa et nisl efficitur fermentum.\r\n";
+    #endregion
+
+    #region -- UpdateUserName --
+    #region -- ValidationFailed --
+    [TestCase(null, false)]
+    [TestCase("nvt87x", false)]
+    public async Task UpdateUserName_ValidationFailed(string? newUserName, bool expected)
+    {
+        var request = new UserNameUpdateR { NewUserName = newUserName };
+        request.Analyze(_hc);
+        var response = await _mediator.Send(request);
+        Assert.That(response.Succeeded, Is.EqualTo(expected));
+    }
+    #endregion
+
+    #region -- ValidationPass --
+    [TestCase("minh123456789121", true)]
+    public async Task UpdateUserName_ValidationPass(string? newUserName, bool expected)
+    {
+        var request = new UserNameUpdateR { NewUserName = newUserName };
+        request.Analyze(_hc);
+        var response = await _mediator.Send(request);
+        Assert.That(response.Succeeded, Is.EqualTo(expected));
+    }
+    #endregion
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private IMediator _mediator;
+
+    /// <summary>
+    /// HTTP context
+    /// </summary>
+    private HttpContext _hc;
+
     #endregion
 }
