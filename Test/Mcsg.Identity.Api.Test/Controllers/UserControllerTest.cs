@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Story.Api.Test.Controllers;
+﻿namespace Mcsg.Identity.Api.Test.Controllers;
 
 using Requests;
 using Validators;
