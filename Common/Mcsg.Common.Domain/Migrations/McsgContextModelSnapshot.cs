@@ -1028,6 +1028,47 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("CrawComicChapters", (string)null);
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.Device", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("UserType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Devices", "identity");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Job", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3172,6 +3213,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CreatedIp")
+                        .HasColumnType("varchar(256)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -3209,6 +3253,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastLoginIp")
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(256)
@@ -3276,6 +3323,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

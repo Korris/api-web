@@ -16,10 +16,10 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "comic");
 
             migrationBuilder.EnsureSchema(
-                name: "system");
+                name: "identity");
 
             migrationBuilder.EnsureSchema(
-                name: "identity");
+                name: "system");
 
             migrationBuilder.EnsureSchema(
                 name: "social");
@@ -125,6 +125,27 @@ namespace Mcsg.Common.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CrawComics", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    UserType = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -425,6 +446,9 @@ namespace Mcsg.Common.Domain.Migrations
                     PremiumDate = table.Column<DateOnly>(type: "date", nullable: true),
                     IsActiveEarning = table.Column<bool>(type: "boolean", nullable: false),
                     IsWalletShowing = table.Column<bool>(type: "boolean", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    CreatedIp = table.Column<string>(type: "varchar(256)", nullable: true),
+                    LastLoginIp = table.Column<string>(type: "varchar(256)", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3325,6 +3349,10 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "CrawComics");
+
+            migrationBuilder.DropTable(
+                name: "Devices",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "Jobs",

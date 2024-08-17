@@ -31,5 +31,10 @@ public enum DeviceType
     /// <summary>
     /// Android
     /// </summary>
-    Android
+    Android,
+
+    /// <summary>
+    /// Web
+    /// </summary>
+    Web
 }

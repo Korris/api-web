@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork.Enums;
 
 public partial class User : IdentityUser<Guid>
 {
@@ -33,6 +35,23 @@ public partial class User : IdentityUser<Guid>
     public DateOnly? PremiumDate { get; set; }
     public bool IsActiveEarning { get; set; }
     public bool IsWalletShowing { get; set; }
+
+    /// <summary>
+    /// 0 Guest, 1 Free, 2 Premium, 3 Administrator
+    /// </summary>
+    public UserType Type { get; set; }
+
+    /// <summary>
+    /// Created IP
+    /// </summary>
+    [Column(TypeName = "varchar(256)")]
+    public string? CreatedIp { get; set; }
+
+    /// <summary>
+    /// Last login IP
+    /// </summary>
+    [Column(TypeName = "varchar(256)")]
+    public string? LastLoginIp { get; set; }
 
     /// <summary>
     /// Created by

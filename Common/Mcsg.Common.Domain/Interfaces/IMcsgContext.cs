@@ -99,6 +99,8 @@ public interface IMcsgContext
 
     DbSet<Job> Jobs { get; set; }
 
+    DbSet<Device> Devices { get; set; }
+
     DbSet<Mention> Mentions { get; set; }
 
     DbSet<Notification> Notifications { get; set; }
@@ -252,6 +254,8 @@ public interface IMcsgContext
     IQueryable<CrawComicChapter> CrawComicChapterAvailable { get; }
 
     IQueryable<Job> JobAvailable { get; }
+
+    IQueryable<Device> DeviceAvailable { get; }
 
     IQueryable<Mention> MentionAvailable { get; }
 

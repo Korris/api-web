@@ -31,5 +31,10 @@ public enum UserType
     /// <summary>
     /// Premium
     /// </summary>
-    Premium
+    Premium,
+
+    /// <summary>
+    /// Administrator
+    /// </summary>
+    Administrator
 }

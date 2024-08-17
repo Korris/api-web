@@ -109,6 +109,8 @@ partial class McsgContext
 
     public IQueryable<Job> JobAvailable => Jobs.Where(p => !p.IsDelete);
 
+    public IQueryable<Device> DeviceAvailable => Devices.Where(p => !p.IsDelete);
+
     public IQueryable<Mention> MentionAvailable => Mentions.Where(p => !p.IsDelete);
 
     public IQueryable<Notification> NotificationAvailable => Notifications.Where(p => !p.IsDelete);
