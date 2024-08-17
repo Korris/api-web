@@ -194,7 +194,7 @@ public class UserControllerTest
 
     private void UpdateUserProfile(string? profileName, string? userName, string? location, bool expected)
     {
-        var req = new UserProfileUpdateR { ProfileName = profileName, UserName = userName, Location = location };
+        var req = new UserProfileUpdateR { ProfileName = profileName, Location = location };
         var vr = new UserProfileUpdateV().Validate(req);
         Assert.That(vr.IsValid, Is.EqualTo(expected));
     }
