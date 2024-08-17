@@ -60,9 +60,29 @@ public static class Error
     public const string E100 = "E100";
 
     /// <summary>
+    /// Incorrect password
+    /// </summary>
+    public const string E101 = "E101";
+
+    /// <summary>
+    /// Verification failed
+    /// </summary>
+    public const string E102 = "E102";
+
+    /// <summary>
     /// No data response
     /// </summary>
     public const string E103 = "E103";
+
+    /// <summary>
+    /// Add login error
+    /// </summary>
+    public const string E104 = "E104";
+
+    /// <summary>
+    /// Email confirmed
+    /// </summary>
+    public const string E106 = "E106";
 
     /// <summary>
     /// This data already exists
@@ -73,6 +93,11 @@ public static class Error
     /// Token is expired
     /// </summary>
     public const string E109 = "E109";
+
+    /// <summary>
+    /// Confirm email error
+    /// </summary>
+    public const string E111 = "E111";
 
     /// <summary>
     /// Invalid file
@@ -254,6 +279,15 @@ public static class Error
     /// API error code
     /// </summary>
     public const string E500 = "500";
+
+    #endregion
+
+    #region -- E9xx --
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    public const string E900 = "E900";
 
     #endregion
 }
