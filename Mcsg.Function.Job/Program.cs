@@ -148,24 +148,6 @@ public class Program
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
 
-        builder.Services.AddControllers();
-
-        // AddHostedService
-        builder.Services.AddHostedService<HostedDeleteAccount>();
-        builder.Services.AddHostedService<HostedEmail>();
-        builder.Services.AddHostedService<HostedExclusiveUnlock>();
-        builder.Services.AddHostedService<HostedPaymentTransaction>();
-        builder.Services.AddHostedService<HostedSmartCountComment>();
-        builder.Services.AddHostedService<HostedSmartCountReact>();
-        builder.Services.AddHostedService<HostedSmartLoopkup>();
-        builder.Services.AddHostedService<HostedSms>();
-        builder.Services.AddHostedService<HostedSyncData>();
-        builder.Services.AddHostedService<HostedViewHistory>();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
-
         #region -- Max request body --
         var maxFileSize = 1024 * 1024 * 1024; // 1024MB
         var bufferSize = 10 * 1024 * 1024; // 10MB
@@ -187,6 +169,24 @@ public class Program
             p.MultipartBodyLengthLimit = maxFileSize;
         });
         #endregion
+
+        builder.Services.AddControllers();
+
+        // AddHostedService
+        builder.Services.AddHostedService<HostedDeleteAccount>();
+        builder.Services.AddHostedService<HostedEmail>();
+        builder.Services.AddHostedService<HostedExclusiveUnlock>();
+        builder.Services.AddHostedService<HostedPaymentTransaction>();
+        builder.Services.AddHostedService<HostedSmartCountComment>();
+        builder.Services.AddHostedService<HostedSmartCountReact>();
+        builder.Services.AddHostedService<HostedSmartLoopkup>();
+        builder.Services.AddHostedService<HostedSms>();
+        builder.Services.AddHostedService<HostedSyncData>();
+        builder.Services.AddHostedService<HostedViewHistory>();
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
 
         var app = builder.Build();
 
