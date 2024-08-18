@@ -52,6 +52,7 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
     public PostSeriesSelectedType SelectType { get; set; }
     public string? ReactionByPostStr { get; set; }
     public int TotalReact { set; get; }
+    public int TotalItems { get; set; }
 }
 
 public class NewPostSeriesResponse : PostSeriesResponse

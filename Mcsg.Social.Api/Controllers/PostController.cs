@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Requests;
@@ -13,8 +16,16 @@ public class PostController : ControllerBase
 {
     #region -- Methods --
 
-    public PostController(IPostService postService)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="mediator">Mediator</param>
+    /// <param name="setting">Setting</param>
+    /// <param name="postService">Post Service</param>
+    public PostController(IMediator mediator, ISetting setting, IPostService postService)
     {
+        _mediator = mediator;
+        _setting = setting;
         _postService = postService;
     }
 
@@ -93,10 +104,38 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// SearchHashTag
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Returns the result</returns>
+    [HttpPatch("/v1/SearchHashTag")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> SearchHashTag([FromBody] PostSearchHashTagR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --
 
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
+
+    /// <summary>
+    /// Post service
+    /// </summary>
     private readonly IPostService _postService;
 
     #endregion

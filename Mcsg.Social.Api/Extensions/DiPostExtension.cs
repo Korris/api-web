@@ -55,6 +55,7 @@ public static class DiPostExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<PostSearchHashTagR, SingleResponse>, PostSearchHashTagH>(life);
     }
 
     #endregion
