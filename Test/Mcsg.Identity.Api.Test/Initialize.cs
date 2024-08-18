@@ -31,6 +31,9 @@ public class Initialize
         var st = prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = prefix;
 
+        st.UserNameChangedInRemaining = 0.1;
+        st.UserNameWaitingChangedAfter = 0.5;
+
         // Connection string
         var cs = "Server={DbServer};Database={DbName};Port={DbPort};User Id={DbUser};Password={DbPassword};MaxPoolSize=100;MinPoolSize=10;ConnectionLifetime=300;";
 
