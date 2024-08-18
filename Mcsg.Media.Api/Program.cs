@@ -111,12 +111,10 @@ public class Program
 
         #region -- Setup token --
         builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
 
         // Cookie name
-        builder.Services.ConfigureApplicationCookie(options =>
-        {
-            options.Cookie.Name = _prefix;
-        });
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
 
         #region -- Max request body --

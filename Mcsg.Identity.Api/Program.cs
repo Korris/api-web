@@ -123,6 +123,14 @@ public class Program
         });
         #endregion
 
+        #region -- Setup token --
+        builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
+
+        // Cookie name
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
+        #endregion
+
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
 
         // Add services to the container.
@@ -134,10 +142,6 @@ public class Program
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
-
-        //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(st.Jwt);
-        builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary();
         builder.Services.AddEmailSender();

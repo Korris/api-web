@@ -148,6 +148,14 @@ public class Program
         });
         #endregion
 
+        #region -- Setup token --
+        builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
+
+        // Cookie name
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
+        #endregion
+
         builder.Services.Configure<FeedDisplayConfig>(builder.Configuration.GetSection("FeedDisplayConfigs"));
 
         // Add services to the container.
@@ -161,10 +169,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(st.Jwt);
-        builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary();
         builder.Services.AddEmailSender();

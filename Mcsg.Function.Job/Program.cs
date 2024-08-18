@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 
 namespace Mcsg.Function.Job;
 
@@ -144,37 +141,11 @@ public class Program
         #endregion
 
         #region -- Setup token --
-        // JWT
-        var signing = Encoding.UTF8.GetBytes(st.Jwt.Signing);
-        builder.Services.AddAuthentication(p =>
-        {
-            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(p =>
-        {
-            p.RequireHttpsMetadata = false;
-            p.SaveToken = true;
-            p.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(signing),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero // so tokens expire exactly at token expiration time (instead of 5 minutes later)
-            };
-        });
-
-        // Add policy
-        builder.Services.AddAuthorization(p =>
-        {
-            p.AddPolicy(Policy.Admin, q => q.RequireRole(McsgRole.SysAdmin, McsgRole.Admin));
-        });
+        builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
 
         // Cookie name
-        builder.Services.ConfigureApplicationCookie(options =>
-        {
-            options.Cookie.Name = _prefix;
-        });
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
 
         builder.Services.AddControllers();

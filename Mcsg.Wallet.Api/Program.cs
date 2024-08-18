@@ -98,6 +98,14 @@ public class Program
         builder.Services.AddWalletDbContext(csDbWallet);
         #endregion
 
+        #region -- Setup token --
+        builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
+
+        // Cookie name
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
+        #endregion
+
         builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
         builder.Services.Configure<ZaloPaySetting>(builder.Configuration.GetSection(ZaloPaySetting.ConfigName));
 
@@ -109,10 +117,6 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
-
-        //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(st.Jwt);
-        builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary();
         builder.Services.AddEmailSender();

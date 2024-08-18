@@ -24,6 +24,7 @@ using Distributor;
 using Interfaces;
 using Notifications;
 using Storages;
+using static SeedWork.Constants.Setting;
 using static SeedWork.Dtos.ConnectionDto;
 using static SeedWork.Dtos.StorageDto;
 
@@ -103,7 +104,12 @@ public static class IServiceCollectionExtension
                 }
             };
         });
-        service.AddAuthorization();
+
+        // Add policy
+        service.AddAuthorization(p =>
+        {
+            p.AddPolicy(Policy.Admin, q => q.RequireRole(McsgRole.SysAdmin, McsgRole.Admin, McsgRole.ContentAdmin));
+        });
 
         return service;
     }

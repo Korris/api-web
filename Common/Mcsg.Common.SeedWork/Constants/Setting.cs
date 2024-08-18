@@ -59,6 +59,11 @@ public class Setting
         /// Admin
         /// </summary>
         public const string Admin = "Mcsg.Admin";
+
+        /// <summary>
+        /// ContentAdmin
+        /// </summary>
+        public const string ContentAdmin = "Mcsg.ContentAdmin";
     }
 
     /// <summary>

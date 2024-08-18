@@ -108,6 +108,14 @@ public class Program
         builder.Services.AddDataLibrary(csDb);
         #endregion
 
+        #region -- Setup token --
+        builder.Services.AddBearerAuthentication(st.Jwt);
+        builder.Services.AddResponseCaching();
+
+        // Cookie name
+        builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
+        #endregion
+
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers();
@@ -118,10 +126,6 @@ public class Program
 
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
-
-        //Add Authentication & Authorization Setup
-        builder.Services.AddBearerAuthentication(st.Jwt);
-        builder.Services.AddResponseCaching();
 
         builder.Services.AddCommonWebLibrary();
         builder.Services.AddEmailSender();
