@@ -172,11 +172,11 @@ public class Program
 
             key = nameof(st.UserNameChangedInRemaining);
             value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.UserNameChangedInRemaining = Convert.ToUInt32(value);
+            st.UserNameChangedInRemaining = Convert.ToDouble(value);
 
             key = nameof(st.UserNameWaitingChangedAfter);
             value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.UserNameWaitingChangedAfter = Convert.ToUInt32(value);
+            st.UserNameWaitingChangedAfter = Convert.ToDouble(value);
         }
         #endregion
 

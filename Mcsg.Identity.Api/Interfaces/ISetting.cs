@@ -53,12 +53,12 @@ public interface ISetting : ISettingBase
     /// <summary>
     /// The remaining time in minutes after which the username can be changed
     /// </summary>
-    uint UserNameChangedInRemaining { get; set; }
+    double UserNameChangedInRemaining { get; set; }
 
     /// <summary>
     /// The waiting time in minutes before the username can be changed
     /// </summary>
-    uint UserNameWaitingChangedAfter { get; set; }
+    double UserNameWaitingChangedAfter { get; set; }
 
     #endregion
 }
