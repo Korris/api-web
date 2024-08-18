@@ -33,11 +33,6 @@ public class UserControllerTest
 
         var serviceProvider = services.BuildServiceProvider();
         _mediator = serviceProvider.GetRequiredService<IMediator>();
-
-        // Mock the HttpContext
-        var payload = "{\"id\":\"733e917b-eddc-4b3d-8973-335299e6d8c8\",\"userName\":\"minh123456789121\",\"profileName\":\"01LAbDRxO4n0GhX6\",\"profileId\":\"01LAbDRxO4n0GhX6\",\"userFolder\":\"01LAbDRxO4n0GhX6\",\"userAvatar\":\"\",\"isPremium\":false,\"isWalletShowing\":false,\"type\":0,\"roles\":[\"Mcsg.ContentAdmin\"]}";
-        var identity = new ClaimsIdentity([new Claim(ClaimTypes.Name, "minh123456789121"), new Claim(Setting.Payload, payload)]);
-        _hc = new DefaultHttpContext { User = new ClaimsPrincipal(identity) };
     }
 
     #region -- UpdateUserProfile --
@@ -239,25 +234,46 @@ public class UserControllerTest
     #region -- ValidationFailed --
     [TestCase(null, false)]
     [TestCase("nvt87x", false)]
-    public async Task UpdateUserName_ValidationFailed(string? newUserName, bool expected)
+    public async Task UpdateUserName_ValidationFailed_FreeUser(string? newUserName, bool expected)
     {
-        var request = new UserNameUpdateR { NewUserName = newUserName };
-        request.Analyze(_hc);
-        var response = await _mediator.Send(request);
-        Assert.That(response.Succeeded, Is.EqualTo(expected));
+        await UpdateUserName(newUserName, _payloadFreeUser, expected);
+    }
+
+    [TestCase(null, false)]
+    [TestCase("nvt87x", false)]
+    public async Task UpdateUserName_ValidationFailed_PremiumUser(string? newUserName, bool expected)
+    {
+        await UpdateUserName(newUserName, _payloadPremiumUser, expected);
     }
     #endregion
 
     #region -- ValidationPass --
     [TestCase("minh123456789121", true)]
-    public async Task UpdateUserName_ValidationPass(string? newUserName, bool expected)
+    public async Task UpdateUserName_ValidationPassFreeUser(string? newUserName, bool expected)
     {
+        await UpdateUserName(newUserName, _payloadFreeUser, expected);
+    }
+
+    [TestCase("minh123456789121", true)]
+    public async Task UpdateUserName_ValidationPassPremiumUser(string? newUserName, bool expected)
+    {
+        await UpdateUserName(newUserName, _payloadPremiumUser, expected);
+    }
+    #endregion
+
+    public async Task UpdateUserName(string? newUserName, string payload, bool expected)
+    {
+        var identity = new ClaimsIdentity([new Claim(ClaimTypes.Name, "minh123456789121"), new Claim(Setting.Payload, payload)]);
+        var hc = new DefaultHttpContext { User = new ClaimsPrincipal(identity) };
+
         var request = new UserNameUpdateR { NewUserName = newUserName };
-        request.Analyze(_hc);
+        request.Analyze(hc);
         var response = await _mediator.Send(request);
         Assert.That(response.Succeeded, Is.EqualTo(expected));
     }
-    #endregion
+
+    private const string _payloadFreeUser = "{\"id\":\"733e917b-eddc-4b3d-8973-335299e6d8c8\",\"userName\":\"minh123456789121\",\"profileName\":\"01LAbDRxO4n0GhX6\",\"profileId\":\"01LAbDRxO4n0GhX6\",\"userFolder\":\"01LAbDRxO4n0GhX6\",\"userAvatar\":\"\",\"isPremium\":false,\"isWalletShowing\":false,\"type\":0,\"roles\":[\"Mcsg.ContentAdmin\"]}";
+    private const string _payloadPremiumUser = "{\"id\":\"733e917b-eddc-4b3d-8973-335299e6d8c8\",\"userName\":\"minh123456789121\",\"profileName\":\"01LAbDRxO4n0GhX6\",\"profileId\":\"01LAbDRxO4n0GhX6\",\"userFolder\":\"01LAbDRxO4n0GhX6\",\"userAvatar\":\"\",\"isPremium\":true,\"isWalletShowing\":false,\"type\":0,\"roles\":[\"Mcsg.ContentAdmin\"]}";
     #endregion
 
     #region -- Fields --
@@ -266,11 +282,6 @@ public class UserControllerTest
     /// Mediator
     /// </summary>
     private IMediator _mediator;
-
-    /// <summary>
-    /// HTTP context
-    /// </summary>
-    private HttpContext _hc;
 
     #endregion
 }
