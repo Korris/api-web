@@ -96,7 +96,6 @@ public class Program
         }
         #endregion
 
-        _mediaApiUrl = st.Minio.MediaApiUrl;
         _mediaExtensionAllow = st.Minio.MediaExtensionAllow;
 
         #region -- Setup DI --
@@ -282,11 +281,6 @@ public class Program
     /// Variable prefix
     /// </summary>
     private static string _prefix = "Sto";
-
-    /// <summary>
-    /// Media API URL
-    /// </summary>
-    public static string _mediaApiUrl = default!;
 
     /// <summary>
     /// Media extension allow
