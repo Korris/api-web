@@ -38,6 +38,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddHealthChecks();
 
         // Get assembly name
         var me = typeof(Program);
@@ -226,7 +227,7 @@ public class Program
         app.UserSessionAuthorizationMiddleware();
 
         app.MapControllers();
-
+        app.MapHealthChecks("/health");
         app.UseResponseCaching();
 
         app.Run();
