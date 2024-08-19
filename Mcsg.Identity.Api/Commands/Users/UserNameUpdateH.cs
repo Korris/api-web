@@ -64,65 +64,65 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res;
         }
 
-        var createdOns = await _context.UserNameHistoryAvailable.Where(p => p.UserId == user.Id).Select(p => p.CreatedOn).ToListAsync(cancellationToken);
-        var mostRecentHistory = createdOns.OrderByDescending(p => p).FirstOrDefault();
-        int modifiedCount = createdOns.Count;
-
-        var timePassed = mostRecentHistory.AddMinutes(_setting.UserNameChangedInRemaining) - DateTime.UtcNow;
-        var timeRemaining = TimeSpan.FromHours(timePassed.TotalHours);
-        var time = timeRemaining.ToString(@"hh\:mm\:ss");
-        var canUpdateUserName = timePassed.TotalHours <= 0;
-
         // UserNameHistory
-        var hasUserNameHistory = await _context.UserNameHistoryAvailable.Where(p => p.UserId != request.UserId).AnyAsync(p => p.UserName == newUserName, cancellationToken);
+        var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserId != request.UserId && p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
             res.SetError(E107, M107);
             return res;
         }
+
+        var minTimeWaitingChange = _setting.UserNameWaitingChangedAfter;
+        var changeRemaining = _setting.UserNameChangedInRemaining;
+
+        var createdOns = await _context.UserNameHistoryAvailable.Where(p => p.UserId == user.Id).Select(p => p.CreatedOn).ToListAsync(cancellationToken);
+        var latestChanged = createdOns.OrderByDescending(p => p).FirstOrDefault();
+        var previousChanged = createdOns.OrderByDescending(p => p).Skip(1).FirstOrDefault();
+        var modifiedCount = createdOns.Count;
+
+        var utcNow = DateTime.UtcNow;
+        var remainingTime = utcNow - latestChanged.AddMinutes(changeRemaining);
+        var waitTime = utcNow - latestChanged.AddMinutes(minTimeWaitingChange);
+        var timePassed = utcNow - latestChanged;
+        var timePreviousPassed = utcNow - previousChanged.AddMinutes(changeRemaining);
+
+        var canUpdateUserName = remainingTime.TotalMinutes <= 0;
+        var updatedUserName = (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= changeRemaining;
+        var time = waitTime.ToString(@"hh\:mm\:ss");
+
         #endregion
 
-        var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == newUserName);
-        if (userNameHistory == null)
+        if (timePassed.TotalMinutes < minTimeWaitingChange)
         {
-            if (!user.IsPremium && newUserName.Length < Common.SeedWork.Constants.Validator.UserNameFree.Min)
+            if ((modifiedCount == 2 && !canUpdateUserName) || ((!canUpdateUserName || updatedUserName) && modifiedCount > 2))
             {
-                res.SetError(E124, M124);
+                res.SetError(E128, M128 + time);
                 return res;
             }
-
-            userNameHistory = new UserNameHistory
-            {
-                UserId = user.Id,
-                UserName = newUserName,
-                CreatedBy = user.Id
-            };
-
-            await _context.UserNameHistories.AddAsync(userNameHistory);
         }
 
-        if (modifiedCount > 1)
+        var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == newUserName, cancellationToken);
+        if (userNameHistory != null)
         {
-            res.SetError(E124, M124);
-
-            if (!canUpdateUserName)
-            {
-                res.SetError(E128, $"{M128}{time}");
-            }
-
-            return res;
+            await _context.UserNameHistories
+            .Where(p => p.UserName == newUserName)
+            .OrderByDescending(p => p.CreatedOn)
+            .Take(1)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.IsDelete, true), cancellationToken);
         }
 
-        if (userNameHistory.UserId != user.Id)
+        userNameHistory = new UserNameHistory
         {
-            res.SetError(E125, M125);
-            return res;
-        }
+            UserId = user.Id,
+            UserName = newUserName,
+            CreatedBy = user.Id
+        };
 
+        await _context.UserNameHistories.AddAsync(userNameHistory);
         user.UserName = newUserName;
         user.NormalizedUserName = newUserName.ToUpper();
 
-        await _context.SaveChangesAsync(default);
+        await _context.SaveChangesAsync(cancellationToken);
         res.SetSuccess(newUserName);
 
         return res;
