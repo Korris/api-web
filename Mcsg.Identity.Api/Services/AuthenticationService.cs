@@ -916,7 +916,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!string.IsNullOrWhiteSpace(email))
         {
-            user = qUser.FirstOrDefault(p => (p.Email == encryptedEmail || p.Email == email) && p.EmailConfirmed);
+            user = qUser.FirstOrDefault(p => p.Email == encryptedEmail || p.Email == email);
             if (user != null)
             {
                 code = ErrorCodes.DuplicateUser;
@@ -926,7 +926,7 @@ public partial class AuthenticationService : IAuthenticationService
 
         if (!string.IsNullOrWhiteSpace(phone))
         {
-            user = qUser.FirstOrDefault(p => (p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone) && p.PhoneNumberConfirmed);
+            user = qUser.FirstOrDefault(p => p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone);
             if (user != null)
             {
                 code = ErrorCodes.DuplicateUserPhone;
