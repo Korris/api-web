@@ -21,7 +21,17 @@ public enum HideOption
     Android,
 
     /// <summary>
+    /// Web
+    /// </summary>
+    Web,
+
+    /// <summary>
+    /// Mobile
+    /// </summary>
+    Mobile = iOS | Android,
+
+    /// <summary>
     /// All
     /// </summary>
-    All
+    All = Web | Mobile
 }
