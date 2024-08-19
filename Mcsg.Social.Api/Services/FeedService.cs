@@ -738,6 +738,7 @@ public partial class FeedService : IFeedService
             HashId = item.HashId,
             UserId = item.UserId,
             FullName = item.ProfileName,
+            UserName = item.UserName,
             ThumbnailUrl = item.ThumbnailUrl,
             CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,

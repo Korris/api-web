@@ -421,7 +421,8 @@ LIMIT @PageSize
                         p.""UserId"",
                         p.""ThumbnailUrl"", 
                         u.""Avatar"" AS UserAvatar,
-                        u.""ProfileName"", 
+                        u.""ProfileName"",
+                        u.""UserName"",
                         u.""ProfileId"",
                         p.""Status"", 
                         p.""Type"", 
@@ -464,7 +465,7 @@ LIMIT @PageSize
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false 
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
-                        p.""UserId"",u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""CreatedOn"",
+                        p.""UserId"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"", p.""CustomNote"",
                         sp.""Id"",sp.""HashId"",sp.""Title"", sp.""Status"",sp.""CreatedOn"",
                         sp.""Permission"",sp.""PublishDate"",sp.""Order"",
