@@ -1101,20 +1101,14 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var currentUserId = await _context.UserAvailable.AsNoTracking()
-                                                .Where(p => p.UserName == input.UserName)
-                                                .Select(p => p.Id)
-                                                .FirstOrDefaultAsync();
-
-        var offset = input.PageSize * (input.PageNumber - 1);
-        var query = GetRelatedBoxPostQuery;
-        query = query.Replace("[QueryCondition]", "");
+        var query = "SELECT * FROM social.fn_get_post_maybe_you_like(@Limit)";
         var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
-            Limit = input.PageSize,
+            Limit = input.PageSize
         });
         var items = MappingRelatedBoxResponse(dataQuery);
-        if (items != null && items.Count() > 0)
+
+        if (items.Any())
         {
             var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
             results.Items = items;
