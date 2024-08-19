@@ -70,13 +70,6 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("get-post-maybe-you-like")]
-    public async Task<IActionResult> GetPostMaybeYouLike([FromQuery] UserNamePagingR input)
-    {
-        var result = await _postService.GetPostMaybeYouLike(input);
-        return Ok(result);
-    }
-
     [HttpGet("get-news-feed")]
     public async Task<IActionResult> GetNewsFeed([FromQuery] UserNamePagingR input)
     {

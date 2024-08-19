@@ -1243,67 +1243,6 @@ public partial class PostService : IPostService
         return data.Concat(dataNeedToTake).ToList();
     }
 
-    public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
-    {
-
-        var currentUserId = await _context.UserAvailable.AsNoTracking()
-                                                .Where(p => p.UserName == input.UserName)
-                                                .Select(p => p.Id)
-                                                .FirstOrDefaultAsync();
-
-        var offset = input.PageSize * (input.PageNumber - 1);
-        var postIdReaded = new List<Guid> { Guid.Empty }; //TODO Analytic
-        if (postIdReaded.Any())
-        {
-            var tagIds = await _postReportRepository.Connection.QueryAsync<Guid>($@"select DISTINCT tp.""TagId"" 
-                                                                                            from comic.""ComicTagPosts"" tp 
-                                                                                            join ""comic"".""ComicPosts""  p on tp.""PostId"" =  p.""Id""
-                                                                                            WHERE tp.""PostId"" = ANY (@PostId)
-                                                                                            AND tp.""IsDelete"" = false
-                                                                                             ", new { PostId = postIdReaded });
-            var query = GetRelatedBoxPostQuery;
-            query = query.Replace("[QueryCondition]", @"AND t.""Id"" = ANY(@TagIds)");
-            var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
-            {
-                Limit = input.PageSize,
-                TagIds = tagIds,
-            });
-            var items = MappingRelatedBoxResponse(dataQuery);
-            if (items != null && items.Count() > 0)
-            {
-                var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
-                results.Items = items;
-                return results;
-            }
-            else
-            {
-                return new PagedResponse<RelatedBoxResponse>(0);
-            }
-        }
-        /// haven't read any stories/comics yet
-        else
-        {
-            var query = GetRelatedBoxPostQuery;
-            query = query.Replace("[QueryCondition]", "");
-            var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
-            {
-                Limit = input.PageSize,
-            });
-            var items = MappingRelatedBoxResponse(dataQuery);
-            if (items != null && items.Count() > 0)
-            {
-                var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
-                results.Items = items;
-                return results;
-            }
-            else
-            {
-                return new PagedResponse<RelatedBoxResponse>(0);
-            }
-        }
-    }
-
-
     private List<RelatedBoxResponse> MappingRelatedBoxResponse(IEnumerable<RelatedBoxQueryResponse> posts)
     {
         return posts.Select(x => new RelatedBoxResponse

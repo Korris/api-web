@@ -44,7 +44,6 @@ public interface IPostService
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
-    Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR loadReq);
     Task<bool> FollowPost(Guid postId);
