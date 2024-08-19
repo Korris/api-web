@@ -262,5 +262,15 @@ public static class Message
     /// </summary>
     public const string M306 = "Account has been logged into the social network";
 
+    /// <summary>
+    /// Email not confirmed
+    /// </summary>
+    public const string M307 = "Email not confirmed";
+
+    /// <summary>
+    /// Mobile not confirmed
+    /// </summary>
+    public const string M308 = "Mobile not confirmed";
+
     #endregion
 }

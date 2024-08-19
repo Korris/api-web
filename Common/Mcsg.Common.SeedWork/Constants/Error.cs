@@ -191,22 +191,22 @@ public static class Error
     /// <summary>
     /// Not file upload
     /// </summary>
-    public const string E201 = "ERR_API_000002";
+    public const string E201 = "E201";
 
     /// <summary>
     /// Only image file
     /// </summary>
-    public const string E202 = "ERR_API_000006";
+    public const string E202 = "E202";
 
     /// <summary>
     /// Post does not exist
     /// </summary>
-    public const string E204 = "ERR_API_200001";
+    public const string E204 = "E204";
 
     /// <summary>
     /// This post has deleted
     /// </summary>
-    public const string E205 = "ERR_API_200003";
+    public const string E205 = "E205";
 
     #endregion
 
@@ -246,6 +246,16 @@ public static class Error
     /// Account has been logged into the social network
     /// </summary>
     public const string E306 = "E306";
+
+    /// <summary>
+    /// Email not confirmed
+    /// </summary>
+    public const string E307 = "E307";
+
+    /// <summary>
+    /// Mobile not confirmed
+    /// </summary>
+    public const string E308 = "E308";
 
     #endregion
 

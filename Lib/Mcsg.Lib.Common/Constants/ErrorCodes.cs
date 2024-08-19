@@ -15,8 +15,6 @@ public class ErrorCodes
     public const string SocialEmailNotPublic = "ERR_AUTH_00013";
     public const string PassShouldEqualConfirmPass = "ERR_AUTH_00015";
     public const string SocialPlatformNotSupport = "ERR_AUTH_00017";
-    public const string EmailNotConfirmed = "ERR_AUTH_00018";
-    public const string MobileNotConfirmed = "ERR_AUTH_00019";
     public const string UserIsNotAllowed = "ERR_AUTH_00020";
     public const string UserIsLockedOut = "ERR_AUTH_00021";
     public const string EmailConfirmed = "ERR_AUTH_00022";
@@ -73,6 +71,5 @@ public class ErrorCodes
 
     // MCSG.Api 
     public const string NotFoundThumbnail = "ERR_API_000001";
-    public const string NotFileUpload = "ERR_API_000002";
     public const string OnlyMediaFile = "ERR_API_000005";
 }

@@ -231,19 +231,19 @@ public partial class AuthenticationService : IAuthenticationService
             throw new ForbiddenAccessException(E305, M305);
         }
 
+        if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
+        {
+            throw new ForbiddenAccessException(E307, M307);
+        }
+        if (!request.Phone.IsNullOrEmpty() && user.PhoneNumberConfirmed == false)
+        {
+            throw new ForbiddenAccessException(E308, M308);
+        }
+
         // Account has been logged into the social network
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
             throw new ForbiddenAccessException(E306, M306);
-        }
-
-        if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
-        {
-            throw new ForbiddenAccessException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, request.Email));
-        }
-        if (!request.Phone.IsNullOrEmpty() && user.PhoneNumberConfirmed == false)
-        {
-            throw new ForbiddenAccessException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, request.Phone));
         }
 
         if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
@@ -476,7 +476,7 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 if (!user.EmailConfirmed)
                 {
-                    throw new BadRequestException(ErrorCodes.EmailNotConfirmed, string.Format(ErrorMessage.EmailNotConfirmed, user.Email));
+                    throw new BadRequestException(E307, M307);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.Email, type);
                 res.Token = userOtp.Token;
@@ -496,7 +496,7 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 if (!user.PhoneNumberConfirmed)
                 {
-                    throw new BadRequestException(ErrorCodes.MobileNotConfirmed, string.Format(ErrorMessage.MobileNotConfirmed, user.PhoneNumber));
+                    throw new BadRequestException(E308, M308);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, type);
                 res.Token = userOtp.Token;
