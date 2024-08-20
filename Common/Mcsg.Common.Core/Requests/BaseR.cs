@@ -259,7 +259,7 @@ public class BaseR : IRequest<SingleResponse>
     /// Is role admin
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true || _hc?.User?.IsInRole(McsgRole.Admin) == true;
+    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true || _hc?.User?.IsInRole(McsgRole.Admin) == true || _hc?.User?.IsInRole(McsgRole.ContentAdmin) == true;
 
     /// <summary>
     /// Is role user

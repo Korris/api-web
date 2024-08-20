@@ -97,17 +97,25 @@ public partial class UserService : IUserService
 
     public async Task<UserProfileResponse> GetCurrentUserAsync()
     {
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == _currentUserService.Session.UserId);
-        var userRespone = await CreateUserRespone(user);
+        var ss = _currentUserService.Session;
+        if (ss == null)
+        {
+            throw new BadRequestException(E119, M119);
+        }
 
-        //Check first login
-        if (user.LastLoginDate == null)
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
+
+        var res = await CreateUserRespone(user);
+        res.Roles = ss.Roles;
+
+        // Check first login
+        if (user != null && user.LastLoginDate == null)
         {
             user.LastLoginDate = DateTime.UtcNow;
             await _context.SaveChangesAsync(default);
         }
 
-        return userRespone;
+        return res;
     }
 
     public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
@@ -257,11 +265,6 @@ public partial class UserService : IUserService
                                             .Select(p => p.Id)
                                             .FirstOrDefaultAsync();
 
-            if (userId == null)
-            {
-                throw new BadRequestException(E119, M119);
-            }
-
             var qUser = _context.UserAvailable;
             var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == userId);
 
@@ -398,7 +401,10 @@ public partial class UserService : IUserService
 
         await SyncWalletUserInfo(user);
 
-        return await CreateUserRespone(user);
+        var res = await CreateUserRespone(user);
+        res.Roles = ss.Roles;
+
+        return res;
     }
 
     public async Task<UserProfileAvatarResponse?> GetUserAvatar(Guid userId)
