@@ -403,4 +403,15 @@ public class Validator
         /// </summary>
         public const ushort Max = 2000;
     }
+
+    /// <summary>
+    /// Device token
+    /// </summary>
+    public class DeviceToken
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 512;
+    }
 }

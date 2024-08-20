@@ -242,6 +242,26 @@ public class BaseR : IRequest<SingleResponse>
     }
 
     /// <summary>
+    /// Origin address
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string? OriginAddress
+    {
+        get
+        {
+            var headers = _hc?.Request.Headers;
+
+            var key = "Origin";
+            if (headers != null && headers.ContainsKey(key))
+            {
+                return headers[key].ToString();
+            }
+
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Action time
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
