@@ -178,13 +178,14 @@ public class Program
         app.UseHttpsRedirection();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
-        app.UseAuthorization();
         app.UserSessionAuthorizationMiddleware();
-        app.UseCommonHub();
+        app.UseAuthorization();
 
         app.MapControllers();
         app.MapHealthChecks("/health");
         app.UseResponseCaching();
+
+        app.UseCommonHub();
 
         app.Run();
     }

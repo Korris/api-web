@@ -223,8 +223,8 @@ public class Program
         app.UseHttpsRedirection();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
-        app.UseAuthorization();
         app.UserSessionAuthorizationMiddleware();
+        app.UseAuthorization();
 
         app.MapControllers();
         app.MapHealthChecks("/health");

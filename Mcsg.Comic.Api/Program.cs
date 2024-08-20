@@ -266,8 +266,8 @@ public class Program
         app.UserSessionAuthorizationMiddleware();
         app.UseAuthorization();
 
-        app.MapHealthChecks("/health");
         app.MapControllers();
+        app.MapHealthChecks("/health");
         app.UseResponseCaching();
 
         app.Run();

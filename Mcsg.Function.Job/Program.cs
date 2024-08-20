@@ -246,10 +246,11 @@ public class Program
         #endregion
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-        app.MapHealthChecks("/health");
+
         app.MapControllers();
+        app.MapHealthChecks("/health");
+        app.UseResponseCaching();
 
         app.Run();
     }
