@@ -70,7 +70,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> ResendOtp(ResendOtpReq request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.ResendOtp(request.Type, request.OtpToken);
+        var result = await _authenticationService.ResendOtp(request);
         return Ok(result);
     }
 

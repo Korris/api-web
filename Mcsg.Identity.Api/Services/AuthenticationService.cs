@@ -108,7 +108,6 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(M000, t);
         }
 
-        VerifyUserResponse response = new();
         if (IsAccountExisted(request.Email, request.Phone, out string code, out string message))
         {
             throw new BadRequestException(code, message);
@@ -171,43 +170,8 @@ public partial class AuthenticationService : IAuthenticationService
             //setup wallet
             await _userWalletService.InitUserWalletAsync(user, false);
         }
-        try
-        {
-            // SEND OTP VIA EMAIL/PHONE HERE
-            if (!string.IsNullOrEmpty(user.Email) && string.IsNullOrEmpty(user.PhoneNumber))
-            {
-                await _otpService.ClearAllUserOtpAsync(user.Id, UserOtpType.VerifyEmail);
-                var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.VerifyEmail);
-                response.Token = userOtp.Token;
-                response.IsEmail = true;
 
-                if (_setting.DevMode)
-                {
-                    response.Code = userOtp.Code;
-                    response.UserName = user.UserName;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(user.PhoneNumber) && string.IsNullOrEmpty(user.Email))
-            {
-                await _otpService.ClearAllUserOtpAsync(user.Id, UserOtpType.VerifyPhone);
-                var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.VerifyPhone);
-                response.Token = userOtp.Token;
-                response.IsPhone = true;
-
-                if (_setting.DevMode)
-                {
-                    response.Code = userOtp.Code;
-                    response.UserName = user.UserName;
-                }
-            }
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(E500, ex.Message);
-        }
+        return await SendOtp(user);
     }
 
     public async Task<TokenDto> LoginUser(LoginUserReq request)
@@ -332,7 +296,7 @@ public partial class AuthenticationService : IAuthenticationService
         // Social user linked to db. Should return access token
         if (existUserId != Guid.Empty)
         {
-            var user = await _userManager.FindByIdAsync(existUserId + "");
+            var user = await _userManager.FindByIdAsync(existUserId.ToString());
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -448,15 +412,24 @@ public partial class AuthenticationService : IAuthenticationService
         return true;
     }
 
-    public async Task<VerifyUserResponse> ResendOtp(UserOtpType type, string otpToken = "")
+    public async Task<VerifyUserResponse> ResendOtp(ResendOtpReq request)
     {
         var res = new VerifyUserResponse();
+
+        var user = await GetUserByEmailOrPhone(request.Email, request.Phone, true);
+        if (user != null)
+        {
+            return await SendOtp(user);
+        }
+
+        var type = request.Type;
+        var otpToken = request.OtpToken;
 
         //Case current user
         if (string.IsNullOrEmpty(otpToken))
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
-            var user = await _userManager.FindByIdAsync(currentUser.UserId + "");
+            user = await _userManager.FindByIdAsync((currentUser.UserId ?? Guid.Empty).ToString());
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -573,7 +546,7 @@ public partial class AuthenticationService : IAuthenticationService
         var res = new TokenDto();
 
         var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(currentUser.UserId + "");
+        var user = await _userManager.FindByIdAsync((currentUser.UserId ?? Guid.Empty).ToString());
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -823,7 +796,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(E000, t);
         }
 
-        var user = await _userManager.FindByIdAsync(request.UserId + "");
+        var user = await _userManager.FindByIdAsync((request.UserId ?? Guid.Empty).ToString());
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -1015,6 +988,43 @@ public partial class AuthenticationService : IAuthenticationService
         await _context.UserNameHistories.AddAsync(ett);
         await _context.SaveChangesAsync(default);
         return ett.UserName;
+    }
+
+    /// <summary>
+    /// Send OTP via email or phone
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <returns>Returns the result</returns>
+    private async Task<VerifyUserResponse> SendOtp(User user)
+    {
+        var res = new VerifyUserResponse();
+        var code = "";
+
+        if (!string.IsNullOrEmpty(user.Email) && string.IsNullOrEmpty(user.PhoneNumber))
+        {
+            await _otpService.ClearAllUserOtpAsync(user.Id, UserOtpType.VerifyEmail);
+            var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.VerifyEmail);
+            res.Token = userOtp.Token;
+            code = userOtp.Code;
+            res.IsEmail = true;
+        }
+
+        if (!string.IsNullOrEmpty(user.PhoneNumber) && string.IsNullOrEmpty(user.Email))
+        {
+            await _otpService.ClearAllUserOtpAsync(user.Id, UserOtpType.VerifyPhone);
+            var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.VerifyPhone);
+            res.Token = userOtp.Token;
+            code = userOtp.Code;
+            res.IsPhone = true;
+        }
+
+        if (_setting.DevMode)
+        {
+            res.Code = code;
+            res.UserName = user.UserName;
+        }
+
+        return res;
     }
 
     #endregion

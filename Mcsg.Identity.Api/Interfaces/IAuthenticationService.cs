@@ -8,7 +8,7 @@ using Response;
 public interface IAuthenticationService
 {
     Task<VerifyUserResponse> RegisterUser(RegisterUserReq request);
-    Task<VerifyUserResponse> ResendOtp(UserOtpType type, string otpToken = "");
+    Task<VerifyUserResponse> ResendOtp(ResendOtpReq request);
     Task<TokenDto> LoginUser(LoginUserReq request);
     Task<TokenDto> LoginSocial(LoginSocialReq request);
     Task<bool> LogOut();
