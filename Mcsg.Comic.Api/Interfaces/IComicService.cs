@@ -18,8 +18,8 @@ public interface IComicService
     Task<List<PostSeriesTopResponse>> GetRecommendedComic(int number);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request);
-    Task<PostSeriesResponse> PostComic(ComicPostSeriesR comicPostReq);
-    Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR comicPostReq);
+    Task<PostSeriesResponse> PostComic(ComicPostSeriesR request);
+    Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR request);
     Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR chapterPostReq);
     Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR chapterPostReq);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);

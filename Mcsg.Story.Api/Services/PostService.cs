@@ -107,9 +107,9 @@ public partial class PostService : IPostService
     }
 
     #region PostStoryOrComic
-    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR storyPostReq)
+    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR request)
     {
-        var vr = new StoryPostSeriesV().Validate(storyPostReq);
+        var vr = new StoryPostSeriesV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
@@ -121,7 +121,7 @@ public partial class PostService : IPostService
         var profileId = ss.ProfileId;
         var currentFullName = ss.ProfileName;
 
-        VerifyBasicInfo(storyPostReq.Title);
+        VerifyBasicInfo(request.Title);
 
         //Check first post
         var rewards = await CheckRewardsForPost(currentUserId, type);
@@ -135,17 +135,17 @@ public partial class PostService : IPostService
 
         var post = new StoryPost()
         {
-            Title = storyPostReq.Title,
+            Title = request.Title,
             Type = type,
             HashId = hashId,
             UserId = currentUserId,
-            AuthorId = storyPostReq.IsCurrentUserAuthor ? currentUserId : null,
-            AuthorName = storyPostReq.IsCurrentUserAuthor ? currentFullName : storyPostReq.AuthorName,
-            Body = storyPostReq.Summary,
-            ThumbnailUrl = storyPostReq.ThumbnailUrl,
-            CoverUrl = storyPostReq.CoverUrl,
-            IsMature = storyPostReq.IsMature,
-            Permission = storyPostReq.Permission,
+            AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
+            AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
+            Body = request.Summary,
+            ThumbnailUrl = request.ThumbnailUrl,
+            CoverUrl = request.CoverUrl,
+            IsMature = request.IsMature,
+            Permission = request.Permission,
             Status = PostStatus.Public,
             CreatedBy = currentUserId,
             //TODO FAKE DATA
@@ -155,20 +155,20 @@ public partial class PostService : IPostService
         var result = new NewPostSeriesResponse
         {
             Id = post.Id,
-            Title = storyPostReq.Title,
+            Title = request.Title,
             HashId = hashId,
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
             Status = post.Status,
-            Body = storyPostReq.Summary,
-            CoverUrl = storyPostReq.CoverUrl,
-            IsMature = storyPostReq.IsMature,
-            Permission = storyPostReq.Permission,
+            Body = request.Summary,
+            CoverUrl = request.CoverUrl,
+            IsMature = request.IsMature,
+            Permission = request.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserAuthor = storyPostReq.IsCurrentUserAuthor,
+            IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             Rewards = rewards
         };
         try
@@ -178,13 +178,13 @@ public partial class PostService : IPostService
             await _smartLookupRepository.InsertAsync(new SmartLookup
             {
                 CountCriteria = 0,
-                Keyword = storyPostReq.Title,
+                Keyword = request.Title,
                 KeywordType = LookupKeywordType.Story
             });
 
-            if (storyPostReq.Tags != null && storyPostReq.Tags.Count > 0)
+            if (request.Tags != null && request.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, storyPostReq.Tags, currentUserId)).ToArray();
+                result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
             }
         }
         catch (Exception)

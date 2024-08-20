@@ -107,9 +107,9 @@ public partial class PostService : IPostService
     }
 
     #region PostStoryOrComic
-    public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR comicPostReq)
+    public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR request)
     {
-        var vr = new ComicPostSeriesV().Validate(comicPostReq);
+        var vr = new ComicPostSeriesV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
@@ -121,31 +121,31 @@ public partial class PostService : IPostService
         var profileId = ss.ProfileId;
         var currentFullName = ss.ProfileName;
 
-        VerifyBasicInfo(comicPostReq.Title);
+        VerifyBasicInfo(request.Title);
 
         //Check first post
         var rewards = await CheckRewardsForPost(currentUserId, type);
 
         var hashId = PostConfig.HashLength.GetRandomString();
         //var safePlainString = "";
-        //if (!string.IsNullOrEmpty(comicPostReq.Summary))
+        //if (!string.IsNullOrEmpty(request.Summary))
         //{
-        //    safePlainString = System.Web.HttpUtility.HtmlEncode(comicPostReq.Summary);
+        //    safePlainString = System.Web.HttpUtility.HtmlEncode(request.Summary);
         //}
 
         var post = new ComicPost()
         {
-            Title = comicPostReq.Title,
+            Title = request.Title,
             Type = type,
             HashId = hashId,
             UserId = currentUserId,
-            AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null,
-            AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName,
-            Body = comicPostReq.Summary,
-            ThumbnailUrl = comicPostReq.ThumbnailUrl,
-            CoverUrl = comicPostReq.CoverUrl,
-            IsMature = comicPostReq.IsMature,
-            Permission = comicPostReq.Permission,
+            AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
+            AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
+            Body = request.Summary,
+            ThumbnailUrl = request.ThumbnailUrl,
+            CoverUrl = request.CoverUrl,
+            IsMature = request.IsMature,
+            Permission = request.Permission,
             Status = PostStatus.Public,
             CreatedBy = currentUserId,
             //TODO FAKE DATA
@@ -155,20 +155,20 @@ public partial class PostService : IPostService
         var result = new NewPostSeriesResponse
         {
             Id = post.Id,
-            Title = comicPostReq.Title,
+            Title = request.Title,
             HashId = hashId,
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
             Status = post.Status,
-            Body = comicPostReq.Summary,
-            CoverUrl = comicPostReq.CoverUrl,
-            IsMature = comicPostReq.IsMature,
-            Permission = comicPostReq.Permission,
+            Body = request.Summary,
+            CoverUrl = request.CoverUrl,
+            IsMature = request.IsMature,
+            Permission = request.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserAuthor = comicPostReq.IsCurrentUserAuthor,
+            IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             Rewards = rewards
         };
         try
@@ -178,13 +178,13 @@ public partial class PostService : IPostService
             await _smartLookupRepository.InsertAsync(new SmartLookup
             {
                 CountCriteria = 0,
-                Keyword = comicPostReq.Title,
+                Keyword = request.Title,
                 KeywordType = LookupKeywordType.Comic
             });
 
-            if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
+            if (request.Tags != null && request.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
+                result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
             }
         }
         catch (Exception)
@@ -771,14 +771,14 @@ public partial class PostService : IPostService
 
         return MappingTopSeries(items);
     }
-    public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR comicPostReq)
+    public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR request)
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
         var profileId = ss.ProfileId;
         var currentFullName = ss.ProfileName;
 
-        VerifyBasicInfo(comicPostReq.Title);
+        VerifyBasicInfo(request.Title);
 
         #region Get post
         var query = string.Format(GetPostWithHashId, _postRepository.TableName);
@@ -787,58 +787,58 @@ public partial class PostService : IPostService
         VerifyPost(post, false);
         #endregion
 
-        if (string.IsNullOrEmpty(comicPostReq.Summary))
+        if (string.IsNullOrEmpty(request.Summary))
         {
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
 
         var currentTitle = post.Title;
-        post.Title = comicPostReq.Title;
+        post.Title = request.Title;
         post.HashId = hashId;
-        post.AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null;
-        post.AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName;
-        post.Body = comicPostReq.Summary;
-        post.ThumbnailUrl = comicPostReq.ThumbnailUrl;
-        post.CoverUrl = comicPostReq.CoverUrl;
-        post.IsMature = comicPostReq.IsMature;
-        post.Permission = comicPostReq.Permission;
-        post.Status = comicPostReq.IsSaveAndPublish ? PostStatus.Public : PostStatus.Draft;
-        post.IsCompleted = comicPostReq.IsCompleted;
+        post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
+        post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
+        post.Body = request.Summary;
+        post.ThumbnailUrl = request.ThumbnailUrl;
+        post.CoverUrl = request.CoverUrl;
+        post.IsMature = request.IsMature;
+        post.Permission = request.Permission;
+        post.Status = request.IsSaveAndPublish ? PostStatus.Public : PostStatus.Draft;
+        post.IsCompleted = request.IsCompleted;
 
         var result = new PostSeriesResponse
         {
             Id = post.Id,
-            Title = comicPostReq.Title,
+            Title = request.Title,
             HashId = hashId,
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
             Status = post.Status,
-            Body = comicPostReq.Summary,
-            CoverUrl = comicPostReq.CoverUrl,
-            IsMature = comicPostReq.IsMature,
-            Permission = comicPostReq.Permission,
+            Body = request.Summary,
+            CoverUrl = request.CoverUrl,
+            IsMature = request.IsMature,
+            Permission = request.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserAuthor = comicPostReq.IsCurrentUserAuthor,
-            IsCompleted = comicPostReq.IsCompleted
+            IsCurrentUserAuthor = request.IsCurrentUserAuthor,
+            IsCompleted = request.IsCompleted
         };
         try
         {
             await _postRepository.UpdateAsync(post);
 
-            if (currentTitle != comicPostReq.Title)
+            if (currentTitle != request.Title)
             {
                 var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.Keyword == currentTitle);
                 if (currentEntity != null)
                 {
-                    currentEntity.Keyword = comicPostReq.Title;
+                    currentEntity.Keyword = request.Title;
                     await _smartLookupRepository.UpdateAsync(currentEntity);
                 }
             }
 
-            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
+            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
         }
         catch (Exception e)
         {

@@ -6,10 +6,10 @@ using Requests;
 
 public interface IStoryService
 {
-    Task<PostSeriesResponse> PostStory(StoryPostSeriesR storyPostReq);
+    Task<PostSeriesResponse> PostStory(StoryPostSeriesR request);
     Task<PostSeriesResponse> GetStory(string hashId, bool isLoadChapters);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
-    Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR storyPostReq);
+    Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR request);
     Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq);
     Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StoryChapterR chapterPostReq);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
