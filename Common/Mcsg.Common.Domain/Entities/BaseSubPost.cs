@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 
@@ -13,7 +15,10 @@ public class BaseSubPost : AuditableHasPrivateEntity
     public string? Body { get; set; }
     public string? CreatorNote { get; set; }
     public PostStatus Status { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? PublishDate { get; set; }
+
     public int ViewCount { get; set; }
     public bool IsEnableComment { get; set; }
     public string? ExternalCode { get; set; }

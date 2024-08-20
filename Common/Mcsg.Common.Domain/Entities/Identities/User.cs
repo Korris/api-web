@@ -20,15 +20,26 @@ public partial class User : IdentityUser<Guid>
 
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? DateOfBirth { get; set; }
+
     public int? Gender { get; set; }
     public string? RefreshToken { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? RefreshTokenExpiryTime { get; set; }
+
     public string? ReferralCode { get; set; }
     public string? Avatar { get; set; }
     public UserStatus Status { get; set; } = UserStatus.Active;
+
+    [Column(TypeName = "timestamp")]
     public DateTime? ActivedDate { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? LastLoginDate { get; set; }
+
     public string? StatusReason { get; set; }
     public string? CoverPhoto { get; set; }
     public string? Location { get; set; }
@@ -61,6 +72,7 @@ public partial class User : IdentityUser<Guid>
     /// <summary>
     /// Created on
     /// </summary>
+    [Column(TypeName = "timestamp")]
     public DateTime CreatedOn { get; set; }
 
     /// <summary>
@@ -71,11 +83,13 @@ public partial class User : IdentityUser<Guid>
     /// <summary>
     /// Modified date
     /// </summary>
+    [Column(TypeName = "timestamp")]
     public DateTime? ModifiedOn { get; set; }
 
     /// <summary>
     /// The scheduled time for the job will be deleted in the future
     /// </summary>
+    [Column(TypeName = "timestamp")]
     public DateTime? DeletedAt { get; set; }
 
     /// <summary>

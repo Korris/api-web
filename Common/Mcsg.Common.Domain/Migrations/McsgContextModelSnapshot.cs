@@ -686,7 +686,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("PublishDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -991,7 +991,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExternalLastedUpdateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1299,7 +1299,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ExpiredDateUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -1308,13 +1308,13 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastActionDateUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LoginDateUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("LoginProvider")
                         .IsRequired()
@@ -1376,7 +1376,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int?>("SubType")
                         .HasColumnType("integer");
@@ -1424,7 +1424,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uuid");
@@ -2025,7 +2025,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("PublishDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -2814,7 +2814,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("PublishDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -3203,7 +3203,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("ActivedDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Avatar")
                         .HasMaxLength(500)
@@ -3223,13 +3223,13 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uuid");
@@ -3258,7 +3258,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastLoginDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("LastLoginIp")
                         .HasColumnType("varchar(256)");
@@ -3280,7 +3280,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -3316,7 +3316,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -3478,7 +3478,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExpiryTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -3567,7 +3567,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3679,7 +3679,7 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("EntityId")
                         .HasColumnType("uuid");
@@ -4525,13 +4525,13 @@ namespace Mcsg.Common.Domain.Migrations
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferee")
-                        .WithMany()
+                        .WithMany("UserReferralUserReferees")
                         .HasForeignKey("UserRefereeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserReferrer")
-                        .WithMany()
+                        .WithMany("UserReferralUserReferrers")
                         .HasForeignKey("UserReferrerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -4612,6 +4612,13 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
+                {
+                    b.Navigation("UserReferralUserReferees");
+
+                    b.Navigation("UserReferralUserReferrers");
                 });
 #pragma warning restore 612, 618
         }

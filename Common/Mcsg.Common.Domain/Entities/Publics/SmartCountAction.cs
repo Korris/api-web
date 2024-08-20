@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
@@ -11,5 +13,7 @@ public class SmartCountAction : EntityId
     public DateOnly Date { get; set; }
     public ActionType ActionType { get; set; }
     public int Count { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? ModifiedOn { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
@@ -10,5 +12,7 @@ public class UserOtp : AuditableEntity
     public string? Token { get; set; }
     public string? Destination { get; set; }
     public string? Code { get; set; }
+
+    [Column(TypeName = "timestamp")]
     public DateTime? ExpiryTime { get; set; }
 }
