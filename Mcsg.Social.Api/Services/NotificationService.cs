@@ -17,6 +17,7 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -89,7 +90,7 @@ public partial class NotificationService : INotificationService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-
+            await UpdateComicStory(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -98,6 +99,51 @@ public partial class NotificationService : INotificationService
         else
         {
             return new PagedResponse<NotificationModel>(0);
+        }
+    }
+
+    private async Task UpdateComicStory(List<NotificationModel> resDto)
+    {
+        var subComicIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubComic).Select(p => p.LocationId).ToList();
+        if (subComicIds.Any())
+        {
+            var subComics = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
+                                        SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from comic.""ComicSubPosts"" csp
+                                        JOIN comic.""ComicPosts"" cp on csp.""PostId"" = cp.""Id""
+                                        WHERE csp.""Id"" = ANY(@ids)", new { ids = subComicIds });
+            if (subComics.Count() > 0)
+            {
+                foreach (var item in subComics)
+                {
+                    var comicResponse = resDto.FirstOrDefault(p => p.LocationId == item.Id);
+                    if (comicResponse != null)
+                    {
+                        comicResponse.Order = item.Order;
+                        comicResponse.LocationHashId = item.HashId;
+                    }
+                }
+            }
+        }
+
+        var subStoryIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubStory).Select(p => p.LocationId).ToList();
+        if (subStoryIds.Any())
+        {
+            var subStories = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
+                                        SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from story.""StorySubPosts"" csp
+                                        JOIN story.""StoryPosts"" cp on csp.""PostId"" = cp.""Id""
+                                        WHERE csp.""Id"" = ANY(@SubPostIds)", new { SubPostIds = subStoryIds });
+            if (subStories.Count() > 0)
+            {
+                foreach (var item in subStories)
+                {
+                    var storyResponse = resDto.FirstOrDefault(p => p.LocationId == item.Id);
+                    if (storyResponse != null)
+                    {
+                        storyResponse.Order = item.Order;
+                        storyResponse.LocationHashId = item.HashId;
+                    }
+                }
+            }
         }
     }
 
@@ -123,7 +169,7 @@ public partial class NotificationService : INotificationService
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-
+            await UpdateComicStory(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 

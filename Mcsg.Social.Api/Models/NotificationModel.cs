@@ -19,6 +19,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public string Message { get; set; }
     public Guid ActorId { get; set; }
     public string ActorName { get; set; }
+    public float Order { get; set; }
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }

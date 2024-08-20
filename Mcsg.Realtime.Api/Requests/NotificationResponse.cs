@@ -15,4 +15,5 @@ public class NotificationResponse
     public DateTime CreatedOn { get; set; }
     public string NotificationType { get; set; }
     public string UserAvatar { get; set; }
+    public float Order { get; set; }
 }

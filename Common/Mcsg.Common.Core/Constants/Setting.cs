@@ -338,9 +338,29 @@ public class Setting : SeedWork.Constants.Setting
         public const string CommentOnFeed = "CommentOnFeed";
 
         /// <summary>
+        /// CommentOnComic
+        /// </summary>
+        public const string CommentOnComic = "CommentOnComic";
+
+        /// <summary>
+        /// CommentOnStory
+        /// </summary>
+        public const string CommentOnStory = "CommentOnStory";
+
+        /// <summary>
         /// CommentOnSubFeed
         /// </summary>
         public const string CommentOnSubFeed = "CommentOnSubFeed";
+
+        /// <summary>
+        /// CommentOnSubStory
+        /// </summary>
+        public const string CommentOnSubComic = "CommentOnSubComic";
+
+        /// <summary>
+        /// CommentOnSubStory
+        /// </summary>
+        public const string CommentOnSubStory = "CommentOnSubStory";
 
         /// <summary>
         /// ReplyOnFeed
@@ -348,9 +368,29 @@ public class Setting : SeedWork.Constants.Setting
         public const string ReplyOnFeed = "ReplyOnFeed";
 
         /// <summary>
+        /// ReplyOnComic
+        /// </summary>
+        public const string ReplyOnComic = "ReplyOnComic";
+
+        /// <summary>
+        /// ReplyOnStory
+        /// </summary>
+        public const string ReplyOnStory = "ReplyOnStory";
+
+        /// <summary>
         /// ReplyOnSubFeed
         /// </summary>
         public const string ReplyOnSubFeed = "ReplyOnSubFeed";
+
+        /// <summary>
+        /// ReplyOnSubComic
+        /// </summary>
+        public const string ReplyOnSubComic = "ReplyOnSubComic";
+
+        /// <summary>
+        /// ReplyOnSubStory
+        /// </summary>
+        public const string ReplyOnSubStory = "ReplyOnSubStory";
     }
 
     /// <summary>

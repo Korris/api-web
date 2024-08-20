@@ -2,7 +2,9 @@
 
 public static class NotificationContent
 {
-    public const string CommentOnFeed = " đã bình luận trong bài viết của bạn: ";
+    public const string CommentOnFeed = " đã bình luận trong bài viết của bạn";
+    public const string CommentOnComic = " đã bình luận trong truyện tranh của bạn";
+    public const string CommentOnStory = " đã bình luận trong truyện chữ của bạn: ";
     public const string ReplyOnComment = " đã trả lời bình luận của bạn trong một bài viết:";
     public const string MentionOnComment = " đã nhắc đến bạn trong một bình luận.";
     public const string MentionOnReply = " đã nhắc đến bạn trong một trả lời bình luận.";

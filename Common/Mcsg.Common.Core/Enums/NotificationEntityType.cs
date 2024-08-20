@@ -31,9 +31,29 @@ public enum NotificationEntityType
     PostComment,
 
     /// <summary>
+    /// ComicPostComment
+    /// </summary>
+    ComicPostComment,
+
+    /// <summary>
+    /// StoryPostComment
+    /// </summary>
+    StoryPostComment,
+
+    /// <summary>
     /// SubPostComment
     /// </summary>
     SubPostComment,
+
+    /// <summary>
+    /// ComicSubPostComment
+    /// </summary>
+    ComicSubPostComment,
+
+    /// <summary>
+    /// StorySubPostComment
+    /// </summary>
+    StorySubPostComment,
 
     /// <summary>
     /// PostCommentReply
@@ -41,9 +61,29 @@ public enum NotificationEntityType
     PostCommentReply,
 
     /// <summary>
+    /// ComicPostCommentReply
+    /// </summary>
+    ComicPostCommentReply,
+
+    /// <summary>
+    /// StoryPostCommentReply
+    /// </summary>
+    StoryPostCommentReply,
+
+    /// <summary>
     /// SubPostCommentReply
     /// </summary>
     SubPostCommentReply,
+
+    /// <summary>
+    /// ComicSubPostCommentReply
+    /// </summary>
+    ComicSubPostCommentReply,
+
+    /// <summary>
+    /// StorySubPostCommentReply
+    /// </summary>
+    StorySubPostCommentReply,
 
     /// <summary>
     /// PostCommentReaction

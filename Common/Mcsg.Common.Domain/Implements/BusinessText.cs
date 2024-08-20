@@ -55,7 +55,7 @@ public class BusinessText : IBusinessText
         res = Regex.Replace(res, Hashtag.Regex, match =>
         {
             var hashtag = match.Value.Substring(1); // remove the leading '#'
-            return $"<a href=\"/search?key={hashtag}&type=Tag\">#{hashtag}</a>";
+            return $"<a href=\"/search-tag?key=${hashtag}&type=Tag\">#{hashtag}</a>";
         });
 
         // Wrap links

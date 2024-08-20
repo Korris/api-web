@@ -11,11 +11,11 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
     public bool IsReply { get; set; }
     public Guid? ReplyToCommentId { get; set; }
     public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostComment;
-
+    public string? PostHashId { get; set; }
     public void Mapping(Profile profile)
     {
         profile.CreateMap<PostCommentResp, CommentNotificationReq>()
-            .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, false)))
+            .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, false, s.PostType)))
             .ForMember(d => d.ReplyToCommentId, opt => opt.Ignore())
         ;
         profile.CreateMap<ReplyCommentResp, CommentNotificationReq>()
@@ -32,18 +32,43 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
             .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
             .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
             .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar))
-            .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, true)))
+            .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, true, s.PostType)))
         ;
     }
-    private NotificationEntityType MapEntityType(string type, bool isReply)
+    private NotificationEntityType MapEntityType(string type, bool isReply, PostType postType)
     {
-        if (type == PostTypes.Post)
+        switch (postType)
         {
-            return !isReply ? NotificationEntityType.PostComment : NotificationEntityType.PostCommentReply;
+            case PostType.Comic:
+                if (type == PostTypes.Post)
+                {
+                    return !isReply ? NotificationEntityType.ComicPostComment : NotificationEntityType.ComicPostCommentReply;
+                }
+                else
+                {
+                    return !isReply ? NotificationEntityType.ComicSubPostComment : NotificationEntityType.ComicSubPostCommentReply;
+                }
+
+            case PostType.Story:
+                if (type == PostTypes.Post)
+                {
+                    return !isReply ? NotificationEntityType.StoryPostComment : NotificationEntityType.StoryPostCommentReply;
+                }
+                else
+                {
+                    return !isReply ? NotificationEntityType.StorySubPostComment : NotificationEntityType.StorySubPostCommentReply;
+                }
+
+            default:
+                if (type == PostTypes.Post)
+                {
+                    return !isReply ? NotificationEntityType.PostComment : NotificationEntityType.PostCommentReply;
+                }
+                else
+                {
+                    return !isReply ? NotificationEntityType.SubPostComment : NotificationEntityType.SubPostCommentReply;
+                }
         }
-        else
-        {
-            return !isReply ? NotificationEntityType.SubPostComment : NotificationEntityType.SubPostCommentReply;
-        }
+
     }
 }

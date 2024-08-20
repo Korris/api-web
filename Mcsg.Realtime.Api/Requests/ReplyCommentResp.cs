@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Realtime.Api.Requests;
 
+using Common.Core.Enums;
 using Dtos;
 
 public class ReplyCommentResp
@@ -21,4 +22,5 @@ public class ReplyCommentResp
     public string UserAvatar { get; set; }
     public string? CustomNote { get; set; }
     public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
+    public PostType PostType { get; set; }
 }

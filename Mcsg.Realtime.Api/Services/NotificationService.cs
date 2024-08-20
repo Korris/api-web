@@ -69,20 +69,49 @@ public class NotificationService : INotificationService
                 response.LocationId = comment.PostId;
                 response.LocationHashId = comment.PostHashId;
                 response.EntityId = comment.Id;
-                response.Message = comment.AuthorName + NotificationContent.CommentOnFeed;
-                response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
+                response.Message = GetMessage(comment);
+                response.TargetType = GetTargetType(comment);
                 response.ActorId = comment.AuthorId;
                 response.ActorName = comment.AuthorName;
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
                 response.UserAvatar = comment.UserAvatar;
-
+                response.Order = comment.Order ?? 0;
                 // Then notification the comment to post owner
                 await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
 
         return response;
+    }
+
+    private string GetTargetType(CommentNotificationReq comment)
+    {
+        switch (comment.PostType)
+        {
+            case PostType.Comic:
+                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnComic : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubComic;
+            case PostType.Story:
+                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnStory : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubStory;
+            default:
+                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed : Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
+        }
+    }
+
+    private string GetMessage(CommentNotificationReq comment)
+    {
+        switch (comment.PostType)
+        {
+            case PostType.Comic:
+                return comment.AuthorName + NotificationContent.CommentOnComic;
+
+            case PostType.Story:
+                return comment.AuthorName + NotificationContent.CommentOnStory;
+            default:
+                return comment.AuthorName + NotificationContent.CommentOnFeed;
+                ;
+
+        }
     }
 
     public async Task<NotificationResponse> AddReplyNotification(CommentNotificationReq comment)

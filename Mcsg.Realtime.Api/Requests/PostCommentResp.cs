@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Realtime.Api.Requests;
 
+using Common.Core.Enums;
 using Dtos;
 
 public class PostCommentResp
@@ -21,4 +22,5 @@ public class PostCommentResp
     public string? CustomNote { get; set; }
     public float? Order { get; set; }
     public Guid PostIdOfPost { get; set; }
+    public PostType PostType { get; set; }
 }

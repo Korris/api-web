@@ -100,7 +100,7 @@ public partial class StoryCommentService : IStoryCommentService
         var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
         var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
-
+        var order = 0.0f;
         var pDto = new PostDto();
 
         if (req.Type == PostTypes.Post)
@@ -120,6 +120,7 @@ public partial class StoryCommentService : IStoryCommentService
             var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
             if (subPost != null)
             {
+                order = subPost.Order;
                 pDto.Id = subPost.Id;
                 pDto.HashId = subPost.HashId;
                 pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
@@ -130,6 +131,7 @@ public partial class StoryCommentService : IStoryCommentService
             };
         }
 
+        response.PostType = PostType.Story;
         if (!string.IsNullOrEmpty(pDto.HashId))
         {
             response.AuthorName = authorName;
@@ -140,6 +142,12 @@ public partial class StoryCommentService : IStoryCommentService
 
             // Send notification
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
+            if (commentNotiRequest.Type == "subpost")
+            {
+                commentNotiRequest.Order = order;
+                var post = await _postRepository.GetByIdAsync(response.PostIdOfPost);
+                commentNotiRequest.PostHashId = post.HashId;
+            }
             await _notificationService.AddCommentNotification(commentNotiRequest);
         }
 
