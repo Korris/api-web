@@ -12,7 +12,7 @@ using Requests;
 public interface IPostService
 {
     Task<bool> Delete(Guid postId);
-    Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR postReq);
+    Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR postReq);
     Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR postReq);
     Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);

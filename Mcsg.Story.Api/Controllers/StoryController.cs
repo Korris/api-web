@@ -23,7 +23,7 @@ public class StoryController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostFeed(ComicPostSeriesR request)
+    public async Task<IActionResult> PostFeed(StoryPostSeriesR request)
     {
         var result = await _storyService.PostStory(request);
         return Ok(result);

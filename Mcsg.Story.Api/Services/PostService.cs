@@ -25,6 +25,7 @@ using Lib.Data.Repositories.Interface;
 using Models;
 using Models.Earning;
 using Requests;
+using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
@@ -106,14 +107,21 @@ public partial class PostService : IPostService
     }
 
     #region PostStoryOrComic
-    public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR comicPostReq)
+    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR storyPostReq)
     {
+        var vr = new StoryPostSeriesV().Validate(storyPostReq);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
         var profileId = ss.ProfileId;
         var currentFullName = ss.ProfileName;
 
-        VerifyBasicInfo(comicPostReq.Title);
+        VerifyBasicInfo(storyPostReq.Title);
 
         //Check first post
         var rewards = await CheckRewardsForPost(currentUserId, type);
@@ -127,17 +135,17 @@ public partial class PostService : IPostService
 
         var post = new StoryPost()
         {
-            Title = comicPostReq.Title,
+            Title = storyPostReq.Title,
             Type = type,
             HashId = hashId,
             UserId = currentUserId,
-            AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null,
-            AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName,
-            Body = comicPostReq.Summary,
-            ThumbnailUrl = comicPostReq.ThumbnailUrl,
-            CoverUrl = comicPostReq.CoverUrl,
-            IsMature = comicPostReq.IsMature,
-            Permission = comicPostReq.Permission,
+            AuthorId = storyPostReq.IsCurrentUserAuthor ? currentUserId : null,
+            AuthorName = storyPostReq.IsCurrentUserAuthor ? currentFullName : storyPostReq.AuthorName,
+            Body = storyPostReq.Summary,
+            ThumbnailUrl = storyPostReq.ThumbnailUrl,
+            CoverUrl = storyPostReq.CoverUrl,
+            IsMature = storyPostReq.IsMature,
+            Permission = storyPostReq.Permission,
             Status = PostStatus.Public,
             CreatedBy = currentUserId,
             //TODO FAKE DATA
@@ -147,20 +155,20 @@ public partial class PostService : IPostService
         var result = new NewPostSeriesResponse
         {
             Id = post.Id,
-            Title = comicPostReq.Title,
+            Title = storyPostReq.Title,
             HashId = hashId,
             UserId = currentUserId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
             Status = post.Status,
-            Body = comicPostReq.Summary,
-            CoverUrl = comicPostReq.CoverUrl,
-            IsMature = comicPostReq.IsMature,
-            Permission = comicPostReq.Permission,
+            Body = storyPostReq.Summary,
+            CoverUrl = storyPostReq.CoverUrl,
+            IsMature = storyPostReq.IsMature,
+            Permission = storyPostReq.Permission,
             ProfileId = profileId,
             AuthorName = post.AuthorName,
-            IsCurrentUserAuthor = comicPostReq.IsCurrentUserAuthor,
+            IsCurrentUserAuthor = storyPostReq.IsCurrentUserAuthor,
             Rewards = rewards
         };
         try
@@ -170,13 +178,13 @@ public partial class PostService : IPostService
             await _smartLookupRepository.InsertAsync(new SmartLookup
             {
                 CountCriteria = 0,
-                Keyword = comicPostReq.Title,
+                Keyword = storyPostReq.Title,
                 KeywordType = LookupKeywordType.Story
             });
 
-            if (comicPostReq.Tags != null && comicPostReq.Tags.Count > 0)
+            if (storyPostReq.Tags != null && storyPostReq.Tags.Count > 0)
             {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, comicPostReq.Tags, currentUserId)).ToArray();
+                result.Tags = (await _tagService.AddTagsToPost(post.Id, storyPostReq.Tags, currentUserId)).ToArray();
             }
         }
         catch (Exception)

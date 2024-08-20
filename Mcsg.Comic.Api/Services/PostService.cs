@@ -25,6 +25,7 @@ using Lib.Data.Repositories.Interface;
 using Models;
 using Models.Earning;
 using Requests;
+using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
@@ -108,6 +109,13 @@ public partial class PostService : IPostService
     #region PostStoryOrComic
     public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR comicPostReq)
     {
+        var vr = new ComicPostSeriesV().Validate(comicPostReq);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
         var profileId = ss.ProfileId;

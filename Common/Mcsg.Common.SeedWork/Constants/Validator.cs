@@ -167,7 +167,7 @@ public class Validator
         /// <summary>
         /// Maximum length
         /// </summary>
-        public const ushort Max = 34;
+        public const ushort Max = 33;
 
         /// <summary>
         /// Regex
