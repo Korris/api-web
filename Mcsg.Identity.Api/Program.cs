@@ -165,37 +165,13 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value);
+            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
             st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
             st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
             st.UserNameChangedInRemaining = Convert.ToDouble(dic[nameof(st.UserNameChangedInRemaining)]);
             st.UserNameWaitingChangedAfter = Convert.ToDouble(dic[nameof(st.UserNameWaitingChangedAfter)]);
-
-            #region -- Api.Admin --
-            st.Api.Admin.Analytic = dic["HostAnalyticAdmin"];
-            st.Api.Admin.Comic = dic["HostComicAdmin"];
-            st.Api.Admin.Identity = dic["HostIdentityAdmin"];
-            st.Api.Admin.Social = dic["HostSocialAdmin"];
-            st.Api.Admin.Story = dic["HostStoryAdmin"];
-            #endregion
-
-            #region -- Api.Mobile --
-            st.Api.Mobile.Comic = dic["HostComicMobile"];
-            st.Api.Mobile.Identity = dic["HostIdentityMobile"];
-            st.Api.Mobile.Social = dic["HostSocialMobile"];
-            st.Api.Mobile.Story = dic["HostStoryMobile"];
-            #endregion
-
-            #region -- Api.Web --
-            st.Api.Web.Comic = dic["HostComic"];
-            st.Api.Web.Identity = dic["HostIdentity"];
-            st.Api.Web.Media = dic["HostMedia"];
-            st.Api.Web.Realtime = dic["HostRealtime"];
-            st.Api.Web.Social = dic["HostSocial"];
-            st.Api.Web.Story = dic["HostStory"];
-            st.Api.Web.Wallet = dic["HostWallet"];
-            #endregion
+            st.LoadApiUrl(dic);
         }
         #endregion
 

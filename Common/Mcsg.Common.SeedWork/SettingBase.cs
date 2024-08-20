@@ -158,5 +158,42 @@ public class SettingBase : ISettingBase
         EncryptKey = string.Empty;
     }
 
+    /// <summary>
+    /// Load API URL
+    /// </summary>
+    /// <param name="dic">Dictionary</param>
+    public void LoadApiUrl(Dictionary<string, string>? dic)
+    {
+        if (dic == null)
+        {
+            return;
+        }
+
+        #region -- Api.Admin --
+        Api.Admin.Analytic = dic["HostAnalyticAdmin"];
+        Api.Admin.Comic = dic["HostComicAdmin"];
+        Api.Admin.Identity = dic["HostIdentityAdmin"];
+        Api.Admin.Social = dic["HostSocialAdmin"];
+        Api.Admin.Story = dic["HostStoryAdmin"];
+        #endregion
+
+        #region -- Api.Mobile --
+        Api.Mobile.Comic = dic["HostComicMobile"];
+        Api.Mobile.Identity = dic["HostIdentityMobile"];
+        Api.Mobile.Social = dic["HostSocialMobile"];
+        Api.Mobile.Story = dic["HostStoryMobile"];
+        #endregion
+
+        #region -- Api.Web --
+        Api.Web.Comic = dic["HostComic"];
+        Api.Web.Identity = dic["HostIdentity"];
+        Api.Web.Media = dic["HostMedia"];
+        Api.Web.Realtime = dic["HostRealtime"];
+        Api.Web.Social = dic["HostSocial"];
+        Api.Web.Story = dic["HostStory"];
+        Api.Web.Wallet = dic["HostWallet"];
+        #endregion
+    }
+
     #endregion
 }

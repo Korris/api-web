@@ -198,15 +198,11 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.ToList();
+            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
-            var key = nameof(st.AccountDeletedAfter);
-            var value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.AccountDeletedAfter = Convert.ToUInt32(value);
-
-            key = nameof(st.AccountCreatedAfter);
-            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.AccountCreatedAfter = Convert.ToUInt32(value);
+            st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
+            st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
+            st.LoadApiUrl(dic);
         }
         #endregion
 
