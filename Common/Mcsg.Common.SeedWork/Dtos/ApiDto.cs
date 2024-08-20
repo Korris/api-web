@@ -61,7 +61,7 @@ public class ApiDto
         /// <summary>
         /// Analytic
         /// </summary>
-        public string Analytic { get; set; } = default!;
+        public string? Analytic { get; set; }
     }
 
     /// <summary>
@@ -72,22 +72,22 @@ public class ApiDto
         /// <summary>
         /// Comic
         /// </summary>
-        public string Comic { get; set; } = default!;
+        public string? Comic { get; set; }
 
         /// <summary>
         /// Identity
         /// </summary>
-        public string Identity { get; set; } = default!;
+        public string? Identity { get; set; }
 
         /// <summary>
         /// Social
         /// </summary>
-        public string Social { get; set; } = default!;
+        public string? Social { get; set; }
 
         /// <summary>
         /// Story
         /// </summary>
-        public string Story { get; set; } = default!;
+        public string? Story { get; set; }
     }
 
     /// <summary>
@@ -98,17 +98,17 @@ public class ApiDto
         /// <summary>
         /// Media
         /// </summary>
-        public string Media { get; set; } = default!;
+        public string? Media { get; set; }
 
         /// <summary>
         /// Realtime
         /// </summary>
-        public string Realtime { get; set; } = default!;
+        public string? Realtime { get; set; }
 
         /// <summary>
         /// Wallet
         /// </summary>
-        public string Wallet { get; set; } = default!;
+        public string? Wallet { get; set; }
     }
 
     #endregion

@@ -165,23 +165,37 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.ToList();
+            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value);
 
-            var key = nameof(st.AccountDeletedAfter);
-            var value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.AccountDeletedAfter = Convert.ToUInt32(value);
+            st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
+            st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
+            st.UserNameChangedInRemaining = Convert.ToDouble(dic[nameof(st.UserNameChangedInRemaining)]);
+            st.UserNameWaitingChangedAfter = Convert.ToDouble(dic[nameof(st.UserNameWaitingChangedAfter)]);
 
-            key = nameof(st.AccountCreatedAfter);
-            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.AccountCreatedAfter = Convert.ToUInt32(value);
+            #region -- Api.Admin --
+            st.Api.Admin.Analytic = dic["HostAnalyticAdmin"];
+            st.Api.Admin.Comic = dic["HostComicAdmin"];
+            st.Api.Admin.Identity = dic["HostIdentityAdmin"];
+            st.Api.Admin.Social = dic["HostSocialAdmin"];
+            st.Api.Admin.Story = dic["HostStoryAdmin"];
+            #endregion
 
-            key = nameof(st.UserNameChangedInRemaining);
-            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.UserNameChangedInRemaining = Convert.ToDouble(value);
+            #region -- Api.Mobile --
+            st.Api.Mobile.Comic = dic["HostComicMobile"];
+            st.Api.Mobile.Identity = dic["HostIdentityMobile"];
+            st.Api.Mobile.Social = dic["HostSocialMobile"];
+            st.Api.Mobile.Story = dic["HostStoryMobile"];
+            #endregion
 
-            key = nameof(st.UserNameWaitingChangedAfter);
-            value = systemSettings.Where(p => p.Key == key).Select(p => p.Value).FirstOrDefault();
-            st.UserNameWaitingChangedAfter = Convert.ToDouble(value);
+            #region -- Api.Web --
+            st.Api.Web.Comic = dic["HostComic"];
+            st.Api.Web.Identity = dic["HostIdentity"];
+            st.Api.Web.Media = dic["HostMedia"];
+            st.Api.Web.Realtime = dic["HostRealtime"];
+            st.Api.Web.Social = dic["HostSocial"];
+            st.Api.Web.Story = dic["HostStory"];
+            st.Api.Web.Wallet = dic["HostWallet"];
+            #endregion
         }
         #endregion
 
