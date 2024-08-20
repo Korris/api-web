@@ -71,6 +71,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     public async Task<SingleResponse> Handle(PostUpdateR request, CancellationToken cancellationToken)
     {
         var res = new SingleResponse();
+        request.Tags = request.Content?.ExtractHashtags();
 
         var vr = new PostUpdateV().Validate(request);
         if (!vr.IsValid)
@@ -107,8 +108,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             //throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
         }
         #endregion
-
-        request.Tags = request.Content?.ExtractHashtags();
 
         var userName = request.UserName;
         var profileName = request.ProfileName;

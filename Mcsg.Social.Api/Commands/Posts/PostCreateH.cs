@@ -72,6 +72,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     public async Task<SingleResponse> Handle(PostCreateR request, CancellationToken cancellationToken)
     {
         var res = new SingleResponse();
+        request.Tags = request.Content?.ExtractHashtags();
 
         var vr = new PostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -84,8 +85,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         {
             throw new BadRequestException(M109);
         }
-
-        request.Tags = request.Content?.ExtractHashtags();
 
         var userName = request.UserName;
         var userId = request.UserId.Value;
