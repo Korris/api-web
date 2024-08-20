@@ -18,52 +18,98 @@ namespace Mcsg.Common.SeedWork.Dtos;
 /// </summary>
 public class ApiDto
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public ApiDto()
+    {
+        Admin = new AdminDto();
+        Mobile = new MobileDto();
+        Web = new WebDto();
+    }
+
+    #endregion
+
     #region -- Properties --
 
     /// <summary>
     /// Admin
     /// </summary>
-    public string Admin { get; set; } = default!;
+    public AdminDto Admin { get; }
 
     /// <summary>
-    /// Analytic
+    /// Mobile
     /// </summary>
-    public string Analytic { get; set; } = default!;
+    public MobileDto Mobile { get; }
 
     /// <summary>
-    /// Comic
+    /// Web
     /// </summary>
-    public string Comic { get; set; } = default!;
+    public WebDto Web { get; }
+
+    #endregion
+
+    #region -- Classes --
 
     /// <summary>
-    /// Identity
+    /// Admin
     /// </summary>
-    public string Identity { get; set; } = default!;
+    public class AdminDto : MobileDto
+    {
+        /// <summary>
+        /// Analytic
+        /// </summary>
+        public string Analytic { get; set; } = default!;
+    }
 
     /// <summary>
-    /// Media
+    /// Mobile
     /// </summary>
-    public string Media { get; set; } = default!;
+    public class MobileDto
+    {
+        /// <summary>
+        /// Comic
+        /// </summary>
+        public string Comic { get; set; } = default!;
+
+        /// <summary>
+        /// Identity
+        /// </summary>
+        public string Identity { get; set; } = default!;
+
+        /// <summary>
+        /// Social
+        /// </summary>
+        public string Social { get; set; } = default!;
+
+        /// <summary>
+        /// Story
+        /// </summary>
+        public string Story { get; set; } = default!;
+    }
 
     /// <summary>
-    /// Realtime
+    /// Web
     /// </summary>
-    public string Realtime { get; set; } = default!;
+    public class WebDto : MobileDto
+    {
+        /// <summary>
+        /// Media
+        /// </summary>
+        public string Media { get; set; } = default!;
 
-    /// <summary>
-    /// Social
-    /// </summary>
-    public string Social { get; set; } = default!;
+        /// <summary>
+        /// Realtime
+        /// </summary>
+        public string Realtime { get; set; } = default!;
 
-    /// <summary>
-    /// Story
-    /// </summary>
-    public string Story { get; set; } = default!;
-
-    /// <summary>
-    /// Wallet
-    /// </summary>
-    public string Wallet { get; set; } = default!;
+        /// <summary>
+        /// Wallet
+        /// </summary>
+        public string Wallet { get; set; } = default!;
+    }
 
     #endregion
 }

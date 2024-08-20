@@ -6,12 +6,7 @@
 public enum MicroService
 {
     /// <summary>
-    /// Admin
-    /// </summary>
-    Admin,
-
-    /// <summary>
-    /// 
+    /// Analytic
     /// </summary>
     Analytic,
 
@@ -19,6 +14,11 @@ public enum MicroService
     /// Comic
     /// </summary>
     Comic,
+
+    /// <summary>
+    /// Job
+    /// </summary>
+    Job,
 
     /// <summary>
     /// Identity

@@ -83,7 +83,7 @@ namespace Mcsg.Media.Tool.Workers
                             TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed
                         };
 
-                        await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Realtime);
+                        await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Web.Realtime);
                     }
                 }
                 catch (Exception ex)

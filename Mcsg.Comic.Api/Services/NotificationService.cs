@@ -178,7 +178,7 @@ public partial class NotificationService : INotificationService
 
     public async Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req)
     {
-        var baseUrl = _setting.Api.Realtime;
+        var baseUrl = _setting.Api.Web.Realtime;
         var urlBuilder = new System.Text.StringBuilder();
         urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/reaction");
 

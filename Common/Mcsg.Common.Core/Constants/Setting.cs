@@ -29,9 +29,9 @@ public class Setting : SeedWork.Constants.Setting
         {
             return new Dictionary<string, string>
             {
-                { "Adm", MicroService.Admin.ToString() },
                 { "Ana", MicroService.Analytic.ToString() },
                 { "Cmc", MicroService.Comic.ToString() },
+                { "Job", MicroService.Job.ToString() },
                 { "Ide", MicroService.Identity.ToString() },
                 { "Med", MicroService.Media.ToString() },
                 { "Rea", MicroService.Realtime.ToString() },

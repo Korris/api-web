@@ -168,7 +168,7 @@ public class ZaloPayService : IZaloPayService
 
     private async Task<bool> AddTransactionUpdateNotificationAsync(RealTimeTransactionUpdateReq req)
     {
-        var baseUrl = _setting.Api.Realtime;
+        var baseUrl = _setting.Api.Web.Realtime;
         if (string.IsNullOrEmpty(baseUrl))
         {
             return false;
