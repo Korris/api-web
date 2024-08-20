@@ -57,32 +57,6 @@ public class BaseR : IRequest<SingleResponse>
     }
 
     /// <summary>
-    /// Detect mobile call API
-    /// </summary>
-    /// <param name="agent">For detecting mobile to call API</param>
-    public void DetectMobileCall(string agent)
-    {
-        var userAgent = UserAgent;
-
-        if (string.IsNullOrWhiteSpace(agent) || string.IsNullOrWhiteSpace(userAgent))
-        {
-            return;
-        }
-
-        var arr = agent.Split(';', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var i in arr)
-        {
-            FromMobile = userAgent.Contains(i);
-
-            if (FromMobile)
-            {
-                break;
-            }
-        }
-    }
-
-    /// <summary>
     /// Get absolute URI
     /// </summary>
     public string GetAbsoluteUri(string domain)
@@ -185,7 +159,19 @@ public class BaseR : IRequest<SingleResponse>
     /// From mobile
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool FromMobile { get; private set; }
+    public bool FromMobile => FromIos || FromAndroid;
+
+    /// <summary>
+    /// From iOS
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool FromIos => "ios".Equals(DeviceType, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// From Android
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool FromAndroid => "android".Equals(DeviceType, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Remote IP address
@@ -232,6 +218,26 @@ public class BaseR : IRequest<SingleResponse>
             }
 
             return 0;
+        }
+    }
+
+    /// <summary>
+    /// Device type
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string? DeviceType
+    {
+        get
+        {
+            var headers = _hc?.Request.Headers;
+
+            var key = nameof(DeviceType);
+            if (headers != null && headers.ContainsKey(key))
+            {
+                return headers[key];
+            }
+
+            return null;
         }
     }
 

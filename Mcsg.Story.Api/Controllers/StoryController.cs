@@ -64,7 +64,6 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetTopStory()
     {
         var req = new BaseR(HttpContext);
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _storyService.GetTopStory();
 
@@ -82,7 +81,6 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetAllTopStory([FromQuery] ComicPostListSeriesR request)
     {
         var req = new BaseR();
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _storyService.GetTopStoryAsync(request);
 
@@ -98,7 +96,6 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetRelationStories([FromQuery] ComicRelationPostSeriesR request)
     {
         var req = new BaseR();
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _storyService.GetRelationStoriesAsync(request);
 

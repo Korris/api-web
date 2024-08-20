@@ -40,7 +40,6 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> GetTopComic()
     {
         var req = new BaseR(HttpContext);
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _comicService.GetTopComic();
 
@@ -58,7 +57,6 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> GetAllTopComic([FromQuery] ComicPostListSeriesR request)
     {
         var req = new BaseR(HttpContext);
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _comicService.GetTopComicAsync(request);
 
@@ -74,7 +72,6 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> GetRelationComics([FromQuery] ComicRelationPostSeriesR request)
     {
         var req = new BaseR();
-        req.DetectMobileCall(_setting.MobileUserAgent);
 
         var result = await _comicService.GetRelationComicsAsync(request);
 

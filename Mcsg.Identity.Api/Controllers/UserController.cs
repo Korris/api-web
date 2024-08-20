@@ -70,7 +70,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateUserName([FromBody] UserNameUpdateR request)
     {
         request.Analyze(HttpContext);
-        request.DetectMobileCall(_setting.MobileUserAgent);
         var response = await _mediator.Send(request);
         return Ok(response);
     }
