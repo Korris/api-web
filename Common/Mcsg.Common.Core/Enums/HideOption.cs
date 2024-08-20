@@ -13,22 +13,22 @@ public enum HideOption
     /// <summary>
     /// iOS
     /// </summary>
-    iOS,
+    Ios = 1 << 0,
 
     /// <summary>
     /// Android
     /// </summary>
-    Android,
+    Android = 1 << 1,
 
     /// <summary>
     /// Web
     /// </summary>
-    Web,
+    Web = 1 << 2,
 
     /// <summary>
     /// Mobile
     /// </summary>
-    Mobile = iOS | Android,
+    Mobile = Ios | Android,
 
     /// <summary>
     /// All

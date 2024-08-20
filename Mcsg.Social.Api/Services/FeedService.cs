@@ -485,7 +485,8 @@ public partial class FeedService : IFeedService
             Type = res.Type,
             CustomNote = res.CustomNote.ForLexical(),
             IsFavorite = postId == null ? false : postId.Contains(res.Id),
-            IsCurrentUserAuthor = res.UserId == currentUserId
+            IsCurrentUserAuthor = res.UserId == currentUserId,
+            Hide = res.Hide
         };
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
@@ -658,7 +659,8 @@ public partial class FeedService : IFeedService
             UserAvatar = item.UserAvatar,
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : [],
             CustomNote = item.CustomNote.ForLexical(),
-            IsFavorite = postIds == null ? false : postIds.Contains(item.Id)
+            IsFavorite = postIds == null ? false : postIds.Contains(item.Id),
+            Hide = item.Hide
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         #region Mapping with db query list
@@ -748,7 +750,8 @@ public partial class FeedService : IFeedService
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
             Body = HttpUtility.HtmlDecode(item.Body),
             CustomNote = item.CustomNote.ForLexical(),
-            IsFollowing = item.IsFollowing
+            IsFollowing = item.IsFollowing,
+            Hide = item.Hide
         };
 
         #region Mapping with db query single

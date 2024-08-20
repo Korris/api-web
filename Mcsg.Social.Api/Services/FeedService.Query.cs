@@ -20,13 +20,13 @@
                         post.""LinkHashId"",
                         post.""LinkUrl"",
                         post.""LinkType"", 
-                        post.""CustomNote"", array_agg(tag.""Name"") as Tags, u.""UserName"" from
+                        post.""CustomNote"", post.""Hide"", array_agg(tag.""Name"") as Tags, u.""UserName"" from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
-                            p.""CustomNote"",--sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -63,6 +63,7 @@
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""CustomNote"",
+                            p.""Hide"",
                             sp.""Total"",
                             md.""Title"",
                             md.""Description"",
@@ -90,6 +91,7 @@
                         post.""MetaUrl"",
                         post.""MetaDomain"",
                         post.""CustomNote"",
+                        post.""Hide"",
                         post.""LinkHashId"",
                         post.""LinkUrl"",
                         post.""LinkType"",
@@ -116,13 +118,13 @@
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"", 
-                        post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+                        post.""CustomNote"", post.""Hide"", array_agg(tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
-                            p.""CustomNote"", --sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -163,6 +165,7 @@
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""CustomNote"",
+                            p.""Hide"",
                             sp.""Total"",
                             md.""Title"",
                             md.""Description"",
@@ -184,7 +187,8 @@
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"",
-                        post.""CustomNote""
+                        post.""CustomNote"",
+                        post.""Hide"",
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 
@@ -211,13 +215,13 @@
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"", 
-                        post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+                        post.""CustomNote"", post.""Hide"", array_agg(tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
-                            p.""CustomNote"", --sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -255,6 +259,7 @@
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""CustomNote"",
+                            p.""Hide"",
                             sp.""Total"",
                             md.""Title"",
                             md.""Description"",
@@ -276,7 +281,8 @@
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"",
-                        post.""CustomNote""
+                        post.""CustomNote"",
+                        post.""Hide"",
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 
@@ -303,13 +309,13 @@
                         post.""LinkHashId"",
                         post.""LinkUrl"",
                         post.""LinkType"", 
-                        post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+                        post.""CustomNote"", post.""Hide"", array_agg(tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", p.commentcount,
                             p.""CreatedOn"",
-                            p.""CustomNote"", --sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", post.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -365,6 +371,7 @@ LIMIT @PageSize
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""CustomNote"",
+                            p.""Hide"",
                             sp.""Total"",
                             md.""Title"",
                             md.""Description"",
@@ -389,6 +396,7 @@ LIMIT @PageSize
                         post.""MetaUrl"",
                         post.""MetaDomain"",
                         post.""CustomNote"",
+                        post.""Hide"",
                         post.""LinkHashId"",
                         post.""LinkUrl"",
                         post.""LinkType""
@@ -427,6 +435,7 @@ LIMIT @PageSize
                         p.""Status"", 
                         p.""Type"", 
                         p.""CustomNote"",
+                        p.""Hide"",
                         array_agg(tag.""Name"") as Tags,
                         p.""CreatedOn"",
                         sp.""Id"", 
@@ -466,7 +475,7 @@ LIMIT @PageSize
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
                         p.""UserId"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""CreatedOn"",
-                        p.""Status"", p.""Type"", p.""CreatedOn"", p.""CustomNote"",
+                        p.""Status"", p.""Type"", p.""CreatedOn"", p.""CustomNote"", p.""Hide"",
                         sp.""Id"",sp.""HashId"",sp.""Title"", sp.""Status"",sp.""CreatedOn"",
                         sp.""Permission"",sp.""PublishDate"",sp.""Order"",
                         spr.""Id"",
@@ -496,6 +505,7 @@ LIMIT @PageSize
                         p.""UserId"",
                         p.""ThumbnailUrl"",                        
                         p.""CustomNote"",
+                        p.""Hide"",
                         u.""Avatar"" AS ""UserAvatar"",
                         u.""ProfileName"" AS ""FullName"",
                         u.""UserName"" AS ""UserName"",
@@ -575,6 +585,7 @@ LIMIT @PageSize
                         p.""UserId"",
                         p.""ThumbnailUrl"",
                         p.""CustomNote"",
+                        p.""Hide"",
                         u.""Avatar"",
                         u.""ProfileName"",
                         u.""UserName"",
@@ -607,13 +618,13 @@ LIMIT @PageSize
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"",
-                        post.""CustomNote"", array_agg(tag.""Name"") as Tags from
+                        post.""CustomNote"", post.""Hide"", array_agg(tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
-                            p.""CustomNote"", --sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -664,6 +675,7 @@ LIMIT @PageSize
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""CustomNote"",
+                            p.""Hide"",
                             sp.""Total"",
                             md.""Title"",
                             md.""Description"",
@@ -684,7 +696,8 @@ LIMIT @PageSize
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"",
-                        post.""CustomNote""
+                        post.""CustomNote"",
+                        post.""Hide"",
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 
