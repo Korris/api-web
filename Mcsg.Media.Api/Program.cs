@@ -191,7 +191,6 @@ public class Program
 
         app.MapControllers();
         app.MapHealthChecks("/health");
-        app.UseResponseCaching();
 
         app.Run();
     }
