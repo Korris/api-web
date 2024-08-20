@@ -246,7 +246,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
-        dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryPostFavorites.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
+        dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
         return MappingFeedRespone(dbPost);
     }
     public async Task<ChapterResponse> GetSeriesChapter(string hashId, float order)

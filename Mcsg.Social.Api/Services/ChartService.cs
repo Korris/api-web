@@ -451,6 +451,7 @@ public partial class ChartService : IChartService
                 Quantity = quantity?.Quantity ?? 0,
             });
         }
+        result.Reverse();
         return result;
     }
 
