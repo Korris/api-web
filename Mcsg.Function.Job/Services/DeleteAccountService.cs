@@ -38,7 +38,8 @@ public class DeleteAccountService : IDeleteAccountService
 
             // Change status from WillDelete to Deleted
             var utc = DateTime.UtcNow.AddMinutes(-_setting.AccountDeletedAfter);
-            var willDeleteUsers = await q.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted && p.DeletedAt < utc).Take(take).ToListAsync();
+            var willDeleteUsers = await q.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted && p.DeletedAt < utc)
+                .Take(take).ToListAsync();
             foreach (var i in willDeleteUsers)
             {
                 i.Status = UserStatus.WillDelete;
@@ -46,7 +47,8 @@ public class DeleteAccountService : IDeleteAccountService
 
             // Add a prefix to email and phone numbers to allow users to create new accounts
             utc = DateTime.UtcNow.AddMinutes(-_setting.AccountCreatedAfter);
-            var deletedUsers = await q.Where(p => p.Status == UserStatus.WillDelete && p.DeletedAt < utc).Take(take).ToListAsync();
+            var deletedUsers = await q.Where(p => p.Status == UserStatus.WillDelete && p.DeletedAt < utc)
+                .Take(take).ToListAsync();
             foreach (var i in deletedUsers)
             {
                 var prefix = $"d_{i.CreatedOn.Month}{i.CreatedOn.Day}{i.CreatedOn.Hour}{i.CreatedOn.Minute}_";
@@ -68,6 +70,14 @@ public class DeleteAccountService : IDeleteAccountService
             if (willDeleteUsers.Count > 0 || deletedUsers.Count > 0)
             {
                 await _context.SaveChangesAsync(default);
+            }
+
+            var userIds = deletedUsers.Select(p => p.Id).ToList();
+            if (userIds.Count > 0)
+            {
+                await _context.UserSocialAvailable
+                    .Where(p => userIds.Contains(p.UserId))
+                    .ExecuteUpdateAsync(p => p.SetProperty(q => q.IsDelete, true), default);
             }
         }
         catch (Exception ex)
