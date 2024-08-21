@@ -317,7 +317,8 @@ public partial class FeedService : IFeedService
                             u.""UserName"",
                             u.""Avatar"" AS UserAvatar,
                             u.""Id"" AS UserId,
-                            p.""HashId"",
+                            sp.""HashId"",
+                            p.""HashId"" as HashIdPost,
                             sp.""Id"",
                             sp.""CreatedOn"", 
                             sp.""Body"",
@@ -362,10 +363,10 @@ public partial class FeedService : IFeedService
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
         if (data.Resources.Count == 1)
         {
-            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from social.""SocialPosts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
+            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from social.""SocialPosts"" WHERE ""HashId"" =@Id", new { Id = data.HashIdPost });
             data.Id = postData.Id;
             data.Body = postData.Body;
-            data.HashId = postData.HashId;
+            data.HashIdPost = postData.HashId;
             data.Body = HttpUtility.HtmlDecode(data.Body);
         }
 

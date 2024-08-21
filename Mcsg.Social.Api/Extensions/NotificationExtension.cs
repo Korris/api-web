@@ -93,6 +93,8 @@ public static class NotificationExtension
                 case NotificationEntityType.StoryPostComment:
                 case NotificationEntityType.StorySubPostComment:
                     return noti.ActorName + NotificationContent.CommentOnStory;
+                case NotificationEntityType.SubPostComment:
+                    return noti.ActorName + NotificationContent.CommentOnFeed;
                 default:
                     return noti.ActorName + NotificationContent.CommentOnFeed;
             }
