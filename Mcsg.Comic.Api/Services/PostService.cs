@@ -1329,7 +1329,7 @@ public partial class PostService : IPostService
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _setting.Minio.MediaApiUrl.GetMediaPath(resources.Name, resources.Url),
+            Url = _setting.Api.Web.Media.GetMediaPath(resources.Name, resources.Url),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,

@@ -31,11 +31,6 @@ public abstract class StorageDto
     public string PublicUrl { get; set; } = default!;
 
     /// <summary>
-    /// Media API URL
-    /// </summary>
-    public string MediaApiUrl { get; set; } = default!;
-
-    /// <summary>
     /// Upload multipart body length limit (MB)
     /// </summary>
     public int UploadMultipartBodyLengthLimit { get; set; } = 128;

@@ -42,7 +42,7 @@ public partial class SoundService : ISoundService
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var response = new PagedResponse<BackgroundMedia.SearchDto>(totalItems, req.PageNumber, req.PageSize);
-            response.Items = items.Select(p => p.ToSearchDto(_setting.Minio.MediaApiUrl));
+            response.Items = items.Select(p => p.ToSearchDto(_setting.Api.Web.Media));
             return response;
         }
         else
@@ -68,8 +68,8 @@ public partial class SoundService : ISoundService
             foreach (var item in items)
             {
                 item.Duration = item.DurationSeconds.ToDuration();
-                item.Url = _setting.Minio.MediaApiUrl.GetMediaPath(".mp3", item.Url);
-                item.Thumbnail = _setting.Minio.MediaApiUrl.GetMediaPath(".jpg", item.Thumbnail);
+                item.Url = _setting.Api.Web.Media.GetMediaPath(".mp3", item.Url);
+                item.Thumbnail = _setting.Api.Web.Media.GetMediaPath(".jpg", item.Thumbnail);
             }
 
             var response = new PagedResponse<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);
@@ -105,7 +105,7 @@ public partial class SoundService : ISoundService
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var response = new PagedResponse<BackgroundMedia.SearchDto>(totalItems, req.PageNumber, req.PageSize);
-            response.Items = items.Select(p => p.ToSearchDto(_setting.Minio.MediaApiUrl));
+            response.Items = items.Select(p => p.ToSearchDto(_setting.Api.Web.Media));
             return response;
         }
         else

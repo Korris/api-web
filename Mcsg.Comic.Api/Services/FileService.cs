@@ -236,7 +236,7 @@ public class FileService : IFileService
             {
                 HashId = resource.HashId,
                 Order = resource.Order,
-                Url = _setting.Minio.MediaApiUrl.GetMediaPath(resource.Name, resource.Url)
+                Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url)
             });
         }
 
