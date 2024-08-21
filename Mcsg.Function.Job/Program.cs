@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -149,28 +148,6 @@ public class Program
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
 
-        #region -- Max request body --
-        var maxFileSize = 1024 * 1024 * 1024; // 1024MB
-        var bufferSize = 10 * 1024 * 1024; // 10MB
-
-        builder.Services.Configure<IISServerOptions>(p =>
-        {
-            p.MaxRequestBodySize = maxFileSize;
-            p.MaxRequestBodyBufferSize = bufferSize;
-        });
-
-        builder.Services.Configure<KestrelServerOptions>(p =>
-        {
-            p.Limits.MaxRequestBodySize = maxFileSize;
-            p.Limits.MaxRequestBufferSize = bufferSize;
-        });
-
-        builder.Services.Configure<FormOptions>(p =>
-        {
-            p.MultipartBodyLengthLimit = maxFileSize;
-        });
-        #endregion
-
         builder.Services.AddControllers();
 
         // AddHostedService
@@ -188,6 +165,8 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(p => { p.EnableAnnotations(); });
+
+        builder.Services.ConfigureMaxRequestSizes();
 
         var app = builder.Build();
 

@@ -12,6 +12,9 @@
 #endregion
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
@@ -125,6 +128,33 @@ public static class IServiceCollectionExtension
         service.AddSingleton(p => { return new DistributeManager(assembly, service.BuildServiceProvider()); });
 
         return service;
+    }
+
+    /// <summary>
+    /// Configures the maximum request body size and buffer size for IIS and Kestrel servers
+    /// </summary>
+    /// <param name="services">The IServiceCollection to configure</param>
+    public static void ConfigureMaxRequestSizes(this IServiceCollection services)
+    {
+        var maxFileSize = 1024 * 1024 * 1024; // 1024MB
+        var bufferSize = 10 * 1024 * 1024; // 10MB
+
+        services.Configure<IISServerOptions>(p =>
+        {
+            p.MaxRequestBodySize = maxFileSize;
+            p.MaxRequestBodyBufferSize = bufferSize;
+        });
+
+        services.Configure<KestrelServerOptions>(p =>
+        {
+            p.Limits.MaxRequestBodySize = maxFileSize;
+            p.Limits.MaxRequestBufferSize = bufferSize;
+        });
+
+        services.Configure<FormOptions>(p =>
+        {
+            p.MultipartBodyLengthLimit = maxFileSize;
+        });
     }
 
     #endregion

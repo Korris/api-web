@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -155,28 +154,6 @@ public class Program
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
 
-        #region -- Max request body --
-        var maxFileSize = 1024 * 1024 * 1024; // 1024MB
-        var bufferSize = 10 * 1024 * 1024; // 10MB
-
-        builder.Services.Configure<IISServerOptions>(p =>
-        {
-            p.MaxRequestBodySize = maxFileSize;
-            p.MaxRequestBodyBufferSize = bufferSize;
-        });
-
-        builder.Services.Configure<KestrelServerOptions>(p =>
-        {
-            p.Limits.MaxRequestBodySize = maxFileSize;
-            p.Limits.MaxRequestBufferSize = bufferSize;
-        });
-
-        builder.Services.Configure<FormOptions>(p =>
-        {
-            p.MultipartBodyLengthLimit = maxFileSize;
-        });
-        #endregion
-
         builder.Services.Configure<FeedDisplayConfig>(builder.Configuration.GetSection("FeedDisplayConfigs"));
 
         // Add services to the container.
@@ -219,6 +196,8 @@ public class Program
         builder.Services.AddScoped<IValidator<StoryPostReport>, PostReportValidator>();
 
         builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+
+        builder.Services.ConfigureMaxRequestSizes();
 
         var app = builder.Build();
 
