@@ -144,12 +144,13 @@ public static class IFormFileExtension
     }
 
     /// <summary>
-    /// CompressAndConvertToJpeg
+    /// Compress and convert to JPEG
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="quality"></param>
-    /// <returns></returns>
-    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int quality)
+    /// <param name="file">File</param>
+    /// <param name="quality">Quality</param>
+    /// <param name="dpi">DPI adjustment</param>
+    /// <returns>Returns the result</returns>
+    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int quality, int dpi = 72)
     {
         if (file != null && file.Length > 0)
         {
@@ -157,6 +158,8 @@ public static class IFormFileExtension
             {
                 using (var magickImage = new MagickImage(stream))
                 {
+                    magickImage.Density = new Density(dpi);
+
                     using (var memoryStream = new MemoryStream())
                     {
                         magickImage.Format = MagickFormat.Jpeg;
