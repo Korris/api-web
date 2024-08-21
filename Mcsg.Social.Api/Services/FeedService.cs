@@ -284,73 +284,73 @@ public partial class FeedService : IFeedService
     public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId)
     {
         var query = $@"WITH SubPostsCount AS (
-                            SELECT ""PostId"", 
-                                   COUNT(*) AS total_subposts 
-                            FROM social.""SocialSubPosts""
-                            WHERE ""IsDelete"" = false
-                            GROUP BY ""PostId""
-                        ),
-                        ResourceCount AS (
-                            SELECT sp.""PostId"",
-                            to_jsonb(array_agg(
-                            json_build_object(
-                                'Url', r.""Url"",
-                                'Height', r.""Height"",
-                                'Width', r.""Width"",
-                                'BucketName', r.""BucketName"",
-                                'Type', r.""Type"",
-                                'Name', r.""Name"",
-                                'Order',r.""Order"",
-                                'HashId',r.""HashId"",
-                                'SubPostHashId',sp.""HashId""
-                   
-                            )
-                            )) AS Resources
-                            FROM social.""SocialSubPosts"" sp
-                            LEFT JOIN social.""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
-                            WHERE sp.""IsDelete"" = false
-                            GROUP BY sp.""PostId""
-                        )
-                        SELECT 
-                            u.""ProfileName"" AS Fullname,
-                            u.""ProfileId"",
-                            u.""UserName"",
-                            u.""Avatar"" AS UserAvatar,
-                            u.""Id"" AS UserId,
-                            sp.""HashId"",
-                            p.""HashId"" as HashIdPost,
-                            sp.""Id"",
-                            sp.""CreatedOn"", 
-                            sp.""Body"",
-                            sp.""CreatedBy"",
-                            COALESCE(psb.""HashId"", (
-                                SELECT ps.""HashId"" 
-                                FROM social.""SocialSubPosts"" ps 
-                                WHERE ps.""PostId"" = sp.""PostId"" 
-                                  AND ps.""Order"" = sc.total_subposts
-                                  AND ps.""IsDelete"" = false
-                            )) AS PrevSubPostHashId,
-                            COALESCE(asp.""HashId"", (
-                                SELECT ps.""HashId"" 
-                                FROM social.""SocialSubPosts"" ps 
-                                WHERE ps.""PostId"" = sp.""PostId"" 
-                                  AND ps.""Order"" = 1
-                                  AND ps.""IsDelete"" = false
-                            )) AS NextSubPostHashId,
-                            rc.Resources as ""ResourcesStr""
-                        FROM social.""SocialSubPosts"" sp
-                        LEFT JOIN identity.""Users"" u ON u.""Id"" = sp.""UserId""
-                        LEFT JOIN social.""SocialPosts"" p ON p.""Id"" = sp.""PostId""
-                        LEFT JOIN social.""SocialSubPosts"" psb ON sp.""PostId"" = psb.""PostId""
-                         AND sp.""Order"" = psb.""Order"" + 1
-                         AND psb.""IsDelete"" = false
-                         LEFT JOIN social.""SocialSubPosts"" asp ON sp.""PostId"" = asp.""PostId""
-                         AND sp.""Order"" = asp.""Order"" - 1
-                         AND asp.""IsDelete"" = false
-                         LEFT JOIN SubPostsCount sc ON sp.""PostId"" = sc.""PostId""
-                         LEFT JOIN ResourceCount rc ON sp.""PostId"" = rc.""PostId""
-                         WHERE sp.""HashId"" = @Id
-                        AND sp.""IsDelete"" = false";
+                         SELECT ""PostId"", 
+                                COUNT(*) AS total_subposts 
+                         FROM social.""SocialSubPosts""
+                         WHERE ""IsDelete"" = false
+                         GROUP BY ""PostId""
+                     ),
+                     ResourceCount AS (
+                         SELECT sp.""PostId"",
+                         to_jsonb(array_agg(
+                         json_build_object(
+                             'Url', r.""Url"",
+                             'Height', r.""Height"",
+                             'Width', r.""Width"",
+                             'BucketName', r.""BucketName"",
+                             'Type', r.""Type"",
+                             'Name', r.""Name"",
+                             'Order',r.""Order"",
+                             'HashId',r.""HashId"",
+                             'SubPostHashId',sp.""HashId""
+                
+                         )
+                         )) AS Resources
+                         FROM social.""SocialSubPosts"" sp
+                         LEFT JOIN social.""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
+                         WHERE sp.""IsDelete"" = false
+                         GROUP BY sp.""PostId""
+                     )
+                     SELECT 
+                         u.""ProfileName"" AS Fullname,
+                         u.""ProfileId"",
+                         u.""UserName"",
+                         u.""Avatar"" AS UserAvatar,
+                         u.""Id"" AS UserId,
+                         p.""HashId"",
+                         sp.""HashId"" as SubPostHashId,
+                         sp.""Id"",
+                         sp.""CreatedOn"", 
+                         sp.""Body"",
+                         sp.""CreatedBy"",
+                         COALESCE(psb.""HashId"", (
+                             SELECT ps.""HashId"" 
+                             FROM social.""SocialSubPosts"" ps 
+                             WHERE ps.""PostId"" = sp.""PostId"" 
+                               AND ps.""Order"" = sc.total_subposts
+                               AND ps.""IsDelete"" = false
+                         )) AS PrevSubPostHashId,
+                         COALESCE(asp.""HashId"", (
+                             SELECT ps.""HashId"" 
+                             FROM social.""SocialSubPosts"" ps 
+                             WHERE ps.""PostId"" = sp.""PostId"" 
+                               AND ps.""Order"" = 1
+                               AND ps.""IsDelete"" = false
+                         )) AS NextSubPostHashId,
+                         rc.Resources as ""ResourcesStr""
+                     FROM social.""SocialSubPosts"" sp
+                     LEFT JOIN identity.""Users"" u ON u.""Id"" = sp.""UserId""
+                     LEFT JOIN social.""SocialPosts"" p ON p.""Id"" = sp.""PostId""
+                     LEFT JOIN social.""SocialSubPosts"" psb ON sp.""PostId"" = psb.""PostId""
+                      AND sp.""Order"" = psb.""Order"" + 1
+                      AND psb.""IsDelete"" = false
+                      LEFT JOIN social.""SocialSubPosts"" asp ON sp.""PostId"" = asp.""PostId""
+                      AND sp.""Order"" = asp.""Order"" - 1
+                      AND asp.""IsDelete"" = false
+                      LEFT JOIN SubPostsCount sc ON sp.""PostId"" = sc.""PostId""
+                      LEFT JOIN ResourceCount rc ON sp.""PostId"" = rc.""PostId""
+                      WHERE sp.""HashId"" = @Id
+                     AND sp.""IsDelete"" = false";
 
         var dataQuery = await _postRepository.Connection.QueryFirstOrDefaultAsync<SubPostFeedQuery>(query, new
         {
@@ -363,10 +363,10 @@ public partial class FeedService : IFeedService
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
         if (data.Resources.Count == 1)
         {
-            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from social.""SocialPosts"" WHERE ""HashId"" =@Id", new { Id = data.HashIdPost });
+            var postData = await _postRepository.Connection.QueryFirstAsync<SubPostFeedResponse>($@"SELECT ""Body"",""Id"",""HashId"" from social.""SocialPosts"" WHERE ""HashId"" =@Id", new { Id = data.HashId });
             data.Id = postData.Id;
             data.Body = postData.Body;
-            data.HashIdPost = postData.HashId;
+            data.HashId = postData.HashId;
             data.Body = HttpUtility.HtmlDecode(data.Body);
         }
 
@@ -385,21 +385,20 @@ public partial class FeedService : IFeedService
         data.SubPosts.Add(new SubUploadFileDto
         {
             Files = new List<UploadFileDto>()
-                {
-                    new UploadFileDto()
-                    {
-                        HashId = hashId,
-                        Height = data.Height,
-                        Width = data.Width,
-                        Url = data.Url,
-                        Type = data.ResourceType,
-                        Name = data.ResourceName
-                    }
-                }
+             {
+                 new UploadFileDto()
+                 {
+                     HashId = hashId,
+                     Height = data.Height,
+                     Width = data.Width,
+                     Url = data.Url,
+                     Type = data.ResourceType,
+                     Name = data.ResourceName
+                 }
+             }
         });
         return data;
     }
-
     public async Task<FeedDto> GetFeedAsync(string hashId, Guid userId)
     {
         var query = string.Format(GetFeedQuery, _postRepository.TableName);

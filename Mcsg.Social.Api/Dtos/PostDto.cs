@@ -10,6 +10,7 @@ public class PostDto
     public Guid Id { get; set; }
     public string Title { get; set; }
     public string HashId { get; set; }
+    public string SubPostHashId { get; set; }
     public Guid UserId { get; set; }
     public string ProfileId { get; set; }
     public string AuthorName { get; set; }
