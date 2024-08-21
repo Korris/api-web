@@ -64,7 +64,7 @@ public class Program
         assembly!.StartLogger(st);
 
         #region -- Load HTTP protocols --
-        if (!st.IsLocal && !string.IsNullOrWhiteSpace(st.Protocols))
+        if (!string.IsNullOrWhiteSpace(st.Protocols))
         {
             var protocols = st.Protocols.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
