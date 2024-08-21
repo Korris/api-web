@@ -162,8 +162,15 @@ public class SettingBase : ISettingBase
     /// Load API URL
     /// </summary>
     /// <param name="dic">Dictionary</param>
-    public void LoadApiUrl(Dictionary<string, string>? dic)
+    /// <param name="isLocal">Is local</param>
+    /// <param name="hasProtocol">Has protocol</param>
+    public void LoadApiUrl(Dictionary<string, string>? dic, bool isLocal, bool hasProtocol)
     {
+        if (isLocal)
+        {
+            dic = hasProtocol ? _hostDicHttp : _hostDicHttps;
+        }
+
         if (dic == null)
         {
             return;
@@ -194,6 +201,60 @@ public class SettingBase : ISettingBase
         Api.Web.Wallet = dic["HostWallet"];
         #endregion
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// Host dictionary
+    /// </summary>
+    private readonly Dictionary<string, string> _hostDicHttps = new()
+    {
+        { "HostComic", "https://localhost:44303" },
+        { "HostIdentity", "https://localhost:44305" },
+        { "HostMedia", "https://localhost:44306" },
+        { "HostRealtime", "https://localhost:44307" },
+        { "HostSocial", "https://localhost:44308" },
+        { "HostStory", "https://localhost:44309" },
+        { "HostWallet", "https://localhost:44310" },
+
+        { "HostComicMobile", "https://localhost:44311" },
+        { "HostIdentityMobile", "https://localhost:44312" },
+        { "HostSocialMobile", "https://localhost:44313" },
+        { "HostStoryMobile", "https://localhost:44314" },
+
+        { "HostAnalyticAdmin", "https://localhost:44302" },
+        { "HostComicAdmin", "https://localhost:44315" },
+        { "HostIdentityAdmin", "https://localhost:44316" },
+        { "HostSocialAdmin", "https://localhost:44317" },
+        { "HostStoryAdmin", "https://localhost:44318" }
+    };
+
+    /// <summary>
+    /// Host dictionary
+    /// </summary>
+    private readonly Dictionary<string, string> _hostDicHttp = new()
+    {
+        { "HostComic", "http://localhost:54303" },
+        { "HostIdentity", "http://localhost:54305" },
+        { "HostMedia", "http://localhost:54306" },
+        { "HostRealtime", "http://localhost:54307" },
+        { "HostSocial", "http://localhost:54308" },
+        { "HostStory", "http://localhost:54309" },
+        { "HostWallet", "http://localhost:54310" },
+
+        { "HostComicMobile", "http://localhost:54311" },
+        { "HostIdentityMobile", "http://localhost:54312" },
+        { "HostSocialMobile", "http://localhost:54313" },
+        { "HostStoryMobile", "http://localhost:54314" },
+
+        { "HostAnalyticAdmin", "http://localhost:54302" },
+        { "HostComicAdmin", "http://localhost:54315" },
+        { "HostIdentityAdmin", "http://localhost:54316" },
+        { "HostSocialAdmin", "http://localhost:54317" },
+        { "HostStoryAdmin", "http://localhost:54318" }
+    };
 
     #endregion
 }

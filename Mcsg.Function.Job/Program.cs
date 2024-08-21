@@ -202,7 +202,7 @@ public class Program
 
             st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
             st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
-            st.LoadApiUrl(dic);
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
         }
         #endregion
 

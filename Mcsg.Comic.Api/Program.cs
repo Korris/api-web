@@ -231,7 +231,7 @@ public class Program
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
             var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
-            st.LoadApiUrl(dic);
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
         }
         #endregion
 
