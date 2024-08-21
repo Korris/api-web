@@ -10,12 +10,23 @@
                                                 pc.""CustomNote"",
                                                 pc.""Id"",
                                                 pc.""CreatedOn"",
+                                                pc.""ParentId"",
+                                                pc.""PostId"",
                                                 u.""Avatar"" as UserAvatar,
                                                 u.""ProfileName"" as AuthorName,
                                                 u.""ProfileId"",
                                                 r.""Name"" as ResourceName,
                                                 r.""Url"" as ResourceUrl,
                                                 r.""HashId"" as ResourceHashId
+                                               FROM {0} pc
+                                               LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                               WHERE pc.""ParentId"" = @CommentId
+                                               AND pc.""IsDelete"" = false
+                                               LIMIT @PageSize
+                                               OFFSET @Offset;
+                                                
+                                               SELECT COUNT(pc.*)
                                                FROM {0} pc
                                                LEFT JOIN social.""SocialResources"" r on pc.""ResourceId"" = r.""Id""
                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
