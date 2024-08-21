@@ -57,8 +57,13 @@ public static class StreamExtension
     /// </summary>
     /// <param name="fs">Stream</param>
     /// <returns>Return the result</returns>
-    public static string ToString(this Stream fs)
+    public static string ToString(this Stream? fs)
     {
+        if (fs == null)
+        {
+            return string.Empty;
+        }
+
         var bufferSize = 1024; // 1 KB buffer size
         var buffer = new byte[bufferSize];
         var stringBuilder = new StringBuilder();
@@ -81,8 +86,13 @@ public static class StreamExtension
     /// </summary>
     /// <param name="fs">Stream</param>
     /// <param name="filePath">File path</param>
-    public static void ToFile(this Stream fs, string filePath)
+    public static void ToFile(this Stream? fs, string filePath)
     {
+        if (fs == null)
+        {
+            return;
+        }
+
         // Ensure the Stream's position is at the beginning
         fs.Position = 0;
 

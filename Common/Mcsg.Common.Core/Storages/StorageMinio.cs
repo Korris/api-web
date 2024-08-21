@@ -30,13 +30,13 @@ public class StorageMinio : StorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
-    public override async Task<Stream> GetObject(string objectName, string? bucketName)
+    public override async Task<Stream?> GetObject(string objectName, string? bucketName)
     {
-        var res = new MemoryStream();
+        Stream? res = null;
 
         if (string.IsNullOrWhiteSpace(objectName))
         {
-            return res;
+            return null;
         }
 
         if (string.IsNullOrWhiteSpace(bucketName))
@@ -44,8 +44,16 @@ public class StorageMinio : StorageStrategy
             bucketName = _auth?.BucketName;
         }
 
-        var getArg = new GetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithCallbackStream(p => { p.CopyTo(res); });
-        await Mc.GetObjectAsync(getArg);
+        try
+        {
+            res = new MemoryStream();
+            var getArg = new GetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithCallbackStream(p => { p.CopyTo(res); });
+            await Mc.GetObjectAsync(getArg);
+        }
+        catch
+        {
+            res = null;
+        }
 
         return res;
     }

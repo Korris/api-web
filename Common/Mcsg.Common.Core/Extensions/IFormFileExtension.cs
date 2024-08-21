@@ -160,14 +160,14 @@ public static class IFormFileExtension
                 {
                     magickImage.Density = new Density(dpi);
 
-                    using (var memoryStream = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         magickImage.Format = MagickFormat.Jpeg;
                         magickImage.Quality = quality;
-                        magickImage.Write(memoryStream);
-                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        magickImage.Write(ms);
+                        ms.Seek(0, SeekOrigin.Begin);
 
-                        using (var image = SixLabors.ImageSharp.Image.Load(memoryStream))
+                        using (var image = SixLabors.ImageSharp.Image.Load(ms))
                         {
                             var output = new MemoryStream();
                             image.Save(output, new JpegEncoder { Quality = quality });

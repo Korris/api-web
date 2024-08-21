@@ -37,7 +37,7 @@ public interface IStorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
-    Task<Stream> GetObject(string objectName, string? bucketName);
+    Task<Stream?> GetObject(string objectName, string? bucketName);
 
     /// <summary>
     /// Download object

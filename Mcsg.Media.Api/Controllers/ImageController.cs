@@ -38,13 +38,13 @@ public class ImageController : ControllerBase
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> Get([FromQuery] string? i, string? p)
     {
-        MemoryStream? ms = null;
+        Stream? fs = null;
         string? objectName = null;
 
         if (!string.IsNullOrWhiteSpace(p))
         {
             objectName = $"{Setting.MinioFolder.Image}/{p}";
-            ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
+            fs = await _sc.Strategy.GetObject(objectName, null);
         }
         else
         {
@@ -59,8 +59,10 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
-            ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
+            fs = await _sc.Strategy.GetObject(objectName, null);
         }
+
+        var ms = fs as MemoryStream;
 
         if (ms == null)
         {

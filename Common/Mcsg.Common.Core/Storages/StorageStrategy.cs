@@ -40,7 +40,7 @@ public class StorageStrategy : IStorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
-    public virtual Task<Stream> GetObject(string objectName, string? bucketName)
+    public virtual Task<Stream?> GetObject(string objectName, string? bucketName)
     {
         throw new NotImplementedException();
     }
