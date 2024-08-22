@@ -20,6 +20,7 @@ using System.Text.Json.Serialization;
 
 namespace Mcsg.Common.Core.Requests;
 
+using Common.Core.Enums;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Responses;
 using static Common.SeedWork.Constants.Setting;
@@ -172,6 +173,41 @@ public class BaseR : IRequest<SingleResponse>
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
     public bool FromAndroid => "android".Equals(DeviceType, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Hides
+    /// </summary>
+    public List<int> Hides
+    {
+        get
+        {
+            var res = new List<HideOption>();
+
+            if (IsRoleAdmin)
+            {
+                return [];
+            }
+
+            if (FromAndroid)
+            {
+                res.Add(HideOption.Android);
+                res.Add(HideOption.Mobile);
+            }
+            else if (FromIos)
+            {
+                res.Add(HideOption.Ios);
+                res.Add(HideOption.Mobile);
+            }
+            else
+            {
+                res.Add(HideOption.Web);
+            }
+
+            res.Add(HideOption.All);
+
+            return res.Select(p => (int)p).ToList();
+        }
+    }
 
     /// <summary>
     /// Remote IP address
