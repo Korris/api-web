@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Checkers;
 
 using Common.Domain;
-using Lib.Data.Interfaces;
+using Interfaces;
 
 /// <summary>
 /// UserName uniqueness checker

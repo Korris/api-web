@@ -4,13 +4,11 @@ using Microsoft.OpenApi.Models;
 
 namespace Mcsg.Media.Api;
 
-using Checkers;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Data.Interfaces;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -87,9 +85,6 @@ public class Program
         // DbContext
         builder.Services.AddDbContext<McsgContext>(p => p.UseNpgsql(csDb!, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
         builder.Services.AddScoped<IMcsgContext>(p => p.GetService<McsgContext>()!);
-
-        // Checker
-        builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
 
         // Storage
         builder.Services.AddStorage(p =>

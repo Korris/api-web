@@ -5,7 +5,6 @@ using System.Reflection;
 namespace Mcsg.Comic.Api;
 
 using Attributes;
-using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain;
@@ -19,7 +18,6 @@ using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data.Interfaces;
 using Lib.Data.Wallet;
 using Models;
 using Services;
@@ -103,9 +101,6 @@ public class Program
 
         // Business
         builder.Services.AddScoped<IBusinessText, BusinessText>();
-
-        // Checker
-        builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
 
         // Storage
         builder.Services.AddStorage(p =>

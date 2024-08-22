@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Data.Interfaces;
+﻿namespace Mcsg.Identity.Api.Interfaces;
 
 using Common.Core.Interfaces;
 
