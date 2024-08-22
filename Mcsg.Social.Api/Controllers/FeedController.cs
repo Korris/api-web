@@ -126,7 +126,8 @@ public class FeedController : ControllerBase
     [HttpGet("post/{userName}")]
     public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq loadReq)
     {
-        loadReq.UserName = userName;
+        loadReq.NewUserName = userName;
+        loadReq.Analyze(HttpContext);
         var result = await _feedService.GetFeedsAsync(loadReq, LoadFeedType.ALL);
         return Ok(result);
     }

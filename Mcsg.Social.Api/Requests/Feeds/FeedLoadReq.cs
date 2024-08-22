@@ -4,5 +4,5 @@ using Common.Core.Requests;
 
 public class FeedLoadReq : PaginatedR
 {
-    public string? UserName { get; set; }
+    public string? NewUserName { get; set; }
 }

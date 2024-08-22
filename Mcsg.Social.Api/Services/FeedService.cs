@@ -104,6 +104,7 @@ public partial class FeedService : IFeedService
 
             query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
 
+            var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new
                     {
@@ -114,7 +115,9 @@ public partial class FeedService : IFeedService
                         Date = date,
                         Status = PostStatus.Public,
                         DateOnly = DateOnly.FromDateTime(date),
-                        Hide = feedLoadReq.Hides
+                        Hide = feedLoadReq.Hides,
+                        MySelf = isMySelf,
+                        feedLoadReq.NewUserName,
                     });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
@@ -858,7 +861,7 @@ public partial class FeedService : IFeedService
     }
     private static string AddAdditionalFeedQuery(FeedLoadReq feedLoadReq, string query, LoadFeedType loadFeedType)
     {
-        if (string.IsNullOrEmpty(feedLoadReq.UserName))
+        if (string.IsNullOrEmpty(feedLoadReq.NewUserName))
         {
             query = query.Replace("[AdditionalCondition]", "")
                 .Replace("[AdditionalTotalQuery]", "")
@@ -867,8 +870,8 @@ public partial class FeedService : IFeedService
         else
         {
             var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
-            var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
-            var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.UserName}'";
+            var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
+            var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
 
             query = query.Replace("[AdditionalCondition]", additionalCondition)
                 .Replace("[AdditionalTotalQuery]", additionalTotalQuery)
