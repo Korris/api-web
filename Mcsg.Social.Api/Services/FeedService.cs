@@ -87,6 +87,7 @@ public partial class FeedService : IFeedService
                 feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
             }
             var query = "";
+            var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
             if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
             {
                 query = string.Format(GetAllFeedsWithTopCommentQuery, _postRepository.TableName, feedLoadReq.OrderBy);
