@@ -42,7 +42,7 @@ public partial class CommentService : ICommentService
         _setting = setting;
         _configuration = configuration;
         _businessText = businessBodyText;
-        _currentUserService = _currentUserService;
+        _currentUserService = currentUserService;
     }
 
     public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -264,8 +264,8 @@ public partial class CommentService : ICommentService
         {
             var postComment = items.Where(p => p.Order == null).ToList();
             var subPostComment = items.Where(p => p.Order != null).ToList();
-            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
-            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"comic.""ComicPostCommentReactions""");
+            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"comic.""ComicSubPostCommentReactions""");
 
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
             {

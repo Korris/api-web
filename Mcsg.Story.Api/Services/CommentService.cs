@@ -264,8 +264,8 @@ public partial class CommentService : ICommentService
         {
             var postComment = items.Where(p => p.Order == null).ToList();
             var subPostComment = items.Where(p => p.Order != null).ToList();
-            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
-            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"story.""StoryPostCommentReactions""");
+            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
 
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
             {
