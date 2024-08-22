@@ -490,7 +490,7 @@ public partial class CommentService : ICommentService
                 {
                     TotalReply = replyModels.Count
                 };
-
+                comment.ReplyCount = replyModels.Count;
                 comment.Replies = replies;
 
                 // Mention to comment
