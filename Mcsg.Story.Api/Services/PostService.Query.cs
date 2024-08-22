@@ -1218,6 +1218,7 @@ ORDER BY group_number, random_row_num;
                     p.""AuthorName"",
                     p.""UserId"",
                     u.""ProfileName"",
+                    u.""UserName"",
                     p.""ViewCount"",
                     p.""IsMature"",
                     p.""CreatedOn"",
@@ -1247,6 +1248,7 @@ ORDER BY group_number, random_row_num;
                           p.""AuthorName"",
                           p.""UserId"",
                           u.""ProfileName"",
+                          u.""UserName"",
                           p.""ViewCount""
             ";
             }

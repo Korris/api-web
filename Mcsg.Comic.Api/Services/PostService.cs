@@ -1306,7 +1306,8 @@ public partial class PostService : IPostService
                     HashId = res.HashId,
                     CreatedOn = res.CreatedOn,
                     ProfileName = res.ProfileName,
-                    UserId = res.UserId
+                    UserId = res.UserId,
+                    UserName = res.UserName,
                 };
 
                 listPostDetails.Add(postDetails);
