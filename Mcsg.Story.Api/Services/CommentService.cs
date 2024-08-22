@@ -12,6 +12,7 @@ using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
 using Lib.Common.Constants;
+using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -25,10 +26,11 @@ public partial class CommentService : ICommentService
     private readonly IRepository<StoryResource> _resourceRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<Mention> _mentionRepository;
+    private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     protected readonly IMapper _mapper;
 
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText)
+    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText, ICurrentUserService currentUserService)
     {
         _postCommentRepository = unitOfWork.GetRepository<StoryPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<StorySubPostComment>();
@@ -40,6 +42,7 @@ public partial class CommentService : ICommentService
         _setting = setting;
         _configuration = configuration;
         _businessText = businessBodyText;
+        _currentUserService = currentUserService;
     }
 
     public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -259,6 +262,23 @@ public partial class CommentService : ICommentService
 
         if (items != null && items.Count() > 0)
         {
+            var postComment = items.Where(p => p.Order == null).ToList();
+            var subPostComment = items.Where(p => p.Order != null).ToList();
+            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
+            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+
+            var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+            {
+                TargetIds = postComment.Select(p => p.Id).ToList(),
+                UserId = _currentUserService.Session?.UserId
+            });
+
+            var subPostCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(querySubPostCommentReaction, new
+            {
+                TargetIds = subPostComment.Select(p => p.Id).ToList(),
+                UserId = _currentUserService.Session?.UserId
+            });
+
             var body = "";
             foreach (var i in items)
             {
@@ -270,6 +290,17 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
+                var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postCommentReaction.Count > 0)
+                {
+                    MapReactionResponse(item, postCommentReaction);
+                }
+                var subPostCommentReaction = subPostCommentReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (subPostCommentReaction.Count > 0)
+                {
+                    MapReactionResponse(item, subPostCommentReaction);
+                }
+
                 item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(item.ResourceName, item.ResourceUrl) : "";
 
                 if (mentions != null && mentions.Any())
@@ -291,6 +322,19 @@ public partial class CommentService : ICommentService
         }
 
         return results;
+    }
+
+    public void MapReactionResponse(MostReactionCommentResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request)

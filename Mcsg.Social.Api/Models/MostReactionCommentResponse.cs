@@ -2,6 +2,7 @@
 
 namespace Mcsg.Social.Api.Models;
 
+using Common.Core.Enums;
 using Common.SeedWork.Converters;
 
 public class MostReactionCommentResponse : BasicCommentResponse
@@ -36,4 +37,13 @@ public class BasicCommentResponse
     public Guid? QuoteId { get; set; }
     public DateTime? ModifiedOn { get; set; }
     public Guid? ParentId { get; set; }
+    public ReactionsResponse Reaction { get; set; } = new ReactionsResponse();
+}
+
+public class CommentReactionResponseQuery
+{
+    public ReactionType? Type { get; set; }
+    public Guid? TargetId { get; set; }
+    public int Count { get; set; }
+    public int ReactByCurrent { get; set; }
 }
