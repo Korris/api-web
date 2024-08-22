@@ -359,7 +359,6 @@ public partial class FeedService : IFeedService
         var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery.ResourcesStr);
         var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
         data.Resources = resource;
-
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
         if (data.Resources.Count == 1)
         {
@@ -370,6 +369,7 @@ public partial class FeedService : IFeedService
             data.Body = HttpUtility.HtmlDecode(data.Body);
         }
 
+        data.Resources.OrderBy(p => p.Order);
         foreach (var item in data.Resources)
         {
             if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
