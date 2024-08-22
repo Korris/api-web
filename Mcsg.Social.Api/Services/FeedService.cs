@@ -370,7 +370,7 @@ public partial class FeedService : IFeedService
             data.Body = HttpUtility.HtmlDecode(data.Body);
         }
 
-        data.Resources.OrderBy(p => p.Order);
+        data.Resources = data.Resources.OrderBy(p => p.Order).ToList();
         foreach (var item in data.Resources)
         {
             if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
