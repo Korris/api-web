@@ -17,6 +17,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;
+    public int ReplyCount { get; set; }
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
     public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
     public string? CustomNote { get; set; }

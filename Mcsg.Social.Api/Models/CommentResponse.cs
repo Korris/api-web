@@ -18,6 +18,7 @@ public class CommentResponse : IMapFrom<CommentQueryModel>
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;
     public string? CustomNote { get; set; }
+    public int ReplyCount { get; set; }
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
     public List<UserMentionResponse> Mentions { get; set; } = new List<UserMentionResponse>();
     public void Mapping(Profile profile)
