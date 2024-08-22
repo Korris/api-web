@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class ComicPostByTagNameR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicPostByTagNameR : PaginatedR
 {
     public string? TagName { get; set; }
 }

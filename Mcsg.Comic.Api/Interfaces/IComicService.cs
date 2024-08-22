@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
@@ -27,7 +28,7 @@ public interface IComicService
     Task<bool> Delete(Guid postId);
     Task<PagedResponse<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request);
-    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
     Task<bool> FollowPost(Guid postId);
     Task<float> GetLatestOrderChapter(string hashPostId);
 }

@@ -4,6 +4,7 @@ namespace Mcsg.Comic.Api.Services;
 
 using Api.Constants;
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -179,7 +180,7 @@ public partial class ComicService : IComicService
         return await _postService.SwapChapterOrder(comicHashId, orders);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input)
     {
         return await _postService.GetFollowedPost(input);
     }

@@ -196,7 +196,7 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("get-followed-post")]
-    public async Task<IActionResult> GetFollowedPost([FromQuery] BasePageResultR input)
+    public async Task<IActionResult> GetFollowedPost([FromQuery] PaginatedR input)
     {
         var result = await _storyService.GetFollowedPost(input);
         return Ok(result);

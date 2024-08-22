@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -45,6 +46,6 @@ public interface IPostService
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
-    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR loadReq);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
     Task<bool> FollowPost(Guid postId);
 }

@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class ComicTopPostR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicTopPostR : PaginatedR
 {
 }

@@ -7,6 +7,7 @@ namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -937,7 +938,7 @@ public partial class PostService : IPostService
         }
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq)
     {
 
         ValidateTotalItem(loadReq.PageSize);

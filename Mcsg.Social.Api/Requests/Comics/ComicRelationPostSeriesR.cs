@@ -2,7 +2,9 @@
 
 namespace Mcsg.Social.Api.Requests;
 
-public class ComicRelationPostSeriesR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicRelationPostSeriesR : PaginatedR
 {
     [Required]
     public string? HashId { get; set; }

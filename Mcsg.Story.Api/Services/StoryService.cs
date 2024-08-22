@@ -2,12 +2,13 @@
 
 namespace Mcsg.Story.Api.Services;
 
-using Api.Constants;
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
+using Constants;
 using Enums;
 using Interfaces;
 using Lib.Common.Web.Security;
@@ -147,7 +148,7 @@ public partial class StoryService : IStoryService
         return await _postService.GetPostByTagName(_type, request);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input)
     {
         return await _postService.GetFollowedPost(input);
     }

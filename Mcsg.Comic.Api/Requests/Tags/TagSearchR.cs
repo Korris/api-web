@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class TagSearchR : BasePageResultR
+using Common.Core.Requests;
+
+public class TagSearchR : PaginatedR
 {
     public string? Name { get; set; }
 }

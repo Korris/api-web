@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class ComicPostByProFileNameR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicPostByProFileNameR : PaginatedR
 {
     public string? Keyword { get; set; }
     public string? SearchBy { get; set; }

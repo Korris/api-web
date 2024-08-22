@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class UserNamePagingR : BasePageResultR
+using Common.Core.Requests;
+
+public class UserNamePagingR : PaginatedR
 {
     public string? UserName { get; set; }
 }

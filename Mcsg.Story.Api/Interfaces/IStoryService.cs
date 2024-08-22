@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
@@ -27,7 +28,7 @@ public interface IStoryService
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request);
     Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request);
-    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(BasePageResultR input);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
     Task<bool> FollowPost(Guid postId);
     Task<float> GetLatestOrderChapter(string hashPostId);
 }

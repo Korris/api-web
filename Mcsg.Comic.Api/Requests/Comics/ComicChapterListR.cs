@@ -2,7 +2,9 @@
 
 namespace Mcsg.Comic.Api.Requests;
 
-public class ComicChapterListR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicChapterListR : PaginatedR
 {
     [DefaultValue("Order")]
     public string? OrderBy { get; set; }

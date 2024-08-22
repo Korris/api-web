@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class FavoritePostR : BasePageResultR
+using Common.Core.Requests;
+
+public class FavoritePostR : PaginatedR
 {
 }

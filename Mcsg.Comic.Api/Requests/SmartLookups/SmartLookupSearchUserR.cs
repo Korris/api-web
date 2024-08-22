@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class SmartLookupSearchUserR : BasePageResultR
+using Common.Core.Requests;
+
+public class SmartLookupSearchUserR : PaginatedR
 {
     public string? ProfileName { get; set; }
 }

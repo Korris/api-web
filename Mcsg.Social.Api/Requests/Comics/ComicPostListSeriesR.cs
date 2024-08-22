@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class ComicPostListSeriesR : BasePageResultR
+using Common.Core.Requests;
+
+public class ComicPostListSeriesR : PaginatedR
 {
     public string? HashTag { get; set; }
     public bool IsFavorite { get; set; }

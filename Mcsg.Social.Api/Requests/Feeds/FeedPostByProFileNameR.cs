@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
-public class FeedPostByProFileNameR : BasePageResultR
+using Common.Core.Requests;
+
+public class FeedPostByProFileNameR : PaginatedR
 {
     public string? Keyword { get; set; }
     public string? SearchBy { get; set; }

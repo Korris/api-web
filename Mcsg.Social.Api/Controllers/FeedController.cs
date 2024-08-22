@@ -43,7 +43,7 @@ public class FeedController : ControllerBase
     public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
     {
         request.Analyze(HttpContext);
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.ALL);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.ALL);
         return Ok(result);
     }
 
@@ -57,14 +57,14 @@ public class FeedController : ControllerBase
     [HttpGet("trending")]
     public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
     {
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.TRENDING);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.TRENDING);
         return Ok(result);
     }
 
     [HttpGet("hot")]
     public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
     {
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.HOT);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.HOT);
         return Ok(result);
     }
 

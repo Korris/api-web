@@ -203,7 +203,7 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("get-followed-post")]
-    public async Task<IActionResult> GetFollowedPost([FromQuery] BasePageResultR input)
+    public async Task<IActionResult> GetFollowedPost([FromQuery] PaginatedR input)
     {
         var result = await _comicService.GetFollowedPost(input);
         return Ok(result);
