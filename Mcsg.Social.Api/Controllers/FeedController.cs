@@ -85,8 +85,9 @@ public class FeedController : ControllerBase
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetFeed(string hashId)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _feedService.GetFeedAsync(hashId, req.UserId ?? Guid.Empty);
+        var req = new FeedHashIdR { HashId = hashId };
+        req.Analyze(HttpContext);
+        var result = await _feedService.GetFeedAsync(req);
         return Ok(result);
     }
 
@@ -116,8 +117,9 @@ public class FeedController : ControllerBase
     [HttpGet("get-feed-by-list-id")]
     public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _feedService.GetFeedsByIds(hashIds, req.UserId ?? Guid.Empty);
+        var req = new FeedHashIdsR { HashIds = hashIds };
+        req.Analyze(HttpContext);
+        var result = await _feedService.GetFeedsByIds(req);
         return Ok(result);
     }
 

@@ -109,11 +109,12 @@ public partial class FeedService : IFeedService
                     {
                         Type = (int)PostType.Feed,
                         IsAccessPrivate = false,
-                        PageSize = feedLoadReq.PageSize,
+                        feedLoadReq.PageSize,
                         Offet = offset,
                         Date = date,
                         Status = PostStatus.Public,
-                        DateOnly = DateOnly.FromDateTime(date)
+                        DateOnly = DateOnly.FromDateTime(date),
+                        Hide = feedLoadReq.Hides
                     });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
@@ -399,11 +400,13 @@ public partial class FeedService : IFeedService
         });
         return data;
     }
-    public async Task<FeedDto> GetFeedAsync(string hashId, Guid userId)
+    public async Task<FeedDto> GetFeedAsync(FeedHashIdR req)
     {
+        var hashId = req.HashId;
+        var userId = req.UserId;
         var query = string.Format(GetFeedQuery, _postRepository.TableName);
 
-        FeedQueryDbDto dbFeed = null;
+        FeedQueryDbDto? dbFeed = null;
         await _postRepository
             .Connection.QueryAsync<FeedQueryDbDto, SubPostQueryDbDto, UploadFileQueryDbDto, MetaDataQueryDto, PostLinkDbDto, FeedQueryDbDto>(query,
             (feed, subpost, uploadfiles, meta, link) =>
@@ -440,6 +443,7 @@ public partial class FeedService : IFeedService
             {
                 HashId = hashId,
                 IsAccessPrivate = false,
+                Hide = req.Hides
             }, splitOn: "Id, Id, Id, Id, Id");
 
         //Add view
@@ -557,9 +561,12 @@ public partial class FeedService : IFeedService
         return itemResponse;
     }
 
-    public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds, Guid userId)
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(FeedHashIdsR req)
     {
-        var param = new { HashIds = hashIds.Split(',').ToList() };
+        var hashIds = req.HashIds;
+        var userId = req.UserId;
+
+        var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 

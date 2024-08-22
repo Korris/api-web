@@ -56,7 +56,7 @@
                                 LIMIT 1
                             ) spr ON spr.""SubPostId"" = sp.""Id""
                             WHERE 
-                             p.""IsDelete"" = false [AdditionalCondition] and  p.""Type"" = @Type AND p.""Status"" = @Status
+                             p.""IsDelete"" = false [AdditionalCondition] and  p.""Type"" = @Type AND p.""Status"" = @Status AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) 
                             -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                             GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"",
@@ -99,7 +99,8 @@
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems FROM {0} p [AdditionalTotalQuery] WHERE p.""Type"" = @Type 
-                        AND p.""IsDelete"" = false [AdditionalTotalCondition]
+                        AND p.""IsDelete"" = false [AdditionalTotalCondition] 
+                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false);";
             }
         }
@@ -315,7 +316,7 @@
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", p.commentcount,
                             p.""CreatedOn"",
-                            p.""CustomNote"", post.""Hide"", --sp.""Id"" as ""SPID"",
+                            p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             to_jsonb(array_agg(spr.*)) AS ""SubPostResourceStr"",
@@ -364,8 +365,8 @@ LIMIT @PageSize
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
-                            ) spr ON spr.""SubPostId"" = sp.""Id""
-                            
+                            ) spr ON spr.""SubPostId"" = sp.""Id"" 
+                            WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) 
                             GROUP BY p.""Id"", p.commentcount ,p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             u.""Avatar"",u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"",
@@ -414,7 +415,8 @@ LIMIT @PageSize
                                         GROUP BY ""EntityId"", ""EntityType"", ""EntityId"",""SubType""
                                     ) smart
                                 ON smart.""EntityId"" = qpost.""Id"" 
-                                WHERE qpost.""Type"" = 0) p;";
+                                WHERE qpost.""Type"" = 0 
+                                AND NOT (qpost.""Hide"" = ANY (@Hide) AND qpost.""Hide"" = ANY (@Hide) IS NOT NULL)) p;";
             }
         }
         private string GetFeedQuery
@@ -471,7 +473,7 @@ LIMIT @PageSize
                         LEFT JOIN social.""SocialResources"" spr ON spr.""SubPostId"" = sp.""Id"" AND spr.""IsDelete"" = false    
                         LEFT JOIN social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false 
                         WHERE 
-                        p.""HashId"" = @HashId AND p.""IsDelete"" = false 
+                        p.""HashId"" = @HashId AND p.""IsDelete"" = false AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
                         p.""UserId"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""CreatedOn"",
@@ -577,6 +579,7 @@ LIMIT @PageSize
                     WHERE
                         p.""HashId"" = ANY(@HashIds)
                         AND p.""IsDelete"" = FALSE
+                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                     GROUP BY
                         p.""Id"",
                         p.""Type"",
