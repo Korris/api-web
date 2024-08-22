@@ -28,7 +28,9 @@
                              END AS ""KeywordType""
                             , us.""Avatar""
                          FROM {_smartLookupRepository.TableName} sm
-                          LEFT JOIN {_userRepository.TableName} us ON sm.""Keyword"" = us.""ProfileName"" AND sm.""KeywordType"" = {LookupKeywordType.People.GetHashCode()}
+                         LEFT JOIN {_userRepository.TableName} us ON sm.""Keyword"" = us.""ProfileName"" 
+                            AND sm.""KeywordType"" = {LookupKeywordType.People.GetHashCode()}
+                            AND us.""IsDelete"" = false
                         {{0}}
                         ORDER BY sm.""CountCriteria"" DESC
                         LIMIT 6";

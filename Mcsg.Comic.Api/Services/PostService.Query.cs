@@ -275,7 +275,7 @@ LIMIT 1
                             p.""CreatedOn""
                             ) 
                         AS post
-                        LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
+                        LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id"" AND u.""IsDelete"" = false
                         LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
                         LEFT JOIN ""comic"".""ComicPostComments"" comment ON comment.""PostId"" = post.""Id"" AND comment.""IsDelete"" = false

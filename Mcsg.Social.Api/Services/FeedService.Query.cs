@@ -189,7 +189,7 @@
                         post.""MetaUrl"",
                         post.""MetaDomain"",
                         post.""CustomNote"",
-                        post.""Hide"",
+                        post.""Hide""
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 
@@ -238,7 +238,7 @@
                                 LIMIT @PageSize
                                 OFFSET @Offet
                             ) p
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""                        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" AND u.""IsDelete"" = false
                             LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL 
                             (
@@ -283,7 +283,7 @@
                         post.""MetaUrl"",
                         post.""MetaDomain"",
                         post.""CustomNote"",
-                        post.""Hide"",
+                        post.""Hide""
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 
@@ -700,7 +700,7 @@ LIMIT @PageSize
                         post.""MetaUrl"",
                         post.""MetaDomain"",
                         post.""CustomNote"",
-                        post.""Hide"",
+                        post.""Hide""
                         ORDER BY post.""{1}"" DESC;
 
                         SELECT COUNT(*) AS TotalItems 

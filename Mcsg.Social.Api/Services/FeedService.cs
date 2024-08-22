@@ -166,6 +166,7 @@ public partial class FeedService : IFeedService
             queryCondition = $@"LEFT JOIN identity.""Users"" u
                                 ON qpost.""UserId"" = u.""Id""
                                 WHERE u.""ProfileName""=@ProfileName 
+                                   AND u.""IsDelete"" = false
                                    AND qpost.""Type""=@PostType
                                    AND qpost.""Status""=@PostStatus
                                    AND qpost.""IsDelete""=false";

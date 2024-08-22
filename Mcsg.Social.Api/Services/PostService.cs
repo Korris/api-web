@@ -651,6 +651,7 @@ public partial class PostService : IPostService
         if (input.SearchBy == "ProfileName")
         {
             queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
+                                   AND u.""IsDelete"" = false
                                    AND p.""Type""=@PostType
                                    AND p.""Status""=@PostStatus
                                    AND p.""IsDelete""=false";
