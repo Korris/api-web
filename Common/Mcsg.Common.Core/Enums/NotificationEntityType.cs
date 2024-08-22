@@ -118,5 +118,10 @@ public enum NotificationEntityType
     /// <summary>
     /// SubPostCommentMention
     /// </summary>
-    SubPostCommentMention
+    SubPostCommentMention,
+
+    /// <summary>
+    /// FollowUser
+    /// </summary>
+    FollowUser
 }

@@ -14,8 +14,6 @@ public interface IUserService
     Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req);
     Task<PagedResponse<UserFollowedResponse>> GetFollowedProfileAsync(UserNamePagingR req);
     Task<UserProfileResponse> GetCurrentUserAsync();
-    Task<bool> FollowUserAsync(Guid userId);
-    Task<bool> UnFollowUserAsync(Guid userId);
     Task<UserProfileAvatarResponse?> GetUserAvatar(Guid userId);
     Task<UserAvatarUpdateResponse> UpdateUserAvatar(UserAvatarUpdateR request);
     Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR request);

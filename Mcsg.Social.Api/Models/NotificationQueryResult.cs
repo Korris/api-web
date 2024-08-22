@@ -24,4 +24,5 @@ public class NotificationQueryResult
     public string ActorName { get; set; }
     public string Avatar { get; set; }
     public int? ReactionType { get; set; }
+    public string UserName { get; set; }
 }

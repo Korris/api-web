@@ -53,5 +53,10 @@ public enum NotificationAction
     /// <summary>
     /// Mention
     /// </summary>
-    Mention
+    Mention,
+
+    /// <summary>
+    /// FollowUser
+    /// </summary>
+    FollowUser
 }

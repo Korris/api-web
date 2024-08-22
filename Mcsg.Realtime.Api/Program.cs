@@ -154,6 +154,7 @@ public class Program
         builder.Services.AddScoped<IStoryNotificationService, StoryNotificationService>();
         builder.Services.AddScoped<IComicNotificationService, ComicNotificationService>();
         builder.Services.AddScoped<IMentionService, MentionService>();
+        builder.Services.AddScoped<IFollowService, FollowService>();
 
         var app = builder.Build();
 
@@ -217,6 +218,7 @@ public class Program
 
         app.MapHub<CommentHub>("/commentHub");
         app.MapHub<NotificationHub>("/notificationHub");
+        app.MapHub<FollowHub>("/followHub");
 
         app.Run();
     }

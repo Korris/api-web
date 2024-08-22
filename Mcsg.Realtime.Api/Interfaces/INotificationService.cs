@@ -17,4 +17,5 @@ public interface INotificationService
     Task<List<NotificationDto>> AddNotificationsAsync(Guid actorId, List<Guid> receiverIds, NotificationAction action, NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead, Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "");
     Task AddTransactionUpdate(RealTimeTransactionUpdateReq req);
     Task AddCommonNotification(CommonNotificationReq req);
+    Task<NotificationResponse> FollowNotification(UserFollowResp followResp);
 }

@@ -14,4 +14,5 @@ public static class NotificationContent
     public const string VideoUploadProcessing = "Video của bạn đang được đăng tải.";
     public const string VideoUploadCompleted = "Video của bạn đã đăng tải thành công.";
     public const string VideoUploadFailed = "Video của bạn đã bị lỗi và đăng tải không thành công.";
+    public const string FollowUser = " đã theo dõi bạn.";
 }

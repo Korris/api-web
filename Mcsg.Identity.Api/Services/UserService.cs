@@ -180,59 +180,6 @@ public partial class UserService : IUserService
         return res;
     }
 
-    public async Task<bool> FollowUserAsync(Guid userId)
-    {
-        var ss = _currentUserService.Session;
-        if (ss == null || userId == Guid.Empty)
-        {
-            throw new BadRequestException(E119, M119);
-        }
-
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
-        if (user == null)
-        {
-            throw new BadRequestException(E119, M119);
-        }
-        if (ss.UserId == userId)
-        {
-            throw new BadRequestException(E120, M120);
-        }
-
-        var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == ss.UserId && p.UserFollowingId == userId);
-        var userFollow = await qUserFollow.FirstOrDefaultAsync();
-        if (userFollow != null)
-        {
-            if (!userFollow.IsDelete)
-            {
-                throw new BadRequestException(E121, M121);
-            }
-            else
-            {
-                userFollow.IsDelete = false;
-                userFollow.ModifiedOn = DateTime.UtcNow;
-                userFollow.ModifiedBy = ss.UserId;
-                _context.UserFollows.Update(userFollow);
-                await _context.SaveChangesAsync(default);
-                return true;
-            }
-        }
-        userFollow = new UserFollow
-        {
-            UserFollowerId = ss.UserId,
-            UserFollowingId = userId,
-            CreatedOn = DateTime.UtcNow,
-            CreatedBy = ss.UserId,
-            ModifiedOn = DateTime.UtcNow,
-            ModifiedBy = ss.UserId,
-            IsDelete = false
-        };
-
-        await _context.UserFollows.AddAsync(userFollow);
-        await _context.SaveChangesAsync(default);
-
-        return true;
-    }
-
     public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
     {
         var currentIdProfileWatching = await _context.UserAvailable.AsNoTracking()
@@ -313,42 +260,6 @@ public partial class UserService : IUserService
         var profiles = await _userRepository.Connection.QueryAsync<SimilarProfilesMention>(GetSimilarProfileNamesMention, new { Name = name });
 
         return profiles.ToList();
-    }
-
-    public async Task<bool> UnFollowUserAsync(Guid userId)
-    {
-        var ss = _currentUserService.Session;
-        if (ss == null || userId == Guid.Empty)
-        {
-            throw new BadRequestException(E119, M119);
-        }
-        if (ss.UserId == userId)
-        {
-            throw new BadRequestException(E120, M120);
-        }
-
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
-        if (user == null)
-        {
-            throw new BadRequestException(E119, M119);
-        }
-
-        var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == ss.UserId && p.UserFollowingId == userId);
-        var userFollow = await qUserFollow.FirstOrDefaultAsync();
-
-        if (userFollow == null || userFollow.IsDelete)
-        {
-            return false;
-        }
-        else
-        {
-            userFollow.IsDelete = true;
-            userFollow.ModifiedOn = DateTime.UtcNow;
-            userFollow.ModifiedBy = ss.UserId;
-            _context.UserFollows.Update(userFollow);
-            await _context.SaveChangesAsync(default);
-            return false;
-        }
     }
 
     public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateR req)

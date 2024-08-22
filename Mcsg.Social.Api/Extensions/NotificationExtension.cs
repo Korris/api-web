@@ -35,10 +35,25 @@ public static class NotificationExtension
             NotificationEntityType.SubPostReaction
         };
 
+        List<NotificationEntityType> followEntities = new List<NotificationEntityType>()
+        {
+            NotificationEntityType.FollowUser,
+        };
+
         if (noti == null)
         {
             return string.Empty;
         }
+
+        #region Follow 
+
+        if (followEntities.Contains(noti.EntityType)
+                 && noti.Action == NotificationAction.FollowUser)
+        {
+            return noti.ActorName + NotificationContent.FollowUser;
+        }
+
+        #endregion
 
         #region Video 
 
@@ -163,6 +178,8 @@ public static class NotificationExtension
             NotificationEntityType.StoryPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnStory,
             NotificationEntityType.StorySubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubStory,
 
+            NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationTargetType.FollowUser,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
@@ -188,6 +205,7 @@ public static class NotificationExtension
             NotificationEntityType.Feed => Common.Core.Constants.Setting.NotificationType.Feed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
+            NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationType.FollowUser,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }

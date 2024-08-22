@@ -126,20 +126,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("follow/{userId}"), Authorize]
-    public async Task<IActionResult> FollowUser(Guid userId)
-    {
-        var result = await _userService.FollowUserAsync(userId);
-        return Ok(result);
-    }
-
-    [HttpPost("unfollow/{userId}"), Authorize]
-    public async Task<IActionResult> UnfollowUserAsync(Guid userId)
-    {
-        var result = await _userService.UnFollowUserAsync(userId);
-        return Ok(result);
-    }
-
     #endregion
 
     #region -- Fields --

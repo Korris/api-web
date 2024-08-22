@@ -12,7 +12,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public Guid Id { get; set; }
     public string Status { get; set; }
     public string TargetType { get; set; }
-    public Guid LocationId { get; set; }
+    public Guid? LocationId { get; set; }
     public string LocationHashId { get; set; }
     public Guid? EntityId { get; set; }
     public string EntityHashId { get; set; }
@@ -27,6 +27,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public string NotificationType { get; set; }
     public string Avatar { get; set; }
     public int? ReactionType { get; set; }
+    public string UserName { get; set; }
 
     public void Mapping(Profile profile)
     {
@@ -45,6 +46,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
             .ForMember(d => d.NotificationType, opt => opt.MapFrom(s => s.ToNotiType()))
             .ForMember(d => d.Avatar, opt => opt.MapFrom(s => s.Avatar))
             .ForMember(d => d.ReactionType, opt => opt.MapFrom(s => s.ReactionType))
+            .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
         ;
     }
 }

@@ -310,6 +310,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Mention
         /// </summary>
         public const string Mention = "Mention";
+
+        /// <summary>
+        /// FollowUser
+        /// </summary>
+        public const string FollowUser = "FollowUser";
     }
 
     /// <summary>
@@ -391,6 +396,11 @@ public class Setting : SeedWork.Constants.Setting
         /// ReplyOnSubStory
         /// </summary>
         public const string ReplyOnSubStory = "ReplyOnSubStory";
+
+        /// <summary>
+        /// FollowUser
+        /// </summary>
+        public const string FollowUser = "FollowUser";
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Npgsql;
 
@@ -6,6 +7,7 @@ namespace Mcsg.Realtime.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.Domain;
 using Common.Domain.Entities;
 using Constants;
 using Dtos;
@@ -28,10 +30,11 @@ public class NotificationService : INotificationService
     private readonly IRepository<NotificationObject> _notiObjectRepository;
     private readonly IHubContext<NotificationHub> _hubcontext;
     private IUnitOfWork _unitOfWork;
+    private readonly IMcsgContext _context;
 
     public NotificationService(ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
-        IHubContext<NotificationHub> hubcontext)
+        IHubContext<NotificationHub> hubcontext, IMcsgContext context)
     {
         _currentUserService = currentUserService;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
@@ -41,6 +44,7 @@ public class NotificationService : INotificationService
         _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
         _unitOfWork = unitOfWork;
         _hubcontext = hubcontext;
+        _context = context;
     }
 
     public async Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment)
@@ -434,5 +438,71 @@ public class NotificationService : INotificationService
             NotificationAction.Failed => NotificationContent.VideoUploadFailed,
             _ => throw new NotSupportedException($"Unsupported video action: {action}"),
         };
+    }
+
+    public async Task<NotificationResponse> FollowNotification(UserFollowResp followResp)
+    {
+        var response = new NotificationResponse();
+
+        if (followResp.CreatedByUserId != Guid.Empty)
+        {
+            var receiverId = followResp.FollowedId;
+
+            if (receiverId != followResp.CreatedByUserId)
+            {
+                var notiObj = await (from a in _context.NotificationObjectAvailable
+                                     join b in _context.Notifications on a.Id equals b.NotificationObjectId
+                                     where a.ActorId == followResp.CreatedByUserId
+                                           && b.ReceiverId == followResp.FollowedId
+                                           && a.Action == NotificationAction.FollowUser
+                                     select new
+                                     {
+                                         a.Id,
+                                         a.CreatedOn
+                                     }).FirstOrDefaultAsync();
+
+                if (notiObj != null)
+                {
+                    await _context.NotificationAvailable
+                        .Where(p => p.NotificationObjectId == notiObj.Id)
+                        .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(p => p.Status, p => NotificationStatus.UnRead)
+                            .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
+                            .SetProperty(p => p.ModifiedOn, p => DateTime.UtcNow));
+                    await _context.NotificationObjectAvailable
+                        .Where(p => p.Id == notiObj.Id)
+                        .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
+                            .SetProperty(p => p.ModifiedOn, p => DateTime.UtcNow));
+                }
+                else
+                {
+                    var noti = await AddNotificationAsync(
+                                        actorId: followResp.CreatedByUserId
+                                        , receiverId: receiverId
+                                        , action: NotificationAction.FollowUser
+                                        , entityType: NotificationEntityType.FollowUser
+                                        , locationHashId: followResp.CreatedByUserName);
+
+                    response.Id = noti.Id;
+                    response.Status = noti.Status;
+                    response.LocationId = null;
+                    response.LocationHashId = "";
+                    response.EntityId = null;
+                    response.Message = followResp.CreatedByUserName + NotificationContent.FollowUser;
+                    response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.FollowUser;
+                    response.ActorId = followResp.CreatedByUserId;
+                    response.ActorName = followResp.CreatedByUserName;
+                    response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+                    response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
+                    response.UserAvatar = followResp.CreatedByUserAvata;
+
+                    await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                    return response;
+                }
+            }
+        }
+
+        return response;
     }
 }

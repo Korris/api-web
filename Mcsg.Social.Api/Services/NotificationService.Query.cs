@@ -28,6 +28,7 @@
                             , noti.""Status"", obj.""LocationId"", obj.""LocationHashId""
                             , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedOn""
                             , obj.""ActorId""
+                            , us.""UserName""
                             , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
                             , us.""Avatar""
                             , COALESCE(pr.""Type"", COALESCE(spr.""Type"", COALESCE(pcr.""Type"", COALESCE(pr.""Type"", spcr.""Type"")))) AS ""ReactionType""
