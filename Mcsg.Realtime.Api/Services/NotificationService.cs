@@ -487,14 +487,14 @@ public class NotificationService : INotificationService
                     response.Id = noti.Id;
                     response.Status = noti.Status;
                     response.LocationId = null;
-                    response.LocationHashId = "";
+                    response.LocationHashId = followResp.CreatedByUserName;
                     response.EntityId = null;
                     response.Message = followResp.CreatedByUserName + NotificationContent.FollowUser;
                     response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.FollowUser;
                     response.ActorId = followResp.CreatedByUserId;
                     response.ActorName = followResp.CreatedByUserName;
                     response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-                    response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
+                    response.NotificationType = Common.Core.Constants.Setting.NotificationType.FollowUser;
                     response.UserAvatar = followResp.CreatedByUserAvata;
 
                     await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
