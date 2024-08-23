@@ -58,7 +58,7 @@
                             WHERE 
                              p.""IsDelete"" = false [AdditionalCondition] and  p.""Type"" = @Type 
                                         AND p.""Status"" = @Status 
-                                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""UserName"" = @NewUserName AND @MySelf)
+                                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                             -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                             GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"",
@@ -102,7 +102,7 @@
 
                         SELECT COUNT(*) AS TotalItems FROM {0} p [AdditionalTotalQuery] WHERE p.""Type"" = @Type 
                         AND p.""IsDelete"" = false [AdditionalTotalCondition] 
-                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""UserName"" = @NewUserName AND @MySelf)
+                        AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false);";
             }
         }

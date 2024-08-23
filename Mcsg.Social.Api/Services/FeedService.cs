@@ -87,7 +87,6 @@ public partial class FeedService : IFeedService
                 feedLoadReq.OrderBy = nameof(SocialPost.CreatedOn);
             }
             var query = "";
-            var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
             if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
             {
                 query = string.Format(GetAllFeedsWithTopCommentQuery, _postRepository.TableName, feedLoadReq.OrderBy);
@@ -106,6 +105,17 @@ public partial class FeedService : IFeedService
             query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
 
             var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
+
+            if (feedLoadReq.NewUserName != null)
+            {
+                var newUserNameQuery = $@"OR (u.""UserName"" = @NewUserName AND @MySelf)";
+                query = query.Replace("[AddNewUserNameContidion]", newUserNameQuery);
+            }
+            else
+            {
+                query = query.Replace("[AddNewUserNameContidion]", "");
+            }
+
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new
                     {
