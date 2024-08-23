@@ -5,6 +5,7 @@ using System.Text;
 namespace Mcsg.Identity.Api.Controllers;
 
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -22,10 +23,12 @@ public class ConfigController : ControllerBase
     /// <summary>
     /// Initialize
     /// </summary>
+    /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    public ConfigController(ISetting setting, IStorageClient sc)
+    public ConfigController(IMcsgContext context, ISetting setting, IStorageClient sc)
     {
+        _context = context;
         _setting = setting;
         _sc = sc;
     }
@@ -97,12 +100,35 @@ public class ConfigController : ControllerBase
         }
         catch { }
 
+        #region -- SystemSettings --
+        var dic = _context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
+        string[] keys = {
+            "MaintenanceFrDate",
+            "MaintenanceToDate"
+        };
+
+        foreach (var key in keys)
+        {
+            if (!dic.TryGetValue(key, out var val))
+            {
+                continue;
+            }
+
+            res.SetSuccess(key.ToCamelCase(), val);
+        }
+        #endregion
+
         return Ok(res.Data);
     }
 
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting
