@@ -165,9 +165,9 @@ public static class Error
     public const string E124 = "E124";
 
     /// <summary>
-    ///  Duplicate username
+    ///  User name matches current username
     /// </summary>
-    public const string E125 = "E124";
+    public const string E125 = "E125";
 
     /// <summary>
     ///  Cover photo image is not null

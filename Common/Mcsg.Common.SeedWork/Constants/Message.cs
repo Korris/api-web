@@ -180,9 +180,9 @@ public static class Message
     public const string M124 = "You need to upgrade to a premium account to edit username";
 
     /// <summary>
-    ///  Duplicate username
+    ///  User name matches current username
     /// </summary>
-    public const string M125 = "Duplicate username";
+    public const string M125 = "User name matches current username";
 
     /// <summary>
     ///  Cover photo image is not null
@@ -271,6 +271,20 @@ public static class Message
     /// Mobile not confirmed
     /// </summary>
     public const string M308 = "Mobile not confirmed";
+
+    #endregion
+
+    #region -- S1xx --
+
+    /// <summary>
+    /// Username changed successfully for the first time
+    /// </summary>
+    public const string S100 = "Username changed successfully for the first time";
+
+    /// <summary>
+    /// Username changed successfully for the second time
+    /// </summary>
+    public const string S101 = "Username changed successfully for the second time";
 
     #endregion
 }

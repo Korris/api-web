@@ -10,6 +10,7 @@ using Common.SeedWork.Dtos;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
+using Dtos;
 using Interfaces;
 using Requests;
 using Validators;
@@ -52,6 +53,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         var newUserName = request.NewUserName.Triz();
         if (request.UserName == newUserName)
         {
+            res.SetError(E125, M125);
             return res;
         }
 
@@ -72,34 +74,17 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res;
         }
 
-        var minTimeWaitingChange = _setting.UserNameWaitingChangedAfter;
-        var changeRemaining = _setting.UserNameChangedInRemaining;
+        var dto = await Validate(user.Id, cancellationToken);
 
-        var createdOns = await _context.UserNameHistoryAvailable.Where(p => p.UserId == user.Id).Select(p => p.CreatedOn).ToListAsync(cancellationToken);
-        var latestChanged = createdOns.OrderByDescending(p => p).FirstOrDefault();
-        var previousChanged = createdOns.OrderByDescending(p => p).Skip(1).FirstOrDefault();
-        var modifiedCount = createdOns.Count;
-
-        var utcNow = DateTime.UtcNow;
-        var remainingTime = utcNow - latestChanged.AddMinutes(changeRemaining);
-        var waitTime = utcNow - latestChanged.AddMinutes(minTimeWaitingChange);
-        var timePassed = utcNow - latestChanged;
-        var timePreviousPassed = utcNow - previousChanged.AddMinutes(changeRemaining);
-
-        var canUpdateUserName = remainingTime.TotalMinutes <= 0;
-        var updatedUserName = (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= changeRemaining;
-        var time = waitTime.ToString(@"hh\:mm\:ss");
-
-        #endregion
-
-        if (timePassed.TotalMinutes < minTimeWaitingChange)
+        if (dto.TimePassed.TotalMinutes < dto.UserNameWaitingChangedAfter)
         {
-            if ((modifiedCount == 2 && !canUpdateUserName) || ((!canUpdateUserName || updatedUserName) && modifiedCount > 2))
+            if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
             {
-                res.SetError(E128, M128 + time);
+                res.SetError(E128, M128 + dto.TimeWaiting);
                 return res;
             }
         }
+        #endregion
 
         var userNameHistory = await _context.UserNameHistories.FirstOrDefaultAsync(p => p.UserName == newUserName, cancellationToken);
         if (userNameHistory != null)
@@ -108,7 +93,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             .Where(p => p.UserName == newUserName)
             .OrderByDescending(p => p.CreatedOn)
             .Take(1)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.IsDelete, true), cancellationToken);
+            .ExecuteUpdateAsync(p => p.SetProperty(q => q.IsDelete, true), cancellationToken);
         }
 
         userNameHistory = new UserNameHistory
@@ -118,14 +103,77 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             CreatedBy = user.Id
         };
 
-        await _context.UserNameHistories.AddAsync(userNameHistory);
+        await _context.UserNameHistories.AddAsync(userNameHistory, cancellationToken);
         user.UserName = newUserName;
         user.NormalizedUserName = newUserName.ToUpper();
 
         await _context.SaveChangesAsync(cancellationToken);
-        res.SetSuccess(newUserName);
 
+        dto = await Validate(user.Id, cancellationToken);
+
+        string m100 = $"{S100}. You have {dto.TimeRemaining} left to edit username again";
+        string m101 = $"{S101}. You need to wait {dto.TimeWaiting} to edit username";
+
+        if (dto.ModifiedCount <= 2)
+        {
+            dto.UpdatedUserName = false;
+        }
+
+        var data = new
+        {
+            code = dto.UpdatedUserName ? nameof(S101) : nameof(S100),
+            message = dto.UpdatedUserName ? m101 : m100,
+            userName = newUserName,
+            waitingTime = dto.TimeWaiting,
+            remainingTime = dto.TimeRemaining
+        };
+
+        res.SetSuccess(data);
         return res;
+    }
+
+    /// <summary>
+    /// Validate the user's ability to change their username
+    /// </summary>
+    /// <param name="userId">User ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Returns the validation result as a <see cref="ChangeUserNameValidatorDto"/></returns>
+    private async Task<ChangeUserNameValidatorDto> Validate(Guid userId, CancellationToken cancellationToken)
+    {
+        var userNameWaitingChangedAfter = _setting.UserNameWaitingChangedAfter;
+        var userNameChangedInRemaining = _setting.UserNameChangedInRemaining;
+
+        var createdOns = await _context.UserNameHistoryAvailable
+            .Where(p => p.UserId == userId)
+            .Select(p => p.CreatedOn)
+            .ToListAsync(cancellationToken);
+
+        var latestChanged = createdOns.OrderByDescending(p => p).FirstOrDefault();
+        var previousChanged = createdOns.OrderByDescending(p => p).Skip(1).FirstOrDefault();
+        var modifiedCount = createdOns.Count;
+
+        var utcNow = DateTime.UtcNow;
+        var remainingTime = utcNow - latestChanged.AddMinutes(userNameChangedInRemaining);
+        var waitTime = latestChanged.AddMinutes(userNameWaitingChangedAfter);
+        var timePassed = utcNow - latestChanged;
+        var timePreviousPassed = utcNow - previousChanged.AddMinutes(userNameChangedInRemaining);
+
+        var canUpdateUserName = remainingTime.TotalMinutes <= 0;
+        var updatedUserName = (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= userNameChangedInRemaining;
+        var timeRemaining = remainingTime.ToString(@"hh\:mm\:ss");
+
+        var result = new ChangeUserNameValidatorDto
+        {
+            CanUpdateUserName = canUpdateUserName,
+            UpdatedUserName = updatedUserName,
+            TimeRemaining = timeRemaining,
+            TimeWaiting = waitTime,
+            ModifiedCount = modifiedCount,
+            UserNameWaitingChangedAfter = userNameWaitingChangedAfter,
+            UserNameChangedInRemaining = userNameChangedInRemaining,
+            TimePassed = timePassed
+        };
+        return result;
     }
 
     #endregion

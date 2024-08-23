@@ -260,20 +260,18 @@ public class UserControllerTest
     [TestCase("minh12345678908", 0, true)]
     [TestCase("minh12345678909", 31, true)]
     [TestCase("minh12345678908", 10, false)]
-    public async Task UpdateUserName_ValidationFailed_FreeUser_AfterWaiTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
+    public async Task UpdateUserName_ValidationFailed_FreeUser_AfterWaitTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
     }
 
     /// <summary>
-    /// Test case failed update the same username and after remaining time for free user
+    /// Test case failed update the same username for free user
     /// </summary>
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minh123456789010", 0, true)]
-    [TestCase("minh123456789011", 3, true)]
-    [TestCase("minh123456789012", 10, false)]
+    [TestCase("minh123456789121", 0, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_TheSameCurrentName(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -318,7 +316,7 @@ public class UserControllerTest
     [TestCase("minhmm6", 31, true)]
     [TestCase("minhmm7", 3, true)]
     [TestCase("minhmm5", 0, false)]
-    public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaiTime_InRemainingTime(string? newUserName, double delay, bool expected)
+    public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaitTime_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
     }
@@ -332,20 +330,18 @@ public class UserControllerTest
     [TestCase("minhmm8", 0, true)]
     [TestCase("minhmm9", 31, true)]
     [TestCase("minhmm8", 10, false)]
-    public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaiTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
+    public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaitTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
     }
 
     /// <summary>
-    /// Test case failed update the same username and after remaining time for premium user
+    /// Test case failed update the same username for premium user
     /// </summary>
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhmm10", 0, true)]
-    [TestCase("minhmm11", 3, true)]
-    [TestCase("minhmm12", 10, false)]
+    [TestCase("minh123456789121", 0, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_TheSameCurrentName(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -406,24 +402,11 @@ public class UserControllerTest
     [TestCase("minh123456789020", 10, false)]
     [TestCase("minh123456789021", 30, true)]
     [TestCase("minh123456789019", 3, true)]
-    public async Task UpdateUserName_ValidationPass_FreeUser_AfterRemainingTime_AfterWaitingTime(string? newUserName, double delay, bool expected)
+    public async Task UpdateUserName_ValidationPass_FreeUser_AfterRemainingTime_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
     }
 
-    /// <summary>
-    /// Test case pass update the same username and in remaining time for free user
-    /// </summary>
-    /// <param name="newUserName"></param>
-    /// <param name="delay"></param>
-    /// <param name="expected"></param>
-    [TestCase("minh123456789022", 0, true)]
-    [TestCase("minh123456789023", 3, true)]
-    [TestCase("minh123456789022", 0, true)]
-    public async Task UpdateUserName_ValidationPass_FreeUser_TheSameCurrentName(string? newUserName, double delay, bool expected)
-    {
-        await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
-    }
     #endregion
 
     #region -- PremiumUser --
@@ -478,21 +461,7 @@ public class UserControllerTest
     [TestCase("minhmm20", 10, false)]
     [TestCase("minhmm21", 30, true)]
     [TestCase("minhmm19", 3, true)]
-    public async Task UpdateUserName_ValidationPass_PremiumUser_AfterRemainingTime_AfterWaitingTime(string? newUserName, double delay, bool expected)
-    {
-        await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
-    }
-
-    /// <summary>
-    /// Test case pass update the same username and in remaining time for premium user
-    /// </summary>
-    /// <param name="newUserName"></param>
-    /// <param name="delay"></param>
-    /// <param name="expected"></param>
-    [TestCase("minhmm22", 0, true)]
-    [TestCase("minhmm23", 3, true)]
-    [TestCase("minhmm22", 0, true)]
-    public async Task UpdateUserName_ValidationPass_PremiumUser_TheSameCurrentName(string? newUserName, double delay, bool expected)
+    public async Task UpdateUserName_ValidationPass_PremiumUser_AfterRemainingTime_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
     }
