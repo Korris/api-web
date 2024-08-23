@@ -1,8 +1,8 @@
-﻿namespace Mcsg.Social.Api.Extensions
+﻿namespace Mcsg.Social.Api.Extensions;
+
+public static class ReactionExtension
 {
-    public static class ReactionExtension
-    {
-        public static string GetReactionByTargetIdsQuery = @"SELECT ""Type"", ""TargetId"", SUM(""Count"") AS ""Count"", SUM(""ReactByCurrent"") AS ""ReactByCurrent""
+    public static string GetReactionByTargetIdsQuery = @"SELECT ""Type"", ""TargetId"", SUM(""Count"") AS ""Count"", SUM(""ReactByCurrent"") AS ""ReactByCurrent""
                                                         FROM (
                                                             SELECT ""Type"", ""TargetId"", COUNT(*) AS ""Count"", CASE
                                                                 WHEN ""AuthorId"" = @UserId THEN 1
@@ -15,5 +15,4 @@
                                                         ) react	
                                                         GROUP BY ""Type"", ""TargetId""
                                                         ORDER BY ""Count"" DESC;";
-    }
 }

@@ -2,7 +2,7 @@
 
 using Common.Core.Enums;
 using Common.Domain.Entities;
-using Mcsg.Social.Api.Models;
+using Models;
 
 public class FeedDto : PostDto
 {
