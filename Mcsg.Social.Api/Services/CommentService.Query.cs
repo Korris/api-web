@@ -176,6 +176,44 @@
             }
         }
 
+        private string GetCommentByIdQuery
+        {
+            get
+            {
+                return @$"WITH cte AS (
+                        SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""ModifiedOn"", ""Body"", ""CustomNote"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId""
+                        FROM @CommentSource
+                        WHERE ""ParentId"" IS NULL AND ""Id"" = @CommentId
+                    )
+                    SELECT
+                        cte.""Id"",
+                        cte.""ParentId"",
+                        cte.""PostId"",
+                        cte.""Body"",
+                        cte.""CustomNote"",
+                        cte.""ModifiedOn"",
+                        cte.""AuthorId"",
+                        (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS AuthorName,
+                        us.""UserName"",
+                        us.""Avatar"" AS UserAvatar,
+                        cte.""ResourceId"",
+                        res.""HashId"" AS ResourceHashId,
+                        res.""Name"" AS ResourceName,
+                        res.""Url"" AS ResourceUrl,
+                        cte.""GifId"",
+                        cte.""QuoteId"",
+                        (
+                            SELECT COUNT(*)
+                            FROM @CommentSource sub_comments
+                            WHERE sub_comments.""ParentId"" = cte.""Id""
+                        ) AS ""ReplyCount""
+                    FROM cte
+                    LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
+                    LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+                    WHERE cte.""IsDelete"" = false;";
+            }
+        }
+
         private string GetCommentOfSubPostQuery
         {
             get

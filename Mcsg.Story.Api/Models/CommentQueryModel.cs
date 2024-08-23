@@ -19,4 +19,5 @@ public class CommentQueryModel
     public int CommentLevel { get; set; } = 0;
     public Guid? QuoteId { get; set; }
     public string? CustomNote { get; set; }
+    public int ReplyCount { get; set; } = 0;
 }

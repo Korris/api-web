@@ -13,4 +13,5 @@ public interface ICommentService
     Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadR request, PostType postType);
     Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input);
     Task<PagedResponse<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input);
+    Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost);
 }

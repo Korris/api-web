@@ -337,6 +337,41 @@ public partial class CommentService : ICommentService
         };
     }
 
+    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost)
+    {
+        var query = GetCommentByIdQuery;
+        query = query.Replace("@CommentSource", $@"story.""{(isSubPost ? "StorySubPostComments" : "StoryPostComments")}""");
+        var comModel = await _postCommentRepository.Connection.QueryFirstAsync<CommentQueryModel>(query, new { CommentId = commentId });
+        var result = new CommentResponse();
+        if (comModel != null)
+        {
+            result = new CommentResponse()
+            {
+                Id = comModel.Id,
+                PostId = comModel.PostId,
+                AuthorId = comModel.AuthorId,
+                AuthorName = comModel.AuthorName,
+                UserName = comModel.UserName,
+                UserAvatar = comModel.UserAvatar,
+                Body = comModel.Body,
+                ModifiedOn = comModel.ModifiedOn,
+                ResourceHashId = comModel.ResourceHashId,
+                ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl) : "",
+                GifId = comModel.GifId,
+                CustomNote = comModel.CustomNote.ForLexical(),
+                ReplyCount = comModel.ReplyCount,
+            };
+
+            result.Body = await _businessText.Process(result.Body);
+            var replies = new ReplyResponse()
+            {
+                TotalReply = comModel.ReplyCount
+            };
+            result.Replies = replies;
+        }
+        return result;
+    }
+
     public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request)
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))
