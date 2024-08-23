@@ -13,7 +13,7 @@ public class FeedBoxResponse : FeedBox
     public MetaDataDto? MetaData { get; set; }
     public PostLinkDto? Link { get; set; }
     public bool IsFavorite { get; set; }
-
+    public ReactionsResponse Reaction { get; set; }
 }
 
 public class PostLinkFeedBoxResponse

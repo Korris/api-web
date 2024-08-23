@@ -256,8 +256,34 @@ public partial class PostService : IPostService
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
-        return MappingFeedRespone(dbPost);
+
+        var result = MappingFeedRespone(dbPost);
+        var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
+        {
+            TargetIds = new List<Guid>() { dbPost.Id },
+            UserId = currentUserId
+        });
+        if (postReactionResponse.Count() > 0)
+        {
+            MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
+        }
+        return result;
     }
+
+    private void MapReactionPostSeriesResponse(PostSeriesResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
     public async Task<ChapterResponse> GetSeriesChapter(string hashId, float order)
     {
         var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
@@ -427,6 +453,20 @@ public partial class PostService : IPostService
         var items = MapTopSeries(dbFeed.ToList());
         if (items != null && items.Count() > 0)
         {
+            var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
+            {
+                TargetIds = items.Select(p => p.Id).ToList(),
+                UserId = currentUserId
+            });
+            foreach (var item in items)
+            {
+                var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapReactionPostSeiresTopResponse(item, postReaction);
+                }
+            }
             var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
             return results;
@@ -617,6 +657,22 @@ public partial class PostService : IPostService
         {
             results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             results.Items = MappingTopSeries(items);
+
+            var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
+            {
+                TargetIds = items.Select(p => p.Id).ToList(),
+                UserId = _currentUserService?.Session?.UserId
+            });
+
+            foreach (var item in results.Items)
+            {
+                var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapReactionPostSeiresTopResponse(item, postReaction);
+                }
+            }
         }
         else
         {
@@ -1280,6 +1336,13 @@ public partial class PostService : IPostService
         {
             var listPostDetails = new List<PostBoxResponse>();
 
+            var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
+            {
+                TargetIds = result.Select(p => p.Id).ToList(),
+                UserId = currentUserId
+            });
+
             foreach (var res in result)
             {
                 var chapters = res.SubPosts != null ? JsonConvert.DeserializeObject<List<SubPostDto>>(res.SubPosts.ToString()) : new List<SubPostDto>();
@@ -1309,6 +1372,12 @@ public partial class PostService : IPostService
                     UserName = res.UserName
                 };
 
+                var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapReactionResponse(postDetails, postReaction);
+                }
+
                 listPostDetails.Add(postDetails);
             }
 
@@ -1319,6 +1388,33 @@ public partial class PostService : IPostService
             return new List<PostBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
         }
     }
+
+    public void MapReactionResponse(PostBoxResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
+    private void MapReactionPostSeiresTopResponse(PostSeriesTopResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
 
     public UploadFileDto MappingFile(StoryResource resources)
     {

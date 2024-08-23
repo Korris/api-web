@@ -9,6 +9,7 @@ using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
+using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Interfaces;
@@ -170,6 +171,23 @@ public partial class FavoriteService : IFavoriteService
 
             if (items != null && items.Count() > 0)
             {
+                var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
+                {
+                    TargetIds = items.Select(p => p.Id).ToList(),
+                    UserId = userId
+                });
+                if (postReactionResponse.Count() > 0)
+                {
+                    foreach (var item in listItemResponse)
+                    {
+                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                        if (postReaction.Count > 0)
+                        {
+                            MapReactionFeedDtoResponse(item, postReaction);
+                        }
+                    }
+                }
                 results = new PagedResponse<FeedDto>(totalItems, req.PageNumber, req.PageSize);
                 results.Items = listItemResponse;
             }
@@ -184,6 +202,19 @@ public partial class FavoriteService : IFavoriteService
         {
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
+    }
+
+    private void MapReactionFeedDtoResponse(FeedDto item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
     #endregion
 

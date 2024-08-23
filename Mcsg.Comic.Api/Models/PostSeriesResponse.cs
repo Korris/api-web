@@ -22,6 +22,7 @@ public class PostSeriesResponse : PostDto
     public string SeriesStatus { get; set; }
     public int TotalComment { get; set; }
     public bool IsFollowing { get; set; }
+    public ReactionsResponse Reaction { get; set; }
 
 }
 public class PostSeriesQueryDbResponse : PostSeriesResponse

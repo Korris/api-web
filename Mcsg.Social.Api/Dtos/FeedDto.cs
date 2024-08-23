@@ -2,6 +2,7 @@
 
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Mcsg.Social.Api.Models;
 
 public class FeedDto : PostDto
 {
@@ -19,4 +20,5 @@ public class FeedDto : PostDto
     public BackgroundMedia.SearchDto? BackgroundSound { get; set; }
     public bool? IsFavorite { get; set; }
     public bool? IsFollowing { get; set; }
+    public ReactionsResponse Reaction { get; set; }
 }

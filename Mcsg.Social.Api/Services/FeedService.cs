@@ -153,6 +153,24 @@ public partial class FeedService : IFeedService
 
             if (items != null && items.Count() > 0)
             {
+                var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
+                {
+                    TargetIds = items.Select(p => p.Id).ToList(),
+                    UserId = userId
+                });
+
+                if (postReactionResponse.Count() > 0)
+                {
+                    foreach (var item in listItemResponse)
+                    {
+                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                        if (postReaction.Count > 0)
+                        {
+                            MapReactionFeedDtoResponse(item, postReaction);
+                        }
+                    }
+                }
                 results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
                 results.Items = listItemResponse;
             }
@@ -598,12 +616,57 @@ public partial class FeedService : IFeedService
                 listFeedDetails.Add(MappingFeedBoxResponse(res, postIds, currentUserId));
             }
 
+            var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
+            {
+                TargetIds = listFeedDetails.Select(p => p.Id).ToList(),
+                UserId = userId
+            });
+
+            if (postReactionResponse.Count() > 0)
+            {
+                foreach (var item in listFeedDetails)
+                {
+                    var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                    if (postReaction.Count > 0)
+                    {
+                        MapReactionFeedBoxResponse(item, postReaction);
+                    }
+                }
+            }
+
             return listFeedDetails;
         }
         else
         {
             return new List<FeedBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
         }
+    }
+
+    private void MapReactionFeedBoxResponse(FeedBoxResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
+    private void MapReactionFeedDtoResponse(FeedDto item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     public async Task<PagedResponse<FeedDto>> GetFeedByKeywordAsync(string keyWord, FeedSearchKeywordR feedLoadReq)

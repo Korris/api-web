@@ -10,6 +10,7 @@ using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
+using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
@@ -264,8 +265,8 @@ public partial class CommentService : ICommentService
         {
             var postComment = items.Where(p => p.Order == null).ToList();
             var subPostComment = items.Where(p => p.Order != null).ToList();
-            var queryPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"story.""StoryPostCommentReactions""");
-            var querySubPostCommentReaction = string.Format(GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
+            var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostCommentReactions""");
+            var querySubPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
 
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
             {
