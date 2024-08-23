@@ -1053,22 +1053,30 @@ sp.""IsEnableComment""
     AND ""Status"" = 1
 ),
 ranked_story AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId"",
-        ROW_NUMBER() OVER (ORDER BY ""CreatedOn"" DESC) AS type_rank
-    FROM ""story"".""StoryPosts""
-    WHERE ""IsDelete"" = false
-    AND ""Type"" = 1
-    AND ""Status"" = 1
-    AND ""Permission"" = 0
+    SELECT sp.""Id"", 
+        GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) AS ""CreatedOn"", 
+        sp.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) DESC) AS type_rank
+    FROM story.""StoryPosts"" sp
+    LEFT JOIN story.""StorySubPosts"" ssp ON sp.""Id"" = ssp.""PostId""
+    WHERE sp.""IsDelete"" = false
+    AND sp.""Type"" = 1
+    AND sp.""Status"" = 1
+    AND sp.""Permission"" = 0
+    GROUP BY sp.""Id"", sp.""CreatedOn"", sp.""HashId""
 ),
 ranked_comic AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId"",
-        ROW_NUMBER() OVER (ORDER BY ""CreatedOn"" DESC) AS type_rank
-    FROM ""comic"".""ComicPosts""
-    WHERE ""IsDelete"" = false
-    AND ""Type"" = 2
-    AND ""Status"" = 1
-    AND ""Permission"" = 0
+    SELECT cp.""Id"", 
+        GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) AS ""CreatedOn"", 
+        cp.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) DESC) AS type_rank
+    FROM comic.""ComicPosts"" cp
+    LEFT JOIN comic.""ComicSubPosts"" csp ON cp.""Id"" = csp.""PostId""
+    WHERE cp.""IsDelete"" = false
+    AND cp.""Type"" = 2
+    AND cp.""Status"" = 1
+    AND cp.""Permission"" = 0
+    GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
 ),
 limited_feed AS (
     SELECT ""Id"", ""CreatedOn"", ""HashId""
