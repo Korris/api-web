@@ -21,17 +21,27 @@ public enum HideOption
     Android = 1 << 1,
 
     /// <summary>
+    /// IosAndroid
+    /// </summary>
+    IosAndroid = Ios | Android,
+
+    /// <summary>
     /// Web
     /// </summary>
     Web = 1 << 2,
 
     /// <summary>
-    /// Mobile
+    /// Ios and Web
     /// </summary>
-    Mobile = Ios | Android,
+    IosWeb = Ios | Web,
+
+    /// <summary>
+    /// Android and Web
+    /// </summary>
+    AndroidWeb = Android | Web,
 
     /// <summary>
     /// All
     /// </summary>
-    All = Web | Mobile
+    All = Ios | Android | Web
 }

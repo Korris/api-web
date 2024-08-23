@@ -191,16 +191,20 @@ public class BaseR : IRequest<SingleResponse>
             if (FromAndroid)
             {
                 res.Add(HideOption.Android);
-                res.Add(HideOption.Mobile);
+                res.Add(HideOption.IosAndroid);
+                res.Add(HideOption.AndroidWeb);
             }
             else if (FromIos)
             {
                 res.Add(HideOption.Ios);
-                res.Add(HideOption.Mobile);
+                res.Add(HideOption.IosAndroid);
+                res.Add(HideOption.IosWeb);
             }
             else
             {
                 res.Add(HideOption.Web);
+                res.Add(HideOption.IosWeb);
+                res.Add(HideOption.AndroidWeb);
             }
 
             res.Add(HideOption.All);
