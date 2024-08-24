@@ -499,7 +499,20 @@ public partial class FeedService : IFeedService
 
         dbFeed.Body = await _businessText.Process(dbFeed.Body);
 
-        return MappingFeedRespone(dbFeed, sound);
+        var result = MappingFeedRespone(dbFeed, sound);
+        var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
+        {
+            TargetIds = new List<Guid>() { result.Id },
+            UserId = userId
+        });
+
+        if (postReactionResponse.Count() > 0)
+        {
+            MapReactionFeedDtoResponse(result, postReactionResponse.ToList());
+        }
+
+        return result;
     }
 
     public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, List<Guid>? postId, Guid? currentUserId)
