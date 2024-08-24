@@ -431,6 +431,19 @@ public partial class FeedService : IFeedService
                  }
              }
         });
+
+        var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialSubPostReactions"""), new
+        {
+            TargetIds = new List<Guid>() { data.Id },
+            UserId = userId
+        });
+
+        if (postReactionResponse.Count() > 0)
+        {
+            MapReactionFeedDtoResponse(data, postReactionResponse.ToList());
+        }
+
         return data;
     }
     public async Task<FeedDto> GetFeedAsync(FeedHashIdR req)
