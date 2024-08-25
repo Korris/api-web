@@ -54,12 +54,9 @@ public partial class ResourceCommentService : IResourceCommentService
             return null;
         }
 
-        var subFolder = "comments";
-        subFolder = $"{dto.UserFolder}/{subFolder}";
-
         #region -- Copy file from temp target --
         var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
-        var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
+        var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
         var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -97,12 +94,9 @@ public partial class ResourceCommentService : IResourceCommentService
             return null;
         }
 
-        var subFolder = "comments";
-        subFolder = $"{dto.UserFolder}/{subFolder}";
-
         #region -- Copy file from temp target --
         var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
-        var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
+        var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
         var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -140,12 +134,9 @@ public partial class ResourceCommentService : IResourceCommentService
             return null;
         }
 
-        var subFolder = "comments";
-        subFolder = $"{dto.UserFolder}/{subFolder}";
-
         #region -- Copy file from temp target --
         var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
-        var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
+        var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
         var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);

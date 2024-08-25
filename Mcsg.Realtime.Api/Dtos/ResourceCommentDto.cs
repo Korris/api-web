@@ -1,8 +1,5 @@
 ﻿namespace Mcsg.Realtime.Api.Dtos;
 
-using Common.Core.Enums;
-using Constants;
-
 /// <summary>
 /// ResourceCommentDto
 /// </summary>
@@ -16,14 +13,12 @@ public class ResourceCommentDto
     /// <param name="userFolder"></param>
     /// <param name="postId"></param>
     /// <param name="hashId"></param>
-    /// <param name="type"></param>
     /// <param name="microService"></param>
-    public ResourceCommentDto(string? userFolder, Guid postId, string hashId, string type, string microService)
+    public ResourceCommentDto(string? userFolder, Guid postId, string hashId, string microService)
     {
         UserFolder = userFolder;
         PostId = postId;
         HashId = hashId;
-        _type = type;
         MicroService = microService;
     }
 
@@ -52,18 +47,9 @@ public class ResourceCommentDto
     public string MicroService { get; }
 
     /// <summary>
-    /// Location type
+    /// SubFolder
     /// </summary>
-    public ResourceLocationType LocationType => _type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
-
-    #endregion
-
-    #region -- Fields --
-
-    /// <summary>
-    /// Type
-    /// </summary>
-    private string _type;
+    public string SubFolder => $"{UserFolder}/posts/{PostId}/comments";
 
     #endregion
 }

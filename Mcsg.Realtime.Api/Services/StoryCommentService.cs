@@ -97,7 +97,7 @@ public partial class StoryCommentService : IStoryCommentService
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
         var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
-        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.Type, req.MicroService);
+        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
         var order = 0.0f;
@@ -197,7 +197,7 @@ public partial class StoryCommentService : IStoryCommentService
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
         var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
-        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.Type, req.MicroService);
+        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
         var response = new PostCommentResp();

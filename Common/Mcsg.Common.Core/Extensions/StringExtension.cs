@@ -367,7 +367,7 @@ public static class StringExtension
     /// <param name="parentFolder">Parent folder</param>
     /// <returns>Return the result</returns>
     /// <exception cref="FormatException">Format exception</exception>
-    public static string GetTempBlobName(this string? fileName, string parentFolder)
+    public static string GetTempBlobName(this string? fileName, string? parentFolder)
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
@@ -388,7 +388,7 @@ public static class StringExtension
     /// <param name="parentFolder">Parent folder</param>
     /// <returns>Return the result</returns>
     /// <exception cref="FormatException">Format exception</exception>
-    public static string GetMediaBlobName(this string? fileName, string parentFolder)
+    public static string GetMediaBlobName(this string? fileName, string? parentFolder)
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
