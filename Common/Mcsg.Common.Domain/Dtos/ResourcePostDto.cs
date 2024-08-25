@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Story.Api.Dtos;
+﻿namespace Mcsg.Common.Domain.Dtos;
 
 /// <summary>
 /// ResourcePostDto

@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-using Dtos;
+using Common.Domain.Dtos;
 
 public class ComicChapterComicR : StoryChapterPostR
 {

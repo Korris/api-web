@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
+using Common.Domain.Dtos;
 using Dtos;
 using Requests;
 

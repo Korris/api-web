@@ -14,6 +14,7 @@
 namespace Mcsg.Story.Api.Requests;
 
 using Common.Core.Requests;
+using Common.Domain.Dtos;
 using Dtos;
 
 /// <summary>

@@ -7,6 +7,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
