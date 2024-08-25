@@ -20,6 +20,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -153,7 +154,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Add file to feed
         if (request.Files != null && request.Files.Count > 0)
         {
-            result.SubPosts = await _fileService.UpdateFilesAsync(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId);
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName) { PostId = ett.Id };
+            result.SubPosts = await _fileService.UpdateFilesAsync(urDto);
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }
         else

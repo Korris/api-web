@@ -6,6 +6,7 @@ using Api.Constants;
 using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
@@ -118,11 +119,6 @@ public partial class ComicService : IComicService
     public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR chapterPostReq)
     {
         var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var currentUserName = ss.UserName;
-        var userFolder = ss.UserFolder;
-        var currentUserAvatar = ss.UserAvatar;
-        var currentProfileId = ss.ProfileId;
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -132,7 +128,8 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
+            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName) { SubPostId = subPost.Id };
+            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 
         return result;
@@ -141,11 +138,6 @@ public partial class ComicService : IComicService
     public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR chapterPostReq)
     {
         var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var currentUserName = ss.UserName;
-        var userFolder = ss.UserFolder;
-        var currentUserAvatar = ss.UserAvatar;
-        var currentProfileId = ss.ProfileId;
 
         _postService.VerifyBasicInfo(chapterPostReq.Title);
 
@@ -157,7 +149,8 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq?.Files.Count > 0)
         {
-            result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
+            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName) { SubPostId = subPost.Id };
+            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 
         return result;

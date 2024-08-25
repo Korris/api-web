@@ -20,6 +20,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
@@ -127,7 +128,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         }
         if (request.Files != null && request.Files.Count > 0)
         {
-            result.SubPosts = await _fileService.ProcessFilesAsync(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId);
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName) { PostId = ett.Id };
+            result.SubPosts = await _fileService.ProcessFilesAsync(urDto);
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }
 

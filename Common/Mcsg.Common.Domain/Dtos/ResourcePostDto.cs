@@ -1,10 +1,27 @@
 ﻿namespace Mcsg.Common.Domain.Dtos;
 
 /// <summary>
-/// ResourcePostDto
+/// ResourcePost data transfer object
 /// </summary>
 public class ResourcePostDto
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Clone method to create a copy of the current instance
+    /// </summary>
+    public ResourcePostDto Clone()
+    {
+        return new ResourcePostDto
+        {
+            HashId = HashId,
+            Order = Order,
+            Body = Body
+        };
+    }
+
+    #endregion
+
     #region -- Properties --
 
     /// <summary>

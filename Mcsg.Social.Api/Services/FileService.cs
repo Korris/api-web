@@ -168,20 +168,14 @@ public class FileService : IFileService
     /// <summary>
     /// ProcessFiles async
     /// </summary>
-    /// <param name="req">Request</param>
-    /// <param name="userId">UserId</param>
-    /// <param name="userFolder">User folder</param>
-    /// <param name="userAvatar">User avatar</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="postId">PostId</param>
-    /// <param name="postHashId">PostHashId</param>
+    /// <param name="dto">UploadResourceDto</param>
     /// <returns>Return the result</returns>
-    public async Task<List<SubUploadFileDto>> ProcessFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> ProcessFilesAsync(UploadResourceDto dto)
     {
         var subPosts = new List<SubUploadFileDto>();
 
         // Complete resource files
-        var (resources, subPostResponses) = await CompleteFilesAsync(req, userId, userName, userFolder, userAvatar, postId, true);
+        var (resources, subPostResponses) = await CompleteFilesAsync(dto, true);
 
         // Map to response for feed service
         foreach (var resource in resources)
@@ -216,34 +210,29 @@ public class FileService : IFileService
     /// <summary>
     /// UpdateFiles async
     /// </summary>
-    /// <param name="req">Request</param>
-    /// <param name="userId">UserId</param>
-    /// <param name="userFolder">User folder</param>
-    /// <param name="userAvatar">User avatar</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="postId">PostId</param>
-    /// <param name="postHashId">PostHashId</param>
+    /// <param name="dto">UploadResourceDto</param>
     /// <returns>Return the result</returns>
     /// <exception cref="NotFoundException">NotFoundException</exception>
-    public async Task<List<SubUploadFileDto>> UpdateFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId)
+    public async Task<List<SubUploadFileDto>> UpdateFilesAsync(UploadResourceDto dto)
     {
-        if (string.IsNullOrWhiteSpace(userFolder))
+        if (string.IsNullOrWhiteSpace(dto.UserFolder))
         {
             throw new NotFoundException(E303, M303);
         }
 
-        var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
-        var subPostDB = await _context.SocialSubPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var resourcesDb = await QueryResourceByPostId(dto.PostId).ToArrayAsync();
+        var subPostDB = await _context.SocialSubPostAvailable.Where(p => p.PostId == dto.PostId).ToListAsync();
 
         //Update
         var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
-        var resourceRequestHashId = req.Select(x => x.HashId).ToList();
+        var resourceRequestHashId = dto.ResourcePosts.Select(x => x.HashId).ToList();
 
-        var listResourceNotAdd = req.Where(x => !resourceDbHashId.Contains(x.HashId)).ToList();
+        var urDto = dto.Clone();
+        urDto.ResourcePosts = dto.ResourcePosts.Where(x => !resourceDbHashId.Contains(x.HashId)).ToList();
         var listResourceAddded = resourcesDb.Where(x => resourceRequestHashId.Contains(x.HashId)).ToList();
 
         // Complete resource files
-        var (listResourcesNew, subPostResponses) = await CompleteFilesAsync(listResourceNotAdd, userId, userName, userFolder, userAvatar, postId, true);
+        var (listResourcesNew, subPostResponses) = await CompleteFilesAsync(urDto, true);
 
         //Remove
         var listRemove = resourcesDb.Where(x => !resourceRequestHashId.Contains(x.HashId)).ToList();
@@ -258,7 +247,7 @@ public class FileService : IFileService
         // Check change order
         foreach (var resourceAdded in listResourceAddded)
         {
-            var resourceReq = req.FirstOrDefault(x => x.HashId == resourceAdded.HashId);
+            var resourceReq = dto.ResourcePosts.FirstOrDefault(x => x.HashId == resourceAdded.HashId);
             var subPostByResource = subPostDB.FirstOrDefault(p => p.Id == resourceAdded.SubPostId);
 
             if (resourceReq != null && subPostByResource != null && ((resourceReq.Order != resourceAdded.Order) || subPostByResource.Body != resourceReq.Body))
@@ -282,7 +271,7 @@ public class FileService : IFileService
                                               join c in _context.SocialPosts
                                                 on a.PostId equals c.Id into g2
                                               from c in g2.DefaultIfEmpty()
-                                              where c.Id == postId
+                                              where c.Id == dto.PostId
                                               select new
                                               {
                                                   SubPostHashId = a.HashId,
@@ -295,7 +284,7 @@ public class FileService : IFileService
             var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
             subPosts.Add(new SubUploadFileDto
             {
-                Body = req.FirstOrDefault(p => p.Order == resource.Order).Body,
+                Body = dto.ResourcePosts.FirstOrDefault(p => p.Order == resource.Order).Body,
                 HashId = subPostData?.SubPostHashId ?? "",
                 Status = PostStatus.Public,
                 Files = [
@@ -365,33 +354,28 @@ public class FileService : IFileService
     /// <summary>
     /// CompleteFiles async
     /// </summary>
-    /// <param name="req"></param>
-    /// <param name="userId"></param>
-    /// <param name="userName"></param>
-    /// <param name="userFolder"></param>
-    /// <param name="userAvatar"></param>
-    /// <param name="postId"></param>
+    /// <param name="dto"></param>
     /// <param name="addSubPost"></param>
     /// <returns></returns>
     /// <exception cref="NotFoundException"></exception>
-    private async Task<Tuple<List<SocialResource>, List<SubUploadFileDto>>> CompleteFilesAsync(List<ResourcePostDto> req, Guid userId, string userName, string userFolder, string userAvatar, Guid postId, bool addSubPost)
+    private async Task<Tuple<List<SocialResource>, List<SubUploadFileDto>>> CompleteFilesAsync(UploadResourceDto dto, bool addSubPost)
     {
         var response = new List<SocialResource>();
         var subPostResponses = new List<SubUploadFileDto>();
 
-        if (string.IsNullOrWhiteSpace(userFolder))
+        if (string.IsNullOrWhiteSpace(dto.UserFolder))
         {
             throw new NotFoundException(E303, M303);
         }
 
-        var hashIds = req.Select(x => x.HashId).ToList();
+        var hashIds = dto.ResourcePosts.Select(x => x.HashId).ToList();
         if (hashIds == null || hashIds.Count == 0)
         {
             return Tuple.Create(response, subPostResponses);
         }
 
         var subFolder = addSubPost ? "sub-posts" : "posts";
-        subFolder = $"{userFolder}/{subFolder}/{postId}";
+        subFolder = $"{dto.UserFolder}/{subFolder}/{dto.PostId}";
 
         var resourceList = await _context.SocialResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
@@ -401,10 +385,10 @@ public class FileService : IFileService
                 continue;
             }
 
-            var resourceReq = req.FirstOrDefault(x => x.HashId == resource.HashId);
+            var resourceReq = dto.ResourcePosts.FirstOrDefault(x => x.HashId == resource.HashId);
 
             #region -- Copy file from temp target --
-            var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+            var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
             var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
@@ -422,14 +406,14 @@ public class FileService : IFileService
             }
             #endregion
 
-            var subPostId = resource.SubPostId ?? postId;
+            var subPostId = resource.SubPostId ?? dto.PostId;
             if (addSubPost)
             {
                 var subPost = new SocialSubPost
                 {
                     Title = resource.Title,
-                    PostId = postId,
-                    UserId = userId,
+                    PostId = dto.PostId,
+                    UserId = dto.UserId,
                     Body = resourceReq.Body,
                     CreatedBy = resource.CreatedBy,
                     Status = PostStatus.Public,
@@ -452,7 +436,7 @@ public class FileService : IFileService
             resource.Order = resourceReq.Order;
             await _context.SaveChangesAsync(default);
 
-            await _jobService.CreateConvertJob(resource, userName, userAvatar, targetObjectName);
+            await _jobService.CreateConvertJob(resource, dto.UserName, dto.UserAvatar, targetObjectName);
             response.Add(resource);
         }
 

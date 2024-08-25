@@ -26,28 +26,16 @@ public interface IFileService
     /// <summary>
     /// ProcessFiles async
     /// </summary>
-    /// <param name="req">Request</param>
-    /// <param name="userId">UserId</param>
-    /// <param name="userFolder">User folder</param>
-    /// <param name="userAvatar">User avatar</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="postId">PostId</param>
-    /// <param name="postHashId">PostHashId</param>
+    /// <param name="dto">UploadResourceDto</param>
     /// <returns>Return the result</returns>
-    Task<List<SubUploadFileDto>> ProcessFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
+    Task<List<SubUploadFileDto>> ProcessFilesAsync(UploadResourceDto dto);
 
     /// <summary>
     /// UpdateFiles async
     /// </summary>
-    /// <param name="req">Request</param>
-    /// <param name="userId">UserId</param>
-    /// <param name="userFolder">User folder</param>
-    /// <param name="userAvatar">User avatar</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="postId">PostId</param>
-    /// <param name="postHashId">PostHashId</param>
+    /// <param name="dto">UploadResourceDto</param>
     /// <returns>Return the result</returns>
-    Task<List<SubUploadFileDto>> UpdateFilesAsync(List<ResourcePostDto> req, Guid userId, string userFolder, string userAvatar, string userName, Guid postId, string postHashId);
+    Task<List<SubUploadFileDto>> UpdateFilesAsync(UploadResourceDto dto);
 
     /// <summary>
     /// RemoveFile async
