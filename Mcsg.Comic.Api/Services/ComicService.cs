@@ -130,7 +130,7 @@ public partial class ComicService : IComicService
         await _subPostRepository.InsertAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
+        if (chapterPostReq?.Files.Count > 0)
         {
             result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
         }
@@ -155,7 +155,7 @@ public partial class ComicService : IComicService
         await _subPostRepository.UpdateAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        if (chapterPostReq.Files != null && chapterPostReq?.Files.Count > 0)
+        if (chapterPostReq?.Files.Count > 0)
         {
             result.Files = await _fileService.ProcessComicFilesAsync(chapterPostReq.Files, currentUserId, userFolder, currentUserAvatar, currentUserName, subPost.Id);
         }

@@ -7,6 +7,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Dtos;
 using Interfaces;
 using Requests;
 
@@ -25,39 +26,39 @@ public partial class ResourceCommentService : IResourceCommentService
         _sc = sc;
     }
 
-    public async Task<ResourceCommentResp?> AddResourceToComment(string userFolder, string hashId, ResourceLocationType locationType, string microService)
+    public async Task<ResourceCommentResp?> AddResourceToComment(ResourceCommentDto dto)
     {
-        if (string.IsNullOrWhiteSpace(userFolder) || string.IsNullOrWhiteSpace(hashId))
+        if (dto == null || string.IsNullOrWhiteSpace(dto.UserFolder) || string.IsNullOrWhiteSpace(dto.HashId))
         {
             return null;
         }
 
-        if (microService == MicroService.Comic.ToString())
+        if (dto.MicroService == MicroService.Comic.ToString())
         {
-            return await AddComicResourceToComment(userFolder, hashId, locationType);
+            return await AddComicResourceToComment(dto);
         }
 
-        if (microService == MicroService.Story.ToString())
+        if (dto.MicroService == MicroService.Story.ToString())
         {
-            return await AddStoryResourceToComment(userFolder, hashId, locationType);
+            return await AddStoryResourceToComment(dto);
         }
 
-        return await AddSocialResourceToComment(userFolder, hashId, locationType);
+        return await AddSocialResourceToComment(dto);
     }
 
-    private async Task<ResourceCommentResp?> AddComicResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+    private async Task<ResourceCommentResp?> AddComicResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.ComicResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+        var resource = await _context.ComicResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
         }
 
         var subFolder = "comments";
-        subFolder = $"{userFolder}/{subFolder}";
+        subFolder = $"{dto.UserFolder}/{subFolder}";
 
         #region -- Copy file from temp target --
-        var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+        var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
         var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
@@ -88,19 +89,19 @@ public partial class ResourceCommentService : IResourceCommentService
         };
     }
 
-    private async Task<ResourceCommentResp?> AddSocialResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+    private async Task<ResourceCommentResp?> AddSocialResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.SocialResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+        var resource = await _context.SocialResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
         }
 
         var subFolder = "comments";
-        subFolder = $"{userFolder}/{subFolder}";
+        subFolder = $"{dto.UserFolder}/{subFolder}";
 
         #region -- Copy file from temp target --
-        var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+        var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
         var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
@@ -131,19 +132,19 @@ public partial class ResourceCommentService : IResourceCommentService
         };
     }
 
-    private async Task<ResourceCommentResp?> AddStoryResourceToComment(string userFolder, string hashId, ResourceLocationType locationType)
+    private async Task<ResourceCommentResp?> AddStoryResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.StoryResourceAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
+        var resource = await _context.StoryResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
         }
 
         var subFolder = "comments";
-        subFolder = $"{userFolder}/{subFolder}";
+        subFolder = $"{dto.UserFolder}/{subFolder}";
 
         #region -- Copy file from temp target --
-        var tempBlobName = resource.Name.GetTempBlobName(userFolder);
+        var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
         var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";

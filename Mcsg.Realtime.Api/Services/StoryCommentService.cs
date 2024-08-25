@@ -97,11 +97,10 @@ public partial class StoryCommentService : IStoryCommentService
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
         var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
-        var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
-
-        var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
-        var order = 0.0f;
+        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.Type, req.MicroService);
+        var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
+        var order = 0.0f;
 
         if (req.Type == PostTypes.Post)
         {
@@ -198,12 +197,11 @@ public partial class StoryCommentService : IStoryCommentService
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
         var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
-        var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
-
-        var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
-
+        var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.Type, req.MicroService);
+        var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
         var response = new PostCommentResp();
+
         if (req.Type == PostTypes.Post)
         {
             var post = await _postRepository.GetByIdAsync(req.PostId);
