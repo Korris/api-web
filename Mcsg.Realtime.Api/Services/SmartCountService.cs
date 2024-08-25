@@ -3,11 +3,11 @@
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Dtos;
 using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Models;
 
 public partial class SmartCountService : ISmartCountService
 {
@@ -32,7 +32,7 @@ public partial class SmartCountService : ISmartCountService
     }
     public async Task QueueAddCommentCount(Guid entityId, EntityType type)
     {
-        await _distributeManager.Deliver(new SmartCountDistributeItem
+        await _distributeManager.Deliver(new SmartCountDistributeDto
         {
             Data = new SmartCountEntityData
             {
@@ -45,7 +45,7 @@ public partial class SmartCountService : ISmartCountService
     }
     public async Task QueueRemoveCommentCount(Guid entityId, EntityType type)
     {
-        await _distributeManager.Deliver(new SmartCountDistributeItem
+        await _distributeManager.Deliver(new SmartCountDistributeDto
         {
             Data = new SmartCountEntityData
             {

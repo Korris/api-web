@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Realtime.Api.Dtos;
 
-public class AuthorModel
+public class AuthorDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

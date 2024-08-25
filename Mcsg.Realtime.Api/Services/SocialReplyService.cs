@@ -84,7 +84,7 @@ public partial class SocialReplyService : ISocialReplyService
         var userAvatar = payload?.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
         var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
         var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
@@ -152,7 +152,7 @@ public partial class SocialReplyService : ISocialReplyService
         var userAvatar = payload?.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
         var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
         var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
@@ -214,7 +214,7 @@ public partial class SocialReplyService : ISocialReplyService
     }
 
     #region Add New Rely Comment
-    private async Task<ReplyCommentResp> ReplyToPostComment(ReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<ReplyCommentResp> ReplyToPostComment(ReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = new SocialPostComment
         {
@@ -252,7 +252,7 @@ public partial class SocialReplyService : ISocialReplyService
         };
     }
 
-    private async Task<ReplyCommentResp> ReplyToSubPostComment(ReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<ReplyCommentResp> ReplyToSubPostComment(ReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = new SocialSubPostComment
         {
@@ -292,7 +292,7 @@ public partial class SocialReplyService : ISocialReplyService
     #endregion
 
     #region Update
-    private async Task<ReplyCommentResp> UpdateReplyToPostComment(UpdateReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<ReplyCommentResp> UpdateReplyToPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = await _postCommentRepository.GetByIdAsync(req.ReplyCommentId);
         if (comment == null)
@@ -332,7 +332,7 @@ public partial class SocialReplyService : ISocialReplyService
             QuoteId = comment?.QuoteId == Guid.Empty ? null : comment.QuoteId
         };
     }
-    private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = await _subPostCommentRepository.GetByIdAsync(req.ReplyCommentId);
         if (comment == null)

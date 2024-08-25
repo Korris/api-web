@@ -9,6 +9,7 @@ using Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
+using Responses;
 
 public partial class MentionService : IMentionService
 {
@@ -37,7 +38,7 @@ public partial class MentionService : IMentionService
         return new MentionResp();
     }
 
-    public async Task<bool> AddUserMentionOnComment(Guid commentId, MentionLocationType locationType, AuthorModel author, IEnumerable<MentionDto> mentions, PostDto post)
+    public async Task<bool> AddUserMentionOnComment(Guid commentId, MentionLocationType locationType, AuthorDto author, IEnumerable<MentionDto> mentions, PostDto post)
     {
         // Remove all mention of comment first
         await _mentionRepository.Connection.ExecuteAsync(DeleteMentionCommentCommand,

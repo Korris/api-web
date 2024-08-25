@@ -3,8 +3,8 @@
 using Common.Core.Distributor;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
+using Dtos;
 using Interfaces;
-using Models;
 
 public class SmartCountDistributeService : BaseDistributor
 {
@@ -15,13 +15,13 @@ public class SmartCountDistributeService : BaseDistributor
 
     public override Task<bool> IsAcceptable(DistributedItem item)
     {
-        var isAcceptable = item.GetType() == typeof(SmartCountDistributeItem);
+        var isAcceptable = item.GetType() == typeof(SmartCountDistributeDto);
         return Task.FromResult(isAcceptable);
     }
 
     public override async Task ApplyAction(DistributedItem item)
     {
-        var distributeItem = item as SmartCountDistributeItem;
+        var distributeItem = item as SmartCountDistributeDto;
         var msg = new QueueMessageDto(distributeItem.Data);
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueuePostComment, msg);
     }

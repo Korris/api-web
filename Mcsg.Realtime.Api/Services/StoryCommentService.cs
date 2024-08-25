@@ -96,7 +96,7 @@ public partial class StoryCommentService : IStoryCommentService
         var userAvatar = payload?.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
         var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
         var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
@@ -197,7 +197,7 @@ public partial class StoryCommentService : IStoryCommentService
         var userAvatar = payload?.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorModel() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
         var type = req.Type == PostTypes.Post ? ResourceLocationType.PostComment : ResourceLocationType.SubPostComment;
 
         var resource = await _resourceCommentService.AddResourceToComment(userFolder, req.ResourceHashId, type, req.MicroService);
@@ -257,7 +257,7 @@ public partial class StoryCommentService : IStoryCommentService
     }
 
     #region Add New Comment
-    private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = new StoryPostComment
         {
@@ -292,7 +292,7 @@ public partial class StoryCommentService : IStoryCommentService
             Mentions = req.Mentions
         };
     }
-    private async Task<PostCommentResp> CommentToSubPost(PostCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<PostCommentResp> CommentToSubPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = new StorySubPostComment
         {
@@ -329,7 +329,7 @@ public partial class StoryCommentService : IStoryCommentService
     #endregion
 
     #region Update
-    private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
         if (comment == null)
@@ -366,7 +366,7 @@ public partial class StoryCommentService : IStoryCommentService
             Mentions = req.Mentions
         };
     }
-    private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorModel author, ResourceCommentResp resource, PostDto post)
+    private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
         if (comment == null)
