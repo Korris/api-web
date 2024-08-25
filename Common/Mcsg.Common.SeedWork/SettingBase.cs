@@ -236,24 +236,24 @@ public class SettingBase : ISettingBase
     /// </summary>
     private readonly Dictionary<string, string> _hostDicHttp = new()
     {
-        { "HostComic", "http://localhost:54303" },
-        { "HostIdentity", "http://localhost:54305" },
-        { "HostMedia", "http://localhost:54306" },
-        { "HostRealtime", "http://localhost:54307" },
-        { "HostSocial", "http://localhost:54308" },
-        { "HostStory", "http://localhost:54309" },
-        { "HostWallet", "http://localhost:54310" },
+        { "HostComic", "http://localhost:54103" },
+        { "HostIdentity", "http://localhost:54105" },
+        { "HostMedia", "http://localhost:54106" },
+        { "HostRealtime", "http://localhost:54107" },
+        { "HostSocial", "http://localhost:54108" },
+        { "HostStory", "http://localhost:54109" },
+        { "HostWallet", "http://localhost:54110" },
 
-        { "HostComicMobile", "http://localhost:54311" },
-        { "HostIdentityMobile", "http://localhost:54312" },
-        { "HostSocialMobile", "http://localhost:54313" },
-        { "HostStoryMobile", "http://localhost:54314" },
+        { "HostComicMobile", "http://localhost:54111" },
+        { "HostIdentityMobile", "http://localhost:54112" },
+        { "HostSocialMobile", "http://localhost:54113" },
+        { "HostStoryMobile", "http://localhost:54114" },
 
-        { "HostAnalyticAdmin", "http://localhost:54302" },
-        { "HostComicAdmin", "http://localhost:54315" },
-        { "HostIdentityAdmin", "http://localhost:54316" },
-        { "HostSocialAdmin", "http://localhost:54317" },
-        { "HostStoryAdmin", "http://localhost:54318" }
+        { "HostAnalyticAdmin", "http://localhost:54102" },
+        { "HostComicAdmin", "http://localhost:54115" },
+        { "HostIdentityAdmin", "http://localhost:54116" },
+        { "HostSocialAdmin", "http://localhost:54117" },
+        { "HostStoryAdmin", "http://localhost:54118" }
     };
 
     #endregion

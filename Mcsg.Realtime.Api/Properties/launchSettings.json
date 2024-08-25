@@ -4,7 +4,7 @@
         "windowsAuthentication": false,
         "anonymousAuthentication": true,
         "iisExpress": {
-            "applicationUrl": "http://localhost:54307",
+            "applicationUrl": "http://localhost:54107",
             "sslPort": 44307
         }
     },
@@ -14,7 +14,7 @@
             "dotnetRunMessages": true,
             "launchBrowser": false,
             "launchUrl": "swagger",
-            "applicationUrl": "http://localhost:54307;http://ntata.debug:54307",
+            "applicationUrl": "http://localhost:54107;http://ntata.debug:54107",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
@@ -24,7 +24,7 @@
             "dotnetRunMessages": true,
             "launchBrowser": false,
             "launchUrl": "swagger",
-            "applicationUrl": "https://localhost:44307;http://localhost:54307",
+            "applicationUrl": "https://localhost:44307;http://localhost:54107",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
