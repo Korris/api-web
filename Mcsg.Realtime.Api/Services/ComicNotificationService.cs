@@ -22,6 +22,7 @@ public class ComicNotificationService : IComicNotificationService
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<ComicPost> _postRepository;
+    private readonly IRepository<ComicSubPost> _subPostRepository;
     private readonly IRepository<ComicPostComment> _postCommentRepository;
     private readonly IRepository<ComicSubPostComment> _subPostCommentRepository;
     private readonly IRepository<Notification> _notiRepository;
@@ -35,6 +36,7 @@ public class ComicNotificationService : IComicNotificationService
     {
         _currentUserService = currentUserService;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
+        _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();
         _postCommentRepository = unitOfWork.GetRepository<ComicPostComment>();
@@ -104,8 +106,15 @@ public class ComicNotificationService : IComicNotificationService
         // Dont notify when comment on their feed
         if (receiverId != Guid.Empty && receiverId != comment.AuthorId)
         {
-            var post = await _postRepository.GetByIdAsync(comment.PostId);
-
+            var postHashId = "";
+            if (comment.Type == PostTypes.Post)
+            {
+                postHashId = (await _postRepository.GetByIdAsync(comment.PostId)).HashId;
+            }
+            else
+            {
+                postHashId = (await _subPostRepository.GetByIdAsync(comment.PostId)).HashId;
+            }
             var noti = await AddNotificationAsync(
                                         actorId: comment.AuthorId
                                         , receiverId: receiverId
@@ -113,12 +122,12 @@ public class ComicNotificationService : IComicNotificationService
                                         , entityType: comment.EntityType
                                         , entityId: comment.Id
                                         , locationId: comment.PostId
-                                        , locationHashId: post.HashId);
+                                        , locationHashId: postHashId);
 
             response.Id = noti.Id;
             response.Status = noti.Status;
             response.LocationId = comment.PostId;
-            response.LocationHashId = post.HashId;
+            response.LocationHashId = postHashId;
             response.EntityId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
             response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed : Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed;
