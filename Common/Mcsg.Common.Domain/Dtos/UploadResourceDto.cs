@@ -15,13 +15,14 @@ public class UploadResourceDto
     /// <param name="userFolder">UserFolder</param>
     /// <param name="userAvatar">UserAvatar</param>
     /// <param name="userName">UserName</param>
-    public UploadResourceDto(List<ResourcePostDto> resourcePosts, Guid userId, string? userFolder, string? userAvatar, string? userName)
+    public UploadResourceDto(List<ResourcePostDto> resourcePosts, Guid userId, string? userFolder, string? userAvatar, string? userName, Guid postId)
     {
         ResourcePosts = resourcePosts;
         UserId = userId;
         UserFolder = userFolder;
         UserAvatar = userAvatar;
         UserName = userName;
+        PostId = postId;
     }
 
     /// <summary>
@@ -34,7 +35,7 @@ public class UploadResourceDto
         var clonedReq = new List<ResourcePostDto>(ResourcePosts.Select(r => r.Clone()));
 
         // Create a new instance with the copied values
-        return new UploadResourceDto(clonedReq, UserId, UserFolder, UserAvatar, UserName) { PostId = PostId, SubPostId = SubPostId };
+        return new UploadResourceDto(clonedReq, UserId, UserFolder, UserAvatar, UserName, PostId) { SubPostId = SubPostId };
     }
 
     #endregion
@@ -69,12 +70,17 @@ public class UploadResourceDto
     /// <summary>
     /// PostId
     /// </summary>
-    public Guid PostId { get; set; }
+    public Guid PostId { get; }
 
     /// <summary>
     /// SubPostId
     /// </summary>
-    public Guid SubPostId { get; set; }
+    public Guid? SubPostId { get; set; }
+
+    /// <summary>
+    /// SubFolder
+    /// </summary>
+    public string SubFolder => $"{UserFolder}/posts/{PostId}{(SubPostId == null ? "" : $"/sub-posts/{SubPostId}")}";
 
     #endregion
 }

@@ -128,7 +128,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq?.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName) { SubPostId = subPost.Id };
+            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId) { SubPostId = subPost.Id };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 
@@ -149,7 +149,7 @@ public partial class ComicService : IComicService
         var result = _postService.MappingChapterResponse(subPost);
         if (chapterPostReq?.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName) { SubPostId = subPost.Id };
+            var urDto = new UploadResourceDto(chapterPostReq.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId) { SubPostId = subPost.Id };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 

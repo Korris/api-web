@@ -154,7 +154,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Add file to feed
         if (request.Files != null && request.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName) { PostId = ett.Id };
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, ett.Id);
             result.SubPosts = await _fileService.UpdateFilesAsync(urDto);
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }

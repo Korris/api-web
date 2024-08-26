@@ -400,9 +400,6 @@ public class FileService : IFileService
             return Tuple.Create(response, subPostResponses);
         }
 
-        var subFolder = addSubPost ? "sub-posts" : "posts";
-        subFolder = $"{dto.UserFolder}/{subFolder}/{dto.PostId}";
-
         var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
         {
@@ -415,7 +412,7 @@ public class FileService : IFileService
 
             #region -- Copy file from temp target --
             var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
-            var targetBlobName = resource.Name.GetMediaBlobName(subFolder);
+            var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
             var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
@@ -454,6 +451,10 @@ public class FileService : IFileService
                 subPostId = subPost.Id;
 
                 subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
+            }
+            else if (dto.SubPostId != null)
+            {
+                subPostId = dto.SubPostId.Value;
             }
 
             resource.Type = resource.Name.GetResourceType();
