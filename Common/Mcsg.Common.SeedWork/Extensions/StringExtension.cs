@@ -525,6 +525,22 @@ public static class StringExtension
     }
 
     /// <summary>
+    /// Generates a modified object name with a specified suffix
+    /// </summary>
+    /// <param name="objectName">The original object name</param>
+    /// <param name="suffix">The suffix to append to the file name</param>
+    /// <returns>The modified object name with the suffix included</returns>
+    public static string GetObjectNameSuffix(this string objectName, string suffix = "-original")
+    {
+        var path = Path.GetDirectoryName(objectName) ?? string.Empty;
+        var fileName = Path.GetFileNameWithoutExtension(objectName);
+        var extension = Path.GetExtension(objectName);
+
+        var res = Path.Combine(path, $"{fileName}{suffix}{extension}");
+        return res.Replace("\\", "/");
+    }
+
+    /// <summary>
     /// Convert the string to a list of GUIDs
     /// </summary>
     /// <param name="s">String data</param>

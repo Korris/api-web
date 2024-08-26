@@ -8,6 +8,7 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
+using Extensions;
 using Interfaces;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -101,6 +102,8 @@ public class Program
         builder.Services.AddMediatR(p =>
         {
             p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiPatch();
         });
         #endregion
 

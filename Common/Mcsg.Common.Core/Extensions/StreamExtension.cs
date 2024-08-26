@@ -11,6 +11,8 @@
  */
 #endregion
 
+using ImageMagick;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SkiaSharp;
 
 namespace Mcsg.Common.Core.Extensions;
@@ -27,7 +29,7 @@ public static class StreamExtension
     /// </summary>
     /// <param name="fs">Stream</param>
     /// <param name="width">New width</param>
-    /// <param name="height">new height</param>
+    /// <param name="height">New height</param>
     /// <returns>Return the result</returns>
     public static Stream ResizeImage(this Stream fs, int width, int height)
     {
@@ -53,6 +55,48 @@ public static class StreamExtension
                     data.SaveTo(ms);
 
                     return ms;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resize image
+    /// </summary>
+    /// <param name="fs">Stream</param>
+    /// <param name="width">New width</param>
+    /// <param name="height">New height</param>
+    /// <param name="quality">Quality</param>
+    /// <returns>Return the result</returns>
+    public static Stream? ResizeImage(this Stream? fs, int width, int height, int quality)
+    {
+        if (fs == null)
+        {
+            return null;
+        }
+
+        // Ensure the Stream's position is at the beginning
+        fs.Position = 0;
+
+        using (var magickImage = new MagickImage(fs))
+        {
+            magickImage.Density = new Density(72);
+            magickImage.SetBitDepth(24);
+            magickImage.Resize(new MagickGeometry(width, height) { IgnoreAspectRatio = true });
+
+            using (var ms = new MemoryStream())
+            {
+                magickImage.Format = MagickFormat.Jpeg;
+                magickImage.Quality = quality;
+                magickImage.Write(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                using (var image = SixLabors.ImageSharp.Image.Load(ms))
+                {
+                    var output = new MemoryStream();
+                    image.Save(output, new JpegEncoder { Quality = quality });
+                    output.Seek(0, SeekOrigin.Begin);
+                    return output;
                 }
             }
         }
