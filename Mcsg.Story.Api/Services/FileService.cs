@@ -85,12 +85,18 @@ public class FileService : IFileService
         var imgHeight = 0;
         var bucketName = _setting.Minio.BucketName;
         var objectName = "";
+        var objectNameOriginal = "";
 
+        var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         if (request.IsPublic == true)
         {
             bucketName = _sc.Strategy.BucketNamePublic;
-            var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
             objectName = $"{Setting.MinioFolder.Story}/{user.UserFolder}{type}/{hashFileName}";
+
+            if (request.Type == "Thumb")
+            {
+                objectNameOriginal = objectName.GetObjectNameSuffix();
+            }
         }
         else
         {
@@ -100,13 +106,30 @@ public class FileService : IFileService
 
         if (file.IsImage() && !file.IsGifAnimated())
         {
+            if (!string.IsNullOrWhiteSpace(objectNameOriginal))
+            {
+                // Compress and save thumbnail
+                var compressedThumb = file.CompressAndConvertToJpeg(144, 180, 100);
+                if (compressedThumb != null)
+                {
+                    using (var thumbStream = compressedThumb.Image.OpenReadStream())
+                    {
+                        await _sc.Strategy.PutObject(thumbStream, objectName, bucketName);
+                    }
+                }
+            }
+            else
+            {
+                objectNameOriginal = objectName;
+            }
+
             var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
             imgWidth = compressedImage.Width;
             imgHeight = compressedImage.Height;
 
             using (var stream = compressedImage.Image.OpenReadStream())
             {
-                await _sc.Strategy.PutObject(stream, objectName, bucketName);
+                await _sc.Strategy.PutObject(stream, objectNameOriginal, bucketName);
             }
         }
         else
