@@ -509,6 +509,7 @@ public partial class FeedService : IFeedService
         }
 
         dbFeed.IsFollowing = await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userId && p.UserFollowingId == dbFeed.UserId);
+        dbFeed.IsFavorite = await _context.SocialPostFavoriteAvailable.AnyAsync(p => p.UserId == userId && p.PostId == dbFeed.Id);
 
         dbFeed.Body = await _businessText.Process(dbFeed.Body);
 
@@ -862,7 +863,8 @@ public partial class FeedService : IFeedService
             Body = HttpUtility.HtmlDecode(item.Body),
             CustomNote = item.CustomNote.ForLexical(),
             IsFollowing = item.IsFollowing,
-            Hide = item.Hide
+            Hide = item.Hide,
+            IsFavorite = item.IsFavorite
         };
 
         #region Mapping with db query single
