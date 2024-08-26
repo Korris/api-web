@@ -9,4 +9,5 @@ public class ReactionsUserModel
     public string AuthorName { get; set; }
     public string AuthorAvatar { get; set; }
     public string? UserName { get; set; }
+    public bool? IsFollowing { get; set; }
 }
