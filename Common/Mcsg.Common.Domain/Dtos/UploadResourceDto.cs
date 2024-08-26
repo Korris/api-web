@@ -82,14 +82,14 @@ public class UploadResourceDto
     public Guid? SubPostId { get; set; }
 
     /// <summary>
-    /// SubPostHashId
+    /// Order
     /// </summary>
-    public string? SubPostHashId { get; set; }
+    public float? Order { get; set; }
 
     /// <summary>
     /// SubFolder
     /// </summary>
-    public string SubFolder => $"{UserFolder}/posts/{_postHashId}{(SubPostHashId == null ? "" : $"/sub-posts/{SubPostHashId}")}";
+    public string SubFolder => $"{UserFolder}/posts/{_postHashId}{(Order == null ? "" : $"/chap-{Order:0000.0}")}";
 
     #endregion
 

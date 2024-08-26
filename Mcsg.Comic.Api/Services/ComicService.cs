@@ -131,7 +131,7 @@ public partial class ComicService : IComicService
             var urDto = new UploadResourceDto(req.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId, subPost.PostHashId)
             {
                 SubPostId = subPost.Id,
-                SubPostHashId = subPost.HashId
+                Order = subPost.Order
             };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
@@ -156,7 +156,7 @@ public partial class ComicService : IComicService
             var urDto = new UploadResourceDto(req.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId, subPost.PostHashId)
             {
                 SubPostId = subPost.Id,
-                SubPostHashId = subPost.HashId
+                Order = subPost.Order
             };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
