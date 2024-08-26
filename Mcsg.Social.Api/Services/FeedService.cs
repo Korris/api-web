@@ -886,7 +886,7 @@ public partial class FeedService : IFeedService
                 }
                 itemResponse.Resources.Add(new ResourceDto
                 {
-                    HashId = subPostdb.HashId,
+                    HashId = fileDbs.HashId,
                     Type = fileDbs.Type,
                     Width = fileDbs.Width,
                     Height = fileDbs.Height,
