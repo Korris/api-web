@@ -15,7 +15,9 @@ public class UploadResourceDto
     /// <param name="userFolder">UserFolder</param>
     /// <param name="userAvatar">UserAvatar</param>
     /// <param name="userName">UserName</param>
-    public UploadResourceDto(List<ResourcePostDto> resourcePosts, Guid userId, string? userFolder, string? userAvatar, string? userName, Guid postId)
+    /// <param name="postId">PostId</param>
+    /// <param name="hashId">HashId</param>
+    public UploadResourceDto(List<ResourcePostDto> resourcePosts, Guid userId, string? userFolder, string? userAvatar, string? userName, Guid postId, string? hashId)
     {
         ResourcePosts = resourcePosts;
         UserId = userId;
@@ -23,6 +25,8 @@ public class UploadResourceDto
         UserAvatar = userAvatar;
         UserName = userName;
         PostId = postId;
+
+        _postHashId = hashId;
     }
 
     /// <summary>
@@ -35,7 +39,7 @@ public class UploadResourceDto
         var clonedReq = new List<ResourcePostDto>(ResourcePosts.Select(r => r.Clone()));
 
         // Create a new instance with the copied values
-        return new UploadResourceDto(clonedReq, UserId, UserFolder, UserAvatar, UserName, PostId) { SubPostId = SubPostId };
+        return new UploadResourceDto(clonedReq, UserId, UserFolder, UserAvatar, UserName, PostId, _postHashId) { SubPostId = SubPostId };
     }
 
     #endregion
@@ -78,9 +82,23 @@ public class UploadResourceDto
     public Guid? SubPostId { get; set; }
 
     /// <summary>
+    /// SubPostHashId
+    /// </summary>
+    public string? SubPostHashId { get; set; }
+
+    /// <summary>
     /// SubFolder
     /// </summary>
-    public string SubFolder => $"{UserFolder}/posts/{PostId}{(SubPostId == null ? "" : $"/sub-posts/{SubPostId}")}";
+    public string SubFolder => $"{UserFolder}/posts/{_postHashId}{(SubPostHashId == null ? "" : $"/sub-posts/{SubPostHashId}")}";
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// PostHashId
+    /// </summary>
+    private string? _postHashId;
 
     #endregion
 }

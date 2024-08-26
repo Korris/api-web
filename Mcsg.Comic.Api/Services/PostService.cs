@@ -1750,6 +1750,7 @@ public partial class PostService : IPostService
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
             IsPremium = chapterPostReq.IsPremium,
+            PostHashId = post.HashId
         };
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
@@ -1801,6 +1802,7 @@ public partial class PostService : IPostService
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
         newChapter.IsPremium = chapterPostReq.IsPremium;
+        newChapter.PostHashId = postHashId;
         newChapter.Order = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : order;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;

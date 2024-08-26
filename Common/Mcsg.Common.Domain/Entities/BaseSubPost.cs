@@ -24,4 +24,10 @@ public class BaseSubPost : AuditableHasPrivateEntity
     public string? ExternalCode { get; set; }
     public bool IsExclusive { get; set; }
     public ExternalResource ExternalResource { get; set; }
+
+    /// <summary>
+    /// PostHashId
+    /// </summary>
+    [NotMapped]
+    public string? PostHashId { get; set; }
 }

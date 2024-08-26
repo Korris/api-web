@@ -135,7 +135,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         }
         if (request.Files != null && request.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, ett.Id);
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, ett.Id, ett.HashId);
             result.SubPosts = await _fileService.ProcessFilesAsync(urDto);
             result.TotalResource = result.SubPosts?.Count ?? 0;
         }
