@@ -8,4 +8,5 @@ public class ReactionsUserModel
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; }
     public string AuthorAvatar { get; set; }
+    public string? UserName { get; set; }
 }

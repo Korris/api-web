@@ -53,7 +53,7 @@
             {
                 return @"SELECT r.""Type"", r.""AuthorId""
                             , (CASE WHEN u.""ProfileName"" IS NULL THEN u.""UserName""  ELSE u.""ProfileName"" END) AS ""AuthorName""
-                            , u.""Avatar"" AS ""AuthorAvatar""
+                            , u.""Avatar"" AS ""AuthorAvatar"", u.""UserName""
                             FROM {0} r
                             LEFT JOIN identity.""Users"" u ON r.""AuthorId"" = u.""Id""
                             WHERE r.""TargetId"" = @TargetId AND r.""IsDelete"" = false
