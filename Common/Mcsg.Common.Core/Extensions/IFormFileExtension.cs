@@ -144,6 +144,36 @@ public static class IFormFileExtension
     }
 
     /// <summary>
+    /// Compress image and upload
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int width, int height, int quality = 100)
+    {
+        if (file == null || file.Length > 0)
+        {
+            return null;
+        }
+
+        using (var stream = file.OpenReadStream())
+        {
+            var output = stream.ResizeImage(width, height, quality);
+            if (output == null)
+            {
+                return null;
+            }
+
+            return new CompressImage
+            {
+                Image = new FormFile(output, 0, output.Length, file.Name, file.FileName)
+            };
+        }
+    }
+
+    /// <summary>
     /// Compress and convert to JPEG
     /// </summary>
     /// <param name="file">File</param>

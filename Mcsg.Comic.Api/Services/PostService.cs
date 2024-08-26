@@ -927,7 +927,7 @@ public partial class PostService : IPostService
             UserId = item.UserId,
             AuthorName = item.AuthorName,
             IsCurrentUserAuthor = currentUserId == item.UserId,
-            ThumbnailUrl = item.ThumbnailUrl,
+            ThumbnailUrl = item.ThumbnailUrl.GetObjectNameSuffix(),
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,
