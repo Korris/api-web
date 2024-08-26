@@ -508,28 +508,6 @@ public partial class CommentService : ICommentService
                 {
                     TotalReply = replyModels.Count
                 };
-                foreach (var repModel in replyModels)
-                {
-                    var replyData = new ReplyData()
-                    {
-                        Id = repModel.Id,
-                        AuthorId = repModel.AuthorId,
-                        AuthorName = repModel.AuthorName,
-                        UserAvatar = repModel.UserAvatar,
-                        Body = repModel.Body,
-                        ModifiedOn = repModel.ModifiedOn,
-                        ResourceHashId = repModel.ResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl) : "",
-                        ParentId = comment.Id,
-                        GifId = repModel.GifId,
-                        QuoteId = repModel.QuoteId,
-                        CustomNote = repModel.CustomNote.ForLexical()
-                    };
-
-                    replyData.Body = await _businessText.Process(replyData.Body);
-
-                    replies.Data.Add(replyData);
-                }
                 comment.Replies = replies;
 
                 // Mention to comment
