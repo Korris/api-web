@@ -14,7 +14,9 @@ public class BasePostLink : AuditableEntity
     [StringLength(Validator.Url.Max)]
     public string? Url { get; set; }
 
-    public Guid PostId { get; set; }
+    [StringLength(Validator.Description.Max)]
     public string? Description { get; set; }
+
+    public Guid PostId { get; set; }
     public PostLinkType Type { get; set; }
 }

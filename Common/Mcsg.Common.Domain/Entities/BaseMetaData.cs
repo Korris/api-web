@@ -13,7 +13,9 @@ public class BaseMetaData : EntityId
     [StringLength(Validator.Url.Max)]
     public string? Url { get; set; }
 
+    [StringLength(Validator.Description.Max)]
     public string? Description { get; set; }
+
     public string? Domain { get; set; }
     public Guid? PostId { get; set; }
     public Guid? SubPostId { get; set; }
