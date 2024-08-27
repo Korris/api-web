@@ -1,10 +1,15 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork;
+using SeedWork.Constants;
 
 public partial class BackgroundMedia : AuditableEntity
 {
+    [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
+
     public string? Url { get; set; }
     public string? Thumbnail { get; set; }
     public string? ArtistName { get; set; }

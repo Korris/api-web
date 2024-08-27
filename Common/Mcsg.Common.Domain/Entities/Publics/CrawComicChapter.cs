@@ -1,15 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
+using SeedWork.Constants;
 
 public class CrawComicChapter : AuditableEntity
 {
+    [StringLength(Validator.Title.Max)]
+    public string? Title { get; set; }
+
     public Guid SourceComic { get; set; }
     public string? ExternalCode { get; set; }
-    public string? Title { get; set; }
     public string? Url { get; set; }
     public string? Name { get; set; }
     public CrawComicChapterStatus Status { get; set; }

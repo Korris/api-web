@@ -1,10 +1,15 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork.Constants;
 
 public partial class BasePost : AuditableHasPrivateEntity
 {
+    [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
+
     public string? HashId { get; set; }
     public Guid? AuthorId { get; set; }
     public Guid UserId { get; set; }

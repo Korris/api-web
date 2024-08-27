@@ -1,16 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
+using SeedWork.Constants;
 
 public class BaseResource : AuditableEntity
 {
+    [StringLength(Validator.Title.Max)]
+    public string? Title { get; set; }
+
     public Guid? AuthorId { get; set; }
     public string? HashId { get; set; }
     public Guid? SubPostId { get; set; }
-    public string? Title { get; set; }
     public string? Name { get; set; }
     public string? Url { get; set; }
     public string? BucketName { get; set; }
