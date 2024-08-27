@@ -414,4 +414,15 @@ public class Validator
         /// </summary>
         public const ushort Max = 512;
     }
+
+    /// <summary>
+    /// URL
+    /// </summary>
+    public class Url
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 256;
+    }
 }

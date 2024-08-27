@@ -15,9 +15,11 @@ public class CrawComicChapter : AuditableEntity
     [StringLength(Validator.Name.Max)]
     public string? Name { get; set; }
 
+    [StringLength(Validator.Url.Max)]
+    public string? Url { get; set; }
+
     public Guid SourceComic { get; set; }
     public string? ExternalCode { get; set; }
-    public string? Url { get; set; }
     public CrawComicChapterStatus Status { get; set; }
     public string? ExternalLastedUpdate { get; set; }
 

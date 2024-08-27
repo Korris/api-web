@@ -11,7 +11,9 @@ public class CrawComic : AuditableEntity
     [StringLength(Validator.Name.Max)]
     public string? Name { get; set; }
 
+    [StringLength(Validator.Url.Max)]
     public string? Url { get; set; }
+
     public string? Author { get; set; }
     public string? Status { get; set; }
     public string? Category { get; set; }

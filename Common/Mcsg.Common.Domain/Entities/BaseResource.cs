@@ -18,9 +18,11 @@ public class BaseResource : AuditableEntity
     [StringLength(Validator.Hashtag.Max)]
     public string? HashId { get; set; }
 
+    [StringLength(Validator.Url.Max)]
+    public string? Url { get; set; }
+
     public Guid? AuthorId { get; set; }
     public Guid? SubPostId { get; set; }
-    public string? Url { get; set; }
     public string? BucketName { get; set; }
     public int Order { get; set; }
     public double Size { get; set; } // bytes
