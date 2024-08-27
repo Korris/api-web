@@ -11,7 +11,9 @@ public class BaseSubPost : AuditableHasPrivateEntity
     [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
 
+    [StringLength(Validator.Name.Max)]
     public string? Name { get; set; }
+
     public Guid PostId { get; set; }
     public string? HashId { get; set; }
     public Guid? AuthorId { get; set; }

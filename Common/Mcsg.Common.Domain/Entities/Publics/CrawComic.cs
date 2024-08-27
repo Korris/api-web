@@ -1,11 +1,16 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
+using SeedWork.Constants;
 
 public class CrawComic : AuditableEntity
 {
+    [StringLength(Validator.Name.Max)]
     public string? Name { get; set; }
+
     public string? Url { get; set; }
     public string? Author { get; set; }
     public string? Status { get; set; }

@@ -12,10 +12,12 @@ public class BaseResource : AuditableEntity
     [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
 
+    [StringLength(Validator.Name.Max)]
+    public string? Name { get; set; }
+
     public Guid? AuthorId { get; set; }
     public string? HashId { get; set; }
     public Guid? SubPostId { get; set; }
-    public string? Name { get; set; }
     public string? Url { get; set; }
     public string? BucketName { get; set; }
     public int Order { get; set; }
