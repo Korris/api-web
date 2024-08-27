@@ -12,6 +12,7 @@
 #endregion
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
@@ -87,12 +88,21 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             throw new BadRequestException(M109);
         }
 
-        var userName = request.UserName;
         var userId = request.UserId.Value;
-        var profileName = request.ProfileName;
-        var profileId = request.ProfileId;
-        var userFolder = request.UserFolder;
-        var userAvatar = request.UserAvatar;
+
+
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+        if (user == null)
+        {
+            throw new BadRequestException(M119);
+
+        }
+
+        var userName = user.UserName;
+        var profileName = user.ProfileName;
+        var profileId = user.ProfileId;
+        var userFolder = user.UserFolder;
+        var userAvatar = user.Avatar;
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
