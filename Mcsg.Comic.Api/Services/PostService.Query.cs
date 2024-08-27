@@ -846,7 +846,7 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT sp.""Id"", sp.""Title"", sp.""Order""
+                return @"SELECT sp.""Id"", sp.""Title"", sp.""Order"", sp.""IsPremium""
                     FROM ""comic"".""ComicSubPosts"" sp
                     INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false

@@ -24,6 +24,7 @@ public class ChapterTOCResponse
     public float Order { get; set; }
     public string? Title { get; set; }
     public Guid Id { get; set; }
+    public bool IsPremium { get; set; }
 }
 public class ChapterTOCExtendResponse : ChapterTOCResponse
 {
