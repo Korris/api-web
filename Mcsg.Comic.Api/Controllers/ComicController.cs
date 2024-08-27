@@ -14,11 +14,12 @@ public class ComicController : ControllerBase
 {
     #region -- Methods --
 
-    public ComicController(ISetting setting, IComicService comicService, IPostService postService)
+    public ComicController(ISetting setting, IComicService comicService, IPostService postService, IPostReactService postReactService)
     {
         _setting = setting;
         _postService = postService;
         _comicService = comicService;
+        _postReactService = postReactService;
     }
 
     [HttpPost]
@@ -231,6 +232,13 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}/reactions")]
+    public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        var result = await _postReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
@@ -243,6 +251,8 @@ public class ComicController : ControllerBase
     private readonly IComicService _comicService;
 
     private readonly IPostService _postService;
+
+    private readonly IPostReactService _postReactService;
 
     #endregion
 }

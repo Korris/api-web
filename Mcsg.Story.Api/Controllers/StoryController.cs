@@ -14,11 +14,12 @@ public class StoryController : ControllerBase
 {
     #region -- Methods --
 
-    public StoryController(ISetting setting, IStoryService storyService, IPostService postService)
+    public StoryController(ISetting setting, IStoryService storyService, IPostService postService, IPostReactService postReactService)
     {
         _setting = setting;
         _storyService = storyService;
         _postService = postService;
+        _postReactService = postReactService;
     }
 
     [HttpPost]
@@ -224,6 +225,13 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}/reactions")]
+    public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        var result = await _postReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
@@ -236,6 +244,8 @@ public class StoryController : ControllerBase
     private readonly IStoryService _storyService;
 
     private readonly IPostService _postService;
+
+    private readonly IPostReactService _postReactService;
 
     #endregion
 }
