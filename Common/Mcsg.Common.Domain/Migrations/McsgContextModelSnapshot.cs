@@ -57,10 +57,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -115,10 +117,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("Domain")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("PostCommentId")
                         .HasColumnType("uuid");
@@ -133,10 +137,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -154,13 +160,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AuthorName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Body")
                         .HasColumnType("text");
 
                     b.Property<string>("CoverUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -172,14 +180,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ExternalCode")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<int>("ExternalResource")
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Hide")
                         .HasColumnType("integer");
@@ -206,13 +216,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("StatusReason")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -427,10 +440,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -448,7 +463,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -554,7 +570,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BucketName")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -564,7 +581,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Height")
                         .HasColumnType("integer");
@@ -583,7 +601,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -598,13 +617,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Width")
                         .HasColumnType("integer");
@@ -653,7 +674,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -674,7 +696,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<float>("Order")
                         .HasColumnType("real");
@@ -692,7 +715,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -925,7 +949,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("ExternalCode")
                         .HasColumnType("text");
@@ -949,7 +974,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Rating")
                         .HasColumnType("text");
@@ -961,7 +987,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("View")
                         .HasColumnType("text");
@@ -1003,7 +1030,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<Guid>("SourceComic")
                         .HasColumnType("uuid");
@@ -1012,10 +1040,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("View")
                         .HasColumnType("text");
@@ -1457,10 +1487,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("Domain")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("PostCommentId")
                         .HasColumnType("uuid");
@@ -1475,10 +1507,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1496,13 +1530,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AuthorName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Body")
                         .HasColumnType("text");
 
                     b.Property<string>("CoverUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -1514,14 +1550,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ExternalCode")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<int>("ExternalResource")
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Hide")
                         .HasColumnType("integer");
@@ -1548,13 +1586,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("StatusReason")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -1769,10 +1810,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -1790,7 +1833,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1896,7 +1940,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BucketName")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -1906,7 +1951,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Height")
                         .HasColumnType("integer");
@@ -1925,7 +1971,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -1940,13 +1987,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Width")
                         .HasColumnType("integer");
@@ -1995,7 +2044,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2013,7 +2063,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -2031,7 +2082,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -2243,10 +2295,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("Domain")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("PostCommentId")
                         .HasColumnType("uuid");
@@ -2261,10 +2315,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -2282,13 +2338,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AuthorName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Body")
                         .HasColumnType("text");
 
                     b.Property<string>("CoverUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -2300,14 +2358,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ExternalCode")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<int>("ExternalResource")
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Hide")
                         .HasColumnType("integer");
@@ -2334,13 +2394,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("StatusReason")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -2555,10 +2618,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2576,7 +2641,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -2682,7 +2748,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("BucketName")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -2692,7 +2759,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("HashId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<int>("Height")
                         .HasColumnType("integer");
@@ -2711,7 +2779,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -2726,13 +2795,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Width")
                         .HasColumnType("integer");
@@ -2781,7 +2852,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("HashId")
-                        .HasColumnType("text");
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -2802,7 +2874,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<float>("Order")
                         .HasColumnType("real");
@@ -2820,7 +2893,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3038,7 +3112,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -3140,10 +3215,12 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
@@ -3220,7 +3297,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CreatedIp")
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp");
@@ -3261,7 +3339,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("LastLoginIp")
-                        .HasColumnType("varchar(256)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(256)
@@ -3325,7 +3404,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("StatusReason")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
