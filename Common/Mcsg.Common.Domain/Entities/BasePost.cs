@@ -10,7 +10,9 @@ public partial class BasePost : AuditableHasPrivateEntity
     [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
 
+    [StringLength(Validator.Hashtag.Max)]
     public string? HashId { get; set; }
+
     public Guid? AuthorId { get; set; }
     public Guid UserId { get; set; }
     public string? ThumbnailUrl { get; set; }
