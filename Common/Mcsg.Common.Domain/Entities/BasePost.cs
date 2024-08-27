@@ -13,20 +13,32 @@ public partial class BasePost : AuditableHasPrivateEntity
     [StringLength(Validator.Hashtag.Max)]
     public string? HashId { get; set; }
 
+    [StringLength(Validator.Url.Max)]
+    public string? ThumbnailUrl { get; set; }
+
+    [StringLength(Validator.Url.Max)]
+    public string? CoverUrl { get; set; }
+
+    [StringLength(Validator.Name.Max)]
+    public string? AuthorName { get; set; }
+
+    [StringLength(Validator.Description.Max)]
+    public string? StatusReason { get; set; }
+
+    [StringLength(32)]
+    public string? ExternalCode { get; set; }
+
+    public string? Body { get; set; }
+
+    public string? CustomNote { get; set; }
+
     public Guid? AuthorId { get; set; }
     public Guid UserId { get; set; }
-    public string? ThumbnailUrl { get; set; }
-    public string? AuthorName { get; set; }
-    public string? CoverUrl { get; set; }
     public PostType Type { get; set; }
-    public string? Body { get; set; }
-    public string? CustomNote { get; set; }
     public PostStatus Status { get; set; }
-    public string? StatusReason { get; set; }
     public bool? IsMature { get; set; }
     public bool? IsCompleted { get; set; }
     public int ViewCount { get; set; }
-    public string? ExternalCode { get; set; }
     public ExternalResource ExternalResource { get; set; }
     public HideOption Hide { get; set; }
 }

@@ -17,11 +17,12 @@ public class BaseSubPost : AuditableHasPrivateEntity
     [StringLength(Validator.Hashtag.Max)]
     public string? HashId { get; set; }
 
+    public string? Body { get; set; }
+    public string? CreatorNote { get; set; }
+
     public Guid PostId { get; set; }
     public Guid? AuthorId { get; set; }
     public Guid UserId { get; set; }
-    public string? Body { get; set; }
-    public string? CreatorNote { get; set; }
     public PostStatus Status { get; set; }
 
     [Column(TypeName = "timestamp")]

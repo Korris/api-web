@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork.Constants;
 using SeedWork.Enums;
 
 public partial class User : IdentityUser<Guid>
@@ -40,7 +42,9 @@ public partial class User : IdentityUser<Guid>
     [Column(TypeName = "timestamp")]
     public DateTime? LastLoginDate { get; set; }
 
+    [StringLength(Validator.Description.Max)]
     public string? StatusReason { get; set; }
+
     public string? CoverPhoto { get; set; }
     public string? Location { get; set; }
     public DateOnly? PremiumDate { get; set; }
@@ -55,13 +59,13 @@ public partial class User : IdentityUser<Guid>
     /// <summary>
     /// Created IP
     /// </summary>
-    [Column(TypeName = "varchar(256)")]
+    [StringLength(Validator.Ip.Max)]
     public string? CreatedIp { get; set; }
 
     /// <summary>
     /// Last login IP
     /// </summary>
-    [Column(TypeName = "varchar(256)")]
+    [StringLength(Validator.Ip.Max)]
     public string? LastLoginIp { get; set; }
 
     /// <summary>

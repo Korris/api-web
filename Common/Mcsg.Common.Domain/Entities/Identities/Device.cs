@@ -4,6 +4,7 @@ namespace Mcsg.Common.Domain.Entities;
 
 using Enums;
 using SeedWork;
+using SeedWork.Constants;
 using SeedWork.Enums;
 
 public partial class Device : AuditableEntity
@@ -16,7 +17,7 @@ public partial class Device : AuditableEntity
     /// <summary>
     /// Token
     /// </summary>
-    [StringLength(512)]
+    [StringLength(Validator.DeviceToken.Max)]
     public string Token { get; set; } = default!;
 
     /// <summary>

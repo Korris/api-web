@@ -425,4 +425,15 @@ public class Validator
         /// </summary>
         public const ushort Max = 256;
     }
+
+    /// <summary>
+    /// IP
+    /// </summary>
+    public class Ip
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 64;
+    }
 }
