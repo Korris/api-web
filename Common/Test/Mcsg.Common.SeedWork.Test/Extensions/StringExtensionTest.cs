@@ -43,6 +43,29 @@ public class StringExtensionTest
     }
     #endregion
 
+    #region -- GetObjectNameSuffix --
+    #region -- ValidationPass --
+    [TestCase(null, null, "")]
+    [TestCase(null, "", "")]
+    [TestCase("", null, "")]
+    [TestCase("", "", "")]
+    [TestCase(" ", "", "")]
+    [TestCase("  ", "", "")]
+    [TestCase(_getObjectNameSuffixInput01, "-original", _getObjectNameSuffixExpected01)]
+    [TestCase(_getObjectNameSuffixInput02, "-original", _getObjectNameSuffixExpected02)]
+    public void GetObjectNameSuffix__ValidationPass(string? input, string? suffix, string? expected)
+    {
+        var actual = input.GetObjectNameSuffix(suffix);
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    private const string _getObjectNameSuffixInput01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
+    private const string _getObjectNameSuffixExpected01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN-original.jpg";
+    private const string _getObjectNameSuffixInput02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
+    private const string _getObjectNameSuffixExpected02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN-original.jpg";
+    #endregion
+    #endregion
+
     #region -- ToGuids --
     #region -- ValidationPass --
     [TestCase(null, "")]

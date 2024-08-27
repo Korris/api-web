@@ -530,14 +530,23 @@ public static class StringExtension
     /// <param name="objectName">The original object name</param>
     /// <param name="suffix">The suffix to append to the file name</param>
     /// <returns>The modified object name with the suffix included</returns>
-    public static string GetObjectNameSuffix(this string objectName, string suffix = "-original")
+    public static string GetObjectNameSuffix(this string? objectName, string? suffix = "-original")
     {
+        if (string.IsNullOrWhiteSpace(objectName))
+        {
+            return string.Empty;
+        }
+
         var path = Path.GetDirectoryName(objectName) ?? string.Empty;
+
+        // Extract file name and extension
         var fileName = Path.GetFileNameWithoutExtension(objectName);
         var extension = Path.GetExtension(objectName);
 
-        var res = Path.Combine(path, $"{fileName}{suffix}{extension}");
-        return res.Replace("\\", "/");
+        // Append the suffix to the file name
+        var newFileName = $"{fileName}{suffix}{extension}";
+
+        return Path.Combine(path, newFileName).Replace("\\", "/").Replace(":/", "://");
     }
 
     /// <summary>
