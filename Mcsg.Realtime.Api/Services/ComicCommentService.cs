@@ -449,6 +449,7 @@ public partial class ComicCommentService : IComicCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
+        var post = await _subPostRepository.GetByIdAsync(comment.PostId);
 
         var command = string.Format(DeleteCommentCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,
@@ -464,6 +465,7 @@ public partial class ComicCommentService : IComicCommentService
         await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.SubPost);
         return new PostCommentResp
         {
+            PostIdOfPost = post.PostId,
             PostId = comment.PostId,
             CommentDate = comment.ModifiedOn.Value,
             Type = PostTypes.SubPost,
