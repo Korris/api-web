@@ -991,6 +991,10 @@ LIMIT 1
                     SET ""IsDelete"" = true    , ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     WHERE ""PostId"" = @PostId;
     
+                    UPDATE ""comic"".""ComicPostFavorites""
+                    SET ""IsDelete"" = true    , ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
+                    WHERE ""PostId"" = @PostId;
+    
                     UPDATE ""comic"".""ComicPostReactions""
                     SET ""IsDelete"" = true    , ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     WHERE ""TargetId"" = @PostId;
