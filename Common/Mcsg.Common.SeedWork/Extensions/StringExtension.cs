@@ -11,7 +11,6 @@
  */
 #endregion
 
-using Mcsg.Common.SeedWork.Constants;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
@@ -20,6 +19,7 @@ using System.Web;
 
 namespace Mcsg.Common.SeedWork.Extensions;
 
+using SeedWork.Constants;
 using static Constants.Validator;
 using static Dtos.ConnectionDto;
 
@@ -568,6 +568,48 @@ public static class StringExtension
         }
 
         return objectName.Replace(suffix, "");
+    }
+
+    /// <summary>
+    /// Extracts the 'src' attributes from 'img' tags in the given HTML content
+    /// </summary>
+    /// <param name="s">The HTML content to extract image sources from</param>
+    /// <returns>A list of image 'src' URLs</returns>
+    public static List<string> ExtractImageSrc(this string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return [];
+        }
+
+        var res = new List<string>();
+        var pattern = @"<img[^>]+src=""([^""]+)""";
+        var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+        var matches = regex.Matches(s);
+
+        foreach (Match match in matches)
+        {
+            if (match.Groups.Count <= 1)
+            {
+                continue;
+            }
+
+            var src = match.Groups[1].Value;
+            res.Add(RemoveQueryString(src));
+        }
+
+        return res;
+    }
+
+    /// <summary>
+    /// Removes the query string from a given URL
+    /// </summary>
+    /// <param name="url">The URL to clean</param>
+    /// <returns>The URL without the query string</returns>
+    public static string RemoveQueryString(this string url)
+    {
+        var index = url.IndexOf('?');
+        return index >= 0 ? url.Substring(0, index) : url;
     }
 
     /// <summary>

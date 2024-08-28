@@ -70,6 +70,18 @@ public class StorageStrategy : IStorageStrategy
     }
 
     /// <summary>
+    /// Put object
+    /// </summary>
+    /// <param name="url">file URL</param>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    public virtual Task PutObject(string url, string objectName, string? bucketName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// Presigned get object
     /// </summary>
     /// <param name="objectName">Object name</param>

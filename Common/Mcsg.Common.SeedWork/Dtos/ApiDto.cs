@@ -62,6 +62,11 @@ public class ApiDto
         /// Analytic
         /// </summary>
         public string? Analytic { get; set; }
+
+        /// <summary>
+        /// Sync
+        /// </summary>
+        public string? Sync { get; set; }
     }
 
     /// <summary>

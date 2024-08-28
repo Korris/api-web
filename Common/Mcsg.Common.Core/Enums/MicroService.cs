@@ -46,6 +46,11 @@ public enum MicroService
     Story,
 
     /// <summary>
+    /// Sync
+    /// </summary>
+    Sync,
+
+    /// <summary>
     /// 
     /// </summary>
     Wallet

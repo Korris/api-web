@@ -58,6 +58,15 @@ public interface IStorageStrategy
     Task PutObject(Stream fs, string objectName, string? bucketName);
 
     /// <summary>
+    /// Put object
+    /// </summary>
+    /// <param name="url">file URL</param>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <returns>Return the result</returns>
+    Task PutObject(string url, string objectName, string? bucketName);
+
+    /// <summary>
     /// Presigned get object
     /// </summary>
     /// <param name="objectName">Object name</param>

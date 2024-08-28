@@ -37,7 +37,8 @@ public class Setting : SeedWork.Constants.Setting
                 { "Rea", MicroService.Realtime.ToString() },
                 { "Soc", MicroService.Social.ToString() },
                 { "Sto", MicroService.Story.ToString() },
-                { "Wal", MicroService.Wallet.ToString() }
+                { "Wal", MicroService.Wallet.ToString() },
+                { "Syn", MicroService.Sync.ToString() }
             };
         }
     }

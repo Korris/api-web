@@ -13,5 +13,10 @@ public enum ExternalResource
     /// <summary>
     /// Nettruyen
     /// </summary>
-    Nettruyen
+    Nettruyen,
+
+    /// <summary>
+    /// Blogtruyen
+    /// </summary>
+    Blogtruyen
 }

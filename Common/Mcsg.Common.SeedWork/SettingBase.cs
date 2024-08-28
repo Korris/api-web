@@ -182,6 +182,7 @@ public class SettingBase : ISettingBase
         Api.Admin.Identity = dic["HostIdentityAdmin"];
         Api.Admin.Social = dic["HostSocialAdmin"];
         Api.Admin.Story = dic["HostStoryAdmin"];
+        Api.Admin.Sync = dic["HostSyncAdmin"];
         #endregion
 
         #region -- Api.Mobile --
@@ -228,7 +229,8 @@ public class SettingBase : ISettingBase
         { "HostComicAdmin", "https://localhost:44315" },
         { "HostIdentityAdmin", "https://localhost:44316" },
         { "HostSocialAdmin", "https://localhost:44317" },
-        { "HostStoryAdmin", "https://localhost:44318" }
+        { "HostStoryAdmin", "https://localhost:44318" },
+        { "HostSyncAdmin", "https://localhost:44319" }
     };
 
     /// <summary>
@@ -253,7 +255,8 @@ public class SettingBase : ISettingBase
         { "HostComicAdmin", "http://localhost:54115" },
         { "HostIdentityAdmin", "http://localhost:54116" },
         { "HostSocialAdmin", "http://localhost:54117" },
-        { "HostStoryAdmin", "http://localhost:54118" }
+        { "HostStoryAdmin", "http://localhost:54118" },
+        { "HostSyncAdmin", "http://localhost:54119" }
     };
 
     #endregion
