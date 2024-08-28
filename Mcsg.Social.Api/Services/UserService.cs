@@ -44,11 +44,12 @@ public partial class UserService : IUserService
                           [QueryCondition]";
         bool first = true;
         var queryCondition = "";
+        queryCondition += @"WHERE ""IsDelete"" = false AND (";
         foreach (var word in keywords)
         {
             if (first)
             {
-                queryCondition += $@"WHERE LOWER(""ProfileName"") LIKE '%{word}%'";
+                queryCondition += $@"LOWER(""ProfileName"") LIKE '%{word}%'";
                 first = false;
             }
             else
@@ -56,7 +57,7 @@ public partial class UserService : IUserService
                 queryCondition += $@"OR LOWER(""ProfileName"") LIKE '%{word}%'";
             }
         }
-        queryCondition += @"AND ""IsDelete"" = false";
+        queryCondition += ")";
         query = query.Replace("[QueryCondition]", queryCondition);
         var offset = input.PageSize * (input.PageNumber - 1);
         var multi = await _userRepository.Connection.QueryMultipleAsync(query, new

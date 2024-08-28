@@ -53,6 +53,16 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
     public string? ReactionByPostStr { get; set; }
     public int TotalReact { set; get; }
     public int TotalItems { get; set; }
+    public MetaDataDto? MetaData { get; set; }
+    public PostLinkDto? Link { get; set; }
+    public int TotalResource { get; set; }
+    public List<ResourceDto>? Resources { get; set; } = [];
+    public string? SubPostResourceStr { get; set; }
+    public string? MetaTitle { get; set; }
+    public string? MetaDomain { get; set; }
+    public string? MetaUrl { get; set; }
+    public string? MetaDescription { get; set; }
+    public string? Url { get; set; }
 }
 
 public class NewPostSeriesResponse : PostSeriesResponse
