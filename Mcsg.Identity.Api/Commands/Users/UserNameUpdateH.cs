@@ -74,6 +74,13 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res;
         }
 
+        hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserId == request.UserId && p.UserName == newUserName, cancellationToken);
+        if (hasUserNameHistory)
+        {
+            res.SetError(E129, M129);
+            return res;
+        }
+
         var dto = await Validate(user.Id, cancellationToken);
 
         if (dto.TimePassed.TotalMinutes < dto.UserNameWaitingChangedAfter)

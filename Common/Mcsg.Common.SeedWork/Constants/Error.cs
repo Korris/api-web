@@ -184,6 +184,11 @@ public static class Error
     /// </summary>
     public const string E128 = "E128";
 
+    /// <summary>
+    ///  Must not be the same as the old username
+    /// </summary>
+    public const string E129 = "E129";
+
     #endregion
 
     #region -- E2xx --
