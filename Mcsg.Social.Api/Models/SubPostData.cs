@@ -6,3 +6,9 @@ public class SubPostData
     public float Order { get; set; }
     public string HashId { get; set; }
 }
+public class PostData
+{
+    public string HashId { get; set; }
+    public string Title { get; set; }
+}
+

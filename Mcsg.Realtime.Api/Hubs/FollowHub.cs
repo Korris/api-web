@@ -21,10 +21,12 @@ public class FollowHub : Hub
     /// Initialize
     /// </summary>
     /// <param name="followService"></param>
-    public FollowHub(IFollowService followService, ICurrentUserService currentUserService)
+    public FollowHub(IFollowService followService, ICurrentUserService currentUserService,
+        IFollowPostService followPostService)
     {
         _followService = followService;
         _currentUserService = currentUserService;
+        _followPostService = followPostService;
     }
 
     /// <summary>
@@ -57,6 +59,11 @@ public class FollowHub : Hub
         await Clients.Client(clientId).SendAsync(RealTimeTopic.ReceiveFollow, JsonConvert.SerializeObject(resp));
     }
 
+    public async Task FollowPost(FollowPostReq request)
+    {
+        await _followPostService.SendPostFollowNotification(request);
+    }
+
     public async Task OnDisconnectedAsync()
     {
         var user = await _currentUserService.GetCurrentUserAsync();
@@ -75,6 +82,8 @@ public class FollowHub : Hub
     /// Follow Service
     /// </summary>
     private readonly IFollowService _followService;
+
+    private readonly IFollowPostService _followPostService;
 
     #endregion
 }

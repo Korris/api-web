@@ -155,6 +155,7 @@ public class Program
         builder.Services.AddScoped<IComicNotificationService, ComicNotificationService>();
         builder.Services.AddScoped<IMentionService, MentionService>();
         builder.Services.AddScoped<IFollowService, FollowService>();
+        builder.Services.AddScoped<IFollowPostService, FollowPostService>();
 
         var app = builder.Build();
 

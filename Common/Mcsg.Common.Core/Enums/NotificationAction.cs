@@ -58,5 +58,10 @@ public enum NotificationAction
     /// <summary>
     /// FollowUser
     /// </summary>
-    FollowUser
+    FollowUser,
+
+    /// <summary>
+    /// FollowUser
+    /// </summary>
+    FollowPost
 }

@@ -90,7 +90,8 @@ public partial class NotificationService : INotificationService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-            await UpdateComicStory(resDto);
+            await CheckDataCommentOnSubPost(resDto);
+            await CheckDataFollowPost(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -102,10 +103,50 @@ public partial class NotificationService : INotificationService
         }
     }
 
-    private async Task UpdateComicStory(List<NotificationModel> resDto)
+    private async Task CheckDataFollowPost(List<NotificationModel> resDto)
+    {
+        var followComicPostIds = resDto.Where(p => p.TargetType == NotificationTargetType.FollowComicPost).Select(p => p.LocationId).ToList();
+        if (followComicPostIds.Count > 0)
+        {
+            var comics = await _notiRepository.Connection.QueryAsync<PostData>($@"
+                                        SELECT cp.""Title"",cp.""HashId""  from comic.""ComicPosts"" cp
+                                        WHERE cp.""Id"" = ANY(@ids)", new { ids = followComicPostIds });
+            if (comics.Count() > 0)
+            {
+                foreach (var item in comics)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
+                    if (response != null)
+                    {
+                        response.Message = string.Format(response.Message, response.ActorName, item.Title);
+                    }
+                }
+            }
+        }
+        var followStoryPostIds = resDto.Where(p => p.TargetType == NotificationTargetType.FollowStoryPost).Select(p => p.LocationId).ToList();
+        if (followStoryPostIds.Count > 0)
+        {
+            var stories = await _notiRepository.Connection.QueryAsync<PostData>($@"
+                                        SELECT sp.""Title"",sp.""HashId""  from comic.""StoryPosts"" sp
+                                        WHERE sp.""Id"" = ANY(@ids)", new { ids = followStoryPostIds });
+            if (stories.Count() > 0)
+            {
+                foreach (var item in stories)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
+                    if (response != null)
+                    {
+                        response.Message = string.Format(response.Message, response.ActorName, item.Title);
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckDataCommentOnSubPost(List<NotificationModel> resDto)
     {
         var subComicIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubComic).Select(p => p.LocationId).ToList();
-        if (subComicIds.Any())
+        if (subComicIds.Count > 0)
         {
             var subComics = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
                                         SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from comic.""ComicSubPosts"" csp
@@ -126,7 +167,7 @@ public partial class NotificationService : INotificationService
         }
 
         var subStoryIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubStory).Select(p => p.LocationId).ToList();
-        if (subStoryIds.Any())
+        if (subStoryIds.Count > 0)
         {
             var subStories = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
                                         SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from story.""StorySubPosts"" csp
@@ -169,7 +210,7 @@ public partial class NotificationService : INotificationService
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var resDto = _mapper.Map<List<NotificationModel>>(items);
-            await UpdateComicStory(resDto);
+            await CheckDataCommentOnSubPost(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 

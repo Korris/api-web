@@ -18,5 +18,6 @@ public static class RealTimeTopic
 
     #region Follow
     public const string ReceiveFollow = "ReceiveFollow";
+    public const string ReceiveFollowPost = "ReceiveFollowPost";
     #endregion
 }

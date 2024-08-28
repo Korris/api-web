@@ -18,4 +18,5 @@ public interface INotificationService
     Task AddTransactionUpdate(RealTimeTransactionUpdateReq req);
     Task AddCommonNotification(CommonNotificationReq req);
     Task<NotificationResponse> FollowNotification(UserFollowResp followResp);
+    Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request);
 }

@@ -19,6 +19,7 @@ using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
+using static Mcsg.Common.Core.Constants.Setting;
 
 public class NotificationService : INotificationService
 {
@@ -438,6 +439,33 @@ public class NotificationService : INotificationService
             NotificationAction.Failed => NotificationContent.VideoUploadFailed,
             _ => throw new NotSupportedException($"Unsupported video action: {action}"),
         };
+    }
+
+    public async Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request)
+    {
+        var response = new NotificationResponse();
+        var noti = await AddNotificationAsync(
+                                actorId: request.ActorId
+                                , receiverId: request.ReceiverId
+                                , action: NotificationAction.FollowPost
+                                , entityType: request.NotificationEntityType
+                                , entityId: request.ReceiverId
+                                , locationId: request.PostId
+                                , locationHashId: request.PostHashId);
+
+        response.Id = noti.Id;
+        response.Status = noti.Status;
+        response.LocationId = request.PostId;
+        response.LocationHashId = request.PostHashId;
+        response.Message = string.Format(NotificationContent.FollowPost, request.ActorName, request.PostName);
+        response.TargetType = request.NotificationEntityType == NotificationEntityType.FollowComicPost ? NotificationTargetType.FollowComicPost : NotificationTargetType.FollowStoryPost;
+        response.ActorId = request.ActorId;
+        response.ActorName = request.ActorName;
+        response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+        response.NotificationType = Common.Core.Constants.Setting.NotificationType.FollowPost;
+        response.UserAvatar = request.UserAvatar;
+        await _hubcontext.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        return response;
     }
 
     public async Task<NotificationResponse> FollowNotification(UserFollowResp followResp)

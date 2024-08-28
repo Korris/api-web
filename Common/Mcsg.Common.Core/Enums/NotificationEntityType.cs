@@ -123,5 +123,15 @@ public enum NotificationEntityType
     /// <summary>
     /// FollowUser
     /// </summary>
-    FollowUser
+    FollowUser,
+
+    /// <summary>
+    /// FollowComicPost
+    /// </summary>
+    FollowComicPost,
+
+    /// <summary>
+    /// FollowStoryPost
+    /// </summary>
+    FollowStoryPost
 }

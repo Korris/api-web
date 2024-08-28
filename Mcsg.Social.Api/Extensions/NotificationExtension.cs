@@ -38,6 +38,8 @@ public static class NotificationExtension
         List<NotificationEntityType> followEntities = new List<NotificationEntityType>()
         {
             NotificationEntityType.FollowUser,
+            NotificationEntityType.FollowComicPost,
+            NotificationEntityType.FollowStoryPost,
         };
 
         if (noti == null)
@@ -47,10 +49,16 @@ public static class NotificationExtension
 
         #region Follow 
 
-        if (followEntities.Contains(noti.EntityType)
-                 && noti.Action == NotificationAction.FollowUser)
+        if (followEntities.Contains(noti.EntityType))
         {
-            return noti.ActorName + NotificationContent.FollowUser;
+            switch (noti.EntityType)
+            {
+                case NotificationEntityType.FollowUser:
+                    return noti.ActorName + NotificationContent.FollowUser;
+                case NotificationEntityType.FollowComicPost:
+                case NotificationEntityType.FollowStoryPost:
+                    return NotificationContent.FollowPost;
+            }
         }
 
         #endregion
@@ -179,6 +187,8 @@ public static class NotificationExtension
             NotificationEntityType.StorySubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubStory,
 
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationTargetType.FollowUser,
+            NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationTargetType.FollowComicPost,
+            NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationTargetType.FollowStoryPost,
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
@@ -206,6 +216,8 @@ public static class NotificationExtension
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationType.FollowUser,
+            NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationType.FollowPost,
+            NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationType.FollowPost,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
