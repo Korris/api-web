@@ -41,6 +41,12 @@ public class Setting
     public const ushort PageSize = 10;
 
     /// <summary>
+    /// Original Suffix FileName
+    /// </summary>
+
+    public const string OriginalSuffixFileName = "-original";
+
+    /// <summary>
     /// Role
     /// </summary>
     public class McsgRole

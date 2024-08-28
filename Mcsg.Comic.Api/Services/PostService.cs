@@ -143,7 +143,7 @@ public partial class PostService : IPostService
             AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
             AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
             Body = request.Summary,
-            ThumbnailUrl = request.ThumbnailUrl,
+            ThumbnailUrl = request.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, ""),
             CoverUrl = request.CoverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
@@ -857,7 +857,7 @@ public partial class PostService : IPostService
         post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
         post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
         post.Body = request.Summary;
-        post.ThumbnailUrl = request.ThumbnailUrl;
+        post.ThumbnailUrl = request.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, "");
         post.CoverUrl = request.CoverUrl;
         post.IsMature = request.IsMature;
         post.Permission = request.Permission;

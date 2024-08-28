@@ -153,7 +153,7 @@ public static class IFormFileExtension
     /// <returns></returns>
     public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int width, int height, int quality = 100)
     {
-        if (file == null || file.Length > 0)
+        if (file == null || file.Length <= 0)
         {
             return null;
         }

@@ -11,6 +11,7 @@
  */
 #endregion
 
+using Mcsg.Common.SeedWork.Constants;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
@@ -530,7 +531,7 @@ public static class StringExtension
     /// <param name="objectName">The original object name</param>
     /// <param name="suffix">The suffix to append to the file name</param>
     /// <returns>The modified object name with the suffix included</returns>
-    public static string GetObjectNameSuffix(this string? objectName, string? suffix = "-original")
+    public static string GetObjectNameSuffix(this string? objectName, string? suffix = Setting.OriginalSuffixFileName)
     {
         if (string.IsNullOrWhiteSpace(objectName))
         {

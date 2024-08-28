@@ -155,7 +155,7 @@ public class FileService : IFileService
             HashId = hashId,
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
-            Url = objectName,
+            Url = !string.IsNullOrWhiteSpace(objectNameOriginal) ? objectNameOriginal : objectName,
             BucketName = bucketName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
             CreatedBy = request.UserId,
