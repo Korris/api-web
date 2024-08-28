@@ -1,7 +1,9 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
+using Api.Requests;
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Models;
 
@@ -21,6 +23,12 @@ public partial class SubPostReactService : ISubPostReactService
     {
         return await _reactService.GetReactions(postId);
     }
+
+    public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
+    {
+        return await _reactService.GetReactionsByTargetAsync(targetId, request);
+    }
+
     public async Task<bool> RemoveReactionToSubPost(Guid postId)
     {
         return await _reactService.RemoveReaction(postId);

@@ -15,11 +15,12 @@ public class FeedController : ControllerBase
 {
     #region -- Methods --
 
-    public FeedController(IMediator mediator, IFeedService feedService, IPostReactService postReactService)
+    public FeedController(IMediator mediator, IFeedService feedService, IPostReactService postReactService, ISubPostReactService subPostReactService)
     {
         _mediator = mediator;
         _feedService = feedService;
         _postReactService = postReactService;
+        _subPostReactService = subPostReactService;
     }
 
     [HttpPost, Authorize]
@@ -114,6 +115,13 @@ public class FeedController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}/sub-post-reactions")]
+    public async Task<IActionResult> GetSubPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        var result = await _subPostReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
     [HttpGet("get-feed-by-list-id")]
     public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
     {
@@ -151,6 +159,8 @@ public class FeedController : ControllerBase
     private readonly IFeedService _feedService;
 
     private readonly IPostReactService _postReactService;
+
+    private readonly ISubPostReactService _subPostReactService;
 
     #endregion
 }
