@@ -127,7 +127,7 @@ public partial class NotificationService : INotificationService
         if (followStoryPostIds.Count > 0)
         {
             var stories = await _notiRepository.Connection.QueryAsync<PostData>($@"
-                                        SELECT sp.""Title"",sp.""HashId""  from comic.""StoryPosts"" sp
+                                        SELECT sp.""Title"",sp.""HashId""  from story.""StoryPosts"" sp
                                         WHERE sp.""Id"" = ANY(@ids)", new { ids = followStoryPostIds });
             if (stories.Count() > 0)
             {
