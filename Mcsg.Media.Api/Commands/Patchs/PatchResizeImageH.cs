@@ -51,33 +51,38 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
                 continue;
             }
 
-            var objectName = i.Replace(publicUrl, "");
-            var objectNameOriginal = objectName.GetObjectNameSuffix();
-
-            // Extract the object name by removing the public URL prefix
-            var ms = await _sc.Strategy.GetObject(objectName, bucketNamePublic);
-            if (ms == null)
-            {
-                continue;
-            }
-
-            // Check objectNameOriginal to avoid unnecessary backups
-            var stat = await _sc.Strategy.StatObjectAsync(objectNameOriginal, bucketNamePublic);
-            if (stat != null)
+            var resizeName = i.Replace(publicUrl, "");
+            var fsResize = await _sc.Strategy.GetObject(resizeName, bucketNamePublic);
+            if (fsResize == null)
             {
                 continue;
             }
 
             // Backup the original image
-            await _sc.Strategy.PutObject(ms, objectNameOriginal, bucketNamePublic);
+            var originalName = resizeName.GetObjectNameSuffix();
+            var stat = await _sc.Strategy.StatObjectAsync(originalName, bucketNamePublic);
+            if (stat == null)
+            {
+                await _sc.Strategy.PutObject(fsResize, originalName, bucketNamePublic);
+            }
+            else
+            {
+                var fsOriginal = await _sc.Strategy.GetObject(originalName, bucketNamePublic);
+
+                // Skip processing if the original file name is longer than the resized file name
+                if (fsOriginal?.Length > fsResize.Length)
+                {
+                    continue;
+                }
+            }
 
             // Resize the image
-            var fs = ms.ResizeImage(144, 180, 100);
+            var fs = fsResize.ResizeImage(144, 180, 100);
             if (fs == null)
             {
                 continue;
             }
-            await _sc.Strategy.PutObject(fs, objectName, bucketNamePublic);
+            await _sc.Strategy.PutObject(fs, resizeName, bucketNamePublic);
             count++;
         }
 
