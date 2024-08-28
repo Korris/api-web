@@ -466,6 +466,7 @@ public partial class PostService : IPostService
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
+                item.isNewChapter = item.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow;
             }
             var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
@@ -1371,6 +1372,7 @@ public partial class PostService : IPostService
                     ProfileName = res.ProfileName,
                     UserId = res.UserId,
                     UserName = res.UserName,
+                    isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow
                 };
 
                 var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();
@@ -1525,7 +1527,8 @@ public partial class PostService : IPostService
             {
                 TotalReacts = x.TotalReact,
                 Reactions = x.ReactionByPostStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionByPostStr) : new List<ReactionResponse>()
-            }
+            },
+            LatestCreatedOn = x.LatestCreatedOn
         }).ToList();
     }
 

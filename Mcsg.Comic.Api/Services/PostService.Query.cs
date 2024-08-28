@@ -235,7 +235,7 @@ LIMIT 1
                         post.""ChapterCount"",
                         post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
-                        post.""SubPostStr"", 
+                        post.""SubPostStr"",post.""LatestCreatedOn"",
                         array_agg(DISTINCT tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
@@ -247,8 +247,8 @@ LIMIT 1
                             p.""CreatedOn"",--sp.""Id"" as ""SPID"",
 SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
-                             
+                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
+                            GREATEST(p.""[OrderBy]"", MAX(sp.""[OrderBy]"")) AS ""LatestCreatedOn""
                             FROM ""comic"".""ComicPosts""  p
                               INNER JOIN-- Select Id
                              (
@@ -285,8 +285,9 @@ LIMIT 1
                         post.""Status"", post.""Type"", post.""ViewCount"",
                         post.""CreatedOn"",
                         post.""SubPostStr"",
-                        u.""UserName""
-                        ORDER BY ""[OrderBy]"" desc;
+                        u.""UserName"",
+                        post.""LatestCreatedOn""
+                        ORDER BY ""LatestCreatedOn"" desc;
 
                         [CountResults] ";
             }
@@ -1227,6 +1228,7 @@ ORDER BY group_number, random_row_num;
                     p.""ViewCount"",
                     p.""IsMature"",
                     p.""CreatedOn"",
+                    GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
                     to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""comic"".""ComicPosts"" p
@@ -1242,6 +1244,12 @@ ORDER BY group_number, random_row_num;
                     FROM ""comic"".""ComicSubPosts""
                     WHERE ""IsDelete"" = false
                 ) sp ON p.""Id"" = sp.""PostId""
+                LEFT JOIN (
+                    SELECT ""PostId"", MAX(""CreatedOn"") AS ""LatestSubPostCreatedOn""
+                    FROM ""comic"".""ComicSubPosts""
+                    WHERE ""IsDelete"" = false
+                    GROUP BY ""PostId""
+                ) sp_max ON p.""Id"" = sp_max.""PostId""
                 WHERE p.""HashId"" = ANY(@HashIds)
                 GROUP BY  
                           p.""HashId"",
@@ -1254,7 +1262,8 @@ ORDER BY group_number, random_row_num;
                           p.""UserId"",
                           u.""ProfileName"",
                           u.""UserName"",
-                          p.""ViewCount""
+                          p.""ViewCount"",
+                          sp_max.""LatestSubPostCreatedOn"";
             ";
             }
         }

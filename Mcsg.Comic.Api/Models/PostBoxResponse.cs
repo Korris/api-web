@@ -10,11 +10,13 @@ public class PostBoxResponse : PostBox
 {
     public List<SubPostDto>? Chapters { get; set; }
     public List<string>? Tags { get; set; }
+    public bool isNewChapter { get; set; }
 }
 public class PostBoxQueryResponse : PostBox
 {
     public string? SubPosts { get; set; }
     public string? Tags { get; set; }
+    public DateTime LatestCreatedOn { get; set; }
 }
 
 public class PostBox

@@ -23,6 +23,7 @@ public class PostSeriesResponse : PostDto
     public int TotalComment { get; set; }
     public bool IsFollowing { get; set; }
     public ReactionsResponse Reaction { get; set; }
+    public DateTime LatestCreatedOn { get; set; }
 
 }
 public class PostSeriesQueryDbResponse : PostSeriesResponse
@@ -43,6 +44,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public string UserName { get; set; }
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
+    public bool isNewChapter { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
