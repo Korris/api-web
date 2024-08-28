@@ -82,6 +82,12 @@ public static class StreamExtension
         {
             magickImage.Density = new Density(72);
             magickImage.SetBitDepth(24);
+
+            if (magickImage.BaseHeight <= height || magickImage.BaseWidth <= width)
+            {
+                return fs;
+            }
+
             magickImage.Resize(new MagickGeometry(width, height) { IgnoreAspectRatio = true });
 
             using (var ms = new MemoryStream())

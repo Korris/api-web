@@ -65,15 +65,12 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             {
                 await _sc.Strategy.PutObject(fsResize, originalName, bucketNamePublic);
             }
-            else
-            {
-                var fsOriginal = await _sc.Strategy.GetObject(originalName, bucketNamePublic);
 
-                // Skip processing if the original file name is longer than the resized file name
-                if (fsOriginal?.Length > fsResize.Length)
-                {
-                    continue;
-                }
+            // Skip processing if the original file name is longer than the resized file name
+            var fsOriginal = await _sc.Strategy.GetObject(originalName, bucketNamePublic);
+            if (fsOriginal?.Length >= fsResize.Length)
+            {
+                continue;
             }
 
             // Resize the image
@@ -82,6 +79,13 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             {
                 continue;
             }
+
+            // No resizing occurred, so backup the original file
+            if (fs.Length == fsResize.Length && fsOriginal != null)
+            {
+                fs = fsOriginal;
+            }
+
             await _sc.Strategy.PutObject(fs, resizeName, bucketNamePublic);
             count++;
         }
