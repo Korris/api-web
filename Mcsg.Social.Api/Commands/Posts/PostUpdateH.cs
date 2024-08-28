@@ -222,7 +222,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
-
+        result.CustomNote = result.CustomNote.ForLexical();
         res.SetSuccess(result);
         return res;
     }
