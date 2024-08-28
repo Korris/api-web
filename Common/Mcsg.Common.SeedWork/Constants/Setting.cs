@@ -41,9 +41,8 @@ public class Setting
     public const ushort PageSize = 10;
 
     /// <summary>
-    /// Original Suffix FileName
+    /// Original suffix file name
     /// </summary>
-
     public const string OriginalSuffixFileName = "-original";
 
     /// <summary>

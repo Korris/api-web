@@ -143,7 +143,7 @@ public partial class PostService : IPostService
             AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
             AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
             Body = request.Summary,
-            ThumbnailUrl = request.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, ""),
+            ThumbnailUrl = request.ThumbnailUrl.RemoveNameSuffix(),
             CoverUrl = request.CoverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
@@ -857,7 +857,7 @@ public partial class PostService : IPostService
         post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
         post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
         post.Body = request.Summary;
-        post.ThumbnailUrl = request.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, "");
+        post.ThumbnailUrl = request.ThumbnailUrl.RemoveNameSuffix();
         post.CoverUrl = request.CoverUrl;
         post.IsMature = request.IsMature;
         post.Permission = request.Permission;
@@ -928,7 +928,7 @@ public partial class PostService : IPostService
             UserId = item.UserId,
             AuthorName = item.AuthorName,
             IsCurrentUserAuthor = currentUserId == item.UserId,
-            ThumbnailUrl = item.ThumbnailUrl.GetObjectNameSuffix(),
+            ThumbnailUrl = item.ThumbnailUrl.AppendNameSuffix(),
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,

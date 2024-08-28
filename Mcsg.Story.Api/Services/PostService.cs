@@ -143,7 +143,7 @@ public partial class PostService : IPostService
             AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
             AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
             Body = request.Summary,
-            ThumbnailUrl = request.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, ""),
+            ThumbnailUrl = request.ThumbnailUrl.RemoveNameSuffix(),
             CoverUrl = request.CoverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
@@ -856,7 +856,7 @@ public partial class PostService : IPostService
         post.AuthorId = comicPostReq.IsCurrentUserAuthor ? currentUserId : null;
         post.AuthorName = comicPostReq.IsCurrentUserAuthor ? currentFullName : comicPostReq.AuthorName;
         post.Body = comicPostReq.Summary;
-        post.ThumbnailUrl = comicPostReq.ThumbnailUrl.Replace(Mcsg.Common.SeedWork.Constants.Setting.OriginalSuffixFileName, "");
+        post.ThumbnailUrl = comicPostReq.ThumbnailUrl.RemoveNameSuffix();
         post.CoverUrl = comicPostReq.CoverUrl;
         post.IsMature = comicPostReq.IsMature;
         post.Permission = comicPostReq.Permission;
@@ -927,7 +927,7 @@ public partial class PostService : IPostService
             UserId = item.UserId,
             AuthorName = item.AuthorName,
             IsCurrentUserAuthor = currentUserId == item.UserId,
-            ThumbnailUrl = item.ThumbnailUrl.GetObjectNameSuffix(),
+            ThumbnailUrl = item.ThumbnailUrl.AppendNameSuffix(),
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
             ProfileId = item.ProfileId,

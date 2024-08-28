@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Common.SeedWork.Test.Extensions;
 
+using SeedWork.Constants;
 using SeedWork.Extensions;
 
 public class StringExtensionTest
@@ -43,7 +44,7 @@ public class StringExtensionTest
     }
     #endregion
 
-    #region -- GetObjectNameSuffix --
+    #region -- AppendNameSuffix --
     #region -- ValidationPass --
     [TestCase(null, null, "")]
     [TestCase(null, "", "")]
@@ -51,18 +52,41 @@ public class StringExtensionTest
     [TestCase("", "", "")]
     [TestCase(" ", "", "")]
     [TestCase("  ", "", "")]
-    [TestCase(_getObjectNameSuffixInput01, "-original", _getObjectNameSuffixExpected01)]
-    [TestCase(_getObjectNameSuffixInput02, "-original", _getObjectNameSuffixExpected02)]
-    public void GetObjectNameSuffix__ValidationPass(string? input, string? suffix, string? expected)
+    [TestCase(_appendNameSuffixInput01, Setting.OriginalSuffixFileName, _appendNameSuffixExpected01)]
+    [TestCase(_appendNameSuffixInput02, Setting.OriginalSuffixFileName, _appendNameSuffixExpected02)]
+    public void AppendNameSuffix_ValidationPass(string? input, string? suffix, string? expected)
     {
-        var actual = input.GetObjectNameSuffix(suffix);
+        var actual = input.AppendNameSuffix(suffix);
         Assert.That(actual, Is.EqualTo(expected));
     }
 
-    private const string _getObjectNameSuffixInput01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
-    private const string _getObjectNameSuffixExpected01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN-original.jpg";
-    private const string _getObjectNameSuffixInput02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
-    private const string _getObjectNameSuffixExpected02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN-original.jpg";
+    private const string _appendNameSuffixInput01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
+    private const string _appendNameSuffixExpected01 = $"https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN{Setting.OriginalSuffixFileName}.jpg";
+    private const string _appendNameSuffixInput02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
+    private const string _appendNameSuffixExpected02 = $"story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN{Setting.OriginalSuffixFileName}.jpg";
+    #endregion
+    #endregion
+
+    #region -- RemoveNameSuffix --
+    #region -- ValidationPass --
+    [TestCase(null, null, "")]
+    [TestCase(null, "", "")]
+    [TestCase("", null, "")]
+    [TestCase("", "", "")]
+    [TestCase(" ", "", "")]
+    [TestCase("  ", "", "")]
+    [TestCase(_removeNameSuffixInput01, Setting.OriginalSuffixFileName, _removeNameSuffixExpected01)]
+    [TestCase(_removeNameSuffixInput02, Setting.OriginalSuffixFileName, _removeNameSuffixExpected02)]
+    public void RemoveNameSuffix_ValidationPass(string? input, string? suffix, string? expected)
+    {
+        var actual = input.RemoveNameSuffix(suffix);
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    private const string _removeNameSuffixInput01 = $"https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN{Setting.OriginalSuffixFileName}.jpg";
+    private const string _removeNameSuffixExpected01 = "https://minio.teamsgsite.com/bumcheo-uat-public/story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
+    private const string _removeNameSuffixInput02 = $"story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN{Setting.OriginalSuffixFileName}.jpg";
+    private const string _removeNameSuffixExpected02 = "story/02FZh7cFBMOSkvtQ/Thumbs/KyhqqNMbY3YjIbrpZnIqnHkr03cOWQoN.jpg";
     #endregion
     #endregion
 
@@ -74,7 +98,7 @@ public class StringExtensionTest
     [TestCase(_input1, _expected)]
     [TestCase(_input2, "")]
     [TestCase(_input3, _expected)]
-    public void ToGuids__ValidationPass(string? input, string expected)
+    public void ToGuids_ValidationPass(string? input, string expected)
     {
         var actual = input.ToGuids();
 

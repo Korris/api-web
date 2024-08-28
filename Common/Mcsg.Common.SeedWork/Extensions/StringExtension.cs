@@ -531,7 +531,7 @@ public static class StringExtension
     /// <param name="objectName">The original object name</param>
     /// <param name="suffix">The suffix to append to the file name</param>
     /// <returns>The modified object name with the suffix included</returns>
-    public static string GetObjectNameSuffix(this string? objectName, string? suffix = Setting.OriginalSuffixFileName)
+    public static string AppendNameSuffix(this string? objectName, string? suffix = Setting.OriginalSuffixFileName)
     {
         if (string.IsNullOrWhiteSpace(objectName))
         {
@@ -547,7 +547,27 @@ public static class StringExtension
         // Append the suffix to the file name
         var newFileName = $"{fileName}{suffix}{extension}";
 
-        return Path.Combine(path, newFileName).Replace("\\", "/").Replace(":/", "://");
+        // Combine the path with the new file name
+        var result = Path.Combine(path, newFileName);
+
+        // Ensure consistent formatting for paths
+        return result.Replace("\\", "/").Replace(":/", "://");
+    }
+
+    /// <summary>
+    /// Removes a specified suffix from the object name if it exists.
+    /// </summary>
+    /// <param name="objectName">The original object name</param>
+    /// <param name="suffix">The suffix to remove from the file name</param>
+    /// <returns>The object name with the suffix removed, or the original name if the suffix is not found</returns>
+    public static string RemoveNameSuffix(this string? objectName, string? suffix = Setting.OriginalSuffixFileName)
+    {
+        if (string.IsNullOrWhiteSpace(objectName) || string.IsNullOrWhiteSpace(suffix))
+        {
+            return string.Empty;
+        }
+
+        return objectName.Replace(suffix, "");
     }
 
     /// <summary>

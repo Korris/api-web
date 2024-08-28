@@ -95,7 +95,7 @@ public class FileService : IFileService
 
             if (request.Type == "Thumb")
             {
-                objectNameOriginal = objectName.GetObjectNameSuffix();
+                objectNameOriginal = objectName.AppendNameSuffix();
             }
         }
         else

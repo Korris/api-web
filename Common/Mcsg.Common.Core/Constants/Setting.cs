@@ -43,17 +43,6 @@ public class Setting : SeedWork.Constants.Setting
     }
 
     /// <summary>
-    /// The folder name is stored in MinIO
-    /// </summary>
-    public class FolderMinIO
-    {
-        /// <summary>
-        /// User
-        /// </summary>
-        public const string User = "users";
-    }
-
-    /// <summary>
     /// Default
     /// </summary>
     public class Default

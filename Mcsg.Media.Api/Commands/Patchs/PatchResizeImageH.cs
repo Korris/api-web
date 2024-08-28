@@ -59,7 +59,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             }
 
             // Backup the original image
-            var originalName = resizeName.GetObjectNameSuffix();
+            var originalName = resizeName.AppendNameSuffix();
             var stat = await _sc.Strategy.StatObjectAsync(originalName, bucketNamePublic);
             if (stat == null)
             {
