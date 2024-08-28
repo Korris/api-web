@@ -40,7 +40,8 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
         var storyThumbnailUrls = await _context.StoryPostAvailable.AsNoTracking().Select(p => p.ThumbnailUrl).ToListAsync(cancellationToken);
 
         var thumbnailUrls = comicThumbnailUrls.Union(storyThumbnailUrls);
-        var publicUrl = $"{_setting.Minio.PublicUrl}/{_sc.Strategy.BucketNamePublic}";
+        var bucketNamePublic = _sc.Strategy.BucketNamePublic;
+        var publicUrl = _setting.Minio.GetPublicUrl(bucketNamePublic, null);
         var count = 0;
 
         foreach (var i in thumbnailUrls)
@@ -50,24 +51,25 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
                 continue;
             }
 
-            // Extract the object name by removing the public URL prefix
             var objectName = i.Replace(publicUrl, "");
-            var ms = await _sc.Strategy.GetObject(objectName, _sc.Strategy.BucketNamePublic);
+            var objectNameOriginal = objectName.GetObjectNameSuffix();
+
+            // Extract the object name by removing the public URL prefix
+            var ms = await _sc.Strategy.GetObject(objectName, bucketNamePublic);
             if (ms == null)
             {
                 continue;
             }
 
             // Check objectNameOriginal to avoid unnecessary backups
-            var objectNameOriginal = objectName.GetObjectNameSuffix();
-            var stat = await _sc.Strategy.StatObjectAsync(objectNameOriginal, _sc.Strategy.BucketNamePublic);
+            var stat = await _sc.Strategy.StatObjectAsync(objectNameOriginal, bucketNamePublic);
             if (stat != null)
             {
                 continue;
             }
 
             // Backup the original image
-            await _sc.Strategy.PutObject(ms, objectNameOriginal, _sc.Strategy.BucketNamePublic);
+            await _sc.Strategy.PutObject(ms, objectNameOriginal, bucketNamePublic);
 
             // Resize the image
             var fs = ms.ResizeImage(144, 180, 100);
@@ -75,7 +77,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             {
                 continue;
             }
-            await _sc.Strategy.PutObject(fs, objectName, _sc.Strategy.BucketNamePublic);
+            await _sc.Strategy.PutObject(fs, objectName, bucketNamePublic);
             count++;
         }
 
