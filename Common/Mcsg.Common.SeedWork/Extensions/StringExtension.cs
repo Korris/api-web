@@ -571,6 +571,33 @@ public static class StringExtension
     }
 
     /// <summary>
+    /// Converts the provided path to be compatible with the current platform.
+    /// </summary>
+    /// <param name="s">The file or directory path to convert.</param>
+    /// <returns>A platform-specific version of the path.</returns>
+    public static string ToPathPlatform(this string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return string.Empty;
+        }
+
+        // Replace backslashes and forward slashes with the platform-specific directory separator
+        var adjustedPath = s.Replace('\\', Path.DirectorySeparatorChar)
+                               .Replace('/', Path.DirectorySeparatorChar);
+
+        // Handle the drive letter if present (specific to non-Windows platforms)
+        if (!OperatingSystem.IsWindows() && adjustedPath.Length > 1 && adjustedPath[1] == ':')
+        {
+            var driveLetter = char.ToLower(adjustedPath[0]);
+            adjustedPath = $"/mnt/{driveLetter}{adjustedPath.Substring(2)}";
+        }
+
+        // Normalize the path (e.g., resolve `..` and `.`)
+        return Path.GetFullPath(adjustedPath);
+    }
+
+    /// <summary>
     /// Extracts the 'src' attributes from 'img' tags in the given HTML content
     /// </summary>
     /// <param name="s">The HTML content to extract image sources from</param>

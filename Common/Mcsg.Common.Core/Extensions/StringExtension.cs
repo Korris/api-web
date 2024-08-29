@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Common.Core.Extensions;
 
 using Common.Core.Enums;
+using SeedWork.Extensions;
 using SeedWork.Interfaces;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
@@ -43,7 +44,7 @@ public static class StringExtension
     public static void StartLogger(this string name, ISettingBase setting)
     {
         // Ensure the logs directory exists
-        var logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\logs");
+        var logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\logs").ToPathPlatform();
         if (!Directory.Exists(logDirectory))
         {
             Directory.CreateDirectory(logDirectory);
