@@ -1266,8 +1266,8 @@ ORDER BY group_number, random_row_num;
                           u.""ProfileName"",
                           u.""UserName"",
                           p.""ViewCount"",
-                          sp_max.""LatestSubPostCreatedOn""
-                          p.""Hide"";
+                          sp_max.""LatestSubPostCreatedOn"",
+                          p.""Hide""
             ";
             }
         }
