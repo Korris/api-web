@@ -15,7 +15,7 @@ public interface IPostService
     Task<bool> Delete(Guid postId);
     Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR postReq);
     Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR postReq);
-    Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters);
+    Task<PostSeriesResponse> GetSeries(StoryHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
@@ -43,7 +43,7 @@ public interface IPostService
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
     Task<ListIdForHomePage> GetLatestPostsByType();
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
-    Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
+    Task<List<PostBoxResponse>> GetPostDetails(StoryHashIdsR req);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);

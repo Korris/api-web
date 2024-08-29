@@ -62,9 +62,9 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
     }
-    public async Task<PostSeriesResponse> GetComic(string hashId, bool isLoadChapters)
+    public async Task<PostSeriesResponse> GetComic(ComicHashIdR req)
     {
-        return await _postService.GetSeries(hashId, isLoadChapters);
+        return await _postService.GetSeries(req);
     }
     public async Task<ChapterResponse> GetChapter(string hashId, float order)
     {
@@ -86,9 +86,9 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetRelationSeriesAsync(_type, request);
     }
-    public async Task<List<PostSeriesTopResponse>> GetRecommendedComic(int number)
+    public async Task<List<PostSeriesTopResponse>> GetRecommendedComic(RecommendedComicR req)
     {
-        return await _postService.GetTopNewSeries(_type, number);
+        return await _postService.GetTopNewSeries(_type, req);
     }
     public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
     {

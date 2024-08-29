@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Models;
 
+using Common.Core.Enums;
+
 public class RelatedBoxResponse : RelatedBox
 {
     public ReactionsResponse? Reaction { get; set; }
@@ -9,7 +11,6 @@ public class RelatedBoxQueryResponse : RelatedBox
 {
     public string? ReactionStr { get; set; }
     public int TotalReacts { get; set; }
-
 }
 
 public class RelatedBox
@@ -20,4 +21,5 @@ public class RelatedBox
     public string? HashId { get; set; }
     public string[] Tags { get; set; }
     public Guid Id { get; set; }
+    public HideOption Hide { get; set; }
 }

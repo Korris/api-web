@@ -34,6 +34,7 @@
                         p.""Permission"",
                         p.""IsMature"",
                         p.""IsCompleted"",
+                        p.""Hide"",
                         postview.""ViewCount"",
                         u.""ProfileName"", 
                         u.""UserName"",
@@ -83,9 +84,10 @@ LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
                         WHERE 
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false         
+                            AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
-                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"",
+                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p.""Hide"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"", ux.""Id"",
                         sp.""Permission"",subpostview.""ViewCount"",
@@ -237,7 +239,7 @@ LIMIT 1
                         post.""ChapterCount"",
                         post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"",u.""UserName"",post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
-                        post.""SubPostStr"",post.""LatestCreatedOn"",
+                        post.""SubPostStr"",post.""LatestCreatedOn"", post.""Hide"",
                         array_agg(DISTINCT tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
@@ -246,7 +248,7 @@ LIMIT 1
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                              postid.""SelectType"",
                             p.""Status"", p.""Type"", postview.""ViewCount"",
-                            p.""CreatedOn"",--sp.""Id"" as ""SPID"",
+                            p.""CreatedOn"", p.""Hide"", --sp.""Id"" as ""SPID"",
 SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
@@ -268,12 +270,12 @@ LEFT JOIN LATERAL (
                                 WHERE ""EntityId"" = p.""Id"" AND ""EntityType"" = 0 AND ""ActionType"" = 2
 LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
-                            
+                            WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",
                             u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
-                            p.""Status"", p.""Type"",postview.""ViewCount"",
+                            p.""Status"", p.""Type"",postview.""ViewCount"", p.""Hide"",
                             p.""CreatedOn""
                             ) 
                         AS post
@@ -284,7 +286,7 @@ LIMIT 1
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
                         post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"",post.""TotalSubPostComment"",
-                        post.""Status"", post.""Type"", post.""ViewCount"",
+                        post.""Status"", post.""Type"", post.""ViewCount"", post.""Hide"",
                         post.""CreatedOn"",
                         post.""SubPostStr"",
                         u.""UserName"",
@@ -412,7 +414,7 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType""
+                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
                                  FROM ""story"".""StoryPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
@@ -429,7 +431,8 @@ LIMIT 1
                                 WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""Permission"" = @PostPermission
                                 AND qpost1.""IsDelete"" = false                                 
-                                GROUP BY qpost1.""Id"", psp1.""CreatedOn""
+                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL)
+                                GROUP BY qpost1.""Id"", psp1.""CreatedOn"", qpost1.""Hide""
                                 ORDER BY psp1.""CreatedOn"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -1228,6 +1231,7 @@ ORDER BY group_number, random_row_num;
                     p.""IsMature"",
                     p.""CreatedOn"",
                     GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
+                    p.""Hide"",
                     to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""story"".""StoryPosts"" p
@@ -1249,7 +1253,7 @@ ORDER BY group_number, random_row_num;
                     WHERE ""IsDelete"" = false
                     GROUP BY ""PostId""
                 ) sp_max ON p.""Id"" = sp_max.""PostId""
-                WHERE p.""HashId"" = ANY(@HashIds)
+                WHERE p.""HashId"" = ANY(@HashIds) AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                 GROUP BY  
                           p.""HashId"",
                           p.""Id"",
@@ -1262,7 +1266,8 @@ ORDER BY group_number, random_row_num;
                           u.""ProfileName"",
                           u.""UserName"",
                           p.""ViewCount"",
-                          sp_max.""LatestSubPostCreatedOn"";
+                          sp_max.""LatestSubPostCreatedOn""
+                          p.""Hide"";
             ";
             }
         }

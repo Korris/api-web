@@ -1102,10 +1102,11 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var query = "SELECT * FROM social.fn_get_post_maybe_you_like(@Limit)";
+        var query = "SELECT * FROM social.fn_get_visible_post_maybe_you_like(@Limit, @Hide)";
         var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
-            Limit = input.PageSize
+            Limit = input.PageSize,
+            Hide = input.Hides
         });
         var items = MappingRelatedBoxResponse(dataQuery);
 

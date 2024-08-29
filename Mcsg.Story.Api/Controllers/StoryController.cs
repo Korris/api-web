@@ -33,7 +33,9 @@ public class StoryController : ControllerBase
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetStory(string hashId, bool isLoadChapters = true)
     {
-        var result = await _storyService.GetStory(hashId, isLoadChapters);
+        var req = new StoryHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
+        req.Analyze(HttpContext);
+        var result = await _storyService.GetStory(req);
         return Ok(result);
     }
 
@@ -82,7 +84,7 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetAllTopStory([FromQuery] ComicPostListSeriesR request)
     {
         var req = new BaseR();
-
+        request.Analyze(HttpContext);
         var result = await _storyService.GetTopStoryAsync(request);
 
         if (req.FromMobile)
@@ -214,6 +216,7 @@ public class StoryController : ControllerBase
     [HttpGet("post/{userName}")]
     public async Task<IActionResult> GetUserStory(string userName, [FromQuery] ComicTopPostR loadReq)
     {
+        loadReq.Analyze(HttpContext);
         var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
         return Ok(result);
     }

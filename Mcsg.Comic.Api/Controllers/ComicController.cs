@@ -33,7 +33,9 @@ public class ComicController : ControllerBase
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetComic(string hashId, bool isLoadChapters = true)
     {
-        var result = await _comicService.GetComic(hashId, isLoadChapters);
+        var req = new ComicHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
+        req.Analyze(HttpContext);
+        var result = await _comicService.GetComic(req);
         return Ok(result);
     }
 
@@ -58,7 +60,7 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> GetAllTopComic([FromQuery] ComicPostListSeriesR request)
     {
         var req = new BaseR(HttpContext);
-
+        request.Analyze(HttpContext);
         var result = await _comicService.GetTopComicAsync(request);
 
         if (req.FromMobile)
@@ -108,7 +110,8 @@ public class ComicController : ControllerBase
     [HttpGet("recommended")]
     public async Task<IActionResult> GetRecommendedComic(int number)
     {
-        var result = await _comicService.GetRecommendedComic(number);
+        var req = new RecommendedComicR { Number = number };
+        var result = await _comicService.GetRecommendedComic(req);
         return Ok(result);
     }
 
@@ -221,6 +224,7 @@ public class ComicController : ControllerBase
     [HttpGet("post/{userName}")]
     public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
     {
+        loadReq.Analyze(HttpContext);
         var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
         return Ok(result);
     }

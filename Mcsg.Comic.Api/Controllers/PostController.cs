@@ -66,7 +66,9 @@ public class PostController : ControllerBase
     [HttpGet("get-post-by-list-id")]
     public async Task<IActionResult> GetPostDetails([FromQuery] string hashIds)
     {
-        var result = await _postService.GetPostDetails(hashIds);
+        var req = new ComicHashIdsR { HashIds = hashIds };
+        req.Analyze(HttpContext);
+        var result = await _postService.GetPostDetails(req);
         return Ok(result);
     }
 

@@ -15,7 +15,7 @@ public interface IPostService
     Task<bool> Delete(Guid postId);
     Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR postReq);
     Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR postReq);
-    Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters);
+    Task<PostSeriesResponse> GetSeries(ComicHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
@@ -24,7 +24,7 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq);
-    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, int number);
+    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, RecommendedComicR req);
     Task<PostSeriesAllTopResponse> GetTopSeries(PostType type);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
@@ -43,7 +43,7 @@ public interface IPostService
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
     Task<ListIdForHomePage> GetLatestPostsByType();
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
-    Task<List<PostBoxResponse>> GetPostDetails(string hashIds);
+    Task<List<PostBoxResponse>> GetPostDetails(ComicHashIdsR hashIds);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);

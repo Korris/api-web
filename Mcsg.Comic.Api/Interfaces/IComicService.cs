@@ -7,7 +7,7 @@ using Requests;
 
 public interface IComicService
 {
-    Task<PostSeriesResponse> GetComic(string hashId, bool isLoadChapters);
+    Task<PostSeriesResponse> GetComic(ComicHashIdR req);
     Task<ChapterResponse> GetChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
@@ -16,7 +16,7 @@ public interface IComicService
     Task<PagedResponse<PostSeriesTopResponse>> GetMyComics(ComicPostListSeriesR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListComic(ComicTopPostR req);
-    Task<List<PostSeriesTopResponse>> GetRecommendedComic(int number);
+    Task<List<PostSeriesTopResponse>> GetRecommendedComic(RecommendedComicR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request);
     Task<PostSeriesResponse> PostComic(ComicPostSeriesR request);

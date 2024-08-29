@@ -8,7 +8,7 @@ using Requests;
 public interface IStoryService
 {
     Task<PostSeriesResponse> PostStory(StoryPostSeriesR request);
-    Task<PostSeriesResponse> GetStory(string hashId, bool isLoadChapters);
+    Task<PostSeriesResponse> GetStory(StoryHashIdR req);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR request);
     Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq);

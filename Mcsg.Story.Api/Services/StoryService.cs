@@ -41,9 +41,9 @@ public partial class StoryService : IStoryService
         return await _postService.PostSeries(_type, request);
     }
 
-    public async Task<PostSeriesResponse> GetStory(string hashId, bool isLoadChapters)
+    public async Task<PostSeriesResponse> GetStory(StoryHashIdR req)
     {
-        return await _postService.GetSeries(hashId, isLoadChapters);
+        return await _postService.GetSeries(req);
     }
 
     public async Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq)

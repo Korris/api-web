@@ -212,8 +212,10 @@ public partial class PostService : IPostService
         return result;
     }
 
-    public async Task<PostSeriesResponse> GetSeries(string hashId, bool isLoadChapters)
+    public async Task<PostSeriesResponse> GetSeries(ComicHashIdR req)
     {
+        var isLoadChapters = req.IsLoadChapters;
+        var hashId = req.HashId;
         var query = string.Format(GetSeriesQuery, _postRepository.TableName);
         string subNotLoadChapter = (isLoadChapters ? "" : @" AND sp.""Id"" IS NULL ");
         query = query.Replace("[Not-load-chapter]", subNotLoadChapter);
@@ -255,6 +257,7 @@ public partial class PostService : IPostService
                 IsAccessPrivate = false,
                 CurrentDate = DateTime.UtcNow,
                 UserId = currentUserId,
+                Hide = req.Hides
             }, splitOn: "Id, Id");
         //Add view
         if (dbPost == null)
@@ -396,7 +399,8 @@ public partial class PostService : IPostService
                         UNION ALL
                         ({GetTopLatestCompletePostHitQuery})";
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
+        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
+            .Replace("[SelectPostIdsQuery]", allSubQuery)
             .Replace("[CountResults]", "")
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
             .Replace("[OrderBy]", "CreatedOn");
@@ -443,7 +447,8 @@ public partial class PostService : IPostService
             countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostByTagToCountQuery);
         }
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", allSubQuery)
+        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
+            .Replace("[SelectPostIdsQuery]", allSubQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
             .Replace("[OrderBy]", "CreatedOn");
@@ -458,7 +463,8 @@ public partial class PostService : IPostService
                     PostStatus = (int)PostStatus.Public,
                     PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
-                    UserId = currentUserId
+                    UserId = currentUserId,
+                    Hide = request.Hides
                 });
 
         var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -654,17 +660,20 @@ public partial class PostService : IPostService
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_USER);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_USER, profileName);
+        var isMySelf = profileName == loadReq.UserName;
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
                 {
                     PostType = (int)type,
                     IsAccessPrivate = false,
-                    PageSize = loadReq.PageSize,
+                    loadReq.PageSize,
                     Offet = offset,
                     PostStatus = (int)PostStatus.Public,
-                    ProfileName = profileName
+                    ProfileName = profileName,
+                    Hide = loadReq.Hides,
+                    MySelf = isMySelf
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -829,8 +838,9 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, int number)
+    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, RecommendedComicR req)
     {
+        var number = req.Number;
         ValidateTotalItem(number);
         var query = GetQuerySelectPage(PostSeriesSelectedType.RECOMMEND);
 
@@ -840,7 +850,8 @@ public partial class PostService : IPostService
                     PostType = (int)type,
                     IsAccessPrivate = false,
                     PageSize = number,
-                    PostStatus = (int)PostStatus.Public
+                    PostStatus = (int)PostStatus.Public,
+                    Hide = req.Hides
                 });
 
         return MappingTopSeries(items);
@@ -1047,7 +1058,8 @@ public partial class PostService : IPostService
 
         var result = new PostSeriesAllTopResponse();
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
+        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
+            .Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[OrderBy]", loadReq.OrderBy)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery);
@@ -1097,7 +1109,8 @@ public partial class PostService : IPostService
 
         var result = new PostSeriesAllTopResponse();
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
+        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
+            .Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[OrderBy]", loadReq.OrderBy)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery);
@@ -1358,9 +1371,10 @@ public partial class PostService : IPostService
         }).ToList();
     }
 
-    public async Task<List<PostBoxResponse>> GetPostDetails(string hashIds)
+    public async Task<List<PostBoxResponse>> GetPostDetails(ComicHashIdsR req)
     {
-        var param = new { HashIds = hashIds.Split(',').ToList() };
+        var hashIds = req.HashIds;
+        var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
@@ -1402,7 +1416,8 @@ public partial class PostService : IPostService
                     ProfileName = res.ProfileName,
                     UserId = res.UserId,
                     UserName = res.UserName,
-                    isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow
+                    isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow,
+                    Hide = res.Hide
                 };
 
                 var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();
@@ -1498,6 +1513,7 @@ public partial class PostService : IPostService
             //"AuthorName", "CoverUrl","CreatedOn", "IsMature", "Id", "Permission", "Status", "UserId"
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
+            Hide = x.Hide
         }).ToList();
     }
 
@@ -1553,6 +1569,7 @@ public partial class PostService : IPostService
             Chapters = MappingTopChapter(x.SubPostStr),
             SeriesStatus = x.ToSeriesStatus(),
             TotalComment = x.TotalComment,
+            Hide = x.Hide,
             Reaction = new ReactionsResponse
             {
                 TotalReacts = x.TotalReact,
@@ -1562,7 +1579,7 @@ public partial class PostService : IPostService
         }).ToList();
     }
 
-    private string GetQuerySelectPage(PostSeriesSelectedType selectedType)
+    private string GetQuerySelectPage(PostSeriesSelectedType selectedType, string? userName = "")
     {
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
@@ -1610,11 +1627,20 @@ public partial class PostService : IPostService
                 }
         }
 
-
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
             .Replace("[OrderBy]", "CreatedOn");
+
+        if (userName != null && userName != "")
+        {
+            var newUserNameQuery = $@"OR (u.""UserName"" = @ProfileName AND @MySelf)";
+            query = query.Replace("[AddNewUserNameContidion]", newUserNameQuery);
+        }
+        else
+        {
+            query = query.Replace("[AddNewUserNameContidion]", "");
+        }
 
         return query;
     }
