@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace Mcsg.Media.Api;
 
@@ -45,7 +46,9 @@ public class Program
         var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
+        builder.Host.UseSerilog();
         assembly!.StartLogger(st);
+        builder.Services.AddSingleton(Log.Logger);
 
         #region -- Load HTTP protocols --
         if (!string.IsNullOrWhiteSpace(st.Protocols))

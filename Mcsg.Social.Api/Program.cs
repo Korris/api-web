@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 
 namespace Mcsg.Social.Api;
@@ -62,7 +63,9 @@ public class Program
         var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
+        builder.Host.UseSerilog();
         assembly!.StartLogger(st);
+        builder.Services.AddSingleton(Log.Logger);
 
         #region -- Load HTTP protocols --
         if (!string.IsNullOrWhiteSpace(st.Protocols))

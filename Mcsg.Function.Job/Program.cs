@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace Mcsg.Function.Job;
 
@@ -56,7 +57,9 @@ public class Program
         var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
+        builder.Host.UseSerilog();
         assembly!.StartLogger(st);
+        builder.Services.AddSingleton(Log.Logger);
 
         #region -- Load HTTP protocols --
         if (!string.IsNullOrWhiteSpace(st.Protocols))
