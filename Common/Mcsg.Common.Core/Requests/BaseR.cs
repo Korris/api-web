@@ -14,13 +14,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Mcsg.Common.Core.Requests;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Responses;
 using static Common.SeedWork.Constants.Setting;
@@ -46,6 +47,8 @@ public class BaseR : IRequest<SingleResponse>
     public BaseR(HttpContext hc)
     {
         _hc = hc;
+
+        LogHeader();
     }
 
     /// <summary>
@@ -55,6 +58,8 @@ public class BaseR : IRequest<SingleResponse>
     public void Analyze(HttpContext hc)
     {
         _hc = hc;
+
+        LogHeader();
     }
 
     /// <summary>
@@ -88,6 +93,22 @@ public class BaseR : IRequest<SingleResponse>
         }
 
         return domain + rewriteUrl;
+    }
+
+    /// <summary>
+    /// Log header
+    /// </summary>
+    private void LogHeader()
+    {
+        if (_hc == null)
+        {
+            return;
+        }
+
+        var dic = _hc.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString());
+        var json = JsonConvert.SerializeObject(dic, Formatting.Indented);
+
+        $"HTTP headers: {json}".LogInfor();
     }
 
     #endregion
