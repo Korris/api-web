@@ -16,29 +16,37 @@ public class LinkPreviewService : ILinkPreviewService
         _logger = logger;
     }
 
-    public MetaDataDto GetMetaDataByUrl(string url)
+    public async Task<MetaDataDto> GetMetaDataByUrl(string url)
     {
         try
         {
-            // Load the HTML from the URL
-            var web = new HtmlWeb();
-            var doc = web.Load(url);
-
-            // Find meta tag
-            var title = doc.GetTitle();
-            var description = doc.GetDescription();
-            var image = doc.GetImage(url);
-            var ogUrl = doc.GetUrl(url);
-            var uri = new Uri(url);
-
-            return new MetaDataDto
+            using (HttpClient client = new HttpClient())
             {
-                Title = title ?? "",
-                Description = description ?? "",
-                Image = image ?? "",
-                Url = ogUrl ?? "",
-                Domain = uri.Host
-            };
+                // Fetch the HTML content
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var htmlContent = await response.Content.ReadAsStringAsync();
+
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(htmlContent);
+
+                // Find meta tag
+                var title = doc.GetTitle();
+                var description = doc.GetDescription();
+                var image = doc.GetImage(url);
+                var ogUrl = doc.GetUrl(url);
+                var uri = new Uri(url);
+
+                return new MetaDataDto
+                {
+                    Title = title ?? "",
+                    Description = description ?? "",
+                    Image = image ?? "",
+                    Url = ogUrl ?? "",
+                    Domain = uri.Host
+                };
+            }
         }
         catch (Exception ex)
         {

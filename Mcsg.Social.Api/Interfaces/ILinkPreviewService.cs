@@ -4,5 +4,5 @@ using Dtos;
 
 public interface ILinkPreviewService
 {
-    MetaDataDto GetMetaDataByUrl(string url);
+    Task<MetaDataDto> GetMetaDataByUrl(string url);
 }

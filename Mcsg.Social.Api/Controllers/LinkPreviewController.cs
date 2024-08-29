@@ -15,10 +15,11 @@ public class LinkPreviewController : ControllerBase
     {
         _linkPreviewService = linkPreviewService;
     }
+
     [HttpGet("get-metadata")]
-    public ActionResult<MetaDataDto> GetMetaData(string url)
+    public async Task<ActionResult<MetaDataDto>> GetMetaData(string url)
     {
-        var result = _linkPreviewService.GetMetaDataByUrl(url);
+        var result = await _linkPreviewService.GetMetaDataByUrl(url);
         return Ok(result);
     }
 
