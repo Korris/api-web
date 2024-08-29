@@ -61,9 +61,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         }
         #endregion
 
-        var pageSize = request.PageSize / 3;
-        var offSetParam = (request.PageNum - 1) * pageSize;
-
         var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara)";
         var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara)";
         var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara)";
@@ -85,10 +82,19 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TagName = keyword,
                     PostType = (int)PostType.Comic,
                     PostStatus = (int)PostStatus.Public,
-                    PageSize = pageSize,
-                    OffSetPara = offSetParam
+                    PageSize = (int)request.PageSize,
+                    OffSetPara = (int)request.Offset
                 });
-                recordComic = dataComic.FirstOrDefault()?.TotalItems ?? 0;
+
+                recordComic = (
+                    from qpost in _context.ComicPostAvailable
+                    join qtp in _context.ComicTagPosts on qpost.Id equals qtp.PostId
+                    join qtag in _context.Tags on qtp.TagId equals qtag.Id
+                    where qtag.Name == keyword
+                          && qpost.Type == PostType.Comic
+                          && qpost.Status == PostStatus.Public
+                    select qpost.Id
+                ).Distinct().Count();
             }
 
             if (request.Tag == "all" || request.Tag == "feed")
@@ -97,16 +103,24 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Feed,
-                    PageSize = pageSize,
-                    OffSetPara = offSetParam
+                    PageSize = (int)request.PageSize,
+                    OffSetPara = (int)request.Offset
                 });
+
+                recordSocial = (
+                    from qpost in _context.SocialPostAvailable
+                    join qtp in _context.SocialTagPostAvailable on qpost.Id equals qtp.PostId
+                    join qtag in _context.TagAvailable on qtp.TagId equals qtag.Id
+                    where qtag.Name == keyword
+                          && qpost.Type == PostType.Feed
+                    select qpost.Id
+                ).Distinct().Count();
 
                 foreach (var item in dataSocial)
                 {
                     await MappingFeedInListResponse(item);
                 }
 
-                recordSocial = dataSocial.FirstOrDefault()?.TotalItems ?? 0;
             }
 
             if (request.Tag == "all" || request.Tag == "story")
@@ -116,10 +130,18 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TagName = keyword,
                     PostType = (int)PostType.Story,
                     PostStatus = (int)PostStatus.Public,
-                    PageSize = pageSize,
-                    OffSetPara = offSetParam
+                    PageSize = (int)request.PageSize,
+                    OffSetPara = (int)request.Offset
                 });
-                recordStory = dataStory.FirstOrDefault()?.TotalItems ?? 0;
+
+                recordStory = (
+                    from qpost in _context.StoryPostAvailable
+                    join qtp in _context.StoryTagPosts on qpost.Id equals qtp.PostId
+                    join qtag in _context.Tags on qtp.TagId equals qtag.Id
+                    where qtag.Name == keyword
+                          && qpost.Type == PostType.Story
+                    select qpost.Id
+                ).Distinct().Count();
             }
 
             var combinedItems = dataComic.Concat(dataSocial).Concat(dataStory).ToList();
