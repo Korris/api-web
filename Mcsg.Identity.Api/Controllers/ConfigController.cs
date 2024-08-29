@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Mcsg.Identity.Api.Controllers;
 
+using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.SeedWork.Extensions;
@@ -42,6 +43,9 @@ public class ConfigController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var res = new MultipleResponse();
+
+        var logMsg = "This is a log message with method and namespace information.";
+        logMsg.ToFullMessage().LogInfor();
 
         var s = _setting;
         res.SetSuccess(nameof(s.DevMode).ToCamelCase(), s.DevMode);
@@ -95,7 +99,7 @@ public class ConfigController : ControllerBase
         {
             var file = "config/validators.json";
             var ms = await _sc.Strategy.GetObject(file, null);
-            var jsonFile = new StringBuilder(StreamExtension.ToString(ms)).ToString();
+            var jsonFile = new StringBuilder(Common.SeedWork.Extensions.StreamExtension.ToString(ms)).ToString();
             res.SetSuccess(nameof(jsonFile), jsonFile);
         }
         catch { }

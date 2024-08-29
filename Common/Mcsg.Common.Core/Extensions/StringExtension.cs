@@ -13,7 +13,9 @@
 
 using Newtonsoft.Json;
 using Serilog;
+using Serilog.Events;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -40,11 +42,45 @@ public static class StringExtension
     /// <param name="setting">Setting</param>
     public static void StartLogger(this string name, ISettingBase setting)
     {
-        var file = $"logs/{name}-{setting.Environment + "-"}.log";
+        // Ensure the logs directory exists
+        var logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\logs");
+        if (!Directory.Exists(logDirectory))
+        {
+            Directory.CreateDirectory(logDirectory);
+        }
+
+        // Define log file paths for each log level
+        var debugFile = $"{logDirectory}/{name}-Debug-{setting.Environment + "-"}.log";
+        var infoFile = $"{logDirectory}/{name}-Info-{setting.Environment + "-"}.log";
+        var warningFile = $"{logDirectory}/{name}-Warning-{setting.Environment + "-"}.log";
+        var errorFile = $"{logDirectory}/{name}-Error-{setting.Environment + "-"}.log";
+        var fatalFile = $"{logDirectory}/{name}-Fatal-{setting.Environment + "-"}.log";
+
+        // Configure Serilog
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
-            .WriteTo.File(file, rollingInterval: RollingInterval.Day)
+
+            .WriteTo.Logger(p => p
+                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Debug)
+                .WriteTo.File(debugFile, rollingInterval: RollingInterval.Day))
+
+            .WriteTo.Logger(p => p
+                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Information)
+                .WriteTo.File(infoFile, rollingInterval: RollingInterval.Day))
+
+            .WriteTo.Logger(p => p
+                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Warning)
+                .WriteTo.File(warningFile, rollingInterval: RollingInterval.Day))
+
+            .WriteTo.Logger(p => p
+                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Error)
+                .WriteTo.File(errorFile, rollingInterval: RollingInterval.Day))
+
+            .WriteTo.Logger(p => p
+                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Fatal)
+                .WriteTo.File(fatalFile, rollingInterval: RollingInterval.Day))
+
             .CreateLogger();
 
         LogInfor($"{name} is started");
@@ -59,23 +95,137 @@ public static class StringExtension
     }
 
     /// <summary>
-    /// Write a log event information level
+    /// Writes a log event at the verbose level.
     /// </summary>
-    /// <param name="msg">Message template describing the event</param>
-    /// <param name="prefix">Prefix</param>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    public static void LogVerbose(this string msg, string? prefix = null)
+    {
+        Log.Verbose($"{prefix}{msg}");
+    }
+
+    /// <summary>
+    /// Writes a log event at the debug level.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    public static void LogDebug(this string msg, string? prefix = null)
+    {
+        Log.Debug($"{prefix}{msg}");
+    }
+
+    /// <summary>
+    /// Writes a log event at the information level.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
     public static void LogInfor(this string msg, string? prefix = null)
     {
         Log.Information($"{prefix}{msg}");
     }
 
     /// <summary>
-    /// Write a log event error level
+    /// Writes a log event at the warning level.
     /// </summary>
-    /// <param name="msg">Message template describing the event</param>
-    /// <param name="prefix">Prefix</param>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    public static void LogWarning(this string msg, string? prefix = null)
+    {
+        Log.Warning($"{prefix}{msg}");
+    }
+
+    /// <summary>
+    /// Writes a log event at the error level.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
     public static void LogError(this string msg, string? prefix = null)
     {
         Log.Error($"{prefix}{msg}");
+    }
+
+    /// <summary>
+    /// Writes a log event at the fatal level.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    public static void LogFatal(this string msg, string? prefix = null)
+    {
+        Log.Fatal($"{prefix}{msg}");
+    }
+
+    /// <summary>
+    /// Logs a message at the specified log level, including the full namespace, class, and method name.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="level">The log level at which to log the message.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    /// <param name="methodName">The name of the calling method (automatically populated).</param>
+    /// <param name="filePath">The source file path of the calling method (automatically populated).</param>
+    public static void LogMessage(this string msg, LogEventLevel level = LogEventLevel.Information, string? prefix = null, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "")
+    {
+        var message = ToFullMessage(msg, null, methodName, filePath);
+        message = $"{prefix}{message}";
+
+        switch (level)
+        {
+            case LogEventLevel.Verbose:
+                Log.Verbose(message);
+                break;
+
+            case LogEventLevel.Debug:
+                Log.Debug(message);
+                break;
+
+            case LogEventLevel.Information:
+                Log.Information(message);
+                break;
+
+            case LogEventLevel.Warning:
+                Log.Warning(message);
+                break;
+
+            case LogEventLevel.Error:
+                Log.Error(message);
+                break;
+
+            case LogEventLevel.Fatal:
+                Log.Fatal(message);
+                break;
+
+            default:
+                Log.Information(message);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Retrieves the full namespace, class, and method name for logging or other purposes.
+    /// </summary>
+    /// <param name="msg">The message template describing the event.</param>
+    /// <param name="prefix">An optional prefix to prepend to the message.</param>
+    /// <param name="methodName">The name of the calling method (automatically populated).</param>
+    /// <param name="filePath">The source file path of the calling method (automatically populated).</param>
+    /// <returns>A string in the format [Namespace.ClassName.MethodName].<br/>
+    /// If the file path is not provided, it returns [UnknownNamespace.UnknownClass.MethodName].</returns>
+    public static string ToFullMessage(this string msg, string? prefix = null, [CallerMemberName] string methodName = "", [CallerFilePath] string filePath = "")
+    {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            return $"[UnknownNamespace.UnknownClass.{methodName}]";
+        }
+
+        var className = Path.GetFileNameWithoutExtension(filePath);
+        var namespaceName = AppDomain.CurrentDomain.FriendlyName;
+
+        var startIndex = filePath.IndexOf(namespaceName);
+        if (startIndex >= 0)
+        {
+            var relevantPath = filePath.Substring(startIndex);
+            namespaceName = relevantPath.Replace("\\", ".").Replace("/", ".").Replace($".{className}.cs", "");
+        }
+
+        return $"[{namespaceName}.{className}.{methodName}] {prefix}{msg}";
     }
 
     #endregion
