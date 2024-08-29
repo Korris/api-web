@@ -1,6 +1,7 @@
-﻿using Mcsg.Realtime.Api.Requests;
+﻿namespace Mcsg.Realtime.Api.Interfaces;
 
-namespace Mcsg.Realtime.Api.Interfaces;
+using Requests;
+
 public interface IFollowPostService
 {
     Task SendPostFollowNotification(FollowPostReq req);
