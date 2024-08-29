@@ -59,11 +59,10 @@ public class ComicController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetAllTopComic([FromQuery] ComicPostListSeriesR request)
     {
-        var req = new BaseR(HttpContext);
         request.Analyze(HttpContext);
         var result = await _comicService.GetTopComicAsync(request);
 
-        if (req.FromMobile)
+        if (request.FromMobile)
         {
             result.Items = result.Items.Where(p => !p.IsMature).ToList();
         }

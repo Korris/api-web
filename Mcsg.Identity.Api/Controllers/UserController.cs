@@ -5,7 +5,6 @@ using System.Net;
 
 namespace Mcsg.Identity.Api.Controllers;
 
-using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
@@ -77,7 +76,6 @@ public class UserController : ControllerBase
     [HttpPut("profile"), Authorize]
     public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR request)
     {
-        var req = new BaseR(HttpContext);
         var result = await _userService.UpdateUserProfile(request);
         return Ok(result);
     }
