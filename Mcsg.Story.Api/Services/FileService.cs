@@ -170,8 +170,7 @@ public class FileService : IFileService
         var shareUrl = "";
         if (request.IsPublic == true)
         {
-            shareUrl = request.Type == "Thumb" ? _setting.Minio.GetPublicUrl(resource.BucketName, objectNameOriginal)
-                                               : _setting.Minio.GetPublicUrl(resource.BucketName, resource.Url);
+            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, request.Type == "Thumb" ? objectNameOriginal : objectName);
         }
         else
         {
