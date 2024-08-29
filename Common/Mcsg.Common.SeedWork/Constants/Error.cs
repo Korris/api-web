@@ -213,6 +213,16 @@ public static class Error
     /// </summary>
     public const string E205 = "E205";
 
+    /// <summary>
+    /// Thumbnail not found
+    /// </summary>
+    public const string E206 = "E206";
+
+    /// <summary>
+    /// Cover not found
+    /// </summary>
+    public const string E207 = "E207";
+
     #endregion
 
     #region -- E3xx --

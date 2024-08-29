@@ -228,6 +228,16 @@ public static class Message
     /// </summary>
     public const string M205 = "This post has deleted";
 
+    /// <summary>
+    /// ThumbnailUrl not found
+    /// </summary>
+    public const string M206 = "This Thumbnail not found";
+
+    /// <summary>
+    /// CoverUrl not found
+    /// </summary>
+    public const string M207 = "This Cover not found";
+
     #endregion
 
     #region -- M3xx --

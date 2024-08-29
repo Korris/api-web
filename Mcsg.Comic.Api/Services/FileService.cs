@@ -155,7 +155,7 @@ public class FileService : IFileService
             HashId = hashId,
             Title = Path.GetFileNameWithoutExtension(fileTitle),
             Name = hashFileName,
-            Url = !string.IsNullOrWhiteSpace(objectNameOriginal) ? objectNameOriginal : objectName,
+            Url = objectName,
             BucketName = bucketName,
             Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
             CreatedBy = request.UserId,
@@ -170,7 +170,8 @@ public class FileService : IFileService
         var shareUrl = "";
         if (request.IsPublic == true)
         {
-            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, resource.Url);
+            shareUrl = request.Type == "Thumb" ? _setting.Minio.GetPublicUrl(resource.BucketName, objectNameOriginal)
+                                               : _setting.Minio.GetPublicUrl(resource.BucketName, resource.Url);
         }
         else
         {

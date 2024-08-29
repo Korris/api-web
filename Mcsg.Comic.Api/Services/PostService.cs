@@ -128,6 +128,21 @@ public partial class PostService : IPostService
         var rewards = await CheckRewardsForPost(currentUserId, type);
 
         var hashId = PostConfig.HashLength.GetRandomString();
+
+        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        if (thumbnailResource == null)
+        {
+            throw new BadRequestException(E206, M206);
+        }
+        var thumbnailUrl = _setting.Minio.GetPublicUrl(thumbnailResource.Bucket, thumbnailResource.Url);
+
+        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        if (coverResource == null)
+        {
+            throw new BadRequestException(E206, M206);
+        }
+        var coverUrl = _setting.Minio.GetPublicUrl(coverResource.Bucket, coverResource.Url);
+
         //var safePlainString = "";
         //if (!string.IsNullOrEmpty(request.Summary))
         //{
@@ -143,8 +158,8 @@ public partial class PostService : IPostService
             AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
             AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
             Body = request.Summary,
-            ThumbnailUrl = request.ThumbnailUrl.RemoveNameSuffix(),
-            CoverUrl = request.CoverUrl,
+            ThumbnailUrl = thumbnailUrl,
+            CoverUrl = coverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             Status = PostStatus.Public,
@@ -164,7 +179,7 @@ public partial class PostService : IPostService
             CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = request.Summary,
-            CoverUrl = request.CoverUrl,
+            CoverUrl = post.CoverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             ProfileId = profileId,
@@ -846,10 +861,25 @@ public partial class PostService : IPostService
         VerifyPost(post, false);
         #endregion
 
+        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        if (thumbnailResource == null)
+        {
+            throw new BadRequestException(E206, M206);
+        }
+        var thumbnailUrl = _setting.Minio.GetPublicUrl(thumbnailResource.Bucket, thumbnailResource.Url);
+
+        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        if (coverResource == null)
+        {
+            throw new BadRequestException(E206, M206);
+        }
+        var coverUrl = _setting.Minio.GetPublicUrl(coverResource.Bucket, coverResource.Url);
+
         if (string.IsNullOrEmpty(request.Summary))
         {
             throw new BadRequestException(ErrorCodes.PortalFeedContentEmpty, ErrorMessage.FeedContentEmpty);
         }
+
 
         var currentTitle = post.Title;
         post.Title = request.Title;
@@ -857,8 +887,8 @@ public partial class PostService : IPostService
         post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
         post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
         post.Body = request.Summary;
-        post.ThumbnailUrl = request.ThumbnailUrl.RemoveNameSuffix();
-        post.CoverUrl = request.CoverUrl;
+        post.ThumbnailUrl = thumbnailUrl;
+        post.CoverUrl = coverUrl;
         post.IsMature = request.IsMature;
         post.Permission = request.Permission;
         post.Status = request.IsSaveAndPublish ? PostStatus.Public : PostStatus.Draft;
@@ -875,7 +905,7 @@ public partial class PostService : IPostService
             CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = request.Summary,
-            CoverUrl = request.CoverUrl,
+            CoverUrl = post.CoverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             ProfileId = profileId,

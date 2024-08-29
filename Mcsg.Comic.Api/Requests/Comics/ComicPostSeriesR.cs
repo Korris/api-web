@@ -6,8 +6,8 @@ public class ComicPostSeriesR
 {
     public string? Title { get; set; }
     public string? Summary { get; set; }
-    public string? ThumbnailUrl { get; set; }
-    public string? CoverUrl { get; set; }
+    public string ThumbnailHashId { get; set; }
+    public string CoverHashId { get; set; }
     public bool IsCurrentUserAuthor { get; set; }
     public string? AuthorName { get; set; } = string.Empty;
     public bool IsMature { get; set; } = false;
