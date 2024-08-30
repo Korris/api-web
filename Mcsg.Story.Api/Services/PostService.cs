@@ -276,14 +276,9 @@ public partial class PostService : IPostService
         dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
 
         var result = MappingFeedRespone(dbPost);
-        result.CoverHashId = await _context.StoryResources.Where(p => p.Name == Path.GetFileName(result.CoverUrl))
-            .Select(p => p.HashId)
-            .FirstOrDefaultAsync();
 
-        var thumbNailNameWithOutSuffix = result.ThumbnailUrl.RemoveNameSuffix();
-        result.ThumbnailHashId = await _context.StoryResources.Where(p => p.Name == Path.GetFileName(thumbNailNameWithOutSuffix))
-            .Select(p => p.HashId)
-            .FirstOrDefaultAsync();
+        result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
+        result.ThumbnailHashId = Path.GetFileNameWithoutExtension(result.ThumbnailUrl.RemoveNameSuffix());
 
         var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
         var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new

@@ -275,14 +275,9 @@ public partial class PostService : IPostService
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         dbPost.IsFollowing = currentUserId == null ? false : await _context.ComicPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
         var result = MappingFeedRespone(dbPost);
-        result.CoverHashId = await _context.ComicResources.Where(p => p.Name == Path.GetFileName(result.CoverUrl))
-            .Select(p => p.HashId)
-            .FirstOrDefaultAsync();
 
-        var thumbNailNameWithOutSuffix = result.ThumbnailUrl.RemoveNameSuffix();
-        result.ThumbnailHashId = await _context.ComicResources.Where(p => p.Name == Path.GetFileName(thumbNailNameWithOutSuffix))
-            .Select(p => p.HashId)
-            .FirstOrDefaultAsync();
+        result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
+        result.ThumbnailHashId = Path.GetFileNameWithoutExtension(result.ThumbnailUrl.RemoveNameSuffix());
 
         var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
         var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
