@@ -103,8 +103,8 @@ public class TokenService : ITokenService
             Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult()
         };
         var st = new SecurityToken(_setting.Jwt, payload);
-
-        return new TokenDto { AccessToken = st.Jwt, ExpiredDate = st.ExpiredDate };
+        // Time delay between server and client
+        return new TokenDto { AccessToken = st.Jwt, ExpiredDate = st.ExpiredDate.AddSeconds(-30) };
     }
 
     public async Task<bool> DeleteRefreshTokenAsync(Guid userId)
