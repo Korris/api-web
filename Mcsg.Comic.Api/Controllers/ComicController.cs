@@ -187,6 +187,7 @@ public class ComicController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetMyComic([FromQuery] ComicPostListSeriesR loadReq)
     {
+        loadReq.Analyze(HttpContext);
         var result = await _comicService.GetMyComics(loadReq);
         return Ok(result);
     }

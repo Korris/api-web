@@ -180,6 +180,7 @@ public class StoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetMyStories([FromQuery] ComicPostListSeriesR loadReq)
     {
+        loadReq.Analyze(HttpContext);
         var result = await _storyService.GetMyStories(loadReq);
         return Ok(result);
     }
