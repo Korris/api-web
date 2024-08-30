@@ -44,55 +44,44 @@ public static class StringExtension
     public static void StartLogger(this string name, ISettingBase setting)
     {
         // Ensure the logs directory exists
-        var logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\logs").ToPathPlatform();
-        if (!Directory.Exists(logDirectory))
+        var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"..\\..\\logs\\{name}").ToPathPlatform();
+        if (!Directory.Exists(directory))
         {
-            Directory.CreateDirectory(logDirectory);
+            Directory.CreateDirectory(directory);
         }
 
-        // Define log file paths for each log level
-        var debugFile = $"{logDirectory}/{name}-Debug-{setting.Environment + "-"}.log";
-        var infoFile = $"{logDirectory}/{name}-Info-{setting.Environment + "-"}.log";
-        var warningFile = $"{logDirectory}/{name}-Warning-{setting.Environment + "-"}.log";
-        var errorFile = $"{logDirectory}/{name}-Error-{setting.Environment + "-"}.log";
-        var fatalFile = $"{logDirectory}/{name}-Fatal-{setting.Environment + "-"}.log";
+        var fileSizeLimitBytes = 10 * 1024 * 1024; // 10MB file size limit
+        var outputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:t4}] {Message:j}{NewLine}{Exception}";
 
-        // Configure Serilog
+        // Configure Serilog with daily rolling files in daily directories
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .MinimumLevel.Verbose()
             .WriteTo.Console()
 
-            .WriteTo.Logger(p => p
-                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Debug)
-                .WriteTo.File(debugFile, rollingInterval: RollingInterval.Day))
-
-            .WriteTo.Logger(p => p
-                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Information)
-                .WriteTo.File(infoFile, rollingInterval: RollingInterval.Day))
-
-            .WriteTo.Logger(p => p
-                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Warning)
-                .WriteTo.File(warningFile, rollingInterval: RollingInterval.Day))
-
-            .WriteTo.Logger(p => p
-                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Error)
-                .WriteTo.File(errorFile, rollingInterval: RollingInterval.Day))
-
-            .WriteTo.Logger(p => p
-                .Filter.ByIncludingOnly(q => q.Level == LogEventLevel.Fatal)
-                .WriteTo.File(fatalFile, rollingInterval: RollingInterval.Day))
-
+            // Map log events by their level and date to different files
+            .WriteTo.Map(
+                logEvent => new
+                {
+                    logEvent.Level,
+                    Date = new DateTime(logEvent.Timestamp.Year, logEvent.Timestamp.Month, logEvent.Timestamp.Day)
+                },
+                (key, wt) => wt.File(
+                    path: $"{directory}/{key.Date:yyyy-MM-dd}/{key.Level}-{name}-{setting.Environment}-.log",
+                    rollingInterval: RollingInterval.Day,
+                    fileSizeLimitBytes: fileSizeLimitBytes,
+                    rollOnFileSizeLimit: true,  // create new file when size limit is reached
+                    retainedFileCountLimit: 30, // keep up to 30 files per level
+                    outputTemplate: outputTemplate
+                )
+            )
             .CreateLogger();
 
         LogInfor($"{name} is started");
 
         // Log information about the system environment
-        var st = new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        };
+        var st = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
         var json = JsonConvert.SerializeObject(setting, Formatting.Indented, st);
-        LogInfor($"System environments {json}");
+        LogInfor($"System environments: {json}");
     }
 
     /// <summary>
