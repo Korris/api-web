@@ -352,6 +352,7 @@ public partial class FeedService : IFeedService
                          u.""Avatar"" AS UserAvatar,
                          u.""Id"" AS UserId,
                          p.""HashId"",
+                         p.""Id"" AS ParentId,
                          sp.""HashId"" as SubPostHashId,
                          sp.""Id"",
                          sp.""CreatedOn"", 

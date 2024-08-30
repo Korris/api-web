@@ -13,6 +13,7 @@ public class SubPostResponseItem
 public class SubPostFeedQuery : SubPostFeedResponse
 {
     public string ResourcesStr { get; set; }
+    public Guid ParentId { get; set; }
 }
 
 public class SubPostFeedResponse : FeedDto
@@ -26,4 +27,5 @@ public class SubPostFeedResponse : FeedDto
     public ResourceType ResourceType { get; set; }
     public string PrevSubPostHashId { get; set; }
     public string NextSubPostHashId { get; set; }
+    public Guid ParentId { get; set; }
 }
