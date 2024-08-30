@@ -358,14 +358,14 @@ public class FileService : IFileService
                 var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 tempBlobName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempBlobName, null);
+                var isExistTempFile = await _sc.Strategy.StatObject(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
                     await _sc.Strategy.RemoveObject(tempBlobName, null);
                 }
 
                 targetBlobName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetBlobName, null);
+                var isExistTargetFile = await _sc.Strategy.StatObject(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
                     await _sc.Strategy.RemoveObject(targetBlobName, null);
@@ -412,10 +412,10 @@ public class FileService : IFileService
             var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-            var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+            var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
 
             var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-            var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+            var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
 
             if (isExistTempFile != null && isExistTargetFile == null)
             {

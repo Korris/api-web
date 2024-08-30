@@ -15,6 +15,7 @@ using Minio.DataModel;
 
 namespace Mcsg.Common.Core.Storages;
 
+using Dtos;
 using Interfaces;
 using static SeedWork.Dtos.StorageDto;
 
@@ -70,13 +71,14 @@ public class StorageStrategy : IStorageStrategy
     }
 
     /// <summary>
-    /// Put object
+    /// Uploads an object to a bucket.
     /// </summary>
-    /// <param name="url">file URL</param>
-    /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
-    /// <returns>Return the result</returns>
-    public virtual Task PutObject(string url, string objectName, string? bucketName)
+    /// <param name="url">The URL of the file to upload.</param>
+    /// <param name="objectName">The name of the object (including full path and file extension).</param>
+    /// <param name="bucketName">The name of the bucket. If null, the default bucket from the settings will be used.</param>
+    /// <param name="isOverwrite">Indicates whether to overwrite the object if it already exists.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public virtual Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite)
     {
         throw new NotImplementedException();
     }
@@ -112,7 +114,7 @@ public class StorageStrategy : IStorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
-    public virtual Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
+    public virtual Task<ObjectStat?> StatObject(string objectName, string? bucketName)
     {
         throw new NotImplementedException();
     }

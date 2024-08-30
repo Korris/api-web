@@ -14,8 +14,12 @@
 using Minio;
 using Minio.DataModel;
 using Minio.DataModel.Args;
+using SixLabors.ImageSharp;
+using System.Net;
 
 namespace Mcsg.Common.Core.Storages;
+
+using Dtos;
 
 /// <summary>
 /// Storage MinIO
@@ -98,21 +102,46 @@ public class StorageMinio : StorageStrategy
     }
 
     /// <summary>
-    /// Put object
+    /// Uploads an object to a bucket.
     /// </summary>
-    /// <param name="url">file URL</param>
-    /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
-    /// <returns>Return the result</returns>
-    public override async Task PutObject(string url, string objectName, string? bucketName)
+    /// <param name="url">The URL of the file to upload.</param>
+    /// <param name="objectName">The name of the object (including full path and file extension).</param>
+    /// <param name="bucketName">The name of the bucket. If null, the default bucket from the settings will be used.</param>
+    /// <param name="isOverwrite">Indicates whether to overwrite the object if it already exists.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public override async Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite)
     {
+        if (!isOverwrite)
+        {
+            var stat = await StatObject(objectName, bucketName);
+            if (stat != null)
+            {
+                return null; // object already exists, and overwrite is not allowed.
+            }
+        }
+
         using HttpClient client = new();
         var response = await client.GetAsync(url);
-        response.EnsureSuccessStatusCode();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            return null;
+        }
 
-        var ms = new MemoryStream();
+        using MemoryStream ms = new();
         await response.Content.CopyToAsync(ms);
-        await PutObject(ms, objectName, null);
+        ms.Position = 0;
+
+        using var image = await Image.LoadAsync(ms);
+        ms.Position = 0;
+
+        await PutObject(ms, objectName, bucketName);
+
+        return new ImageRatio
+        {
+            Width = image.Width,
+            Height = image.Height,
+            Length = ms.Length
+        };
     }
 
     /// <summary>
@@ -172,7 +201,7 @@ public class StorageMinio : StorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
-    public override async Task<ObjectStat?> StatObjectAsync(string objectName, string? bucketName)
+    public override async Task<ObjectStat?> StatObject(string objectName, string? bucketName)
     {
         if (string.IsNullOrWhiteSpace(bucketName))
         {

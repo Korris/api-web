@@ -363,7 +363,7 @@ public partial class UserService : IUserService
         var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, bucketName);
+            var isExistFile = await _sc.Strategy.StatObject(objectName, bucketName);
             if (isExistFile != null)
             {
                 fileName = GenerateNewFileName(file.FileName);
@@ -420,7 +420,7 @@ public partial class UserService : IUserService
         var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.Strategy.StatObjectAsync(objectName, bucketName);
+            var isExistFile = await _sc.Strategy.StatObject(objectName, bucketName);
             if (isExistFile != null)
             {
                 fileName = GenerateNewFileName(file.FileName);

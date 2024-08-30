@@ -17,5 +17,10 @@ public class ImageRatio
     /// </summary>
     public int Height { get; set; }
 
+    /// <summary>
+    /// Length
+    /// </summary>
+    public long Length { get; set; }
+
     #endregion
 }

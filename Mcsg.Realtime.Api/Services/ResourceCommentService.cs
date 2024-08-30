@@ -59,10 +59,10 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {
@@ -99,10 +99,10 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {
@@ -139,10 +139,10 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObjectAsync(tempObjectName, null);
+        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObjectAsync(targetObjectName, null);
+        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {

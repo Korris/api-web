@@ -60,7 +60,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
 
             // Backup the original image
             var originalName = resizeName.AppendNameSuffix();
-            var stat = await _sc.Strategy.StatObjectAsync(originalName, bucketNamePublic);
+            var stat = await _sc.Strategy.StatObject(originalName, bucketNamePublic);
             if (stat == null)
             {
                 await _sc.Strategy.PutObject(fsResize, originalName, bucketNamePublic);
