@@ -10,6 +10,8 @@ public class PostSeriesResponse : PostDto
     public int? CommentCount { get; set; }
     public int ChapterCount { get; set; }
     public string CoverUrl { get; set; }
+    public string CoverHashId { get; set; }
+    public string ThumbnailHashId { get; set; }
     public bool IsMature { get; set; }
     public bool? IsCompleted { get; set; }
     public string ProfileName { get; set; }
