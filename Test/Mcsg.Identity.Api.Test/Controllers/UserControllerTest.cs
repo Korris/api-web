@@ -203,6 +203,7 @@ public class UserControllerTest
     [TestCase("UserKiệt", 0, false)]
     [TestCase("minhminhminhminh1", 0, false)]
     [TestCase("minhhh1", 0, false)]
+    [TestCase("minhhhh", 0, false)]
     public async Task UpdateUserName_ValidationFailed(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -215,9 +216,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0001", 0, true)]
-    [TestCase("minhminhminh0002", 3, true)]
-    [TestCase("minhminhminh0003", 10, false)]
+    [TestCase("minhminhminh0001A", 0, true)]
+    [TestCase("minhminhminh0002A", 3, true)]
+    [TestCase("minhminhminh0003A", 10, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -229,8 +230,8 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0003", 0, true)]
-    [TestCase("minhminhminh0004", 10, false)]
+    [TestCase("minhminhminh0003C", 0, true)]
+    [TestCase("minhminhminh0004D", 10, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -242,10 +243,10 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0004", 0, true)]
-    [TestCase("minhminhminh0005", 31, true)]
-    [TestCase("minhminhminh0006", 3, true)]
-    [TestCase("minhminhminh0007", 0, false)]
+    [TestCase("minhminhminh0004A", 0, true)]
+    [TestCase("minhminhminh0005A", 31, true)]
+    [TestCase("minhminhminh0006A", 3, true)]
+    [TestCase("minhminhminh0007A", 0, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_AfterWaiTime_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -257,9 +258,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0007", 0, true)]
-    [TestCase("minhminhminh0008", 31, true)]
-    [TestCase("minhminhminh0009", 10, false)]
+    [TestCase("minhminhminh0007A", 0, true)]
+    [TestCase("minhminhminh0008A", 31, true)]
+    [TestCase("minhminhminh0009A", 10, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_AfterWaitTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -283,8 +284,20 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0001", 0, false)]
+    [TestCase("minhminhminh0001A", 0, false)]
     public async Task UpdateUserName_ValidationFailed_FreeUser_TheOldUserName(string? newUserName, double delay, bool expected)
+    {
+        await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
+    }
+
+    /// <summary>
+    /// Test case failed update no number in username for free user
+    /// </summary>
+    /// <param name="newUserName"></param>
+    /// <param name="delay"></param>
+    /// <param name="expected"></param>
+    [TestCase("minhminhminhminhA", 0, false)]
+    public async Task UpdateUserName_ValidationFailed_FreeUser_NoNumber(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
     }
@@ -297,9 +310,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm001", 0, true)]
-    [TestCase("minhm002", 3, true)]
-    [TestCase("minhm003", 10, false)]
+    [TestCase("minhhA", 0, true)]
+    [TestCase("minhhB", 3, true)]
+    [TestCase("minhhC", 10, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -311,8 +324,8 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm0011", 0, true)]
-    [TestCase("minhm0012", 10, false)]
+    [TestCase("minhhC", 0, true)]
+    [TestCase("minhhD", 10, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -324,10 +337,10 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm004", 0, true)]
-    [TestCase("minhm005", 31, true)]
-    [TestCase("minhm006", 3, true)]
-    [TestCase("minhm007", 0, false)]
+    [TestCase("minhhD", 0, true)]
+    [TestCase("minhhE", 31, true)]
+    [TestCase("minhhF", 3, true)]
+    [TestCase("minhhG", 0, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaitTime_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -339,9 +352,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm007", 0, true)]
-    [TestCase("minhm008", 31, true)]
-    [TestCase("minhm009", 10, false)]
+    [TestCase("minhhG", 0, true)]
+    [TestCase("minhhH", 31, true)]
+    [TestCase("minhhI", 10, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_AfterWaitTime_AfterRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -365,7 +378,7 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm001", 0, false)]
+    [TestCase("minhhA", 0, false)]
     public async Task UpdateUserName_ValidationFailed_PremiumUser_TheOldUserName(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -381,8 +394,8 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minh123456789013", 0, true)]
-    [TestCase("minh123456789014", 3, true)]
+    [TestCase("minh123456789013A", 0, true)]
+    [TestCase("minh123456789014A", 3, true)]
     public async Task UpdateUserName_ValidationPass_FreeUser_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -394,9 +407,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0010", 0, true)]
-    [TestCase("minhminhminh0011", 3, true)]
-    [TestCase("minhminhminh0012", 31, true)]
+    [TestCase("minhminhminh0010A", 0, true)]
+    [TestCase("minhminhminh0011A", 3, true)]
+    [TestCase("minhminhminh0012A", 31, true)]
     public async Task UpdateUserName_ValidationPass_FreeUser_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -408,9 +421,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh00013", 0, true)]
-    [TestCase("minhminhminh00014", 31, true)]
-    [TestCase("minhminhminh00015", 3, true)]
+    [TestCase("minhminhminh00013A", 0, true)]
+    [TestCase("minhminhminh00014A", 31, true)]
+    [TestCase("minhminhminh00015A", 3, true)]
     public async Task UpdateUserName_ValidationPass_FreeUser_AfterWaitTime_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -422,10 +435,10 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhminhminh0016", 0, true)]
-    [TestCase("minhminhminh0017", 10, false)]
-    [TestCase("minhminhminh0018", 30, true)]
-    [TestCase("minhminhminh0019", 3, true)]
+    [TestCase("minhminhminh0016A", 0, true)]
+    [TestCase("minhminhminh0017A", 10, false)]
+    [TestCase("minhminhminh0018A", 30, true)]
+    [TestCase("minhminhminh0019A", 3, true)]
     public async Task UpdateUserName_ValidationPass_FreeUser_AfterRemainingTime_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadFreeUser, delay, expected);
@@ -440,8 +453,8 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm0010", 0, true)]
-    [TestCase("minhm011", 3, true)]
+    [TestCase("minhmhK", 0, true)]
+    [TestCase("minhmhL", 3, true)]
     public async Task UpdateUserName_ValidationPass_PremiumUser_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -453,9 +466,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm012", 0, true)]
-    [TestCase("minhm013", 3, true)]
-    [TestCase("minhm014", 31, true)]
+    [TestCase("minhmhM", 0, true)]
+    [TestCase("minhmhN", 3, true)]
+    [TestCase("minhmhO", 31, true)]
     public async Task UpdateUserName_ValidationPass_PremiumUser_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -467,9 +480,9 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm015", 0, true)]
-    [TestCase("minhm016", 31, true)]
-    [TestCase("minhm017", 3, true)]
+    [TestCase("minhmhP", 0, true)]
+    [TestCase("minhmhQ", 31, true)]
+    [TestCase("minhmhR", 3, true)]
     public async Task UpdateUserName_ValidationPass_PremiumUser_AfterWaitTime_InRemainingTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);
@@ -481,10 +494,10 @@ public class UserControllerTest
     /// <param name="newUserName"></param>
     /// <param name="delay"></param>
     /// <param name="expected"></param>
-    [TestCase("minhm018", 0, true)]
-    [TestCase("minhm019", 10, false)]
-    [TestCase("minhm020", 30, true)]
-    [TestCase("minhm021", 3, true)]
+    [TestCase("minhmhS", 0, true)]
+    [TestCase("minhmhT", 10, false)]
+    [TestCase("minhmhU", 30, true)]
+    [TestCase("minhmhV1", 3, true)]
     public async Task UpdateUserName_ValidationPass_PremiumUser_AfterRemainingTime_AfterWaitTime(string? newUserName, double delay, bool expected)
     {
         await UpdateUserName(newUserName, _payloadPremiumUser, delay, expected);

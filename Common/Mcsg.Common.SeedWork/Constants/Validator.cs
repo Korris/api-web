@@ -90,14 +90,14 @@ public class Validator
         /// No spaces allowed.<br/>
         /// Minimum length: 15 characters.<br/>
         /// Maximum length: 30 characters.<br/>
-        /// Must contain at least one letter and one number.<br/>
+        /// Must contain at least one lowercase letter, one uppercase letter and one number.<br/>
         /// </summary>
-        public const string Regex = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$";
+        public const string Regex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z0-9]+$";
 
         /// <summary>
         /// Error message for invalid.<br/>
         /// </summary>
-        public const string Message = "User name can only contain letters and numbers. No spaces allowed. Must be between 15 and 30 characters long and contain at least one letter and one number.";
+        public const string Message = "Username can only contain letters and numbers. No spaces allowed. Must be between 15 and 30 characters long, containing at least one lowercase letter, one uppercase letter, and one number";
     }
 
     /// <summary>
@@ -116,13 +116,14 @@ public class Validator
         /// No spaces allowed.<br/>
         /// Minimum length: 5 characters.<br/>
         /// Maximum length: 30 characters.<br/>
+        /// Must contain at least one lowercase letter and one uppercase letter.<br/>
         /// </summary>
-        public const string Regex = @"^[A-Za-z0-9]+$";
+        public const string Regex = @"^(?=.*[a-z])(?=.*[A-Z])[A-Za-z0-9]+$";
 
         /// <summary>
         /// Error message for invalid.<br/>
         /// </summary>
-        public const string Message = "User name can only contain letters and numbers. No spaces allowed. Must be between 5 and 30 characters";
+        public const string Message = "Username can only contain letters and numbers. No spaces allowed. Username must be between 5 and 30 characters long, containing at least one lowercase letter and one uppercase letter.";
     }
 
     /// <summary>

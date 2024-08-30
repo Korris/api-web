@@ -199,11 +199,6 @@ public static class Message
     /// </summary>
     public const string M128 = "Wait time for edit username: ";
 
-    /// <summary>
-    ///  Must not be the same as the old username
-    /// </summary>
-    public const string M129 = "Must not be the same as the old username";
-
     #endregion
 
     #region -- M2xx --

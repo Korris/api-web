@@ -67,17 +67,10 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         }
 
         // UserNameHistory
-        var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserId != request.UserId && p.UserName == newUserName, cancellationToken);
+        var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
             res.SetError(E107, M107);
-            return res;
-        }
-
-        hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserId == request.UserId && p.UserName == newUserName, cancellationToken);
-        if (hasUserNameHistory)
-        {
-            res.SetError(E129, M129);
             return res;
         }
 
