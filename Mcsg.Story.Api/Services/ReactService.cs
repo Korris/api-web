@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -27,7 +29,8 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         INotificationService notificationService,
         IConfiguration configuration,
         ISetting setting,
-        ISmartCountService smartCountService)
+        ISmartCountService smartCountService,
+         IMcsgContext context)
     {
         _reactRepository = unitOfWork.GetRepository<T>();
         _currentUserService = currentUserService;
@@ -35,6 +38,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         _smartCountService = smartCountService;
         _setting = setting;
         _configuration = configuration;
+        _context = context;
     }
     public async Task<bool> AddReaction(Guid targetId, ReactionType type)
     {
@@ -148,12 +152,23 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
                                             });
 
         var items = await multi.ReadAsync<ReactionsUserModel>().ConfigureAwait(false);
+        var currentUserId = _currentUserService?.Session?.UserId;
+        var followingList = await _context.UserFollowAvailable
+                            .Where(p => currentUserId == p.UserFollowerId)
+                            .Select(p => p.UserFollowingId)
+                            .ToListAsync();
+
         if (items != null)
         {
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var response = new PagedResponse<ReactionsUserModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = items;
+
+            foreach (var item in items)
+            {
+                item.IsFollowing = followingList.Contains(item.AuthorId);
+            }
 
             return response;
         }
@@ -277,6 +292,11 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
 
     #endregion
 }
