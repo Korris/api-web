@@ -10,4 +10,5 @@ public class ReactionNotificationReq
     public string AuthorName { get; set; }
     public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostReaction;
     public string UserAvatar { get; set; }
+    public ReactionType ReactionType { get; set; }
 }

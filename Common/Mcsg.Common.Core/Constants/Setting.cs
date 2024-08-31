@@ -328,9 +328,28 @@ public class Setting : SeedWork.Constants.Setting
         public const string Feed = "Feed";
 
         /// <summary>
+        /// Comic
+        /// </summary>
+        public const string Comic = "Comic";
+
+        /// <summary>
+        /// Story
+        /// </summary>
+        public const string Story = "Story";
+        /// <summary>
         /// SubFeed
         /// </summary>
         public const string SubFeed = "SubFeed";
+
+        /// <summary>
+        /// SubComic
+        /// </summary>
+        public const string SubComic = "SubComic";
+
+        /// <summary>
+        /// SubStory
+        /// </summary>
+        public const string SubStory = "SubStory";
 
         /// <summary>
         /// CommentOnFeed

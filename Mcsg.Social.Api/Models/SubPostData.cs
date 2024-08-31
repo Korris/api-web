@@ -12,3 +12,10 @@ public class PostData
     public string Title { get; set; }
 }
 
+public class PostDataByPostComment
+{
+    public Guid CommentId { get; set; }
+    public string HashPostId { get; set; }
+}
+
+

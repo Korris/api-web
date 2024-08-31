@@ -133,5 +133,45 @@ public enum NotificationEntityType
     /// <summary>
     /// FollowStoryPost
     /// </summary>
-    FollowStoryPost
+    FollowStoryPost,
+
+    /// <summary>
+    /// ComicPostReaction
+    /// </summary>
+    ComicPostReaction,
+
+    /// <summary>
+    /// ComicSubPostReaction
+    /// </summary>
+    ComicSubPostReaction,
+
+    /// <summary>
+    /// ComicPostCommentReaction
+    /// </summary>
+    ComicPostCommentReaction,
+
+    /// <summary>
+    /// ComicSubPostCommentReaction
+    /// </summary>
+    ComicSubPostCommentReaction,
+
+    /// <summary>
+    /// StoryPostReaction
+    /// </summary>
+    StoryPostReaction,
+
+    /// <summary>
+    /// StorySubPostReaction
+    /// </summary>
+    StorySubPostReaction,
+
+    /// <summary>
+    /// StoryPostCommentReaction
+    /// </summary>
+    StoryPostCommentReaction,
+
+    /// <summary>
+    /// StorySubPostCommentReaction
+    /// </summary>
+    StorySubPostCommentReaction,
 }

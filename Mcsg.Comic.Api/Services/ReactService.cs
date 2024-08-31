@@ -68,7 +68,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
                 var updateResult = await _reactRepository.UpdateAsync(reactionDb);
 
                 // Send Notification
-                await SendReactNotificationAsync(reactionDb.Id, targetId);
+                await SendReactNotificationAsync(reactionDb.Id, targetId, type);
 
                 return updateResult;
             }
@@ -86,7 +86,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             // Send Notification
             if (insertResult != null)
             {
-                await SendReactNotificationAsync(insertResult.Id, targetId);
+                await SendReactNotificationAsync(insertResult.Id, targetId, type);
                 await AddCountQueue(targetId);
                 return true;
             }
@@ -224,28 +224,34 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             return null;
         }
     }
-    private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId)
+    private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId, ReactionType reactionType)
     {
-        Type entityType = typeof(T);
-        if (entityType.Name == nameof(ComicPostReaction))
+        var authorName = !string.IsNullOrWhiteSpace(_currentUserService.Session.ProfileName)
+                                        ? _currentUserService.Session.ProfileName
+                                        : _currentUserService.Session.UserName;
+
+        var notiReq = new ReactionNotificationReq()
         {
-            //Send notification when video processing
-            var authorName = !string.IsNullOrWhiteSpace(_currentUserService.Session.ProfileName)
-                                            ? _currentUserService.Session.ProfileName
-                                            : _currentUserService.Session.UserName;
+            Id = reactionId,
+            TargetId = targetId,
+            AuthorId = _currentUserService.Session.UserId,
+            AuthorName = authorName,
+            ReactionType = reactionType,
+            UserAvatar = _currentUserService.Session.UserAvatar
+        };
 
-            var notiReq = new ReactionNotificationReq()
-            {
-                Id = reactionId,
-                TargetId = targetId,
-                AuthorId = _currentUserService.Session.UserId,
-                AuthorName = authorName,
-                EntityType = NotificationEntityType.PostReaction
-            };
+        Type entityType = typeof(T);
+        notiReq.EntityType = entityType.Name switch
+        {
+            nameof(ComicPostReaction) => NotificationEntityType.ComicPostReaction,
+            nameof(ComicPostCommentReaction) => NotificationEntityType.ComicPostCommentReaction,
+            nameof(ComicSubPostCommentReaction) => NotificationEntityType.ComicSubPostCommentReaction,
+            _ => NotificationEntityType.ComicPostReaction
+        };
 
-            await _notificationService.AddReactionNotificationAsync(notiReq);
-        }
+        await _notificationService.AddReactionNotificationAsync(notiReq);
     }
+
 
     private async Task AddCountQueue(Guid targetId)
     {

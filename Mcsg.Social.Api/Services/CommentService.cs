@@ -341,6 +341,19 @@ public partial class CommentService : ICommentService
         };
     }
 
+    public void MapReactionCommentResponse(CommentResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
     public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost = false)
     {
         var query = GetCommentByIdQuery;
@@ -372,6 +385,14 @@ public partial class CommentService : ICommentService
                 TotalReply = comModel.ReplyCount
             };
             result.Replies = replies;
+
+            var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(ReactionExtension.GetReactionByTargetIdsQuery, new
+            {
+                TargetIds = new List<Guid> { result.Id },
+                UserId = _currentUserService.Session?.UserId
+            });
+
+            MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
         }
         return result;
     }

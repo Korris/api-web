@@ -26,13 +26,24 @@ public partial class NotificationService : INotificationService
     private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Notification> _notiRepository;
     private readonly IRepository<NotificationObject> _notiObjRepository;
-    private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<SocialPost> _postRepository;
 
-    private readonly IRepository<SocialPostReaction> _postReacRepository;
-    private readonly IRepository<SocialSubPostReaction> _subPostReacRepository;
-    private readonly IRepository<SocialPostCommentReaction> _postCommentRepository;
-    private readonly IRepository<SocialSubPostCommentReaction> _subPostCommentRepository;
+    private readonly IRepository<SocialPostReaction> _postReactionRepository;
+    private readonly IRepository<ComicPostReaction> _comicPostReactionRepository;
+    private readonly IRepository<StoryPostReaction> _storyPostReactionRepository;
+
+    private readonly IRepository<SocialSubPostReaction> _subPostReactionRepository;
+
+    private readonly IRepository<SocialPostCommentReaction> _postCommentReactionRepository;
+    private readonly IRepository<ComicPostCommentReaction> _comicPostCommentReactionRepository;
+    private readonly IRepository<StoryPostCommentReaction> _storyPostCommentReactionRepository;
+
+    private readonly IRepository<SocialSubPostCommentReaction> _subPostCommentReactionRepository;
+    private readonly IRepository<ComicSubPostCommentReaction> _comicSubPostCommentReactionRepository;
+    private readonly IRepository<StorySubPostCommentReaction> _storySubPostCommentReactionRepository;
+
+
     private readonly IMapper _mapper;
     private IConfiguration _configuration;
 
@@ -40,11 +51,8 @@ public partial class NotificationService : INotificationService
         , IUnitOfWork unitOfWork
         , IMapper mapper
         , IConfiguration configuration
-        , IRepository<SocialPostReaction> postReacRepository
-        , IRepository<SocialSubPostReaction> subPostReacRepository
-        , IRepository<SocialPostCommentReaction> postCommentRepository
         , ISetting setting
-        , IRepository<SocialSubPostCommentReaction> subPostCommentRepository)
+        , IRepository<User> userRepository)
     {
         _currentUserService = currentUserService;
         _notiRepository = unitOfWork.GetRepository<Notification>();
@@ -52,12 +60,21 @@ public partial class NotificationService : INotificationService
         _userRepository = unitOfWork.GetRepository<User>();
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _mapper = mapper;
-        _configuration = configuration;
-        _postReacRepository = postReacRepository;
-        _subPostReacRepository = subPostReacRepository;
-        _postCommentRepository = postCommentRepository;
         _setting = setting;
-        _subPostCommentRepository = subPostCommentRepository;
+        _configuration = configuration;
+
+        _postReactionRepository = unitOfWork.GetRepository<SocialPostReaction>();
+        _comicPostReactionRepository = unitOfWork.GetRepository<ComicPostReaction>();
+        _storyPostReactionRepository = unitOfWork.GetRepository<StoryPostReaction>();
+
+        _subPostReactionRepository = unitOfWork.GetRepository<SocialSubPostReaction>();
+
+        _postCommentReactionRepository = unitOfWork.GetRepository<SocialPostCommentReaction>();
+        _comicPostCommentReactionRepository = unitOfWork.GetRepository<ComicPostCommentReaction>();
+        _storyPostCommentReactionRepository = unitOfWork.GetRepository<StoryPostCommentReaction>();
+        _subPostCommentReactionRepository = unitOfWork.GetRepository<SocialSubPostCommentReaction>();
+        _comicSubPostCommentReactionRepository = unitOfWork.GetRepository<ComicSubPostCommentReaction>();
+        _storySubPostCommentReactionRepository = unitOfWork.GetRepository<StorySubPostCommentReaction>();
     }
 
     public async Task<NotificationModel> GetNotificationAsync(Guid id)
@@ -75,7 +92,10 @@ public partial class NotificationService : INotificationService
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
-        var multi = await _notiRepository.Connection.QueryMultipleAsync(GetNotificationByUserQuery,
+        var query = GetNotificationByUserQuery;
+        query = query.Replace("[UnreadCondition]", "");
+        query = query.Replace("[UnreadCountCondition]", "");
+        var multi = await _notiRepository.Connection.QueryMultipleAsync(query,
                                                                         new
                                                                         {
                                                                             ReceiverId = receiverId,
@@ -92,6 +112,7 @@ public partial class NotificationService : INotificationService
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             await CheckDataCommentOnSubPost(resDto);
             await CheckDataFollowPost(resDto);
+            await CheckDataCommentReaction(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -100,6 +121,74 @@ public partial class NotificationService : INotificationService
         else
         {
             return new PagedResponse<NotificationModel>(0);
+        }
+    }
+
+    private async Task CheckDataCommentReaction(List<NotificationModel> resDto)
+    {
+        var postCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.PostCommentReaction).Select(p => p.LocationId).ToList();
+        if (postCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                        SELECT pc.""Id"" as CommentId,sp.""HashId"" as HashPostId from social.""SocialPostComments"" pc
+                                        LEFT JOIN social.""SocialPosts"" sp on pc.""PostId"" = sp.""Id""
+                                        WHERE pc.""Id"" = ANY(@ids)", new { ids = postCommentReactionIds });
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                    }
+                }
+            }
+        }
+
+        var comicPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicPostCommentReaction).Select(p => p.LocationId).ToList();
+        if (comicPostCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                        SELECT pc.""Id"" as CommentId,sp.""HashId"" as HashPostId from comic.""ComicPostComments"" pc
+                                        LEFT JOIN comic.""ComicPosts"" sp on pc.""PostId"" = sp.""Id""
+                                        WHERE pc.""Id"" = ANY(@ids)", new { ids = comicPostCommentReactionIds });
+
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                    }
+                }
+            }
+        }
+
+        var storyPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StoryPostCommentReaction).Select(p => p.LocationId).ToList();
+        if (storyPostCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                  SELECT pc.""Id"" as CommentId,sp.""HashId"" as HashPostId from story.""StoryPostComments"" pc
+                                  LEFT JOIN story.""StoryPosts"" sp on pc.""PostId"" = sp.""Id""
+                                  WHERE pc.""Id"" = ANY(@ids)", new { ids = storyPostCommentReactionIds });
+
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                    }
+                }
+            }
         }
     }
 
@@ -145,7 +234,7 @@ public partial class NotificationService : INotificationService
 
     private async Task CheckDataCommentOnSubPost(List<NotificationModel> resDto)
     {
-        var subComicIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubComic).Select(p => p.LocationId).ToList();
+        var subComicIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostComment).Select(p => p.LocationId).ToList();
         if (subComicIds.Count > 0)
         {
             var subComics = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
@@ -166,7 +255,7 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var subStoryIds = resDto.Where(p => p.TargetType == NotificationTargetType.CommentOnSubStory).Select(p => p.LocationId).ToList();
+        var subStoryIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostComment).Select(p => p.LocationId).ToList();
         if (subStoryIds.Count > 0)
         {
             var subStories = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
@@ -197,7 +286,10 @@ public partial class NotificationService : INotificationService
         }
         var receiverId = currentUser.UserId;
         var offset = request.PageSize * (request.PageNumber - 1);
-        var multi = await _notiRepository.Connection.QueryMultipleAsync(GetNotificationUnReadByUserQuery,
+        var query = GetNotificationByUserQuery;
+        query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");
+        query = query.Replace("[UnreadCountCondition]", $@"AND ""Status"" = 0");
+        var multi = await _notiRepository.Connection.QueryMultipleAsync(query,
                                                                         new
                                                                         {
                                                                             ReceiverId = receiverId,

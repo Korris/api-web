@@ -22,8 +22,7 @@ public static class NotificationExtension
             NotificationEntityType.SubPostCommentReply,
             NotificationEntityType.ComicSubPostCommentReply,
             NotificationEntityType.StorySubPostCommentReply,
-            NotificationEntityType.PostCommentReaction,
-            NotificationEntityType.SubPostCommentReaction,
+
         };
 
         List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
@@ -31,8 +30,20 @@ public static class NotificationExtension
             NotificationEntityType.Feed,
             NotificationEntityType.Comic,
             NotificationEntityType.Story,
+        };
+
+        List<NotificationEntityType> reactionEntities = new List<NotificationEntityType>()
+        {
             NotificationEntityType.PostReaction,
-            NotificationEntityType.SubPostReaction
+            NotificationEntityType.StoryPostReaction,
+            NotificationEntityType.ComicPostReaction,
+            NotificationEntityType.SubPostReaction,
+            NotificationEntityType.PostCommentReaction,
+            NotificationEntityType.SubPostCommentReaction,
+            NotificationEntityType.ComicPostCommentReaction,
+            NotificationEntityType.StoryPostCommentReaction,
+            NotificationEntityType.ComicSubPostCommentReaction,
+            NotificationEntityType.StorySubPostCommentReaction,
         };
 
         List<NotificationEntityType> followEntities = new List<NotificationEntityType>()
@@ -46,6 +57,20 @@ public static class NotificationExtension
         {
             return string.Empty;
         }
+
+        #region Reaction
+        if (reactionEntities.Contains(noti.EntityType))
+        {
+            if (noti.EntityType.ToString().Contains("Comment"))
+            {
+                return noti.ActorName + NotificationContent.ReactOnComment;
+            }
+            else
+            {
+                return noti.ActorName + NotificationContent.ReactOnFeed;
+            }
+        }
+        #endregion
 
         #region Follow 
 
@@ -169,26 +194,35 @@ public static class NotificationExtension
         {
             NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.PostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
-            NotificationEntityType.SubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
+            NotificationEntityType.SubPostComment => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
             NotificationEntityType.PostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed,
             NotificationEntityType.SubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed,
             NotificationEntityType.PostReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.SubPostReaction => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
+            NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
 
-            NotificationEntityType.ComicPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnComic,
+
+            NotificationEntityType.ComicPostComment => Common.Core.Constants.Setting.NotificationTargetType.Comic,
+            NotificationEntityType.ComicPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
+            NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicSubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubComic,
             NotificationEntityType.ComicPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnComic,
             NotificationEntityType.ComicSubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubComic,
+            NotificationEntityType.ComicPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
+            NotificationEntityType.ComicSubPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
 
-            NotificationEntityType.StoryPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnStory,
+            NotificationEntityType.StoryPostComment => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.StoryPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.StoryPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.StorySubPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.SubStory,
             NotificationEntityType.StorySubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubStory,
             NotificationEntityType.StoryPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnStory,
             NotificationEntityType.StorySubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubStory,
 
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationTargetType.FollowUser,
-            NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationTargetType.FollowComicPost,
-            NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationTargetType.FollowStoryPost,
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
@@ -212,6 +246,12 @@ public static class NotificationExtension
             NotificationEntityType.SubPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.SubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.StoryPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.ComicPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.ComicPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.ComicSubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.StoryPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.StorySubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.Feed => Common.Core.Constants.Setting.NotificationType.Feed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,

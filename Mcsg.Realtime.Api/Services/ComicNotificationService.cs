@@ -129,6 +129,7 @@ public class ComicNotificationService : IComicNotificationService
             response.LocationId = comment.PostId;
             response.LocationHashId = postHashId;
             response.EntityId = comment.Id;
+            response.CommentId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
             response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed : Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed;
             response.ActorId = comment.AuthorId;
