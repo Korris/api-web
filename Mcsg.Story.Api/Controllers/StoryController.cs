@@ -63,7 +63,7 @@ public class StoryController : ControllerBase
     {
         var req = new StoryHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
         req.Analyze(HttpContext);
-        var result = await _storyService.GetStory(req);
+        var result = await _storyService.Get(req);
         return Ok(result);
     }
 
@@ -80,7 +80,7 @@ public class StoryController : ControllerBase
     {
         var req = new BaseR(HttpContext);
 
-        var result = await _storyService.GetTopStory();
+        var result = await _storyService.GetTop();
 
         if (req.FromMobile)
         {
@@ -97,7 +97,7 @@ public class StoryController : ControllerBase
     {
         var req = new BaseR();
         request.Analyze(HttpContext);
-        var result = await _storyService.GetTopStoryAsync(request);
+        var result = await _storyService.GetTopAsync(request);
 
         if (req.FromMobile)
         {
@@ -112,7 +112,7 @@ public class StoryController : ControllerBase
     {
         var req = new BaseR();
 
-        var result = await _storyService.GetRelationStoriesAsync(request);
+        var result = await _storyService.GetRelationAsync(request);
 
         if (req.FromMobile)
         {
@@ -125,58 +125,58 @@ public class StoryController : ControllerBase
     [HttpGet("top-hit")]
     public async Task<IActionResult> GetTopListHitStory([FromQuery] StoryTopPostR request)
     {
-        var result = await _storyService.GetTopHitListStory(request);
+        var result = await _storyService.GetTopHitList(request);
         return Ok(result);
     }
 
     [HttpGet("top-latest")]
     public async Task<IActionResult> GetTopListLatestStory([FromQuery] StoryTopPostR request)
     {
-        var result = await _storyService.GetTopLatestListStory(request);
+        var result = await _storyService.GetTopLatestList(request);
         return Ok(result);
     }
 
     [HttpGet("top-completed")]
     public async Task<IActionResult> GetTopListCompletedStory([FromQuery] StoryTopPostR request)
     {
-        var result = await _storyService.GetTopCompletedListStory(request);
+        var result = await _storyService.GetTopCompletedList(request);
         return Ok(result);
     }
 
-    [HttpGet("{storyHashId}/chapters")]
-    public async Task<IActionResult> GetChapters(string storyHashId, [FromQuery] StoryChapterListR request)
+    [HttpGet("{hashId}/chapters")]
+    public async Task<IActionResult> GetChapters(string hashId, [FromQuery] StoryChapterListR request)
     {
-        var result = await _storyService.GetChapters(storyHashId, request);
+        var result = await _storyService.GetChapters(hashId, request);
         return Ok(result);
     }
 
-    [HttpGet("{storyHashId}/chapters-list")]
-    public async Task<IActionResult> GetChaptersList(string storyHashId)
+    [HttpGet("{hashId}/chapters-list")]
+    public async Task<IActionResult> GetChaptersList(string hashId)
     {
-        var result = await _storyService.GetChaptersListSimple(storyHashId);
+        var result = await _storyService.GetChaptersListSimple(hashId);
         return Ok(result);
     }
 
-    [HttpGet("{storyHashId}/chapter/{chapterOrder}")]
-    public async Task<IActionResult> GetChapter(string storyHashId, float chapterOrder)
+    [HttpGet("{hashId}/chapter/{chapterOrder}")]
+    public async Task<IActionResult> GetChapter(string hashId, float chapterOrder)
     {
-        var result = await _storyService.GetChapter(storyHashId, chapterOrder);
+        var result = await _storyService.GetChapter(hashId, chapterOrder);
         return Ok(result);
     }
 
-    [HttpPut("{storyHashId}/chapter-swap")]
+    [HttpPut("{hashId}/chapter-swap")]
     [Authorize]
-    public async Task<IActionResult> PutSwapChapter(string storyHashId, StoryChapterOrderSwapR orders)
+    public async Task<IActionResult> PutSwapChapter(string hashId, StoryChapterOrderSwapR orders)
     {
-        var result = await _storyService.SwapChapterOrder(storyHashId, orders);
+        var result = await _storyService.SwapChapterOrder(hashId, orders);
         return Ok(result);
     }
 
-    [HttpDelete("{storyHashId}/chapter/{chapterOrder}")]
+    [HttpDelete("{hashId}/chapter/{chapterOrder}")]
     [Authorize]
-    public async Task<IActionResult> DeleteChapter(string storyHashId, int chapterOrder)
+    public async Task<IActionResult> DeleteChapter(string hashId, int chapterOrder)
     {
-        var result = await _storyService.DeleteChapter(storyHashId, chapterOrder);
+        var result = await _storyService.DeleteChapter(hashId, chapterOrder);
         return Ok(result);
     }
 
@@ -185,21 +185,21 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetMyStories([FromQuery] StoryPostListSeriesR loadReq)
     {
         loadReq.Analyze(HttpContext);
-        var result = await _storyService.GetMyStories(loadReq);
+        var result = await _storyService.GetMy(loadReq);
         return Ok(result);
     }
 
     [HttpGet("search-by-profileName")]
     public async Task<IActionResult> GetSearchComic([FromQuery] StoryPostByProFileNameR input)
     {
-        var result = await _storyService.GetStoryByUserProfileName(input);
+        var result = await _storyService.GetByUserProfileName(input);
         return Ok(result);
     }
 
     [HttpGet("search-by-tagName")]
     public async Task<IActionResult> GetSearchComicByTagName([FromQuery] StoryPostByTagNameR input)
     {
-        var result = await _storyService.GetStoryByTagName(input);
+        var result = await _storyService.GetByTagName(input);
         return Ok(result);
     }
 

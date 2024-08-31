@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace Mcsg.Story.Api.Services;
 
@@ -6,15 +7,11 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
-using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Constants;
 using Enums;
 using Interfaces;
-using Lib.Common.Web.Security;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 using Validators;
@@ -22,34 +19,31 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class StoryService : IStoryService
 {
-    private readonly IPostService _postService;
-    private readonly PostType _type;
-    private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IMcsgContext _context;
-    public StoryService(
-        IUnitOfWork unitOfWork,
-        IPostService postService,
-        ICurrentUserService currentUserService,
-        IMcsgContext context)
+    #region -- Methods --
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="postService"></param>
+    public StoryService(IMcsgContext context, IPostService postService)
     {
-        _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _postService = postService;
-        _type = PostType.Story;
-        _currentUserService = currentUserService;
         _context = context;
+        _type = PostType.Story;
+        _postService = postService;
     }
+
     public async Task<PostSeriesResponse> PostCreate(StoryPostCreateR request)
     {
         return await _postService.PostCreate(_type, request);
     }
 
-    public async Task<PostSeriesResponse> GetStory(StoryHashIdR req)
+    public async Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR request)
     {
-        return await _postService.GetSeries(req);
+        return await _postService.PostUpdate(hashId, request);
     }
 
-    public async Task<ChapterResponse> SubPostCreate(string comicHashId, StorySubPostCreateR request)
+    public async Task<ChapterResponse> SubPostCreate(string hashId, StorySubPostCreateR request)
     {
         var vr = new StorySubPostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -63,18 +57,19 @@ public partial class StoryService : IStoryService
             throw new BadRequestException(M109);
         }
 
-        var subPost = await _postService.SubPostChapterToSeries(comicHashId, request);
+        var subPost = await _postService.SubPostChapterToSeries(hashId, request);
 
-        subPost.Body = System.Web.HttpUtility.HtmlEncode(request.Body);
-        await _subPostRepository.InsertAsync(subPost);
+        subPost.Body = HttpUtility.HtmlEncode(request.Body);
+        await _context.StorySubPosts.AddAsync(subPost);
+        await _context.SaveChangesAsync(default);
 
         var result = _postService.MappingChapterResponse(subPost);
         result.Body = request.Body;
 
         return result;
-
     }
-    public async Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, StorySubPostUpdateR request)
+
+    public async Task<ChapterResponse> SubPostUpdate(string hashId, float order, StorySubPostUpdateR request)
     {
         var vr = new StorySubPostUpdateV().Validate(request);
         if (!vr.IsValid)
@@ -88,29 +83,31 @@ public partial class StoryService : IStoryService
             throw new BadRequestException(M109);
         }
 
-        var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, request);
-        subPost.Body = System.Web.HttpUtility.HtmlEncode(request.Body);
-
-        await _subPostRepository.UpdateAsync(subPost);
+        var subPost = await _postService.SubPostUpdateChapterToSeries(hashId, order, request);
+        subPost.Body = HttpUtility.HtmlEncode(request.Body);
+        await _context.SaveChangesAsync(default);
 
         var result = _postService.MappingChapterResponse(subPost);
         result.Body = request.Body;
 
         return result;
-
     }
+
+    public async Task<PostSeriesResponse> Get(StoryHashIdR req)
+    {
+        return await _postService.GetSeries(req);
+    }
+
     public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
         return await _postService.SwapChapterOrder(hashId, orders);
     }
-    public async Task<bool> DeleteChapter(string comicHashId, float order)
+
+    public async Task<bool> DeleteChapter(string hashId, float order)
     {
-        return await _postService.DeleteChapter(comicHashId, order);
+        return await _postService.DeleteChapter(hashId, order);
     }
-    public async Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR comicPostReq)
-    {
-        return await _postService.PostUpdate(hashId, comicPostReq);
-    }
+
     public async Task<bool> Delete(Guid postId)
     {
         return await _postService.Delete(postId);
@@ -120,40 +117,40 @@ public partial class StoryService : IStoryService
     {
         return await _postService.GetSeriesChapter(hashId, order);
     }
-    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
-    {
-        return await _postService.GetChaptersListSimple(hashId);
-    }
-    public async Task<PostSeriesAllTopResponse> GetTopStory()
-    {
-        return await _postService.GetTopSeries(_type);
-    }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(StoryPostListSeriesR request)
-    {
-        return await _postService.GetTopSeriesAsync(_type, request);
-    }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(StoryRelationPostSeriesR request)
-    {
-        return await _postService.GetRelationSeriesAsync(_type, request);
-    }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetMyStories(StoryPostListSeriesR loadReq)
-    {
-        return await _postService.GetMySeries(_type, loadReq);
-    }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListStory(StoryTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListStory(StoryTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListStory(StoryTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
+    }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMy(StoryPostListSeriesR loadReq)
+    {
+        return await _postService.GetMySeries(_type, loadReq);
+    }
+
+    public async Task<PostSeriesAllTopResponse> GetTop()
+    {
+        return await _postService.GetTopSeries(_type);
+    }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopAsync(StoryPostListSeriesR request)
+    {
+        return await _postService.GetTopSeriesAsync(_type, request);
+    }
+
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationAsync(StoryRelationPostSeriesR request)
+    {
+        return await _postService.GetRelationSeriesAsync(_type, request);
     }
 
     public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request)
@@ -161,12 +158,17 @@ public partial class StoryService : IStoryService
         return await _postService.GetChapters(hashId, request);
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(StoryPostByProFileNameR request)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    {
+        return await _postService.GetChaptersListSimple(hashId);
+    }
+
+    public async Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(StoryPostByProFileNameR request)
     {
         return await _postService.GetPostByUserProfileName(_type, request);
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(StoryPostByTagNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetByTagName(StoryPostByTagNameR request)
     {
         return await _postService.GetPostByTagName(_type, request);
     }
@@ -201,4 +203,18 @@ public partial class StoryService : IStoryService
 
         return (int)latestOrder + 1;
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
+
+    private readonly PostType _type;
+    private readonly IPostService _postService;
+
+    #endregion
 }
