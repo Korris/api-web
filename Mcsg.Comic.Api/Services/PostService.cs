@@ -129,19 +129,8 @@ public partial class PostService : IPostService
         //Check first post
         var rewards = await CheckRewardsForPost(userId, type);
 
-        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
-        if (thumbnailResource == null)
-        {
-            throw new BadRequestException(E206, M206);
-        }
-        var thumbnailUrl = _setting.Minio.GetPublicUrl(thumbnailResource.Bucket, thumbnailResource.Url);
-
-        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
-        if (coverResource == null)
-        {
-            throw new BadRequestException(E206, M206);
-        }
-        var coverUrl = _setting.Minio.GetPublicUrl(coverResource.Bucket, coverResource.Url);
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
+        var coverUrl = await GetPublicUrl(request.CoverHashId);
 
         var hashId = PostConfig.HashLength.GetRandomString();
         var post = new ComicPost
@@ -873,19 +862,8 @@ public partial class PostService : IPostService
             throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
 
-        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
-        if (thumbnailResource == null)
-        {
-            throw new BadRequestException(E206, M206);
-        }
-        var thumbnailUrl = _setting.Minio.GetPublicUrl(thumbnailResource.Bucket, thumbnailResource.Url);
-
-        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
-        if (coverResource == null)
-        {
-            throw new BadRequestException(E206, M206);
-        }
-        var coverUrl = _setting.Minio.GetPublicUrl(coverResource.Bucket, coverResource.Url);
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
+        var coverUrl = await GetPublicUrl(request.CoverHashId);
 
         if (string.IsNullOrEmpty(request.Summary))
         {
@@ -2121,6 +2099,25 @@ public partial class PostService : IPostService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
+
+    /// <summary>
+    /// GetPublicUrl
+    /// </summary>
+    /// <param name="hashId"></param>
+    /// <returns></returns>
+    /// <exception cref="BadRequestException"></exception>
+    private async Task<string> GetPublicUrl(string hashId)
+    {
+        var resource = await _context.ComicResources.Where(p => p.HashId == hashId)
+            .Select(p => new { p.Url, Bucket = p.BucketName })
+            .FirstOrDefaultAsync();
+        if (resource == null)
+        {
+            throw new BadRequestException(E206, M206);
+        }
+        return _setting.Minio.GetPublicUrl(resource.Bucket, resource.Url);
+    }
+
     #endregion
 
     #region -- Fields --
