@@ -6,7 +6,7 @@
     {
         private string GetTotalCommentQuery => $@"SELECT 
                                                         (SELECT COUNT(*)
-                                                         FROM ""story"".""StoryPostComments""  pc
+                                                         FROM ""story"".""StoryPostComments"" pc
                                                          JOIN ""story"".""StoryPosts"" p ON pc.""PostId""= p.""Id"" 
                                                          WHERE p.""HashId"" = @HashId
                                                          And pc.""IsDelete"" = false) 
@@ -83,13 +83,13 @@ LEFT JOIN LATERAL (
 LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
                         WHERE 
-                        p.""HashId"" = @HashId AND p.""IsDelete"" = false         
+                        p.""HashId"" = @HashId AND p.""IsDelete"" = false 
                             AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
-                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p.""Hide"",
+                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
-                        p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"", ux.""Id"",
+                        p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
                         sp.""Permission"",subpostview.""ViewCount"",
                         sp.""PublishDate""
                         ORDER BY sp.""Order""
@@ -104,7 +104,7 @@ LIMIT 1
             {
                 return @"
                     SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"", ""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
-                    FROM ""story"".""StoryPosts""
+                    FROM ""story"".""StoryPosts"" 
                     WHERE ""HashId"" = @HashId;
 
                     SELECT MAX(""Order"")
@@ -176,7 +176,7 @@ LIMIT 1
                INNER JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId"" = sp.""Id""
                WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE
            ) AS ""TotalComment"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
+                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
                             FROM ""story"".""StoryPosts"" p
                               INNER JOIN-- Select Id
@@ -184,7 +184,7 @@ LIMIT 1
                                 [SelectPostIdsQuery]  
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             [JoinSubPostSubQuery]    
                             --Post view
                             LEFT JOIN LATERAL (
@@ -206,7 +206,7 @@ LIMIT 1
                         AS post
                         LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-                        LEFT JOIN ""story"".""StoryPostReactions"" r ON r.""TargetId"" = post.""Id""  AND r.""IsDelete"" = FALSE
+                        LEFT JOIN ""story"".""StoryPostReactions"" r ON r.""TargetId"" = post.""Id"" AND r.""IsDelete"" = FALSE
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
                         post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
@@ -222,7 +222,7 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
+                return @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
                         post.""ChapterCount"",
                         post.""Status"", post.""Type"",post.""ViewCount"", post.""TotalSubPostComment"" + COALESCE(COUNT(comment.""Id""), 0) AS ""TotalComment"",
@@ -233,10 +233,10 @@ LIMIT 1
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
                             u.""ProfileName"",u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
-                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
+                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"", p.""AuthorId"",
                              postid.""SelectType"",
                             p.""Status"", p.""Type"", postview.""ViewCount"",
-                            p.""CreatedOn"", p.""Hide"", --sp.""Id"" as ""SPID"",
+                            p.""CreatedOn"", p.""Hide"",--sp.""Id"" as ""SPID"",
 SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
@@ -247,7 +247,7 @@ SUM(""CommentCount"") as ""TotalSubPostComment"",
                                 [SelectPostIdsQuery]  
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             [JoinSubPostSubQuery]    
 --Post view
 LEFT JOIN LATERAL (
@@ -418,7 +418,7 @@ LIMIT 1
 
                                 WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""Permission"" = @PostPermission
-                                AND qpost1.""IsDelete"" = false                                 
+                                AND qpost1.""IsDelete"" = false
                                 AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL)
                                 GROUP BY qpost1.""Id"", psp1.""CreatedOn"", qpost1.""Hide""
                                 ORDER BY psp1.""CreatedOn"" DESC
@@ -500,7 +500,7 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType""
+                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
                                  FROM ""story"".""StoryPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
@@ -635,9 +635,9 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
-                                FROM ""story"".""StoryPosts""  qpost
+                                FROM ""story"".""StoryPosts"" qpost
                                 LEFT JOIN ""story"".""StoryPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false 
                                 ORDER BY cfp.""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -649,7 +649,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id""
-                                FROM ""story"".""StoryPosts""  qpost                                     
+                                FROM ""story"".""StoryPosts"" qpost 
                                 LEFT JOIN ""story"".""StoryPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
                                 WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
@@ -661,10 +661,10 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
         {
             get
             {
-                return @" --My post
+                return @"--My post
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
-                                FROM ""story"".""StoryPosts"" qpost                                 
-                                WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false              
+                                FROM ""story"".""StoryPosts"" qpost
+                                WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false
                                 ORDER BY ""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -676,7 +676,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id""
-                                FROM ""story"".""StoryPosts"" qpost                                 
+                                FROM ""story"".""StoryPosts"" qpost 
                                 WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false";
             }
         }
@@ -700,7 +700,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""story"".""StoryPosts"" qpost1        
-                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""                                
+                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
@@ -717,7 +717,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @"SELECT qpost1.""Id""
                                  FROM ""story"".""StoryPosts"" qpost1
-                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""                                
+                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false
                                 GROUP BY qpost1.""Id""";
@@ -825,7 +825,7 @@ LIMIT 1
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (
-                                SELECT sp.""Id""            
+                                SELECT sp.""Id"" 
                                 FROM ""story"".""StorySubPosts"" sp
                                 INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                                 WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
@@ -846,7 +846,7 @@ LIMIT 1
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (
-                                SELECT sp.""Id""            
+                                SELECT sp.""Id"" 
                                 FROM ""story"".""StorySubPosts"" sp
                                 INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                                 WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
@@ -868,7 +868,7 @@ LIMIT 1
 
                     SELECT COUNT(*) AS TotalItems 
                     FROM (
-                            SELECT sp.""Id""            
+                            SELECT sp.""Id"" 
                             FROM {_subPostRepository.TableName} sp
                             INNER JOIN {_postRepository.TableName} p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                             WHERE p.""CreatedBy"" = @UserId AND p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
@@ -897,7 +897,7 @@ LIMIT 1
                             p.""Status"", p.""Type"", p.""ViewCount"",
                             p.""CreatedOn"",--sp.""Id"" as ""SPID"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
+                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
                             FROM ""story"".""StoryPosts"" p
                               INNER JOIN-- Select Id
@@ -905,7 +905,7 @@ LIMIT 1
                                 [SelectPostIdsQuery] 
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             LEFT JOIN LATERAL 
                             (
                                 SELECT ""Id"",""PostId"",""CreatedOn"",""Title"",""Order"", count(*) OVER() AS ""Total"" 
@@ -914,7 +914,7 @@ LIMIT 1
                                 GROUP BY ""Id"", ""PostId"", ""Title"",""Order""
                                 ORDER BY ""Order"" DESC
                                 LIMIT 2
-                            ) sp ON sp.""PostId"" = p.""Id""                            
+                            ) sp ON sp.""PostId"" = p.""Id"" 
                             
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
@@ -947,7 +947,7 @@ LIMIT 1
         {
             get
             {
-                return @"UPDATE ""story"".""StoryPosts""
+                return @"UPDATE ""story"".""StoryPosts"" 
                     SET ""IsDelete"" = true    , ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     WHERE ""Id"" = @PostId;
 
@@ -957,7 +957,7 @@ LIMIT 1
                           FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
                     WHERE ""story"".""StoryResources"".""SubPostId"" = sp.""Id"";
     
-                    UPDATE ""story"".""StorySubPostReactions"" spr
+                    UPDATE ""story"".""StorySubPostReactions""spr
                     SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     FROM (SELECT ""Id""
                           FROM ""story"".""StorySubPosts"" WHERE ""PostId"" = @PostId) AS sp
@@ -1006,7 +1006,7 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"", sp.""PostId"", 
-                sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId""                
+                sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId"" 
             FROM ""story"".""StorySubPosts"" sp
             INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id""
             WHERE p.""HashId"" = @HashId AND sp.""Order"" = @Order
@@ -1022,7 +1022,7 @@ LIMIT 1
                 sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
                 sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
                 sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
-sp.""IsEnableComment""                
+sp.""IsEnableComment"" 
             FROM ""story"".""StorySubPosts"" sp
             INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id""
             WHERE p.""HashId"" = @HashId AND (sp.""Order"" = @Order1 OR sp.""Order"" = @Order2 )
@@ -1041,7 +1041,7 @@ sp.""IsEnableComment""
                     SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     WHERE ""SubPostId"" = @SubPostId;
     
-                    UPDATE ""story"".""StorySubPostReactions"" 
+                    UPDATE ""story"".""StorySubPostReactions""
                     SET ""IsDelete"" = true, ""ModifiedOn"" = @Date, ""ModifiedBy"" = @UserId
                     WHERE ""TargetId"" = @SubPostId;
     
@@ -1063,7 +1063,7 @@ sp.""IsEnableComment""
                       WITH ranked_posts AS (
           SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
               ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedOn"" DESC) AS type_rank
-          FROM ""story"".""StoryPosts""
+          FROM ""story"".""StoryPosts"" 
           WHERE ""Type"" IN (0, 1, 2)
           AND ""IsDelete"" = false
           AND ""Status"" = {(int)PostStatus.Public}
@@ -1113,7 +1113,7 @@ sp.""IsEnableComment""
     SELECT p.""Id"", p.""Type"", p.""CreatedOn"", p.""HashId"",
            ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedOn"" DESC) AS type_rank
     FROM ""story"".""StoryPosts"" p
-LEFT JOIN ""story"".""StoryTagPosts"" tp on p.""Id"" = tp.""PostId""                
+LEFT JOIN ""story"".""StoryTagPosts"" tp on p.""Id"" = tp.""PostId"" 
 LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
     WHERE ""Type"" IN (0, 1, 2)
     AND t.""Name"" ILIKE @ExactKeyword   
@@ -1160,7 +1160,7 @@ ORDER BY group_number, random_row_num;
         }
         #endregion
         private string GetCountPostByTypeQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""story"".""StoryPosts""
+                                                   FROM ""story"".""StoryPosts"" 
                                                    WHERE ""IsDelete"" = false 
                                                    AND ""Status"" = {(int)PostStatus.Public}";
 
@@ -1235,7 +1235,7 @@ ORDER BY group_number, random_row_num;
                     FROM ""story"".""StorySubPosts""
                     WHERE ""IsDelete"" = false
                 ) sp ON p.""Id"" = sp.""PostId""
-                      LEFT JOIN (
+                LEFT JOIN (
                     SELECT ""PostId"", MAX(""CreatedOn"") AS ""LatestSubPostCreatedOn""
                     FROM ""story"".""StorySubPosts""
                     WHERE ""IsDelete"" = false

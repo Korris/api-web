@@ -1885,11 +1885,11 @@ public partial class PostService : IPostService
         return result;
     }
 
-    public async Task<List<ChapterResponse>> SwapChapterOrder(string postHashId, ComicChapterOrderSwapR orders)
+    public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
         var result = new List<ChapterResponse>();
         var subPosts = await _postRepository
-            .Connection.QueryAsync<ComicSubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = postHashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
+            .Connection.QueryAsync<ComicSubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = hashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
 
         var currentUserId = _currentUserService.Session.UserId;
         var chapter1 = subPosts.Where(x => x.Order == orders?.Order1).FirstOrDefault();

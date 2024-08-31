@@ -6,15 +6,17 @@
     {
         private string GetTotalCommentQuery => $@"SELECT 
                                                         (SELECT COUNT(*)
-                                                         FROM ""comic"".""ComicPostComments""  pc
-                                                         JOIN ""comic"".""ComicPosts""  p ON pc.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId) 
+                                                         FROM ""comic"".""ComicPostComments"" pc
+                                                         JOIN ""comic"".""ComicPosts"" p ON pc.""PostId""= p.""Id"" 
+                                                         WHERE p.""HashId"" = @HashId
+                                                         And pc.""IsDelete"" = false) 
                                                         +
                                                         (SELECT COUNT(*)
                                                          FROM ""comic"".""ComicSubPostComments"" spc
                                                          JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId""= sp.""Id""
-                                                         JOIN ""comic"".""ComicPosts""  p ON sp.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId) AS total_comment_count";
+                                                         JOIN ""comic"".""ComicPosts"" p ON sp.""PostId""= p.""Id"" 
+                                                         WHERE p.""HashId"" = @HashId
+                                                         AND spc.""IsDelete"" = false) AS total_comment_count";
         private string GetSeriesQuery
         {
             get
@@ -55,7 +57,7 @@
                         ux.""Id"" as ""UserExclusiveId"" ,
                         sp.""CreatorNote"",
                         sp.""IsEnableComment""
-                        FROM ""comic"".""ComicPosts""  p
+                        FROM ""comic"".""ComicPosts"" p
                         LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
                         LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id"" AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
@@ -107,7 +109,7 @@ LIMIT 1
 
                     SELECT MAX(""Order"")
                     FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts""  p
+                    INNER JOIN ""comic"".""ComicPosts"" p
                     ON sp.""PostId"" = p.""Id""
                     WHERE p.""HashId"" = @HashId AND p.""IsDelete"" = false AND sp.""IsDelete"" = false
 ";
@@ -120,7 +122,7 @@ LIMIT 1
                                 COALESCE(pc.comment_count, 0) + COALESCE(spc.sub_comment_count, 0) AS TotalComment,
                                 CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE NULL END AS ReactionStr,
                                 CASE WHEN COUNT(t.""Id"") > 0 THEN array_agg(DISTINCT t.""Name"") ELSE NULL END as Tags
-                                from ""comic"".""ComicPosts""  p
+                                from ""comic"".""ComicPosts"" p
                                 LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id""
                                 LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id"" 
                                 LEFT JOIN 
@@ -174,15 +176,15 @@ LIMIT 1
                INNER JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId"" = sp.""Id""
                WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE
            ) AS ""TotalComment"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
+                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
-                            FROM ""comic"".""ComicPosts""  p
+                            FROM ""comic"".""ComicPosts"" p
                               INNER JOIN-- Select Id
                              (
                                 [SelectPostIdsQuery]  
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             [JoinSubPostSubQuery]    
                             --Post view
                             LEFT JOIN LATERAL (
@@ -204,7 +206,7 @@ LIMIT 1
                         AS post
                         LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-                        LEFT JOIN ""comic"".""ComicPostReactions"" r ON r.""TargetId"" = post.""Id""  AND r.""IsDelete"" = FALSE
+                        LEFT JOIN ""comic"".""ComicPostReactions"" r ON r.""TargetId"" = post.""Id"" AND r.""IsDelete"" = FALSE
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
                         post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
@@ -239,13 +241,13 @@ SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
                             GREATEST(p.""[OrderBy]"", MAX(sp.""[OrderBy]"")) AS ""LatestCreatedOn""
-                            FROM ""comic"".""ComicPosts""  p
+                            FROM ""comic"".""ComicPosts"" p
                               INNER JOIN-- Select Id
                              (
                                 [SelectPostIdsQuery]  
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             [JoinSubPostSubQuery]    
 --Post view
 LEFT JOIN LATERAL (
@@ -256,7 +258,6 @@ LEFT JOIN LATERAL (
                                 WHERE ""EntityId"" = p.""Id"" AND ""EntityType"" = 0 AND ""ActionType"" = 2
 LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
-                            
                             WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
@@ -322,7 +323,7 @@ LIMIT 1
                 return @"--HIT
                                 SELECT DISTINCT qpost.""Id"", COUNT(pcm.""Id"") as COUNTCM, qpost.""CreatedOn"", 0 AS ""SelectType""
 
-                                FROM ""comic"".""ComicPosts""  qpost
+                                FROM ""comic"".""ComicPosts"" qpost
                                  INNER JOIN ""comic"".""ComicPostComments"" pcm ON pcm.""PostId"" = qpost.""Id"" 
                                 AND pcm.""CreatedOn"" > @LastWeek
                                 WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = @PostStatus AND pcm.""IsDelete"" = false 
@@ -339,7 +340,7 @@ LIMIT 1
             {
                 return @"--HIT
                                 SELECT qpost.""Id""
-                                FROM ""comic"".""ComicPosts""  qpost
+                                FROM ""comic"".""ComicPosts"" qpost
                                  INNER JOIN ""comic"".""ComicPostComments"" pcm ON pcm.""PostId"" = qpost.""Id"" 
                                 AND pcm.""CreatedOn"" > @LastWeek
                                 WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = @PostStatus AND pcm.""IsDelete"" = false 
@@ -356,7 +357,7 @@ LIMIT 1
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
@@ -379,7 +380,7 @@ LIMIT 1
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
@@ -431,7 +432,7 @@ LIMIT 1
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
@@ -455,7 +456,7 @@ LIMIT 1
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
@@ -477,7 +478,7 @@ LIMIT 1
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
@@ -500,7 +501,7 @@ LIMIT 1
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
@@ -528,7 +529,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN LATERAL (
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
@@ -553,7 +554,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT qpost1.""Id"", 0 as COUNTCM, qpost1.""CreatedOn"", 2 AS ""SelectType""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
 
                                 WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false AND qpost1.""IsCompleted"" = true                    
@@ -568,7 +569,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT qpost2.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost2
+                                 FROM ""comic"".""ComicPosts"" qpost2
                                 WHERE  qpost2.""Type"" = @PostType AND qpost2.""Status"" = @PostStatus
                                 AND qpost2.""IsDelete"" = false AND qpost2.""IsCompleted"" = true";
             }
@@ -582,7 +583,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""CreatedOn"", 4 AS ""SelectType""
-                                FROM ""comic"".""ComicPosts""  qpost1                                 
+                                FROM ""comic"".""ComicPosts"" qpost1                                 
                                 WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id"", qpost1.""CreatedOn""
@@ -599,7 +600,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
-                                 FROM ""comic"".""ComicPosts""  qpost1        
+                                 FROM ""comic"".""ComicPosts"" qpost1        
                                  INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
@@ -616,7 +617,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
+                                 FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
@@ -634,9 +635,9 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
-                                FROM ""comic"".""ComicPosts""  qpost
+                                FROM ""comic"".""ComicPosts"" qpost
                                 LEFT JOIN ""comic"".""ComicPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false             
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false 
                                 ORDER BY cfp.""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -648,7 +649,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id""
-                                FROM ""comic"".""ComicPosts""  qpost                                 
+                                FROM ""comic"".""ComicPosts"" qpost 
                                 LEFT JOIN ""comic"".""ComicPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
                                 WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
             }
@@ -661,11 +662,9 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @"--My post
-
                                 SELECT qpost.""Id"", 0 AS ""SelectType""
-                                FROM ""comic"".""ComicPosts""  qpost
+                                FROM ""comic"".""ComicPosts"" qpost
                                 WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false
-
                                 ORDER BY ""[OrderBy]"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -677,7 +676,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id""
-                                FROM ""comic"".""ComicPosts""  qpost                                 
+                                FROM ""comic"".""ComicPosts"" qpost 
                                 WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false";
             }
         }
@@ -700,8 +699,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
-                                 FROM ""comic"".""ComicPosts""  qpost1        
-                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""                                
+                                 FROM ""comic"".""ComicPosts"" qpost1        
+                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
@@ -717,8 +716,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             get
             {
                 return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts""  qpost1
-                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId""                                
+                                 FROM ""comic"".""ComicPosts"" qpost1
+                                 INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
                                 AND qpost1.""IsDelete"" = false
                                 GROUP BY qpost1.""Id""";
@@ -732,7 +731,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
         {
             get
             {
-                return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"",sp.""IsPremium"", sp.""IsExclusive"", ux.""Id"" as ""UserExclusiveId"",
+                return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsPremium"", sp.""IsExclusive"", ux.""Id"" as ""UserExclusiveId"",
                     sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
                     sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", u.""ProfileName"",
                     sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
@@ -741,7 +740,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                     rs.""CreatedBy"", rs.""ModifiedOn"", rs.""ModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
                     rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order""
                     FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                    INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
 INNER JOIN identity.""Users"" u ON u.""Id"" = sp.""CreatedBy""
                     LEFT JOIN ""comic"".""ComicResources"" rs ON sp.""Id"" = rs.""SubPostId"" AND rs.""IsDelete"" = false
@@ -778,7 +777,7 @@ LIMIT 1
                 sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
 sp.""IsEnableComment""
                     FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                    INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN LATERAL (
                                 SELECT 
                                 ""EntityId"", 
@@ -802,7 +801,7 @@ LIMIT 1
 sp.""IsEnableComment"", spcmc.""CommentCount""
                     FROM ""comic"".""ComicSubPosts"" sp
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
-                    INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                    INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN LATERAL 
                             (
                                 SELECT COUNT(spcm.""Id"") as ""CommentCount"", spcm.""PostId"" as ""SubPostId""
@@ -826,9 +825,9 @@ LIMIT 1
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (
-                                SELECT sp.""Id""            
+                                SELECT sp.""Id"" 
                                 FROM ""comic"".""ComicSubPosts"" sp
-                                INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                                INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                                 WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
                             ) p;
 ";
@@ -841,15 +840,15 @@ LIMIT 1
             {
                 return @"SELECT sp.""Id"", sp.""Title"", sp.""Order"", sp.""IsPremium""
                     FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                    INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
                     ORDER BY sp.""Order"";
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (
-                                SELECT sp.""Id""            
+                                SELECT sp.""Id"" 
                                 FROM ""comic"".""ComicSubPosts"" sp
-                                INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
+                                INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                                 WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
                             ) p;
 ";
@@ -869,7 +868,7 @@ LIMIT 1
 
                     SELECT COUNT(*) AS TotalItems 
                     FROM (
-                            SELECT sp.""Id""            
+                            SELECT sp.""Id"" 
                             FROM {_subPostRepository.TableName} sp
                             INNER JOIN {_postRepository.TableName} p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                             WHERE p.""CreatedBy"" = @UserId AND p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
@@ -898,15 +897,15 @@ LIMIT 1
                             p.""Status"", p.""Type"", p.""ViewCount"",
                             p.""CreatedOn"",--sp.""Id"" as ""SPID"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr""    
+                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
-                            FROM ""comic"".""ComicPosts""  p
+                            FROM ""comic"".""ComicPosts"" p
                               INNER JOIN-- Select Id
                              (
                                 [SelectPostIdsQuery] 
                             ) postid 
                              ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
                             LEFT JOIN LATERAL 
                             (
                                 SELECT ""Id"",""PostId"",""CreatedOn"",""Title"",""Order"", count(*) OVER() AS ""Total"" 
@@ -915,7 +914,7 @@ LIMIT 1
                                 GROUP BY ""Id"", ""PostId"", ""Title"",""Order""
                                 ORDER BY ""Order"" DESC
                                 LIMIT 2
-                            ) sp ON sp.""PostId"" = p.""Id""                            
+                            ) sp ON sp.""PostId"" = p.""Id"" 
                             
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
@@ -1007,9 +1006,9 @@ LIMIT 1
             get
             {
                 return @"SELECT sp.""Id"", sp.""PostId"", 
-                sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId""                
+                sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId"" 
             FROM ""comic"".""ComicSubPosts"" sp
-            INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id""
+            INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id""
             WHERE p.""HashId"" = @HashId AND sp.""Order"" = @Order
             AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
             }
@@ -1023,9 +1022,9 @@ LIMIT 1
                 sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
                 sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
                 sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
-sp.""IsEnableComment""                
+sp.""IsEnableComment"" 
             FROM ""comic"".""ComicSubPosts"" sp
-            INNER JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id""
+            INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id""
             WHERE p.""HashId"" = @HashId AND (sp.""Order"" = @Order1 OR sp.""Order"" = @Order2 )
             AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
             }
@@ -1113,8 +1112,8 @@ sp.""IsEnableComment""
                      WITH ranked_posts AS (
     SELECT p.""Id"", p.""Type"", p.""CreatedOn"", p.""HashId"",
            ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedOn"" DESC) AS type_rank
-    FROM ""comic"".""ComicPosts""  p
-LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId""                
+    FROM ""comic"".""ComicPosts"" p
+LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId"" 
 LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
     WHERE ""Type"" IN (0, 1, 2)
     AND t.""Name"" ILIKE @ExactKeyword   
@@ -1166,7 +1165,7 @@ ORDER BY group_number, random_row_num;
                                                    AND ""Status"" = {(int)PostStatus.Public}";
 
         private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""comic"".""ComicPosts""  p
+                                                   FROM ""comic"".""ComicPosts"" p
                                                    LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId""
                                                    LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
                                                    WHERE p.""IsDelete"" = false 
@@ -1188,7 +1187,7 @@ ORDER BY group_number, random_row_num;
                         WITH newtable 
                         AS
                         (
-                        SELECT * FROM ""comic"".""ComicPosts""  p
+                        SELECT * FROM ""comic"".""ComicPosts"" p
                             WHERE p.""IsDelete"" = false
                             ORDER BY RANDOM()
                             LIMIT @numOfItemNeedFilter
@@ -1204,7 +1203,6 @@ ORDER BY group_number, random_row_num;
             get
             {
                 return @"
-                
                 SELECT 
                     p.""Id"",
                     p.""HashId"",
@@ -1257,7 +1255,7 @@ ORDER BY group_number, random_row_num;
                           u.""UserName"",
                           p.""ViewCount"",
                           sp_max.""LatestSubPostCreatedOn"",
-                          p.""Hide"";
+                          p.""Hide""
             ";
             }
         }

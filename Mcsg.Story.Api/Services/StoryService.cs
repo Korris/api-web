@@ -99,9 +99,9 @@ public partial class StoryService : IStoryService
         return result;
 
     }
-    public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, StoryChapterOrderSwapR orders)
+    public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
-        return await _postService.SwapChapterOrder(comicHashId, orders);
+        return await _postService.SwapChapterOrder(hashId, orders);
     }
     public async Task<bool> DeleteChapter(string comicHashId, int order)
     {

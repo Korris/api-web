@@ -31,7 +31,7 @@ public interface IPostService
 
     Task<StorySubPost> SubPostChapterToSeries(string hashId, StorySubPostFormBaseR chapterPostReq);
     Task<StorySubPost> SubPostUpdateChapterToSeries(string hashId, float order, StorySubPostFormBaseR chapterPostReq);
-    Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, StoryChapterOrderSwapR orders);
+    Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string hashId, int order);
     ChapterResponse MappingChapterResponse(StorySubPost newChapter);
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
