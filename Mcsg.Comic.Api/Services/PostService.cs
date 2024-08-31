@@ -1729,7 +1729,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<ComicSubPost> SubPostChapterToSeries(string comicHashId, StoryChapterPostR chapterPostReq)
+    public async Task<ComicSubPost> SubPostChapterToSeries(string comicHashId, ComicSubPostFormBaseR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
 
@@ -1789,7 +1789,7 @@ public partial class PostService : IPostService
 
         return newChapter;
     }
-    public async Task<ComicSubPost> SubPostUpdateChapterToSeries(string postHashId, float order, StoryChapterPostR chapterPostReq)
+    public async Task<ComicSubPost> SubPostUpdateChapterToSeries(string postHashId, float order, ComicSubPostFormBaseR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
@@ -1970,16 +1970,6 @@ public partial class PostService : IPostService
         {
             throw new NotFoundException(E204, M204);
         }
-    }
-
-    public void VerifyBasicInfo(string title)
-    {
-        if (title.Length > 255)
-            throw new BadRequestException(ApiErrorCode.POST_TITLE_LESS_THAN_CHARACTER, ApiErrorMessage.POST_TITLE_LESS_THAN_CHARACTER);
-        //if (body.Length >= 2000)
-        //{
-        //    throw new BadRequestException(ApiErrorCode.POST_NOTE_LESS_THAN_CHARACTER, ApiErrorMessage.POST_NOTE_LESS_THAN_CHARACTER);
-        //}
     }
 
     private int GetOffsetSetup(ref ComicTopPostR loadReq)

@@ -1,11 +1,18 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
+using Common.Domain.Dtos;
 
-public class StoryChapterPostR
+/// <summary>
+/// FormBase request
+/// </summary>
+public class ComicSubPostFormBaseR : IdBaseR
 {
     public string? Title { get; set; }
     public string? Name { get; set; }
+
+    public List<ResourcePostDto> Files { get; set; }
 
     #region Setting
     public bool IsPublicNow { get; set; }

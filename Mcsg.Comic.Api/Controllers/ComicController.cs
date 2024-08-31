@@ -147,17 +147,19 @@ public class ComicController : ControllerBase
 
     [HttpPost("{comicHashId}/chapter")]
     [Authorize]
-    public async Task<IActionResult> PostChapter(string comicHashId, ComicChapterComicR chapterPostReq)
+    public async Task<IActionResult> PostChapter(string comicHashId, ComicSubPostCreateR request)
     {
-        var result = await _comicService.PostChapterToComic(comicHashId, chapterPostReq);
+        request.Analyze(HttpContext);
+        var result = await _comicService.PostChapterToComic(comicHashId, request);
         return Ok(result);
     }
 
     [HttpPut("{comicHashId}/chapter/{chapterOrder}")]
     [Authorize]
-    public async Task<IActionResult> PutChapter(string comicHashId, int chapterOrder, ComicChapterComicR chapterPostReq)
+    public async Task<IActionResult> PutChapter(string comicHashId, int chapterOrder, ComicSubPostUpdateR request)
     {
-        var result = await _comicService.UpdateChapterToComic(comicHashId, chapterOrder, chapterPostReq);
+        request.Analyze(HttpContext);
+        var result = await _comicService.UpdateChapterToComic(comicHashId, chapterOrder, request);
         return Ok(result);
     }
 
@@ -187,10 +189,10 @@ public class ComicController : ControllerBase
 
     [HttpGet("my-comic")]
     [Authorize]
-    public async Task<IActionResult> GetMyComic([FromQuery] ComicPostListSeriesR loadReq)
+    public async Task<IActionResult> GetMyComic([FromQuery] ComicPostListSeriesR request)
     {
-        loadReq.Analyze(HttpContext);
-        var result = await _comicService.GetMyComics(loadReq);
+        request.Analyze(HttpContext);
+        var result = await _comicService.GetMyComics(request);
         return Ok(result);
     }
 
@@ -224,10 +226,10 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR loadReq)
+    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR request)
     {
-        loadReq.Analyze(HttpContext);
-        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, loadReq);
+        request.Analyze(HttpContext);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, request);
         return Ok(result);
     }
 

@@ -4,6 +4,7 @@ namespace Mcsg.Comic.Api.Services;
 
 using Api.Constants;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Dtos;
@@ -17,6 +18,8 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
+using Validators;
+using static Common.SeedWork.Constants.Message;
 
 public partial class ComicService : IComicService
 {
@@ -116,19 +119,32 @@ public partial class ComicService : IComicService
         return await _postService.PostSeries(_type, request);
     }
 
-    public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR req)
+    public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicSubPostCreateR request)
     {
-        var ss = _currentUserService.Session;
+        var vr = new ComicSubPostCreateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
 
-        _postService.VerifyBasicInfo(req.Title);
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
-        var subPost = await _postService.SubPostChapterToSeries(comicHashId, req);
+        var userId = request.UserId.Value;
+        var userFolder = request.UserFolder;
+        var userAvatar = request.UserAvatar;
+        var userName = request.UserName;
+
+        var subPost = await _postService.SubPostChapterToSeries(comicHashId, request);
         await _subPostRepository.InsertAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        if (req?.Files.Count > 0)
+        if (request?.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(req.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId, subPost.PostHashId)
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
             {
                 SubPostId = subPost.Id,
                 Order = subPost.Order
@@ -139,21 +155,34 @@ public partial class ComicService : IComicService
         return result;
     }
 
-    public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR req)
+    public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicSubPostUpdateR request)
     {
-        var ss = _currentUserService.Session;
+        var vr = new ComicSubPostUpdateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
 
-        _postService.VerifyBasicInfo(req.Title);
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
-        var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, req);
+        var userId = request.UserId.Value;
+        var userFolder = request.UserFolder;
+        var userAvatar = request.UserAvatar;
+        var userName = request.UserName;
+
+        var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, request);
         //subPost.CreatorNote = chapterPostReq.CreatorNote;
 
         await _subPostRepository.UpdateAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        if (req?.Files.Count > 0)
+        if (request?.Files.Count > 0)
         {
-            var urDto = new UploadResourceDto(req.Files, ss.UserId, ss.UserFolder, ss.UserAvatar, ss.UserName, subPost.PostId, subPost.PostHashId)
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
             {
                 SubPostId = subPost.Id,
                 Order = subPost.Order
