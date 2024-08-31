@@ -36,7 +36,6 @@ public interface IPostService
     ChapterResponse MappingChapterResponse(StorySubPost newChapter);
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
     Task<List<MyPostSeriesResponse>> GetMyAllSeries();
-    Task UpdateKeyWordToSmartLookup();
     Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, StoryPostByProFileNameR input);
     Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, StoryPostByTagNameR input);
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);

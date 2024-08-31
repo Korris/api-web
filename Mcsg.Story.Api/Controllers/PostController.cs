@@ -28,13 +28,6 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> UpdateKeyWordForComicAndStoryToSmartLookup()
-    {
-        await _postService.UpdateKeyWordToSmartLookup();
-        return Ok();
-    }
-
     [HttpGet("latest-posts-by-type")]
     public async Task<IActionResult> GetLatestPostsByType()
     {

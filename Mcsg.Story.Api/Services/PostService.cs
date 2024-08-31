@@ -583,23 +583,6 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task UpdateKeyWordToSmartLookup()
-    {
-        var queryNameListPost = $@"SELECT ""Title"" FROM ""story"".""StoryPosts""  where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
-        var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
-        var smartLookupInserts = new List<SmartLookup>();
-        foreach (var name in nameListPost)
-        {
-            smartLookupInserts.Add(new SmartLookup
-            {
-                CountCriteria = 0,
-                Keyword = name,
-                KeywordType = LookupKeywordType.None
-            });
-        }
-        await _smartLookupRepository.InsertAsync(smartLookupInserts);
-    }
-
     public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, StoryTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
