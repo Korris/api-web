@@ -6,7 +6,7 @@ using Common.Core.Requests;
 /// <summary>
 /// FormBase request
 /// </summary>
-public class StorySubPostFormBaseR : BaseR
+public class StorySubPostFormBaseR : IdBaseR
 {
     public string? Title { get; set; }
     public string? Name { get; set; }

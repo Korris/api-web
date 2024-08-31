@@ -2,7 +2,7 @@
 
 using Common.Core.Requests;
 
-public class RecommendedComicR : PaginatedR
+public class ComicRecommendedR : PaginatedR
 {
     public int Number { get; set; }
 }

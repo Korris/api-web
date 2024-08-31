@@ -24,7 +24,7 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, StoryTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, StoryTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, StoryTopPostR loadReq);
-    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, int number);
+    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, StoryRecommendedR req);
     Task<PostSeriesAllTopResponse> GetTopSeries(PostType type);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, StoryPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, StoryRelationPostSeriesR request);

@@ -815,7 +815,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, RecommendedComicR req)
+    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, ComicRecommendedR req)
     {
         var number = req.Number;
         ValidateTotalItem(number);

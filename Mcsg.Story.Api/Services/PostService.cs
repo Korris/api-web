@@ -815,8 +815,9 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, int number)
+    public async Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, StoryRecommendedR req)
     {
+        var number = req.Number;
         ValidateTotalItem(number);
         var query = GetQuerySelectPage(PostSeriesSelectedType.RECOMMEND);
 

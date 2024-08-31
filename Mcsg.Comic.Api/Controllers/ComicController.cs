@@ -110,7 +110,7 @@ public class ComicController : ControllerBase
     [HttpGet("recommended")]
     public async Task<IActionResult> GetRecommendedComic(int number)
     {
-        var req = new RecommendedComicR { Number = number };
+        var req = new ComicRecommendedR { Number = number };
         var result = await _comicService.GetRecommendedComic(req);
         return Ok(result);
     }

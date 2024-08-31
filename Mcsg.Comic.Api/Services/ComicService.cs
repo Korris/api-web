@@ -89,7 +89,7 @@ public partial class ComicService : IComicService
     {
         return await _postService.GetRelationSeriesAsync(_type, request);
     }
-    public async Task<List<PostSeriesTopResponse>> GetRecommendedComic(RecommendedComicR req)
+    public async Task<List<PostSeriesTopResponse>> GetRecommendedComic(ComicRecommendedR req)
     {
         return await _postService.GetTopNewSeries(_type, req);
     }

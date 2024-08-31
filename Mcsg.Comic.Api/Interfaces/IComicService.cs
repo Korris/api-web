@@ -16,7 +16,7 @@ public interface IComicService
     Task<PagedResponse<PostSeriesTopResponse>> GetMyComics(ComicPostListSeriesR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListComic(ComicTopPostR req);
-    Task<List<PostSeriesTopResponse>> GetRecommendedComic(RecommendedComicR req);
+    Task<List<PostSeriesTopResponse>> GetRecommendedComic(ComicRecommendedR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request);
     Task<PostSeriesResponse> PostComic(ComicPostCreateR request);

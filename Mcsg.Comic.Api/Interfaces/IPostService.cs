@@ -24,7 +24,7 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq);
-    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, RecommendedComicR req);
+    Task<List<PostSeriesTopResponse>> GetTopNewSeries(PostType type, ComicRecommendedR req);
     Task<PostSeriesAllTopResponse> GetTopSeries(PostType type);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
@@ -42,7 +42,7 @@ public interface IPostService
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
     Task<ListIdForHomePage> GetLatestPostsByType();
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
-    Task<List<PostBoxResponse>> GetPostDetails(ComicHashIdsR hashIds);
+    Task<List<PostBoxResponse>> GetPostDetails(ComicHashIdsR req);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
