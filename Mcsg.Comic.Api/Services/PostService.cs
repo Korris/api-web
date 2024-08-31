@@ -332,7 +332,7 @@ public partial class PostService : IPostService
         {
             if (subpost.CreatedBy != currentUserId && subpost.UserId != currentUserId)
             {
-                if (subpost.PublishDate != null && subpost.PublishDate < DateTime.UtcNow)
+                if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
                 {
                     throw new BadRequestException(E204, M204);
                 }
