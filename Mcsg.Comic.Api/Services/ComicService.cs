@@ -114,12 +114,12 @@ public partial class ComicService : IComicService
     #endregion
 
     #region Modify data
-    public async Task<PostSeriesResponse> PostComic(ComicPostCreateR request)
+    public async Task<PostSeriesResponse> PostCreate(ComicPostCreateR request)
     {
-        return await _postService.PostSeries(_type, request);
+        return await _postService.PostCreate(_type, request);
     }
 
-    public async Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicSubPostCreateR request)
+    public async Task<ChapterResponse> SubPostCreate(string comicHashId, ComicSubPostCreateR request)
     {
         var vr = new ComicSubPostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -155,7 +155,7 @@ public partial class ComicService : IComicService
         return result;
     }
 
-    public async Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicSubPostUpdateR request)
+    public async Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, ComicSubPostUpdateR request)
     {
         var vr = new ComicSubPostUpdateV().Validate(request);
         if (!vr.IsValid)
@@ -193,13 +193,13 @@ public partial class ComicService : IComicService
         return result;
 
     }
-    public async Task<bool> DeleteChapter(string comicHashId, int order)
+    public async Task<bool> DeleteChapter(string comicHashId, float order)
     {
         return await _postService.DeleteChapter(comicHashId, order);
     }
-    public async Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateR request)
+    public async Task<PostSeriesResponse> PostUpdate(string hashId, ComicPostUpdateR request)
     {
-        return await _postService.UpdateSeries(hashId, request);
+        return await _postService.PostUpdate(hashId, request);
     }
     public async Task<bool> Delete(Guid postId)
     {

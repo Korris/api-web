@@ -39,9 +39,9 @@ public partial class StoryService : IStoryService
         _currentUserService = currentUserService;
         _context = context;
     }
-    public async Task<PostSeriesResponse> PostStory(StoryPostCreateR request)
+    public async Task<PostSeriesResponse> PostCreate(StoryPostCreateR request)
     {
-        return await _postService.PostSeries(_type, request);
+        return await _postService.PostCreate(_type, request);
     }
 
     public async Task<PostSeriesResponse> GetStory(StoryHashIdR req)
@@ -49,7 +49,7 @@ public partial class StoryService : IStoryService
         return await _postService.GetSeries(req);
     }
 
-    public async Task<ChapterResponse> PostChapterToStory(string comicHashId, StorySubPostCreateR request)
+    public async Task<ChapterResponse> SubPostCreate(string comicHashId, StorySubPostCreateR request)
     {
         var vr = new StorySubPostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -74,7 +74,7 @@ public partial class StoryService : IStoryService
         return result;
 
     }
-    public async Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StorySubPostUpdateR request)
+    public async Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, StorySubPostUpdateR request)
     {
         var vr = new StorySubPostUpdateV().Validate(request);
         if (!vr.IsValid)
@@ -103,13 +103,13 @@ public partial class StoryService : IStoryService
     {
         return await _postService.SwapChapterOrder(hashId, orders);
     }
-    public async Task<bool> DeleteChapter(string comicHashId, int order)
+    public async Task<bool> DeleteChapter(string comicHashId, float order)
     {
         return await _postService.DeleteChapter(comicHashId, order);
     }
-    public async Task<PostSeriesResponse> UpdateStory(string hashId, StoryPostUpdateR comicPostReq)
+    public async Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR comicPostReq)
     {
-        return await _postService.UpdateSeries(hashId, comicPostReq);
+        return await _postService.PostUpdate(hashId, comicPostReq);
     }
     public async Task<bool> Delete(Guid postId)
     {

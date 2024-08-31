@@ -7,6 +7,11 @@ using Requests;
 
 public interface IComicService
 {
+    Task<PostSeriesResponse> PostCreate(ComicPostCreateR request);
+    Task<PostSeriesResponse> PostUpdate(string hashId, ComicPostUpdateR request);
+    Task<ChapterResponse> SubPostCreate(string comicHashId, ComicSubPostCreateR request);
+    Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, ComicSubPostUpdateR request);
+
     Task<PostSeriesResponse> GetComic(ComicHashIdR req);
     Task<ChapterResponse> GetChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
@@ -19,12 +24,8 @@ public interface IComicService
     Task<List<PostSeriesTopResponse>> GetRecommendedComic(ComicRecommendedR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request);
-    Task<PostSeriesResponse> PostComic(ComicPostCreateR request);
-    Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateR request);
-    Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicSubPostCreateR request);
-    Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicSubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);
-    Task<bool> DeleteChapter(string comicHashId, int order);
+    Task<bool> DeleteChapter(string comicHashId, float order);
     Task<bool> Delete(Guid postId);
     Task<PagedResponse<PostBoxResposne>> GetComicByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetComicByTagName(ComicPostByTagNameR request);

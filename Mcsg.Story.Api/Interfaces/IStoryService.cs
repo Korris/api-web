@@ -7,14 +7,15 @@ using Requests;
 
 public interface IStoryService
 {
-    Task<PostSeriesResponse> PostStory(StoryPostCreateR request);
+    Task<PostSeriesResponse> PostCreate(StoryPostCreateR request);
+    Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR request);
+    Task<ChapterResponse> SubPostCreate(string comicHashId, StorySubPostCreateR request);
+    Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, StorySubPostUpdateR request);
+
     Task<PostSeriesResponse> GetStory(StoryHashIdR req);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request);
-    Task<PostSeriesResponse> UpdateStory(string hashId, StoryPostUpdateR request);
-    Task<ChapterResponse> PostChapterToStory(string comicHashId, StorySubPostCreateR request);
-    Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StorySubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, StoryChapterOrderSwapR orders);
-    Task<bool> DeleteChapter(string comicHashId, int order);
+    Task<bool> DeleteChapter(string comicHashId, float order);
     Task<bool> Delete(Guid postId);
 
     Task<ChapterResponse> GetChapter(string hashId, float order);

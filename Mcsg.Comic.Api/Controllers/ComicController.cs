@@ -22,14 +22,41 @@ public class ComicController : ControllerBase
         _postReactService = postReactService;
     }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> PostFeed(ComicPostCreateR request)
+    #region -- Post --
+    [HttpPost, Authorize]
+    public async Task<IActionResult> PostCreate(ComicPostCreateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _comicService.PostComic(request);
+        var result = await _comicService.PostCreate(request);
         return Ok(result);
     }
+
+    [HttpPut("{hashId}"), Authorize]
+    public async Task<IActionResult> PostUpdate(string hashId, ComicPostUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _comicService.PostUpdate(hashId, request);
+        return Ok(result);
+    }
+    #endregion
+
+    #region -- SubPost --
+    [HttpPost("{hashId}/chapter"), Authorize]
+    public async Task<IActionResult> SubPostCreate(string hashId, ComicSubPostCreateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _comicService.SubPostCreate(hashId, request);
+        return Ok(result);
+    }
+
+    [HttpPut("{hashId}/chapter/{chapterOrder}"), Authorize]
+    public async Task<IActionResult> SubPostUpdate(string hashId, int chapterOrder, ComicSubPostUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _comicService.SubPostUpdate(hashId, chapterOrder, request);
+        return Ok(result);
+    }
+    #endregion
 
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetComic(string hashId, bool isLoadChapters = true)
@@ -115,15 +142,6 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{hashId}")]
-    [Authorize]
-    public async Task<IActionResult> UpdateComic(string hashId, ComicPostUpdateR request)
-    {
-        request.Analyze(HttpContext);
-        var result = await _comicService.UpdateComic(hashId, request);
-        return Ok(result);
-    }
-
     [HttpGet("{hashId}/chapter/{order}")]
     public async Task<IActionResult> GetChapter(string hashId, float order)
     {
@@ -142,24 +160,6 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> GetChaptersList(string comicHashId)
     {
         var result = await _comicService.GetChaptersListSimple(comicHashId);
-        return Ok(result);
-    }
-
-    [HttpPost("{comicHashId}/chapter")]
-    [Authorize]
-    public async Task<IActionResult> PostChapter(string comicHashId, ComicSubPostCreateR request)
-    {
-        request.Analyze(HttpContext);
-        var result = await _comicService.PostChapterToComic(comicHashId, request);
-        return Ok(result);
-    }
-
-    [HttpPut("{comicHashId}/chapter/{chapterOrder}")]
-    [Authorize]
-    public async Task<IActionResult> PutChapter(string comicHashId, int chapterOrder, ComicSubPostUpdateR request)
-    {
-        request.Analyze(HttpContext);
-        var result = await _comicService.UpdateChapterToComic(comicHashId, chapterOrder, request);
         return Ok(result);
     }
 

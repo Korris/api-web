@@ -22,13 +22,41 @@ public class StoryController : ControllerBase
         _postReactService = postReactService;
     }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> PostFeed(StoryPostCreateR request)
+    #region -- Post --
+    [HttpPost, Authorize]
+    public async Task<IActionResult> PostCreate(StoryPostCreateR request)
     {
-        var result = await _storyService.PostStory(request);
+        request.Analyze(HttpContext);
+        var result = await _storyService.PostCreate(request);
         return Ok(result);
     }
+
+    [HttpPut("{hashId}"), Authorize]
+    public async Task<IActionResult> PostUpdate(string hashId, StoryPostUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _storyService.PostUpdate(hashId, request);
+        return Ok(result);
+    }
+    #endregion
+
+    #region -- SubPost --
+    [HttpPost("{hashId}/chapter"), Authorize]
+    public async Task<IActionResult> SubPostCreate(string hashId, StorySubPostCreateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _storyService.SubPostCreate(hashId, request);
+        return Ok(result);
+    }
+
+    [HttpPut("{hashId}/chapter/{chapterOrder}"), Authorize]
+    public async Task<IActionResult> SubPostUpdate(string hashId, int chapterOrder, StorySubPostUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _storyService.SubPostUpdate(hashId, chapterOrder, request);
+        return Ok(result);
+    }
+    #endregion
 
     [HttpGet("{hashId}")]
     public async Task<IActionResult> GetStory(string hashId, bool isLoadChapters = true)
@@ -36,22 +64,6 @@ public class StoryController : ControllerBase
         var req = new StoryHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
         req.Analyze(HttpContext);
         var result = await _storyService.GetStory(req);
-        return Ok(result);
-    }
-
-    [HttpPut("{hashId}")]
-    [Authorize]
-    public async Task<IActionResult> UpdateStory(string hashId, StoryPostUpdateR request)
-    {
-        var result = await _storyService.UpdateStory(hashId, request);
-        return Ok(result);
-    }
-
-    [HttpPost("{hashId}/chapter")]
-    [Authorize]
-    public async Task<IActionResult> PostChapter(string hashId, StorySubPostCreateR chapterPostReq)
-    {
-        var result = await _storyService.PostChapterToStory(hashId, chapterPostReq);
         return Ok(result);
     }
 
@@ -149,14 +161,6 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> GetChapter(string storyHashId, float chapterOrder)
     {
         var result = await _storyService.GetChapter(storyHashId, chapterOrder);
-        return Ok(result);
-    }
-
-    [HttpPut("{storyHashId}/chapter/{chapterOrder}")]
-    [Authorize]
-    public async Task<IActionResult> PutChapter(string storyHashId, int chapterOrder, StorySubPostUpdateR chapterPostReq)
-    {
-        var result = await _storyService.UpdateChapterToStory(storyHashId, chapterOrder, chapterPostReq);
         return Ok(result);
     }
 

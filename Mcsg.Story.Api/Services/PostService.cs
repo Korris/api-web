@@ -108,7 +108,7 @@ public partial class PostService : IPostService
     }
 
     #region -- Post --
-    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostCreateR request)
+    public async Task<PostSeriesResponse> PostCreate(PostType type, StoryPostCreateR request)
     {
         var vr = new StoryPostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -817,7 +817,7 @@ public partial class PostService : IPostService
         return MappingTopSeries(items);
     }
 
-    public async Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateR request)
+    public async Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR request)
     {
         var vr = new StoryPostUpdateV().Validate(request);
         if (!vr.IsValid)
@@ -1822,7 +1822,7 @@ public partial class PostService : IPostService
 
         return newChapter;
     }
-    public async Task<bool> DeleteChapter(string hashId, int order)
+    public async Task<bool> DeleteChapter(string hashId, float order)
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
