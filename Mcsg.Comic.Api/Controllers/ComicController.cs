@@ -59,7 +59,7 @@ public class ComicController : ControllerBase
     #endregion
 
     [HttpGet("{hashId}")]
-    public async Task<IActionResult> GetComic(string hashId, bool isLoadChapters = true)
+    public async Task<IActionResult> Get(string hashId, bool isLoadChapters = true)
     {
         var req = new ComicHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
         req.Analyze(HttpContext);
@@ -68,10 +68,9 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("top")]
-    public async Task<IActionResult> GetTopComic()
+    public async Task<IActionResult> GetTop()
     {
         var req = new BaseR(HttpContext);
-
         var result = await _comicService.GetTop();
 
         if (req.FromMobile)
@@ -85,7 +84,7 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> GetAllTopComic([FromQuery] ComicPostListSeriesR request)
+    public async Task<IActionResult> GetAllTop([FromQuery] ComicPostListSeriesR request)
     {
         request.Analyze(HttpContext);
         var result = await _comicService.GetTopAsync(request);
@@ -99,13 +98,12 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("relation")]
-    public async Task<IActionResult> GetRelationComics([FromQuery] ComicRelationPostSeriesR request)
+    public async Task<IActionResult> GetRelation([FromQuery] ComicRelationPostSeriesR request)
     {
-        var req = new BaseR();
-
+        request.Analyze(HttpContext);
         var result = await _comicService.GetRelationAsync(request);
 
-        if (req.FromMobile)
+        if (request.FromMobile)
         {
             result.Items = result.Items.Where(p => !p.IsMature).ToList();
         }
@@ -114,31 +112,23 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("top-hit")]
-    public async Task<IActionResult> GetTopListHitComic([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopHitList([FromQuery] ComicTopPostR request)
     {
         var result = await _comicService.GetTopHitList(request);
         return Ok(result);
     }
 
     [HttpGet("top-latest")]
-    public async Task<IActionResult> GetTopListLatestComic([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopLatestList([FromQuery] ComicTopPostR request)
     {
         var result = await _comicService.GetTopLatestList(request);
         return Ok(result);
     }
 
     [HttpGet("top-completed")]
-    public async Task<IActionResult> GetTopListCompletedComic([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopCompletedList([FromQuery] ComicTopPostR request)
     {
         var result = await _comicService.GetTopCompletedList(request);
-        return Ok(result);
-    }
-
-    [HttpGet("recommended")]
-    public async Task<IActionResult> GetRecommendedComic(int number)
-    {
-        var req = new ComicRecommendedR { Number = number };
-        var result = await _comicService.GetRecommended(req);
         return Ok(result);
     }
 
@@ -157,7 +147,7 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("{hashId}/chapters-list")]
-    public async Task<IActionResult> GetChaptersList(string hashId)
+    public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {
         var result = await _comicService.GetChaptersListSimple(hashId);
         return Ok(result);
@@ -165,7 +155,7 @@ public class ComicController : ControllerBase
 
     [HttpPut("{hashId}/chapter-swap")]
     [Authorize]
-    public async Task<IActionResult> PutSwapChapter(string hashId, ComicChapterOrderSwapR orders)
+    public async Task<IActionResult> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
         var result = await _comicService.SwapChapterOrder(hashId, orders);
         return Ok(result);
@@ -181,7 +171,7 @@ public class ComicController : ControllerBase
 
     [HttpDelete("{postId}")]
     [Authorize]
-    public async Task<IActionResult> DeleteFeed(Guid postId)
+    public async Task<IActionResult> Delete(Guid postId)
     {
         var result = await _comicService.Delete(postId);
         return Ok(result);
@@ -189,7 +179,7 @@ public class ComicController : ControllerBase
 
     [HttpGet("my-comic")]
     [Authorize]
-    public async Task<IActionResult> GetMyComic([FromQuery] ComicPostListSeriesR request)
+    public async Task<IActionResult> GetMy([FromQuery] ComicPostListSeriesR request)
     {
         request.Analyze(HttpContext);
         var result = await _comicService.GetMy(request);
@@ -197,14 +187,14 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("search-by-profileName")]
-    public async Task<IActionResult> GetSearchComic([FromQuery] ComicPostByProFileNameR input)
+    public async Task<IActionResult> GetByUserProfileName([FromQuery] ComicPostByProFileNameR input)
     {
         var result = await _comicService.GetByUserProfileName(input);
         return Ok(result);
     }
 
     [HttpGet("search-by-tagName")]
-    public async Task<IActionResult> GetSearchComicByTagName([FromQuery] ComicPostByTagNameR input)
+    public async Task<IActionResult> GetByTagName([FromQuery] ComicPostByTagNameR input)
     {
         var result = await _comicService.GetByTagName(input);
         return Ok(result);
@@ -226,7 +216,7 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserComic(string userName, [FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetSeriesByUserByPage(string userName, [FromQuery] ComicTopPostR request)
     {
         request.Analyze(HttpContext);
         var result = await _postService.GetSeriesByUserByPage(PostType.Comic, userName, request);
@@ -234,16 +224,24 @@ public class ComicController : ControllerBase
     }
 
     [HttpGet("latest-order")]
-    public async Task<IActionResult> GetLatestOrder([FromQuery] string hashPostId)
+    public async Task<IActionResult> GetLatestOrderChapter([FromQuery] string hashPostId)
     {
         var result = await _comicService.GetLatestOrderChapter(hashPostId);
         return Ok(result);
     }
 
     [HttpGet("{id}/reactions")]
-    public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
+    public async Task<IActionResult> GetReactionsByTargetAsync(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
         var result = await _postReactService.GetReactionsByTargetAsync(id, request);
+        return Ok(result);
+    }
+
+    [HttpGet("recommended")]
+    public async Task<IActionResult> GetRecommended(int number)
+    {
+        var req = new ComicRecommendedR { Number = number };
+        var result = await _comicService.GetRecommended(req);
         return Ok(result);
     }
 

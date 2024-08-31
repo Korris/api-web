@@ -59,7 +59,7 @@ public class StoryController : ControllerBase
     #endregion
 
     [HttpGet("{hashId}")]
-    public async Task<IActionResult> GetStory(string hashId, bool isLoadChapters = true)
+    public async Task<IActionResult> Get(string hashId, bool isLoadChapters = true)
     {
         var req = new StoryHashIdR { HashId = hashId, IsLoadChapters = isLoadChapters };
         req.Analyze(HttpContext);
@@ -67,19 +67,10 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{postId}")]
-    [Authorize]
-    public async Task<IActionResult> DeleteFeed(Guid postId)
-    {
-        var result = await _storyService.Delete(postId);
-        return Ok(result);
-    }
-
     [HttpGet("top")]
-    public async Task<IActionResult> GetTopStory()
+    public async Task<IActionResult> GetTop()
     {
         var req = new BaseR(HttpContext);
-
         var result = await _storyService.GetTop();
 
         if (req.FromMobile)
@@ -93,13 +84,12 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> GetAllTopStory([FromQuery] StoryPostListSeriesR request)
+    public async Task<IActionResult> GetAllTop([FromQuery] StoryPostListSeriesR request)
     {
-        var req = new BaseR();
         request.Analyze(HttpContext);
         var result = await _storyService.GetTopAsync(request);
 
-        if (req.FromMobile)
+        if (request.FromMobile)
         {
             result.Items = result.Items.Where(p => !p.IsMature).ToList();
         }
@@ -108,13 +98,12 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("relation")]
-    public async Task<IActionResult> GetRelationStories([FromQuery] StoryRelationPostSeriesR request)
+    public async Task<IActionResult> GetRelation([FromQuery] StoryRelationPostSeriesR request)
     {
-        var req = new BaseR();
-
+        request.Analyze(HttpContext);
         var result = await _storyService.GetRelationAsync(request);
 
-        if (req.FromMobile)
+        if (request.FromMobile)
         {
             result.Items = result.Items.Where(p => !p.IsMature).ToList();
         }
@@ -123,23 +112,30 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("top-hit")]
-    public async Task<IActionResult> GetTopListHitStory([FromQuery] StoryTopPostR request)
+    public async Task<IActionResult> GetTopHitList([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopHitList(request);
         return Ok(result);
     }
 
     [HttpGet("top-latest")]
-    public async Task<IActionResult> GetTopListLatestStory([FromQuery] StoryTopPostR request)
+    public async Task<IActionResult> GetTopLatestList([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopLatestList(request);
         return Ok(result);
     }
 
     [HttpGet("top-completed")]
-    public async Task<IActionResult> GetTopListCompletedStory([FromQuery] StoryTopPostR request)
+    public async Task<IActionResult> GetTopCompletedList([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopCompletedList(request);
+        return Ok(result);
+    }
+
+    [HttpGet("{hashId}/chapter/{order}")]
+    public async Task<IActionResult> GetChapter(string hashId, float order)
+    {
+        var result = await _storyService.GetChapter(hashId, order);
         return Ok(result);
     }
 
@@ -151,22 +147,15 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("{hashId}/chapters-list")]
-    public async Task<IActionResult> GetChaptersList(string hashId)
+    public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {
         var result = await _storyService.GetChaptersListSimple(hashId);
         return Ok(result);
     }
 
-    [HttpGet("{hashId}/chapter/{chapterOrder}")]
-    public async Task<IActionResult> GetChapter(string hashId, float chapterOrder)
-    {
-        var result = await _storyService.GetChapter(hashId, chapterOrder);
-        return Ok(result);
-    }
-
     [HttpPut("{hashId}/chapter-swap")]
     [Authorize]
-    public async Task<IActionResult> PutSwapChapter(string hashId, StoryChapterOrderSwapR orders)
+    public async Task<IActionResult> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
         var result = await _storyService.SwapChapterOrder(hashId, orders);
         return Ok(result);
@@ -180,24 +169,32 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
+    [HttpDelete("{postId}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(Guid postId)
+    {
+        var result = await _storyService.Delete(postId);
+        return Ok(result);
+    }
+
     [HttpGet("my-stories")]
     [Authorize]
-    public async Task<IActionResult> GetMyStories([FromQuery] StoryPostListSeriesR loadReq)
+    public async Task<IActionResult> GetMy([FromQuery] StoryPostListSeriesR request)
     {
-        loadReq.Analyze(HttpContext);
-        var result = await _storyService.GetMy(loadReq);
+        request.Analyze(HttpContext);
+        var result = await _storyService.GetMy(request);
         return Ok(result);
     }
 
     [HttpGet("search-by-profileName")]
-    public async Task<IActionResult> GetSearchComic([FromQuery] StoryPostByProFileNameR input)
+    public async Task<IActionResult> GetByUserProfileName([FromQuery] StoryPostByProFileNameR input)
     {
         var result = await _storyService.GetByUserProfileName(input);
         return Ok(result);
     }
 
     [HttpGet("search-by-tagName")]
-    public async Task<IActionResult> GetSearchComicByTagName([FromQuery] StoryPostByTagNameR input)
+    public async Task<IActionResult> GetByTagName([FromQuery] StoryPostByTagNameR input)
     {
         var result = await _storyService.GetByTagName(input);
         return Ok(result);
@@ -219,22 +216,22 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserStory(string userName, [FromQuery] StoryTopPostR loadReq)
+    public async Task<IActionResult> GetSeriesByUserByPage(string userName, [FromQuery] StoryTopPostR request)
     {
-        loadReq.Analyze(HttpContext);
-        var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);
+        request.Analyze(HttpContext);
+        var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, request);
         return Ok(result);
     }
 
     [HttpGet("latest-order")]
-    public async Task<IActionResult> GetLatestOrder([FromQuery] string hashPostId)
+    public async Task<IActionResult> GetLatestOrderChapter([FromQuery] string hashPostId)
     {
         var result = await _storyService.GetLatestOrderChapter(hashPostId);
         return Ok(result);
     }
 
     [HttpGet("{id}/reactions")]
-    public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
+    public async Task<IActionResult> GetReactionsByTargetAsync(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
         var result = await _postReactService.GetReactionsByTargetAsync(id, request);
         return Ok(result);
