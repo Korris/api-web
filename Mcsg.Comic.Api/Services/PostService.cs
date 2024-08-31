@@ -107,7 +107,7 @@ public partial class PostService : IPostService
         }
     }
 
-    #region PostStoryOrComic
+    #region -- Post --
     public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostCreateR request)
     {
         var vr = new ComicPostCreateV().Validate(request);
@@ -159,11 +159,11 @@ public partial class PostService : IPostService
             HashId = hashId,
             UserId = userId,
             Type = post.Type,
-            ThumbnailUrl = post.ThumbnailUrl,
+            ThumbnailUrl = thumbnailUrl,
             CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = request.Summary,
-            CoverUrl = post.CoverUrl,
+            CoverUrl = coverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             ProfileId = profileId,
@@ -767,13 +767,13 @@ public partial class PostService : IPostService
                                         (
                                             SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
                                             FROM ""comic"".""ComicSubPosts"" sp 
-                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false                                 
+                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
                                             ORDER BY sp.""Order"" DESC
                                             LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"",u.""UserName""
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName""
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -894,7 +894,7 @@ public partial class PostService : IPostService
             CreatedOn = post.CreatedOn,
             Status = post.Status,
             Body = request.Summary,
-            CoverUrl = post.CoverUrl,
+            CoverUrl = coverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             ProfileId = profileId,
@@ -907,7 +907,7 @@ public partial class PostService : IPostService
 
         if (currentTitle != request.Title)
         {
-            var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.Keyword == currentTitle);
+            var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Comic && p.Keyword == currentTitle);
             if (currentEntity != null)
             {
                 currentEntity.Keyword = request.Title;
@@ -963,7 +963,7 @@ public partial class PostService : IPostService
             EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
             SeriesStatus = item.ToSeriesStatus(),
             TotalComment = item.TotalComment,
-            IsFollowing = item.IsFollowing,
+            IsFollowing = item.IsFollowing
         };
 
         return itemResponse;
@@ -1435,7 +1435,6 @@ public partial class PostService : IPostService
         };
     }
 
-
     public UploadFileDto MappingFile(ComicResource resources)
     {
         if (resources == null || resources.Id == Guid.Empty)
@@ -1621,10 +1620,9 @@ public partial class PostService : IPostService
     {
         return (PublishDate != null && PublishDate < DateTime.Now);
     }
-
     #endregion
 
-    #region Chapters        
+    #region -- Subpost --
     public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR loadReq)
     {
         PagedResponse<ChapterResponse> results;
@@ -1729,7 +1727,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<ComicSubPost> SubPostChapterToSeries(string comicHashId, ComicSubPostFormBaseR chapterPostReq)
+    public async Task<ComicSubPost> SubPostChapterToSeries(string hashId, ComicSubPostFormBaseR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
 
@@ -1741,7 +1739,7 @@ public partial class PostService : IPostService
         var newOrder = 0.0f;
         var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
         var reader = await _postRepository
-            .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
+            .Connection.QueryMultipleAsync(query, new { HashId = hashId });
         var post = (await reader.ReadAsync<ComicPost>().ConfigureAwait(false)).FirstOrDefault();
         VerifyPost(post, true);
         #endregion
@@ -2107,7 +2105,6 @@ public partial class PostService : IPostService
         }
         return _setting.Minio.GetPublicUrl(resource.Bucket, resource.Url);
     }
-
     #endregion
 
     #region -- Fields --

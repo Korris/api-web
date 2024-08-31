@@ -107,7 +107,7 @@ public partial class PostService : IPostService
         }
     }
 
-    #region PostStoryOrComic
+    #region -- Post --
     public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostCreateR request)
     {
         var vr = new StoryPostCreateV().Validate(request);
@@ -133,7 +133,7 @@ public partial class PostService : IPostService
         var coverUrl = await GetPublicUrl(request.CoverHashId);
 
         var hashId = PostConfig.HashLength.GetRandomString();
-        var post = new StoryPost()
+        var post = new StoryPost
         {
             Title = request.Title,
             Type = type,
@@ -150,8 +150,8 @@ public partial class PostService : IPostService
             CreatedBy = userId,
             //TODO FAKE DATA
             ViewCount = 0
-
         };
+
         var result = new NewPostSeriesResponse
         {
             Id = post.Id,
@@ -252,7 +252,6 @@ public partial class PostService : IPostService
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         dbPost.IsFollowing = currentUserId == null ? false : await _context.StoryPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
-
         var result = MappingFeedRespone(dbPost);
 
         result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
@@ -492,7 +491,7 @@ public partial class PostService : IPostService
 
             var offset = request.PageSize * (request.PageNumber - 1);
 
-            string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
+            string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Permission\" = @PostPermission AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
             var tags = await _tagService.GetTagsByPostIdAsync(post.Id);
             var tagIds = new List<Guid>();
             if (tags != null && tags.Any())
@@ -526,7 +525,8 @@ public partial class PostService : IPostService
                         PostStatus = (int)PostStatus.Public,
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
-                        HashId = request.HashId
+                        HashId = request.HashId,
+                        PostPermission = (int)PostPermission.Public
                     });
 
             var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -665,7 +665,7 @@ public partial class PostService : IPostService
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
             {
                 TargetIds = items.Select(p => p.Id).ToList(),
-                _currentUserService?.Session?.UserId
+                UserId = _currentUserService?.Session?.UserId
             });
 
             foreach (var item in results.Items)
@@ -767,13 +767,13 @@ public partial class PostService : IPostService
                                         (
                                             SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
                                             FROM ""story"".""StorySubPosts"" sp 
-                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false                                 
+                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
                                             ORDER BY sp.""Order"" DESC
                                             LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName""  
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName""
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -827,7 +827,8 @@ public partial class PostService : IPostService
                     PostType = (int)type,
                     IsAccessPrivate = false,
                     PageSize = number,
-                    PostStatus = (int)PostStatus.Public
+                    PostStatus = (int)PostStatus.Public,
+                    Hide = req.Hides
                 });
 
         return MappingTopSeries(items);
@@ -917,8 +918,8 @@ public partial class PostService : IPostService
         result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, userId)).ToArray();
 
         return result;
-
     }
+
     private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item)
     {
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
@@ -1371,12 +1372,12 @@ public partial class PostService : IPostService
                 {
                     Id = res.Id,
                     IsMature = res.IsMature,
+                    IsCurrentUserAuthor = res.UserId == currentUserId,
                     ThumbnailUrl = res.ThumbnailUrl,
                     Body = res.Body,
                     Title = res.Title,
                     AuthorId = res.AuthorId,
                     AuthorName = res.AuthorName,
-                    IsCurrentUserAuthor = res.UserId == currentUserId,
                     ViewCount = res.ViewCount,
                     Tags = res.Tags != null ? JsonConvert.DeserializeObject<List<string>>(res.Tags.ToString()) : new List<string>(),
                     Chapters = chapters,
@@ -1408,7 +1409,7 @@ public partial class PostService : IPostService
         }
     }
 
-    public void MapReactionResponse(PostBoxResponse item, List<CommentReactionResponseQuery> reactions)
+    private void MapReactionResponse(PostBoxResponse item, List<CommentReactionResponseQuery> reactions)
     {
         var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
         item.Reaction = new ReactionsResponse
@@ -1433,7 +1434,6 @@ public partial class PostService : IPostService
             MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
         };
     }
-
 
     public UploadFileDto MappingFile(StoryResource resources)
     {
@@ -1540,6 +1540,7 @@ public partial class PostService : IPostService
             Chapters = MappingTopChapter(x.SubPostStr),
             SeriesStatus = x.ToSeriesStatus(),
             TotalComment = x.TotalComment,
+            Hide = x.Hide,
             Reaction = new ReactionsResponse
             {
                 TotalReacts = x.TotalReact,
@@ -1597,7 +1598,6 @@ public partial class PostService : IPostService
                 }
         }
 
-
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
@@ -1620,10 +1620,9 @@ public partial class PostService : IPostService
     {
         return (PublishDate != null && PublishDate < DateTime.Now);
     }
-
     #endregion
 
-    #region Chapters        
+    #region -- Subpost --
     public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR loadReq)
     {
         PagedResponse<ChapterResponse> results;
@@ -1728,9 +1727,10 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<StorySubPost> SubPostChapterToSeries(string comicHashId, StorySubPostFormBaseR chapterPostReq)
+    public async Task<StorySubPost> SubPostChapterToSeries(string hashId, StorySubPostFormBaseR chapterPostReq)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
+
         if (!chapterPostReq.IsPublicNow && chapterPostReq.PublishDate == null)
         {
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
@@ -1739,7 +1739,7 @@ public partial class PostService : IPostService
         var newOrder = 0.0f;
         var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
         var reader = await _postRepository
-            .Connection.QueryMultipleAsync(query, new { HashId = comicHashId });
+            .Connection.QueryMultipleAsync(query, new { HashId = hashId });
         var post = (await reader.ReadAsync<StoryPost>().ConfigureAwait(false)).FirstOrDefault();
         VerifyPost(post, true);
         #endregion
@@ -1753,7 +1753,6 @@ public partial class PostService : IPostService
         {
             var maxOrder = (await reader.ReadAsync<float>(false)).FirstOrDefault();
             newOrder = (int)maxOrder + 1;
-
         }
         else
         {
@@ -1780,6 +1779,7 @@ public partial class PostService : IPostService
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
             IsPremium = chapterPostReq.IsPremium,
+            PostHashId = post.HashId
         };
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
@@ -1830,6 +1830,7 @@ public partial class PostService : IPostService
         newChapter.IsEnableComment = chapterPostReq.IsEnableComment;
         newChapter.Permission = chapterPostReq.Permission;
         newChapter.IsPremium = chapterPostReq.IsPremium;
+        newChapter.PostHashId = postHashId;
         newChapter.Order = chapterPostReq.Order.HasValue ? chapterPostReq.Order.Value : order;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = currentUserId;
