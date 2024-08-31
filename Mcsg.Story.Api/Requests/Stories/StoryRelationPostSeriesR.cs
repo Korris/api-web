@@ -4,7 +4,7 @@ namespace Mcsg.Story.Api.Requests;
 
 using Common.Core.Requests;
 
-public class ComicRelationPostSeriesR : PaginatedR
+public class StoryRelationPostSeriesR : PaginatedR
 {
     [Required]
     public string? HashId { get; set; }

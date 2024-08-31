@@ -10,7 +10,7 @@ public interface IEarningService
     Task EnableEarningAsync(EarningEnableR req);
     Task<EarningDashboardResponse> GetDataDashboardAsync();
     Task<List<MyPostSeriesResponse>> GetMyComicStoryListAsync();
-    Task<PagedResponse<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ComicChapterListR loadReq);
+    Task<PagedResponse<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, StoryChapterListR loadReq);
     string GetAffiliateCode(EarningAffiliateCodeR req);
     RevenueCalculateResponse CalculateRevenueOfMonth(RevenueCalculateReq data);
     Task<PerformanceChartResponse> GetPerformanceChart(Guid userId);

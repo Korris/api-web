@@ -2,7 +2,7 @@
 
 using Common.Domain.Dtos;
 
-public class ComicChapterComicR : StoryChapterPostR
+public class StoryChapterComicR : StoryChapterPostR
 {
     public List<ResourcePostDto> Files { get; set; }
 }

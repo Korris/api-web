@@ -2,7 +2,7 @@
 
 namespace Mcsg.Story.Api.Requests;
 
-public class ComicTopPostRecommendedR : ComicTopPostR
+public class StoryTopPostRecommendedR : StoryTopPostR
 {
     [DefaultValue(3)]
     public int PageSize { get; set; }

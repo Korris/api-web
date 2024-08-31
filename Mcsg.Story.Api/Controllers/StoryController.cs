@@ -41,7 +41,7 @@ public class StoryController : ControllerBase
 
     [HttpPut("{hashId}")]
     [Authorize]
-    public async Task<IActionResult> UpdateStory(string hashId, ComicPostUpdateSeriesR request)
+    public async Task<IActionResult> UpdateStory(string hashId, StoryPostUpdateSeriesR request)
     {
         var result = await _storyService.UpdateStory(hashId, request);
         return Ok(result);
@@ -81,7 +81,7 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> GetAllTopStory([FromQuery] ComicPostListSeriesR request)
+    public async Task<IActionResult> GetAllTopStory([FromQuery] StoryPostListSeriesR request)
     {
         var req = new BaseR();
         request.Analyze(HttpContext);
@@ -96,7 +96,7 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("relation")]
-    public async Task<IActionResult> GetRelationStories([FromQuery] ComicRelationPostSeriesR request)
+    public async Task<IActionResult> GetRelationStories([FromQuery] StoryRelationPostSeriesR request)
     {
         var req = new BaseR();
 
@@ -111,28 +111,28 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("top-hit")]
-    public async Task<IActionResult> GetTopListHitStory([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopListHitStory([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopHitListStory(request);
         return Ok(result);
     }
 
     [HttpGet("top-latest")]
-    public async Task<IActionResult> GetTopListLatestStory([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopListLatestStory([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopLatestListStory(request);
         return Ok(result);
     }
 
     [HttpGet("top-completed")]
-    public async Task<IActionResult> GetTopListCompletedStory([FromQuery] ComicTopPostR request)
+    public async Task<IActionResult> GetTopListCompletedStory([FromQuery] StoryTopPostR request)
     {
         var result = await _storyService.GetTopCompletedListStory(request);
         return Ok(result);
     }
 
     [HttpGet("{storyHashId}/chapters")]
-    public async Task<IActionResult> GetChapters(string storyHashId, [FromQuery] ComicChapterListR request)
+    public async Task<IActionResult> GetChapters(string storyHashId, [FromQuery] StoryChapterListR request)
     {
         var result = await _storyService.GetChapters(storyHashId, request);
         return Ok(result);
@@ -162,7 +162,7 @@ public class StoryController : ControllerBase
 
     [HttpPut("{storyHashId}/chapter-swap")]
     [Authorize]
-    public async Task<IActionResult> PutSwapChapter(string storyHashId, ComicChapterOrderSwapR orders)
+    public async Task<IActionResult> PutSwapChapter(string storyHashId, StoryChapterOrderSwapR orders)
     {
         var result = await _storyService.SwapChapterOrder(storyHashId, orders);
         return Ok(result);
@@ -178,7 +178,7 @@ public class StoryController : ControllerBase
 
     [HttpGet("my-stories")]
     [Authorize]
-    public async Task<IActionResult> GetMyStories([FromQuery] ComicPostListSeriesR loadReq)
+    public async Task<IActionResult> GetMyStories([FromQuery] StoryPostListSeriesR loadReq)
     {
         loadReq.Analyze(HttpContext);
         var result = await _storyService.GetMyStories(loadReq);
@@ -186,14 +186,14 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("search-by-profileName")]
-    public async Task<IActionResult> GetSearchComic([FromQuery] ComicPostByProFileNameR input)
+    public async Task<IActionResult> GetSearchComic([FromQuery] StoryPostByProFileNameR input)
     {
         var result = await _storyService.GetStoryByUserProfileName(input);
         return Ok(result);
     }
 
     [HttpGet("search-by-tagName")]
-    public async Task<IActionResult> GetSearchComicByTagName([FromQuery] ComicPostByTagNameR input)
+    public async Task<IActionResult> GetSearchComicByTagName([FromQuery] StoryPostByTagNameR input)
     {
         var result = await _storyService.GetStoryByTagName(input);
         return Ok(result);
@@ -215,7 +215,7 @@ public class StoryController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserStory(string userName, [FromQuery] ComicTopPostR loadReq)
+    public async Task<IActionResult> GetUserStory(string userName, [FromQuery] StoryTopPostR loadReq)
     {
         loadReq.Analyze(HttpContext);
         var result = await _postService.GetSeriesByUserByPage(PostType.Story, userName, loadReq);

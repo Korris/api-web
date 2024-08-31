@@ -76,7 +76,7 @@ public partial class StoryService : IStoryService
         return result;
 
     }
-    public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders)
+    public async Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, StoryChapterOrderSwapR orders)
     {
         return await _postService.SwapChapterOrder(comicHashId, orders);
     }
@@ -84,7 +84,7 @@ public partial class StoryService : IStoryService
     {
         return await _postService.DeleteChapter(comicHashId, order);
     }
-    public async Task<PostSeriesResponse> UpdateStory(string hashId, ComicPostUpdateSeriesR comicPostReq)
+    public async Task<PostSeriesResponse> UpdateStory(string hashId, StoryPostUpdateSeriesR comicPostReq)
     {
         return await _postService.UpdateSeries(hashId, comicPostReq);
     }
@@ -105,45 +105,45 @@ public partial class StoryService : IStoryService
     {
         return await _postService.GetTopSeries(_type);
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(ComicPostListSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopStoryAsync(StoryPostListSeriesR request)
     {
         return await _postService.GetTopSeriesAsync(_type, request);
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(ComicRelationPostSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationStoriesAsync(StoryRelationPostSeriesR request)
     {
         return await _postService.GetRelationSeriesAsync(_type, request);
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetMyStories(ComicPostListSeriesR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMyStories(StoryPostListSeriesR loadReq)
     {
         return await _postService.GetMySeries(_type, loadReq);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitListStory(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestListStory(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListStory(ComicTopPostR req)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListStory(StoryTopPostR req)
     {
         return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
     }
 
-    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request)
+    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request)
     {
         return await _postService.GetChapters(hashId, request);
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(ComicPostByProFileNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetStoryByUserProfileName(StoryPostByProFileNameR request)
     {
         return await _postService.GetPostByUserProfileName(_type, request);
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(ComicPostByTagNameR request)
+    public async Task<PagedResponse<PostBoxResposne>> GetStoryByTagName(StoryPostByTagNameR request)
     {
         return await _postService.GetPostByTagName(_type, request);
     }

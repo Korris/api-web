@@ -2,7 +2,7 @@
 
 using Common.Core.Requests;
 
-public class ComicPostListSeriesR : PaginatedR
+public class StoryPostListSeriesR : PaginatedR
 {
     public string? HashTag { get; set; }
     public bool IsFavorite { get; set; }

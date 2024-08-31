@@ -18,7 +18,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet("{postType}/tag/{tagName}")]
-    public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] ComicTopPostR loadReq)
+    public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] StoryTopPostR loadReq)
     {
         if (postType != PostType.Story && postType != PostType.Comic)
         {

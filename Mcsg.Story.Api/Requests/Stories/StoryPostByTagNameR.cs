@@ -2,7 +2,7 @@
 
 using Common.Core.Requests;
 
-public class ComicPostByTagNameR : PaginatedR
+public class StoryPostByTagNameR : PaginatedR
 {
     public string? TagName { get; set; }
 }

@@ -411,7 +411,7 @@ public partial class PostService : IPostService
 
         return result;
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, StoryPostListSeriesR request)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
         var isFavorite = currentUserId == null ? false : request.IsFavorite;
@@ -484,7 +484,7 @@ public partial class PostService : IPostService
             return new PagedResponse<PostSeriesTopResponse>(0);
         }
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, StoryRelationPostSeriesR request)
     {
         try
         {
@@ -554,7 +554,7 @@ public partial class PostService : IPostService
             throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
         }
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, StoryTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
@@ -604,7 +604,7 @@ public partial class PostService : IPostService
         await _smartLookupRepository.InsertAsync(smartLookupInserts);
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, StoryTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
@@ -636,7 +636,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, StoryTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
@@ -688,7 +688,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, ComicPostByTagNameR input)
+    public async Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, StoryPostByTagNameR input)
     {
         ValidateTotalItem(input.PageSize);
         PagedResponse<PostBoxResposne> results;
@@ -722,7 +722,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, ComicPostByProFileNameR input)
+    public async Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, StoryPostByProFileNameR input)
     {
         ValidateTotalItem(input.PageSize);
         PagedResponse<PostBoxResposne> results;
@@ -836,7 +836,7 @@ public partial class PostService : IPostService
         return MappingTopSeries(items);
     }
 
-    public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR request)
+    public async Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateSeriesR request)
     {
         var ss = _currentUserService.Session;
         var currentUserId = ss.UserId;
@@ -1059,7 +1059,7 @@ public partial class PostService : IPostService
 
     }
 
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, StoryPostListSeriesR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         var currentUserId = _currentUserService?.Session?.UserId;
@@ -1623,7 +1623,7 @@ public partial class PostService : IPostService
     #endregion
 
     #region Chapters        
-    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR loadReq)
     {
         PagedResponse<ChapterResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -1693,7 +1693,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
-    public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, StoryChapterListR loadReq)
     {
         PagedResponse<ChapterTOCExtendResponse> results;
         var query = GetSeriesChaptersWithOffsetSimpleByHashId;
@@ -1900,7 +1900,7 @@ public partial class PostService : IPostService
         return result;
     }
 
-    public async Task<List<ChapterResponse>> SwapChapterOrder(string postHashId, ComicChapterOrderSwapR orders)
+    public async Task<List<ChapterResponse>> SwapChapterOrder(string postHashId, StoryChapterOrderSwapR orders)
     {
         var result = new List<ChapterResponse>();
         var subPosts = await _postRepository
@@ -1978,7 +1978,7 @@ public partial class PostService : IPostService
         //}
     }
 
-    private int GetOffsetSetup(ref ComicTopPostR loadReq)
+    private int GetOffsetSetup(ref StoryTopPostR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 

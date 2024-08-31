@@ -105,7 +105,7 @@ public class EarningService : IEarningService
     {
         return await _postService.GetMyAllSeries();
     }
-    public async Task<PagedResponse<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, ComicChapterListR loadReq)
+    public async Task<PagedResponse<ReportSeriesData>> GetReportOfSeriesAsync(string seriesHashId, StoryChapterListR loadReq)
     {
         var userId = _currentUserService.Session.UserId;
 

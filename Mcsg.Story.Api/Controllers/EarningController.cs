@@ -52,7 +52,7 @@ public class EarningController : ControllerBase
 
     [Authorize]
     [HttpGet("report-detail")]
-    public async Task<IActionResult> GetReportOfSeries(string hashId, [FromQuery] ComicChapterListR req)
+    public async Task<IActionResult> GetReportOfSeries(string hashId, [FromQuery] StoryChapterListR req)
     {
         var result = await _earningService.GetReportOfSeriesAsync(hashId, req);
         return Ok(result);
