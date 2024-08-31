@@ -24,7 +24,7 @@ public class StoryController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostFeed(StoryPostSeriesR request)
+    public async Task<IActionResult> PostFeed(StoryPostCreateR request)
     {
         var result = await _storyService.PostStory(request);
         return Ok(result);
@@ -41,7 +41,7 @@ public class StoryController : ControllerBase
 
     [HttpPut("{hashId}")]
     [Authorize]
-    public async Task<IActionResult> UpdateStory(string hashId, StoryPostUpdateSeriesR request)
+    public async Task<IActionResult> UpdateStory(string hashId, StoryPostUpdateR request)
     {
         var result = await _storyService.UpdateStory(hashId, request);
         return Ok(result);

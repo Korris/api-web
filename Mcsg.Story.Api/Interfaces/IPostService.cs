@@ -13,8 +13,8 @@ using Requests;
 public interface IPostService
 {
     Task<bool> Delete(Guid postId);
-    Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR postReq);
-    Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateSeriesR postReq);
+    Task<PostSeriesResponse> PostSeries(PostType type, StoryPostCreateR postReq);
+    Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateR postReq);
     Task<PostSeriesResponse> GetSeries(StoryHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request);

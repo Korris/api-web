@@ -36,7 +36,7 @@ public partial class StoryService : IStoryService
         _currentUserService = currentUserService;
         _context = context;
     }
-    public async Task<PostSeriesResponse> PostStory(StoryPostSeriesR request)
+    public async Task<PostSeriesResponse> PostStory(StoryPostCreateR request)
     {
         return await _postService.PostSeries(_type, request);
     }
@@ -84,7 +84,7 @@ public partial class StoryService : IStoryService
     {
         return await _postService.DeleteChapter(comicHashId, order);
     }
-    public async Task<PostSeriesResponse> UpdateStory(string hashId, StoryPostUpdateSeriesR comicPostReq)
+    public async Task<PostSeriesResponse> UpdateStory(string hashId, StoryPostUpdateR comicPostReq)
     {
         return await _postService.UpdateSeries(hashId, comicPostReq);
     }

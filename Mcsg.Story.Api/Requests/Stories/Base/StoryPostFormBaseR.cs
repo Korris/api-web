@@ -1,8 +1,12 @@
 ﻿namespace Mcsg.Story.Api.Requests;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 
-public class StoryPostSeriesR
+/// <summary>
+/// FormBase request
+/// </summary>
+public class StoryPostFormBaseR : BaseR
 {
     public string? Title { get; set; }
     public string? Summary { get; set; }

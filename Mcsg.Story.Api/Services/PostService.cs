@@ -108,24 +108,26 @@ public partial class PostService : IPostService
     }
 
     #region PostStoryOrComic
-    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostSeriesR request)
+    public async Task<PostSeriesResponse> PostSeries(PostType type, StoryPostCreateR request)
     {
-        var vr = new StoryPostSeriesV().Validate(request);
+        var vr = new StoryPostCreateV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
             throw new BadRequestException(M000, t);
         }
 
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileId = ss.ProfileId;
-        var currentFullName = ss.ProfileName;
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
-        VerifyBasicInfo(request.Title);
+        var userId = request.UserId.Value;
+        var profileId = request.ProfileId;
+        var profileName = request.ProfileName;
 
         //Check first post
-        var rewards = await CheckRewardsForPost(currentUserId, type);
+        var rewards = await CheckRewardsForPost(userId, type);
 
         var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
         var coverUrl = await GetPublicUrl(request.CoverHashId);
@@ -136,16 +138,16 @@ public partial class PostService : IPostService
             Title = request.Title,
             Type = type,
             HashId = hashId,
-            UserId = currentUserId,
-            AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
-            AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
+            UserId = userId,
+            AuthorId = request.IsCurrentUserAuthor ? userId : null,
+            AuthorName = request.IsCurrentUserAuthor ? profileName : request.AuthorName,
             Body = request.Summary,
             ThumbnailUrl = thumbnailUrl,
             CoverUrl = coverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             Status = PostStatus.Public,
-            CreatedBy = currentUserId,
+            CreatedBy = userId,
             //TODO FAKE DATA
             ViewCount = 0
 
@@ -155,7 +157,7 @@ public partial class PostService : IPostService
             Id = post.Id,
             Title = request.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             Type = post.Type,
             ThumbnailUrl = thumbnailUrl,
             CreatedOn = post.CreatedOn,
@@ -169,26 +171,20 @@ public partial class PostService : IPostService
             IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             Rewards = rewards
         };
-        try
-        {
-            await _postRepository.InsertAsync(post);
 
-            await _smartLookupRepository.InsertAsync(new SmartLookup
-            {
-                CountCriteria = 0,
-                Keyword = request.Title,
-                KeywordType = LookupKeywordType.Story
-            });
+        await _context.StoryPosts.AddAsync(post);
+        await _context.SaveChangesAsync(default);
 
-            if (request.Tags != null && request.Tags.Count > 0)
-            {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
-            }
-        }
-        catch (Exception)
+        await _smartLookupRepository.InsertAsync(new SmartLookup
         {
-            _unitOfWork.RollbackTransaction();
-            throw;
+            CountCriteria = 0,
+            Keyword = request.Title,
+            KeywordType = LookupKeywordType.Story
+        });
+
+        if (request.Tags != null && request.Tags.Count > 0)
+        {
+            result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
 
         return result;
@@ -836,19 +832,30 @@ public partial class PostService : IPostService
         return MappingTopSeries(items);
     }
 
-    public async Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateSeriesR request)
+    public async Task<PostSeriesResponse> UpdateSeries(string hashId, StoryPostUpdateR request)
     {
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileId = ss.ProfileId;
-        var currentFullName = ss.ProfileName;
+        var vr = new StoryPostUpdateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var userId = request.UserId.Value;
+        var profileId = request.ProfileId;
+        var profileName = request.ProfileName;
 
         var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
         if (post == null)
         {
             throw new NotFoundException(E204, M204);
         }
-        if (post.CreatedBy != currentUserId)
+        if (post.CreatedBy != userId)
         {
             throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
@@ -864,8 +871,8 @@ public partial class PostService : IPostService
         var currentTitle = post.Title;
         post.Title = request.Title;
         post.HashId = hashId;
-        post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
-        post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
+        post.AuthorId = request.IsCurrentUserAuthor ? userId : null;
+        post.AuthorName = request.IsCurrentUserAuthor ? profileName : request.AuthorName;
         post.Body = request.Summary;
         post.ThumbnailUrl = thumbnailUrl;
         post.CoverUrl = coverUrl;
@@ -879,7 +886,7 @@ public partial class PostService : IPostService
             Id = post.Id,
             Title = request.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
@@ -893,27 +900,20 @@ public partial class PostService : IPostService
             IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             IsCompleted = request.IsCompleted
         };
-        try
-        {
-            await _postRepository.UpdateAsync(post);
 
-            if (currentTitle != request.Title)
+        await _context.SaveChangesAsync(default);
+
+        if (currentTitle != request.Title)
+        {
+            var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Story && p.Keyword == currentTitle);
+            if (currentEntity != null)
             {
-                var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Story && p.Keyword == currentTitle);
-                if (currentEntity != null)
-                {
-                    currentEntity.Keyword = request.Title;
-                    await _smartLookupRepository.UpdateAsync(currentEntity);
-                }
+                currentEntity.Keyword = request.Title;
+                await _smartLookupRepository.UpdateAsync(currentEntity);
             }
+        }
 
-            result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
-        }
-        catch (Exception e)
-        {
-            _unitOfWork.RollbackTransaction();
-            throw new Exception(e.ToString());
-        }
+        result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, userId)).ToArray();
 
         return result;
 

@@ -10,15 +10,19 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class StoryPostSeriesV : AbstractValidator<StoryPostSeriesR>
+public class StoryPostFormBaseV : AbstractValidator<StoryPostFormBaseR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public StoryPostSeriesV()
+    public StoryPostFormBaseV()
     {
+        var t = "Title";
+        RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}")
+            .MaximumLength(Title.Max).WithMessage($"{t} {MaximumLength} {Title.Max}");
+
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
         RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
