@@ -111,7 +111,7 @@ public partial class ComicService : IComicService
     #endregion
 
     #region Modify data
-    public async Task<PostSeriesResponse> PostComic(ComicPostSeriesR request)
+    public async Task<PostSeriesResponse> PostComic(ComicPostCreateR request)
     {
         return await _postService.PostSeries(_type, request);
     }
@@ -168,7 +168,7 @@ public partial class ComicService : IComicService
     {
         return await _postService.DeleteChapter(comicHashId, order);
     }
-    public async Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR request)
+    public async Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateR request)
     {
         return await _postService.UpdateSeries(hashId, request);
     }

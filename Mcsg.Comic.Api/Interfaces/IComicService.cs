@@ -19,8 +19,8 @@ public interface IComicService
     Task<List<PostSeriesTopResponse>> GetRecommendedComic(RecommendedComicR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedListComic(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationComicsAsync(ComicRelationPostSeriesR request);
-    Task<PostSeriesResponse> PostComic(ComicPostSeriesR request);
-    Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateSeriesR request);
+    Task<PostSeriesResponse> PostComic(ComicPostCreateR request);
+    Task<PostSeriesResponse> UpdateComic(string hashId, ComicPostUpdateR request);
     Task<ChapterResponse> PostChapterToComic(string comicHashId, ComicChapterComicR req);
     Task<ChapterResponse> UpdateChapterToComic(string comicHashId, float order, ComicChapterComicR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string comicHashId, ComicChapterOrderSwapR orders);

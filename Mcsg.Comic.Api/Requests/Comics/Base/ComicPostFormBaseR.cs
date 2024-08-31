@@ -1,8 +1,12 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 
-public class ComicPostSeriesR
+/// <summary>
+/// FormBase request
+/// </summary>
+public class ComicPostFormBaseR : IdBaseR
 {
     public string? Title { get; set; }
     public string? Summary { get; set; }

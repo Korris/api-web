@@ -10,14 +10,14 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class ComicPostSeriesV : AbstractValidator<ComicPostSeriesR>
+public class ComicPostFormBaseV : AbstractValidator<ComicPostFormBaseR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public ComicPostSeriesV()
+    public ComicPostFormBaseV()
     {
         var t = "Title";
         RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}")

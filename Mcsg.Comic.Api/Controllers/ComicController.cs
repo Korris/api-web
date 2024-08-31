@@ -24,8 +24,9 @@ public class ComicController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> PostFeed(ComicPostSeriesR request)
+    public async Task<IActionResult> PostFeed(ComicPostCreateR request)
     {
+        request.Analyze(HttpContext);
         var result = await _comicService.PostComic(request);
         return Ok(result);
     }
@@ -116,8 +117,9 @@ public class ComicController : ControllerBase
 
     [HttpPut("{hashId}")]
     [Authorize]
-    public async Task<IActionResult> UpdateComic(string hashId, ComicPostUpdateSeriesR request)
+    public async Task<IActionResult> UpdateComic(string hashId, ComicPostUpdateR request)
     {
+        request.Analyze(HttpContext);
         var result = await _comicService.UpdateComic(hashId, request);
         return Ok(result);
     }

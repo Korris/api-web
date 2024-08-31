@@ -108,72 +108,67 @@ public partial class PostService : IPostService
     }
 
     #region PostStoryOrComic
-    public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostSeriesR request)
+    public async Task<PostSeriesResponse> PostSeries(PostType type, ComicPostCreateR request)
     {
-        var vr = new ComicPostSeriesV().Validate(request);
+        var vr = new ComicPostCreateV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
             throw new BadRequestException(M000, t);
         }
 
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileId = ss.ProfileId;
-        var currentFullName = ss.ProfileName;
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
-        VerifyBasicInfo(request.Title);
+        var userId = request.UserId.Value;
+        var profileId = request.ProfileId;
+        var profileName = request.ProfileName;
 
         //Check first post
-        var rewards = await CheckRewardsForPost(currentUserId, type);
+        var rewards = await CheckRewardsForPost(userId, type);
 
-        var hashId = PostConfig.HashLength.GetRandomString();
-
-        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        var thumbnailResource = await _context.ComicResources.Where(p => p.HashId == request.ThumbnailHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
         if (thumbnailResource == null)
         {
             throw new BadRequestException(E206, M206);
         }
         var thumbnailUrl = _setting.Minio.GetPublicUrl(thumbnailResource.Bucket, thumbnailResource.Url);
 
-        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { Url = p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
+        var coverResource = await _context.ComicResources.Where(p => p.HashId == request.CoverHashId).Select(p => new { p.Url, Bucket = p.BucketName }).FirstOrDefaultAsync();
         if (coverResource == null)
         {
             throw new BadRequestException(E206, M206);
         }
         var coverUrl = _setting.Minio.GetPublicUrl(coverResource.Bucket, coverResource.Url);
 
-        //var safePlainString = "";
-        //if (!string.IsNullOrEmpty(request.Summary))
-        //{
-        //    safePlainString = System.Web.HttpUtility.HtmlEncode(request.Summary);
-        //}
-
-        var post = new ComicPost()
+        var hashId = PostConfig.HashLength.GetRandomString();
+        var post = new ComicPost
         {
             Title = request.Title,
             Type = type,
             HashId = hashId,
-            UserId = currentUserId,
-            AuthorId = request.IsCurrentUserAuthor ? currentUserId : null,
-            AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName,
+            UserId = userId,
+            AuthorId = request.IsCurrentUserAuthor ? userId : null,
+            AuthorName = request.IsCurrentUserAuthor ? profileName : request.AuthorName,
             Body = request.Summary,
             ThumbnailUrl = thumbnailUrl,
             CoverUrl = coverUrl,
             IsMature = request.IsMature,
             Permission = request.Permission,
             Status = PostStatus.Public,
-            CreatedBy = currentUserId,
+            CreatedBy = userId,
             //TODO FAKE DATA
             ViewCount = 0
-
         };
+
         var result = new NewPostSeriesResponse
         {
             Id = post.Id,
             Title = request.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
@@ -187,26 +182,20 @@ public partial class PostService : IPostService
             IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             Rewards = rewards
         };
-        try
-        {
-            await _postRepository.InsertAsync(post);
 
-            await _smartLookupRepository.InsertAsync(new SmartLookup
-            {
-                CountCriteria = 0,
-                Keyword = request.Title,
-                KeywordType = LookupKeywordType.Comic
-            });
+        await _context.ComicPosts.AddAsync(post);
+        await _context.SaveChangesAsync(default);
 
-            if (request.Tags != null && request.Tags.Count > 0)
-            {
-                result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
-            }
-        }
-        catch (Exception)
+        await _smartLookupRepository.InsertAsync(new SmartLookup
         {
-            _unitOfWork.RollbackTransaction();
-            throw;
+            CountCriteria = 0,
+            Keyword = request.Title,
+            KeywordType = LookupKeywordType.Comic
+        });
+
+        if (request.Tags != null && request.Tags.Count > 0)
+        {
+            result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
 
         return result;
@@ -856,26 +845,30 @@ public partial class PostService : IPostService
         return MappingTopSeries(items);
     }
 
-    public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateSeriesR request)
+    public async Task<PostSeriesResponse> UpdateSeries(string hashId, ComicPostUpdateR request)
     {
-        var vr = new ComicPostSeriesV().Validate(request);
+        var vr = new ComicPostUpdateV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
             throw new BadRequestException(M000, t);
         }
 
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileId = ss.ProfileId;
-        var currentFullName = ss.ProfileName;
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var userId = request.UserId.Value;
+        var profileId = request.ProfileId;
+        var profileName = request.ProfileName;
 
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == hashId);
         if (post == null)
         {
             throw new NotFoundException(E204, M204);
         }
-        if (post.CreatedBy != currentUserId)
+        if (post.CreatedBy != userId)
         {
             throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
@@ -902,8 +895,8 @@ public partial class PostService : IPostService
         var currentTitle = post.Title;
         post.Title = request.Title;
         post.HashId = hashId;
-        post.AuthorId = request.IsCurrentUserAuthor ? currentUserId : null;
-        post.AuthorName = request.IsCurrentUserAuthor ? currentFullName : request.AuthorName;
+        post.AuthorId = request.IsCurrentUserAuthor ? userId : null;
+        post.AuthorName = request.IsCurrentUserAuthor ? profileName : request.AuthorName;
         post.Body = request.Summary;
         post.ThumbnailUrl = thumbnailUrl;
         post.CoverUrl = coverUrl;
@@ -917,7 +910,7 @@ public partial class PostService : IPostService
             Id = post.Id,
             Title = request.Title,
             HashId = hashId,
-            UserId = currentUserId,
+            UserId = userId,
             Type = post.Type,
             ThumbnailUrl = post.ThumbnailUrl,
             CreatedOn = post.CreatedOn,
@@ -944,7 +937,7 @@ public partial class PostService : IPostService
             }
         }
 
-        result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, currentUserId)).ToArray();
+        result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, userId)).ToArray();
 
         return result;
     }
