@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -34,9 +35,31 @@ public class PatchController : ControllerBase
     /// </summary>
     /// <param name="request">Request</param>
     /// <returns>Return the result</returns>
-    [HttpPost("ResizeImage")]
+    [HttpPost("ResizeImage"), Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> ResizeImage([FromBody] PatchResizeImageR request)
+    {
+        if (request.Otp != CommonPrefix)
+        {
+            return Unauthorized();
+        }
+
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = request.GetAbsoluteUri(_setting.Domain);
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// Encrypt the Email, Phone, and SocialId in the Users and UserSocials tables
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("EncryptEmail"), Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> EncryptEmail([FromBody] PatchEncryptEmailR request)
     {
         if (request.Otp != CommonPrefix)
         {

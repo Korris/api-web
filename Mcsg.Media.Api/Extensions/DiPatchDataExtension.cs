@@ -32,6 +32,7 @@ public static class DiPatchExtension
     public static void AddPatchCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<PatchResizeImageR, SingleResponse>, PatchResizeImageH>(ServiceLifetime.Scoped);
+        p.AddBehavior<IRequestHandler<PatchEncryptEmailR, SingleResponse>, PatchEncryptEmailH>(ServiceLifetime.Scoped);
     }
 
     /// <summary>
