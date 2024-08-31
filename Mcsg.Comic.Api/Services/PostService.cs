@@ -583,7 +583,7 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
+    public async Task UpdateKeyWordToSmartLookup()
     {
         var queryNameListPost = $@"SELECT ""Title"" FROM ""comic"".""ComicPosts""  where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
         var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);

@@ -31,7 +31,7 @@ public class PostController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> UpdateKeyWordForComicAndStoryToSmartLookup()
     {
-        await _postService.UpdateKeyWordForComicAndStoryToSmartLookup();
+        await _postService.UpdateKeyWordToSmartLookup();
         return Ok();
     }
 
