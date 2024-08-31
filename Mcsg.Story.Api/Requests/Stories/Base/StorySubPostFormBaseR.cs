@@ -1,11 +1,17 @@
 ﻿namespace Mcsg.Story.Api.Requests;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 
-public class StoryChapterPostR
+/// <summary>
+/// FormBase request
+/// </summary>
+public class StorySubPostFormBaseR : BaseR
 {
     public string? Title { get; set; }
     public string? Name { get; set; }
+
+    public string? Body { get; set; }
 
     #region Setting
     public bool IsPublicNow { get; set; }

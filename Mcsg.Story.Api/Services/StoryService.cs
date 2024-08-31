@@ -3,6 +3,7 @@
 namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -16,6 +17,8 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
+using Validators;
+using static Common.SeedWork.Constants.Message;
 
 public partial class StoryService : IStoryService
 {
@@ -46,32 +49,52 @@ public partial class StoryService : IStoryService
         return await _postService.GetSeries(req);
     }
 
-    public async Task<ChapterResponse> PostChapterToStory(string comicHashId, StoryChapterR chapterPostReq)
+    public async Task<ChapterResponse> PostChapterToStory(string comicHashId, StorySubPostCreateR request)
     {
-        _postService.VerifyBasicInfo(chapterPostReq.Title);
+        var vr = new StorySubPostCreateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
 
-        var subPost = await _postService.SubPostChapterToSeries(comicHashId, chapterPostReq);
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
-        subPost.Body = System.Web.HttpUtility.HtmlEncode(chapterPostReq.Body);
+        var subPost = await _postService.SubPostChapterToSeries(comicHashId, request);
+
+        subPost.Body = System.Web.HttpUtility.HtmlEncode(request.Body);
         await _subPostRepository.InsertAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        result.Body = chapterPostReq.Body;
+        result.Body = request.Body;
 
         return result;
 
     }
-    public async Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StoryChapterR chapterPostReq)
+    public async Task<ChapterResponse> UpdateChapterToStory(string comicHashId, int order, StorySubPostUpdateR request)
     {
-        _postService.VerifyBasicInfo(chapterPostReq.Title);
+        var vr = new StorySubPostUpdateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
 
-        var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, chapterPostReq);
-        subPost.Body = System.Web.HttpUtility.HtmlEncode(chapterPostReq.Body);
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var subPost = await _postService.SubPostUpdateChapterToSeries(comicHashId, order, request);
+        subPost.Body = System.Web.HttpUtility.HtmlEncode(request.Body);
 
         await _subPostRepository.UpdateAsync(subPost);
 
         var result = _postService.MappingChapterResponse(subPost);
-        result.Body = chapterPostReq.Body;
+        result.Body = request.Body;
 
         return result;
 

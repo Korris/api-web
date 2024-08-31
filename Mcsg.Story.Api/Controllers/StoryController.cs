@@ -49,7 +49,7 @@ public class StoryController : ControllerBase
 
     [HttpPost("{hashId}/chapter")]
     [Authorize]
-    public async Task<IActionResult> PostChapter(string hashId, StoryChapterR chapterPostReq)
+    public async Task<IActionResult> PostChapter(string hashId, StorySubPostCreateR chapterPostReq)
     {
         var result = await _storyService.PostChapterToStory(hashId, chapterPostReq);
         return Ok(result);
@@ -154,7 +154,7 @@ public class StoryController : ControllerBase
 
     [HttpPut("{storyHashId}/chapter/{chapterOrder}")]
     [Authorize]
-    public async Task<IActionResult> PutChapter(string storyHashId, int chapterOrder, StoryChapterR chapterPostReq)
+    public async Task<IActionResult> PutChapter(string storyHashId, int chapterOrder, StorySubPostUpdateR chapterPostReq)
     {
         var result = await _storyService.UpdateChapterToStory(storyHashId, chapterOrder, chapterPostReq);
         return Ok(result);
