@@ -97,18 +97,6 @@ LIMIT 1
             }
         }
 
-        private string GetPostWithHashId
-
-        {
-            get
-            {
-                return @"
-                    SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"",""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
-                    FROM ""story"".""StoryPosts""
-                    WHERE ""HashId"" = @HashId;";
-            }
-        }
-
         private string GetPostAndLastSubPostOrder
 
         {
