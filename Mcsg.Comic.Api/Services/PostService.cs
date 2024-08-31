@@ -218,8 +218,7 @@ public partial class PostService : IPostService
                 {
                     if (dbPost.Chapters == null)
                         dbPost.Chapters = new List<ChapterBasicResponse>();
-                    //Mapping schedule
-                    subpost.IsPublicNow = CheckIsPublicNow(subpost.PublishDate);
+
                     if (subpost != null && subpost.Id != Guid.Empty)
                     {
                         subpost.ViewCount = subpost.ViewCount ?? 0;
@@ -298,7 +297,6 @@ public partial class PostService : IPostService
                 {
                     subpost = subpostdb;
                     subpost.Body = System.Web.HttpUtility.HtmlDecode(subpostdb.Body);
-                    subpost.IsPublicNow = CheckIsPublicNow(subpostdb.PublishDate);
                 }
                 if (subpostdb != null)
                 {
@@ -306,14 +304,13 @@ public partial class PostService : IPostService
                     {
                         subpost = subpostdb;
                         subpost.Body = System.Web.HttpUtility.HtmlDecode(subpostdb.Body);
-                        subpost.IsPublicNow = CheckIsPublicNow(subpostdb.PublishDate);
-                        if (subpost.IsPublicNow)
-                        {
-                            subpost.PublishDate = null;
-                        }
                     }
+
                     if (subpost != null && subpost.Files == null)
+                    {
                         subpost.Files = new List<UploadFileDto>();
+                    }
+
                     if (resource != null)
                     {
                         subpost.Files.Add(MappingFile(resource));
@@ -1598,11 +1595,6 @@ public partial class PostService : IPostService
 
         return query;
     }
-
-    private bool CheckIsPublicNow(DateTime? PublishDate)
-    {
-        return (PublishDate != null && PublishDate < DateTime.Now);
-    }
     #endregion
 
     #region -- Subpost --
@@ -1640,7 +1632,6 @@ public partial class PostService : IPostService
             results = new PagedResponse<ChapterResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             foreach (var item in items)
             {
-                item.IsPublicNow = CheckIsPublicNow(item.PublishDate);
                 item.Body = System.Web.HttpUtility.HtmlDecode(item.Body);
             }
             results.Items = items;
@@ -1753,7 +1744,7 @@ public partial class PostService : IPostService
             Name = string.IsNullOrEmpty(chapterPostReq.Name) ? newOrder.ToString() : chapterPostReq.Name,
             PostId = post.Id,
             Status = PostStatus.Public,
-            PublishDate = chapterPostReq.IsPublicNow ? DateTime.UtcNow : TimeZoneInfo.ConvertTimeToUtc(chapterPostReq.PublishDate ?? DateTime.Now),
+            PublishDate = chapterPostReq.IsPublicNow ? DateTime.UtcNow : chapterPostReq.PublishDateUtc,
             Title = chapterPostReq.Title,
             UserId = currentUserId ?? Guid.Empty,
             //CreatorNote = chapterPostReq.CreatorNote,
@@ -1853,7 +1844,6 @@ public partial class PostService : IPostService
 
         listChapter.ForEach(x =>
         {
-            x.IsPublicNow = true;
             if (x.ViewCount == null) { x.ViewCount = 0; }
         });
 
@@ -1877,7 +1867,6 @@ public partial class PostService : IPostService
         result.CreatorNote = newChapter.CreatorNote;
         result.PublishDate = newChapter.PublishDate;
         result.CreatedBy = newChapter.CreatedBy;
-        result.IsPublicNow = CheckIsPublicNow(newChapter.PublishDate);
         result.IsEnableComment = newChapter.IsEnableComment;
         result.IsExclusive = newChapter.IsExclusive;
         //When new, return 0

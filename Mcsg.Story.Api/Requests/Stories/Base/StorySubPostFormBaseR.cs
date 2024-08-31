@@ -18,6 +18,7 @@ public class StorySubPostFormBaseR : IdBaseR
     public PostPermission Permission { get; set; }
     public PostStatus Status { get; set; }
     public DateTime? PublishDate { get; set; }
+    public DateTime? PublishDateUtc => PublishDate == null ? DateTime.UtcNow : PublishDate.Value.AddMinutes(TimezoneOffset);
     public bool IsEnableComment { get; set; }
     public bool IsPremium { get; set; }
     public bool IsAutoGenerateOrder { get; set; }

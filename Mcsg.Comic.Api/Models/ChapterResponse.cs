@@ -8,7 +8,7 @@ public class ChapterBasicResponse : SubPostBasic
     public int? ViewCount { get; set; }
     public int CommentCount { get; set; }
     public Guid? PostId { get; set; }
-    public bool IsPublicNow { get; set; }
+    public bool IsPublicNow => PublishDate == null ? false : PublishDate.Value < DateTime.UtcNow;
     public bool IsEnableComment { get; set; }
     public Guid? UserExclusiveId { get; set; }
     public bool IsPremium { get; set; }
