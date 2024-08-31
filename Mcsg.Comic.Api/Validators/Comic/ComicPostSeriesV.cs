@@ -19,6 +19,10 @@ public class ComicPostSeriesV : AbstractValidator<ComicPostSeriesR>
     /// </summary>
     public ComicPostSeriesV()
     {
+        var t = "Title";
+        RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}")
+            .MaximumLength(Title.Max).WithMessage($"{t} {MaximumLength} {Title.Max}");
+
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
         RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
