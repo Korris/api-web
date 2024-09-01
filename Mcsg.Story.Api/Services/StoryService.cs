@@ -8,13 +8,10 @@ using Common.Core.Requests;
 using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
-using Constants;
 using Enums;
 using Interfaces;
 using Models;
 using Requests;
-using Validators;
-using static Common.SeedWork.Constants.Message;
 
 public partial class StoryService : IStoryService
 {
@@ -40,16 +37,6 @@ public partial class StoryService : IStoryService
     public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
         return await _postService.SwapChapterOrder(hashId, orders);
-    }
-
-    public async Task<bool> DeleteChapter(string hashId, float order)
-    {
-        return await _postService.DeleteChapter(hashId, order);
-    }
-
-    public async Task<bool> Delete(Guid postId)
-    {
-        return await _postService.Delete(postId);
     }
 
     public async Task<ChapterResponse> GetChapter(string hashId, float order)

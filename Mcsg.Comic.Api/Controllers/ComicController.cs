@@ -165,19 +165,17 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{hashId}/chapter/{chapterOrder}")]
-    [Authorize]
+    [HttpDelete("{hashId}/chapter/{chapterOrder}"), Authorize]
     public async Task<IActionResult> DeleteChapter(string hashId, float chapterOrder)
     {
-        var result = await _comicService.DeleteChapter(hashId, chapterOrder);
+        var result = await _postService.DeleteChapter(hashId, chapterOrder);
         return Ok(result);
     }
 
-    [HttpDelete("{postId}")]
-    [Authorize]
+    [HttpDelete("{postId}"), Authorize]
     public async Task<IActionResult> Delete(Guid postId)
     {
-        var result = await _comicService.Delete(postId);
+        var result = await _postService.Delete(postId);
         return Ok(result);
     }
 

@@ -41,16 +41,6 @@ public partial class ComicService : IComicService
         return await _postService.SwapChapterOrder(hashId, orders);
     }
 
-    public async Task<bool> DeleteChapter(string hashId, float order)
-    {
-        return await _postService.DeleteChapter(hashId, order);
-    }
-
-    public async Task<bool> Delete(Guid postId)
-    {
-        return await _postService.Delete(postId);
-    }
-
     public async Task<ChapterResponse> GetChapter(string hashId, float order)
     {
         return await _postService.GetSeriesChapter(hashId, order);

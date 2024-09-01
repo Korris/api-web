@@ -9,8 +9,6 @@ public interface IComicService
 {
     Task<PostSeriesResponse> Get(ComicHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
-    Task<bool> DeleteChapter(string comicHashId, float order);
-    Task<bool> Delete(Guid postId);
     Task<ChapterResponse> GetChapter(string hashId, float order);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(ComicTopPostR req);

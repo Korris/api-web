@@ -958,20 +958,6 @@ LIMIT 1
 
 
         #region Delete Subpost
-
-        private string GetSubPostIdWithHashIdAndOrder
-
-        {
-            get
-            {
-                return @"SELECT sp.""Id"", sp.""PostId"", 
-                sp.""Order"", sp.""Body"", sp.""Status"", p.""UserId"" 
-            FROM ""story"".""StorySubPosts"" sp
-            INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id""
-            WHERE p.""HashId"" = @HashId AND sp.""Order"" = @Order
-            AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
-            }
-        }
         private string GetSubPostsWithHashIdAndOrders
 
         {

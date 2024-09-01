@@ -1719,11 +1719,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
 
-        var qSubPost = from sp in _context.StorySubPostAvailable
-                       join p in _context.StoryPostAvailable on sp.PostId equals p.Id
-                       where p.HashId == request.PostHashId && sp.Order == request.ChapterOrder
-                       select sp;
-        var subPost = await qSubPost.FirstOrDefaultAsync();
+        var subPost = await FindSubPost(request.PostHashId, request.ChapterOrder);
         if (subPost == null)
         {
             throw new NotFoundException(nameof(E208), E208);
@@ -1770,7 +1766,7 @@ public partial class PostService : IPostService
         var currentUserId = ss.UserId;
         var profileName = ss.ProfileName;
 
-        var subPost = await _postRepository.Connection.QueryFirstAsync<StorySubPost>(GetSubPostIdWithHashIdAndOrder, new { HashId = hashId, Order = order });
+        var subPost = await FindSubPost(hashId, order);
         if (subPost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, order));
@@ -1778,7 +1774,6 @@ public partial class PostService : IPostService
         else if (subPost.UserId != currentUserId)
         {
             throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
-
         }
         else
         {
@@ -1788,6 +1783,7 @@ public partial class PostService : IPostService
             return true;
         }
     }
+
     private List<ChapterBasicResponse> MappingTopChapter(string subPostStr)
     {
         var listChapter = (JsonConvert.DeserializeObject<List<ChapterBasicResponse>>(subPostStr))?.Where(x => x != null).
@@ -2022,6 +2018,21 @@ public partial class PostService : IPostService
         var orders = await _context.StorySubPostAvailable.Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();
 
         return orders.Count > 0 ? orders.Max() + 1 : 1;
+    }
+
+    /// <summary>
+    /// Finds a specific subpost based on the parent post's hash ID and the subpost's order.
+    /// </summary>
+    /// <param name="postHashId">The hash ID of the parent post.</param>
+    /// <param name="order">The order of the subpost.</param>
+    /// <returns>The matching subpost if found; otherwise, null.</returns>
+    private async Task<StorySubPost?> FindSubPost(string? postHashId, float order)
+    {
+        var q = from a in _context.StorySubPostAvailable
+                join b in _context.StoryPostAvailable on a.PostId equals b.Id
+                where b.HashId == postHashId && a.Order == order
+                select a;
+        return await q.FirstOrDefaultAsync();
     }
     #endregion
 
