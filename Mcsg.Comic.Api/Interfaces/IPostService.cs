@@ -29,8 +29,8 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
 
-    Task<ComicSubPost> SubPostCreate(string hashId, ComicSubPostCreateR request);
-    Task<ComicSubPost> SubPostUpdate(string hashId, float order, ComicSubPostUpdateR request);
+    Task<ChapterResponse> SubPostCreate(ComicSubPostCreateR request);
+    Task<ChapterResponse> SubPostUpdate(ComicSubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string hashId, float order);
     ChapterResponse MappingChapterResponse(ComicSubPost newChapter);

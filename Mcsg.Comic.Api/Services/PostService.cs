@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace Mcsg.Comic.Api.Services;
 
@@ -9,6 +10,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -1701,45 +1703,53 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<ComicSubPost> SubPostCreate(string hashId, ComicSubPostCreateR request)
+    public async Task<ChapterResponse> SubPostCreate(ComicSubPostCreateR request)
     {
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var vr = new ComicSubPostCreateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
 
         if (!request.IsPublicNow && request.PublishDate == null)
         {
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
 
-        #region Get post
-        var newOrder = 0.0f;
-        var query = string.Format(GetPostAndLastSubPostOrder, _postRepository.TableName);
-        var reader = await _postRepository
-            .Connection.QueryMultipleAsync(query, new { HashId = hashId });
-        var post = (await reader.ReadAsync<ComicPost>().ConfigureAwait(false)).FirstOrDefault();
-        VerifyPost(post, true);
-        #endregion
+        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
+        if (post == null)
+        {
+            throw new NotFoundException(E204, M204);
+        }
 
-        if (await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order))
+        if (post.IsCompleted == true)
+        {
+            throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
+        }
+
+        var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
+        if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
 
-        if (request.IsAutoGenerateOrder)
-        {
-            var maxOrder = (await reader.ReadAsync<float>(false)).FirstOrDefault();
-            newOrder = (int)maxOrder + 1;
-        }
-        else
-        {
-            newOrder = request.Order.HasValue ? request.Order.Value : 0;
-        }
+        var newOrder = await DetermineOrder(post.Id, request.Order, request.IsAutoGenerateOrder);
 
-        reader.Dispose();
+        var userId = request.UserId.Value;
+        var userFolder = request.UserFolder;
+        var userAvatar = request.UserAvatar;
+        var userName = request.UserName;
 
-        var newChapter = new ComicSubPost
+        var subPost = new ComicSubPost
         {
             AuthorId = post.AuthorId,
-            CreatedBy = currentUserId,
+            CreatedBy = userId,
             Permission = request.Permission,
             Order = newOrder,
             Name = string.IsNullOrEmpty(request.Name) ? newOrder.ToString() : request.Name,
@@ -1747,8 +1757,8 @@ public partial class PostService : IPostService
             Status = PostStatus.Public,
             PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc,
             Title = request.Title,
-            UserId = currentUserId ?? Guid.Empty,
-            //CreatorNote = chapterPostReq.CreatorNote,
+            UserId = userId,
+            //CreatorNote = request.CreatorNote,
             IsEnableComment = request.IsEnableComment,
             ViewCount = 0,
             HashId = PostConfig.SubHashLength.GetRandomString(),
@@ -1756,64 +1766,106 @@ public partial class PostService : IPostService
             IsPremium = request.IsPremium,
             PostHashId = post.HashId
         };
-        post.ModifiedOn = DateTime.UtcNow;
-        post.ModifiedBy = currentUserId;
-        await _postRepository.UpdateAsync(post);
 
-        return newChapter;
+        post.ModifiedOn = DateTime.UtcNow;
+        post.ModifiedBy = userId;
+
+        await _context.ComicSubPosts.AddAsync(subPost);
+        await _context.SaveChangesAsync(default);
+
+        var result = MappingChapterResponse(subPost);
+        if (request?.Files.Count > 0)
+        {
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
+            {
+                SubPostId = subPost.Id,
+                Order = subPost.Order
+            };
+            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
+        }
+
+        return result;
     }
 
-    public async Task<ComicSubPost> SubPostUpdate(string postHashId, float order, ComicSubPostUpdateR request)
+    public async Task<ChapterResponse> SubPostUpdate(ComicSubPostUpdateR request)
     {
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var vr = new ComicSubPostUpdateV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
         if (!request.IsPublicNow && request.PublishDate == null)
         {
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
 
-        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == postHashId);
+        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
             throw new NotFoundException(E204, M204);
         }
 
-        //Getchapter
-        var querySubpost = string.Format(GetSeriesChapterByHashIdOrder, _postRepository.TableName);
+        var qSubPost = from sp in _context.ComicSubPostAvailable
+                       join p in _context.ComicPostAvailable on sp.PostId equals p.Id
+                       where p.HashId == request.PostHashId && sp.Order == request.ChapterOrder
+                       select sp;
+        var subPost = await qSubPost.FirstOrDefaultAsync();
+        if (subPost == null)
+        {
+            throw new NotFoundException(nameof(E208), E208);
+        }
 
-        var newChapter = await _subPostRepository
-            .Connection.QueryFirstAsync<ComicSubPost>(querySubpost, new
-            {
-                PostHashId = postHashId,
-                IsAccessPrivate = false,
-                SubPostOrder = order,
-            });
-
-        if (await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order && p.Id != newChapter.Id))
+        var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order && p.Id != subPost.Id);
+        if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
 
-        newChapter.PublishDate = request.IsPublicNow ? DateTime.UtcNow : TimeZoneInfo.ConvertTimeToUtc(request.PublishDate ?? DateTime.Now);
-        newChapter.Title = request.Title;
+        subPost.PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc;
+        subPost.Title = request.Title;
         if (!string.IsNullOrEmpty(request.Name))
         {
-            newChapter.Name = request.Name;
+            subPost.Name = request.Name;
         }
 
-        newChapter.ModifiedOn = DateTime.UtcNow;
-        newChapter.ModifiedBy = currentUserId;
-        //newChapter.CreatorNote = chapterPostReq.CreatorNote;
-        newChapter.IsEnableComment = request.IsEnableComment;
-        newChapter.Permission = request.Permission;
-        newChapter.IsPremium = request.IsPremium;
-        newChapter.PostHashId = postHashId;
-        newChapter.Order = request.Order.HasValue ? request.Order.Value : order;
+        var userId = request.UserId.Value;
+        var userFolder = request.UserFolder;
+        var userAvatar = request.UserAvatar;
+        var userName = request.UserName;
+
+        subPost.ModifiedOn = DateTime.UtcNow;
+        subPost.ModifiedBy = userId;
+        //subPost.CreatorNote = request.CreatorNote;
+        subPost.IsEnableComment = request.IsEnableComment;
+        subPost.Permission = request.Permission;
+        subPost.IsPremium = request.IsPremium;
+        subPost.PostHashId = request.PostHashId;
+        subPost.Order = request.Order ?? request.ChapterOrder;
+
         post.ModifiedOn = DateTime.UtcNow;
-        post.ModifiedBy = currentUserId;
+        post.ModifiedBy = userId;
 
-        await _postRepository.UpdateAsync(post);
+        await _context.SaveChangesAsync(default);
 
-        return newChapter;
+        var result = MappingChapterResponse(subPost);
+        if (request?.Files.Count > 0)
+        {
+            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
+            {
+                SubPostId = subPost.Id,
+                Order = subPost.Order
+            };
+            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
+        }
+
+        return result;
     }
 
     public async Task<bool> DeleteChapter(string hashId, float order)
@@ -1852,13 +1904,14 @@ public partial class PostService : IPostService
 
         return listChapter;
     }
+
     public ChapterResponse MappingChapterResponse(ComicSubPost newChapter)
     {
         var result = new ChapterResponse();
 
         result.Id = newChapter.Id;
         result.HashId = newChapter.HashId;
-        result.Body = System.Web.HttpUtility.HtmlDecode(newChapter.Body);
+        result.Body = HttpUtility.HtmlDecode(newChapter.Body);
         result.ViewCount = newChapter.ViewCount;
         result.Permission = newChapter.Permission;
         result.Order = newChapter.Order;
@@ -1920,31 +1973,6 @@ public partial class PostService : IPostService
     #endregion
 
     #region POST - COMMON
-    private void VerifyPost(ComicPost post, bool checkCompleted)
-    {
-        var currentUserId = _currentUserService.Session.UserId;
-        if (post != null)
-        {
-            if (post.IsDelete)
-            {
-                throw new BadRequestException(E205, M205);
-            }
-            if (post.CreatedBy != currentUserId)
-            {
-                //TODO check permission
-                //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
-            }
-            if (checkCompleted && (post.IsCompleted ?? false))
-            {
-                throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
-            }
-        }
-        else
-        {
-            throw new NotFoundException(E204, M204);
-        }
-    }
-
     private int GetOffsetSetup(ref ComicTopPostR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -2079,6 +2107,25 @@ public partial class PostService : IPostService
             throw new BadRequestException(E206, M206);
         }
         return _setting.Minio.GetPublicUrl(resource.Bucket, resource.Url);
+    }
+
+    /// <summary>
+    /// Determines the order for a comic subpost.
+    /// </summary>
+    /// <param name="postId">The ID of the parent post.</param>
+    /// <param name="order">The provided order value, if any.</param>
+    /// <param name="isAutoGenerateOrder">Flag indicating whether the order should be auto-generated.</param>
+    /// <returns>The calculated order as a float.</returns>
+    private async Task<float> DetermineOrder(Guid postId, float? order, bool isAutoGenerateOrder)
+    {
+        if (!isAutoGenerateOrder)
+        {
+            return order >= 1 ? order.Value : 1;
+        }
+
+        var orders = await _context.ComicSubPostAvailable.Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();
+
+        return orders.Count > 0 ? orders.Max() + 1 : 1;
     }
     #endregion
 

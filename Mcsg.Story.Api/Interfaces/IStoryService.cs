@@ -7,9 +7,6 @@ using Requests;
 
 public interface IStoryService
 {
-    Task<ChapterResponse> SubPostCreate(string comicHashId, StorySubPostCreateR request);
-    Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, StorySubPostUpdateR request);
-
     Task<PostSeriesResponse> Get(StoryHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string comicHashId, float order);

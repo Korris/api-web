@@ -9,12 +9,18 @@ using Common.Domain.Dtos;
 /// </summary>
 public class ComicSubPostFormBaseR : IdBaseR
 {
+    #region -- Properties --
+
+    /// <summary>
+    /// PostHashId
+    /// </summary>
+    public string? PostHashId { get; set; }
+
     public string? Title { get; set; }
     public string? Name { get; set; }
 
     public List<ResourcePostDto> Files { get; set; }
 
-    #region Setting
     public bool IsPublicNow { get; set; }
     public PostPermission Permission { get; set; }
     public PostStatus Status { get; set; }
@@ -24,5 +30,6 @@ public class ComicSubPostFormBaseR : IdBaseR
     public bool IsPremium { get; set; }
     public bool IsAutoGenerateOrder { get; set; }
     public float? Order { get; set; }
+
     #endregion
 }

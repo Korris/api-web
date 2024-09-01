@@ -7,9 +7,6 @@ using Requests;
 
 public interface IComicService
 {
-    Task<ChapterResponse> SubPostCreate(string comicHashId, ComicSubPostCreateR request);
-    Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, ComicSubPostUpdateR request);
-
     Task<PostSeriesResponse> Get(ComicHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string comicHashId, float order);

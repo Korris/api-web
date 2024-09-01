@@ -97,25 +97,6 @@ LIMIT 1
             }
         }
 
-        private string GetPostAndLastSubPostOrder
-
-        {
-            get
-            {
-                return @"
-                    SELECT ""Id"", ""Title"", ""HashId"", ""Type"", ""Body"", ""Status"", ""CreatedOn"", ""CreatedBy"", ""ModifiedOn"", ""ModifiedBy"", ""IsDelete"", ""Permission"", ""ThumbnailUrl"", ""AuthorName"", ""CoverUrl"", ""IsMature"", ""IsCompleted"", ""ViewCount"", ""AuthorId"", ""UserId""
-                    FROM ""comic"".""ComicPosts"" 
-                    WHERE ""HashId"" = @HashId;
-
-                    SELECT MAX(""Order"")
-                    FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts"" p
-                    ON sp.""PostId"" = p.""Id""
-                    WHERE p.""HashId"" = @HashId AND p.""IsDelete"" = false AND sp.""IsDelete"" = false
-";
-            }
-        }
-
         private string GetRelatedBoxPostQuery => @"
                                 select p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"", 
                                 COALESCE(pr.reaction_count, 0) AS TotalReacts,
@@ -765,28 +746,6 @@ LIMIT 1
 
                     WHERE p.""HashId"" = @PostHashId AND sp.""Order"" = @SubPostOrder AND sp.""IsDelete"" = false
                     ORDER BY rs.""Order"";";
-            }
-        }
-        private string GetSeriesChapterByHashIdOrder
-        {
-            get
-            {
-                return @"SELECT sp.""Id"",sp.""HashId"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
-                sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
-                sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
-                sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
-sp.""IsEnableComment""
-                    FROM ""comic"".""ComicSubPosts"" sp
-                    INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
-LEFT JOIN LATERAL (
-                                SELECT 
-                                ""EntityId"", 
-                                ""Count"" as ""ViewCount""
-                                    FROM ""SmartCountActions"" 
-                                WHERE ""EntityId"" = sp.""Id"" AND ""EntityType"" = 1 AND ""ActionType"" = 2
-LIMIT 1
-                                ) count ON count.""EntityId"" = sp.""Id""
-                    WHERE p.""HashId"" = @PostHashId AND sp.""Order"" = @SubPostOrder AND sp.""IsDelete"" = false";
             }
         }
 

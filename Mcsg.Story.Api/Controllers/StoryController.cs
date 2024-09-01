@@ -46,15 +46,18 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> SubPostCreate(string hashId, StorySubPostCreateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _storyService.SubPostCreate(hashId, request);
+        request.PostHashId = hashId;
+        var result = await _postService.SubPostCreate(request);
         return Ok(result);
     }
 
     [HttpPut("{hashId}/chapter/{chapterOrder}"), Authorize]
-    public async Task<IActionResult> SubPostUpdate(string hashId, int chapterOrder, StorySubPostUpdateR request)
+    public async Task<IActionResult> SubPostUpdate(string hashId, float chapterOrder, StorySubPostUpdateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _storyService.SubPostUpdate(hashId, chapterOrder, request);
+        request.PostHashId = hashId;
+        request.ChapterOrder = chapterOrder;
+        var result = await _postService.SubPostUpdate(request);
         return Ok(result);
     }
     #endregion
@@ -164,7 +167,7 @@ public class StoryController : ControllerBase
 
     [HttpDelete("{hashId}/chapter/{chapterOrder}")]
     [Authorize]
-    public async Task<IActionResult> DeleteChapter(string hashId, int chapterOrder)
+    public async Task<IActionResult> DeleteChapter(string hashId, float chapterOrder)
     {
         var result = await _storyService.DeleteChapter(hashId, chapterOrder);
         return Ok(result);

@@ -218,6 +218,16 @@ public static class Error
     /// </summary>
     public const string E207 = "E207";
 
+    /// <summary>
+    /// Subpost does not exist
+    /// </summary>
+    public const string E208 = "Subpost does not exist";
+
+    /// <summary>
+    /// This subpost has deleted
+    /// </summary>
+    public const string E209 = "This subpost has deleted";
+
     #endregion
 
     #region -- E3xx --

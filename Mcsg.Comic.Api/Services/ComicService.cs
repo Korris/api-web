@@ -4,18 +4,14 @@ namespace Mcsg.Comic.Api.Services;
 
 using Api.Constants;
 using Common.Core.Enums;
-using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
-using Common.Domain.Dtos;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
 using Interfaces;
 using Models;
 using Requests;
-using Validators;
-using static Common.SeedWork.Constants.Message;
 
 public partial class ComicService : IComicService
 {
@@ -33,79 +29,6 @@ public partial class ComicService : IComicService
         _type = PostType.Comic;
         _fileService = fileService;
         _postService = postService;
-    }
-
-    public async Task<ChapterResponse> SubPostCreate(string hashId, ComicSubPostCreateR request)
-    {
-        var vr = new ComicSubPostCreateV().Validate(request);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (request.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var userId = request.UserId.Value;
-        var userFolder = request.UserFolder;
-        var userAvatar = request.UserAvatar;
-        var userName = request.UserName;
-
-        var subPost = await _postService.SubPostCreate(hashId, request);
-        await _context.ComicSubPosts.AddAsync(subPost);
-        await _context.SaveChangesAsync(default);
-
-        var result = _postService.MappingChapterResponse(subPost);
-        if (request?.Files.Count > 0)
-        {
-            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
-            {
-                SubPostId = subPost.Id,
-                Order = subPost.Order
-            };
-            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
-        }
-
-        return result;
-    }
-
-    public async Task<ChapterResponse> SubPostUpdate(string hashId, float order, ComicSubPostUpdateR request)
-    {
-        var vr = new ComicSubPostUpdateV().Validate(request);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (request.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var userId = request.UserId.Value;
-        var userFolder = request.UserFolder;
-        var userAvatar = request.UserAvatar;
-        var userName = request.UserName;
-
-        var subPost = await _postService.SubPostUpdate(hashId, order, request);
-        await _context.SaveChangesAsync(default);
-
-        var result = _postService.MappingChapterResponse(subPost);
-        if (request?.Files.Count > 0)
-        {
-            var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
-            {
-                SubPostId = subPost.Id,
-                Order = subPost.Order
-            };
-            result.Files = await _fileService.ProcessComicFilesAsync(urDto);
-        }
-
-        return result;
     }
 
     public async Task<PostSeriesResponse> Get(ComicHashIdR req)

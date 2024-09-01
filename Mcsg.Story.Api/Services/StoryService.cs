@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Web;
 
 namespace Mcsg.Story.Api.Services;
 
+using Api.Constants;
 using Common.Core.Enums;
-using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.SeedWork.Exceptions;
@@ -31,56 +30,6 @@ public partial class StoryService : IStoryService
         _context = context;
         _type = PostType.Story;
         _postService = postService;
-    }
-
-    public async Task<ChapterResponse> SubPostCreate(string hashId, StorySubPostCreateR request)
-    {
-        var vr = new StorySubPostCreateV().Validate(request);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (request.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var subPost = await _postService.SubPostCreate(hashId, request);
-
-        subPost.Body = HttpUtility.HtmlEncode(request.Body);
-        await _context.StorySubPosts.AddAsync(subPost);
-        await _context.SaveChangesAsync(default);
-
-        var result = _postService.MappingChapterResponse(subPost);
-        result.Body = request.Body;
-
-        return result;
-    }
-
-    public async Task<ChapterResponse> SubPostUpdate(string hashId, float order, StorySubPostUpdateR request)
-    {
-        var vr = new StorySubPostUpdateV().Validate(request);
-        if (!vr.IsValid)
-        {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
-        }
-
-        if (request.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var subPost = await _postService.SubPostUpdate(hashId, order, request);
-        subPost.Body = HttpUtility.HtmlEncode(request.Body);
-        await _context.SaveChangesAsync(default);
-
-        var result = _postService.MappingChapterResponse(subPost);
-        result.Body = request.Body;
-
-        return result;
     }
 
     public async Task<PostSeriesResponse> Get(StoryHashIdR req)

@@ -8,12 +8,18 @@ using Common.Core.Requests;
 /// </summary>
 public class StorySubPostFormBaseR : IdBaseR
 {
+    #region -- Properties --
+
+    /// <summary>
+    /// PostHashId
+    /// </summary>
+    public string? PostHashId { get; set; }
+
     public string? Title { get; set; }
     public string? Name { get; set; }
 
     public string? Body { get; set; }
 
-    #region Setting
     public bool IsPublicNow { get; set; }
     public PostPermission Permission { get; set; }
     public PostStatus Status { get; set; }
@@ -23,5 +29,6 @@ public class StorySubPostFormBaseR : IdBaseR
     public bool IsPremium { get; set; }
     public bool IsAutoGenerateOrder { get; set; }
     public float? Order { get; set; }
+
     #endregion
 }
