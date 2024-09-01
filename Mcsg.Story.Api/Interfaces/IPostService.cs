@@ -39,8 +39,6 @@ public interface IPostService
     Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, StoryPostByProFileNameR input);
     Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, StoryPostByTagNameR input);
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
-    Task<ListIdForHomePage> GetLatestPostsByType();
-    Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<PostBoxResponse>> GetPostDetails(StoryHashIdsR req);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);

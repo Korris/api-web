@@ -28,20 +28,6 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("latest-posts-by-type")]
-    public async Task<IActionResult> GetLatestPostsByType()
-    {
-        var result = await _postService.GetLatestPostsByType();
-        return Ok(result);
-    }
-
-    [HttpGet("latest-posts-by-tag")]
-    public async Task<IActionResult> GetLatestPostsByTag([FromQuery] string tagName)
-    {
-        var result = await _postService.GetLatestPostsByTag(tagName);
-        return Ok(result);
-    }
-
     [HttpPost("get-random-ids")]
     public async Task<IActionResult> GetPostRandomIds([FromBody] PostRandomIdsR request)
     {
