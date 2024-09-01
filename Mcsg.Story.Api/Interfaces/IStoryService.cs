@@ -7,8 +7,6 @@ using Requests;
 
 public interface IStoryService
 {
-    Task<PostSeriesResponse> PostCreate(StoryPostCreateR request);
-    Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR request);
     Task<ChapterResponse> SubPostCreate(string comicHashId, StorySubPostCreateR request);
     Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, StorySubPostUpdateR request);
 

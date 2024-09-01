@@ -7,8 +7,6 @@ using Requests;
 
 public interface IComicService
 {
-    Task<PostSeriesResponse> PostCreate(ComicPostCreateR request);
-    Task<PostSeriesResponse> PostUpdate(string hashId, ComicPostUpdateR request);
     Task<ChapterResponse> SubPostCreate(string comicHashId, ComicSubPostCreateR request);
     Task<ChapterResponse> SubPostUpdate(string comicHashId, float order, ComicSubPostUpdateR request);
 

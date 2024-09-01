@@ -13,8 +13,8 @@ using Requests;
 public interface IPostService
 {
     Task<bool> Delete(Guid postId);
-    Task<PostSeriesResponse> PostCreate(PostType type, ComicPostCreateR postReq);
-    Task<PostSeriesResponse> PostUpdate(string hashId, ComicPostUpdateR postReq);
+    Task<PostSeriesResponse> PostCreate(ComicPostCreateR request);
+    Task<PostSeriesResponse> PostUpdate(ComicPostUpdateR request);
     Task<PostSeriesResponse> GetSeries(ComicHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
@@ -29,8 +29,8 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request);
 
-    Task<ComicSubPost> SubPostChapterToSeries(string hashId, ComicSubPostFormBaseR chapterPostReq);
-    Task<ComicSubPost> SubPostUpdateChapterToSeries(string hashId, float order, ComicSubPostFormBaseR chapterPostReq);
+    Task<ComicSubPost> SubPostCreate(string hashId, ComicSubPostCreateR request);
+    Task<ComicSubPost> SubPostUpdate(string hashId, float order, ComicSubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string hashId, float order);
     ChapterResponse MappingChapterResponse(ComicSubPost newChapter);

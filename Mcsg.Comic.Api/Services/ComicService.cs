@@ -35,16 +35,6 @@ public partial class ComicService : IComicService
         _postService = postService;
     }
 
-    public async Task<PostSeriesResponse> PostCreate(ComicPostCreateR request)
-    {
-        return await _postService.PostCreate(_type, request);
-    }
-
-    public async Task<PostSeriesResponse> PostUpdate(string hashId, ComicPostUpdateR request)
-    {
-        return await _postService.PostUpdate(hashId, request);
-    }
-
     public async Task<ChapterResponse> SubPostCreate(string hashId, ComicSubPostCreateR request)
     {
         var vr = new ComicSubPostCreateV().Validate(request);
@@ -64,7 +54,7 @@ public partial class ComicService : IComicService
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
 
-        var subPost = await _postService.SubPostChapterToSeries(hashId, request);
+        var subPost = await _postService.SubPostCreate(hashId, request);
         await _context.ComicSubPosts.AddAsync(subPost);
         await _context.SaveChangesAsync(default);
 
@@ -101,7 +91,7 @@ public partial class ComicService : IComicService
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
 
-        var subPost = await _postService.SubPostUpdateChapterToSeries(hashId, order, request);
+        var subPost = await _postService.SubPostUpdate(hashId, order, request);
         await _context.SaveChangesAsync(default);
 
         var result = _postService.MappingChapterResponse(subPost);

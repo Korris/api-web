@@ -33,16 +33,6 @@ public partial class StoryService : IStoryService
         _postService = postService;
     }
 
-    public async Task<PostSeriesResponse> PostCreate(StoryPostCreateR request)
-    {
-        return await _postService.PostCreate(_type, request);
-    }
-
-    public async Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR request)
-    {
-        return await _postService.PostUpdate(hashId, request);
-    }
-
     public async Task<ChapterResponse> SubPostCreate(string hashId, StorySubPostCreateR request)
     {
         var vr = new StorySubPostCreateV().Validate(request);
@@ -57,7 +47,7 @@ public partial class StoryService : IStoryService
             throw new BadRequestException(M109);
         }
 
-        var subPost = await _postService.SubPostChapterToSeries(hashId, request);
+        var subPost = await _postService.SubPostCreate(hashId, request);
 
         subPost.Body = HttpUtility.HtmlEncode(request.Body);
         await _context.StorySubPosts.AddAsync(subPost);
@@ -83,7 +73,7 @@ public partial class StoryService : IStoryService
             throw new BadRequestException(M109);
         }
 
-        var subPost = await _postService.SubPostUpdateChapterToSeries(hashId, order, request);
+        var subPost = await _postService.SubPostUpdate(hashId, order, request);
         subPost.Body = HttpUtility.HtmlEncode(request.Body);
         await _context.SaveChangesAsync(default);
 

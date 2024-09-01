@@ -13,8 +13,8 @@ using Requests;
 public interface IPostService
 {
     Task<bool> Delete(Guid postId);
-    Task<PostSeriesResponse> PostCreate(PostType type, StoryPostCreateR postReq);
-    Task<PostSeriesResponse> PostUpdate(string hashId, StoryPostUpdateR postReq);
+    Task<PostSeriesResponse> PostCreate(StoryPostCreateR request);
+    Task<PostSeriesResponse> PostUpdate(StoryPostUpdateR request);
     Task<PostSeriesResponse> GetSeries(StoryHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(string hashId, float order);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request);
@@ -29,8 +29,8 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, StoryPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, StoryRelationPostSeriesR request);
 
-    Task<StorySubPost> SubPostChapterToSeries(string hashId, StorySubPostFormBaseR chapterPostReq);
-    Task<StorySubPost> SubPostUpdateChapterToSeries(string hashId, float order, StorySubPostFormBaseR chapterPostReq);
+    Task<StorySubPost> SubPostCreate(string hashId, StorySubPostCreateR request);
+    Task<StorySubPost> SubPostUpdate(string hashId, float order, StorySubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders);
     Task<bool> DeleteChapter(string hashId, float order);
     ChapterResponse MappingChapterResponse(StorySubPost newChapter);

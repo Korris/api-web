@@ -27,7 +27,7 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> PostCreate(StoryPostCreateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _storyService.PostCreate(request);
+        var result = await _postService.PostCreate(request);
         return Ok(result);
     }
 
@@ -35,7 +35,8 @@ public class StoryController : ControllerBase
     public async Task<IActionResult> PostUpdate(string hashId, StoryPostUpdateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _storyService.PostUpdate(hashId, request);
+        request.HashId = hashId;
+        var result = await _postService.PostUpdate(request);
         return Ok(result);
     }
     #endregion

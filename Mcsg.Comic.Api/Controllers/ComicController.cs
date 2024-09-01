@@ -27,7 +27,7 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> PostCreate(ComicPostCreateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _comicService.PostCreate(request);
+        var result = await _postService.PostCreate(request);
         return Ok(result);
     }
 
@@ -35,7 +35,8 @@ public class ComicController : ControllerBase
     public async Task<IActionResult> PostUpdate(string hashId, ComicPostUpdateR request)
     {
         request.Analyze(HttpContext);
-        var result = await _comicService.PostUpdate(hashId, request);
+        request.HashId = hashId;
+        var result = await _postService.PostUpdate(request);
         return Ok(result);
     }
     #endregion
