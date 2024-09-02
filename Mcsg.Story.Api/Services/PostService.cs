@@ -1676,7 +1676,7 @@ public partial class PostService : IPostService
             PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc,
             Title = request.Title,
             UserId = userId,
-            //CreatorNote = request.CreatorNote,
+            Body = request.Body,
             IsEnableComment = request.IsEnableComment,
             ViewCount = 0,
             HashId = PostConfig.SubHashLength.GetRandomString(),
