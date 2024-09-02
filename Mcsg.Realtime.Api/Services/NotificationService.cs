@@ -34,6 +34,8 @@ public class NotificationService : INotificationService
     private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
     private readonly IRepository<ComicSubPostComment> _comicSubPostCommentRepository;
     private readonly IRepository<StorySubPostComment> _storySubPostCommentRepository;
+    private readonly IRepository<ComicSubPost> _comicSubPostRepository;
+    private readonly IRepository<StorySubPost> _storySubPostRepository;
     private readonly IRepository<Notification> _notiRepository;
     private readonly IRepository<NotificationObject> _notiObjectRepository;
     private readonly IHubContext<NotificationHub> _hubcontext;
@@ -58,6 +60,8 @@ public class NotificationService : INotificationService
         _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
+        _comicSubPostRepository = unitOfWork.GetRepository<ComicSubPost>();
+        _storySubPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _unitOfWork = unitOfWork;
         _hubcontext = hubcontext;
         _context = context;
@@ -240,7 +244,7 @@ public class NotificationService : INotificationService
             && reaction.EntityType != NotificationEntityType.StoryPostReaction
             && reaction.EntityType != NotificationEntityType.ComicPostReaction
             && reaction.EntityType != NotificationEntityType.SubPostReaction;
-        // React to post
+        // Reaction for comment => Find Id of Post
         if (isCommentReaction)
         {
             dynamic postComment = reaction.EntityType switch
@@ -248,16 +252,18 @@ public class NotificationService : INotificationService
                 NotificationEntityType.PostCommentReaction => await _postCommentRepository.GetByIdAsync(reaction.TargetId),
                 NotificationEntityType.ComicPostCommentReaction => await _comicPostCommentRepository.GetByIdAsync(reaction.TargetId),
                 NotificationEntityType.StoryPostCommentReaction => await _storyPostCommentRepository.GetByIdAsync(reaction.TargetId),
+                NotificationEntityType.SubPostCommentReaction => await _subPostCommentRepository.GetByIdAsync(reaction.TargetId),
+                NotificationEntityType.ComicSubPostCommentReaction => await _comicSubPostCommentRepository.GetByIdAsync(reaction.TargetId),
+                NotificationEntityType.StorySubPostCommentReaction => await _storySubPostCommentRepository.GetByIdAsync(reaction.TargetId),
                 _ => await _postCommentRepository.GetByIdAsync(reaction.TargetId)
             };
 
             targetId = postComment.PostId;
-            locationId = postComment.Id;
             receiverId = postComment.CreatedBy;
             //locationHashId = postComment.HashId;
-            response.CommentId = postComment.Id;
+            locationId = reaction.TargetId;
+            response.CommentId = reaction.TargetId;
             response.Message = reaction.AuthorName + NotificationContent.ReactOnComment;
-
         }
 
         dynamic post = reaction.EntityType switch
@@ -266,6 +272,8 @@ public class NotificationService : INotificationService
             NotificationEntityType.ComicPostReaction or NotificationEntityType.ComicPostCommentReaction => await _comicPostRepository.GetByIdAsync(targetId),
             NotificationEntityType.StoryPostReaction or NotificationEntityType.StoryPostCommentReaction => await _storyPostRepository.GetByIdAsync(targetId),
             NotificationEntityType.SubPostReaction or NotificationEntityType.SubPostCommentReaction => await _subPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.ComicSubPostCommentReaction => await _comicSubPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.StorySubPostCommentReaction => await _storySubPostRepository.GetByIdAsync(targetId),
             _ => await _postRepository.GetByIdAsync(targetId),
         };
 
@@ -273,6 +281,13 @@ public class NotificationService : INotificationService
         {
             postId = post.Id;
             postHashId = post.HashId;
+            /// only reaction by subpost comment need order to go to subpost Comic/Story
+            if (reaction.EntityType == NotificationEntityType.ComicSubPostCommentReaction || reaction.EntityType == NotificationEntityType.StorySubPostCommentReaction)
+            {
+                response.Order = post.Order;
+                Guid postIdOfSubPost = post.PostId;
+                postHashId = reaction.EntityType == NotificationEntityType.ComicSubPostCommentReaction ? (await _comicPostRepository.GetByIdAsync(postIdOfSubPost)).HashId : (await _storyPostRepository.GetByIdAsync(postIdOfSubPost)).HashId;
+            }
             if (!isCommentReaction)
             {
                 receiverId = post.UserId != null ? post.UserId : Guid.Empty;
@@ -285,7 +300,9 @@ public class NotificationService : INotificationService
                 NotificationEntityType.PostReaction or NotificationEntityType.PostCommentReaction => NotificationTargetType.Feed,
                 NotificationEntityType.StoryPostReaction or NotificationEntityType.StoryPostCommentReaction => NotificationTargetType.Story,
                 NotificationEntityType.ComicPostReaction or NotificationEntityType.ComicPostCommentReaction => NotificationTargetType.Comic,
-                NotificationEntityType.SubPostReaction or NotificationEntityType.SubPostCommentReaction => NotificationTargetType.SubFeed
+                NotificationEntityType.SubPostReaction or NotificationEntityType.SubPostCommentReaction => NotificationTargetType.SubFeed,
+                NotificationEntityType.ComicSubPostCommentReaction => NotificationTargetType.SubComic,
+                NotificationEntityType.StorySubPostCommentReaction => NotificationTargetType.SubStory,
             };
 
             var notificationObject = await _context.NotificationObjects.Where(p => p.EntityType == reaction.EntityType

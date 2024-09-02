@@ -190,6 +190,56 @@ public partial class NotificationService : INotificationService
                 }
             }
         }
+
+        var comicSubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReaction).Select(p => p.LocationId).ToList();
+        if (comicSubPostCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                        SELECT pc.""Id"" as CommentId,p.""HashId"" as HashPostId, sp.""Order"" from comic.""ComicSubPostComments"" pc
+                                        LEFT JOIN comic.""ComicSubPosts"" sp on pc.""PostId"" = sp.""Id""                                        
+                                        LEFT JOIN comic.""ComicPosts"" p on sp.""PostId"" = p.""Id""
+                                        WHERE pc.""Id"" = ANY(@ids)", new { ids = comicSubPostCommentReactionIds });
+
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
+                                                         p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReaction);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                        response.Order = item.Order;
+                    }
+                }
+            }
+        }
+
+        var storySubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReaction).Select(p => p.LocationId).ToList();
+        if (storySubPostCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                 SELECT pc.""Id"" as CommentId,p.""HashId"" as HashPostId, sp.""Order"" from story.""StorySubPostComments"" pc
+                                 LEFT JOIN story.""StorySubPosts"" sp on pc.""PostId"" = sp.""Id""                                 
+                                 LEFT JOIN story.""StoryPosts"" p on sp.""PostId"" = p.""Id""
+                                 WHERE pc.""Id"" = ANY(@ids)", new { ids = storySubPostCommentReactionIds });
+
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
+                                                         p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReaction);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                        response.Order = item.Order;
+                    }
+                }
+            }
+        }
     }
 
     private async Task CheckDataFollowPost(List<NotificationModel> resDto)

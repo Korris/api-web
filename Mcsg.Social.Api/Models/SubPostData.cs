@@ -16,6 +16,7 @@ public class PostDataByPostComment
 {
     public Guid CommentId { get; set; }
     public string HashPostId { get; set; }
+    public float Order { get; set; }
 }
 
 
