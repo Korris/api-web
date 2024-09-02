@@ -1,8 +1,11 @@
-﻿namespace Mcsg.Wallet.Api;
+﻿using Newtonsoft.Json;
+
+namespace Mcsg.Wallet.Api;
 
 using Common.SeedWork;
 using Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
+using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting
@@ -67,6 +70,14 @@ public class Setting : SettingBase, ISetting
         NotificationQueueSms = string.Empty;
         NotificationQueueSyncData = string.Empty;
         NotificationRoutingKey = string.Empty;
+    }
+
+    /// <summary>
+    /// Load storages
+    /// </summary>
+    public void LoadStorages()
+    {
+        Minio.Storages = JsonConvert.DeserializeObject<List<MinioInstanceDto>>(Storage!)!;
     }
 
     #endregion

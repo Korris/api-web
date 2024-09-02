@@ -1,0 +1,22 @@
+[
+    {
+        "instance": 0,
+        "endPoint": "minio.teamsgsite.com",
+        "publicUrl": "https://minio.teamsgsite.com",
+        "publicPrefix": "",
+        "bucketName": "bumcheo-local",
+        "location": "us-east-1",
+        "accessKey": "admin",
+        "secrectKey": "P@SSnhucu6969"
+    },
+    {
+        "instance": 1,
+        "endPoint": "minio.teamsgsite.com",
+        "publicUrl": "https://minio.teamsgsite.com",
+        "publicPrefix": "",
+        "bucketName": "bumcheo-local",
+        "location": "us-east-1",
+        "accessKey": "admin",
+        "secrectKey": "P@SSnhucu6969"
+    }
+]

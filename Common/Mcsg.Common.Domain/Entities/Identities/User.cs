@@ -109,7 +109,7 @@ public partial class User : IdentityUser<Guid>
     /// <summary>
     /// Minio instance
     /// </summary>
-    public int MinioInstance { get; set; }
+    public MinioInstanceType MinioInstance { get; set; }
 
     /// <summary>
     /// Storage limit (MB)

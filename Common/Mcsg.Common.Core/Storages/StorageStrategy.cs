@@ -30,7 +30,7 @@ public class StorageStrategy : IStorageStrategy
     /// Set auth sender
     /// </summary>
     /// <param name="auth">Auth sender</param>
-    public void SetAuthSender(MinioDto auth)
+    public void SetAuthSender(MinioInstanceDto auth)
     {
         _auth = auth;
     }
@@ -166,7 +166,7 @@ public class StorageStrategy : IStorageStrategy
     /// <summary>
     /// Auth sender
     /// </summary>
-    protected MinioDto? _auth { get; set; }
+    protected MinioInstanceDto? _auth { get; set; }
 
     #endregion
 }

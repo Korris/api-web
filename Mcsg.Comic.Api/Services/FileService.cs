@@ -84,7 +84,8 @@ public class FileService : IFileService
         var fileTitle = file.FileName;
         var imgWidth = 0;
         var imgHeight = 0;
-        var bucketName = _setting.Minio.BucketName;
+        var minioInstance = request.MinioInstance;
+        var bucketName = _setting.GetMinio(minioInstance).BucketName;
         var objectName = "";
         var objectNameOriginal = "";
         var compressedSize = file.Length;
@@ -92,7 +93,7 @@ public class FileService : IFileService
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         if (request.IsPublic == true)
         {
-            bucketName = _sc.Strategy.BucketNamePublic;
+            bucketName = _sc.GetStrategy(minioInstance).BucketNamePublic;
             objectName = $"{Setting.MinioFolder.Comic}/{user.UserFolder}{type}/{hashFileName}";
 
             if (request.Type == "Thumb")
@@ -116,7 +117,7 @@ public class FileService : IFileService
                 {
                     using (var thumbStream = compressedThumb.Image.OpenReadStream())
                     {
-                        await _sc.Strategy.PutObject(thumbStream, objectName, bucketName);
+                        await _sc.GetStrategy(minioInstance).PutObject(thumbStream, objectName, bucketName);
                     }
                 }
             }
@@ -132,7 +133,7 @@ public class FileService : IFileService
             using (var stream = compressedImage.Image.OpenReadStream())
             {
                 compressedSize = stream.Length;
-                await _sc.Strategy.PutObject(stream, objectNameOriginal, bucketName);
+                await _sc.GetStrategy(minioInstance).PutObject(stream, objectNameOriginal, bucketName);
             }
         }
         else
@@ -147,7 +148,7 @@ public class FileService : IFileService
 
             using (var stream = file.OpenReadStream())
             {
-                await _sc.Strategy.PutObject(stream, objectName, bucketName);
+                await _sc.GetStrategy(minioInstance).PutObject(stream, objectName, bucketName);
             }
         }
 
@@ -166,7 +167,7 @@ public class FileService : IFileService
             Height = imgHeight,
             Size = file.Length,
             CompressedSize = compressedSize,
-            MinioInstance = request.MinioInstance ?? 0
+            MinioInstance = minioInstance
         };
 
         await _context.ComicResources.AddAsync(resource);
@@ -175,11 +176,11 @@ public class FileService : IFileService
         var shareUrl = "";
         if (request.IsPublic == true)
         {
-            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, request.Type == PostResourceType.Thumb ? objectNameOriginal : objectName);
+            shareUrl = _setting.GetMinio(minioInstance).GetPublicUrl(resource.BucketName, request.Type == PostResourceType.Thumb ? objectNameOriginal : objectName);
         }
         else
         {
-            shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+            shareUrl = await _sc.GetStrategy(minioInstance).PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
         }
 
         return new UploadFileDto
@@ -209,7 +210,7 @@ public class FileService : IFileService
         foreach (var resource in resources)
         {
             var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
-            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+            var shareUrl = await _sc.GetStrategy().PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
 
             subPosts.Add(new SubUploadFileDto
             {
@@ -334,7 +335,7 @@ public class FileService : IFileService
 
         foreach (var resource in resourcesResult.OrderBy(p => p.Order))
         {
-            var shareUrl = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+            var shareUrl = await _sc.GetStrategy().PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
             var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
             subPosts.Add(new SubUploadFileDto
             {
@@ -389,17 +390,17 @@ public class FileService : IFileService
                 var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 tempBlobName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
-                var isExistTempFile = await _sc.Strategy.StatObject(tempBlobName, null);
+                var isExistTempFile = await _sc.GetStrategy().StatObject(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
-                    await _sc.Strategy.RemoveObject(tempBlobName, null);
+                    await _sc.GetStrategy().RemoveObject(tempBlobName, null);
                 }
 
                 targetBlobName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
-                var isExistTargetFile = await _sc.Strategy.StatObject(targetBlobName, null);
+                var isExistTargetFile = await _sc.GetStrategy().StatObject(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
-                    await _sc.Strategy.RemoveObject(targetBlobName, null);
+                    await _sc.GetStrategy().RemoveObject(targetBlobName, null);
                 }
             }
         }
@@ -443,17 +444,17 @@ public class FileService : IFileService
             var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
-            var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
+            var isExistTempFile = await _sc.GetStrategy().StatObject(tempObjectName, null);
 
             var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
-            var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
+            var isExistTargetFile = await _sc.GetStrategy().StatObject(targetObjectName, null);
 
             if (isExistTempFile != null && isExistTargetFile == null)
             {
-                await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+                await _sc.GetStrategy().CopyObject(tempObjectName, targetObjectName, null, null);
 
                 resource.Size = isExistTempFile!.Size;
-                await _sc.Strategy.RemoveObject(tempObjectName, null);
+                await _sc.GetStrategy().RemoveObject(tempObjectName, null);
             }
             #endregion
 

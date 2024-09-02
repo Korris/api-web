@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
+using Common.SeedWork.Enums;
 using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
@@ -33,7 +34,7 @@ public class BaseResource : AuditableEntity
     /// <summary>
     /// Minio instance
     /// </summary>
-    public int MinioInstance { get; set; }
+    public MinioInstanceType? MinioInstance { get; set; }
 
     public Guid? AuthorId { get; set; }
     public Guid? SubPostId { get; set; }

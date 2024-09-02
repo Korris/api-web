@@ -1,7 +1,10 @@
-﻿namespace Mcsg.Media.Api;
+﻿using Newtonsoft.Json;
+
+namespace Mcsg.Media.Api;
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting
@@ -21,6 +24,14 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
+    }
+
+    /// <summary>
+    /// Load storages
+    /// </summary>
+    public void LoadStorages()
+    {
+        Minio.Storages = JsonConvert.DeserializeObject<List<MinioInstanceDto>>(Storage!)!;
     }
 
     #endregion

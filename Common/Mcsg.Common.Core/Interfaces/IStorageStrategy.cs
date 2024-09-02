@@ -30,7 +30,7 @@ public interface IStorageStrategy
     /// Set auth sender
     /// </summary>
     /// <param name="auth">Auth sender</param>
-    void SetAuthSender(MinioDto auth);
+    void SetAuthSender(MinioInstanceDto auth);
 
     /// <summary>
     /// Get object

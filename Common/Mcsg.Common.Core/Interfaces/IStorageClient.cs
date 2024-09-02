@@ -13,6 +13,8 @@
 
 namespace Mcsg.Common.Core.Interfaces;
 
+using SeedWork.Enums;
+
 /// <summary>
 /// Interface storage client
 /// </summary>
@@ -26,14 +28,12 @@ public interface IStorageClient
     /// <param name="strategy">Strategy</param>
     void SetStrategy(IStorageStrategy strategy);
 
-    #endregion
-
-    #region -- Properties --
-
     /// <summary>
-    /// Strategy
+    /// Retrieves an <see cref="IStorageStrategy"/> based on the specified instance type.
     /// </summary>
-    IStorageStrategy Strategy { get; }
+    /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
+    /// <returns>The corresponding <see cref="IStorageStrategy"/> object.</returns>
+    IStorageStrategy GetStrategy(MinioInstanceType instance = MinioInstanceType.Default);
 
     #endregion
 }

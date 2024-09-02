@@ -52,7 +52,7 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        var ms = await _sc.Strategy.GetObject(objectName, null) as MemoryStream;
+        var ms = await _sc.GetStrategy().GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {
             return NoContent();

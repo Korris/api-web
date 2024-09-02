@@ -44,7 +44,7 @@ public class ImageController : ControllerBase
         if (!string.IsNullOrWhiteSpace(p))
         {
             objectName = $"{Setting.MinioFolder.Image}/{p}";
-            fs = await _sc.Strategy.GetObject(objectName, null);
+            fs = await _sc.GetStrategy().GetObject(objectName, null);
         }
         else
         {
@@ -59,7 +59,7 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
-            fs = await _sc.Strategy.GetObject(objectName, null);
+            fs = await _sc.GetStrategy().GetObject(objectName, null);
         }
 
         var ms = fs as MemoryStream;

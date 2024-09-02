@@ -1,7 +1,10 @@
-﻿namespace Mcsg.Media.Tool;
+﻿using Newtonsoft.Json;
+
+namespace Mcsg.Media.Tool;
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting
@@ -43,6 +46,14 @@ public class Setting : SettingBase, ISetting
         AppVersion = "1.0.0";
         PoolSize = 5;
         DefaultConnection = "Server={DbServer};Database={DbName};Port={DbPort};User Id={DbUser};Password={DbPassword};MaxPoolSize=100;MinPoolSize=10;ConnectionLifetime=300;";
+    }
+
+    /// <summary>
+    /// Load storages
+    /// </summary>
+    public void LoadStorages()
+    {
+        Minio.Storages = JsonConvert.DeserializeObject<List<MinioInstanceDto>>(Storage!)!;
     }
 
     #endregion

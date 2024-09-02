@@ -1,0 +1,22 @@
+[
+    {
+        "instance": 0,
+        "endPoint": "localhost:9000",
+        "publicUrl": "http://localhost:9000",
+        "publicPrefix": "",
+        "bucketName": "bumcheo-local",
+        "location": "us-east-1",
+        "accessKey": "admin",
+        "secrectKey": "P@SSnhucu6969"
+    },
+    {
+        "instance": 1,
+        "endPoint": "localhost:9000",
+        "publicUrl": "http://localhost:9000",
+        "publicPrefix": "",
+        "bucketName": "bumcheo-local",
+        "location": "us-east-1",
+        "accessKey": "admin",
+        "secrectKey": "P@SSnhucu6969"
+    }
+]

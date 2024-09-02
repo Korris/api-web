@@ -59,17 +59,17 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Comic}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
+        var isExistTempFile = await _sc.GetStrategy().StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
+        var isExistTargetFile = await _sc.GetStrategy().StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {
-            await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+            await _sc.GetStrategy().CopyObject(tempObjectName, targetObjectName, null, null);
 
             resource.Size = isExistTempFile!.Size;
-            await _sc.Strategy.RemoveObject(tempObjectName, null);
+            await _sc.GetStrategy().RemoveObject(tempObjectName, null);
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
@@ -99,17 +99,17 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
+        var isExistTempFile = await _sc.GetStrategy().StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
+        var isExistTargetFile = await _sc.GetStrategy().StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {
-            await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+            await _sc.GetStrategy().CopyObject(tempObjectName, targetObjectName, null, null);
 
             resource.Size = isExistTempFile!.Size;
-            await _sc.Strategy.RemoveObject(tempObjectName, null);
+            await _sc.GetStrategy().RemoveObject(tempObjectName, null);
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
@@ -139,17 +139,17 @@ public partial class ResourceCommentService : IResourceCommentService
         var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
         var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-        var isExistTempFile = await _sc.Strategy.StatObject(tempObjectName, null);
+        var isExistTempFile = await _sc.GetStrategy().StatObject(tempObjectName, null);
 
         var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-        var isExistTargetFile = await _sc.Strategy.StatObject(targetObjectName, null);
+        var isExistTargetFile = await _sc.GetStrategy().StatObject(targetObjectName, null);
 
         if (isExistTempFile != null && isExistTargetFile == null)
         {
-            await _sc.Strategy.CopyObject(tempObjectName, targetObjectName, null, null);
+            await _sc.GetStrategy().CopyObject(tempObjectName, targetObjectName, null, null);
 
             resource.Size = isExistTempFile!.Size;
-            await _sc.Strategy.RemoveObject(tempObjectName, null);
+            await _sc.GetStrategy().RemoveObject(tempObjectName, null);
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;

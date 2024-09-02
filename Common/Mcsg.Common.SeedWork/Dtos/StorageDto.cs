@@ -18,46 +18,12 @@ namespace Mcsg.Common.SeedWork.Dtos;
 /// </summary>
 public abstract class StorageDto
 {
-    #region -- Properties --
-
-    /// <summary>
-    /// EndPoint
-    /// </summary>
-    public string EndPoint { get; set; } = default!;
-
-    /// <summary>
-    /// Public URL
-    /// </summary>
-    public string PublicUrl { get; set; } = default!;
-
-    /// <summary>
-    /// Upload multipart body length limit (MB)
-    /// </summary>
-    public int UploadMultipartBodyLengthLimit { get; set; } = 128;
-
-    /// <summary>
-    /// Upload value length limit (MB)
-    /// </summary>
-    public int UploadValueLengthLimit { get; set; } = 4;
-
-    /// <summary>
-    /// Media extension allow
-    /// </summary>
-    public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, webm, heic, webp, mov";
-
-    /// <summary>
-    /// Image down quality
-    /// </summary>
-    public int ImageDownQuality { get; set; } = 75;
-
-    #endregion
-
     #region -- Classes --
 
     /// <summary>
-    /// MinIO
+    /// MinioInstance
     /// </summary>
-    public class MinioDto : StorageDto
+    public class MinioInstanceDto
     {
         #region -- Methods --
 
@@ -78,14 +44,29 @@ public abstract class StorageDto
         #region -- Properties --
 
         /// <summary>
-        /// Bucket name
+        /// Minio instance
         /// </summary>
-        public string BucketName { get; set; } = default!;
+        public int Instance { get; set; }
+
+        /// <summary>
+        /// EndPoint
+        /// </summary>
+        public string EndPoint { get; set; } = default!;
+
+        /// <summary>
+        /// Public URL
+        /// </summary>
+        public string PublicUrl { get; set; } = default!;
 
         /// <summary>
         /// Public prefix
         /// </summary>
         public string? PublicPrefix { get; set; }
+
+        /// <summary>
+        /// Bucket name
+        /// </summary>
+        public string BucketName { get; set; } = default!;
 
         /// <summary>
         /// Location
@@ -103,14 +84,49 @@ public abstract class StorageDto
         public string SecrectKey { get; set; } = default!;
 
         /// <summary>
-        /// Maximum expiry in seconds (7 days)
-        /// </summary>
-        public int MaxExpiryInSeconds { get; set; } = 7 * 24 * 60 * 60; // 7 days
-
-        /// <summary>
         /// Bucket name public
         /// </summary>
         public string BucketNamePublic => BucketName + "-public";
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Represents the MinIO configuration.
+    /// </summary>
+    public class MinioDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// Gets or sets the list of MinIO instances.
+        /// </summary>
+        public List<MinioInstanceDto> Storages { get; set; } = [];
+
+        /// <summary>
+        /// Gets or sets the upload multipart body length limit in megabytes.
+        /// </summary>
+        public int UploadMultipartBodyLengthLimit { get; set; } = 128;
+
+        /// <summary>
+        /// Gets or sets the upload value length limit in megabytes.
+        /// </summary>
+        public int UploadValueLengthLimit { get; set; } = 4;
+
+        /// <summary>
+        /// Gets or sets the allowed media file extensions.
+        /// </summary>
+        public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, webm, heic, webp, mov";
+
+        /// <summary>
+        /// Gets or sets the image downscaling quality percentage.
+        /// </summary>
+        public int ImageDownQuality { get; set; } = 75;
+
+        /// <summary>
+        /// Gets or sets the maximum expiry time in seconds (default is 7 days).
+        /// </summary>
+        public int MaxExpiryInSeconds { get; set; } = 7 * 24 * 60 * 60; // 7 days
 
         #endregion
     }

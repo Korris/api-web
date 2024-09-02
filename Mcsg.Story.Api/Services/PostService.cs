@@ -11,6 +11,7 @@ using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -130,8 +131,9 @@ public partial class PostService : IPostService
         //Check first post
         var rewards = await CheckRewardsForPost(userId, PostType.Story);
 
-        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
-        var coverUrl = await GetPublicUrl(request.CoverHashId);
+        var minioInstance = request.MinioInstance;
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId, minioInstance);
+        var coverUrl = await GetPublicUrl(request.CoverHashId, minioInstance);
 
         var hashId = PostConfig.HashLength.GetRandomString();
         var post = new StoryPost
@@ -843,8 +845,9 @@ public partial class PostService : IPostService
             throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
 
-        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
-        var coverUrl = await GetPublicUrl(request.CoverHashId);
+        var minioInstance = request.MinioInstance;
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId, minioInstance);
+        var coverUrl = await GetPublicUrl(request.CoverHashId, minioInstance);
 
         if (string.IsNullOrEmpty(request.Summary))
         {
@@ -1988,9 +1991,10 @@ public partial class PostService : IPostService
     /// GetPublicUrl
     /// </summary>
     /// <param name="hashId"></param>
+    /// <param name="minioInstance"></param>
     /// <returns></returns>
     /// <exception cref="BadRequestException"></exception>
-    private async Task<string> GetPublicUrl(string hashId)
+    private async Task<string> GetPublicUrl(string hashId, MinioInstanceType minioInstance)
     {
         var resource = await _context.StoryResources.Where(p => p.HashId == hashId)
             .Select(p => new { p.Url, Bucket = p.BucketName })
@@ -1999,7 +2003,7 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(E206, M206);
         }
-        return _setting.Minio.GetPublicUrl(resource.Bucket, resource.Url);
+        return _setting.GetMinio(minioInstance).GetPublicUrl(resource.Bucket, resource.Url);
     }
 
     /// <summary>

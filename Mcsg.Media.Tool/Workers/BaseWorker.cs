@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 namespace Mcsg.Media.Tool.Workers
 {
     using Common.Core.Interfaces;
+    using Common.SeedWork.Enums;
     using Common.SeedWork.Extensions;
     using Interfaces;
     using Models;
@@ -41,7 +42,7 @@ namespace Mcsg.Media.Tool.Workers
                 File.Delete(filePath);
             }
 
-            var fs = await _sc.Strategy.GetObject(path, null);
+            var fs = await _sc.GetStrategy(MinioInstanceType.Default).GetObject(path, null);
             fs.ToFile(filePath);
 
             return filePath;
@@ -50,7 +51,7 @@ namespace Mcsg.Media.Tool.Workers
         public async Task UploadBlobAsync(string localFile, string remoteUri)
         {
             var fs = File.OpenRead(localFile);
-            await _sc.Strategy.PutObject(fs, remoteUri, null);
+            await _sc.GetStrategy(MinioInstanceType.Default).PutObject(fs, remoteUri, null);
             fs.Close();
         }
 

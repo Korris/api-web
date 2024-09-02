@@ -98,7 +98,7 @@ public class ConfigController : ControllerBase
         try
         {
             var file = "config/validators.json";
-            var ms = await _sc.Strategy.GetObject(file, null);
+            var ms = await _sc.GetStrategy().GetObject(file, null);
             var jsonFile = new StringBuilder(Common.SeedWork.Extensions.StreamExtension.ToString(ms)).ToString();
             res.SetSuccess(nameof(jsonFile), jsonFile);
         }

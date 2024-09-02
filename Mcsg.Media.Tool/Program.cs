@@ -38,15 +38,8 @@ internal class Program
         var services = new ServiceCollection();
 
         // Storage
-        services.AddStorage(p =>
-        {
-            p.BucketName = st.Minio.BucketName;
-            p.Location = st.Minio.Location;
-            p.EndPoint = st.Minio.EndPoint;
-            p.PublicUrl = st.Minio.PublicUrl;
-            p.AccessKey = st.Minio.AccessKey;
-            p.SecrectKey = st.Minio.SecrectKey;
-        });
+        st.LoadStorages();
+        services.AddStorage(p => { p.Storages = st.Minio.Storages; });
 
         var serviceProvider = services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();

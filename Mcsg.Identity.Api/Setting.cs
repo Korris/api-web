@@ -1,8 +1,11 @@
-﻿namespace Mcsg.Identity.Api;
+﻿using Newtonsoft.Json;
+
+namespace Mcsg.Identity.Api;
 
 using Common.SeedWork;
 using Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
+using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting
@@ -75,6 +78,14 @@ public class Setting : SettingBase, ISetting
         NotificationQueueEmail = string.Empty;
         NotificationQueueSms = string.Empty;
         NotificationRoutingKey = string.Empty;
+    }
+
+    /// <summary>
+    /// Load storages
+    /// </summary>
+    public void LoadStorages()
+    {
+        Minio.Storages = JsonConvert.DeserializeObject<List<MinioInstanceDto>>(Storage!)!;
     }
 
     #endregion

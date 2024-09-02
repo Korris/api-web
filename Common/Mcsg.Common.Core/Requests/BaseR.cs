@@ -23,6 +23,7 @@ namespace Mcsg.Common.Core.Requests;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Constants;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Responses;
 using static Common.SeedWork.Constants.Setting;
 
@@ -161,7 +162,7 @@ public class BaseR : IRequest<SingleResponse>
     /// User MinioInstance
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public int? MinioInstance => Payload?.RootElement.GetProperty("minioInstance").GetInt32();
+    public MinioInstanceType MinioInstance => (MinioInstanceType?)Payload?.RootElement.GetProperty("minioInstance").GetInt32() ?? MinioInstanceType.Default;
 
     /// <summary>
     /// UserAgent

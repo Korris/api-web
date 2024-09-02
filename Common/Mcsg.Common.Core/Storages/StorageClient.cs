@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 namespace Mcsg.Common.Core.Storages;
 
 using Interfaces;
+using SeedWork.Enums;
 using static SeedWork.Dtos.StorageDto;
 
 /// <summary>
@@ -31,14 +32,18 @@ public class StorageClient : IStorageClient
     /// <param name="strategy">Strategy</param>
     public void SetStrategy(IStorageStrategy strategy)
     {
-        _strategy = strategy;
-        _strategy.SetAuthSender(_auth);
+        _strategy.Add(strategy);
     }
 
     /// <summary>
-    /// Strategy
+    /// Retrieves an <see cref="IStorageStrategy"/> based on the specified instance type.
     /// </summary>
-    public IStorageStrategy Strategy => _strategy;
+    /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
+    /// <returns>The corresponding <see cref="IStorageStrategy"/> object.</returns>
+    public IStorageStrategy GetStrategy(MinioInstanceType instance)
+    {
+        return _strategy[(int)instance];
+    }
 
     #endregion
 
@@ -51,8 +56,14 @@ public class StorageClient : IStorageClient
     public StorageClient(IOptions<MinioDto> options)
     {
         _auth = options.Value;
-        _strategy = new StorageMinio();
-        _strategy.SetAuthSender(_auth);
+        _strategy = [];
+
+        foreach (var i in _auth.Storages)
+        {
+            var strategy = new StorageMinio();
+            strategy.SetAuthSender(i);
+            _strategy.Add(strategy);
+        }
     }
 
     #endregion
@@ -62,7 +73,7 @@ public class StorageClient : IStorageClient
     /// <summary>
     /// Strategy
     /// </summary>
-    private IStorageStrategy _strategy;
+    private List<IStorageStrategy> _strategy;
 
     /// <summary>
     /// Auth sender

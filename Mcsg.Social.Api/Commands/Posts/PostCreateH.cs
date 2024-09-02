@@ -207,7 +207,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
                     if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
                     {
-                        resource.Url = await _sc.Strategy.PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+                        resource.Url = await _sc.GetStrategy(request.MinioInstance).PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
                     }
                     resourceResponse.Add(resource);
                 }

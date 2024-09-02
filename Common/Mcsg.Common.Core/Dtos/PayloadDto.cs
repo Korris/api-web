@@ -15,6 +15,8 @@ using System.Text.Json.Serialization;
 
 namespace Mcsg.Common.Core.Dtos;
 
+using SeedWork.Enums;
+
 /// <summary>
 /// Payload data transfer object
 /// </summary>
@@ -82,7 +84,7 @@ public class PayloadDto
     /// <summary>
     /// Minio instance
     /// </summary>
-    public int MinioInstance { get; set; }
+    public MinioInstanceType MinioInstance { get; set; }
 
     /// <summary>
     /// Storage limit (MB)

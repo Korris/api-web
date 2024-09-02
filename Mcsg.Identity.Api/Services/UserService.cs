@@ -356,14 +356,14 @@ public partial class UserService : IUserService
             throw new NotFoundException(E303, M303);
         }
 
-        var bucketName = _sc.Strategy.BucketNamePublic;
+        var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
 
         var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.Strategy.StatObject(objectName, bucketName);
+            var isExistFile = await _sc.GetStrategy(request.MinioInstance).StatObject(objectName, bucketName);
             if (isExistFile != null)
             {
                 fileName = GenerateNewFileName(file.FileName);
@@ -372,7 +372,7 @@ public partial class UserService : IUserService
             {
                 fileName = file.FileName;
             }
-            user.Avatar = _setting.Minio.GetPublicUrl(bucketName, objectName);
+            user.Avatar = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
 
             Stream? newFormFile = null;
             using (var imageContent = file.OpenReadStream())
@@ -380,7 +380,7 @@ public partial class UserService : IUserService
                 newFormFile = imageContent.ResizeImage(180, 180);
             }
 
-            await _sc.Strategy.PutObject(newFormFile, objectName, bucketName);
+            await _sc.GetStrategy(request.MinioInstance).PutObject(newFormFile, objectName, bucketName);
             newFormFile.Close();
 
             await _context.SaveChangesAsync(default);
@@ -413,14 +413,14 @@ public partial class UserService : IUserService
             throw new NotFoundException(E303, M303);
         }
 
-        var bucketName = _sc.Strategy.BucketNamePublic;
+        var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
 
         var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.Strategy.StatObject(objectName, bucketName);
+            var isExistFile = await _sc.GetStrategy(request.MinioInstance).StatObject(objectName, bucketName);
             if (isExistFile != null)
             {
                 fileName = GenerateNewFileName(file.FileName);
@@ -429,9 +429,9 @@ public partial class UserService : IUserService
             {
                 fileName = file.FileName;
             }
-            user.CoverPhoto = _setting.Minio.GetPublicUrl(bucketName, objectName);
+            user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
 
-            await _sc.Strategy.PutObject(file.OpenReadStream(), objectName, bucketName);
+            await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
 
             await _context.SaveChangesAsync(default);
         }

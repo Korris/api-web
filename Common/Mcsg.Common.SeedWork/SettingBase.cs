@@ -14,9 +14,10 @@
 namespace Mcsg.Common.SeedWork;
 
 using Dtos;
+using Enums;
 using Interfaces;
 using static Dtos.ConnectionDto;
-using static SeedWork.Dtos.StorageDto;
+using static Dtos.StorageDto;
 
 /// <summary>
 /// Setting base
@@ -24,6 +25,16 @@ using static SeedWork.Dtos.StorageDto;
 public class SettingBase : ISettingBase
 {
     #region -- Implements --
+
+    /// <summary>
+    /// Retrieves a MinIO instance based on the specified instance type.
+    /// </summary>
+    /// <param name="instance">The type of the MinIO instance to retrieve.</param>
+    /// <returns>The corresponding <see cref="MinioInstanceDto"/> object.</returns>
+    public MinioInstanceDto GetMinio(MinioInstanceType instance)
+    {
+        return Minio.Storages[(int)instance];
+    }
 
     /// <summary>
     /// Project prefix
@@ -117,6 +128,11 @@ public class SettingBase : ISettingBase
     /// MinIO
     /// </summary>
     public MinioDto Minio { get; }
+
+    /// <summary>
+    /// Storage
+    /// </summary>
+    public string? Storage { get; set; }
 
     /// <summary>
     /// API

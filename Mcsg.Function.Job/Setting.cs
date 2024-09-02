@@ -1,9 +1,12 @@
-﻿namespace Mcsg.Function.Job;
+﻿using Newtonsoft.Json;
+
+namespace Mcsg.Function.Job;
 
 using Common.SeedWork;
 using Common.SeedWork.Dtos;
 using Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
+using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
 /// Setting
@@ -108,6 +111,14 @@ public class Setting : SettingBase, ISetting
         NotificationQueueViewHistory = string.Empty;
         NotificationRoutingKey = string.Empty;
         ZaloPay = new ZaloPayDto();
+    }
+
+    /// <summary>
+    /// Load storages
+    /// </summary>
+    public void LoadStorages()
+    {
+        Minio.Storages = JsonConvert.DeserializeObject<List<MinioInstanceDto>>(Storage!)!;
     }
 
     #endregion

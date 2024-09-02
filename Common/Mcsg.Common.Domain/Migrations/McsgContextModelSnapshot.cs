@@ -603,7 +603,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("LocationType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MinioInstance")
+                    b.Property<int?>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -2034,7 +2034,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("LocationType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MinioInstance")
+                    b.Property<int?>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -2855,7 +2855,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("LocationType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MinioInstance")
+                    b.Property<int?>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")

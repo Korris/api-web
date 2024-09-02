@@ -14,14 +14,26 @@
 namespace Mcsg.Common.SeedWork.Interfaces;
 
 using Dtos;
+using Enums;
 using static Dtos.ConnectionDto;
-using static SeedWork.Dtos.StorageDto;
+using static Dtos.StorageDto;
 
 /// <summary>
 /// Interface setting base
 /// </summary>
 public interface ISettingBase
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Retrieves a MinIO instance based on the specified instance type.
+    /// </summary>
+    /// <param name="instance">The type of the MinIO instance to retrieve.</param>
+    /// <returns>The corresponding <see cref="MinioInstanceDto"/> object.</returns>
+    MinioInstanceDto GetMinio(MinioInstanceType instance);
+
+    #endregion
+
     #region -- Properties --
 
     /// <summary>
