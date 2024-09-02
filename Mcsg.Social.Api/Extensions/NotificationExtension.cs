@@ -202,7 +202,7 @@ public static class NotificationExtension
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
             NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
-
+            NotificationEntityType.SubPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
 
             NotificationEntityType.ComicPostComment => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
