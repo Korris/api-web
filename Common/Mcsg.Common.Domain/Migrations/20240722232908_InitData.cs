@@ -458,6 +458,7 @@ namespace Mcsg.Common.Domain.Migrations
                     DeletedAt = table.Column<DateTime>(type: "timestamp", nullable: true),
                     DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -568,6 +569,34 @@ namespace Mcsg.Common.Domain.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                schema: "system",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Satisfaction = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Comment = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Feedbacks_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -2750,6 +2779,12 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: new[] { "TagId", "PostId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_UserId",
+                schema: "system",
+                table: "Feedbacks",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_NotificationObjectId",
                 schema: "system",
                 table: "Notifications",
@@ -3355,6 +3390,10 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.DropTable(
                 name: "Devices",
                 schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "Jobs",

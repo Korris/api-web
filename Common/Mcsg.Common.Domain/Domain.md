@@ -1,5 +1,14 @@
 # Add migration
+Set as Startup Project: Common\Mcsg.Common.Domain
+Tools -> Nuget Package Manager -> Package Manager Console
+Default project: Common\Mcsg.Common.Domain
+Run command below:
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
+Install-Package Microsoft.EntityFrameworkCore.Tools
 Add-Migration InitData -Args "host=localhost;port=5432;database=local_bumcheo;username=local;password=Local+54321z@"
+Note:
+Revert Mcsg.Common.Domain.csproj file
 
 # Update migration
 ```

@@ -105,4 +105,9 @@ public partial class User : IdentityUser<Guid>
     /// Is delete
     /// </summary>
     public bool IsDelete { get; set; }
+
+    /// <summary>
+    /// Minio instance
+    /// </summary>
+    public int MinioInstance { get; set; }
 }
