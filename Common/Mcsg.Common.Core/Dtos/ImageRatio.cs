@@ -18,9 +18,14 @@ public class ImageRatio
     public int Height { get; set; }
 
     /// <summary>
-    /// Length
+    /// Stream
     /// </summary>
-    public long Length { get; set; }
+    public MemoryStream? Stream { get; set; }
+
+    /// <summary>
+    /// Object name
+    /// </summary>
+    public string? ObjectName { get; set; }
 
     #endregion
 }

@@ -65,8 +65,9 @@ public interface IStorageStrategy
     /// <param name="objectName">The name of the object (including full path and file extension).</param>
     /// <param name="bucketName">The name of the bucket. If null, the default bucket from the settings will be used.</param>
     /// <param name="isOverwrite">Indicates whether to overwrite the object if it already exists.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite);
+    /// <param name="timeout">The timeout for the HTTP request.</param>
+    /// <returns>A task representing the asynchronous operation, with an ImageRatio object if successful, or null if not.</returns>
+    Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite, TimeSpan timeout);
 
     /// <summary>
     /// Presigned get object
@@ -127,7 +128,7 @@ public interface IStorageStrategy
     /// <summary>
     /// Bucket name public
     /// </summary>
-    string? BucketNamePublic { get; }
+    string BucketNamePublic { get; }
 
     #endregion
 }

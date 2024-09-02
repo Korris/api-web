@@ -28,5 +28,10 @@ public enum LookupKeywordType
     /// <summary>
     /// Story
     /// </summary>
-    Story
+    Story,
+
+    /// <summary>
+    /// Social
+    /// </summary>
+    Social
 }

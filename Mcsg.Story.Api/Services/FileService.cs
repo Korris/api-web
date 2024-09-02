@@ -14,6 +14,7 @@ using Common.SeedWork.Extensions;
 using Dtos;
 using Interfaces;
 using Requests;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -170,7 +171,7 @@ public class FileService : IFileService
         var shareUrl = "";
         if (request.IsPublic == true)
         {
-            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, request.Type == "Thumb" ? objectNameOriginal : objectName);
+            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, request.Type == PostResourceType.Thumb ? objectNameOriginal : objectName);
         }
         else
         {

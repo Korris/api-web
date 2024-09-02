@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
 using Common.Core.Requests;
+using static Common.Core.Constants.Setting;
 
 /// <summary>
 /// Request
@@ -17,7 +18,7 @@ public class UserCoverPhotoUpdateR : BaseR
     /// <summary>
     /// Type
     /// </summary>
-    public string? Type { get; set; } = "Cover";
+    public string? Type { get; set; } = PostResourceType.Cover;
 
     #endregion
 }

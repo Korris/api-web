@@ -267,6 +267,22 @@ public class Setting : SeedWork.Constants.Setting
     }
 
     /// <summary>
+    /// PostResource type
+    /// </summary>
+    public class PostResourceType
+    {
+        /// <summary>
+        /// Cover
+        /// </summary>
+        public const string Cover = "Cover";
+
+        /// <summary>
+        /// Thumb
+        /// </summary>
+        public const string Thumb = "Thumb";
+    }
+
+    /// <summary>
     /// Notification type
     /// </summary>
     public class NotificationType
@@ -336,6 +352,7 @@ public class Setting : SeedWork.Constants.Setting
         /// Story
         /// </summary>
         public const string Story = "Story";
+
         /// <summary>
         /// SubFeed
         /// </summary>

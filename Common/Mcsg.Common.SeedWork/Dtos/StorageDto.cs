@@ -107,6 +107,11 @@ public abstract class StorageDto
         /// </summary>
         public int MaxExpiryInSeconds { get; set; } = 7 * 24 * 60 * 60; // 7 days
 
+        /// <summary>
+        /// Bucket name public
+        /// </summary>
+        public string BucketNamePublic => BucketName + "-public";
+
         #endregion
     }
 

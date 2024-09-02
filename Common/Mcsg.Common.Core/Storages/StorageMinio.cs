@@ -108,8 +108,9 @@ public class StorageMinio : StorageStrategy
     /// <param name="objectName">The name of the object (including full path and file extension).</param>
     /// <param name="bucketName">The name of the bucket. If null, the default bucket from the settings will be used.</param>
     /// <param name="isOverwrite">Indicates whether to overwrite the object if it already exists.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public override async Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite)
+    /// <param name="timeout">The timeout for the HTTP request.</param>
+    /// <returns>A task representing the asynchronous operation, with an ImageRatio object if successful, or null if not.</returns>
+    public override async Task<ImageRatio?> PutObject(string url, string objectName, string? bucketName, bool isOverwrite, TimeSpan timeout)
     {
         if (!isOverwrite)
         {
@@ -120,28 +121,45 @@ public class StorageMinio : StorageStrategy
             }
         }
 
-        using HttpClient client = new();
-        var response = await client.GetAsync(url);
+        using HttpClient client = new() { Timeout = timeout };
+        HttpResponseMessage response;
+        try
+        {
+            response = await client.GetAsync(url);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
         if (response.StatusCode != HttpStatusCode.OK)
         {
             return null;
         }
 
-        using MemoryStream ms = new();
-        await response.Content.CopyToAsync(ms);
-        ms.Position = 0;
-
-        using var image = await Image.LoadAsync(ms);
-        ms.Position = 0;
-
-        await PutObject(ms, objectName, bucketName);
-
-        return new ImageRatio
+        try
         {
-            Width = image.Width,
-            Height = image.Height,
-            Length = ms.Length
-        };
+            MemoryStream ms = new();
+            await response.Content.CopyToAsync(ms);
+            ms.Position = 0;
+
+            using var image = await Image.LoadAsync(ms);
+            ms.Position = 0;
+
+            await PutObject(ms, objectName, bucketName);
+
+            return new ImageRatio
+            {
+                Width = image.Width,
+                Height = image.Height,
+                Stream = ms,
+                ObjectName = objectName
+            };
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     /// <summary>
