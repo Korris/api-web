@@ -66,7 +66,7 @@ public static class StringExtension
                     Date = new DateTime(logEvent.Timestamp.Year, logEvent.Timestamp.Month, logEvent.Timestamp.Day)
                 },
                 (key, wt) => wt.File(
-                    path: $"{directory}/{key.Date:yyyy-MM-dd}/{key.Level}-{name}-{setting.Environment}-.log",
+                    path: $"{directory}/{key.Date:yyyy-MM-dd}/{key.Level}-.log",
                     rollingInterval: RollingInterval.Day,
                     fileSizeLimitBytes: fileSizeLimitBytes,
                     rollOnFileSizeLimit: true,  // create new file when size limit is reached
