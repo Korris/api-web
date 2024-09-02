@@ -1751,6 +1751,7 @@ public partial class PostService : IPostService
         subPost.IsPremium = request.IsPremium;
         subPost.PostHashId = request.PostHashId;
         subPost.Order = request.Order ?? request.ChapterOrder;
+        subPost.Body = request.Body;
 
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
