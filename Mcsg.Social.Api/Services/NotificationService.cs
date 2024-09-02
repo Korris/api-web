@@ -245,7 +245,7 @@ public partial class NotificationService : INotificationService
         if (subPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
-                                 SELECT pc.""Id"" as CommentId,p.""HashId"" as HashPostId from social.""SocialSubPostComments"" pc
+                                 SELECT pc.""Id"" as CommentId,sp.""HashId"" as HashPostId from social.""SocialSubPostComments"" pc
                                  LEFT JOIN social.""SocialSubPosts"" sp on pc.""PostId"" = sp.""Id""                                 
                                  LEFT JOIN social.""SocialPosts"" p on sp.""PostId"" = p.""Id""
                                  WHERE pc.""Id"" = ANY(@ids)", new { ids = subPostCommentReactionIds });
