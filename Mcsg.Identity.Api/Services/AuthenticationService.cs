@@ -142,6 +142,8 @@ public partial class AuthenticationService : IAuthenticationService
             user.ProfileName = user.UserName;
             user.ProfileId = user.UserName;
             user.CreatedIp = request.RemoteIp;
+            user.MinioInstance = 0; // default MinIO
+            user.StorageLimit = 2048; // 2GB
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -349,6 +351,8 @@ public partial class AuthenticationService : IAuthenticationService
                 user.ProfileName = user.UserName;
                 user.ProfileId = user.UserName;
                 user.CreatedIp = request.RemoteIp;
+                user.MinioInstance = 0; // default MinIO
+                user.StorageLimit = 2048; // 2GB
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)

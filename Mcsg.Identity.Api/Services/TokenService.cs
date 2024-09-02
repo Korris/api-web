@@ -100,6 +100,8 @@ public class TokenService : ITokenService
             IsPremium = user.IsPremium,
             IsWalletShowing = user.IsWalletShowing,
             SessionId = sessionId,
+            MinioInstance = user.MinioInstance,
+            StorageLimit = user.StorageLimit,
             Roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult()
         };
         var st = new SecurityToken(_setting.Jwt, payload);

@@ -14,6 +14,7 @@ using Common.SeedWork.Extensions;
 using Dtos;
 using Interfaces;
 using Requests;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -85,12 +86,19 @@ public class FileService : IFileService
         var imgHeight = 0;
         var bucketName = _setting.Minio.BucketName;
         var objectName = "";
+        var objectNameOriginal = "";
+        var compressedSize = file.Length;
 
+        var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         if (request.IsPublic == true)
         {
             bucketName = _sc.Strategy.BucketNamePublic;
-            var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
             objectName = $"{Setting.MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
+
+            if (request.Type == "Thumb")
+            {
+                objectNameOriginal = objectName.AppendNameSuffix();
+            }
         }
         else
         {
@@ -100,13 +108,31 @@ public class FileService : IFileService
 
         if (file.IsImage() && !file.IsGifAnimated())
         {
+            if (!string.IsNullOrWhiteSpace(objectNameOriginal))
+            {
+                // Compress and save thumbnail
+                var compressedThumb = file.CompressAndConvertToJpeg(144, 180, 100);
+                if (compressedThumb != null)
+                {
+                    using (var thumbStream = compressedThumb.Image.OpenReadStream())
+                    {
+                        await _sc.Strategy.PutObject(thumbStream, objectName, bucketName);
+                    }
+                }
+            }
+            else
+            {
+                objectNameOriginal = objectName;
+            }
+
             var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
             imgWidth = compressedImage.Width;
             imgHeight = compressedImage.Height;
 
             using (var stream = compressedImage.Image.OpenReadStream())
             {
-                await _sc.Strategy.PutObject(stream, objectName, bucketName);
+                compressedSize = stream.Length;
+                await _sc.Strategy.PutObject(stream, objectNameOriginal, bucketName);
             }
         }
         else
@@ -138,7 +164,9 @@ public class FileService : IFileService
             CreatedBy = request.UserId,
             Width = imgWidth,
             Height = imgHeight,
-            Size = file.Length
+            Size = file.Length,
+            CompressedSize = compressedSize,
+            MinioInstance = request.MinioInstance ?? 0
         };
 
         await _context.SocialResources.AddAsync(resource);
@@ -147,7 +175,7 @@ public class FileService : IFileService
         var shareUrl = "";
         if (request.IsPublic == true)
         {
-            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, resource.Url);
+            shareUrl = _setting.Minio.GetPublicUrl(resource.BucketName, request.Type == PostResourceType.Thumb ? objectNameOriginal : objectName);
         }
         else
         {

@@ -80,6 +80,16 @@ public class PayloadDto
     public byte Type { get; set; }
 
     /// <summary>
+    /// Minio instance
+    /// </summary>
+    public int MinioInstance { get; set; }
+
+    /// <summary>
+    /// Storage limit (MB)
+    /// </summary>
+    public int StorageLimit { get; set; }
+
+    /// <summary>
     /// Roles
     /// </summary>
     public IList<string> Roles { get; set; }

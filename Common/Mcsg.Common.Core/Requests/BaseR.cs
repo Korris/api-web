@@ -158,6 +158,12 @@ public class BaseR : IRequest<SingleResponse>
     public bool? IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean();
 
     /// <summary>
+    /// User MinioInstance
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public int? MinioInstance => Payload?.RootElement.GetProperty("minioInstance").GetInt32();
+
+    /// <summary>
     /// UserAgent
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]

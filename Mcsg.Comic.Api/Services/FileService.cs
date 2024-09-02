@@ -87,6 +87,7 @@ public class FileService : IFileService
         var bucketName = _setting.Minio.BucketName;
         var objectName = "";
         var objectNameOriginal = "";
+        var compressedSize = file.Length;
 
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         if (request.IsPublic == true)
@@ -130,6 +131,7 @@ public class FileService : IFileService
 
             using (var stream = compressedImage.Image.OpenReadStream())
             {
+                compressedSize = stream.Length;
                 await _sc.Strategy.PutObject(stream, objectNameOriginal, bucketName);
             }
         }
@@ -162,7 +164,9 @@ public class FileService : IFileService
             CreatedBy = request.UserId,
             Width = imgWidth,
             Height = imgHeight,
-            Size = file.Length
+            Size = file.Length,
+            CompressedSize = compressedSize,
+            MinioInstance = request.MinioInstance ?? 0
         };
 
         await _context.ComicResources.AddAsync(resource);
