@@ -12,22 +12,22 @@ public class FeedbackCreateR : BaseR
     /// <summary>
     /// Email
     /// </summary>
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
     /// SatisfactionLevel
     /// </summary>
-    public string? SatisfactionLevel { get; set; }
+    public string? Satisfaction { get; set; }
 
     /// <summary>
     /// ReasonText
     /// </summary>
-    public string? ReasonText { get; set; }
+    public string? Comment { get; set; }
 
     /// <summary>
-    /// PostType
+    /// Type
     /// </summary>
-    public string? PostType { get; set; }
+    public string? Type { get; set; }
 
     #endregion
 }

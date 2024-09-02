@@ -17,11 +17,12 @@ public class FeedbackCreateV : AbstractValidator<FeedbackCreateR>
     /// </summary>
     public FeedbackCreateV()
     {
-        RuleFor(p => p.Email).NotEmpty().WithMessage($"Email {NotEmpty}")
+        var t = "Email";
+        RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}")
             .EmailAddress().WithMessage("Invalid email format");
 
-        RuleFor(p => p.SatisfactionLevel).NotEmpty()
-               .WithMessage($"SatisfactionLevel {NotEmpty}");
+        t = "Satisfaction";
+        RuleFor(p => p.Satisfaction).NotEmpty().WithMessage($"{t} {NotEmpty}");
     }
 
     #endregion

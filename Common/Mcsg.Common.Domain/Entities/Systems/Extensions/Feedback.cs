@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork.Constants;
 using SeedWork.Dtos;
 
 partial class Feedback
@@ -19,22 +20,22 @@ partial class Feedback
     /// <summary>
     /// Create
     /// </summary>
-    /// <param name="satisfactionLevel"></param>
+    /// <param name="satisfaction"></param>
     /// <param name="userId"></param>
     /// <param name="email"></param>
     /// <param name="comment"></param>
+    /// <param name="postType"></param>
     /// <returns></returns>
-    public static Feedback Create(SatisfactionLevel satisfactionLevel, Guid userId, string email, string? comment, PostType postType)
+    public static Feedback Create(SatisfactionLevel satisfaction, Guid? userId, string email, string comment, PostType postType)
     {
         var res = new Feedback
         {
-            Satisfaction = satisfactionLevel,
+            Satisfaction = satisfaction,
             UserId = userId,
             Email = email,
-            Comment = comment + "",
-            CreatedBy = userId,
-            Type = postType,
-
+            Comment = comment,
+            CreatedBy = userId == null ? Setting.CreatedBy.System : userId,
+            Type = postType
         };
 
         return res;
