@@ -565,7 +565,7 @@ public class NotificationService : INotificationService
         response.LocationId = request.PostId;
         response.LocationHashId = request.PostHashId;
         response.Message = string.Format(NotificationContent.FollowPost, request.ActorName, request.PostName);
-        response.TargetType = request.NotificationEntityType == NotificationEntityType.FollowComicPost ? NotificationTargetType.FollowComicPost : NotificationTargetType.FollowStoryPost;
+        response.TargetType = request.NotificationEntityType == NotificationEntityType.FollowComicPost ? NotificationTargetType.Comic : NotificationTargetType.Story;
         response.ActorId = request.ActorId;
         response.ActorName = request.ActorName;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
