@@ -123,6 +123,7 @@ public class Program
 
             p.AddDiUserReferral();
             p.AddDiUser();
+            p.AddDiFeedback();
         });
         #endregion
 

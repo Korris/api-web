@@ -6,7 +6,7 @@ using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
 
-public class Feedback : AuditableEntity
+public partial class Feedback : AuditableEntity
 {
     public SatisfactionLevel Satisfaction { get; set; }
 
