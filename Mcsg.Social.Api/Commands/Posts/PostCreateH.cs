@@ -24,6 +24,7 @@ using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
@@ -53,7 +54,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
     /// <param name="businessText">BusinessText service</param>
-    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText) : base(context, setting, sc)
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -63,6 +64,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
         _businessText = businessText;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -97,7 +99,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             throw new BadRequestException(M119);
 
         }
-
+        var receiverIds = request.Content.ToGuids();
         var userName = user.UserName;
         var profileName = user.ProfileName;
         var profileId = user.ProfileId;
@@ -111,9 +113,19 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
         await _context.SocialPosts.AddAsync(ett);
         await _context.SaveChangesAsync(default);
-
         request.Content = await _businessText.Process(request.Content);
-
+        if (receiverIds.Count() > 0)
+        {
+            await _notificationService.AddMentionNotificationAsync(new MentionPostNotificationReq
+            {
+                ReceiversId = receiverIds,
+                EntityType = NotificationEntityType.PostMention,
+                UserAvatar = userAvatar,
+                UserId = userId,
+                UserProfileName = profileName,
+                TargetId = ett.Id,
+            });
+        }
         var result = new FeedPostDto
         {
             Id = ett.Id,
@@ -252,6 +264,11 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// BusinessText service
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    /// <summary>
+    /// Notification service
+    /// </summary>
+    private readonly INotificationService _notificationService;
 
     #endregion
 }

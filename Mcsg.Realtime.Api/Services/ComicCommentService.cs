@@ -11,6 +11,7 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Constants;
 using Dtos;
 using Interfaces;
@@ -89,7 +90,7 @@ public partial class ComicCommentService : IComicCommentService
 
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
-
+        var receiverIds = req.CommentText.ToGuids();
         var userName = payload?.UserName;
         var profileName = payload?.ProfileName;
         var userFolder = payload?.UserFolder;
@@ -130,7 +131,8 @@ public partial class ComicCommentService : IComicCommentService
             };
         }
         response.PostType = PostType.Comic;
-        if (!string.IsNullOrEmpty(pDto.HashId))
+        /// Check createdby in mention will not send this notification to notice that someone comment on their post
+        if (!string.IsNullOrEmpty(pDto.HashId) && !receiverIds.Contains(pDto.CreateBy))
         {
             response.AuthorName = authorName;
             response.PostHashId = pDto.HashId;
@@ -147,6 +149,19 @@ public partial class ComicCommentService : IComicCommentService
                 commentNotiRequest.PostHashId = post.HashId;
             }
             await _notificationService.AddCommentNotification(commentNotiRequest);
+        }
+
+        if (receiverIds.Count > 0)
+        {
+            await _notificationService.AddPostMentionNotification(new MentionPostNotificationReq
+            {
+                ReceiversId = receiverIds,
+                UserAvatar = userAvatar,
+                UserProfileName = profileName,
+                TargetId = response.Id,
+                UserId = user.UserId ?? Guid.Empty,
+                EntityType = req.Type == PostTypes.Post ? NotificationEntityType.ComicPostCommentMention : NotificationEntityType.ComicSubPostCommentMention
+            });
         }
 
         var userIds = response.Mentions.Select(p => p.EntityId).ToList();

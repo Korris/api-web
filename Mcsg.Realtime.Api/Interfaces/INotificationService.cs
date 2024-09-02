@@ -19,4 +19,5 @@ public interface INotificationService
     Task AddCommonNotification(CommonNotificationReq req);
     Task<NotificationResponse> FollowNotification(UserFollowResp followResp);
     Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request);
+    Task AddPostMentionNotification(MentionPostNotificationReq request);
 }

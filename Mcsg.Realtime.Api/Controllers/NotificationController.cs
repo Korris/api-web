@@ -43,4 +43,18 @@ public class NotificationController : ControllerBase
         await _notificationService.AddCommonNotification(request);
         return Ok();
     }
+
+    [HttpPost("mention")]
+    public async Task<IActionResult> AddMentionNotification([FromBody] CommonNotificationReq request)
+    {
+        await _notificationService.AddCommonNotification(request);
+        return Ok();
+    }
+
+    [HttpPost("post-mention")]
+    public async Task<IActionResult> AddPostMentionNotification([FromBody] MentionPostNotificationReq request)
+    {
+        await _notificationService.AddPostMentionNotification(request);
+        return Ok();
+    }
 }

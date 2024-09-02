@@ -126,7 +126,8 @@ public partial class NotificationService : INotificationService
 
     private async Task CheckDataCommentReaction(List<NotificationModel> resDto)
     {
-        var postCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.PostCommentReaction).Select(p => p.LocationId).ToList();
+        var postCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.PostCommentReaction
+                                                     || p.NotificationEntityType == NotificationEntityType.PostCommentMention).Select(p => p.LocationId).ToList();
         if (postCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -147,7 +148,8 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var comicPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicPostCommentReaction).Select(p => p.LocationId).ToList();
+        var comicPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicPostCommentReaction
+                                                          || p.NotificationEntityType == NotificationEntityType.ComicPostCommentMention).Select(p => p.LocationId).ToList();
         if (comicPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -169,7 +171,8 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var storyPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StoryPostCommentReaction).Select(p => p.LocationId).ToList();
+        var storyPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StoryPostCommentReaction
+                                                         || p.NotificationEntityType == NotificationEntityType.StoryPostCommentMention).Select(p => p.LocationId).ToList();
         if (storyPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -191,7 +194,8 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var comicSubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReaction).Select(p => p.LocationId).ToList();
+        var comicSubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReaction
+                                                            || p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentMention).Select(p => p.LocationId).ToList();
         if (comicSubPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -204,8 +208,7 @@ public partial class NotificationService : INotificationService
             {
                 foreach (var item in postDataByPostComment)
                 {
-                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
-                                                         p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReaction);
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId);
                     if (response != null)
                     {
                         response.LocationHashId = item.HashPostId;
@@ -216,7 +219,8 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var storySubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReaction).Select(p => p.LocationId).ToList();
+        var storySubPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReaction
+                                                       || p.NotificationEntityType == NotificationEntityType.StorySubPostCommentMention).Select(p => p.LocationId).ToList();
         if (storySubPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -229,8 +233,7 @@ public partial class NotificationService : INotificationService
             {
                 foreach (var item in postDataByPostComment)
                 {
-                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
-                                                         p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReaction);
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId);
                     if (response != null)
                     {
                         response.LocationHashId = item.HashPostId;
@@ -454,6 +457,28 @@ public partial class NotificationService : INotificationService
         }
     }
 
+    public async Task<bool> AddMentionNotificationAsync(MentionPostNotificationReq req)
+    {
+        var baseUrl = _setting.Api.Web.Realtime;
+        var urlBuilder = new System.Text.StringBuilder();
+        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/post-mention");
+
+        var url = urlBuilder.ToString();
+
+        var response = await url.MakePostRequest(req);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     #region -- Fields --
 
     /// <summary>

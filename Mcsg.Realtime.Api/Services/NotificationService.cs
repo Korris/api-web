@@ -367,6 +367,101 @@ public class NotificationService : INotificationService
         return response;
     }
 
+    public async Task AddPostMentionNotification(MentionPostNotificationReq request)
+    {
+        var response = new NotificationResponse();
+        var receiverId = Guid.Empty;
+        var postId = Guid.Empty;
+        var locationId = Guid.Empty;
+        string postHashId = "";
+        string locationHashId = "";
+        var targetId = request.TargetId;
+        bool isMentionComment = request.EntityType != NotificationEntityType.PostMention;
+        // Reaction for comment => Find Id of Post
+
+        if (isMentionComment)
+        {
+            dynamic postComment = request.EntityType switch
+            {
+                NotificationEntityType.PostCommentMention => await _postCommentRepository.GetByIdAsync(request.TargetId),
+                NotificationEntityType.ComicPostCommentMention => await _comicPostCommentRepository.GetByIdAsync(request.TargetId),
+                NotificationEntityType.StoryPostCommentMention => await _storyPostCommentRepository.GetByIdAsync(request.TargetId),
+                NotificationEntityType.SubPostCommentMention => await _subPostCommentRepository.GetByIdAsync(request.TargetId),
+                NotificationEntityType.ComicSubPostCommentMention => await _comicSubPostCommentRepository.GetByIdAsync(request.TargetId),
+                NotificationEntityType.StorySubPostCommentMention => await _storySubPostCommentRepository.GetByIdAsync(request.TargetId),
+                _ => await _postCommentRepository.GetByIdAsync(request.TargetId)
+            };
+
+            targetId = postComment.PostId;
+            locationId = request.TargetId;
+            response.CommentId = request.TargetId;
+        }
+
+        dynamic post = request.EntityType switch
+        {
+            NotificationEntityType.PostMention => await _postRepository.GetByIdAsync(targetId),
+            NotificationEntityType.ComicPostCommentMention => await _comicPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.StoryPostCommentMention => await _storyPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.SubPostCommentMention => await _subPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.ComicSubPostCommentMention => await _comicSubPostRepository.GetByIdAsync(targetId),
+            NotificationEntityType.StorySubPostCommentMention => await _storySubPostRepository.GetByIdAsync(targetId),
+            _ => await _postRepository.GetByIdAsync(targetId),
+        };
+
+        if (post != null)
+        {
+            postId = post.Id;
+            postHashId = post.HashId;
+            /// only reaction by subpost comment need order to go to subpost Comic/Story
+            if (request.EntityType == NotificationEntityType.ComicSubPostCommentMention || request.EntityType == NotificationEntityType.StorySubPostCommentMention)
+            {
+                response.Order = post.Order;
+                Guid postIdOfSubPost = post.PostId;
+                postHashId = request.EntityType == NotificationEntityType.ComicSubPostCommentMention ? (await _comicPostRepository.GetByIdAsync(postIdOfSubPost)).HashId : (await _storyPostRepository.GetByIdAsync(postIdOfSubPost)).HashId;
+            }
+            if (!isMentionComment)
+            {
+                locationId = post.Id;
+                locationHashId = post.HashId;
+            }
+            response.TargetType = request.EntityType switch
+            {
+                NotificationEntityType.PostMention or NotificationEntityType.PostCommentMention => NotificationTargetType.Feed,
+                NotificationEntityType.StoryPostCommentMention => NotificationTargetType.Story,
+                NotificationEntityType.ComicPostCommentMention => NotificationTargetType.Comic,
+                NotificationEntityType.SubPostMention or NotificationEntityType.SubPostCommentReaction => NotificationTargetType.SubFeed,
+                NotificationEntityType.ComicSubPostCommentMention => NotificationTargetType.SubComic,
+                NotificationEntityType.StorySubPostCommentMention => NotificationTargetType.SubStory,
+            };
+
+            foreach (var item in request.ReceiversId)
+            {
+
+                var noti = await AddNotificationAsync(
+                                    actorId: request.UserId
+                                  , receiverId: item
+                                  , action: NotificationAction.Mention
+                                  , entityType: request.EntityType
+                                  , entityId: item
+                                  , locationId: locationId
+                                  , locationHashId: locationHashId);
+
+                response.Id = noti.Id;
+                response.Status = noti.Status;
+                response.LocationId = postId;
+                response.LocationHashId = postHashId;
+                response.EntityId = item;
+                response.ActorId = request.UserId;
+                response.UserAvatar = request.UserAvatar;
+                response.ActorName = request.UserProfileName;
+                response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Mention;
+                response.Message = request.UserProfileName + (isMentionComment ? NotificationContent.MentionOnComment : NotificationContent.MentionOnPost);
+                // Then notification the comment to post owner
+                await _hubcontext.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            }
+        }
+    }
     public async Task<NotificationResponse> AddMentionNotification(MentionNotificationReq mention)
     {
         // TODO
