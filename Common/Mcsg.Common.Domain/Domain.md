@@ -6,7 +6,7 @@ Run command below:
 Install-Package Microsoft.EntityFrameworkCore
 Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
 Install-Package Microsoft.EntityFrameworkCore.Tools
-Add-Migration InitData -Args "host=localhost;port=5432;database=local_bumcheo;username=local;password=Local+54321z@"
+Add-Migration InitData -Args "host=localhost;port=5433;database=local_bumcheo;username=local;password=Local+54321z@"
 Note:
 Revert Mcsg.Common.Domain.csproj file
 
@@ -24,4 +24,9 @@ DROP DATABASE local_bumcheo;
 -- Recreate the database with a specific owner
 CREATE DATABASE local_bumcheo OWNER local;
 ```
-Update-Database InitData -Args "host=ntata.postgres;port=5432;database=local_bumcheo;username=local;password=Local+54321z@"
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
+Install-Package Microsoft.EntityFrameworkCore.Tools
+Update-Database InitData -Args "host=ntata.postgres;port=5433;database=local_bumcheo;username=local;password=Local+54321z@"
+Note:
+Revert Mcsg.Common.Domain.csproj file
