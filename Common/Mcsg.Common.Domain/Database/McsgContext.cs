@@ -174,6 +174,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<Device> Devices { get; set; }
 
+    public virtual DbSet<Feedback> Feedbacks { get; set; }
+
     public virtual DbSet<Mention> Mentions { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }

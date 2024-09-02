@@ -101,6 +101,8 @@ public interface IMcsgContext
 
     DbSet<Device> Devices { get; set; }
 
+    DbSet<Feedback> Feedbacks { get; set; }
+
     DbSet<Mention> Mentions { get; set; }
 
     DbSet<Notification> Notifications { get; set; }
@@ -256,6 +258,8 @@ public interface IMcsgContext
     IQueryable<Job> JobAvailable { get; }
 
     IQueryable<Device> DeviceAvailable { get; }
+
+    IQueryable<Feedback> FeedbackAvailable { get; }
 
     IQueryable<Mention> MentionAvailable { get; }
 
