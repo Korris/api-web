@@ -240,6 +240,30 @@ public partial class NotificationService : INotificationService
                 }
             }
         }
+
+        var subPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.SubPostCommentReaction).Select(p => p.LocationId).ToList();
+        if (subPostCommentReactionIds.Count > 0)
+        {
+            var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
+                                 SELECT pc.""Id"" as CommentId,p.""HashId"" as HashPostId from social.""SocialSubPostComments"" pc
+                                 LEFT JOIN social.""SocialSubPosts"" sp on pc.""PostId"" = sp.""Id""                                 
+                                 LEFT JOIN social.""SocialPosts"" p on sp.""PostId"" = p.""Id""
+                                 WHERE pc.""Id"" = ANY(@ids)", new { ids = subPostCommentReactionIds });
+
+            if (postDataByPostComment.Count() > 0)
+            {
+                foreach (var item in postDataByPostComment)
+                {
+                    var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
+                                                         p.NotificationEntityType == NotificationEntityType.SubPostCommentReaction);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.HashPostId;
+                        response.CommentId = item.CommentId;
+                    }
+                }
+            }
+        }
     }
 
     private async Task CheckDataFollowPost(List<NotificationModel> resDto)
@@ -353,6 +377,8 @@ public partial class NotificationService : INotificationService
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             var resDto = _mapper.Map<List<NotificationModel>>(items);
             await CheckDataCommentOnSubPost(resDto);
+            await CheckDataFollowPost(resDto);
+            await CheckDataCommentReaction(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
