@@ -459,6 +459,7 @@ namespace Mcsg.Common.Domain.Migrations
                     DeletedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     MinioInstance = table.Column<int>(type: "integer", nullable: false),
+                    StorageLimit = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -1836,15 +1837,19 @@ namespace Mcsg.Common.Domain.Migrations
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
                     SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
                     Width = table.Column<int>(type: "integer", nullable: false),
                     Height = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     LocationType = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1914,15 +1919,19 @@ namespace Mcsg.Common.Domain.Migrations
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
                     SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
                     Width = table.Column<int>(type: "integer", nullable: false),
                     Height = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     LocationType = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2024,15 +2033,19 @@ namespace Mcsg.Common.Domain.Migrations
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
                     SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
                     Width = table.Column<int>(type: "integer", nullable: false),
                     Height = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     LocationType = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {

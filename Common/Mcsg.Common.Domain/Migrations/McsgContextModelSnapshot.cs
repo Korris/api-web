@@ -573,11 +573,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<int?>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExternalUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -591,6 +601,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -1991,11 +2004,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<int?>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExternalUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -2009,6 +2032,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -2799,11 +2825,21 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<int?>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExternalUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("HashId")
                         .IsRequired()
@@ -2817,6 +2853,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinioInstance")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -3457,6 +3496,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("StatusReason")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
+
+                    b.Property<int>("StorageLimit")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
