@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Mcsg.Social.Api.Models;
 
+using Common.Core.Enums;
 using Common.SeedWork.Converters;
 using Extensions;
 using Mappings;
-using Mcsg.Common.Core.Enums;
 
 public class NotificationModel : IMapFrom<NotificationQueryResult>
 {
