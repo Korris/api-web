@@ -17,7 +17,6 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -271,7 +270,7 @@ public partial class NotificationService : INotificationService
 
     private async Task CheckDataFollowPost(List<NotificationModel> resDto)
     {
-        var followComicPostIds = resDto.Where(p => p.TargetType == NotificationTargetType.FollowComicPost).Select(p => p.LocationId).ToList();
+        var followComicPostIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowComicPost).Select(p => p.LocationId).ToList();
         if (followComicPostIds.Count > 0)
         {
             var comics = await _notiRepository.Connection.QueryAsync<PostData>($@"
@@ -284,12 +283,12 @@ public partial class NotificationService : INotificationService
                     var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
                     if (response != null)
                     {
-                        response.Message = string.Format(response.Message, response.ActorName, item.Title);
+                        response.Message = string.Format(NotificationContent.FollowPost, response.ActorName, item.Title);
                     }
                 }
             }
         }
-        var followStoryPostIds = resDto.Where(p => p.TargetType == NotificationTargetType.FollowStoryPost).Select(p => p.LocationId).ToList();
+        var followStoryPostIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowStoryPost).Select(p => p.LocationId).ToList();
         if (followStoryPostIds.Count > 0)
         {
             var stories = await _notiRepository.Connection.QueryAsync<PostData>($@"
@@ -302,7 +301,7 @@ public partial class NotificationService : INotificationService
                     var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
                     if (response != null)
                     {
-                        response.Message = string.Format(response.Message, response.ActorName, item.Title);
+                        response.Message = string.Format(NotificationContent.FollowPost, response.ActorName, item.Title);
                     }
                 }
             }
