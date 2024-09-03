@@ -60,12 +60,12 @@
                                                 LEFT JOIN ""comic"".""ComicPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
                                                 LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
-                                                LEFT JOIN ""comic"".""ComicPosts""  p on pc.""PostId"" = p.""Id""                                                
+                                                LEFT JOIN ""comic"".""ComicPosts""  p on pc.""PostId"" = p.""Id""
                                                 LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
                                                 WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
                                                 AND p.""IsDelete"" = false
                                                 AND pc.""IsDelete"" = false
-                                                GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+                                                GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""MinioInstance"",r.""HashId""
                                                 UNION
                                                 SELECT 
                                                     spc.""CreatedBy"" as AuthorId,
@@ -85,6 +85,7 @@
                                                     COUNT(reply.*) ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
+                                                    r.""MinioInstance"",
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
                                                 FROM ""comic"".""ComicSubPostComments"" spc
@@ -96,7 +97,7 @@
                                                 WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""comic"".""ComicPosts""   WHERE ""HashId"" =@HashId) 
                                                 AND spc.""ParentId"" is null
                                                 AND spc.""IsDelete"" = false
-                                                GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""HashId""
+                                                GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""MinioInstance"",r.""HashId""
                                                 ORDER BY reaction_count desc,
                                                 ""CreatedOn"" desc
                                                 OFFSET @Offset
