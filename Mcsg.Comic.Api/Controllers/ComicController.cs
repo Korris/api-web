@@ -191,6 +191,7 @@ public class ComicController : ControllerBase
     [HttpGet("search-by-profileName")]
     public async Task<IActionResult> GetByUserProfileName([FromQuery] ComicPostByProFileNameR input)
     {
+        input.Analyze(HttpContext);
         var result = await _comicService.GetByUserProfileName(input);
         return Ok(result);
     }
@@ -198,6 +199,7 @@ public class ComicController : ControllerBase
     [HttpGet("search-by-tagName")]
     public async Task<IActionResult> GetByTagName([FromQuery] ComicPostByTagNameR input)
     {
+        input.Analyze(HttpContext);
         var result = await _comicService.GetByTagName(input);
         return Ok(result);
     }

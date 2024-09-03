@@ -191,6 +191,7 @@ public class StoryController : ControllerBase
     [HttpGet("search-by-profileName")]
     public async Task<IActionResult> GetByUserProfileName([FromQuery] StoryPostByProFileNameR input)
     {
+        input.Analyze(HttpContext);
         var result = await _storyService.GetByUserProfileName(input);
         return Ok(result);
     }
@@ -198,6 +199,7 @@ public class StoryController : ControllerBase
     [HttpGet("search-by-tagName")]
     public async Task<IActionResult> GetByTagName([FromQuery] StoryPostByTagNameR input)
     {
+        input.Analyze(HttpContext);
         var result = await _storyService.GetByTagName(input);
         return Ok(result);
     }

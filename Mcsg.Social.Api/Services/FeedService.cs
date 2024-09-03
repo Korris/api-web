@@ -224,7 +224,8 @@ public partial class FeedService : IFeedService
                        PageSize = feedLoadReq.PageSize,
                        Offet = offset,
                        ProfileName = feedLoadReq.Keyword,
-                       PostStatus = (int)PostStatus.Public
+                       PostStatus = (int)PostStatus.Public,
+                       Hide = feedLoadReq.Hides
                    });
         var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
         var listItemResponse = new List<FeedDto>();

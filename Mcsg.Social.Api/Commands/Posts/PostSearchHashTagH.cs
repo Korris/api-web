@@ -61,9 +61,9 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         }
         #endregion
 
-        var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara)";
-        var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara)";
-        var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara)";
+        var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara, @HideList)";
+        var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara, @HideList)";
+        var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara, @HideList)";
 
         var recordComic = 0;
         var recordSocial = 0;
@@ -83,7 +83,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PostType = (int)PostType.Comic,
                     PostStatus = (int)PostStatus.Public,
                     PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset
+                    OffSetPara = (int)request.Offset,
+                    HideList = request.Hides
                 });
 
                 recordComic = (
@@ -104,7 +105,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TagName = keyword,
                     PostType = (int)PostType.Feed,
                     PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset
+                    OffSetPara = (int)request.Offset,
+                    HideList = request.Hides
                 });
 
                 recordSocial = (
@@ -131,7 +133,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PostType = (int)PostType.Story,
                     PostStatus = (int)PostStatus.Public,
                     PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset
+                    OffSetPara = (int)request.Offset,
+                    HideList = request.Hides
                 });
 
                 recordStory = (

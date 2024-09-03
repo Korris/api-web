@@ -117,6 +117,7 @@
                         post.""MetaDescription"",
                         post.""MetaUrl"",
                         post.""MetaDomain"", 
+                        post.""Hide"",
                         post.""CustomNote"", array_agg(tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
@@ -172,6 +173,7 @@
                             md.""Domain""
                             ) 
                         AS post
+                        WHERE NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" IS NOT NULL)
                         LEFT JOIN story.""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
                         GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 

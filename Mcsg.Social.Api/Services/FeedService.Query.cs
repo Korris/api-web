@@ -273,6 +273,7 @@
                         LEFT JOIN identity.""Users"" u ON post.""UserId"" = u.""Id""
                         LEFT JOIN social.""SocialTagPosts"" tp ON tp.""PostId"" = post.""Id""
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
+                        WHERE NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" IS NOT NULL)
                         GROUP BY post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""Avatar"",post.""UserId"",post.""ProfileName"",u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
                         post.""Status"", post.""Type"", 

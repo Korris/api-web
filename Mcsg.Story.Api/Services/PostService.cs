@@ -683,7 +683,8 @@ public partial class PostService : IPostService
                     PageSize = input.PageSize,
                     Offet = offset,
                     PostStatus = (int)PostStatus.Public,
-                    TagName = input.TagName
+                    TagName = input.TagName,
+                    Hide = input.Hides
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -715,7 +716,8 @@ public partial class PostService : IPostService
                                    AND p.""Type""=@PostType
                                    AND p.""Status""=@PostStatus                                   
                                    AND p.""Permission""=@Permission
-                                   AND p.""IsDelete""=false";
+                                   AND p.""IsDelete""=false
+                                   AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
         }
         else
         {
@@ -723,7 +725,8 @@ public partial class PostService : IPostService
                                      AND p.""Type""=@PostType
                                      AND p.""Status""=@PostStatus
                                      AND p.""Permission""=@Permission
-                                     AND p.""IsDelete""=false";
+                                     AND p.""IsDelete""=false
+                                     AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
         }
 
         var query = $@"SELECT p.""Id"",
@@ -733,6 +736,7 @@ public partial class PostService : IPostService
                                   p.""IsMature"", 
                                   p.""HashId"",
                                   p.""Type"",
+                                  p.""Hide"",
                                   u.""ProfileName"",
                                   u.""UserName"",
                                   CASE 
@@ -756,7 +760,7 @@ public partial class PostService : IPostService
                                             LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName""
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide""
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -776,7 +780,8 @@ public partial class PostService : IPostService
                     Offset = offset,
                     PostStatus = (int)PostStatus.Public,
                     Permission = (int)PostPermission.Public,
-                    ProfileName = input.Keyword
+                    ProfileName = input.Keyword,
+                    Hide = input.Hides
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
