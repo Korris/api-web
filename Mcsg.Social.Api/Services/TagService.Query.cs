@@ -153,15 +153,16 @@
                         ) tp ON t.""Id"" = tp.""TagId""
                         LEFT JOIN (
                         SELECT ""TagId"", COUNT(*) AS comic_count
-                        FROM comic.""ComicTagPosts""
-                        WHERE ""IsDelete"" = false
+                        FROM comic.""ComicTagPosts"" ctp
+                        JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
+                        WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
                         GROUP BY  ""TagId""
                         ) tc ON t.""Id"" = tc.""TagId""
                         LEFT JOIN (
                         SELECT stp.""TagId"", COUNT(*) AS story_count
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
-                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false
+                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
                         [QueryCondition]
@@ -179,15 +180,16 @@
                         ) tp ON t.""Id"" = tp.""TagId""
                         LEFT JOIN (
                         SELECT ""TagId""
-                        FROM comic.""ComicTagPosts""
-                        WHERE ""IsDelete"" = false
+                        FROM comic.""ComicTagPosts"" ctp
+                        JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
+                        WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
                         GROUP BY  ""TagId""
                         ) tc ON t.""Id"" = tc.""TagId""
                         LEFT JOIN (
                         SELECT stp.""TagId""
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
-                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false
+                        WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
                         [QueryCondition]
