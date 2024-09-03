@@ -1026,7 +1026,8 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     UserId = currentUserId,
                     PageSize = loadReq.PageSize,
-                    Offet = offset
+                    Offet = offset,
+                    Hide = loadReq.Hides
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
