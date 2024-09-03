@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Story.Api.Models;
 
+using Common.SeedWork.Enums;
+
 public class CommentQueryModel
 {
     public Guid Id { get; set; }
@@ -15,6 +17,7 @@ public class CommentQueryModel
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceName { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
+    public MinioInstanceType? MinioInstance { get; set; }
     public string GifId { get; set; } = string.Empty;
     public int CommentLevel { get; set; } = 0;
     public Guid? QuoteId { get; set; }

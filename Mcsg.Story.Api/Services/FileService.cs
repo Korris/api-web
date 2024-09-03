@@ -402,7 +402,6 @@ public class FileService : IFileService
         {
             return Tuple.Create(response, subPostResponses);
         }
-
         var resourceDb = await _context.StoryResourceAvailable.Where(p => p.SubPostId == dto.SubPostId).ToListAsync();
         var resourceHashIdRemove = resourceDb.Where(p => !hashIds.Contains(p.HashId)).Select(p => p.HashId).ToList();
         var resourceList = await _context.StoryResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();

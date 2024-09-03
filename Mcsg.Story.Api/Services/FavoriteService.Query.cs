@@ -121,7 +121,7 @@
                             pl.""Type"" AS ""LinkType""
                             FROM {_postRepository.TableName} p
                             INNER JOIN {_postFavoriteRepository.TableName} pf ON p.""Id"" = pf.""PostId""
-                            LEFT JOIN {_userRepository.TableName} u ON p.""UserId"" = u.""Id""                        
+                            LEFT JOIN {_userRepository.TableName} u ON p.""UserId"" = u.""Id""
                             LEFT JOIN {_metaDataRepository.TableName} md ON md.""PostId"" = p.""Id""
                             LEFT JOIN {_postLinkRepository.TableName} pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
                             LEFT JOIN LATERAL 
@@ -135,7 +135,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM {_resourceRepository.TableName} 
                                  WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
