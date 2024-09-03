@@ -127,6 +127,7 @@ public class Program
 
         // Service
         builder.Services.AddScoped<IDeleteAccountService, DeleteAccountService>();
+        builder.Services.AddScoped<IDownloadImage, DownloadImage>();
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
         builder.Services.AddSingleton<IEmailSender, SmtpSender>();
@@ -148,6 +149,7 @@ public class Program
 
         // AddHostedService
         builder.Services.AddHostedService<HostedDeleteAccount>();
+        builder.Services.AddHostedService<HostedDownloadImage>();
         builder.Services.AddHostedService<HostedEmail>();
         builder.Services.AddHostedService<HostedExclusiveUnlock>();
         builder.Services.AddHostedService<HostedPaymentTransaction>();
