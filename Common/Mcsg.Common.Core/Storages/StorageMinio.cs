@@ -117,7 +117,7 @@ public class StorageMinio : StorageStrategy
             var stat = await StatObject(objectName, bucketName);
             if (stat != null)
             {
-                return null; // object already exists, and overwrite is not allowed.
+                return new ImageRatio(); // object already exists, and overwrite is not allowed.
             }
         }
 

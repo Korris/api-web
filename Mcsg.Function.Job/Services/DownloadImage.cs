@@ -35,27 +35,39 @@ public class DownloadImage : IDownloadImage
     /// <returns>Return the result</returns>
     public async Task Run()
     {
-        var take = 10;
-        var q = _context.ComicResourceAvailable.Where(p => p.Status == ResourceStatus.WaitingForDownload && p.ExternalUrl != null);
-        var ts = TimeSpan.FromMinutes(3);
+        // Take 1 chapter
+        var qSubPost = _context.ComicSubPostAvailable.Where(p => p.Status == PostStatus.WaitingForDownload);
+        var subPostId = await qSubPost.OrderBy(p => p.Order).Select(p => p.Id).FirstOrDefaultAsync();
+        if (subPostId == Guid.Empty)
+        {
+            return;
+        }
 
-        var resource = await q.Take(take).ToListAsync();
+        var ts = TimeSpan.FromMinutes(5);
+        var qResource = _context.ComicResourceAvailable.Where(p => p.SubPostId == subPostId);
+        qResource = qResource.Where(p => p.Status == ResourceStatus.WaitingForDownload && p.ExternalUrl != null);
+        var resource = await qResource.ToListAsync();
+
         foreach (var i in resource)
         {
-            var sc = _sc.GetStrategy(MinioInstanceType.Blogtruyen);
-
+            var sc = _sc.GetStrategy(i.MinioInstance ?? MinioInstanceType.Default);
             var image = await sc.PutObject(i.ExternalUrl + "", i.Url + "", i.BucketName, false, ts);
             if (image == null)
             {
                 i.Status = ResourceStatus.NotFound;
-                continue;
             }
+            else
+            {
+                i.Status = ResourceStatus.Done;
 
-            i.Size = image.Stream?.Length ?? 0;
-            i.CompressedSize = i.Size;
-            i.Width = image.Width;
-            i.Height = image.Height;
-            i.Status = ResourceStatus.Done;
+                if (image.Stream != null)
+                {
+                    i.Size = image.Stream?.Length ?? 0;
+                    i.CompressedSize = i.Size;
+                    i.Width = image.Width;
+                    i.Height = image.Height;
+                }
+            }
 
             i.ModifiedOn = DateTime.UtcNow;
             i.ModifiedBy = CreatedBy.System;

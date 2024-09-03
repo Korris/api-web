@@ -18,5 +18,10 @@ public enum PostStatus
     /// <summary>
     /// Inactive
     /// </summary>
-    Inactive
+    Inactive,
+
+    /// <summary>
+    /// Waiting for download
+    /// </summary>
+    WaitingForDownload
 }
