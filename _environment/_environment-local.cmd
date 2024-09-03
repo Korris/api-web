@@ -12,7 +12,7 @@ setx Bumcheo_Com_Queue_VirtualHost "localvh"
 setx Bumcheo_Com_Queue_UserName "local"
 setx Bumcheo_Com_Queue_Password "Local+54321z@"
 setx Bumcheo_Com_MobileUserAgent "okhttp"
-setx Bumcheo_Com_Storage "[{\"instance\":0,\"endPoint\":\"localhost:9000\",\"publicUrl\":\"http://localhost:9000\",\"publicPrefix\":\"\",\"bucketName\":\"bumcheo-local\",\"location\":\"us-east-1\",\"accessKey\":\"admin\",\"secrectKey\":\"P@SSnhucu6969\"},{\"instance\":1,\"endPoint\":\"localhost:9000\",\"publicUrl\":\"http://localhost:9000\",\"publicPrefix\":\"\",\"bucketName\":\"bumcheo-local\",\"location\":\"us-east-1\",\"accessKey\":\"admin\",\"secrectKey\":\"P@SSnhucu6969\"}]"
+setx Bumcheo_Com_Storage "[{\"instance\":0,\"endPoint\":\"localhost:9000\",\"publicUrl\":\"http://localhost:9000\",\"publicPrefix\":\"\",\"bucketName\":\"bumcheo-dev\",\"location\":\"us-east-1\",\"accessKey\":\"admin\",\"secrectKey\":\"P@SSnhucu6969\"},{\"instance\":1,\"endPoint\":\"localhost:9000\",\"publicUrl\":\"http://localhost:9000\",\"publicPrefix\":\"\",\"bucketName\":\"bumcheo-dev\",\"location\":\"us-east-1\",\"accessKey\":\"admin\",\"secrectKey\":\"P@SSnhucu6969\"}]"
 setx Bumcheo_Com_EncryptKey "7weOVpAvST9y5v2xwqze3g=="
 
 setx Bumcheo_Cmc_Db_Host "localhost"

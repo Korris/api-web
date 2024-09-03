@@ -4,7 +4,7 @@
         "endPoint": "minio.teamsgsite.com",
         "publicUrl": "https://minio.teamsgsite.com",
         "publicPrefix": "",
-        "bucketName": "bumcheo-local",
+        "bucketName": "bumcheo-dev",
         "location": "us-east-1",
         "accessKey": "admin",
         "secrectKey": "P@SSnhucu6969"
@@ -14,7 +14,7 @@
         "endPoint": "minio.teamsgsite.com",
         "publicUrl": "https://minio.teamsgsite.com",
         "publicPrefix": "",
-        "bucketName": "bumcheo-local",
+        "bucketName": "bumcheo-dev",
         "location": "us-east-1",
         "accessKey": "admin",
         "secrectKey": "P@SSnhucu6969"
