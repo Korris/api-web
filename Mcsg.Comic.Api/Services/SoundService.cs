@@ -68,8 +68,8 @@ public partial class SoundService : ISoundService
             foreach (var item in items)
             {
                 item.Duration = item.DurationSeconds.ToDuration();
-                item.Url = _setting.Api.Web.Media.GetMediaPath(".mp3", item.Url);
-                item.Thumbnail = _setting.Api.Web.Media.GetMediaPath(".jpg", item.Thumbnail);
+                item.Url = _setting.Api.Web.Media.GetMediaPath(".mp3", item.Url, null);
+                item.Thumbnail = _setting.Api.Web.Media.GetMediaPath(".jpg", item.Thumbnail, null);
             }
 
             var response = new PagedResponse<SoundRecentlyDto>(totalItems, req.PageNumber, req.PageSize);

@@ -198,6 +198,7 @@ public partial class FeedService : IFeedService
                             to_jsonb(array_agg(
                             json_build_object(
                                 'Url', r.""Url"",
+                                'MinioInstance', r.""MinioInstance"",
                                 'Height', r.""Height"",
                                 'Width', r.""Width"",
                                 'BucketName', r.""BucketName"",
@@ -279,7 +280,7 @@ public partial class FeedService : IFeedService
             }
             else
             {
-                item.Url = _setting.Api.Web.Media.GetMediaPath(item.Name, item.Url);
+                item.Url = _setting.Api.Web.Media.GetMediaPath(item.Name, item.Url, item.MinioInstance);
             }
         }
 
@@ -410,7 +411,7 @@ public partial class FeedService : IFeedService
                 }
                 else
                 {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
                 }
 
                 itemResponse.Resources.Add(resourceResponse);
@@ -579,7 +580,7 @@ public partial class FeedService : IFeedService
                 }
                 else
                 {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
                 }
                 itemResponse.Resources.Add(resourceResponse);
             }
@@ -656,7 +657,7 @@ public partial class FeedService : IFeedService
                 }
                 else
                 {
-                    url = _setting.Api.Web.Media.GetMediaPath(fileDbs.Name, fileDbs.Url);
+                    url = _setting.Api.Web.Media.GetMediaPath(fileDbs.Name, fileDbs.Url, fileDbs.MinioInstance);
                 }
                 itemResponse.Resources.Add(new ResourceDto
                 {
@@ -691,7 +692,7 @@ public partial class FeedService : IFeedService
                         var resource = new UploadFileDto
                         {
                             HashId = subPostdb.HashId,
-                            Url = _setting.Api.Web.Media.GetMediaPath(x.Name, x.Url),
+                            Url = _setting.Api.Web.Media.GetMediaPath(x.Name, x.Url, x.MinioInstance),
                             Name = x.Name,
                             Type = x.Type,
                             Status = x.Status,

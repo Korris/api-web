@@ -21,12 +21,13 @@ using System.Text.RegularExpressions;
 
 namespace Mcsg.Common.Core.Extensions;
 
-using Common.Core.Enums;
+using Enums;
+using SeedWork.Enums;
 using SeedWork.Extensions;
 using SeedWork.Interfaces;
-using static Common.Core.Constants.Setting;
-using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
+using static Constants.Setting;
+using static SeedWork.Constants.Error;
+using static SeedWork.Constants.Message;
 
 /// <summary>
 /// String extension for using [this string] only
@@ -590,9 +591,10 @@ public static class StringExtension
     /// <param name="baseUrl">Base URL</param>
     /// <param name="name">Name</param>
     /// <param name="url">URL</param>
+    /// <param name="minioInstance">MinIO instance</param>
     /// <returns>Return the result</returns>
     /// <exception cref="FormatException">Format exception</exception>
-    public static string GetMediaPath(this string? baseUrl, string name, string? url)
+    public static string GetMediaPath(this string? baseUrl, string name, string? url, MinioInstanceType? minioInstance = null)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -614,7 +616,8 @@ public static class StringExtension
             mediaPath = string.Format(MediaConfig.VideoUrlPath, url);
         }
 
-        return $"{baseUrl}/{mediaPath}";
+        minioInstance ??= MinioInstanceType.Default;
+        return $"{baseUrl}/{mediaPath}&instance={minioInstance}";
     }
 
     /// <summary>

@@ -18,6 +18,7 @@
                                                 u.""ProfileId"",
                                                 r.""Name"" as ResourceName,
                                                 r.""Url"" as ResourceUrl,
+                                                r.""MinioInstance"",
                                                 r.""HashId"" as ResourceHashId
                                                FROM {0} pc
                                                LEFT JOIN ""comic"".""ComicResources"" r on pc.""ResourceId"" = r.""Id""
@@ -52,6 +53,7 @@
                                                     COUNT(reply.*) as ReplyCount, 
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
+                                                    r.""MinioInstance"",
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM ""comic"".""ComicPostComments""  pc
@@ -149,7 +151,7 @@
                                     )
                                 SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"" ,cte.""ModifiedOn"", cte.""AuthorId"", 
                                         (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
-                                        , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
+                                        , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
                                 FROM cte
                                 LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
                                 LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
@@ -187,6 +189,7 @@
                  res.""HashId"" AS ResourceHashId,
                  res.""Name"" AS ResourceName,
                  res.""Url"" AS ResourceUrl,
+                 res.""MinioInstance"",
                  cte.""GifId"",
                  cte.""QuoteId"",
                  (
@@ -221,7 +224,7 @@
                                 SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"", cte.""QuoteId"", cte.""ModifiedOn""
                                             , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
                                             , us.""Avatar"" AS UserAvatar
-                                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, cte.""GifId""
+                                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId""
                                             , cte.CommentLevel
                                 FROM cte
                                 LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
@@ -239,7 +242,7 @@
                                 , (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
                                 , comUser.""Avatar"" AS UserAvatar
                                 , com.""Body"", com.""ModifiedOn""
-                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance""
                                 , com.""GifId""
                                 , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
                                 , repUser.""Avatar"" AS ReplyUserAvatar    
@@ -270,7 +273,7 @@
                                 , (CASE WHEN comUser.""ProfileName"" IS NULL THEN comUser.""UserName""  ELSE comUser.""ProfileName"" END) AS AuthorName
                                 , comUser.""Avatar"" AS UserAvatar
                                 , com.""Body"", com.""ModifiedOn""
-                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl
+                                , res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance""
                                 , com.""GifId""
                                 , rep.""Id"" AS ReplyId, (CASE WHEN repUser.""ProfileName"" IS NULL THEN repUser.""UserName""  ELSE repUser.""ProfileName"" END) AS ReplyAuthorName
                                 , repUser.""Avatar"" AS ReplyUserAvatar    
