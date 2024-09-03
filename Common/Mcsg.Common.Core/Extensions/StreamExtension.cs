@@ -88,8 +88,15 @@ public static class StreamExtension
                 return fs;
             }
 
-            magickImage.Resize(new MagickGeometry(width, height) { IgnoreAspectRatio = true });
+            magickImage.Resize(new MagickGeometry
+            {
+                Width = width,
+                Height = height,
+                FillArea = true // Resize to fill the area
+            });
 
+            // Optionally crop the image to ensure it fits the exact dimensions
+            magickImage.Crop(width, height, Gravity.Center);
             using (var ms = new MemoryStream())
             {
                 magickImage.Format = MagickFormat.Jpeg;
