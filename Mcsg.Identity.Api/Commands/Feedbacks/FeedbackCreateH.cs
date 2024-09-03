@@ -43,17 +43,9 @@ public class FeedbackCreateH : BaseH, IRequestHandler<FeedbackCreateR, SingleRes
             throw new BadRequestException(M000, t);
         }
 
-        if (request.UserId == null)
-        {
-            throw new BadRequestException(M109);
-        }
-
-        var userId = request.UserId.Value;
-
         // Create
         var satisfaction = request.Satisfaction.ToEnum(SatisfactionLevel.Neutral);
-        var type = request.Type.ToEnum(PostType.Feed);
-        var ett = Feedback.Create(satisfaction, userId, request.Email!, request.Comment!, type);
+        var ett = Feedback.Create(satisfaction, request.UserId, request.Email!, request.Comment!, null);
         await _context.Feedbacks.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(default);
 

@@ -26,7 +26,7 @@ partial class Feedback
     /// <param name="comment"></param>
     /// <param name="postType"></param>
     /// <returns></returns>
-    public static Feedback Create(SatisfactionLevel satisfaction, Guid? userId, string email, string comment, PostType postType)
+    public static Feedback Create(SatisfactionLevel satisfaction, Guid? userId, string email, string comment, PostType? postType)
     {
         var res = new Feedback
         {
