@@ -632,7 +632,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                                 SELECT qpost.""Id""
                                 FROM ""story"".""StoryPosts"" qpost 
                                 LEFT JOIN ""story"".""StoryPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
-                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false";
+                                WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false
+                                AND NOT (qpost.""Hide"" = ANY (@Hide) AND qpost.""Hide"" IS NOT NULL)";
             }
         }
         #endregion

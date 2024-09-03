@@ -7,6 +7,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -770,11 +771,30 @@ public partial class PostService : IPostService
         }
     }
 
-    public async Task<Tuple<int, int>> GetFollowedPostCount()
+    public async Task<Tuple<int, int>> GetFollowedPostCount(BaseR req)
     {
         var currentUserId = _currentUserService.Session?.UserId;
-        var followedComicCount = await _context.ComicPostFavoriteAvailable.AsNoTracking().CountAsync(p => p.UserId == currentUserId);
-        var followedStoryCount = await _context.StoryPostFavoriteAvailable.AsNoTracking().CountAsync(p => p.UserId == currentUserId);
+        var followedComicCount = await (
+            from qpost in _context.ComicPosts.AsNoTracking()
+            join cfp in _context.ComicPostFavoriteAvailable.AsNoTracking()
+                on qpost.Id equals cfp.PostId
+            where cfp.UserId == currentUserId
+                  && !cfp.IsDelete
+                  && !qpost.IsDelete
+                  && (!req.Hides.Contains((int)qpost.Hide))
+            select qpost
+        ).CountAsync();
+
+        var followedStoryCount = await (
+            from qpost in _context.StoryPosts.AsNoTracking()
+            join cfp in _context.StoryPostFavoriteAvailable.AsNoTracking()
+                on qpost.Id equals cfp.PostId
+            where cfp.UserId == currentUserId
+                  && !cfp.IsDelete
+                  && !qpost.IsDelete
+                  && (!req.Hides.Contains((int)qpost.Hide))
+            select qpost
+        ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
     #endregion

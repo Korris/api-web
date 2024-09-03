@@ -1,13 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Mcsg.Social.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Requests;
 
 [ApiController]
@@ -101,7 +102,8 @@ public class PostController : ControllerBase
     [HttpGet("get-followed-post-count")]
     public async Task<IActionResult> GetFollowedPostCount()
     {
-        var result = await _postService.GetFollowedPostCount();
+        var req = new BaseR(HttpContext);
+        var result = await _postService.GetFollowedPostCount(req);
         return Ok(result);
     }
 

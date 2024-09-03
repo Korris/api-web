@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Dtos;
 using Models;
@@ -22,5 +23,5 @@ public interface IPostService
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
-    Task<Tuple<int, int>> GetFollowedPostCount();
+    Task<Tuple<int, int>> GetFollowedPostCount(BaseR req);
 }
