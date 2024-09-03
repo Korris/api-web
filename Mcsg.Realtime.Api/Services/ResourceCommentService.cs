@@ -81,7 +81,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url),
+            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url, resource.MinioInstance),
             Id = resource.Id
         };
     }
@@ -121,7 +121,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url),
+            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url, resource.MinioInstance),
             Id = resource.Id
         };
     }
@@ -161,7 +161,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url),
+            Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url, resource.MinioInstance),
             Id = resource.Id
         };
     }

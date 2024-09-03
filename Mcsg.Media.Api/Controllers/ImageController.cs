@@ -6,6 +6,8 @@ namespace Mcsg.Media.Api.Controllers;
 
 using Common.Core.Constants;
 using Common.Core.Interfaces;
+using Common.SeedWork.Enums;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 
@@ -31,20 +33,22 @@ public class ImageController : ControllerBase
     /// <summary>
     /// Get
     /// </summary>
+    /// <param name="instance">MinIO instance</param>
     /// <param name="i">Image</param>
     /// <param name="p">Public</param>
     /// <returns>Return the result</returns>
     [HttpGet]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Get([FromQuery] string? i, string? p)
+    public async Task<IActionResult> Get([FromQuery] string? instance, string? i, string? p)
     {
+        var minioInstance = (instance + "").ToEnum(MinioInstanceType.Default);
         Stream? fs = null;
         string? objectName = null;
 
         if (!string.IsNullOrWhiteSpace(p))
         {
             objectName = $"{Setting.MinioFolder.Image}/{p}";
-            fs = await _sc.GetStrategy().GetObject(objectName, null);
+            fs = await _sc.GetStrategy(minioInstance).GetObject(objectName, null);
         }
         else
         {
@@ -59,11 +63,10 @@ public class ImageController : ControllerBase
                 return NoContent();
             }
 
-            fs = await _sc.GetStrategy().GetObject(objectName, null);
+            fs = await _sc.GetStrategy(minioInstance).GetObject(objectName, null);
         }
 
         var ms = fs as MemoryStream;
-
         if (ms == null)
         {
             return NoContent();

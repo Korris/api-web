@@ -4,6 +4,8 @@ using System.Net;
 namespace Mcsg.Media.Api.Controllers;
 
 using Common.Core.Interfaces;
+using Common.SeedWork.Enums;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 
@@ -29,12 +31,13 @@ public class VideoController : ControllerBase
     /// <summary>
     /// Get
     /// </summary>
+    /// <param name="instance">MinIO instance</param>
     /// <param name="v">Video</param>
     /// <param name="a">Audio</param>
     /// <returns>Return the result</returns>
     [HttpGet]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Get([FromQuery] string? v, string? a)
+    public async Task<IActionResult> Get([FromQuery] string? instance, string? v, string? a)
     {
         if (!string.IsNullOrWhiteSpace(a))
         {
@@ -52,7 +55,8 @@ public class VideoController : ControllerBase
             return NoContent();
         }
 
-        var ms = await _sc.GetStrategy().GetObject(objectName, null) as MemoryStream;
+        var minioInstance = (instance + "").ToEnum(MinioInstanceType.Default);
+        var ms = await _sc.GetStrategy(minioInstance).GetObject(objectName, null) as MemoryStream;
         if (ms == null)
         {
             return NoContent();
