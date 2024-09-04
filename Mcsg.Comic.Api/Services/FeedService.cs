@@ -30,41 +30,27 @@ public partial class FeedService : IFeedService
 {
     #region -- Methods --
 
-    public FeedService(
-        IMcsgContext context,
-        ISetting setting,
-        IStorageClient sc,
-        IPostService postService,
-        IMetaDataService metaDataService,
-        ITagService tagService,
-        IFileService fileService,
-        ISoundService soundService,
-        IPostLinkService postLinkService,
-        ISmartLookupService smartLookupService,
-        IUnitOfWork unitOfWork,
-        ISmartCountService smartCountService,
-        IViewHistoryService viewHistoryService,
-        IConfiguration configuration,
-        IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
-        IMapper mapper)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="postService"></param>
+    /// <param name="soundService"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="feedDisplayConfig"></param>
+    /// <param name="mapper"></param>
+    public FeedService(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, ISoundService soundService, IUnitOfWork unitOfWork, IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig, IMapper mapper)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
         _postService = postService;
-        _metaDataService = metaDataService;
-        _tagService = tagService;
-        _fileService = fileService;
         _soundService = soundService;
-        _postLinkService = postLinkService;
-        _smartLookupService = smartLookupService;
 
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
-
-        _smartCountService = smartCountService;
-        _viewHistoryService = viewHistoryService;
-        _configuration = configuration;
         _feedDisplayConfig = feedDisplayConfig.CurrentValue;
         _mapper = mapper;
     }
@@ -354,8 +340,6 @@ public partial class FeedService : IFeedService
         {
             throw new NotFoundException(E204, M204);
         }
-
-        //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
 
         if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
@@ -783,40 +767,12 @@ public partial class FeedService : IFeedService
     private readonly IPostService _postService;
 
     /// <summary>
-    /// MetaData service
-    /// </summary>
-    private readonly IMetaDataService _metaDataService;
-
-    /// <summary>
-    /// Tag service
-    /// </summary>
-    private readonly ITagService _tagService;
-
-    /// <summary>
-    /// File service
-    /// </summary>
-    private readonly IFileService _fileService;
-
-    /// <summary>
     /// Sound service
     /// </summary>
     private readonly ISoundService _soundService;
 
-    /// <summary>
-    /// PostLink service
-    /// </summary>
-    private readonly IPostLinkService _postLinkService;
-
-    /// <summary>
-    /// SmartLookup service
-    /// </summary>
-    private readonly ISmartLookupService _smartLookupService;
-
     private readonly IRepository<ComicPost> _postRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISmartCountService _smartCountService;
-    private readonly IViewHistoryService _viewHistoryService;
-    private readonly IConfiguration _configuration;
     private readonly FeedDisplayConfig _feedDisplayConfig;
     private readonly IMapper _mapper;
 

@@ -154,8 +154,8 @@
                                         (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
                                         , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId"", cte.CommentLevel, cte.""QuoteId""
                                 FROM cte
-                                LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
-                                LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+                                LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" res ON cte.""ResourceId"" = res.""Id""
                                 WHERE cte.""IsDelete"" = false
                                 ORDER BY
                                     cte.CommentLevel,
@@ -199,8 +199,8 @@
                      WHERE sub_comments.""ParentId"" = cte.""Id""
                  ) AS ""ReplyCount""
              FROM cte
-             LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
-             LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+             LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
+             LEFT JOIN ""comic"".""ComicResources"" res ON cte.""ResourceId"" = res.""Id""
              WHERE cte.""IsDelete"" = false;";
             }
         }
@@ -228,8 +228,8 @@
                                             , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId""
                                             , cte.CommentLevel
                                 FROM cte
-                                LEFT JOIN {_userRepository.TableName} us ON cte.""AuthorId"" = us.""Id""
-                                LEFT JOIN {_resourceRepository.TableName} res ON cte.""ResourceId"" = res.""Id""
+                                LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" res ON cte.""ResourceId"" = res.""Id""
                                 WHERE cte.""IsDelete"" = false
                                 ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
             }
@@ -254,11 +254,11 @@
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_postCommentRepository.TableName}
                                         WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
                                 FROM {_postCommentRepository.TableName} com
-                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN identity.""Users"" comUser ON com.""AuthorId"" = comUser.""Id""
                                 LEFT JOIN {_postCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN identity.""Users"" repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -284,11 +284,11 @@
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
                                         WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
                                 FROM {_subPostCommentRepository.TableName} com
-                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN identity.""Users"" comUser ON com.""AuthorId"" = comUser.""Id""
                                 LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN identity.""Users"" repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -314,11 +314,11 @@
                                 , (SELECT COUNT(""Id"") AS TotalRecord FROM {_subPostCommentRepository.TableName}
                                         WHERE ""PostId"" = @PostId AND ""IsDelete"" = false) AS TotalRecord
                                 FROM {_subPostCommentRepository.TableName} com
-                                LEFT JOIN {_resourceRepository.TableName} res ON com.""ResourceId"" = res.""Id""
-                                LEFT JOIN {_userRepository.TableName} comUser ON com.""AuthorId"" = comUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" res ON com.""ResourceId"" = res.""Id""
+                                LEFT JOIN identity.""Users"" comUser ON com.""AuthorId"" = comUser.""Id""
                                 LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
-                                LEFT JOIN {_resourceRepository.TableName} repRes ON rep.""ResourceId"" = repRes.""Id""
-                                LEFT JOIN {_userRepository.TableName} repUser ON rep.""AuthorId"" = repUser.""Id""
+                                LEFT JOIN ""comic"".""ComicResources"" repRes ON rep.""ResourceId"" = repRes.""Id""
+                                LEFT JOIN identity.""Users"" repUser ON rep.""AuthorId"" = repUser.""Id""
                         WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
@@ -330,8 +330,8 @@
             get
             {
                 return $@"SELECT T1.""PostId"", COUNT (DISTINCT T1.""Id"") AS ""Count"" 
-                        FROM {_subPostRepository.TableName} T1
-                        LEFT JOIN {_subPostRepository.TableName} T2
+                        FROM ""comic"".""ComicSubPosts"" T1
+                        LEFT JOIN ""comic"".""ComicSubPosts"" T2
                         ON T1.""PostId"" = T2.""PostId""
                         WHERE T2.""Id"" = @PostId AND T2.""IsDelete"" = false 
                         GROUP BY T1.""PostId"" ";

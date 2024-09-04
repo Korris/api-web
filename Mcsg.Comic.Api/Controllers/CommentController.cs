@@ -3,6 +3,7 @@
 namespace Mcsg.Comic.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -77,7 +78,8 @@ public class CommentController : ControllerBase
     [HttpGet("get-comment-by-id/{commentId}")]
     public async Task<IActionResult> GetPostCommentReaction(Guid commentId, [FromQuery] bool isSubPost)
     {
-        var result = await _commentService.GetCommentById(commentId, isSubPost);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentById(commentId, isSubPost, req.UserId);
         return Ok(result);
     }
 
@@ -117,9 +119,10 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("comment-most-reaction")]
-    public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] CommentMostReactionR input)
+    public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] CommentMostReactionR request)
     {
-        var result = await _commentService.GetCommentWithMostReaction(input);
+        request.Analyze(HttpContext);
+        var result = await _commentService.GetCommentWithMostReaction(request);
         return Ok(result);
     }
 
