@@ -1070,11 +1070,7 @@ public partial class PostService : IPostService
 
         var result = new PostSeriesAllTopResponse();
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
-            .Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
-            .Replace("[CountResults]", countTopQuery)
-            .Replace("[OrderBy]", loadReq.OrderBy)
-            .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_MYSELF);
 
 
         var multi = await _postRepository
@@ -1463,6 +1459,7 @@ public partial class PostService : IPostService
     {
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
+        var permission = $@"AND p.""Permission"" != 1";
         switch (selectedType)
         {
             case PostSeriesSelectedType.HIT:
@@ -1501,6 +1498,13 @@ public partial class PostService : IPostService
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetLatestPostByUserToCountQuery);
                     break;
                 }
+            case PostSeriesSelectedType.BY_MYSELF:
+                {
+                    permission = "";
+                    topSelectPostIdQuery = GetMyPostIdsQuery;
+                    countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
+                    break;
+                }
             default:
                 {
                     break;
@@ -1510,7 +1514,8 @@ public partial class PostService : IPostService
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedOn");
+            .Replace("[OrderBy]", "CreatedOn")
+            .Replace("[Permission]", permission);
 
         if (userName != null && userName != "")
         {

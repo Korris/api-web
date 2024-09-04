@@ -7,5 +7,6 @@ public enum PostSeriesSelectedType
     COMPLETED = 2,
     BY_TAG = 3,
     RECOMMEND = 4,
-    BY_USER = 5
+    BY_USER = 5,
+    BY_MYSELF = 6
 }
