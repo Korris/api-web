@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Story.Api.Interfaces;
 
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Dtos;
 using Enums;
@@ -15,6 +16,6 @@ public interface IFeedService
     FeedDisplayConfig GetFeedDisplayConfig();
     Task<bool> DeleteFeedAsync(Guid postId);
     FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item);
-    Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId);
-    Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds);
+    Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request);
+    Task<List<FeedBoxResponse>> GetFeedsByIds(StoryHashIdsR request);
 }

@@ -58,6 +58,7 @@ public class FeedController : ControllerBase
     [HttpGet("trending")]
     public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedsAsync(request, LoadFeedType.TRENDING);
         return Ok(result);
     }
@@ -65,6 +66,7 @@ public class FeedController : ControllerBase
     [HttpGet("hot")]
     public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedsAsync(request, LoadFeedType.HOT);
         return Ok(result);
     }
@@ -72,6 +74,7 @@ public class FeedController : ControllerBase
     [HttpGet("list/{tagName}")]
     public async Task<IActionResult> GetFeedByTag(string tagName, [FromQuery] FeedLoadReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedsByTagAsync(tagName, request);
         return Ok(result);
     }
@@ -79,6 +82,7 @@ public class FeedController : ControllerBase
     [HttpGet("search/{keyword}")]
     public async Task<IActionResult> GetFeedByKeyword(string keyword, [FromQuery] FeedSearchKeywordR request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedByKeywordAsync(keyword, request);
         return Ok(result);
     }
@@ -95,8 +99,8 @@ public class FeedController : ControllerBase
     [HttpGet("subpost/{hashId}")]
     public async Task<IActionResult> GetFeedSubPost(string hashId)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _feedService.GetFeedSubPostAsync(hashId, req.UserId ?? Guid.Empty);
+        var req = new IdBaseR(HttpContext) { HashId = hashId };
+        var result = await _feedService.GetFeedSubPostAsync(req);
         return Ok(result);
     }
 
@@ -111,6 +115,7 @@ public class FeedController : ControllerBase
     [HttpGet("{id}/reactions")]
     public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
+        request.Analyze(HttpContext);
         var result = await _postReactService.GetReactionsByTargetAsync(id, request);
         return Ok(result);
     }
@@ -118,6 +123,7 @@ public class FeedController : ControllerBase
     [HttpGet("{id}/sub-post-reactions")]
     public async Task<IActionResult> GetSubPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
+        request.Analyze(HttpContext);
         var result = await _subPostReactService.GetReactionsByTargetAsync(id, request);
         return Ok(result);
     }
@@ -132,18 +138,19 @@ public class FeedController : ControllerBase
     }
 
     [HttpGet("post/{userName}")]
-    public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq loadReq)
+    public async Task<IActionResult> GetUserFeed(string userName, [FromQuery] FeedLoadReq request)
     {
-        loadReq.NewUserName = userName;
-        loadReq.Analyze(HttpContext);
-        var result = await _feedService.GetFeedsAsync(loadReq, LoadFeedType.ALL);
+        request.Analyze(HttpContext);
+        request.NewUserName = userName;
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.ALL);
         return Ok(result);
     }
 
     [HttpGet("search-by-profileName")]
-    public async Task<IActionResult> GetSearchFeed([FromQuery] FeedPostByProFileNameR input)
+    public async Task<IActionResult> GetSearchFeed([FromQuery] FeedPostByProFileNameR request)
     {
-        var result = await _feedService.GetFeedByUserNameOrKeyword(input);
+        request.Analyze(HttpContext);
+        var result = await _feedService.GetFeedByUserNameOrKeyword(request);
         return Ok(result);
     }
 

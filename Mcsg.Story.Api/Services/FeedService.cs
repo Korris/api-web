@@ -9,6 +9,7 @@ namespace Mcsg.Story.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -18,7 +19,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -38,7 +38,6 @@ public partial class FeedService : IFeedService
         IMetaDataService metaDataService,
         ITagService tagService,
         IFileService fileService,
-        ICurrentUserService _currentUserService,
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
@@ -56,7 +55,6 @@ public partial class FeedService : IFeedService
         _metaDataService = metaDataService;
         _tagService = tagService;
         _fileService = fileService;
-        _currentUserService = _currentUserService;
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
@@ -184,8 +182,11 @@ public partial class FeedService : IFeedService
         }
     }
 
-    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId)
+    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request)
     {
+        var hashId = request.HashId;
+        var userId = request.UserId;
+
         var query = $@"WITH SubPostsCount AS (
                             SELECT ""PostId"", 
                                    COUNT(*) AS total_subposts 
@@ -454,11 +455,11 @@ public partial class FeedService : IFeedService
         return itemResponse;
     }
 
-    public async Task<List<FeedBoxResponse>> GetFeedsByIds(string hashIds)
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(StoryHashIdsR request)
     {
-        var param = new { HashIds = hashIds.Split(',').ToList() };
+        var param = new { HashIds = request.HashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
+        var userId = request.UserId;
 
         if (result != null && result.Any())
         {
@@ -466,7 +467,7 @@ public partial class FeedService : IFeedService
 
             foreach (var res in result)
             {
-                listFeedDetails.Add(MappingFeedBoxResponse(res, currentUserId));
+                listFeedDetails.Add(MappingFeedBoxResponse(res, userId));
             }
 
             return listFeedDetails;
@@ -795,11 +796,6 @@ public partial class FeedService : IFeedService
     /// File service
     /// </summary>
     private readonly IFileService _fileService;
-
-    /// <summary>
-    /// CurrentUser service
-    /// </summary>
-    private readonly ICurrentUserService _currentUserService;
 
     /// <summary>
     /// Sound service

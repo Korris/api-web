@@ -37,9 +37,7 @@ public class BaseR : IRequest<SingleResponse>
     /// <summary>
     /// Initialize
     /// </summary>
-    public BaseR()
-    {
-    }
+    public BaseR() { }
 
     /// <summary>
     /// Initialize

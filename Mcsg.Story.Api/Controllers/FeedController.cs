@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Story.Api.Controllers;
 
 using Common.Core.Requests;
+using Enums;
 using Interfaces;
 using Requests;
 
@@ -41,7 +42,8 @@ public class FeedController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
     {
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.ALL);
+        request.Analyze(HttpContext);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.ALL);
         return Ok(result);
     }
 
@@ -55,20 +57,23 @@ public class FeedController : ControllerBase
     [HttpGet("trending")]
     public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
     {
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.TRENDING);
+        request.Analyze(HttpContext);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.TRENDING);
         return Ok(result);
     }
 
     [HttpGet("hot")]
     public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
     {
-        var result = await _feedService.GetFeedsAsync(request, Enums.LoadFeedType.HOT);
+        request.Analyze(HttpContext);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.HOT);
         return Ok(result);
     }
 
     [HttpGet("list/{tagName}")]
     public async Task<IActionResult> GetFeedByTag(string tagName, [FromQuery] FeedLoadReq request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedsByTagAsync(tagName, request);
         return Ok(result);
     }
@@ -76,6 +81,7 @@ public class FeedController : ControllerBase
     [HttpGet("search/{keyword}")]
     public async Task<IActionResult> GetFeedByKeyword(string keyword, [FromQuery] FeedSearchKeywordR request)
     {
+        request.Analyze(HttpContext);
         var result = await _feedService.GetFeedByKeywordAsync(keyword, request);
         return Ok(result);
     }
@@ -91,8 +97,8 @@ public class FeedController : ControllerBase
     [HttpGet("subpost/{hashId}")]
     public async Task<IActionResult> GetFeedSubPost(string hashId)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _feedService.GetFeedSubPostAsync(hashId, req.UserId ?? Guid.Empty);
+        var req = new IdBaseR(HttpContext) { HashId = hashId };
+        var result = await _feedService.GetFeedSubPostAsync(req);
         return Ok(result);
     }
 
@@ -107,6 +113,7 @@ public class FeedController : ControllerBase
     [HttpGet("{id}/reactions")]
     public async Task<IActionResult> GetPostReactsByType(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
+        request.Analyze(HttpContext);
         var result = await _postReactService.GetReactionsByTargetAsync(id, request);
         return Ok(result);
     }
@@ -114,7 +121,9 @@ public class FeedController : ControllerBase
     [HttpGet("get-feed-by-list-id")]
     public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
     {
-        var result = await _feedService.GetFeedsByIds(hashIds);
+        var req = new StoryHashIdsR { HashIds = hashIds };
+        req.Analyze(HttpContext);
+        var result = await _feedService.GetFeedsByIds(req);
         return Ok(result);
     }
 

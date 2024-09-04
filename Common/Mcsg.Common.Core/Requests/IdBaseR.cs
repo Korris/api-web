@@ -11,6 +11,8 @@
  */
 #endregion
 
+using Microsoft.AspNetCore.Http;
+
 namespace Mcsg.Common.Core.Requests;
 
 using SeedWork.Interfaces;
@@ -20,6 +22,21 @@ using SeedWork.Interfaces;
 /// </summary>
 public class IdBaseR : BaseR, IEntityId<Guid>
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public IdBaseR() { }
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="hc">HTTP context</param>
+    public IdBaseR(HttpContext hc) : base(hc) { }
+
+    #endregion
+
     #region -- Implements --
 
     /// <summary>

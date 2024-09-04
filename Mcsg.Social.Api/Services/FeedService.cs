@@ -10,6 +10,7 @@ namespace Mcsg.Social.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -19,7 +20,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -39,7 +39,6 @@ public partial class FeedService : IFeedService
         IMetaDataService metaDataService,
         ITagService tagService,
         IFileService fileService,
-        ICurrentUserService currentUserService,
         ISoundService soundService,
         IPostLinkService postLinkService,
         ISmartLookupService smartLookupService,
@@ -58,7 +57,6 @@ public partial class FeedService : IFeedService
         _metaDataService = metaDataService;
         _tagService = tagService;
         _fileService = fileService;
-        _currentUserService = currentUserService;
         _soundService = soundService;
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
@@ -315,8 +313,11 @@ public partial class FeedService : IFeedService
         }
     }
 
-    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(string hashId, Guid userId)
+    public async Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request)
     {
+        var hashId = request.HashId;
+        var userId = request.UserId;
+
         var query = $@"WITH SubPostsCount AS (
                          SELECT ""PostId"", 
                                 COUNT(*) AS total_subposts 
@@ -630,7 +631,6 @@ public partial class FeedService : IFeedService
 
         var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
         var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId)
                                                                 .Select(p => p.PostId)
@@ -642,7 +642,7 @@ public partial class FeedService : IFeedService
             foreach (var res in result)
             {
                 res.Body = await _businessText.Process(res.Body);
-                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds, currentUserId));
+                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds, userId));
             }
 
             var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
@@ -1022,11 +1022,6 @@ public partial class FeedService : IFeedService
     /// File service
     /// </summary>
     private readonly IFileService _fileService;
-
-    /// <summary>
-    /// CurrentUser service
-    /// </summary>
-    private readonly ICurrentUserService _currentUserService;
 
     /// <summary>
     /// Sound service
