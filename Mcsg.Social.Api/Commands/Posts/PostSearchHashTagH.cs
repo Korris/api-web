@@ -94,6 +94,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Comic
                           && qpost.Status == PostStatus.Public
+                          && qpost.Permission != PostPermission.Private
+                          && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
                 ).Distinct().Count();
             }
@@ -115,6 +117,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.TagAvailable on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Feed
+                          && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
                 ).Distinct().Count();
 
@@ -143,6 +146,9 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Story
+                          && qpost.Status == PostStatus.Public
+                          && qpost.Permission != PostPermission.Private
+                          && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
                 ).Distinct().Count();
             }
