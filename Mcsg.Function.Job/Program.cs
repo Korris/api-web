@@ -149,7 +149,7 @@ public class Program
 
         // AddHostedService
         builder.Services.AddHostedService<HostedDeleteAccount>();
-        builder.Services.AddHostedService<HostedDownloadImage>();
+        //builder.Services.AddHostedService<HostedDownloadImage>(); not in use for now
         builder.Services.AddHostedService<HostedEmail>();
         builder.Services.AddHostedService<HostedExclusiveUnlock>();
         builder.Services.AddHostedService<HostedPaymentTransaction>();
