@@ -1248,7 +1248,7 @@ public partial class PostService : IPostService
         }).ToList();
     }
 
-    public async Task<List<PostBoxResponse>> GetPostDetails(ComicHashIdsR req)
+    public async Task<List<PostBoxResponse>> GetPostDetails(PaginatedR req)
     {
         var hashIds = req.HashIds;
         var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };

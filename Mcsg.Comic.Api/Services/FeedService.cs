@@ -455,7 +455,7 @@ public partial class FeedService : IFeedService
         return itemResponse;
     }
 
-    public async Task<List<FeedBoxResponse>> GetFeedsByIds(ComicHashIdsR request)
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(PaginatedR request)
     {
         var param = new { HashIds = request.HashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);

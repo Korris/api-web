@@ -624,7 +624,7 @@ public partial class FeedService : IFeedService
         return itemResponse;
     }
 
-    public async Task<List<FeedBoxResponse>> GetFeedsByIds(FeedHashIdsR req)
+    public async Task<List<FeedBoxResponse>> GetFeedsByIds(PaginatedR req)
     {
         var hashIds = req.HashIds;
         var userId = req.UserId;

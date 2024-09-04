@@ -17,5 +17,5 @@ public interface IFeedService
     Task<bool> DeleteFeedAsync(Guid postId);
     FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item);
     Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request);
-    Task<List<FeedBoxResponse>> GetFeedsByIds(StoryHashIdsR request);
+    Task<List<FeedBoxResponse>> GetFeedsByIds(PaginatedR request);
 }

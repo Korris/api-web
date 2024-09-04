@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel;
 
 namespace Mcsg.Common.Core.Requests;
 
@@ -7,6 +8,36 @@ namespace Mcsg.Common.Core.Requests;
 /// </summary>
 public class PaginatedR : BaseR
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public PaginatedR() { }
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="hc">HTTP context</param>
+    public PaginatedR(HttpContext hc)
+    {
+        _hc = hc;
+
+        LogHeader();
+    }
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="hc">HTTP context</param>
+    /// <param name="hashIds">HashIds</param>
+    public PaginatedR(HttpContext hc, string? hashIds) : this(hc)
+    {
+        HashIds = hashIds;
+    }
+
+    #endregion
+
     #region -- Properties --
 
     /// <summary>
@@ -26,6 +57,11 @@ public class PaginatedR : BaseR
     /// </summary>
     [DefaultValue("CreatedOn")]
     public string? OrderBy { get; set; }
+
+    /// <summary>
+    /// HashIds
+    /// </summary>
+    public string? HashIds { get; set; }
 
     #endregion
 }

@@ -3,6 +3,7 @@
 namespace Mcsg.Story.Api.Controllers;
 
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -45,8 +46,7 @@ public class PostController : ControllerBase
     [HttpGet("get-post-by-list-id")]
     public async Task<IActionResult> GetPostDetails([FromQuery] string hashIds)
     {
-        var req = new StoryHashIdsR { HashIds = hashIds };
-        req.Analyze(HttpContext);
+        var req = new PaginatedR(HttpContext, hashIds);
         var result = await _postService.GetPostDetails(req);
         return Ok(result);
     }

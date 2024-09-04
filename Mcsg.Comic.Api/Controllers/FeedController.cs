@@ -121,8 +121,7 @@ public class FeedController : ControllerBase
     [HttpGet("get-feed-by-list-id")]
     public async Task<IActionResult> GetFeedsByIds([FromQuery] string hashIds)
     {
-        var req = new ComicHashIdsR { HashIds = hashIds };
-        req.Analyze(HttpContext);
+        var req = new PaginatedR(HttpContext, hashIds);
         var result = await _feedService.GetFeedsByIds(req);
         return Ok(result);
     }

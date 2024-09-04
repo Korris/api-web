@@ -97,7 +97,7 @@ public class BaseR : IRequest<SingleResponse>
     /// <summary>
     /// Log header
     /// </summary>
-    private void LogHeader()
+    protected void LogHeader()
     {
         if (_hc == null)
         {
