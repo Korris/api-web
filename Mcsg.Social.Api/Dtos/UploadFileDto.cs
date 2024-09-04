@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
+using Common.SeedWork.Enums;
 
 public class UploadFileDto
 {
@@ -14,4 +15,5 @@ public class UploadFileDto
     public int Width { get; set; }
     public int Height { get; set; }
     public double Size { get; set; }
+    public MinioInstanceType? MinioInstance { get; set; }
 }

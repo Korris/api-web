@@ -594,7 +594,7 @@ public static class StringExtension
     /// <param name="minioInstance">MinIO instance</param>
     /// <returns>Return the result</returns>
     /// <exception cref="FormatException">Format exception</exception>
-    public static string GetMediaPath(this string? baseUrl, string name, string? url, MinioInstanceType? minioInstance = null)
+    public static string GetMediaPath(this string? baseUrl, string name, string? url, MinioInstanceType? minioInstance)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

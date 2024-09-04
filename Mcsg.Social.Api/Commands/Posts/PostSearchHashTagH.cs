@@ -200,7 +200,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 }
                 else
                 {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url);
+                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
                 }
                 item.Resources.Add(resourceResponse);
             }

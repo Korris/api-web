@@ -146,7 +146,7 @@
                                 LIMIT @PageSize
                                 OFFSET @Offet
                             ) p
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""                        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
                             LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL 
                             (
@@ -157,7 +157,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1
@@ -251,7 +251,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1
@@ -351,7 +351,7 @@ LIMIT @PageSize
                                 LIMIT @PageSize
                                 OFFSET @Offet
                             ) p
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""                        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
                             LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
                             LEFT JOIN social.""SocialPostLinks"" pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
                             LEFT JOIN LATERAL 
@@ -364,7 +364,7 @@ LIMIT @PageSize
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
@@ -452,6 +452,7 @@ LIMIT @PageSize
                         spr.""Id"", 
                         spr.""Type"",
                         spr.""Url"",
+                        spr.""MinioInstance"",
                         spr.""BucketName"",
                         spr.""HashId"",
                         spr.""Name"",
@@ -508,7 +509,7 @@ LIMIT @PageSize
                         p.""Body"",
                         p.""HashId"",
                         p.""UserId"",
-                        p.""ThumbnailUrl"",                        
+                        p.""ThumbnailUrl"",
                         p.""CustomNote"",
                         p.""Hide"",
                         u.""Avatar"" AS ""UserAvatar"",
@@ -566,6 +567,7 @@ LIMIT @PageSize
                             spr.""Status"",
                             spr.""BucketName"",
                             spr.""Url"",
+                            spr.""MinioInstance"",
                             spr.""Name"",
                             spr.""HashId"",
                             spr.""Width"",
@@ -658,7 +660,7 @@ LIMIT @PageSize
                                 LIMIT @PageSize
                                 OFFSET @Offet
                             ) p
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""                        
+                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
                             LEFT JOIN social.""SocialMetaDatas"" md ON md.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL 
                             (
@@ -670,7 +672,7 @@ LIMIT @PageSize
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""BucketName"",""Status"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""BucketName"",""Status"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM social.""SocialResources"" 
                                  WHERE ""SubPostId"" = sp.""Id""
                                 LIMIT 1

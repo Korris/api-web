@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
+using Common.SeedWork.Enums;
 
 public class ResourceDto
 {
@@ -14,4 +15,5 @@ public class ResourceDto
     public int Height { get; set; }
     public string Body { get; set; }
     public string SubPostHashId { get; set; }
+    public MinioInstanceType? MinioInstance { get; set; }
 }

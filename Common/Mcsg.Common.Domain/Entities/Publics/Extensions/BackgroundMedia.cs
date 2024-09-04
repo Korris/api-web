@@ -58,8 +58,8 @@ partial class BackgroundMedia
         {
             Id = Id,
             Title = Title,
-            Url = mediaApiUrl.GetMediaPath(".mp3", Url),
-            Thumbnail = mediaApiUrl.GetMediaPath(".jpg", Thumbnail),
+            Url = mediaApiUrl.GetMediaPath(".mp3", Url, null),
+            Thumbnail = mediaApiUrl.GetMediaPath(".jpg", Thumbnail, null),
             ArtistName = ArtistName,
             Duration = DurationSeconds.ToDuration(),
             Order = Order
