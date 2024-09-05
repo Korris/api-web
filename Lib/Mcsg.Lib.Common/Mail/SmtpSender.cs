@@ -9,24 +9,24 @@ using Models;
 
 public class SmtpSender : IEmailSender
 {
-    public SmtpSettings _sendMailSettings { get; }
+    public SmtpSettings _smtpSetting { get; }
 
     public SmtpSender(IOptions<SmtpSettings> smtpSettings)
     {
-        _sendMailSettings = smtpSettings.Value;
+        _smtpSetting = smtpSettings.Value;
     }
 
     public async Task<bool> SendEmail(Email email)
     {
         try
         {
-            var client = new SmtpClient(_sendMailSettings.SmtpHost, _sendMailSettings.SmtpPort)
+            var client = new SmtpClient(_smtpSetting.SmtpHost, _smtpSetting.SmtpPort)
             {
-                Credentials = new NetworkCredential(_sendMailSettings.SmtpUser, _sendMailSettings.SmtpPass),
+                Credentials = new NetworkCredential(_smtpSetting.SmtpUser, _smtpSetting.SmtpPass),
                 EnableSsl = true
             };
-            client.Send(_sendMailSettings.SmtpFrom,
-                email.To, email.Subject, email.Body);
+
+            client.Send(_smtpSetting.SmtpFrom, email.To, email.Subject, email.Body);
         }
         catch (Exception e)
         {
@@ -40,13 +40,18 @@ public class SmtpSender : IEmailSender
     {
         try
         {
-            var client = new SmtpClient(_sendMailSettings.SmtpHost, _sendMailSettings.SmtpPort)
+            var client = new SmtpClient(_smtpSetting.SmtpHost, _smtpSetting.SmtpPort)
             {
-                Credentials = new NetworkCredential(_sendMailSettings.SmtpUser, _sendMailSettings.SmtpPass),
                 EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(_smtpSetting.SmtpUser, _smtpSetting.SmtpPass)
             };
-            Console.WriteLine($"Send mail from {_sendMailSettings.SmtpFrom} to {toEmail}");
-            var email = new MailMessage(new MailAddress(_sendMailSettings.SmtpFrom, _sendMailSettings.SmtpDisplayFrom), new MailAddress(toEmail))
+
+            var fr = new MailAddress(_smtpSetting.SmtpFrom, _smtpSetting.SmtpDisplayFrom);
+            var to = new MailAddress(toEmail);
+
+            var email = new MailMessage(fr, to)
             {
                 IsBodyHtml = true,
                 Subject = subject,
@@ -78,13 +83,7 @@ public class SmtpSender : IEmailSender
         catch (Exception e)
         {
             Console.WriteLine(e.ToString());
-            throw e;
         }
         return;
-    }
-
-    public async Task Execute(string apiKey, string subject, string message, string toEmail)
-    {
-        //
     }
 }
