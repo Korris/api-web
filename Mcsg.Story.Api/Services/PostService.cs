@@ -1080,7 +1080,7 @@ public partial class PostService : IPostService
         try
         {
             var currentUserId = _currentUserService?.Session?.UserId;
-            var query = string.Format(GetMyAllComicStoryQuery);
+            var query = string.Format(GetMyAllQuery);
 
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new

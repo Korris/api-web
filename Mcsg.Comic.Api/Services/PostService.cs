@@ -692,10 +692,10 @@ public partial class PostService : IPostService
             queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
                                    AND u.""IsDelete"" = false
                                    AND p.""Type""=@PostType
-                                   AND p.""Status""=@PostStatus                                   
+                                   AND p.""Status""=@PostStatus
                                    AND p.""Permission""=@Permission
                                    AND p.""IsDelete""=false
-                                   AND NOT(p.""Hide"" = ANY(@Hide) AND p.""Hide"" IS NOT NULL)";
+                                   AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
         }
         else
         {
@@ -1080,7 +1080,7 @@ public partial class PostService : IPostService
         try
         {
             var currentUserId = _currentUserService?.Session?.UserId;
-            var query = string.Format(GetMyAllComicStoryQuery);
+            var query = string.Format(GetMyAllQuery);
 
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new

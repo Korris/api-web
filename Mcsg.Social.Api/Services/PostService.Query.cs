@@ -616,16 +616,16 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
             {
                 return @" --My post
                                 SELECT qpost.""Id""
-                                FROM social.""SocialPosts"" qpost                                 
+                                FROM social.""SocialPosts"" qpost 
                                 WHERE qpost.""CreatedBy"" = @UserId AND qpost.""Type"" = @PostType AND qpost.""IsDelete"" = false";
             }
         }
-        private string GetMyAllComicStoryQuery
+        private string GetMyAllQuery
         {
             get
             {
                 return $@" SELECT ""HashId"", ""Title"", ""Type"", ""Status""
-                                FROM {_postRepository.TableName}                                 
+                                FROM {_postRepository.TableName}
                                 WHERE ""CreatedBy"" = @UserId AND ""IsDelete"" = false AND ""Type"" IN ({(int)PostType.Story}, {(int)PostType.Comic}) 
                                 ORDER BY ""CreatedOn"" DESC;";
             }

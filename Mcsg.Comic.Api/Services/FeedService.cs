@@ -141,7 +141,8 @@ public partial class FeedService : IFeedService
                         IsAccessPrivate = false,
                         PageSize = feedLoadReq.PageSize,
                         Offet = offset,
-                        TagName = tagName
+                        TagName = tagName,
+                        Hide = feedLoadReq.Hides
                     });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
