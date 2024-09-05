@@ -180,7 +180,7 @@ public class FileService : IFileService
         }
         else
         {
-            shareUrl = await _sc.GetStrategy(minioInstance).PresignedGetObject(resource.Url, null);
+            shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, minioInstance);
         }
 
         return new UploadFileDto
@@ -255,7 +255,7 @@ public class FileService : IFileService
             {
                 HashId = resource.HashId,
                 Order = resource.Order,
-                Url = _setting.Api.Web.Media.GetMediaPath(resource.Name, resource.Url, resource.MinioInstance)
+                Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance)
             });
         }
 

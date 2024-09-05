@@ -54,6 +54,7 @@ public partial class CommentService : ICommentService
         if (result != null)
         {
             response = new PagedResponse<CommentResponse>(1, 1, 1);
+
             var commentData = new CommentResponse()
             {
                 Id = result.Id,
@@ -64,7 +65,7 @@ public partial class CommentService : ICommentService
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
                 ResourceHashId = result.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ResourceName, result.ResourceUrl, result.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
             };
 
@@ -87,7 +88,7 @@ public partial class CommentService : ICommentService
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl, result.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId,
                     QuoteId = result?.ReplyQuoteId == Guid.Empty ? null : result.ReplyQuoteId
@@ -136,7 +137,7 @@ public partial class CommentService : ICommentService
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
                 ResourceHashId = result.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ResourceName, result.ResourceUrl, result.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
             };
 
@@ -159,7 +160,7 @@ public partial class CommentService : ICommentService
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl, result.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId
                 };
@@ -212,7 +213,7 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
-                item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(item.ResourceName, item.ResourceUrl, item.MinioInstance) : "";
+                item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
                 if (mentions != null && mentions.Any())
                 {
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
@@ -301,7 +302,7 @@ public partial class CommentService : ICommentService
                 {
                     MapReactionResponse(item, subPostCommentReaction);
                 }
-                item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(item.ResourceName, item.ResourceUrl, item.MinioInstance) : "";
+                item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
 
                 if (mentions != null && mentions.Any())
                 {
@@ -369,7 +370,7 @@ public partial class CommentService : ICommentService
                 Body = comModel.Body,
                 ModifiedOn = comModel.ModifiedOn,
                 ResourceHashId = comModel.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                 GifId = comModel.GifId,
                 CustomNote = comModel.CustomNote.ForLexical(),
                 ReplyCount = comModel.ReplyCount,
@@ -428,7 +429,7 @@ public partial class CommentService : ICommentService
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
                     CustomNote = comModel.CustomNote.ForLexical()
                 };
@@ -454,7 +455,7 @@ public partial class CommentService : ICommentService
                         Body = repModel.Body,
                         ModifiedOn = repModel.ModifiedOn,
                         ResourceHashId = repModel.ResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl, repModel.MinioInstance) : "",
+                        ResourceUrl = await _sc.GetPublicUrl(repModel.ResourceUrl, repModel.BucketName, repModel.MinioInstance),
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
@@ -533,7 +534,7 @@ public partial class CommentService : ICommentService
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
                     CustomNote = comModel.CustomNote.ForLexical()
                 };

@@ -1323,12 +1323,13 @@ public partial class PostService : IPostService
         {
             return null;
         }
+
         return new UploadFileDto
         {
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _setting.Api.Web.Media.GetMediaPath(resources.Name, resources.Url, resources.MinioInstance),
+            Url = _sc.GetPublicUrl(resources.Url, resources.BucketName, resources.MinioInstance).GetAwaiter().GetResult(),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,
@@ -1877,7 +1878,6 @@ public partial class PostService : IPostService
     }
     #endregion
 
-    #region POST - COMMON
     private int GetOffsetSetup(ref ComicTopPostR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -2048,7 +2048,6 @@ public partial class PostService : IPostService
                 select a;
         return await q.FirstOrDefaultAsync();
     }
-    #endregion
 
     #endregion
 
