@@ -7,6 +7,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -18,7 +19,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -31,54 +31,31 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : IPostService
 {
-    private readonly IRepository<SocialPost> _postRepository;
-    private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IRepository<SocialSubPost> _subPostRepository;
-    private readonly IRepository<SocialPostReport> _postReportRepository;
-    private readonly IValidator<SocialPostReport> _postReportValidator;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ITagService _tagService;
-    private readonly IUserService _userService;
-    private readonly IFileService _fileService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly ISmartLookupService _smartLookupService;
-    private readonly IViewHistoryService _viewHistoryService;
-    private readonly IConfiguration _configuration;
-    private readonly IMapper _mapper;
+    #region -- Methods --
 
-    public PostService(IUnitOfWork unitOfWork,
-        ITagService tagService,
-        IRepository<SmartLookup> smartLookupRepository,
-        IUserService userService,
-        IFileService fileService,
-        ICurrentUserService currentUserService,
-        IViewHistoryService viewHistoryService,
-        IConfiguration configuration,
-        IMapper mapper,
-        IMcsgContext context,
-        ISetting setting,
-        ISmartLookupService smartLookupService,
-        IValidator<SocialPostReport> postReportValidator,
-        IRepository<SocialPostComment> postCommentRepository)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="mapper"></param>
+    /// <param name="currentUserService"></param>
+    /// <param name="smartLookupService"></param>
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService)
     {
-        _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
-        _postReportRepository = unitOfWork.GetRepository<SocialPostReport>();
-        _unitOfWork = unitOfWork;
-        _tagService = tagService;
-        _userService = userService;
-        _fileService = fileService;
-        _currentUserService = currentUserService;
-        _viewHistoryService = viewHistoryService;
-        _smartLookupService = smartLookupService;
-        _configuration = configuration;
-        _mapper = mapper;
         _context = context;
         _setting = setting;
-        _postReportValidator = postReportValidator;
-        _smartLookupRepository = smartLookupRepository;
-        _postCommentRepository = postCommentRepository;
+        _sc = sc;
+
+        _postRepository = unitOfWork.GetRepository<SocialPost>();
+        _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
+        _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
+        _postReportRepository = unitOfWork.GetRepository<SocialPostReport>();
+        _mapper = mapper;
+        _currentUserService = currentUserService;
+        _smartLookupService = smartLookupService;
     }
 
     public async Task<bool> Delete(Guid postId)
@@ -652,7 +629,6 @@ public partial class PostService : IPostService
     }
     #endregion
 
-    #region POST - COMMON
     private int GetOffsetSetup(ref ComicTopPostR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -797,6 +773,7 @@ public partial class PostService : IPostService
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
+
     #endregion
 
     #region -- Fields --
@@ -810,6 +787,20 @@ public partial class PostService : IPostService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
+
+    private readonly IRepository<SocialPost> _postRepository;
+    private readonly IRepository<SocialPostComment> _postCommentRepository;
+    private readonly IRepository<SmartLookup> _smartLookupRepository;
+    private readonly IRepository<SocialPostReport> _postReportRepository;
+
+    private readonly IMapper _mapper;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly ISmartLookupService _smartLookupService;
 
     #endregion
 }

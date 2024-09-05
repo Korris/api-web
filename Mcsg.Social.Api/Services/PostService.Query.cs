@@ -799,7 +799,7 @@ LIMIT 1
             get
             {
                 return $@"SELECT sp.""Id"", sp.""Title"", sp.""PublishDate"", sp.""Order""
-                    FROM {_subPostRepository.TableName} sp
+                    FROM ""social"".""SocialSubPosts"" sp
                     INNER JOIN {_postRepository.TableName} p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""CreatedBy"" = @UserId AND p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
                     ORDER BY sp.""Order""
@@ -808,8 +808,8 @@ LIMIT 1
 
                     SELECT COUNT(*) AS TotalItems 
                     FROM (
-                            SELECT sp.""Id""            
-                            FROM {_subPostRepository.TableName} sp
+                            SELECT sp.""Id""
+                            FROM ""social"".""SocialSubPosts"" sp
                             INNER JOIN {_postRepository.TableName} p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                             WHERE p.""CreatedBy"" = @UserId AND p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
                         ) p;

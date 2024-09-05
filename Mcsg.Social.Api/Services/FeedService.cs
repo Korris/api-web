@@ -31,45 +31,30 @@ public partial class FeedService : IFeedService
 {
     #region -- Methods --
 
-    public FeedService(
-        IMcsgContext context,
-        ISetting setting,
-        IStorageClient sc,
-        IPostService postService,
-        IMetaDataService metaDataService,
-        ITagService tagService,
-        IFileService fileService,
-        ISoundService soundService,
-        IPostLinkService postLinkService,
-        ISmartLookupService smartLookupService,
-        IBusinessText businessBodyText,
-        IUnitOfWork unitOfWork,
-        ISmartCountService smartCountService,
-        IViewHistoryService viewHistoryService,
-        IConfiguration configuration,
-        IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig,
-        IMapper mapper)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="businessBodyText"></param>
+    /// <param name="postService"></param>
+    /// <param name="soundService"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="mapper"></param>
+    /// <param name="feedDisplayConfig"></param>
+    public FeedService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IPostService postService, ISoundService soundService, IUnitOfWork unitOfWork, IMapper mapper, IOptionsMonitor<FeedDisplayConfig> feedDisplayConfig)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
-        _postService = postService;
-        _metaDataService = metaDataService;
-        _tagService = tagService;
-        _fileService = fileService;
-        _soundService = soundService;
-        _postLinkService = postLinkService;
-        _smartLookupService = smartLookupService;
         _businessText = businessBodyText;
+        _postService = postService;
+        _soundService = soundService;
 
-        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
-
-        _smartCountService = smartCountService;
-        _viewHistoryService = viewHistoryService;
-        _configuration = configuration;
-        _feedDisplayConfig = feedDisplayConfig.CurrentValue;
         _mapper = mapper;
+        _feedDisplayConfig = feedDisplayConfig.CurrentValue;
     }
 
     public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
@@ -504,8 +489,6 @@ public partial class FeedService : IFeedService
 
         // Will map later
         var sound = await _soundService.GetSoundByPostAsync(dbFeed.Id);
-
-        //await _viewHistoryService.QueueAddView(userId, dbFeed.Id, EntityType.Post, "", EntitySubType.Sub1);
 
         if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
@@ -1005,52 +988,23 @@ public partial class FeedService : IFeedService
     private readonly IStorageClient _sc;
 
     /// <summary>
+    /// Business text
+    /// </summary>
+    private readonly IBusinessText _businessText;
+
+    /// <summary>
     /// Post service
     /// </summary>
     private readonly IPostService _postService;
-
-    /// <summary>
-    /// MetaData service
-    /// </summary>
-    private readonly IMetaDataService _metaDataService;
-
-    /// <summary>
-    /// Tag service
-    /// </summary>
-    private readonly ITagService _tagService;
-
-    /// <summary>
-    /// File service
-    /// </summary>
-    private readonly IFileService _fileService;
 
     /// <summary>
     /// Sound service
     /// </summary>
     private readonly ISoundService _soundService;
 
-    /// <summary>
-    /// PostLink service
-    /// </summary>
-    private readonly IPostLinkService _postLinkService;
-
-    /// <summary>
-    /// SmartLookup service
-    /// </summary>
-    private readonly ISmartLookupService _smartLookupService;
-
-    /// <summary>
-    /// Business text
-    /// </summary>
-    private readonly IBusinessText _businessText;
-
     private readonly IRepository<SocialPost> _postRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ISmartCountService _smartCountService;
-    private readonly IViewHistoryService _viewHistoryService;
-    private readonly IConfiguration _configuration;
-    private readonly FeedDisplayConfig _feedDisplayConfig;
     private readonly IMapper _mapper;
+    private readonly FeedDisplayConfig _feedDisplayConfig;
 
     #endregion
 }

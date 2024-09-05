@@ -5,6 +5,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -13,7 +14,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -21,29 +21,28 @@ using Requests;
 
 public partial class CommentService : ICommentService
 {
-    private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
-    private readonly IRepository<SocialSubPost> _subPostRepository;
-    private readonly IRepository<SocialResource> _resourceRepository;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private IConfiguration _configuration;
-    protected readonly IMapper _mapper;
+    #region -- Methods --
 
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText, ICurrentUserService currentUserService)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="businessBodyText"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="mapper"></param>
+    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper)
     {
+        _context = context;
+        _setting = setting;
+        _sc = sc;
+        _businessText = businessBodyText;
+
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
-        _resourceRepository = unitOfWork.GetRepository<SocialResource>();
-        _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
-        _userRepository = unitOfWork.GetRepository<User>();
         _mentionRepository = unitOfWork.GetRepository<Mention>();
         _mapper = mapper;
-        _setting = setting;
-        _configuration = configuration;
-        _businessText = businessBodyText;
-        _currentUserService = currentUserService;
     }
 
     public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -245,21 +244,21 @@ public partial class CommentService : ICommentService
         }
     }
 
-    public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input)
+    public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR request)
     {
-        if (string.IsNullOrWhiteSpace(input.HashPostId))
+        if (string.IsNullOrWhiteSpace(request.HashPostId))
         {
             return new CommentPagedResults<MostReactionCommentResponse>(0);
         }
         CommentPagedResults<MostReactionCommentResponse> results;
-        var offset = input.PageSize * (input.PageNumber - 1);
+        var offset = request.PageSize * (request.PageNumber - 1);
         var query = GetCommentWithMostReactionQuery;
 
         var multi = await _postCommentRepository
            .Connection.QueryMultipleAsync(query, new
            {
-               HashId = input.HashPostId,
-               PageSize = input.PageSize,
+               HashId = request.HashPostId,
+               PageSize = request.PageSize,
                Offset = offset
            });
         var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
@@ -272,16 +271,17 @@ public partial class CommentService : ICommentService
             var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
             var querySubPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
 
+            var userId = request.UserId;
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
             {
                 TargetIds = postComment.Select(p => p.Id).ToList(),
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             var subPostCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(querySubPostCommentReaction, new
             {
                 TargetIds = subPostComment.Select(p => p.Id).ToList(),
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             var body = "";
@@ -316,9 +316,9 @@ public partial class CommentService : ICommentService
                 item.Body = await _businessText.Process(item.Body, profiles);
             }
 
-            results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+            results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
-            results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = input.HashPostId });
+            results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = request.HashPostId });
         }
         else
         {
@@ -354,7 +354,7 @@ public partial class CommentService : ICommentService
         };
     }
 
-    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost = false)
+    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId)
     {
         var query = GetCommentByIdQuery;
         query = query.Replace("@CommentSource", $@"social.""{(isSubPost ? "SocialSubPostComments" : "SocialPostComments")}""");
@@ -389,7 +389,7 @@ public partial class CommentService : ICommentService
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(ReactionExtension.GetReactionByTargetIdsQuery, new
             {
                 TargetIds = new List<Guid> { result.Id },
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
@@ -549,7 +549,14 @@ public partial class CommentService : ICommentService
         return response;
     }
 
+    #endregion
+
     #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting
@@ -557,9 +564,19 @@ public partial class CommentService : ICommentService
     private readonly ISetting _setting;
 
     /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
+
+    /// <summary>
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    private readonly IRepository<SocialPostComment> _postCommentRepository;
+    private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
+    private readonly IRepository<Mention> _mentionRepository;
+    private readonly IMapper _mapper;
 
     #endregion
 }

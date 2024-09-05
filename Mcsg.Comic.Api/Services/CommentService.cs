@@ -22,6 +22,8 @@ using Requests;
 
 public partial class CommentService : ICommentService
 {
+    #region -- Methods --
+
     /// <summary>
     /// Initialize
     /// </summary>
@@ -31,8 +33,7 @@ public partial class CommentService : ICommentService
     /// <param name="businessBodyText"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="mapper"></param>
-    /// <param name="currentUserService"></param>
-    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
+    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _setting = setting;
@@ -54,7 +55,6 @@ public partial class CommentService : ICommentService
         if (result != null)
         {
             response = new PagedResponse<CommentResponse>(1, 1, 1);
-
             var commentData = new CommentResponse()
             {
                 Id = result.Id,
@@ -568,6 +568,8 @@ public partial class CommentService : ICommentService
         return response;
     }
 
+    #endregion
+
     #region -- Fields --
 
     /// <summary>
@@ -593,7 +595,7 @@ public partial class CommentService : ICommentService
     private readonly IRepository<ComicPostComment> _postCommentRepository;
     private readonly IRepository<ComicSubPostComment> _subPostCommentRepository;
     private readonly IRepository<Mention> _mentionRepository;
-    protected readonly IMapper _mapper;
+    private readonly IMapper _mapper;
 
     #endregion
 }
