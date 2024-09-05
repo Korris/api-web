@@ -1060,6 +1060,7 @@ ranked_story AS (
     FROM story.""StoryPosts"" sp
     LEFT JOIN story.""StorySubPosts"" ssp ON sp.""Id"" = ssp.""PostId""
     WHERE sp.""IsDelete"" = false
+    AND ssp.""IsDelete"" = false
     AND sp.""Type"" = 1
     AND sp.""Status"" = 1
     AND sp.""Permission"" = 0
@@ -1073,6 +1074,7 @@ ranked_comic AS (
     FROM comic.""ComicPosts"" cp
     LEFT JOIN comic.""ComicSubPosts"" csp ON cp.""Id"" = csp.""PostId""
     WHERE cp.""IsDelete"" = false
+    AND csp.""IsDelete"" = false
     AND cp.""Type"" = 2
     AND cp.""Status"" = 1
     AND cp.""Permission"" = 0
