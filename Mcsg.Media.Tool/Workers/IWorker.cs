@@ -1,13 +1,12 @@
-﻿namespace Mcsg.Media.Tool.Workers
+﻿namespace Mcsg.Media.Tool.Workers;
+
+using Common.Domain.Entities;
+
+internal interface IWorker
 {
-    using Common.Domain.Entities;
+    void CleanupPool();
 
-    internal interface IWorker
-    {
-        void CleanupPool();
+    bool HasAvailableSlot();
 
-        bool HasAvailableSlot();
-
-        void Execute(Job jobInfo);
-    }
+    void Execute(Job jobInfo);
 }

@@ -1,9 +1,8 @@
-﻿namespace Mcsg.Media.Tool.Models
+﻿namespace Mcsg.Media.Tool.Models;
+
+internal class WorkerPoolItem
 {
-    internal class WorkerPoolItem
-    {
-        public Guid Id { get; set; }
-        public Task Task { get; set; }
-        public bool IsRunning { get; set; } = true;
-    }
+    public Guid Id { get; set; }
+    public Task Task { get; set; }
+    public bool IsRunning { get; set; } = true;
 }
