@@ -1656,6 +1656,9 @@ public partial class PostService : IPostService
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
 
+        //Check first post
+        var rewards = await CheckRewardsForSubPost(userId);
+
         var subPost = new ComicSubPost
         {
             AuthorId = post.AuthorId,
@@ -1684,6 +1687,7 @@ public partial class PostService : IPostService
         await _context.SaveChangesAsync(default);
 
         var result = MappingChapterResponse(subPost);
+        result.Rewards = rewards;
         if (request?.Files.Count > 0)
         {
             var urDto = new UploadResourceDto(request.Files, userId, userFolder, userAvatar, userName, subPost.PostId, subPost.PostHashId)
@@ -2049,6 +2053,23 @@ public partial class PostService : IPostService
         return await q.FirstOrDefaultAsync();
     }
 
+    public async Task<List<RewardDto>> CheckRewardsForSubPost(Guid userId)
+    {
+        var res = new List<RewardDto>();
+
+        var check = await _context.ComicSubPosts.FirstOrDefaultAsync(p => p.UserId == userId);
+        if (check == null)
+        {
+            var rewardType = RewardType.FirstComic;
+            res.Add(new RewardDto
+            {
+                Type = rewardType,
+                MessageCode = rewardType.ToString()
+            });
+        }
+
+        return res;
+    }
     #endregion
 
     #region -- Fields --

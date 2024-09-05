@@ -44,4 +44,5 @@ public interface IPostService
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
     Task<bool> FollowPost(Guid postId);
+    Task<List<RewardDto>> CheckRewardsForSubPost(Guid currentUserId);
 }

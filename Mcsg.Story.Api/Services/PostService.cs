@@ -11,7 +11,6 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
-using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
@@ -1656,6 +1655,9 @@ public partial class PostService : IPostService
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
 
+        //Check first post
+        var rewards = await CheckRewardsForSubPost(userId);
+
         var subPost = new StorySubPost
         {
             AuthorId = post.AuthorId,
@@ -1683,7 +1685,10 @@ public partial class PostService : IPostService
         await _context.StorySubPosts.AddAsync(subPost);
         await _context.SaveChangesAsync(default);
 
-        return MappingChapterResponse(subPost);
+        var result = MappingChapterResponse(subPost);
+        result.Rewards = rewards;
+
+        return result;
     }
 
     public async Task<ChapterResponse> SubPostUpdate(StorySubPostUpdateR request)
@@ -2028,6 +2033,23 @@ public partial class PostService : IPostService
         return await q.FirstOrDefaultAsync();
     }
 
+    public async Task<List<RewardDto>> CheckRewardsForSubPost(Guid userId)
+    {
+        var res = new List<RewardDto>();
+
+        var check = await _context.StorySubPosts.FirstOrDefaultAsync(p => p.UserId == userId);
+        if (check == null)
+        {
+            var rewardType = RewardType.FirstStory;
+            res.Add(new RewardDto
+            {
+                Type = rewardType,
+                MessageCode = rewardType.ToString()
+            });
+        }
+
+        return res;
+    }
     #endregion
 
     #region -- Fields --

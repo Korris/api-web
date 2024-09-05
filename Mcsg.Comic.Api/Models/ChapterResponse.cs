@@ -18,6 +18,7 @@ public class ChapterResponse : ChapterBasicResponse
     public List<UploadFileDto> Files { get; set; } = new List<UploadFileDto>();
     public string Body { get; set; }
     public string ProfileName { get; set; }
+    public List<RewardDto> Rewards { get; set; }
 }
 public class ChapterTOCResponse
 {

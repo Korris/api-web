@@ -45,7 +45,7 @@ public class FeedbackCreateH : BaseH, IRequestHandler<FeedbackCreateR, SingleRes
 
         // Create
         var satisfaction = request.Satisfaction.ToEnum(SatisfactionLevel.Neutral);
-        var ett = Feedback.Create(satisfaction, request.UserId, request.Email!, request.Comment!, null);
+        var ett = Feedback.Create(satisfaction, request.UserId, request.Email!, request.Comment + ""!, null);
         await _context.Feedbacks.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(default);
 
