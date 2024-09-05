@@ -751,25 +751,24 @@ public partial class PostService : IPostService
     {
         var currentUserId = _currentUserService.Session?.UserId;
         var followedComicCount = await (
-            from qpost in _context.ComicPosts.AsNoTracking()
-            join cfp in _context.ComicPostFavoriteAvailable.AsNoTracking()
-                on qpost.Id equals cfp.PostId
-            where cfp.UserId == currentUserId
-                  && !cfp.IsDelete
-                  && !qpost.IsDelete
-                  && (!req.Hides.Contains((int)qpost.Hide))
-            select qpost
+            from a in _context.ComicPostAvailable.AsNoTracking()
+            join b in _context.ComicPostFavoriteAvailable.AsNoTracking()
+                on a.Id equals b.PostId
+            where b.UserId == currentUserId
+                  && !a.IsDelete
+                  && (!req.Hides.Contains((int)a.Hide))
+            select a
         ).CountAsync();
 
         var followedStoryCount = await (
-            from qpost in _context.StoryPosts.AsNoTracking()
-            join cfp in _context.StoryPostFavoriteAvailable.AsNoTracking()
-                on qpost.Id equals cfp.PostId
-            where cfp.UserId == currentUserId
-                  && !cfp.IsDelete
-                  && !qpost.IsDelete
-                  && (!req.Hides.Contains((int)qpost.Hide))
-            select qpost
+            from a in _context.StoryPosts.AsNoTracking()
+            join b in _context.StoryPostFavoriteAvailable.AsNoTracking()
+                on a.Id equals b.PostId
+            where b.UserId == currentUserId
+                  && !b.IsDelete
+                  && !a.IsDelete
+                  && (!req.Hides.Contains((int)a.Hide))
+            select a
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }

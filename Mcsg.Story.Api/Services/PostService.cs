@@ -1493,7 +1493,6 @@ public partial class PostService : IPostService
                 }
             case PostSeriesSelectedType.FOLLOWED_POST:
                 {
-                    permission = "";
                     topSelectPostIdQuery = GetMyPostFollowedIdsQuery; ;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostFollowedCountQuery);
                     break;
