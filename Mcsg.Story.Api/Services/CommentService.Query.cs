@@ -89,7 +89,7 @@
                                                     r.""HashId"" as ResourceHashId,
                                                     COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
                                                 FROM ""story"".""StorySubPostComments"" spc
-                                                LEFT JOIN ""story"".""StorySubPostComments"" reply on reply.""ParentId"" = spc.""Id""
+                                                LEFT JOIN ""story"".""StorySubPostComments"" reply on reply.""ParentId"" = spc.""Id"" AND reply.""IsDelete"" = false
                                                 LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""story"".""StorySubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
                                                 LEFT JOIN ""story"".""StorySubPosts""  sp ON spc.""PostId"" = sp.""Id""

@@ -382,14 +382,16 @@ public partial class CommentService : ICommentService
                 TotalReply = comModel.ReplyCount
             };
             result.Replies = replies;
-
-            var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(ReactionExtension.GetReactionByTargetIdsQuery, new
+            var tableName = isSubPost ? $@"story.""StorySubPostCommentReactions""" : $@"story.""StoryPostCommentReactions""";
+            var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, tableName), new
             {
                 TargetIds = new List<Guid> { result.Id },
                 UserId = userId
             });
-
-            MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
+            if (postCommentReactionResponse.Any())
+            {
+                MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
+            }
         }
         return result;
     }
