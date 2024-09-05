@@ -52,6 +52,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
     public bool isNewChapter { get; set; }
+    public int FollowCount { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
