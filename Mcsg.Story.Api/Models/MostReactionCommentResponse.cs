@@ -30,6 +30,7 @@ public class BasicCommentResponse
     public string ResourceName { get; set; }
     public string ResourceUrl { get; set; }
     public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
     public string ResourceHashId { get; set; }
     public string GifId { get; set; }
     public Guid PostId { get; set; }

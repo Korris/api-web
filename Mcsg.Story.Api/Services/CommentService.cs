@@ -5,6 +5,7 @@ namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -21,29 +22,27 @@ using Requests;
 
 public partial class CommentService : ICommentService
 {
-    private readonly IRepository<StoryPostComment> _postCommentRepository;
-    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
-    private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<StoryResource> _resourceRepository;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private IConfiguration _configuration;
-    protected readonly IMapper _mapper;
-
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, ISetting setting, IConfiguration configuration, IBusinessText businessBodyText, ICurrentUserService currentUserService)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="businessBodyText"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="mapper"></param>
+    /// <param name="currentUserService"></param>
+    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
     {
+        _context = context;
+        _setting = setting;
+        _sc = sc;
+        _businessText = businessBodyText;
+
         _postCommentRepository = unitOfWork.GetRepository<StoryPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<StorySubPostComment>();
-        _resourceRepository = unitOfWork.GetRepository<StoryResource>();
-        _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _userRepository = unitOfWork.GetRepository<User>();
         _mentionRepository = unitOfWork.GetRepository<Mention>();
         _mapper = mapper;
-        _setting = setting;
-        _configuration = configuration;
-        _businessText = businessBodyText;
-        _currentUserService = currentUserService;
     }
 
     public async Task<PagedResponse<CommentResponse>> GetLatestPostCommentInAsync(Guid postId)
@@ -55,6 +54,7 @@ public partial class CommentService : ICommentService
         if (result != null)
         {
             response = new PagedResponse<CommentResponse>(1, 1, 1);
+
             var commentData = new CommentResponse()
             {
                 Id = result.Id,
@@ -65,7 +65,7 @@ public partial class CommentService : ICommentService
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
                 ResourceHashId = result.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ResourceName, result.ResourceUrl, result.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
             };
 
@@ -88,7 +88,7 @@ public partial class CommentService : ICommentService
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl, result.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId,
                     QuoteId = result?.ReplyQuoteId == Guid.Empty ? null : result.ReplyQuoteId
@@ -137,7 +137,7 @@ public partial class CommentService : ICommentService
                 PostId = result.PostId,
                 ModifiedOn = result.ModifiedOn,
                 ResourceHashId = result.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(result.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ResourceName, result.ResourceUrl, result.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
             };
 
@@ -160,7 +160,7 @@ public partial class CommentService : ICommentService
                     Body = result.ReplyBody,
                     ModifiedOn = result.ReplyLastModifiedDate,
                     ResourceHashId = result.ReplyResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(result.ReplyResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(result.ReplyResourceName, result.ReplyResourceUrl, result.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId
                 };
@@ -213,7 +213,7 @@ public partial class CommentService : ICommentService
 
             foreach (var item in items)
             {
-                item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(item.ResourceName, item.ResourceUrl, item.MinioInstance) : "";
+                item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
                 if (mentions != null && mentions.Any())
                 {
                     var userMentioneds = mentions.Where(x => x.LocationId == item.Id).ToList();
@@ -241,21 +241,21 @@ public partial class CommentService : ICommentService
         }
     }
 
-    public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR input)
+    public async Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR request)
     {
-        if (string.IsNullOrWhiteSpace(input.HashPostId))
+        if (string.IsNullOrWhiteSpace(request.HashPostId))
         {
             return new CommentPagedResults<MostReactionCommentResponse>(0);
         }
         CommentPagedResults<MostReactionCommentResponse> results;
-        var offset = input.PageSize * (input.PageNumber - 1);
+        var offset = request.PageSize * (request.PageNumber - 1);
         var query = GetCommentWithMostReactionQuery;
 
         var multi = await _postCommentRepository
            .Connection.QueryMultipleAsync(query, new
            {
-               HashId = input.HashPostId,
-               PageSize = input.PageSize,
+               HashId = request.HashPostId,
+               PageSize = request.PageSize,
                Offset = offset
            });
         var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
@@ -268,16 +268,17 @@ public partial class CommentService : ICommentService
             var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostCommentReactions""");
             var querySubPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
 
+            var userId = request.UserId;
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
             {
                 TargetIds = postComment.Select(p => p.Id).ToList(),
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             var subPostCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(querySubPostCommentReaction, new
             {
                 TargetIds = subPostComment.Select(p => p.Id).ToList(),
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             var body = "";
@@ -301,7 +302,7 @@ public partial class CommentService : ICommentService
                 {
                     MapReactionResponse(item, subPostCommentReaction);
                 }
-                item.ResourceUrl = !string.IsNullOrWhiteSpace(item.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(item.ResourceName, item.ResourceUrl, item.MinioInstance) : "";
+                item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
 
                 if (mentions != null && mentions.Any())
                 {
@@ -312,9 +313,9 @@ public partial class CommentService : ICommentService
                 item.Body = await _businessText.Process(item.Body, profiles);
             }
 
-            results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+            results = new CommentPagedResults<MostReactionCommentResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
-            results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = input.HashPostId });
+            results.TotalComments = await _postCommentRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = request.HashPostId });
         }
         else
         {
@@ -350,7 +351,7 @@ public partial class CommentService : ICommentService
         };
     }
 
-    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost)
+    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId)
     {
         var query = GetCommentByIdQuery;
         query = query.Replace("@CommentSource", $@"story.""{(isSubPost ? "StorySubPostComments" : "StoryPostComments")}""");
@@ -369,7 +370,7 @@ public partial class CommentService : ICommentService
                 Body = comModel.Body,
                 ModifiedOn = comModel.ModifiedOn,
                 ResourceHashId = comModel.ResourceHashId,
-                ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                 GifId = comModel.GifId,
                 CustomNote = comModel.CustomNote.ForLexical(),
                 ReplyCount = comModel.ReplyCount,
@@ -385,7 +386,7 @@ public partial class CommentService : ICommentService
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(ReactionExtension.GetReactionByTargetIdsQuery, new
             {
                 TargetIds = new List<Guid> { result.Id },
-                UserId = _currentUserService.Session?.UserId
+                UserId = userId
             });
 
             MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
@@ -428,7 +429,7 @@ public partial class CommentService : ICommentService
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
                     CustomNote = comModel.CustomNote.ForLexical()
                 };
@@ -454,7 +455,7 @@ public partial class CommentService : ICommentService
                         Body = repModel.Body,
                         ModifiedOn = repModel.ModifiedOn,
                         ResourceHashId = repModel.ResourceHashId,
-                        ResourceUrl = !string.IsNullOrWhiteSpace(repModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(repModel.ResourceName, repModel.ResourceUrl, repModel.MinioInstance) : "",
+                        ResourceUrl = await _sc.GetPublicUrl(repModel.ResourceUrl, repModel.BucketName, repModel.MinioInstance),
                         ParentId = comment.Id,
                         GifId = repModel.GifId,
                         QuoteId = repModel.QuoteId,
@@ -533,7 +534,7 @@ public partial class CommentService : ICommentService
                     Body = comModel.Body,
                     ModifiedOn = comModel.ModifiedOn,
                     ResourceHashId = comModel.ResourceHashId,
-                    ResourceUrl = !string.IsNullOrWhiteSpace(comModel.ResourceUrl) ? _setting.Api.Web.Media.GetMediaPath(comModel.ResourceName, comModel.ResourceUrl, comModel.MinioInstance) : "",
+                    ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
                     CustomNote = comModel.CustomNote.ForLexical()
                 };
@@ -570,14 +571,29 @@ public partial class CommentService : ICommentService
     #region -- Fields --
 
     /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IMcsgContext _context;
+
+    /// <summary>
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
 
     /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
+
+    /// <summary>
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    private readonly IRepository<StoryPostComment> _postCommentRepository;
+    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
+    private readonly IRepository<Mention> _mentionRepository;
+    protected readonly IMapper _mapper;
 
     #endregion
 }

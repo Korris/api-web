@@ -18,6 +18,7 @@ public class CommentQueryModel
     public string ResourceName { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
     public string GifId { get; set; } = string.Empty;
     public int CommentLevel { get; set; } = 0;
     public Guid? QuoteId { get; set; }

@@ -15,6 +15,7 @@ public class CommentQueryResult
     public string ResourceName { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
     public Guid ReplyId { get; set; }
     public string ReplyAuthorName { get; set; } = string.Empty;
     public string ReplyUserAvatar { get; set; } = string.Empty;

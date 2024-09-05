@@ -8,8 +8,10 @@ namespace Mcsg.Story.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
@@ -35,53 +37,39 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : IPostService
 {
-    private readonly IRepository<StoryPost> _postRepository;
-    private readonly IRepository<StoryPostComment> _postCommentRepository;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<StoryPostReport> _postReportRepository;
-    private readonly IValidator<StoryPostReport> _postReportValidator;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ITagService _tagService;
-    private readonly IUserService _userService;
-    private readonly IFileService _fileService;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly ISmartLookupService _smartLookupService;
-    private readonly IViewHistoryService _viewHistoryService;
-    private readonly IConfiguration _configuration;
-    private readonly IMapper _mapper;
+    #region -- Methods --
 
-    public PostService(IUnitOfWork unitOfWork,
-        ITagService tagService,
-        IRepository<SmartLookup> smartLookupRepository,
-        IUserService userService,
-        IFileService fileService,
-        ICurrentUserService currentUserService,
-        IViewHistoryService viewHistoryService,
-        IConfiguration configuration,
-        IMapper mapper,
-        IMcsgContext context,
-        ISetting setting,
-        ISmartLookupService smartLookupService,
-        IValidator<StoryPostReport> postReportValidator,
-        IRepository<StoryPostComment> postCommentRepository)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="tagService"></param>
+    /// <param name="smartLookupRepository"></param>
+    /// <param name="fileService"></param>
+    /// <param name="currentUserService"></param>
+    /// <param name="mapper"></param>
+    /// <param name="smartLookupService"></param>
+    /// <param name="postReportValidator"></param>
+    /// <param name="postCommentRepository"></param>
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, ICurrentUserService currentUserService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<StoryPostReport> postReportValidator, IRepository<StoryPostComment> postCommentRepository)
     {
+        _context = context;
+        _setting = setting;
+        _sc = sc;
+
+        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _postReportRepository = unitOfWork.GetRepository<StoryPostReport>();
-        _unitOfWork = unitOfWork;
         _tagService = tagService;
-        _userService = userService;
+        _smartLookupRepository = smartLookupRepository;
         _fileService = fileService;
         _currentUserService = currentUserService;
-        _viewHistoryService = viewHistoryService;
-        _smartLookupService = smartLookupService;
-        _configuration = configuration;
         _mapper = mapper;
-        _context = context;
-        _setting = setting;
-        _postReportValidator = postReportValidator;
-        _smartLookupRepository = smartLookupRepository;
+        _smartLookupService = smartLookupService;
         _postCommentRepository = postCommentRepository;
     }
 
@@ -244,10 +232,6 @@ public partial class PostService : IPostService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (currentUserId != null)
-        {
-            //await _viewHistoryService.QueueAddView(currentUserId ?? Guid.Empty, dbPost.Id, EntityType.POST, "", (EntitySubType)(dbPost.Type));
-        }
         if (dbPost.Status == PostStatus.Inactive || (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId))
         {
             throw new NotFoundException(E204, M204);
@@ -354,13 +338,6 @@ public partial class PostService : IPostService
                     //Todo implement Premium
                     throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_READ, ApiErrorMessage.NEED_PREMIUM_TO_READ);
                 }
-            }
-
-
-            //Add view
-            if (currentUserId != null)
-            {
-                //await _viewHistoryService.QueueAddView(currentUserId ?? Guid.Empty, subpost.Id, EntityType.SUBPOST, "", null);
             }
         }
         else
@@ -715,7 +692,7 @@ public partial class PostService : IPostService
             queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
                                    AND u.""IsDelete"" = false
                                    AND p.""Type""=@PostType
-                                   AND p.""Status""=@PostStatus                                   
+                                   AND p.""Status""=@PostStatus
                                    AND p.""Permission""=@Permission
                                    AND p.""IsDelete""=false
                                    AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
@@ -1070,7 +1047,6 @@ public partial class PostService : IPostService
         countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
 
         var result = new PostSeriesAllTopResponse();
-
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_MYSELF);
 
 
@@ -1347,12 +1323,13 @@ public partial class PostService : IPostService
         {
             return null;
         }
+
         return new UploadFileDto
         {
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _setting.Api.Web.Media.GetMediaPath(resources.Name, resources.Url, resources.MinioInstance),
+            Url = _sc.GetPublicUrl(resources.Url, resources.BucketName, resources.MinioInstance).GetAwaiter().GetResult(),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,
@@ -1880,7 +1857,6 @@ public partial class PostService : IPostService
     }
     #endregion
 
-    #region POST - COMMON
     private int GetOffsetSetup(ref StoryTopPostR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
@@ -2051,6 +2027,7 @@ public partial class PostService : IPostService
                 select a;
         return await q.FirstOrDefaultAsync();
     }
+
     #endregion
 
     #region -- Fields --
@@ -2064,6 +2041,23 @@ public partial class PostService : IPostService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// Storage client
+    /// </summary>
+    private readonly IStorageClient _sc;
+
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepository<StoryPost> _postRepository;
+    private readonly IRepository<StoryPostComment> _postCommentRepository;
+    private readonly IRepository<StorySubPost> _subPostRepository;
+    private readonly IRepository<StoryPostReport> _postReportRepository;
+    private readonly ITagService _tagService;
+    private readonly IRepository<SmartLookup> _smartLookupRepository;
+    private readonly IFileService _fileService;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IMapper _mapper;
+    private readonly ISmartLookupService _smartLookupService;
 
     #endregion
 }
