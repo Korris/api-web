@@ -28,7 +28,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                 var url = resourceInfo.Url;
                 var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
                 var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
-                int width, height = 0;
+
                 var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
                 if (File.Exists(targetFile))
                 {
@@ -36,10 +36,12 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                 }
                 if (Path.GetFileName(orgfile) != Path.GetFileName(targetFile))
                 {
+                    int width = 0, height = 0;
+
                     //Run conversion
                     //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
                     string command = "-vn -ar 44100 -ac 2 -preset faster -b:a 128k"; // optimizer
-                    RunFFmeg("ffmpeg", orgfile, targetFile, command);
+                    RunFfmpeg(orgfile, targetFile, command);
 
                     //upload
                     var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
@@ -48,7 +50,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService, width = 0, height = 0);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService, width, height);
                 }
 
                 //clean up resource

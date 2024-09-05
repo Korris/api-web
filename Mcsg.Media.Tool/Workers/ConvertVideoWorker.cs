@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace Mcsg.Media.Tool.Workers;
 
@@ -31,10 +30,6 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
                 var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
 
-                // Get video dimensions
-                var (width, height) = GetVideoDimensions(orgfile);
-                Console.WriteLine($"Video dimensions: {width}x{height}");
-
                 var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
                 if (File.Exists(targetFile))
                 {
@@ -42,12 +37,20 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 }
                 if (Path.GetFileName(orgfile) != Path.GetFileName(targetFile))
                 {
+                    int width = 0, height = 0;
+                    var command = "error -select_streams v:0 -show_entries stream=width,height -of csv=p=0";
+                    var output = RunFfprobe(orgfile, command);
+                    var dimensions = output.Trim().Split(',');
+                    if (dimensions.Length == 2)
+                    {
+                        width = Convert.ToInt32(dimensions[0]);
+                        height = Convert.ToInt32(dimensions[1]);
+                    }
+
                     //Run conversion
-                    // string command = "-c:v libvpx -b:v 1M -c:a libvorbis -b:a 192K";
                     //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
-                    //string command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 28 -c:a aac -b:a 64k"; // optimizer
-                    string command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
-                    RunFFmeg("ffmpeg", orgfile, targetFile, command);
+                    command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
+                    RunFfmpeg(orgfile, targetFile, command);
 
                     //upload
                     var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
@@ -96,27 +99,5 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Failed, ex.Message);
             }
         }));
-    }
-
-    private (int width, int height) GetVideoDimensions(string filePath)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = "ffprobe",
-            Arguments = $"-v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 {filePath}",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        using (var process = Process.Start(startInfo))
-        {
-            using (var reader = process.StandardOutput)
-            {
-                var output = reader.ReadToEnd();
-                var dimensions = output.Trim().Split(',');
-                return (int.Parse(dimensions[0]), int.Parse(dimensions[1]));
-            }
-        }
     }
 }

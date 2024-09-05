@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Mcsg.Media.Tool.Workers;
 
@@ -55,44 +56,16 @@ internal abstract class BaseWorker
         fs.Close();
     }
 
-    public void RunFFmeg(string exepath, string input, string output, string command)
+    public string RunFfmpeg(string input, string output, string command)
     {
-        ProcessStartInfo psi = new()
-        {
-            FileName = exepath,
-            Arguments = $"-i {input} {command} {output}",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            RedirectStandardError = true,
-        };
+        var arguments = $"-i {input} {command} {output}";
+        return RunProcess("ffmpeg", arguments).GetAwaiter().GetResult();
+    }
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            var enviromentPath = Environment.GetEnvironmentVariable("PATH");
-            var paths = (enviromentPath + "").Split(';');
-
-            var filePath = paths.Select(p => Path.Combine(p, $"{exepath}.exe")).Where(p => File.Exists(p)).FirstOrDefault();
-            if (filePath != null)
-            {
-                exepath = filePath;
-            }
-        }
-
-        // Start the FFmpeg process.
-        Process process = new()
-        {
-            StartInfo = psi
-        };
-
-        process.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
-        process.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
-
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit();
-        process.Dispose();
+    public string RunFfprobe(string input, string command)
+    {
+        var arguments = $"-v {command} {input}";
+        return RunProcess("ffprobe", arguments).GetAwaiter().GetResult();
     }
 
     public bool HasAvailableSlot()
@@ -110,6 +83,69 @@ internal abstract class BaseWorker
         Pools.RemoveAll(x => x.IsRunning == false);
         GC.SuppressFinalize(this);
         GC.Collect();
+    }
+
+    private async Task<string> RunProcess(string exepath, string arguments)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = exepath,
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardError = true
+        };
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var enviromentPath = Environment.GetEnvironmentVariable("PATH");
+            var paths = (enviromentPath + "").Split(';');
+
+            var filePath = paths.Select(p => Path.Combine(p, $"{exepath}.exe")).Where(p => File.Exists(p)).FirstOrDefault();
+            if (filePath != null)
+            {
+                exepath = filePath;
+            }
+        }
+
+        // Start the process
+        using Process process = new() { StartInfo = psi };
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
+        // Capture the output
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                errorBuilder.AppendLine(e.Data);
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.Start();
+
+        // Start reading output and error asynchronously
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        // Wait for process to exit asynchronously
+        await process.WaitForExitAsync();
+
+        var output = outputBuilder.ToString();
+        var error = errorBuilder.ToString();
+
+        return string.IsNullOrWhiteSpace(error) ? output : $"Error: {error}";
     }
 
     #region -- Fields --
