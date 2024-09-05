@@ -91,4 +91,10 @@ public class PostBoxResposne
     public string HashId { get; set; }
     public PostType Type { get; set; }
     public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
+
+    public HideOption Hide { get; set; }
+    public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
+    public bool HideAndroid => (Hide & HideOption.Android) == HideOption.Android;
+    public bool HideWeb => (Hide & HideOption.Web) == HideOption.Web;
+    public bool HideAll => (Hide & HideOption.All) == HideOption.All;
 }

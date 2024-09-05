@@ -1395,6 +1395,7 @@ public partial class PostService : IPostService
             HashId = x.HashId,
             Type = x.Type,
             Chapters = MappingTopChapter(x.SubPostStr),
+            Hide = x.Hide
         }).ToList();
     }
 
