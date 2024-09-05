@@ -418,7 +418,7 @@ public partial class PostService : IPostService
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _sc.GetPublicUrl(resources.Url, resources.Url, resources.MinioInstance).GetAwaiter().GetResult(),
+            Url = _sc.GetPublicUrl(resources.Url, resources.BucketName, resources.MinioInstance).GetAwaiter().GetResult(),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,

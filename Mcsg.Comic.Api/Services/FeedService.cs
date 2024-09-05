@@ -262,14 +262,7 @@ public partial class FeedService : IFeedService
 
         foreach (var item in data.Resources)
         {
-            if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
-            {
-                item.Url = await _sc.GetStrategy().PresignedGetObject(item.Url, null);
-            }
-            else
-            {
-                item.Url = await _sc.GetPublicUrl(item.Name, item.Url, item.MinioInstance);
-            }
+            item.Url = await _sc.GetPublicUrl(item.Url, item.BucketName, item.MinioInstance);
         }
 
         data.SubPosts.Add(new SubUploadFileDto
@@ -633,7 +626,7 @@ public partial class FeedService : IFeedService
                     continue;
                 }
 
-                var url = _sc.GetPublicUrl(fileDbs.Name, fileDbs.Url, fileDbs.MinioInstance).GetAwaiter().GetResult();
+                var url = _sc.GetPublicUrl(fileDbs.Url, fileDbs.BucketName, fileDbs.MinioInstance).GetAwaiter().GetResult();
 
                 itemResponse.Resources.Add(new ResourceDto
                 {
@@ -676,10 +669,9 @@ public partial class FeedService : IFeedService
                             Height = x.Height,
                             Order = x.Order
                         };
-                        if (x.Type == ResourceType.Audio || x.Type == ResourceType.Video)
-                        {
-                            resource.Url = _sc.GetStrategy().PresignedGetObject(x.Url, null).GetAwaiter().GetResult();
-                        }
+
+                        resource.Url = _sc.GetPublicUrl(x.Url, x.BucketName, x.MinioInstance).GetAwaiter().GetResult();
+
                         return resource;
                     }).ToList();
                 }

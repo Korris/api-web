@@ -211,10 +211,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
                         SubPostHashId = subPost.HashId,
                     };
 
-                    if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
-                    {
-                        resource.Url = await _sc.GetStrategy(request.MinioInstance).PresignedGetObject(resource.Url, null);
-                    }
+                    resource.Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
+
                     resourceResponse.Add(resource);
                 }
             }

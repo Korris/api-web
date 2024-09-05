@@ -210,7 +210,7 @@ public class FileService : IFileService
         foreach (var resource in resources)
         {
             var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
-            var shareUrl = await _sc.GetStrategy().PresignedGetObject(resource.Url, null);
+            var shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
 
             subPosts.Add(new SubUploadFileDto
             {
@@ -335,7 +335,7 @@ public class FileService : IFileService
 
         foreach (var resource in resourcesResult.OrderBy(p => p.Order))
         {
-            var shareUrl = await _sc.GetStrategy().PresignedGetObject(resource.Url, null);
+            var shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
             var subPostData = subpostAndResourceHashId.FirstOrDefault(p => p.SubPostId == resource.SubPostId);
             subPosts.Add(new SubUploadFileDto
             {
