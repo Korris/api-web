@@ -996,12 +996,7 @@ public partial class PostService : IPostService
 
         var result = new PostSeriesAllTopResponse();
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
-            .Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
-            .Replace("[CountResults]", countTopQuery)
-            .Replace("[OrderBy]", loadReq.OrderBy)
-            .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery);
-
+        var query = GetQuerySelectPage(PostSeriesSelectedType.FOLLOWED_POST);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -1495,6 +1490,13 @@ public partial class PostService : IPostService
                     permission = "";
                     topSelectPostIdQuery = GetMyPostIdsQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
+                    break;
+                }
+            case PostSeriesSelectedType.FOLLOWED_POST:
+                {
+                    permission = "";
+                    topSelectPostIdQuery = GetMyPostFollowedIdsQuery; ;
+                    countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostFollowedCountQuery);
                     break;
                 }
             default:

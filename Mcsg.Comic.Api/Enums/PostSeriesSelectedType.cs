@@ -9,5 +9,5 @@ public enum PostSeriesSelectedType
     RECOMMEND = 4,
     BY_USER = 5,
     BY_MYSELF = 6,
-
+    FOLLOWED_POST = 7
 }
