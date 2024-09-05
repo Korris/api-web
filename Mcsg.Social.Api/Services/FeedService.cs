@@ -394,14 +394,7 @@ public partial class FeedService : IFeedService
         data.Resources = data.Resources.OrderBy(p => p.Order).ToList();
         foreach (var item in data.Resources)
         {
-            if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
-            {
-                item.Url = await _sc.GetStrategy().PresignedGetObject(item.Url, null);
-            }
-            else
-            {
-                item.Url = _setting.Api.Web.Media.GetMediaPath(item.Name, item.Url, item.MinioInstance);
-            }
+            item.Url = await _sc.GetPublicUrl(item.Url, item.BucketName, item.MinioInstance);
         }
 
         data.SubPosts.Add(new SubUploadFileDto
@@ -559,14 +552,7 @@ public partial class FeedService : IFeedService
                     continue;
                 }
 
-                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                {
-                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null).GetAwaiter().GetResult();
-                }
-                else
-                {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
-                }
+                resourceResponse.Url = _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance).GetAwaiter().GetResult();
 
                 itemResponse.Resources.Add(resourceResponse);
                 itemResponse.SubPosts.Add(new SubUploadFileDto
@@ -781,14 +767,8 @@ public partial class FeedService : IFeedService
                     continue;
                 }
 
-                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                {
-                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null).GetAwaiter().GetResult();
-                }
-                else
-                {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
-                }
+                resourceResponse.Url = _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance).GetAwaiter().GetResult();
+
                 itemResponse.Resources.Add(resourceResponse);
             }
         }
@@ -860,16 +840,19 @@ public partial class FeedService : IFeedService
             itemResponse.SubPosts = new List<SubUploadFileDto>();
             foreach (var subPostdb in item.SubPostDbs)
             {
+                if (subPostdb == null || subPostdb.FileDbs == null)
+                {
+                    continue;
+                }
+
                 var fileDbs = subPostdb.FileDbs.FirstOrDefault();
-                var url = "";
-                if (fileDbs.Type == ResourceType.Video || fileDbs.Type == ResourceType.Audio)
+                if (fileDbs == null)
                 {
-                    url = _sc.GetStrategy().PresignedGetObject(fileDbs.Url, null).GetAwaiter().GetResult();
+                    continue;
                 }
-                else
-                {
-                    url = _setting.Api.Web.Media.GetMediaPath(fileDbs.Name, fileDbs.Url, fileDbs.MinioInstance);
-                }
+
+                var url = _sc.GetPublicUrl(fileDbs.Url, fileDbs.BucketName, fileDbs.MinioInstance).GetAwaiter().GetResult();
+
                 itemResponse.Resources.Add(new ResourceDto
                 {
                     HashId = fileDbs.HashId,
@@ -903,7 +886,7 @@ public partial class FeedService : IFeedService
                         var resource = new UploadFileDto
                         {
                             HashId = subPostdb.HashId,
-                            Url = _setting.Api.Web.Media.GetMediaPath(x.Name, x.Url, x.MinioInstance),
+                            Url = _sc.GetPublicUrl(x.Url, x.BucketName, x.MinioInstance).GetAwaiter().GetResult(),
                             Name = x.Name,
                             Type = x.Type,
                             Status = x.Status,

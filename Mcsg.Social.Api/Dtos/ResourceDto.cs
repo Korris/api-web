@@ -16,4 +16,5 @@ public class ResourceDto
     public string Body { get; set; }
     public string SubPostHashId { get; set; }
     public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
 }

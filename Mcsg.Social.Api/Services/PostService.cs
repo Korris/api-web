@@ -418,7 +418,7 @@ public partial class PostService : IPostService
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _setting.Api.Web.Media.GetMediaPath(resources.Name, resources.Url, resources.MinioInstance),
+            Url = _sc.GetPublicUrl(resources.Url, resources.Url, resources.MinioInstance).GetAwaiter().GetResult(),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,

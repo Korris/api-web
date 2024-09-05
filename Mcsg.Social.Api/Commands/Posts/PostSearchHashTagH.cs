@@ -194,14 +194,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             foreach (var resourceResponse in resourceResponses)
             {
-                if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
-                {
-                    resourceResponse.Url = await _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null);
-                }
-                else
-                {
-                    resourceResponse.Url = _setting.Api.Web.Media.GetMediaPath(resourceResponse.Name, resourceResponse.Url, resourceResponse.MinioInstance);
-                }
+                resourceResponse.Url = await _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance);
                 item.Resources.Add(resourceResponse);
             }
         }

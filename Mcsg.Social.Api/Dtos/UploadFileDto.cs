@@ -16,4 +16,5 @@ public class UploadFileDto
     public int Height { get; set; }
     public double Size { get; set; }
     public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
 }
