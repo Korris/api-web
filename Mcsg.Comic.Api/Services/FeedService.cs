@@ -263,7 +263,7 @@ public partial class FeedService : IFeedService
         {
             if (item.Type == ResourceType.Video || item.Type == ResourceType.Audio)
             {
-                item.Url = await _sc.GetStrategy().PresignedGetObject(item.Url, _setting.Minio.MaxExpiryInSeconds, null);
+                item.Url = await _sc.GetStrategy().PresignedGetObject(item.Url, null);
             }
             else
             {
@@ -392,7 +392,7 @@ public partial class FeedService : IFeedService
 
                 if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
                 {
-                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -561,7 +561,7 @@ public partial class FeedService : IFeedService
 
                 if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
                 {
-                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    resourceResponse.Url = _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -638,7 +638,7 @@ public partial class FeedService : IFeedService
                 var url = "";
                 if (fileDbs.Type == ResourceType.Video || fileDbs.Type == ResourceType.Audio)
                 {
-                    url = _sc.GetStrategy().PresignedGetObject(fileDbs.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                    url = _sc.GetStrategy().PresignedGetObject(fileDbs.Url, null).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -687,7 +687,7 @@ public partial class FeedService : IFeedService
                         };
                         if (x.Type == ResourceType.Audio || x.Type == ResourceType.Video)
                         {
-                            resource.Url = _sc.GetStrategy().PresignedGetObject(x.Url, _setting.Minio.MaxExpiryInSeconds, null).GetAwaiter().GetResult();
+                            resource.Url = _sc.GetStrategy().PresignedGetObject(x.Url, null).GetAwaiter().GetResult();
                         }
                         return resource;
                     }).ToList();

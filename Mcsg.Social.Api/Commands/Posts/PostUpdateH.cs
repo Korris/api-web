@@ -213,7 +213,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
                     if (resource.Type == ResourceType.Audio || resource.Type == ResourceType.Video)
                     {
-                        resource.Url = await _sc.GetStrategy(request.MinioInstance).PresignedGetObject(resource.Url, _setting.Minio.MaxExpiryInSeconds, null);
+                        resource.Url = await _sc.GetStrategy(request.MinioInstance).PresignedGetObject(resource.Url, null);
                     }
                     resourceResponse.Add(resource);
                 }

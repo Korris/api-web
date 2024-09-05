@@ -196,7 +196,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
             {
                 if (resourceResponse.Type == ResourceType.Video || resourceResponse.Type == ResourceType.Audio)
                 {
-                    resourceResponse.Url = await _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, _setting.Minio.MaxExpiryInSeconds, null);
+                    resourceResponse.Url = await _sc.GetStrategy().PresignedGetObject(resourceResponse.Url, null);
                 }
                 else
                 {

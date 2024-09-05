@@ -40,9 +40,22 @@ public class StorageClient : IStorageClient
     /// </summary>
     /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
     /// <returns>The corresponding <see cref="IStorageStrategy"/> object.</returns>
-    public IStorageStrategy GetStrategy(MinioInstanceType instance)
+    public IStorageStrategy GetStrategy(MinioInstanceType? instance)
     {
+        instance = instance ?? MinioInstanceType.Default;
         return _strategy[(int)instance];
+    }
+
+    /// <summary>
+    /// Get public URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
+    /// <returns>Return the public URL</returns>
+    public Task<string> GetPublicUrl(string objectName, string? bucketNamePublic, MinioInstanceType? instance)
+    {
+        return GetStrategy(instance).GetPublicUrl(objectName, bucketNamePublic);
     }
 
     #endregion

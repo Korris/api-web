@@ -166,19 +166,29 @@ public class StorageMinio : StorageStrategy
     /// Presigned get object
     /// </summary>
     /// <param name="objectName">Object name</param>
-    /// <param name="expiry">Expiry in seconds</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="expiry">Expiry in seconds</param>
     /// <returns>Return the result</returns>
-    public override async Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName)
+    public override async Task<string> PresignedGetObject(string objectName, string? bucketName, int? expiry = null)
     {
+        if (string.IsNullOrWhiteSpace(objectName))
+        {
+            return string.Empty;
+        }
+
         if (string.IsNullOrWhiteSpace(bucketName))
         {
             bucketName = _auth?.BucketName;
         }
 
+        if (expiry == null || expiry <= 0)
+        {
+            expiry = _maxExpiryInSeconds;
+        }
+
         try
         {
-            var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry);
+            var presignedArg = new PresignedGetObjectArgs().WithBucket(bucketName).WithObject(objectName).WithExpiry(expiry.Value);
             return await Mc.PresignedGetObjectAsync(presignedArg);
         }
         catch
@@ -260,16 +270,21 @@ public class StorageMinio : StorageStrategy
     /// Get public URL
     /// </summary>
     /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the public URL</returns>
-    public override async Task<string> GetPublicUrl(string objectName, string? bucketNamePublic)
+    public override async Task<string> GetPublicUrl(string objectName, string? bucketName)
     {
-        if (string.IsNullOrWhiteSpace(bucketNamePublic))
+        if (string.IsNullOrWhiteSpace(bucketName))
         {
-            bucketNamePublic = BucketNamePublic;
+            bucketName = _auth?.BucketName;
         }
 
-        var uri = await PresignedGetObject(objectName, 1, bucketNamePublic);
+        var uri = await PresignedGetObject(objectName, bucketName);
+        if (bucketName != BucketNamePublic)
+        {
+            return uri;
+        }
+
         var arr = uri.Split('?');
         return arr.Length > 0 ? arr[0] : "";
     }
@@ -323,7 +338,7 @@ public class StorageMinio : StorageStrategy
     /// <summary>
     /// MinIO client
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Return the result</returns>
     private IMinioClient Mc
     {
         get
@@ -355,6 +370,11 @@ public class StorageMinio : StorageStrategy
     /// MinIO client
     /// </summary>
     private IMinioClient? _mc;
+
+    /// <summary>
+    /// The maximum expiry time in seconds (default is 1 days).
+    /// </summary>
+    private int _maxExpiryInSeconds = 1 * 24 * 60 * 60; // 1 days
 
     #endregion
 }

@@ -88,10 +88,10 @@ public class StorageStrategy : IStorageStrategy
     /// Presigned get object
     /// </summary>
     /// <param name="objectName">Object name</param>
-    /// <param name="expiry">Expiry in seconds</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
-    /// <returns></returns>
-    public virtual Task<string> PresignedGetObject(string objectName, int expiry, string? bucketName)
+    /// <param name="expiry">Expiry in seconds</param>
+    /// <returns>Return the result</returns>
+    public virtual Task<string> PresignedGetObject(string objectName, string? bucketName, int? expiry = null)
     {
         throw new NotImplementedException();
     }
@@ -157,7 +157,7 @@ public class StorageStrategy : IStorageStrategy
     /// <summary>
     /// Bucket name public
     /// </summary>
-    public string BucketNamePublic => _auth?.BucketName + "-public";
+    public string BucketNamePublic => _auth?.BucketNamePublic + "";
 
     #endregion
 
