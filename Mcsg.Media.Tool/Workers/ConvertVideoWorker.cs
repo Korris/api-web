@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Mcsg.Media.Tool.Workers;
 
@@ -30,6 +31,10 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
                 var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
 
+                // Get video dimensions
+                var (width, height) = GetVideoDimensions(orgfile);
+                Console.WriteLine($"Video dimensions: {width}x{height}");
+
                 var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
                 if (File.Exists(targetFile))
                 {
@@ -51,7 +56,7 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService, width, height);
                 }
 
                 //clean up resource
@@ -91,5 +96,27 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Failed, ex.Message);
             }
         }));
+    }
+
+    private (int width, int height) GetVideoDimensions(string filePath)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "ffprobe",
+            Arguments = $"-v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 {filePath}",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using (var process = Process.Start(startInfo))
+        {
+            using (var reader = process.StandardOutput)
+            {
+                var output = reader.ReadToEnd();
+                var dimensions = output.Trim().Split(',');
+                return (int.Parse(dimensions[0]), int.Parse(dimensions[1]));
+            }
+        }
     }
 }

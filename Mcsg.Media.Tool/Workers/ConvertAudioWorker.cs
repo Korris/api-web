@@ -28,7 +28,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                 var url = resourceInfo.Url;
                 var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
                 var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
-
+                int width, height = 0;
                 var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
                 if (File.Exists(targetFile))
                 {
@@ -48,7 +48,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, newUrl, microService, width = 0, height = 0);
                 }
 
                 //clean up resource

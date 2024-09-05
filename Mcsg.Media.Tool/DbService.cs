@@ -54,12 +54,14 @@ internal class DbService
             });
     }
 
-    public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string shareUrl, MicroService microService)
+    public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string shareUrl, MicroService microService, int width, int height)
     {
         var command = @"UPDATE {0}.""{1}Resources""
                             SET ""Status""= @status,
                                  ""Url"" = @url,
-                                ""BucketName"" = @shareUrl
+                                ""BucketName"" = @shareUrl,
+                                ""Width"" = @width,
+                                ""Height"" = @height
                             WHERE ""Id"" = @id ";
 
         if (microService != MicroService.Comic && microService != MicroService.Story)
@@ -77,6 +79,8 @@ internal class DbService
             url,
             shareUrl,
             id = resourceId,
+            width,
+            height
         });
     }
 
