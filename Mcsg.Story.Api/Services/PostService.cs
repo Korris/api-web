@@ -252,6 +252,7 @@ public partial class PostService : IPostService
         {
             MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
         }
+        result.FollowCount = await _context.ComicPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
         return result;
     }
 
@@ -1013,7 +1014,21 @@ public partial class PostService : IPostService
         if (items != null && items.Count() > 0)
         {
             results = new PagedResponse<PostSeriesTopResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
-            results.Items = MappingTopSeries(items);
+
+            var mappedItems = MappingTopSeries(items);
+            var postIds = mappedItems.Select(x => x.Id).ToList();
+
+            var followCounts = await _context.StoryPostFavoriteAvailable
+                              .Where(p => postIds.Contains(p.PostId))
+                              .GroupBy(p => p.PostId)
+                              .Select(p => new { PostId = p.Key, Count = p.Count() })
+                              .ToListAsync();
+
+            foreach (var item in mappedItems)
+            {
+                item.FollowCount = followCounts.FirstOrDefault(p => p.PostId == item.Id)?.Count ?? 0;
+            }
+            results.Items = mappedItems;
         }
         else
         {

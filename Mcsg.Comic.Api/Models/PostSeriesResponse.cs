@@ -26,6 +26,7 @@ public class PostSeriesResponse : PostDto
     public bool IsFollowing { get; set; }
     public ReactionsResponse Reaction { get; set; }
     public DateTime LatestCreatedOn { get; set; }
+    public int FollowCount { get; set; }
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
@@ -52,7 +53,6 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
     public bool isNewChapter { get; set; }
-    public int FollowCount { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
