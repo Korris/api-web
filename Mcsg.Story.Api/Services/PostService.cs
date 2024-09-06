@@ -829,7 +829,7 @@ public partial class PostService : IPostService
 
         var minioInstance = request.MinioInstance;
         var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId, minioInstance);
-        var coverUrl = await GetPublicUrl(request.CoverHashId, minioInstance);
+        var coverUrl = await GetPublicUrl(request.CoverHashId ?? request.ThumbnailHashId, minioInstance);
 
         if (string.IsNullOrEmpty(request.Summary))
         {
