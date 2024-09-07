@@ -773,6 +773,21 @@ public partial class PostService : IPostService
             {
                 item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
             }
+
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostReactions"""), new
+            {
+                TargetIds = items.Select(p => p.Id).ToList(),
+                UserId = _currentUserService?.Session?.UserId
+            });
+
+            foreach (var item in results.Items)
+            {
+                var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapPostBoxReactionResponse(item, postReaction);
+                }
+            }
         }
         else
         {
@@ -1312,6 +1327,19 @@ public partial class PostService : IPostService
         {
             return new List<PostBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
         }
+    }
+
+    private void MapPostBoxReactionResponse(PostBoxResposne item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     private void MapReactionResponse(PostBoxResponse item, List<CommentReactionResponseQuery> reactions)

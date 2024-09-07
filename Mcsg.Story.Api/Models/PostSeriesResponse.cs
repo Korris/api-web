@@ -90,6 +90,7 @@ public class PostBoxResposne
     public bool IsMature { get; set; }
     public string HashId { get; set; }
     public PostType Type { get; set; }
+    public ReactionsResponse? Reaction { get; set; }
     public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
 
     public HideOption Hide { get; set; }
