@@ -425,7 +425,7 @@ public partial class FeedService : IFeedService
             MapReactionFeedDtoResponse(data, postReactionResponse.ToList());
         }
         data.IsFavorite = await _context.SocialPostFavoriteAvailable.AnyAsync(p => p.UserId == userId && p.PostId == data.ParentId);
-
+        data.Body = await _businessText.Process(data.Body);
         return data;
     }
     public async Task<FeedDto> GetFeedAsync(FeedHashIdR req)
