@@ -237,7 +237,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             AuthorId = _currentUserService.Session.UserId,
             AuthorName = authorName,
             ReactionType = reactionType,
-            UserAvatar = _currentUserService.Session.UserAvatar
+            UserAvatar = _currentUserService.Session.UserAvatar ?? ""
         };
 
         Type entityType = typeof(T);
