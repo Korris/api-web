@@ -112,7 +112,7 @@ public class FileService : IFileService
             if (!string.IsNullOrWhiteSpace(objectNameOriginal))
             {
                 // Compress and save thumbnail
-                var compressedThumb = file.CompressAndConvertToJpeg(144, 216, 100);
+                var compressedThumb = file.CompressAndConvertToJpeg(288, 432, 100);
                 if (compressedThumb != null)
                 {
                     using (var thumbStream = compressedThumb.Image.OpenReadStream())
