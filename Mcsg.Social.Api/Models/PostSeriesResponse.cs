@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿    namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
 using Dtos;
@@ -63,6 +63,7 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
     public string? MetaUrl { get; set; }
     public string? MetaDescription { get; set; }
     public string? Url { get; set; }
+    public ReactionsResponse Reaction { get; set; }
 }
 
 public class NewPostSeriesResponse : PostSeriesResponse

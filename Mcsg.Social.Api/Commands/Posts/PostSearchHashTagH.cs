@@ -15,6 +15,7 @@ using Dtos;
 using Extensions;
 using Filters;
 using Interfaces;
+using Lib.Data.Repositories;
 using Models;
 using Requests;
 
@@ -32,9 +33,10 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="businessText">Business Text</param>
-    public PostSearchHashTagH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessText) : base(context, setting, sc)
+    public PostSearchHashTagH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessText, IRepository<Reaction> reactionRepository) : base(context, setting, sc)
     {
         _businessText = businessText;
+        _reactionRepository = reactionRepository;
     }
 
     /// <summary>
@@ -152,6 +154,65 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     select qpost.Id
                 ).Distinct().Count();
             }
+            if (dataSocial.Any())
+            {
+                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostReactions"""), new
+                {
+                    TargetIds = dataSocial.Select(p => p.Id).ToList(),
+                    UserId = request?.UserId
+                });
+                if (postReactionResponse.Count() > 0)
+                {
+                    foreach (var item in dataSocial)
+                    {
+                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                        if (postReaction.Count > 0)
+                        {
+                            MapReactionPostSeiresTopResponse(item, postReaction);
+                        }
+                    }
+                }
+
+            }
+            if (dataComic.Any())
+            {
+                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
+                {
+                    TargetIds = dataComic.Select(p => p.Id).ToList(),
+                    UserId = request?.UserId
+                });
+                if (postReactionResponse.Count() > 0)
+                {
+                    foreach (var item in dataComic)
+                    {
+                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                        if (postReaction.Count > 0)
+                        {
+                            MapReactionPostSeiresTopResponse(item, postReaction);
+                        }
+                    }
+                }
+            }
+
+            if (dataStory.Any())
+            {
+                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostReactions"""), new
+                {
+                    TargetIds = dataStory.Select(p => p.Id).ToList(),
+                    UserId = request?.UserId
+                });
+                if (postReactionResponse.Count() > 0)
+                {
+                    foreach (var item in dataStory)
+                    {
+                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                        if (postReaction.Count > 0)
+                        {
+                            MapReactionPostSeiresTopResponse(item, postReaction);
+                        }
+                    }
+                }
+            }
 
             var combinedItems = dataComic.Concat(dataSocial).Concat(dataStory).ToList();
 
@@ -175,6 +236,19 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         await _context.Database.CloseConnectionAsync();
 
         return res;
+    }
+
+    private void MapReactionPostSeiresTopResponse(PostSeriesTopQueryDbResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     /// <summary>
@@ -236,6 +310,11 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// Business Text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    /// <summary>
+    /// ReactionRepostiroy
+    /// </summary>
+    private readonly IRepository<Reaction> _reactionRepository;
 
     #endregion
 }
