@@ -2,7 +2,6 @@
 
 namespace Mcsg.Function.Job.Extensions;
 
-using Constants;
 using Lib.Common.Models;
 
 internal static class EmailTemplateExtension
@@ -13,7 +12,6 @@ internal static class EmailTemplateExtension
             throw new ArgumentNullException();
 
         return template
-            .Replace("{{LOGO_URL}}", FunctionConstant.LogoUrl)
             .Replace("{{TO}}", email.To)
             .Replace("{{OTP}}", email.Body).ToString();
     }
@@ -25,7 +23,6 @@ internal static class EmailTemplateExtension
         var listParams = email.Body.Split(',');
 
         return template
-            .Replace("{{LOGO_URL}}", FunctionConstant.LogoUrl)
             .Replace("{{TO}}", email.To)
             .Replace("{{ACTION}}", listParams[0]).ToString()
             .Replace("{{FROM}}", listParams[1])
