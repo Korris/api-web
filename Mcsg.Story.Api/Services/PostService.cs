@@ -118,9 +118,8 @@ public partial class PostService : IPostService
         //Check first post
         var rewards = await CheckRewardsForPost(userId, PostType.Story);
 
-        var minioInstance = request.MinioInstance;
-        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId, minioInstance);
-        var coverUrl = await GetPublicUrl(request.CoverHashId, minioInstance);
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
+        var coverUrl = await GetPublicUrl(request.CoverHashId);
 
         var hashId = PostConfig.HashLength.GetRandomString();
         var post = new StoryPost
@@ -843,9 +842,8 @@ public partial class PostService : IPostService
             throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
 
-        var minioInstance = request.MinioInstance;
-        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId, minioInstance);
-        var coverUrl = await GetPublicUrl(request.CoverHashId ?? request.ThumbnailHashId, minioInstance);
+        var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
+        var coverUrl = await GetPublicUrl(request.CoverHashId);
 
         if (string.IsNullOrEmpty(request.Summary))
         {
@@ -858,7 +856,7 @@ public partial class PostService : IPostService
         post.AuthorId = request.IsCurrentUserAuthor ? userId : null;
         post.AuthorName = request.IsCurrentUserAuthor ? profileName : request.AuthorName;
         post.Body = request.Summary;
-        post.ThumbnailUrl = thumbnailUrl;
+        post.ThumbnailUrl = thumbnailUrl.RemoveNameSuffix();
         post.CoverUrl = coverUrl;
         post.IsMature = request.IsMature;
         post.Permission = request.Permission;
@@ -2043,19 +2041,18 @@ public partial class PostService : IPostService
     /// GetPublicUrl
     /// </summary>
     /// <param name="hashId"></param>
-    /// <param name="minioInstance"></param>
     /// <returns></returns>
-    /// <exception cref="BadRequestException"></exception>
-    private async Task<string> GetPublicUrl(string hashId, MinioInstanceType minioInstance)
+    private async Task<string> GetPublicUrl(string hashId)
     {
         var resource = await _context.StoryResources.Where(p => p.HashId == hashId)
-            .Select(p => new { p.Url, Bucket = p.BucketName })
+            .Select(p => new { p.Url, p.BucketName, p.MinioInstance })
             .FirstOrDefaultAsync();
         if (resource == null)
         {
-            throw new BadRequestException(E206, M206);
+            return string.Empty;
         }
-        return _setting.GetMinio(minioInstance).GetPublicUrl(resource.Bucket, resource.Url);
+        var minioInstance = resource.MinioInstance ?? MinioInstanceType.Default;
+        return _setting.GetMinio(minioInstance).GetPublicUrl(resource.BucketName, resource.Url);
     }
 
     /// <summary>
