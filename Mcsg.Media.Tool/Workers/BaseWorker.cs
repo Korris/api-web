@@ -5,6 +5,7 @@ using System.Text;
 namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Interfaces;
@@ -13,8 +14,9 @@ using Services;
 
 internal abstract class BaseWorker
 {
-    public BaseWorker(ISetting setting, IStorageClient sc)
+    public BaseWorker(IMcsgContext context, ISetting setting, IStorageClient sc)
     {
+        _context = context;
         _setting = setting;
         _sc = sc;
 
@@ -49,11 +51,13 @@ internal abstract class BaseWorker
         return filePath;
     }
 
-    public async Task UploadBlobAsync(string localFile, string remoteUri)
+    public async Task<long> UploadBlobAsync(string localFile, string remoteUri)
     {
         var fs = File.OpenRead(localFile);
+        var res = fs.Length;
         await _sc.GetStrategy(MinioInstanceType.Default).PutObject(fs, remoteUri, null);
         fs.Close();
+        return res;
     }
 
     public string RunFfmpeg(string input, string output, string command)
@@ -149,6 +153,11 @@ internal abstract class BaseWorker
     }
 
     #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    protected readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

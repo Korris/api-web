@@ -4,6 +4,7 @@ namespace Mcsg.Media.Tool;
 
 using Common.Core.Enums;
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.Domain.Entities;
 using Interfaces;
 using Workers;
@@ -12,14 +13,14 @@ internal class WorkDistributor
 {
     #region -- Methods --
 
-    public WorkDistributor(ISetting setting, IStorageClient sc)
+    public WorkDistributor(IMcsgContext context, ISetting setting, IStorageClient sc)
     {
         _dbService = new DbService(setting.DefaultConnection);
         _sc = sc;
         _workers = new Dictionary<JobType, IWorker>
         {
-            { JobType.ConvertVideo, new ConvertVideoWorker(setting, _sc) },
-            { JobType.ConvertAudio, new ConvertAudioWorker(setting, _sc) }
+            { JobType.ConvertVideo, new ConvertVideoWorker(context,setting, _sc) },
+            { JobType.ConvertAudio, new ConvertAudioWorker(context, setting, _sc) }
         };
 
         LoadActiveJobs();

@@ -4,6 +4,7 @@ namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Enums;
 using Common.Core.Interfaces;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Interfaces;
@@ -12,7 +13,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
 {
     private const string TARGET = ".mp3";
 
-    public ConvertAudioWorker(ISetting setting, IStorageClient sc) : base(setting, sc) { }
+    public ConvertAudioWorker(IMcsgContext context, ISetting setting, IStorageClient sc) : base(context, setting, sc) { }
 
     public void Execute(Job jobInfo)
     {
@@ -45,12 +46,12 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
 
                     //upload
                     var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
-                    await UploadBlobAsync(targetFile, newUrl);
+                    var length = await UploadBlobAsync(targetFile, newUrl);
 
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, width, height);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, width, height, length);
                 }
 
                 //clean up resource

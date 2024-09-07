@@ -61,11 +61,12 @@ internal class Program
             var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+
+            var cancellation = new CancellationTokenSource();
+            await new WorkDistributor(context, st, sc!).Run(cancellation.Token);
         }
         #endregion
 
-        var cancellation = new CancellationTokenSource();
-        await new WorkDistributor(st, sc!).Run(cancellation.Token);
         Console.ReadLine();
     }
 
