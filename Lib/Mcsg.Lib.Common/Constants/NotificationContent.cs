@@ -6,7 +6,7 @@ public static class NotificationContent
     public const string CommentOnComic = " đã bình luận trong truyện tranh của bạn.";
     public const string CommentOnStory = " đã bình luận trong truyện chữ của bạn.";
     public const string ReplyOnComment = " đã trả lời bình luận của bạn trong một bài viết:";
-    public const string MentionOnComment = " đã đề cập bạn trong một bình luận.";
+    public const string MentionOnComment = " đã nhắc đến bạn trong bài viết.";
     public const string MentionOnPost = " đã đề cập bạn trong một bài viết của họ.";
     public const string MentionOnReply = " đã nhắc đến bạn trong một trả lời bình luận.";
     public const string ReactOnFeed = " đã bày tỏ cảm xúc về bài viết của bạn.";
