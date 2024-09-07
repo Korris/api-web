@@ -1,4 +1,4 @@
-﻿    namespace Mcsg.Social.Api.Models;
+﻿namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
 using Dtos;

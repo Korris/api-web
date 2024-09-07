@@ -16,6 +16,11 @@ public enum ResourceStatus
     Processing,
 
     /// <summary>
+    /// Downloading
+    /// </summary>
+    Downloading,
+
+    /// <summary>
     /// Waiting for download
     /// </summary>
     WaitingForDownload,
