@@ -56,7 +56,7 @@ public static class StringExtension
 
         // Configure Serilog with daily rolling files in daily directories
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
+            .MinimumLevel.Information()
             .WriteTo.Console()
 
             // Map log events by their level and date to different files
