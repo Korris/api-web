@@ -625,7 +625,10 @@ public partial class UserService : IUserService
             throw new BadRequestException(E120, M120);
         }
 
-        return await _context.UserFollowAvailable.CountAsync(p => p.UserFollowingId == userId);
+        return await (from a in _context.UserFollowAvailable
+                      join b in _context.Users on a.UserFollowerId equals b.Id
+                      where a.UserFollowingId == userId && b.IsDelete == false
+                      select a).CountAsync();
     }
 
     private async Task<int> GetFollowingCountAsync(Guid userId)
@@ -635,6 +638,9 @@ public partial class UserService : IUserService
             throw new BadRequestException(E120, M120);
         }
 
-        return await _context.UserFollowAvailable.CountAsync(p => p.UserFollowerId == userId);
+        return await (from a in _context.UserFollowAvailable
+                      join b in _context.Users on a.UserFollowingId equals b.Id
+                      where a.UserFollowerId == userId && b.IsDelete == false
+                      select a).CountAsync();
     }
 }
