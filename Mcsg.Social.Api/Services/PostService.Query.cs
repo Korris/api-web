@@ -1135,50 +1135,97 @@ ORDER BY group_number, row_num;
             get
             {
                 return $@"
-                     WITH ranked_posts AS (
-    SELECT p.""Id"", p.""Type"", p.""CreatedOn"", p.""HashId"",
-           ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY p.""CreatedOn"" DESC) AS type_rank
+                     WITH ranked_feed AS (
+    SELECT p.""Id"", p.""CreatedOn"", p.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY p.""CreatedOn"" DESC) AS type_rank
     FROM social.""SocialPosts"" p
-LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId""AND tp.""IsDelete"" = false 
-LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
-    WHERE ""Type"" IN (0, 1, 2)
-    AND t.""Name"" ILIKE @ExactKeyword   
-    AND p.""IsDelete"" = false
+    LEFT JOIN social.""SocialTagPosts"" tp ON p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
+    LEFT JOIN ""Tags"" t ON t.""Id"" = tp.""TagId""
+    WHERE p.""IsDelete"" = false
+    AND p.""Type"" = 0
     AND p.""Status"" = 1
+    AND t.""Name"" ILIKE @ExactKeyword   
 ),
-limited_posts AS (
-    SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId""
-    FROM ranked_posts
-     WHERE (""Type"" = 0 AND type_rank <= @feed)
-               OR (""Type"" = 1 AND type_rank <= @story)
-               OR (""Type"" = 2 AND type_rank <= @comic)
+ranked_story AS (
+    SELECT sp.""Id"", 
+        GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) AS ""CreatedOn"", 
+        sp.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) DESC) AS type_rank
+    FROM story.""StoryPosts"" sp
+    LEFT JOIN story.""StoryTagPosts"" stp ON sp.""Id"" = stp.""PostId"" AND stp.""IsDelete"" = false 
+    LEFT JOIN ""Tags"" t ON t.""Id"" = stp.""TagId""   
+    LEFT JOIN story.""StorySubPosts"" ssp ON sp.""Id"" = ssp.""PostId""
+    WHERE sp.""IsDelete"" = false
+    AND ssp.""IsDelete"" = false
+    AND sp.""Type"" = 1
+    AND sp.""Status"" = 1
+    AND sp.""Permission"" = 0
+    AND t.""Name"" ILIKE @ExactKeyword
+    GROUP BY sp.""Id"", sp.""CreatedOn"", sp.""HashId""
+),
+ranked_comic AS (
+    SELECT cp.""Id"", 
+        GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) AS ""CreatedOn"", 
+        cp.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) DESC) AS type_rank
+    FROM comic.""ComicPosts"" cp
+    LEFT JOIN comic.""ComicTagPosts"" ctp ON cp.""Id"" = ctp.""PostId"" AND ctp.""IsDelete"" = false 
+    LEFT JOIN ""Tags"" t ON t.""Id"" = ctp.""TagId""
+    LEFT JOIN comic.""ComicSubPosts"" csp ON cp.""Id"" = csp.""PostId""
+    WHERE cp.""IsDelete"" = false
+    AND csp.""IsDelete"" = false
+    AND cp.""Type"" = 2
+    AND cp.""Status"" = 1
+    AND cp.""Permission"" = 0
+    AND t.""Name"" ILIKE @ExactKeyword   
+    GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
+),
+limited_feed AS (
+    SELECT ""Id"", ""CreatedOn"", ""HashId""
+    FROM ranked_feed
+    WHERE type_rank <= @feed
+),
+limited_story AS (
+    SELECT ""Id"", ""CreatedOn"", ""HashId""
+    FROM ranked_story
+    WHERE type_rank <= @story
+),
+limited_comic AS (
+    SELECT ""Id"", ""CreatedOn"", ""HashId""
+    FROM ranked_comic
+    WHERE type_rank <= @comic
+),
+combined_posts AS (
+    SELECT ""Id"", ""CreatedOn"", ""HashId"", 0 AS ""Type"" FROM limited_feed
+    UNION ALL
+    SELECT ""Id"", ""CreatedOn"", ""HashId"", 1 AS ""Type"" FROM limited_story
+    UNION ALL
+    SELECT ""Id"", ""CreatedOn"", ""HashId"", 2 AS ""Type"" FROM limited_comic
 ),
 numbered_posts AS (
     SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
-           ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedOn"" DESC) AS num
-    FROM limited_posts
+        ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedOn"" DESC) AS num
+    FROM combined_posts
 ),
 grouped_posts AS (
     SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
-           CEIL(num / CASE
-          WHEN ""Type"" = 0 THEN @feedPercent *10
-               WHEN ""Type"" = 1 THEN @storyPercent *10
-               WHEN ""Type"" = 2 THEN @comicPercent *10
-           END) AS group_number
+        CEILING(CAST(num AS FLOAT) / 
+        CASE
+            WHEN ""Type"" = 0 THEN @feedPercent * 10
+            WHEN ""Type"" = 1 THEN @storyPercent * 10
+            WHEN ""Type"" = 2 THEN @comicPercent * 10
+        END) AS group_number
     FROM numbered_posts
 ),
 final_grouped_posts AS (
     SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"", group_number,
-           ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY RANDOM()) AS random_row_num
+        ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY ""CreatedOn"" DESC) AS row_num
     FROM grouped_posts
 )
 SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"", group_number
 FROM final_grouped_posts
-WHERE random_row_num <= 10
-ORDER BY group_number, random_row_num;
-
-
-;
+WHERE row_num <= 10
+ORDER BY group_number, row_num;
         
         [GetTotalCount]
         ";
@@ -1209,13 +1256,34 @@ ORDER BY group_number, random_row_num;
                                                    AND ""Status"" = 1)
                                                     )";
 
-        private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
+        private string GetCountPostByTagQuery => $@"SELECT (
+                                                    (SELECT COUNT(*) 
+                                                   FROM ""comic"".""ComicPosts"" p
+                                                   LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
+                                                   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+                                                   WHERE p.""IsDelete"" = false 
+                                                   AND p.""Status"" = {(int)PostStatus.Public}
+                                                   AND p. ""Permission"" = 0
+                                                   AND t.""Name"" ILIKE @ExactKeyword)
+                                                    +
+                                                    (SELECT COUNT(*) 
+                                                   FROM ""story"".""StoryPosts"" p
+                                                     LEFT JOIN story.""StoryTagPosts"" tp on p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
+                                                   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+                                                   WHERE p.""IsDelete"" = false 
+                                                   AND p.""Status"" = {(int)PostStatus.Public}
+                                                   AND p. ""Permission"" = 0
+                                                   AND t.""Name"" ILIKE @ExactKeyword)
+                                                    +
+                                                    (SELECT COUNT(*)
                                                    FROM social.""SocialPosts"" p
                                                    LEFT JOIN social.""SocialTagPosts"" tp on p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
                                                    LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
                                                    WHERE p.""IsDelete"" = false 
                                                    AND p.""Status"" = {(int)PostStatus.Public}
-                                                   AND t.""Name"" ILIKE @ExactKeyword";
+                                                   AND p. ""Permission"" = 0
+                                                   AND t.""Name"" ILIKE @ExactKeyword))";
+
         private string PremiumWhereQuery
         {
             get
