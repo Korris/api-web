@@ -8,6 +8,7 @@ using Common.Core.Enums;
 using Common.Core.Interfaces;
 using Common.Domain.Entities;
 using Common.SeedWork;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Constants;
 using Extensions;
@@ -91,7 +92,7 @@ public class EmailService : IEmailService
     private async Task<StringBuilder> DownloadEmailTemplateAsync(string templateName)
     {
         var file = $"email-templates/{templateName}";
-        var ms = await _sc.GetStrategy().GetObject(file, null);
+        var ms = await _sc.GetStrategy(MinioInstanceType.Default).GetObject(file, null);
         return new StringBuilder(StreamExtension.ToString(ms));
     }
 

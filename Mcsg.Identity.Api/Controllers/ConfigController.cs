@@ -7,6 +7,7 @@ namespace Mcsg.Identity.Api.Controllers;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -98,7 +99,7 @@ public class ConfigController : ControllerBase
         try
         {
             var file = "config/validators.json";
-            var ms = await _sc.GetStrategy().GetObject(file, null);
+            var ms = await _sc.GetStrategy(MinioInstanceType.Default).GetObject(file, null);
             var jsonFile = new StringBuilder(Common.SeedWork.Extensions.StreamExtension.ToString(ms)).ToString();
             res.SetSuccess(nameof(jsonFile), jsonFile);
         }

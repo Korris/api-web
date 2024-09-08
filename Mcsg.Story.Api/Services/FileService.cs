@@ -206,7 +206,6 @@ public class FileService : IFileService
         // Complete resource files
         var (resources, subPostResponses) = await CompleteFilesAsync(dto, true);
 
-        // Map to response for feed service
         foreach (var resource in resources)
         {
             var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
@@ -288,7 +287,6 @@ public class FileService : IFileService
         }
         await _context.SaveChangesAsync(default);
 
-        // Map to response for feed service
         var resourcesResult = listResourceAddded.Concat(listResourcesNew);
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
         var subPosts = new List<SubUploadFileDto>();
@@ -364,17 +362,17 @@ public class FileService : IFileService
                 var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
                 tempBlobName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-                var isExistTempFile = await _sc.GetStrategy().StatObject(tempBlobName, null);
+                var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
-                    await _sc.GetStrategy().RemoveObject(tempBlobName, null);
+                    await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempBlobName, null);
                 }
 
                 targetBlobName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-                var isExistTargetFile = await _sc.GetStrategy().StatObject(targetBlobName, null);
+                var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
-                    await _sc.GetStrategy().RemoveObject(targetBlobName, null);
+                    await _sc.GetStrategy(resource.MinioInstance).RemoveObject(targetBlobName, null);
                 }
             }
         }
@@ -423,17 +421,17 @@ public class FileService : IFileService
             var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
             var tempObjectName = $"{Setting.MinioFolder.Story}/{tempBlobName}";
-            var isExistTempFile = await _sc.GetStrategy().StatObject(tempObjectName, null);
+            var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempObjectName, null);
 
             var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
-            var isExistTargetFile = await _sc.GetStrategy().StatObject(targetObjectName, null);
+            var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
 
             if (isExistTempFile != null && isExistTargetFile == null)
             {
-                await _sc.GetStrategy().CopyObject(tempObjectName, targetObjectName, null, null);
+                await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 
                 resource.Size = isExistTempFile!.Size;
-                await _sc.GetStrategy().RemoveObject(tempObjectName, null);
+                await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempObjectName, null);
             }
             #endregion
 
