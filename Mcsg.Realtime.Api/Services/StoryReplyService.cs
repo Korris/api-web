@@ -120,10 +120,11 @@ public partial class StoryReplyService : IStoryReplyService
             response.UserAvatar = userAvatar;
 
             // Send notification
+            response.PostType = PostType.Story;
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
             await _notificationService.AddReplyNotification(commentNotiRequest);
         }
-
+        
         response.CustomNote = req.CustomNote;
 
         return response;

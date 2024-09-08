@@ -120,6 +120,7 @@ public partial class ComicReplyService : IComicReplyService
             response.UserAvatar = userAvatar;
 
             // Send notification
+            response.PostType = PostType.Comic;
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
             await _notificationService.AddReplyNotification(commentNotiRequest);
         }

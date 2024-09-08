@@ -131,7 +131,7 @@ public class ComicNotificationService : IComicNotificationService
             response.EntityId = comment.Id;
             response.CommentId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
-            response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed : Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed;
+            response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Comic : Common.Core.Constants.Setting.NotificationTargetType.SubComic;
             response.ActorId = comment.AuthorId;
             response.ActorName = comment.AuthorName;
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
