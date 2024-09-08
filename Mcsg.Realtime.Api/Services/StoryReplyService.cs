@@ -118,6 +118,7 @@ public partial class StoryReplyService : IStoryReplyService
         {
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
+            response.UserName = userName;
 
             // Send notification
             response.PostType = PostType.Story;
@@ -183,6 +184,7 @@ public partial class StoryReplyService : IStoryReplyService
 
         response.AuthorName = authorName;
         response.UserAvatar = userAvatar;
+        response.UserName = userName;
         response.CustomNote = req.CustomNote;
 
         return response;

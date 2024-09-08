@@ -118,7 +118,7 @@ public partial class ComicReplyService : IComicReplyService
         {
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
-
+            response.UserName = userName;
             // Send notification
             response.PostType = PostType.Comic;
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
@@ -183,6 +183,7 @@ public partial class ComicReplyService : IComicReplyService
 
         response.AuthorName = authorName;
         response.UserAvatar = userAvatar;
+        response.UserName = userName;
         response.CustomNote = req.CustomNote;
 
         return response;

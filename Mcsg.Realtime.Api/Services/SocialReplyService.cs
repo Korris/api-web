@@ -118,7 +118,7 @@ public partial class SocialReplyService : ISocialReplyService
         {
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
-
+            response.UserName = userName;
             // Send notification
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
             await _notificationService.AddReplyNotification(commentNotiRequest);
@@ -182,6 +182,7 @@ public partial class SocialReplyService : ISocialReplyService
 
         response.AuthorName = authorName;
         response.UserAvatar = userAvatar;
+        response.UserName = userName;
         response.CustomNote = req.CustomNote;
 
         return response;

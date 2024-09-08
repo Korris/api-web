@@ -18,6 +18,7 @@ public class PostCommentResp
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; }
     public string UserAvatar { get; set; }
+    public string UserName { get; set; }
     public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
     public string? CustomNote { get; set; }
     public float? Order { get; set; }

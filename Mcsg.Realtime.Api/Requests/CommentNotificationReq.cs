@@ -32,6 +32,7 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
             .ForMember(d => d.AuthorId, opt => opt.MapFrom(s => s.AuthorId))
             .ForMember(d => d.AuthorName, opt => opt.MapFrom(s => s.AuthorName))
             .ForMember(d => d.UserAvatar, opt => opt.MapFrom(s => s.UserAvatar))
+            .ForMember(d => d.UserName, opt => opt.MapFrom(s => s.UserName))
             .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, true, s.PostType)))
         ;
     }
