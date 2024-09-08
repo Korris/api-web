@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
 using Common.SeedWork.Converters;
+using Common.SeedWork.Enums;
 
 public class NewsFeedDto
 {
@@ -21,5 +22,9 @@ public class NewsFeedDto
     public PostType Type { get; set; }
     public Guid Id { get; set; }
     public int? Order { get; set; }
+    public string ResourceUrl { get; set; }
+    public MinioInstanceType? MinioInstance { get; set; }
+    public string? BucketName { get; set; }
+    public string GifId { get; set; }
 }
 

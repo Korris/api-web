@@ -2066,7 +2066,7 @@ public partial class PostService : IPostService
     {
         if (!isAutoGenerateOrder)
         {
-            return order >= 1 ? order.Value : 1;
+            return order >= 0 ? order.Value : 0;
         }
 
         var orders = await _context.StorySubPostAvailable.Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();

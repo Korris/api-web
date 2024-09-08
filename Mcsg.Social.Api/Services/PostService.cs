@@ -43,11 +43,12 @@ public partial class PostService : IPostService
     /// <param name="mapper"></param>
     /// <param name="currentUserService"></param>
     /// <param name="smartLookupService"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService , IBusinessText businessText)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
+        _businessText = businessText;
 
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
@@ -264,12 +265,16 @@ public partial class PostService : IPostService
         var fromDate = DateTime.Today.AddDays(-2);
         var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",
                     pc.""CreatedOn"",
+                    pc.""GifId"",
+                    sr.""Url"" as ResourceUrl,
+                    sr.""MinioInstance"",
                     p.""Type"" , 
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
                     from social.""SocialPostComments"" pc 
                     left join social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
+                    LEFT JOIN ""social"".""SocialResources"" sr on pc.""ResourceId"" = sr.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
@@ -287,12 +292,15 @@ public partial class PostService : IPostService
             FromDate = fromDate
         });
         var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
-        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"",p.""Type"" , 
+        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"", pc.""GifId"",
+                    sr.""Url"" as ResourceUrl,
+                    sr.""MinioInstance"",p.""Type"" , 
                         p.""HashId"" as HashPostId,
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
                         FROM social.""SocialPostComments"" pc 
+                        LEFT JOIN ""social"".""SocialResources"" sr on pc.""ResourceId"" = sr.""Id""
                         LEFT JOIN social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
                         LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
@@ -301,7 +309,7 @@ public partial class PostService : IPostService
                         AND p.""IsDelete"" = false
                         AND pc.""IsDelete"" = false
                         AND pc.""CreatedOn"" > @FromDate
-                        GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type""
+                        GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type"",sr.""Url"",sr.""MinioInstance""
                       
                         ORDER BY sort_key
                         LIMIT @Limit";
@@ -315,7 +323,20 @@ public partial class PostService : IPostService
             FromDate = fromDate
         });
 
-        return data.Concat(dataNeedToTake).ToList();
+        var result = data.Concat(dataNeedToTake).ToList();
+        var body = "";
+        foreach (var item in result)
+        {
+            body += item.Body + " ";
+        }
+        var profiles = await _businessText.GetProfiles(body);
+
+        foreach (var item in result)
+        {
+            item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
+            item.Body = await _businessText.Process(item.Body, profiles);
+        }
+        return result;
     }
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
@@ -791,6 +812,11 @@ public partial class PostService : IPostService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// Business Text
+    /// </summary>
+    private readonly IBusinessText _businessText;
 
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialPostComment> _postCommentRepository;
