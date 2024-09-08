@@ -16,6 +16,7 @@
                                                 u.""Avatar"" as UserAvatar,
                                                 u.""ProfileName"" as AuthorName,
                                                 u.""ProfileId"",
+                                                u.""UserName"",
                                                 r.""Name"" as ResourceName,
                                                 r.""Url"" as ResourceUrl,
                                                 r.""MinioInstance"",
