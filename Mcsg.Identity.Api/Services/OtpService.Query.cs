@@ -2,15 +2,6 @@
 {
     public partial class OtpService
     {
-        private string GetValidTokenQuery
-        {
-            get
-            {
-                return @$"SELECT ""Code"" FROM {_userOtpRepository.TableName}
-                      WHERE ""Token"" = @Token AND ""OtpType"" = @Type and ""ExpiryTime"" > now() AT TIME ZONE 'UTC'";
-            }
-        }
-
         private string DeleteUserOtpsQuery
         {
             get

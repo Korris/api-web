@@ -1,10 +1,12 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services;
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -25,14 +27,16 @@ public partial class OtpService : IOtpService
     /// <summary>
     /// Initialize
     /// </summary>
+    /// <param name="context"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="distributeManager"></param>
     /// <param name="otpConfiguration"></param>
-    public OtpService(IUnitOfWork unitOfWork, DistributeManager distributeManager, IOptions<OtpSetting> otpConfiguration)
+    public OtpService(IMcsgContext context, IUnitOfWork unitOfWork, DistributeManager distributeManager, IOptions<OtpSetting> otpConfiguration)
     {
         _distributeManager = distributeManager;
         _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
         _otpSetting = otpConfiguration.Value;
+        _context = context;
     }
 
     public async Task<UserOtp> CreateAsync(Guid userId, string to, UserOtpType type, string otpToken = "")
@@ -85,17 +89,11 @@ public partial class OtpService : IOtpService
     {
         try
         {
-            var valid = false;
-            if (otpToken != null)
-            {
-                var dbOtp = await _userOtpRepository
-                    .Connection.QueryFirstOrDefaultAsync<UserOtp>(GetValidTokenQuery, new { Token = otpToken, Type = otpType });
+            var nowUtc = DateTime.UtcNow;
+            var haveOtp = _context.UserOtps
+                .Count(u => u.Code == otp && u.OtpType == otpType && u.ExpiryTime > nowUtc);
+            var valid = haveOtp > 0;
 
-                if (dbOtp != null)
-                {
-                    valid = dbOtp?.Code == otp;
-                }
-            }
             return valid;
         }
         catch (Exception ex)
@@ -180,6 +178,7 @@ public partial class OtpService : IOtpService
 
     #region -- Fields --
 
+    private readonly IMcsgContext _context;
     private readonly IRepository<UserOtp> _userOtpRepository;
     private readonly OtpSetting _otpSetting;
     private readonly DistributeManager _distributeManager;
