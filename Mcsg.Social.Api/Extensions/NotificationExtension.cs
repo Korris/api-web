@@ -258,6 +258,8 @@ public static class NotificationExtension
             NotificationEntityType.ComicPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
             NotificationEntityType.StoryPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
             NotificationEntityType.SubPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
+            NotificationEntityType.ComicSubPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
+            NotificationEntityType.StorySubPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
             NotificationEntityType.PostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.SubPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,

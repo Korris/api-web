@@ -83,7 +83,7 @@ public partial class NotificationService : INotificationService
     }
 
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
-    {
+     {
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
@@ -310,7 +310,7 @@ public partial class NotificationService : INotificationService
 
     private async Task CheckDataCommentOnSubPost(List<NotificationModel> resDto)
     {
-        var subComicIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostComment).Select(p => p.LocationId).ToList();
+        var subComicIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicSubPostComment || p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReply).Select(p => p.LocationId).ToList();
         if (subComicIds.Count > 0)
         {
             var subComics = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
@@ -331,7 +331,7 @@ public partial class NotificationService : INotificationService
             }
         }
 
-        var subStoryIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostComment).Select(p => p.LocationId).ToList();
+        var subStoryIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StorySubPostComment || p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReply).Select(p => p.LocationId).ToList();
         if (subStoryIds.Count > 0)
         {
             var subStories = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
