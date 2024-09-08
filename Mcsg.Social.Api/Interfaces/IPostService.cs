@@ -11,11 +11,10 @@ using Requests;
 public interface IPostService
 {
     Task<bool> Delete(Guid postId);
-    Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq);
-    Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq);
+    Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, PostChapterListR loadReq);
+    Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, PostTopR loadReq);
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
     Task<List<MyPostSeriesResponse>> GetMyAllSeries();
-    Task UpdateKeyWordForComicAndStoryToSmartLookup();
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
     Task<ListIdForHomePage> GetLatestPostsByType();
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);

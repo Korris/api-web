@@ -16,7 +16,6 @@ using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
 using Enums;
-using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
@@ -43,7 +42,7 @@ public partial class PostService : IPostService
     /// <param name="mapper"></param>
     /// <param name="currentUserService"></param>
     /// <param name="smartLookupService"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService , IBusinessText businessText)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService, IBusinessText businessText)
     {
         _context = context;
         _setting = setting;
@@ -83,25 +82,8 @@ public partial class PostService : IPostService
         }
     }
 
-    #region PostStoryOrComic
-    public async Task UpdateKeyWordForComicAndStoryToSmartLookup()
-    {
-        var queryNameListPost = $@"SELECT ""Title"" FROM social.""SocialPosts"" where ""Type"" != {(int)PostType.Feed}  AND ""IsDelete"" = false ";
-        var nameListPost = await _postRepository.Connection.QueryAsync<string>(queryNameListPost);
-        var smartLookupInserts = new List<SmartLookup>();
-        foreach (var name in nameListPost)
-        {
-            smartLookupInserts.Add(new SmartLookup
-            {
-                CountCriteria = 0,
-                Keyword = name,
-                KeywordType = LookupKeywordType.None
-            });
-        }
-        await _smartLookupRepository.InsertAsync(smartLookupInserts);
-    }
-
-    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, ComicTopPostR loadReq)
+    #region -- Series --
+    public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByTagByPage(PostType type, string tagName, PostTopR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
@@ -361,7 +343,6 @@ public partial class PostService : IPostService
         }
     }
 
-
     private List<RelatedBoxResponse> MappingRelatedBoxResponse(IEnumerable<RelatedBoxQueryResponse> posts)
     {
         return posts.Select(x => new RelatedBoxResponse
@@ -428,25 +409,6 @@ public partial class PostService : IPostService
         }
     }
 
-    public UploadFileDto MappingFile(SocialResource resources)
-    {
-        if (resources == null || resources.Id == Guid.Empty)
-        {
-            return null;
-        }
-        return new UploadFileDto
-        {
-            HashId = resources.HashId,
-            Order = resources.Order,
-            Name = resources.Name,
-            Url = _sc.GetPublicUrl(resources.Url, resources.BucketName, resources.MinioInstance).GetAwaiter().GetResult(),
-            Height = resources.Height,
-            Width = resources.Width,
-            Type = resources.Type,
-            Status = resources.Status,
-            Size = resources.Size
-        };
-    }
     private List<PostSeriesTopResponse> MappingTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
     {
         return posts.Select(x => new PostSeriesTopResponse
@@ -495,44 +457,6 @@ public partial class PostService : IPostService
             HashId = x.HashId,
             Type = x.Type,
             Chapters = MappingTopChapter(x.SubPostStr),
-        }).ToList();
-    }
-
-    private List<PostSeriesTopResponse> MapTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
-    {
-        return posts.Select(x => new PostSeriesTopResponse
-        {
-            ProfileId = x.ProfileId,
-            ProfileName = x.ProfileName,
-            UserName = x.UserName,
-            UserAvatar = x.UserAvatar,
-            Title = x.Title,
-            ViewCount = x.ViewCount ?? 0,
-            CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
-            ChapterCount = x.ChapterCount,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
-            Tags = x.Tags,
-            Type = x.Type,
-            AuthorName = x.AuthorName,
-            AuthorId = x.AuthorId,
-            CoverUrl = x.CoverUrl,
-            ThumbnailUrl = x.ThumbnailUrl,
-            CreatedOn = x.CreatedOn,
-            Id = x.Id,
-            IsMature = x.IsMature,
-            IsCompleted = x.IsCompleted,
-            Permission = x.Permission,
-            Status = x.Status,
-            UserId = x.UserId,
-            HashId = x.HashId,
-            Chapters = MappingTopChapter(x.SubPostStr),
-            SeriesStatus = x.ToSeriesStatus(),
-            TotalComment = x.TotalComment,
-            Reaction = new ReactionsResponse
-            {
-                TotalReacts = x.TotalReact,
-                Reactions = x.ReactionByPostStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionByPostStr) : new List<ReactionResponse>()
-            }
         }).ToList();
     }
 
@@ -592,16 +516,10 @@ public partial class PostService : IPostService
 
         return query;
     }
-
-    private bool CheckIsPublicNow(DateTime? PublishDate)
-    {
-        return (PublishDate != null && PublishDate < DateTime.UtcNow);
-    }
-
     #endregion
 
-    #region Chapters
-    public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
+    #region -- Chapters --
+    public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, PostChapterListR loadReq)
     {
         PagedResponse<ChapterTOCExtendResponse> results;
         var query = GetSeriesChaptersWithOffsetSimpleByHashId;
@@ -650,7 +568,7 @@ public partial class PostService : IPostService
     }
     #endregion
 
-    private int GetOffsetSetup(ref ComicTopPostR loadReq)
+    private int GetOffsetSetup(ref PostTopR loadReq)
     {
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
 

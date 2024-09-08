@@ -251,7 +251,7 @@ public partial class PostService : IPostService
         {
             MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
         }
-        result.FollowCount = await _context.ComicPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
+        result.FollowCount = await _context.StoryPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
         return result;
     }
 
@@ -999,7 +999,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(ComicPost.CreatedOn);
+            loadReq.OrderBy = nameof(StoryPost.CreatedOn);
         }
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;

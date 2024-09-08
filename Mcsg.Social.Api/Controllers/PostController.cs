@@ -31,7 +31,7 @@ public class PostController : ControllerBase
     }
 
     [HttpGet("{postType}/tag/{tagName}")]
-    public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] ComicTopPostR loadReq)
+    public async Task<IActionResult> GetTopListHitComic(PostType postType, string tagName, [FromQuery] PostTopR loadReq)
     {
         if (postType != PostType.Story && postType != PostType.Comic)
         {
@@ -39,13 +39,6 @@ public class PostController : ControllerBase
         }
         var result = await _postService.GetSeriesByTagByPage(postType, tagName, loadReq);
         return Ok(result);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> UpdateKeyWordForComicAndStoryToSmartLookup()
-    {
-        await _postService.UpdateKeyWordForComicAndStoryToSmartLookup();
-        return Ok();
     }
 
     [HttpGet("latest-posts-by-type")]

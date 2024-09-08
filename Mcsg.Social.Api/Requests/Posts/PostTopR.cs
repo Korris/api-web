@@ -2,6 +2,6 @@
 
 using Common.Core.Requests;
 
-public class ComicTopPostR : PaginatedR
+public class PostTopR : PaginatedR
 {
 }

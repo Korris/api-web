@@ -774,7 +774,7 @@ public partial class PostService : IPostService
                 item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
             }
 
-            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"Comic.""ComicPostReactions"""), new
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
             {
                 TargetIds = items.Select(p => p.Id).ToList(),
                 UserId = _currentUserService?.Session?.UserId
