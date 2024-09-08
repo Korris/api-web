@@ -129,7 +129,7 @@ public partial class FeedService : IFeedService
             foreach (var item in items)
             {
                 item.Body = await _businessText.Process(item.Body, profiles);
-                listItemResponse.Add(MappingFeedInListRespone(item, postIds));
+                listItemResponse.Add(MappingFeedInListRespone(item, postIds, isMySelf));
             }
 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
@@ -226,7 +226,7 @@ public partial class FeedService : IFeedService
         foreach (var item in items)
         {
             item.Body = await _businessText.Process(item.Body, profiles);
-            listItemResponse.Add(MappingFeedInListRespone(item, null));
+            listItemResponse.Add(MappingFeedInListRespone(item, null, null));
         }
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -278,7 +278,7 @@ public partial class FeedService : IFeedService
             foreach (var item in items)
             {
                 item.Body = await _businessText.Process(item.Body, profiles);
-                listItemResponse.Add(MappingFeedInListRespone(item, null));
+                listItemResponse.Add(MappingFeedInListRespone(item, null, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -693,7 +693,7 @@ public partial class FeedService : IFeedService
             var listItemResponse = new List<FeedDto>();
             foreach (var item in items)
             {
-                listItemResponse.Add(MappingFeedInListRespone(item, null));
+                listItemResponse.Add(MappingFeedInListRespone(item, null, null));
             }
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
@@ -724,7 +724,7 @@ public partial class FeedService : IFeedService
         return await _postService.Delete(postId);
     }
 
-    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item, List<Guid>? postIds)
+    public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item, List<Guid>? postIds, bool? isMySelf)
     {
         var itemResponse = new FeedDto()
         {
@@ -744,7 +744,8 @@ public partial class FeedService : IFeedService
             Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : [],
             CustomNote = item.CustomNote.ForLexical(),
             IsFavorite = postIds == null ? false : postIds.Contains(item.Id),
-            Hide = item.Hide
+            Hide = item.Hide,
+            IsCurrentUserAuthor = isMySelf
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         #region Mapping with db query list

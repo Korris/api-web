@@ -14,7 +14,7 @@ public class PostDto
     public Guid UserId { get; set; }
     public string ProfileId { get; set; }
     public string AuthorName { get; set; }
-    public bool IsCurrentUserAuthor { get; set; }
+    public bool? IsCurrentUserAuthor { get; set; }
     public string ThumbnailUrl { get; set; }
     public string UserAvatar { get; set; }
 
