@@ -23,8 +23,8 @@
                                                 r.""HashId"" as ResourceHashId
                                                FROM {0} pc
                                                LEFT JOIN ""story"".""StoryResources"" r on pc.""ResourceId"" = r.""Id""
-                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-                                               WHERE pc.""ParentId"" = @CommentId
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id"" 
+                                               WHERE pc.""ParentId"" = @CommentId AND u.""IsDelete"" = false
                                                AND pc.""IsDelete"" = false
                                                LIMIT @PageSize
                                                OFFSET @Offset;
@@ -32,9 +32,9 @@
                                                SELECT COUNT(pc.*)
                                                FROM {0} pc
                                                LEFT JOIN ""story"".""StoryResources"" r on pc.""ResourceId"" = r.""Id""
-                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
-                                               WHERE pc.""ParentId"" = @CommentId
-                                               AND pc.""IsDelete"" = false";
+                                               LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id"" 
+                                               WHERE pc.""ParentId"" = @CommentId 
+                                               AND pc.""IsDelete"" = false AND u.""IsDelete"" = false";
         private string GetCommentWithMostReactionQuery = $@"
                                                 SELECT 
                                                     pc.""CreatedBy"" as AuthorId,
@@ -51,7 +51,10 @@
                                                     u.""ProfileName"" as AuthorName,
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(reply.*) as ReplyCount, 
+                                                    COUNT(CASE 
+                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
+                                                        ELSE NULL
+                                                    END) as ReplyCount, 
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -59,12 +62,13 @@
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM ""story"".""StoryPostComments""  pc
                                                 LEFT JOIN ""story"".""StoryPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
-                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id""
+                                                LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                INNER JOIN identity.""Users"" u on pc.""AuthorId"" = u.""Id"" 
                                                 LEFT JOIN ""story"".""StoryPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                                                 LEFT JOIN ""story"".""StoryPosts""  p on pc.""PostId"" = p.""Id""
                                                 LEFT JOIN ""story"".""StoryResources"" r on pc.""ResourceId"" = r.""Id""
-                                                WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null
-                                                AND p.""IsDelete"" = false
+                                                WHERE p.""HashId"" = @HashId and pc.""ParentId"" is null AND u.""IsDelete"" = false
+                                                AND p.""IsDelete"" = false 
                                                 AND pc.""IsDelete"" = false
                                                 GROUP BY pc.""CreatedBy"",pc.""Id"",pc.""CustomNote"",p.""Title"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""MinioInstance"",r.""HashId""
                                                 UNION
@@ -83,7 +87,10 @@
                                                     u.""ProfileName"",
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(reply.*) ReplyCount,
+                                                    COUNT(CASE 
+                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
+                                                        ELSE NULL
+                                                    END) ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -91,13 +98,14 @@
                                                     COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
                                                 FROM ""story"".""StorySubPostComments"" spc
                                                 LEFT JOIN ""story"".""StorySubPostComments"" reply on reply.""ParentId"" = spc.""Id"" AND reply.""IsDelete"" = false
-                                                LEFT JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
+                                                LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                INNER JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""story"".""StorySubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
                                                 LEFT JOIN ""story"".""StorySubPosts""  sp ON spc.""PostId"" = sp.""Id""
                                                 LEFT JOIN ""story"".""StoryResources"" r on spc.""ResourceId"" = r.""Id""
                                                 WHERE sp.""PostId"" = (SELECT ""Id"" FROM ""story"".""StoryPosts""   WHERE ""HashId"" =@HashId) 
-                                                AND spc.""ParentId"" is null
-                                                AND spc.""IsDelete"" = false
+                                                AND spc.""ParentId"" is null AND u.""IsDelete"" = false
+                                                AND spc.""IsDelete"" = false 
                                                 GROUP BY spc.""CreatedBy"", spc.""Id"",spc.""CustomNote"",sp.""Title"",sp.""Order"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"",r.""Name"",r.""Url"",r.""MinioInstance"",r.""HashId""
                                                 ORDER BY reaction_count desc,
                                                 ""CreatedOn"" desc
@@ -108,36 +116,72 @@
                                                     (SELECT COUNT(*)
                                                      FROM ""story"".""StoryPostComments""  pc
                                                      JOIN ""story"".""StoryPosts""  p ON pc.""PostId""= p.""Id"" 
-                                                     WHERE p.""HashId"" = @HashId 
-                                                    and ""ParentId"" is null 
+                                                     LEFT JOIN identity.""Users"" u on p.""UserId"" = u.""Id""
+                                                     WHERE p.""HashId"" = @HashId AND u.""IsDelete"" = false 
+                                                     and ""ParentId"" is null 
                                                      AND pc.""IsDelete"" = false) 
                                                     +
                                                     (SELECT COUNT(*)
                                                      FROM ""story"".""StorySubPostComments"" spc
                                                      JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId""= sp.""Id""
                                                      JOIN ""story"".""StoryPosts""  p ON sp.""PostId""= p.""Id""
-                                                     WHERE p.""HashId"" = @HashId and ""ParentId"" is null
+                                                     LEFT JOIN identity.""Users"" u on p.""UserId"" = u.""Id""
+                                                     WHERE p.""HashId"" = @HashId and ""ParentId"" is null AND u.""IsDelete""
                                                      AND spc.""IsDelete"" = false) AS total_comment_count";
 
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
                                                          FROM ""story"".""StoryPostComments""  pc
                                                          JOIN ""story"".""StoryPosts""  p ON pc.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId
+                                                         LEFT JOIN identity.""Users"" u on pc.""UserId"" = u.""Id""
+                                                         WHERE p.""HashId"" = @HashId AND u.""IsDelete"" = false
                                                          AND pc.""IsDelete"" = false";
 
         private string GetTotalCommentQuery => $@"SELECT 
                                                         (SELECT COUNT(*)
                                                          FROM ""story"".""StoryPostComments""  pc
                                                          JOIN ""story"".""StoryPosts""  p ON pc.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId
-                                                         AND pc.""IsDelete"" = false) 
+                                                         INNER JOIN identity.""Users"" u on pc.""AuthorId"" = u.""Id"" AND u.""IsDelete"" = false
+                                                         WHERE p.""HashId"" = @HashId 
+                                                         AND pc.""IsDelete"" = false
+                                                         AND (
+                                                           pc.""ParentId"" IS NULL
+                                                             OR (
+                                                               pc.""ParentId"" IS NOT NULL 
+                                                               AND pc.""IsDelete"" = false
+                                                               AND EXISTS (
+                                                                 SELECT *
+                                                                 FROM ""story"".""StoryPostComments"" pc1
+                                                                 INNER JOIN ""identity"".""Users"" comUser ON pc1.""AuthorId"" = comUser.""Id"" 
+                                                                 WHERE pc1.""Id"" = pc.""ParentId""
+                                                                 AND comUser.""IsDelete"" = false
+                                                                  )
+                                                               )
+                                                            )
+                                                          )
                                                         +
                                                         (SELECT COUNT(*)
                                                          FROM ""story"".""StorySubPostComments"" spc
                                                          JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId""= sp.""Id""
                                                          JOIN ""story"".""StoryPosts""  p ON sp.""PostId""= p.""Id""
-                                                         WHERE p.""HashId"" = @HashId
-                                                         AND spc.""IsDelete"" = false) AS total_comment_count";
+                                                         INNER JOIN identity.""Users"" u on spc.""AuthorId"" = u.""Id"" AND u.""IsDelete"" = false
+                                                         WHERE p.""HashId"" = @HashId 
+                                                         AND spc.""IsDelete"" = false
+                                                         AND (
+                                                           spc.""ParentId"" IS NULL
+                                                             OR (
+                                                               spc.""ParentId"" IS NOT NULL 
+                                                               AND spc.""IsDelete"" = false
+                                                               AND EXISTS (
+                                                                 SELECT *
+                                                                 FROM ""story"".""StorySubPostComments"" spc1
+                                                                 INNER JOIN ""identity"".""Users"" comUser ON spc1.""AuthorId"" = comUser.""Id"" 
+                                                                 AND comUser.""IsDelete"" = false
+                                                                 WHERE spc1.""Id"" = spc.""ParentId""
+                                                                 AND comUser.""IsDelete"" = false
+                                                                  )
+                                                               )
+                                                            )
+                                                          ) AS total_comment_count";
         private string GetCommentOfPostQuery
         {
             get
@@ -150,6 +194,7 @@
                                     SELECT post.""Id"", post.""ParentId"", post.""PostId"", post.""AuthorId"", post.""ModifiedOn"", post.""Body"", post.""CustomNote"" ,post.""ResourceId"", post.""GifId"", post.""IsDelete"", post.""QuoteId"", ct.CommentLevel + 1
                                     FROM cte ct
                                     JOIN {_postCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
+                                    INNER JOIN identity.""Users"" parentUser ON ct.""AuthorId"" = parentUser.""Id"" AND parentUser.""IsDelete"" = false
                                     )
                                 SELECT  cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"" ,cte.""ModifiedOn"", cte.""AuthorId"", 
                                         (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName, us.""UserName"" ,us.""Avatar"" AS UserAvatar
@@ -157,7 +202,7 @@
                                 FROM cte
                                 LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
                                 LEFT JOIN ""story"".""StoryResources"" res ON cte.""ResourceId"" = res.""Id""
-                                WHERE cte.""IsDelete"" = false
+                                WHERE cte.""IsDelete"" = false AND us.""IsDelete"" = false
                                 ORDER BY
                                     cte.CommentLevel,
                                     CASE 
@@ -202,7 +247,7 @@
              FROM cte
              LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
              LEFT JOIN ""story"".""StoryResources"" res ON cte.""ResourceId"" = res.""Id""
-             WHERE cte.""IsDelete"" = false;";
+             WHERE cte.""IsDelete"" = false AND us.""IsDelete"" = false;";
             }
         }
 
@@ -222,6 +267,7 @@
                                             , post.""Body"", post.""CustomNote"", post.""QuoteId"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
                                    FROM cte ct
                                    JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
+                                   INNER JOIN identity.""Users"" parentUser ON ct.""AuthorId"" = parentUser.""Id"" AND parentUser.""IsDelete"" = false
                                 )
                                 SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"", cte.""QuoteId"", cte.""ModifiedOn""
                                             , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
@@ -231,7 +277,7 @@
                                 FROM cte
                                 LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
                                 LEFT JOIN ""story"".""StoryResources"" res ON cte.""ResourceId"" = res.""Id""
-                                WHERE cte.""IsDelete"" = false
+                                WHERE cte.""IsDelete"" = false AND us.""IsDelete"" = false
                                 ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
             }
         }
@@ -260,7 +306,7 @@
                                 LEFT JOIN {_postCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
                                 LEFT JOIN ""story"".""StoryResources"" repRes ON rep.""ResourceId"" = repRes.""Id""
                                 LEFT JOIN identity.""Users"" repUser ON rep.""AuthorId"" = repUser.""Id""
-                        WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
+                        WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false AND comUser.""IsDelete"" = false
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
             }
@@ -290,7 +336,7 @@
                                 LEFT JOIN {_subPostCommentRepository.TableName} rep ON com.""Id"" = rep.""ParentId"" AND rep.""IsDelete"" = false 
                                 LEFT JOIN ""story"".""StoryResources"" repRes ON rep.""ResourceId"" = repRes.""Id""
                                 LEFT JOIN identity.""Users"" repUser ON rep.""AuthorId"" = repUser.""Id""
-                        WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false 
+                        WHERE com.""PostId"" = @PostId AND com.""ParentId"" IS NULL AND com.""IsDelete"" = false AND comUser.""IsDelete"" = false
                         ORDER BY com.""ModifiedOn"" DESC
                         LIMIT 1 ";
             }
