@@ -83,7 +83,7 @@ public partial class NotificationService : INotificationService
     }
 
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
-     {
+    {
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
         {
@@ -112,6 +112,7 @@ public partial class NotificationService : INotificationService
             await CheckDataCommentOnSubPost(resDto);
             await CheckDataFollowPost(resDto);
             await CheckDataCommentReaction(resDto);
+            await CheckDataFollowUser(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -478,6 +479,37 @@ public partial class NotificationService : INotificationService
         else
         {
             return false;
+        }
+    }
+
+    private async Task CheckDataFollowUser(List<NotificationModel> resDto)
+    {
+        var userFollowIds = resDto
+            .Where(p => p.NotificationEntityType == NotificationEntityType.FollowUser)
+            .Select(p => p.EntityId)
+            .ToList();
+
+        if (userFollowIds.Count > 0)
+        {
+            var userData = await _notiRepository.Connection.QueryAsync<UserFollowedResponse>($@"
+                SELECT u.""Id"" as UserId,  
+                       u.""ProfileName"", 
+                       u.""UserName"", 
+                       u.""Avatar""
+                FROM identity.""Users"" u
+                WHERE u.""Id"" = ANY(@ids)", new { ids = userFollowIds });
+
+            if (userData.Count() > 0)
+            {
+                foreach (var item in userData)
+                {
+                    var response = resDto.FirstOrDefault(p => p.EntityId == item.UserId);
+                    if (response != null)
+                    {
+                        response.LocationHashId = item.UserName + "";
+                    }
+                }
+            }
         }
     }
     #region -- Fields --

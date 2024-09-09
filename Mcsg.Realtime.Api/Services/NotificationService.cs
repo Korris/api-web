@@ -712,6 +712,7 @@ public class NotificationService : INotificationService
                                         , receiverId: receiverId
                                         , action: NotificationAction.FollowUser
                                         , entityType: NotificationEntityType.FollowUser
+                                        , entityId: followResp.CreatedByUserId
                                         , locationHashId: followResp.CreatedByUserName);
 
                     response.Id = noti.Id;
