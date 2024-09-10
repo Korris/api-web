@@ -270,7 +270,8 @@ public partial class NotificationService : INotificationService
 
     private async Task CheckDataFollowPost(List<NotificationModel> resDto)
     {
-        var followComicPostIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowComicPost).Select(p => p.LocationId).ToList();
+        var resDtoFollowComic = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowComicPost).ToList();
+        var followComicPostIds = resDtoFollowComic.Select(p => p.LocationId).ToList();
         if (followComicPostIds.Count > 0)
         {
             var comics = await _notiRepository.Connection.QueryAsync<PostData>($@"
@@ -278,17 +279,18 @@ public partial class NotificationService : INotificationService
                                         WHERE cp.""Id"" = ANY(@ids)", new { ids = followComicPostIds });
             if (comics.Count() > 0)
             {
-                foreach (var item in comics)
+                foreach (var item in resDtoFollowComic)
                 {
-                    var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
-                    if (response != null)
+                    var comic = comics.FirstOrDefault(p => p.HashId == item.LocationHashId);
+                    if (comic != null)
                     {
-                        response.Message = string.Format(NotificationContent.FollowPost, response.ActorName, item.Title);
+                        item.Message = string.Format(NotificationContent.FollowPost, item.ActorName, comic.Title);
                     }
                 }
             }
         }
-        var followStoryPostIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowStoryPost).Select(p => p.LocationId).ToList();
+        var resDtoFollowStory = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowStoryPost).ToList();
+        var followStoryPostIds = resDtoFollowStory.Select(p => p.LocationId).ToList();
         if (followStoryPostIds.Count > 0)
         {
             var stories = await _notiRepository.Connection.QueryAsync<PostData>($@"
@@ -296,12 +298,12 @@ public partial class NotificationService : INotificationService
                                         WHERE sp.""Id"" = ANY(@ids)", new { ids = followStoryPostIds });
             if (stories.Count() > 0)
             {
-                foreach (var item in stories)
+                foreach (var item in resDtoFollowComic)
                 {
-                    var response = resDto.FirstOrDefault(p => p.LocationHashId == item.HashId);
-                    if (response != null)
+                    var story = stories.FirstOrDefault(p => p.HashId == item.LocationHashId);
+                    if (story != null)
                     {
-                        response.Message = string.Format(NotificationContent.FollowPost, response.ActorName, item.Title);
+                        item.Message = string.Format(NotificationContent.FollowPost, item.ActorName, story.Title);
                     }
                 }
             }
