@@ -677,6 +677,13 @@ public partial class AuthenticationService : IAuthenticationService
             await _userManager.UpdateAsync(user);
         }
 
+        // If otp is valid, email will be confirmed and then reset password
+        if (!user.EmailConfirmed)
+        {
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+        }
+
         return resetPass.Succeeded;
     }
 
