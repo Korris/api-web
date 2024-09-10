@@ -74,7 +74,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             }
 
             // Resize the image
-            var fs = fsResize.ResizeImage(144, 180, 100);
+            var fs = fsResize.ResizeImage(288, 432, 100);
             if (fs == null)
             {
                 continue;

@@ -158,19 +158,17 @@ public static class IFormFileExtension
             return null;
         }
 
-        using (var stream = file.OpenReadStream())
+        var stream = file.OpenReadStream();
+        var output = stream.ResizeImage(width, height, quality);
+        if (output == null)
         {
-            var output = stream.ResizeImage(width, height, quality);
-            if (output == null)
-            {
-                return null;
-            }
-
-            return new CompressImage
-            {
-                Image = new FormFile(output, 0, output.Length, file.Name, file.FileName)
-            };
+            return null;
         }
+
+        return new CompressImage
+        {
+            Image = new FormFile(output, 0, output.Length, file.Name, file.FileName)
+        };
     }
 
     /// <summary>
