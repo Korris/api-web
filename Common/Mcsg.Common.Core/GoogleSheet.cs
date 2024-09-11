@@ -84,7 +84,8 @@ public class GoogleSheet
                 {
                     Properties = new SheetProperties
                     {
-                        Title = sheetName
+                        Title = sheetName,
+                        Index = 0 // Insert the new sheet at the beginning (index 0)
                     }
                 };
 
