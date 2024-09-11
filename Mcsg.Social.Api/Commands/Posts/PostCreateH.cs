@@ -17,12 +17,14 @@ using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
 
+using Common.Core;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
+using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -54,7 +56,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
     /// <param name="businessText">BusinessText service</param>
-    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService) : base(context, setting, sc)
+    /// <param name="googleSheet">Sheets service</param>
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService, GoogleSheet googleSheet) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -65,6 +68,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         _smartLookupService = smartLookupService;
         _businessText = businessText;
         _notificationService = notificationService;
+        _googleSheet = googleSheet;
     }
 
     /// <summary>
@@ -91,14 +95,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         }
 
         var userId = request.UserId.Value;
-
-
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId, cancellationToken);
         if (user == null)
         {
             throw new BadRequestException(M119);
-
         }
+
         var receiverIds = request.Content.ToGuids();
         var userName = user.UserName;
         var profileName = user.ProfileName;
@@ -216,6 +218,11 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
         res.SetSuccess(result);
+
+        var link = $"{_setting.Domain}/feed/detail?id={ett.HashId}";
+        var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
+        await _googleSheet.WriteDataToSheet(PostType.Feed, _setting.Environment, link, email, ett.HashId, request.UserName, ett.CreatedOn, ett.Body, request.RemoteIp, "Web");
+
         return res;
     }
 
@@ -267,6 +274,11 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// Notification service
     /// </summary>
     private readonly INotificationService _notificationService;
+
+    /// <summary>
+    /// Google sheet
+    /// </summary>
+    private readonly GoogleSheet _googleSheet;
 
     #endregion
 }

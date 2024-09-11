@@ -1,3 +1,6 @@
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Sheets.v4;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -6,6 +9,7 @@ using System.Reflection;
 namespace Mcsg.Story.Api;
 
 using Attributes;
+using Common.Core;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain;
@@ -126,6 +130,32 @@ public class Program
         builder.Services.AddScoped<IPostLinkService, PostLinkService>();
         builder.Services.AddScoped<ISmartLookupService, SmartLookupService>();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
+
+        #region -- Google Sheets API --
+        // Add configuration for Google Sheets Service into DI
+        builder.Services.AddSingleton(s =>
+        {
+            // Load service account credentials JSON file
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var filePath = Path.Combine(basePath, "serviceaccounts.json");
+
+            GoogleCredential credential;
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                credential = GoogleCredential.FromStream(stream)
+                    .CreateScoped(SheetsService.Scope.Spreadsheets);
+            }
+
+            // Create Google Sheets API service
+            var sheetsService = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Google Sheets API with Service Account"
+            });
+
+            return new GoogleSheet(sheetsService);
+        });
+        #endregion
 
         // MediatR
         builder.Services.AddMediatR(p =>

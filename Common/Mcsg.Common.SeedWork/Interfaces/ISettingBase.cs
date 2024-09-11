@@ -42,7 +42,7 @@ public interface ISettingBase
     string Prefix { get; set; }
 
     /// <summary>
-    /// Environment (local, dev, stg and pro)
+    /// Environment (local, dev, uat, stg and pro)
     /// </summary>
     string Environment { get; set; }
 

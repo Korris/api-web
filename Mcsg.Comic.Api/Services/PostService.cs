@@ -6,6 +6,7 @@ using System.Web;
 
 namespace Mcsg.Comic.Api.Services;
 
+using Common.Core;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -13,6 +14,7 @@ using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
+using Common.SeedWork;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -42,9 +44,10 @@ public partial class PostService : IPostService
     /// <summary>
     /// Initialize
     /// </summary>
-    /// <param name="context"></param>
-    /// <param name="setting"></param>
-    /// <param name="sc"></param>
+    /// <param name="context">DB context</param>
+    /// <param name="setting">Setting</param>
+    /// <param name="sc">Storage client</param>
+    /// <param name="googleSheet">Sheets service</param>
     /// <param name="unitOfWork"></param>
     /// <param name="tagService"></param>
     /// <param name="smartLookupRepository"></param>
@@ -54,11 +57,12 @@ public partial class PostService : IPostService
     /// <param name="smartLookupService"></param>
     /// <param name="postReportValidator"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, ICurrentUserService currentUserService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<ComicPostReport> postReportValidator, IRepository<ComicPostComment> postCommentRepository)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, ICurrentUserService currentUserService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<ComicPostReport> postReportValidator, IRepository<ComicPostComment> postCommentRepository)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
+        _googleSheet = googleSheet;
 
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
@@ -113,6 +117,12 @@ public partial class PostService : IPostService
         }
 
         var userId = request.UserId.Value;
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+        if (user == null)
+        {
+            throw new BadRequestException(M119);
+        }
+
         var profileId = request.ProfileId;
         var profileName = request.ProfileName;
 
@@ -176,6 +186,10 @@ public partial class PostService : IPostService
         {
             result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
+
+        var link = $"{_setting.Domain}/comic/series?id={post.HashId}";
+        var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
+        await _googleSheet.WriteDataToSheet(PostType.Comic, _setting.Environment, link, email, post.HashId, request.UserName, post.CreatedOn, post.Body, request.RemoteIp, "Web");
 
         return result;
     }
@@ -2144,6 +2158,11 @@ public partial class PostService : IPostService
     /// Storage client
     /// </summary>
     private readonly IStorageClient _sc;
+
+    /// <summary>
+    /// Google sheet
+    /// </summary>
+    private readonly GoogleSheet _googleSheet;
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ComicPost> _postRepository;

@@ -42,7 +42,7 @@ public class SettingBase : ISettingBase
     public string Prefix { get; set; }
 
     /// <summary>
-    /// Environment (local, dev, stg and pro)
+    /// Environment (local, dev, uat, stg and pro)
     /// </summary>
     public string Environment { get; set; }
 
