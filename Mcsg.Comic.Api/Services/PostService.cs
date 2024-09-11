@@ -187,9 +187,20 @@ public partial class PostService : IPostService
             result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
 
+        #region -- WriteDataToSheet --
         var link = $"{_setting.Domain}/comic/series?id={post.HashId}";
         var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
-        await _googleSheet.WriteDataToSheet(PostType.Comic, _setting.Environment, link, email, post.HashId, request.UserName, post.CreatedOn, post.Body, request.RemoteIp, "Web");
+        var platform = "Web";
+        if (request.FromAndroid)
+        {
+            platform = "Android";
+        }
+        if (request.FromIos)
+        {
+            platform = "iOS";
+        }
+        await _googleSheet.WriteDataToSheet(PostType.Comic, _setting.Environment, link, email, post.HashId, request.UserName, post.CreatedOn, post.Body, request.RemoteIp, platform);
+        #endregion
 
         return result;
     }

@@ -219,9 +219,20 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         result.CustomNote = result.CustomNote.ForLexical();
         res.SetSuccess(result);
 
+        #region -- WriteDataToSheet --
         var link = $"{_setting.Domain}/feed/detail?id={ett.HashId}";
         var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
-        await _googleSheet.WriteDataToSheet(PostType.Feed, _setting.Environment, link, email, ett.HashId, request.UserName, ett.CreatedOn, ett.Body, request.RemoteIp, "Web");
+        var platform = "Web";
+        if (request.FromAndroid)
+        {
+            platform = "Android";
+        }
+        if (request.FromIos)
+        {
+            platform = "iOS";
+        }
+        await _googleSheet.WriteDataToSheet(PostType.Feed, _setting.Environment, link, email, ett.HashId, request.UserName, ett.CreatedOn, ett.Body, request.RemoteIp, platform);
+        #endregion
 
         return res;
     }
