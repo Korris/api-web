@@ -175,6 +175,22 @@ public class GoogleSheet
         };
     }
 
+    /// <summary>
+    /// Get feedback sheet ID
+    /// </summary>
+    /// <param name="environment">Environment</param>
+    /// <returns>Returns the sheet ID</returns>
+    private string GetFeedbackSheetId(string environment)
+    {
+        return environment switch
+        {
+            "pro" => "1iTKAwXgyOTWplUP2m63eiKYiZCjISBJVdD-TC_nEzJI",
+            "stg" => "1ZbhWTE7L7lvV58kzhnMFNrCAZh3qanOOzk22KepmZnE",
+            "uat" => "1YJfeXR-3Ov7LyPJeCOT2WTkE8wA9ltLVcAhDX81qnzQ",
+            _ => "1q2r-qn0sQpcShTVtHYy94feRiOCPKfw3L7lFoevdt9I"
+        };
+    }
+
     #endregion
 
     #region -- Fields --
