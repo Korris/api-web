@@ -22,6 +22,10 @@ public class ReplyCommentResp
     public string UserAvatar { get; set; }
     public string UserName { get; set; }
     public string? CustomNote { get; set; }
+    public float? Order { get; set; }
     public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
     public PostType PostType { get; set; }
+    public Guid PostIdOfPost { get; set; }
+    public Guid ReplyCommentId { get; set; }
+    public Guid CommentId { get; set; }
 }

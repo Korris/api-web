@@ -77,7 +77,7 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddCommentPostReact(ReactionReactR request)
     {
-        var result = await _postCommentReactService.AddReaction(request.TargetId, request.Type);
+        var result = await _postCommentReactService.AddReaction(request.TargetId, request.Type, request.IsReply ?? false);
         return Ok(result);
     }
 
@@ -100,7 +100,7 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddCommentSubPostReact(ReactionReactR request)
     {
-        var result = await _subPostCommentReactService.AddReaction(request.TargetId, request.Type);
+        var result = await _subPostCommentReactService.AddReaction(request.TargetId, request.Type, request.IsReply ?? false);
         return Ok(result);
     }
 

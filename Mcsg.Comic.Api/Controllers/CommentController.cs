@@ -76,10 +76,10 @@ public class CommentController : ControllerBase
     }
 
     [HttpGet("get-comment-by-id/{commentId}")]
-    public async Task<IActionResult> GetPostCommentReaction(Guid commentId, [FromQuery] bool isSubPost)
+    public async Task<IActionResult> GetPostCommentReaction(Guid commentId, [FromQuery] bool isSubPost, [FromQuery] Guid? replyCommentId)
     {
         var req = new BaseR(HttpContext);
-        var result = await _commentService.GetCommentById(commentId, isSubPost, req.UserId);
+        var result = await _commentService.GetCommentById(commentId, isSubPost, req.UserId, replyCommentId);
         return Ok(result);
     }
 

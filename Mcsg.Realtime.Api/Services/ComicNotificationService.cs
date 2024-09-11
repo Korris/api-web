@@ -94,12 +94,12 @@ public class ComicNotificationService : IComicNotificationService
 
         if (comment.Type == PostTypes.Post)
         {
-            var parentComment = await _postCommentRepository.GetByIdAsync(comment.ReplyToCommentId.Value);
+            var parentComment = await _postCommentRepository.GetByIdAsync(comment.QuoteId ?? comment.ReplyToCommentId.Value);
             receiverId = parentComment.AuthorId;
         }
         else
         {
-            var parentComment = await _subPostCommentRepository.GetByIdAsync(comment.ReplyToCommentId.Value);
+            var parentComment = await _subPostCommentRepository.GetByIdAsync(comment.QuoteId ?? comment.ReplyToCommentId.Value);
             receiverId = parentComment.AuthorId;
         }
 
@@ -127,9 +127,8 @@ public class ComicNotificationService : IComicNotificationService
             response.Id = noti.Id;
             response.Status = noti.Status;
             response.LocationId = comment.PostId;
-            response.LocationHashId = postHashId;
+            response.LocationHashId = comment.PostHashId ?? postHashId;
             response.EntityId = comment.Id;
-            response.CommentId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
             response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Comic : Common.Core.Constants.Setting.NotificationTargetType.SubComic;
             response.ActorId = comment.AuthorId;
@@ -137,7 +136,10 @@ public class ComicNotificationService : IComicNotificationService
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
             response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reply;
             response.UserAvatar = comment.UserAvatar;
-
+            response.Order = comment?.Order ?? 0;
+            /// this Id is ReplyCommentId
+            response.ReplyCommentId = comment.Id;
+            response.CommentId = comment.CommentId;
             // Then notification the comment to post owner
             await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }

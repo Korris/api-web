@@ -130,7 +130,7 @@ public partial class StoryCommentService : IStoryCommentService
                 response.PostIdOfPost = subPost.PostId;
             };
         }
-
+        response.PostType = PostType.Story;
         /// Check createdby in mention will not send this notification to notice that someone comment on their post
         if (!string.IsNullOrEmpty(pDto.HashId) && !receiverIds.Contains(pDto.CreateBy))
         {

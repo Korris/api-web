@@ -8,10 +8,13 @@ using Mappings;
 
 public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>, IMapFrom<ReplyCommentResp>
 {
+    public Guid CommentId { get; set; }
     public bool IsReply { get; set; }
     public Guid? ReplyToCommentId { get; set; }
+    public Guid? QuoteId { get; set; }
     public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostComment;
     public string? PostHashId { get; set; }
+    public string LocationHashId { get; set; }
     public void Mapping(Profile profile)
     {
         profile.CreateMap<PostCommentResp, CommentNotificationReq>()

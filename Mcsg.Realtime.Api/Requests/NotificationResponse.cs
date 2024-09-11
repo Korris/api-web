@@ -11,6 +11,7 @@ public class NotificationResponse
     public string LocationHashId { get; set; }
     public Guid? EntityId { get; set; }
     public Guid? CommentId { get; set; }
+    public Guid? ReplyCommentId { get; set; }
     public string EntityHashId { get; set; }
     public string Message { get; set; }
     public Guid ActorId { get; set; }

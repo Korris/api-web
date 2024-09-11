@@ -40,7 +40,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         _configuration = configuration;
         _context = context;
     }
-    public async Task<bool> AddReaction(Guid targetId, ReactionType type)
+    public async Task<bool> AddReaction(Guid targetId, ReactionType type, bool isReply = false)
     {
         var currentUserId = _currentUserService.Session.UserId;
 
@@ -68,7 +68,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
                 var updateResult = await _reactRepository.UpdateAsync(reactionDb);
 
                 // Send Notification
-                await SendReactNotificationAsync(reactionDb.Id, targetId, type);
+                await SendReactNotificationAsync(reactionDb.Id, targetId, type, isReply);
 
                 return updateResult;
             }
@@ -86,7 +86,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             // Send Notification
             if (insertResult != null)
             {
-                await SendReactNotificationAsync(insertResult.Id, targetId, type);
+                await SendReactNotificationAsync(insertResult.Id, targetId, type, isReply);
                 await AddCountQueue(targetId);
                 return true;
             }
@@ -224,7 +224,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             return null;
         }
     }
-    private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId, ReactionType reactionType)
+    private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId, ReactionType reactionType, bool isReply = false)
     {
         var authorName = !string.IsNullOrWhiteSpace(_currentUserService.Session.ProfileName)
                                         ? _currentUserService.Session.ProfileName
@@ -237,15 +237,16 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             AuthorId = _currentUserService.Session.UserId,
             AuthorName = authorName,
             ReactionType = reactionType,
-            UserAvatar = _currentUserService.Session.UserAvatar ?? ""
+            UserAvatar = _currentUserService.Session.UserAvatar ?? "",
+            IsReplyReaction = isReply
         };
 
         Type entityType = typeof(T);
         notiReq.EntityType = entityType.Name switch
         {
             nameof(ComicPostReaction) => NotificationEntityType.ComicPostReaction,
-            nameof(ComicPostCommentReaction) => NotificationEntityType.ComicPostCommentReaction,
-            nameof(ComicSubPostCommentReaction) => NotificationEntityType.ComicSubPostCommentReaction,
+            nameof(ComicPostCommentReaction) => isReply ? NotificationEntityType.ComicPostCommentReplyReaction : NotificationEntityType.ComicPostCommentReaction,
+            nameof(ComicSubPostCommentReaction) => isReply ? NotificationEntityType.ComicSubPostCommentReplyReaction : NotificationEntityType.ComicSubPostCommentReaction,
             _ => NotificationEntityType.ComicPostReaction
         };
 

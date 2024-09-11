@@ -88,6 +88,7 @@ public partial class StoryReplyService : IStoryReplyService
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
+        var order = 0.0f;
 
         if (req.Type == PostTypes.Post)
         {
@@ -106,11 +107,13 @@ public partial class StoryReplyService : IStoryReplyService
             var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
             if (subPost != null)
             {
+                order = subPost.Order;
                 pDto.Id = subPost.Id;
                 pDto.HashId = subPost.HashId;
                 pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
 
                 response = await ReplyToSubPostComment(req, author, resource, pDto);
+                response.PostIdOfPost = subPost.PostId;
             };
         }
 
@@ -119,13 +122,20 @@ public partial class StoryReplyService : IStoryReplyService
             response.AuthorName = authorName;
             response.UserAvatar = userAvatar;
             response.UserName = userName;
-
+            response.QuoteId = req.QuoteId;
             // Send notification
             response.PostType = PostType.Story;
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
+            if (commentNotiRequest.Type == PostTypes.SubPost)
+            {
+                response.Order = commentNotiRequest.Order = order;
+                var post = await _postRepository.GetByIdAsync(response.PostIdOfPost);
+                commentNotiRequest.PostHashId = post.HashId;
+            }
+            commentNotiRequest.CommentId = req.ReplyToCommentId;
             await _notificationService.AddReplyNotification(commentNotiRequest);
         }
-        
+
         response.CustomNote = req.CustomNote;
 
         return response;

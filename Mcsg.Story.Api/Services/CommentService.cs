@@ -338,7 +338,7 @@ public partial class CommentService : ICommentService
         };
     }
 
-    public void MapReactionCommentResponse(CommentResponse item, List<CommentReactionResponseQuery> reactions)
+    private void MapReactionCommentResponse(CommentResponse item, List<CommentReactionResponseQuery> reactions)
     {
         var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
         item.Reaction = new ReactionsResponse
@@ -351,51 +351,141 @@ public partial class CommentService : ICommentService
         };
     }
 
-    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId)
+    private void MapReactionReplyCommentResponse(ReplyData item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
+    private async Task<CommentResponse> MapCommentResponse(CommentQueryModel queryModel)
+    {
+        return new CommentResponse()
+        {
+            Id = queryModel.Id,
+            PostId = queryModel.PostId,
+            AuthorId = queryModel.AuthorId,
+            AuthorName = queryModel.AuthorName,
+            UserName = queryModel.UserName,
+            UserAvatar = queryModel.UserAvatar,
+            Body = await _businessText.Process(queryModel.Body),
+            ModifiedOn = queryModel.ModifiedOn,
+            ResourceHashId = queryModel.ResourceHashId,
+            ResourceUrl = await _sc.GetPublicUrl(queryModel.ResourceUrl, queryModel.BucketName, queryModel.MinioInstance),
+            GifId = queryModel.GifId,
+            CustomNote = queryModel.CustomNote.ForLexical(),
+            ReplyCount = queryModel.ReplyCount,
+        };
+    }
+
+    private async Task<ReplyData> MapReplyCommentResponsel(CommentQueryModel queryModel)
+    {
+        return new ReplyData()
+        {
+            Id = queryModel.Id,
+            AuthorId = queryModel.AuthorId,
+            AuthorName = queryModel.AuthorName,
+            UserName = queryModel.UserName,
+            ParentId = queryModel.ParentId,
+            UserAvatar = queryModel.UserAvatar,
+            Body = await _businessText.Process(queryModel.Body),
+            ModifiedOn = queryModel.ModifiedOn,
+            ResourceHashId = queryModel.ResourceHashId,
+            ResourceUrl = await _sc.GetPublicUrl(queryModel.ResourceUrl, queryModel.BucketName, queryModel.MinioInstance),
+            GifId = queryModel.GifId,
+            CustomNote = queryModel.CustomNote.ForLexical(),
+            QuoteId = queryModel.QuoteId,
+            PostId = queryModel.PostId
+        };
+    }
+
+    public async Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId, Guid? replyCommentId)
     {
         var query = GetCommentByIdQuery;
         query = query.Replace("@CommentSource", $@"story.""{(isSubPost ? "StorySubPostComments" : "StoryPostComments")}""");
         var comModel = await _postCommentRepository.Connection.QueryFirstAsync<CommentQueryModel>(query, new { CommentId = commentId });
         var result = new CommentResponse();
+        var replyCommentMapping = new ReplyData();
+        var replyCommentQuoteMapping = new ReplyData();
         if (comModel != null)
         {
-            result = new CommentResponse()
-            {
-                Id = comModel.Id,
-                PostId = comModel.PostId,
-                AuthorId = comModel.AuthorId,
-                AuthorName = comModel.AuthorName,
-                UserName = comModel.UserName,
-                UserAvatar = comModel.UserAvatar,
-                Body = comModel.Body,
-                ModifiedOn = comModel.ModifiedOn,
-                ResourceHashId = comModel.ResourceHashId,
-                ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
-                GifId = comModel.GifId,
-                CustomNote = comModel.CustomNote.ForLexical(),
-                ReplyCount = comModel.ReplyCount,
-            };
+            result = await MapCommentResponse(comModel);
 
-            result.Body = await _businessText.Process(result.Body);
             var replies = new ReplyResponse()
             {
                 TotalReply = comModel.ReplyCount
             };
-            result.Replies = replies;
+            if (replyCommentId != null)
+            {
+                var replyCommentModel = await _postCommentRepository.Connection.QueryFirstAsync<CommentQueryModel>(query, new { CommentId = replyCommentId });
+                if (replyCommentModel != null)
+                {
+                    replyCommentMapping = await MapReplyCommentResponsel(replyCommentModel);
+                    replies.Data.Add(replyCommentMapping);
+                    if (replyCommentModel.QuoteId != null)
+                    {
+                        var replyCommentQuoteModel = await _postCommentRepository.Connection.QueryFirstAsync<CommentQueryModel>(query, new { CommentId = replyCommentModel.QuoteId });
+                        replyCommentQuoteMapping = await MapReplyCommentResponsel(replyCommentQuoteModel);
+                        replies.Data.Add(replyCommentQuoteMapping);
+                        replies.Data.Reverse();
+                    }
+                }
+            }
+
+            var targetIds = new List<Guid> { result.Id };
+
+            if (replyCommentId != null)
+            {
+                targetIds.Add(replyCommentId.Value);
+            }
+            if (replyCommentQuoteMapping != null)
+            {
+                targetIds.Add(replyCommentQuoteMapping.Id);
+            }
+
             var tableName = isSubPost ? $@"story.""StorySubPostCommentReactions""" : $@"story.""StoryPostCommentReactions""";
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, tableName), new
             {
-                TargetIds = new List<Guid> { result.Id },
+                TargetIds = targetIds,
                 UserId = userId
             });
             if (postCommentReactionResponse.Any())
             {
-                MapReactionCommentResponse(result, postCommentReactionResponse.ToList());
+                var reactionOfComment = postCommentReactionResponse.Where(p => p.TargetId == result.Id).ToList();
+                if (reactionOfComment.Count > 0)
+                {
+                    MapReactionCommentResponse(result, reactionOfComment);
+                }
+
+                if (replyCommentId != null)
+                {
+                    var reactionOfReplyComment = postCommentReactionResponse.Where(p => p.TargetId == replyCommentId).ToList();
+                    if (reactionOfReplyComment.Count > 0)
+                    {
+                        MapReactionReplyCommentResponse(replyCommentMapping, reactionOfReplyComment);
+                    }
+                    if (replyCommentQuoteMapping != null)
+                    {
+                        var reactionOfReplyCommentQuote = postCommentReactionResponse.Where(p => p.TargetId == replyCommentQuoteMapping.Id).ToList();
+                        if (reactionOfReplyCommentQuote.Count > 0)
+                        {
+                            MapReactionReplyCommentResponse(replyCommentQuoteMapping, reactionOfReplyCommentQuote);
+                        }
+                    }
+                }
             }
+
+            result.Replies = replies;
+
         }
         return result;
     }
-
     public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request)
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))

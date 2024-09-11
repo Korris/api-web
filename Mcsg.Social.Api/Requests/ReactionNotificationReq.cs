@@ -11,4 +11,5 @@ public class ReactionNotificationReq
     public string? UserAvatar { get; set; }
     public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostReaction;
     public ReactionType ReactionType { get; set; }
+    public bool IsReplyReaction { get; set; }
 }

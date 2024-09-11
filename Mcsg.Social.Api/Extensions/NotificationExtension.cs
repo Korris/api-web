@@ -44,6 +44,12 @@ public static class NotificationExtension
             NotificationEntityType.StoryPostCommentReaction,
             NotificationEntityType.ComicSubPostCommentReaction,
             NotificationEntityType.StorySubPostCommentReaction,
+            NotificationEntityType.PostCommentReplyReaction,
+            NotificationEntityType.SubPostCommentReplyReaction,
+            NotificationEntityType.ComicPostCommentReplyReaction,
+            NotificationEntityType.ComicSubPostCommentReplyReaction,
+            NotificationEntityType.StoryPostCommentReplyReaction,
+            NotificationEntityType.StorySubPostCommentReplyReaction,
         };
 
         List<NotificationEntityType> followEntities = new List<NotificationEntityType>()
@@ -215,6 +221,8 @@ public static class NotificationExtension
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
             NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.SubPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
+            NotificationEntityType.PostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.SubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
 
             NotificationEntityType.ComicPostComment => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
@@ -226,6 +234,8 @@ public static class NotificationExtension
             NotificationEntityType.ComicSubPostCommentReaction => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
             NotificationEntityType.ComicPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicSubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
+            NotificationEntityType.ComicPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
+            NotificationEntityType.ComicSubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
 
             NotificationEntityType.StoryPostComment => Common.Core.Constants.Setting.NotificationTargetType.Story,
             NotificationEntityType.StoryPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Story,
@@ -237,6 +247,8 @@ public static class NotificationExtension
             NotificationEntityType.StorySubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.SubStory,
             NotificationEntityType.StoryPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.Story,
             NotificationEntityType.StorySubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.SubStory,
+            NotificationEntityType.StoryPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.StorySubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.SubStory,
 
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationTargetType.FollowUser,
 
@@ -270,6 +282,12 @@ public static class NotificationExtension
             NotificationEntityType.ComicSubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.StoryPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.StorySubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.PostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.SubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.ComicPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.ComicSubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.StoryPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.StorySubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.Feed => Common.Core.Constants.Setting.NotificationType.Feed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,

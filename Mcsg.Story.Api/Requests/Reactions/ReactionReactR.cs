@@ -6,4 +6,5 @@ public class ReactionReactR
 {
     public Guid TargetId { get; set; }
     public ReactionType Type { get; set; }
+    public bool? IsReply { get; set; }
 }

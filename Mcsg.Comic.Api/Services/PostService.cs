@@ -2116,7 +2116,7 @@ public partial class PostService : IPostService
 
         var orders = await _context.ComicSubPostAvailable.Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();
 
-        return orders.Count > 0 ? orders.Max() + 1 : 1;
+        return orders.Count > 0 ? (int)orders.Max() + 1 : 1;
     }
 
     /// <summary>

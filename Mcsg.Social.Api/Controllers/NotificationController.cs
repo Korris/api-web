@@ -18,7 +18,7 @@ public class NotificationController : ControllerBase
     }
 
     [HttpGet("list")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> GetNotificationByReceiver([FromQuery] NotificationR request)
     {
         var result = await _notificationService.GetNotificationByReceiverAsync(request);

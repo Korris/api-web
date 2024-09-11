@@ -14,9 +14,9 @@ public partial class SubPostCommentReactService : ISubPostCommentReactService
     {
         _reactService = reactService;
     }
-    public async Task<bool> AddReaction(Guid commentSubPostId, ReactionType type)
+    public async Task<bool> AddReaction(Guid commentSubPostId, ReactionType type, bool isReply = false)
     {
-        return await _reactService.AddReaction(commentSubPostId, type);
+        return await _reactService.AddReaction(commentSubPostId, type, isReply);
     }
     public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {

@@ -204,4 +204,34 @@ public enum NotificationEntityType
     /// StorySubPostCommentPostMention
     /// </summary>
     StorySubPostCommentMention,
+
+    /// <summary>
+    /// PostCommentReplyReaction
+    /// </summary>
+    PostCommentReplyReaction,
+
+    /// <summary>
+    /// SubPostCommentReplyReaction
+    /// </summary>
+    SubPostCommentReplyReaction,
+
+    /// <summary>
+    /// ComicPostCommentReplyReaction
+    /// </summary>
+    ComicPostCommentReplyReaction,
+
+    /// <summary>
+    /// ComicSubPostCommentReplyReaction
+    /// </summary>
+    ComicSubPostCommentReplyReaction,
+
+    /// <summary>
+    /// StoryPostCommentReplyReaction
+    /// </summary>
+    StoryPostCommentReplyReaction,
+
+    /// <summary>
+    /// StorySubPostCommentReplyReaction
+    /// </summary>
+    StorySubPostCommentReplyReaction,
 }

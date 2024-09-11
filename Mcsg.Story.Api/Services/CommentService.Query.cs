@@ -219,7 +219,7 @@
                 return @$"WITH cte AS (
                  SELECT ""Id"", ""ParentId"", ""PostId"", ""AuthorId"", ""ModifiedOn"", ""Body"", ""CustomNote"", ""ResourceId"", ""GifId"", ""IsDelete"", ""QuoteId""
                  FROM @CommentSource
-                 WHERE ""ParentId"" IS NULL AND ""Id"" = @CommentId
+                 WHERE ""Id"" = @CommentId
              )
              SELECT
                  cte.""Id"",
@@ -243,6 +243,7 @@
                      SELECT COUNT(*)
                      FROM @CommentSource sub_comments
                      WHERE sub_comments.""ParentId"" = cte.""Id""
+                     AND sub_comments.""IsDelete"" = false
                  ) AS ""ReplyCount""
              FROM cte
              LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""

@@ -49,12 +49,12 @@
                             LEFT JOIN {_postReactionRepository.TableName} pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostReaction}
                             LEFT JOIN {_comicPostReactionRepository.TableName} cpr ON obj.""EntityId"" = cpr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.ComicPostReaction}
                             LEFT JOIN {_storyPostReactionRepository.TableName} spr ON obj.""EntityId"" = spr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.StoryPostReaction}
-                            LEFT JOIN {_postCommentReactionRepository.TableName} pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction}
-                            LEFT JOIN {_comicPostCommentReactionRepository.TableName} cpcr ON obj.""EntityId"" = cpcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.ComicPostCommentReaction}
-                            LEFT JOIN {_storyPostCommentReactionRepository.TableName} spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.StoryPostCommentReaction}
-                            LEFT JOIN {_subPostCommentReactionRepository.TableName} subpcr ON obj.""EntityId"" = subpcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction}
-                            LEFT JOIN {_comicSubPostCommentReactionRepository.TableName} csubpcr ON obj.""EntityId"" = csubpcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.ComicSubPostCommentReaction}
-                            LEFT JOIN {_storySubPostCommentReactionRepository.TableName} ssubpcr ON obj.""EntityId"" = ssubpcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.StorySubPostCommentReaction}
+                            LEFT JOIN {_postCommentReactionRepository.TableName} pcr ON obj.""EntityId"" = pcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReplyReaction})
+                            LEFT JOIN {_comicPostCommentReactionRepository.TableName} cpcr ON obj.""EntityId"" = cpcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.ComicPostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.ComicPostCommentReplyReaction})
+                            LEFT JOIN {_storyPostCommentReactionRepository.TableName} spcr ON obj.""EntityId"" = spcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.StoryPostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.StoryPostCommentReplyReaction})
+                            LEFT JOIN {_subPostCommentReactionRepository.TableName} subpcr ON obj.""EntityId"" = subpcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReplyReaction})
+                            LEFT JOIN {_comicSubPostCommentReactionRepository.TableName} csubpcr ON obj.""EntityId"" = csubpcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.ComicSubPostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.ComicSubPostCommentReplyReaction})
+                            LEFT JOIN {_storySubPostCommentReactionRepository.TableName} ssubpcr ON obj.""EntityId"" = ssubpcr.""Id"" AND (obj.""EntityType"" = {(int)NotificationEntityType.StorySubPostCommentReaction} OR obj.""EntityType"" = {(int)NotificationEntityType.StorySubPostCommentReplyReaction})
                             WHERE noti.""ReceiverId"" = @ReceiverId [UnreadCondition]
                             ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
