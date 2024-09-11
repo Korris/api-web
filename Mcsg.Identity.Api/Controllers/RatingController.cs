@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,11 +10,11 @@ using Interfaces;
 using Requests;
 
 /// <summary>
-/// Feedback controller
+/// Rating controller
 /// </summary>
 [ApiController]
 [Route("[controller]")]
-public class FeedbackController : BaseController
+public class RatingController : BaseController
 {
     #region -- Methods --
 
@@ -24,7 +23,7 @@ public class FeedbackController : BaseController
     /// </summary>
     /// <param name="mediator">Mediator</param>
     /// <param name="setting">Setting</param>
-    public FeedbackController(IMediator mediator, ISetting setting) : base(mediator)
+    public RatingController(IMediator mediator, ISetting setting) : base(mediator)
     {
         _setting = setting;
         DomainName = _setting.Domain;
@@ -34,9 +33,9 @@ public class FeedbackController : BaseController
     /// Create
     /// </summary>
     /// <returns>Return the result</returns>
-    [HttpPost("Create"), Authorize]
+    [HttpPost("Create")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Create([FromForm] FeedbackCreateR request)
+    public async Task<IActionResult> Create([FromBody] RatingCreateR request)
     {
         request.Analyze(HttpContext);
 

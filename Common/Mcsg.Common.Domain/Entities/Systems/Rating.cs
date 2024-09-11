@@ -6,9 +6,9 @@ using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
 
-public partial class Feedback : AuditableEntity
+public partial class Rating : AuditableEntity
 {
-    public FeedbackType Type { get; set; }
+    public SatisfactionLevel Satisfaction { get; set; }
 
     public Guid? UserId { get; set; }
 

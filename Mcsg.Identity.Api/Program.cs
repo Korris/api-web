@@ -117,6 +117,7 @@ public class Program
             p.AddDiUserReferral();
             p.AddDiUser();
             p.AddDiFeedback();
+            p.AddDiRating();
         });
         #endregion
 

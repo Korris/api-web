@@ -119,6 +119,8 @@ partial class McsgContext
 
     public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
 
+    public IQueryable<Rating> RatingAvailable => Ratings.Where(p => !p.IsDelete);
+
     public IQueryable<Role> RoleAvailable => Roles;
 
     //public IQueryable<RoleClaim> RoleClaimAvailable => RoleClaims;

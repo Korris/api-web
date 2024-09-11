@@ -4,14 +4,14 @@ using Core.Enums;
 using SeedWork.Constants;
 using SeedWork.Dtos;
 
-partial class Feedback
+partial class Rating
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public Feedback()
+    public Rating()
     {
         Id = Guid.NewGuid();
         CreatedOn = DateTime.UtcNow;
@@ -20,16 +20,16 @@ partial class Feedback
     /// <summary>
     /// Create
     /// </summary>
-    /// <param name="feedbackType"></param>
+    /// <param name="satisfaction"></param>
     /// <param name="userId"></param>
     /// <param name="email"></param>
     /// <param name="comment"></param>
     /// <returns></returns>
-    public static Feedback Create(FeedbackType feedbackType, Guid? userId, string email, string comment)
+    public static Rating Create(SatisfactionLevel satisfaction, Guid? userId, string email, string comment)
     {
-        var res = new Feedback
+        var res = new Rating
         {
-            Type = feedbackType,
+            Satisfaction = satisfaction,
             UserId = userId,
             Email = email,
             Comment = comment,

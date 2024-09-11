@@ -182,6 +182,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
 
+    public virtual DbSet<Rating> Ratings { get; set; }
+
     //public virtual DbSet<Role> Roles { get; set; }
 
     //public virtual DbSet<RoleClaim> RoleClaims { get; set; }

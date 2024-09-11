@@ -109,6 +109,8 @@ public interface IMcsgContext
 
     DbSet<NotificationObject> NotificationObjects { get; set; }
 
+    DbSet<Rating> Ratings { get; set; }
+
     DbSet<Role> Roles { get; set; }
 
     //DbSet<RoleClaim> RoleClaims { get; set; }
@@ -266,6 +268,8 @@ public interface IMcsgContext
     IQueryable<Notification> NotificationAvailable { get; }
 
     IQueryable<NotificationObject> NotificationObjectAvailable { get; }
+
+    IQueryable<Rating> RatingAvailable { get; }
 
     IQueryable<Role> RoleAvailable { get; }
 

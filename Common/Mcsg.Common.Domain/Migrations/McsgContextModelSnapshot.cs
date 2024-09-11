@@ -1144,10 +1144,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
-                    b.Property<int>("Satisfaction")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("Type")
+                    b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("UserId")
@@ -1336,6 +1333,51 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotificationObjects", "system");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.Rating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Satisfaction")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Ratings", "system");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Role", b =>
@@ -4220,6 +4262,13 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasOne("Mcsg.Common.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("ReceiverId");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.Rating", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SmartLookupUser", b =>

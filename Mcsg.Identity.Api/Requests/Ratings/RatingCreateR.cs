@@ -5,7 +5,7 @@ using Common.Core.Requests;
 /// <summary>
 /// Request
 /// </summary>
-public class FeedbackCreateR : BaseR
+public class RatingCreateR : BaseR
 {
     #region -- Properties --
 
@@ -15,9 +15,9 @@ public class FeedbackCreateR : BaseR
     public string? Email { get; set; }
 
     /// <summary>
-    /// FeedbackType
+    /// SatisfactionLevel
     /// </summary>
-    public string? FeedbackType { get; set; }
+    public string? Satisfaction { get; set; }
 
     /// <summary>
     /// ReasonText
@@ -28,11 +28,6 @@ public class FeedbackCreateR : BaseR
     /// Type
     /// </summary>
     public string? Type { get; set; }
-
-    /// <summary>
-    /// File
-    /// </summary>
-    public List<IFormFile>? Files { get; set; }
 
     #endregion
 }
