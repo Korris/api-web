@@ -740,6 +740,7 @@ public partial class PostService : IPostService
                                   p.""HashId"",
                                   p.""Type"",
                                   p.""Hide"",
+                                  p.""ExternalResource"",
                                   u.""ProfileName"",
                                   u.""UserName"",
                                   CASE 
@@ -763,7 +764,7 @@ public partial class PostService : IPostService
                                             LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide""
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide"", p.""ExternalResource""
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -1443,7 +1444,8 @@ public partial class PostService : IPostService
             //"AuthorName", "CoverUrl","CreatedOn", "IsMature", "Id", "Permission", "Status", "UserId"
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
-            Hide = x.Hide
+            Hide = x.Hide,
+            ExternalResource = x.ExternalResource
         }).ToList();
     }
 
@@ -1463,7 +1465,8 @@ public partial class PostService : IPostService
             HashId = x.HashId,
             Type = x.Type,
             Chapters = MappingTopChapter(x.SubPostStr),
-            Hide = x.Hide
+            Hide = x.Hide,
+            ExternalResource = x.ExternalResource
         }).ToList();
     }
 
@@ -1506,7 +1509,8 @@ public partial class PostService : IPostService
                 TotalReacts = x.TotalReact,
                 Reactions = x.ReactionByPostStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionByPostStr) : new List<ReactionResponse>()
             },
-            LatestCreatedOn = x.LatestCreatedOn
+            LatestCreatedOn = x.LatestCreatedOn,
+            ExternalResource = x.ExternalResource
         }).ToList();
     }
 

@@ -34,6 +34,7 @@ public class PostSeriesResponse : PostDto
     public ExternalResource ExternalResource { get; set; }
 
     public bool IsShowChapter => ExternalResource == ExternalResource.None;
+    public bool IsExternalSource => ExternalResource != ExternalResource.None;
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
@@ -99,6 +100,10 @@ public class PostBoxResposne
     public PostType Type { get; set; }
     public ReactionsResponse? Reaction { get; set; }
     public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
+
+    [JsonIgnore]
+    public ExternalResource ExternalResource { get; set; }
+    public bool IsExternalSource => ExternalResource != ExternalResource.None;
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
