@@ -35,6 +35,7 @@
                         p.""IsMature"",
                         p.""IsCompleted"",
                         p.""Hide"",
+                        p.""ExternalResource"",
                         postview.""ViewCount"",
                         u.""ProfileName"", 
                         u.""UserName"",
@@ -87,7 +88,7 @@ LIMIT 1
                             AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
-                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"",
+                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
                         sp.""Permission"",subpostview.""ViewCount"",

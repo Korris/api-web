@@ -27,6 +27,7 @@ public class PostSeriesResponse : PostDto
     public ReactionsResponse Reaction { get; set; }
     public DateTime LatestCreatedOn { get; set; }
     public int FollowCount { get; set; }
+    public int ExternalResource { get; set; }
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;

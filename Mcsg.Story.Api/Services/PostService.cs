@@ -968,7 +968,8 @@ public partial class PostService : IPostService
             EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
             SeriesStatus = item.ToSeriesStatus(),
             TotalComment = item.TotalComment,
-            IsFollowing = item.IsFollowing
+            IsFollowing = item.IsFollowing,
+            ExternalResource = item.ExternalResource
         };
 
         return itemResponse;
