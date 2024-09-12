@@ -68,7 +68,7 @@ public static class StreamExtension
     /// <param name="height">New height</param>
     /// <param name="quality">Quality</param>
     /// <returns>Return the result</returns>
-    public static Stream? ResizeImage(this Stream? fs, int width, int height, int quality)
+    public static Stream? ResizeImage(this Stream? fs, uint width, uint height, uint quality)
     {
         if (fs == null)
         {
@@ -107,7 +107,7 @@ public static class StreamExtension
                 using (var image = SixLabors.ImageSharp.Image.Load(ms))
                 {
                     var output = new MemoryStream();
-                    image.Save(output, new JpegEncoder { Quality = quality });
+                    image.Save(output, new JpegEncoder { Quality = (int)quality });
                     output.Seek(0, SeekOrigin.Begin);
                     return output;
                 }

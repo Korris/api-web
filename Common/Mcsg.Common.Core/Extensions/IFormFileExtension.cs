@@ -151,7 +151,7 @@ public static class IFormFileExtension
     /// <param name="height"></param>
     /// <param name="quality"></param>
     /// <returns></returns>
-    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int width, int height, int quality = 100)
+    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, uint width, uint height, uint quality)
     {
         if (file == null || file.Length <= 0)
         {
@@ -178,7 +178,7 @@ public static class IFormFileExtension
     /// <param name="quality">Quality</param>
     /// <param name="dpi">DPI adjustment</param>
     /// <returns>Returns the result</returns>
-    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, int quality, int dpi = 72)
+    public static CompressImage? CompressAndConvertToJpeg(this IFormFile file, uint quality, int dpi = 72)
     {
         if (file != null && file.Length > 0)
         {
@@ -198,7 +198,7 @@ public static class IFormFileExtension
                         using (var image = SixLabors.ImageSharp.Image.Load(ms))
                         {
                             var output = new MemoryStream();
-                            image.Save(output, new JpegEncoder { Quality = quality });
+                            image.Save(output, new JpegEncoder { Quality = (int)quality });
                             output.Seek(0, SeekOrigin.Begin);
                             var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName);
 

@@ -121,7 +121,7 @@ public abstract class StorageDto
         /// <summary>
         /// Gets or sets the image downscaling quality percentage.
         /// </summary>
-        public int ImageDownQuality { get; set; } = 75;
+        public uint ImageDownQuality { get; set; } = 75;
 
         /// <summary>
         /// Gets or sets the maximum expiry time in seconds (default is 7 days).
