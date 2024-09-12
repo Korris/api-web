@@ -168,6 +168,7 @@ public class Program
             st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
             st.UserNameChangedInRemaining = Convert.ToDouble(dic[nameof(st.UserNameChangedInRemaining)]);
             st.UserNameWaitingChangedAfter = Convert.ToDouble(dic[nameof(st.UserNameWaitingChangedAfter)]);
+            st.UsernameIsReserved = dic[nameof(st.UsernameIsReserved)];
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
         }
         #endregion

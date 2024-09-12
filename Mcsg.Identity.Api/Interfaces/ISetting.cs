@@ -60,5 +60,10 @@ public interface ISetting : ISettingBase
     /// </summary>
     double UserNameWaitingChangedAfter { get; set; }
 
+    /// <summary>
+    /// Username is reserved
+    /// </summary>
+    string UsernameIsReserved { get; set; }
+
     #endregion
 }

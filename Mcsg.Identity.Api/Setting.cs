@@ -64,6 +64,11 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public double UserNameWaitingChangedAfter { get; set; }
 
+    /// <summary>
+    /// Username is reserved
+    /// </summary>
+    public string UsernameIsReserved { get; set; }
+
     #endregion
 
     #region -- Methods --

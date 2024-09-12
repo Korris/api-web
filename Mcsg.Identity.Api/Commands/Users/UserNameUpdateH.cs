@@ -57,6 +57,12 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res;
         }
 
+        if (CheckUsernameIsReserved(newUserName))
+        {
+            res.SetError(E107, M107);
+            return res;
+        }
+
         #region -- Validate on server --
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId, cancellationToken);
         if (user == null)
@@ -174,6 +180,28 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             TimePassed = timePassed
         };
         return result;
+    }
+
+    /// <summary>
+    /// Checks if the username is reserved.
+    /// </summary>
+    /// <param name="userName">The username to check.</param>
+    /// <returns>True if the username is reserved, otherwise false.</returns>
+    private bool CheckUsernameIsReserved(string userName)
+    {
+        // Split the reserved usernames from settings
+        var reservedUsernames = _setting.UsernameIsReserved.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+        // Check if the provided username contains any reserved usernames
+        foreach (var reserved in reservedUsernames)
+        {
+            if (userName.Contains(reserved, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #endregion
