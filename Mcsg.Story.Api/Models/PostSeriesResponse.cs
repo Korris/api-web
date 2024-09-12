@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Story.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Story.Api.Models;
 
 using Common.Core.Enums;
 using Dtos;
@@ -27,7 +29,11 @@ public class PostSeriesResponse : PostDto
     public ReactionsResponse Reaction { get; set; }
     public DateTime LatestCreatedOn { get; set; }
     public int FollowCount { get; set; }
-    public int ExternalResource { get; set; }
+
+    [JsonIgnore]
+    public ExternalResource ExternalResource { get; set; }
+
+    public bool IsShowChapter => ExternalResource == ExternalResource.None;
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
