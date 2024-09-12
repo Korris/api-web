@@ -370,7 +370,7 @@ public partial class NotificationService : INotificationService
                                         WHERE sp.""Id"" = ANY(@ids)", new { ids = followStoryPostIds });
             if (stories.Count() > 0)
             {
-                foreach (var item in resDtoFollowComic)
+                foreach (var item in resDtoFollowStory)
                 {
                     var story = stories.FirstOrDefault(p => p.HashId == item.LocationHashId);
                     if (story != null)
