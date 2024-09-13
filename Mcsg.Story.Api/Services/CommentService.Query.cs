@@ -126,7 +126,7 @@
                                                      JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId""= sp.""Id""
                                                      JOIN ""story"".""StoryPosts""  p ON sp.""PostId""= p.""Id""
                                                      LEFT JOIN identity.""Users"" u on p.""UserId"" = u.""Id""
-                                                     WHERE p.""HashId"" = @HashId and ""ParentId"" is null AND u.""IsDelete""
+                                                     WHERE p.""HashId"" = @HashId and ""ParentId"" is null AND u.""IsDelete"" = false
                                                      AND spc.""IsDelete"" = false) AS total_comment_count";
 
         private string GetTotalPostCommentQuery => $@"SELECT COUNT(*)
