@@ -5,6 +5,7 @@ namespace Mcsg.Identity.Api.Controllers;
 
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 [ApiController]
 [Route("[controller]")]
@@ -32,6 +33,20 @@ public class AuthenticationController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(AuthenticationRegisterUserR request)
     {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.RegisterUser(request);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Creates an account as an admin.
+    /// </summary>
+    /// <param name="request">The request object containing user registration details.</param>
+    /// <returns>An IActionResult indicating the result of the operation.</returns>
+    [HttpPost("create-account"), Authorize(Roles = McsgRole.Admin)]
+    public async Task<IActionResult> CreateAccount([FromBody] AuthenticationRegisterUserR request)
+    {
+        request.SetForAdmin(true);
         request.Analyze(HttpContext);
         var result = await _authenticationService.RegisterUser(request);
         return Ok(result);

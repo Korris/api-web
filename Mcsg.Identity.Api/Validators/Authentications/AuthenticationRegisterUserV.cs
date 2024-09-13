@@ -3,6 +3,7 @@
 namespace Mcsg.Identity.Api.Validators;
 
 using Requests;
+using static Common.SeedWork.Constants.Validator;
 
 /// <summary>
 /// Validator
@@ -17,6 +18,20 @@ public class AuthenticationRegisterUserV : AbstractValidator<AuthenticationRegis
     public AuthenticationRegisterUserV()
     {
         Include(new AuthenticationFormBaseV());
+
+        When(p => p.IsForAdmin, () =>
+        {
+            var t = nameof(Password);
+            RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}")
+                .MinimumLength(Password.Min).WithMessage($"{t} {MinimumLength} {Password.Min}")
+                .MaximumLength(Password.Max).WithMessage($"{t} {MaximumLength} {Password.Max}");
+
+            t = "ConfirmPassword";
+            RuleFor(p => p.ConfirmPassword).NotEmpty().WithMessage($"{t} {NotEmpty}")
+                .MinimumLength(Password.Min).WithMessage($"{t} {MinimumLength} {Password.Min}")
+                .MaximumLength(Password.Max).WithMessage($"{t} {MaximumLength} {Password.Max}")
+                .Equal(x => x.Password).WithMessage($"{t} {Equal}");
+        });
     }
 
     #endregion

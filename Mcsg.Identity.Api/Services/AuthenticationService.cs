@@ -172,6 +172,14 @@ public partial class AuthenticationService : IAuthenticationService
             await _userWalletService.InitUserWalletAsync(user, false);
         }
 
+        if (request.IsForAdmin)
+        {
+            await SetPassword(user, request.Password!);
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+            return new VerifyUserResponse();
+        }
+
         return await SendOtp(user);
     }
 
@@ -566,14 +574,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
         }
 
-        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var resetPasswordResult = await _userManager.ResetPasswordAsync(user, code, password);
-
-        if (!resetPasswordResult.Succeeded)
-        {
-            var createError = resetPasswordResult.Errors.FirstOrDefault();
-            throw new BadRequestException(createError?.Code, createError?.Description);
-        }
+        await SetPassword(user, password);
 
         if (currentUser != null)
         {
@@ -745,14 +746,7 @@ public partial class AuthenticationService : IAuthenticationService
             throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
         }
 
-        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var resetPasswordResult = await _userManager.ResetPasswordAsync(user, code, password);
-
-        if (!resetPasswordResult.Succeeded)
-        {
-            var createError = resetPasswordResult.Errors.FirstOrDefault();
-            throw new BadRequestException(createError?.Code, createError?.Description);
-        }
+        await SetPassword(user, password);
 
         if (otpType == UserOtpType.VerifyEmail)
         {
@@ -936,7 +930,7 @@ public partial class AuthenticationService : IAuthenticationService
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
-        var qUser = _context.UserAvailable.AsNoTracking();
+        var qUser = _context.UserAvailable;
 
         User? user = null;
         if (forRegister)
@@ -1035,6 +1029,25 @@ public partial class AuthenticationService : IAuthenticationService
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// ResetPassword
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <param name="password">Password</param>
+    /// <returns>Returns the result</returns>
+    /// <exception cref="BadRequestException"></exception>
+    private async Task SetPassword(User user, string password)
+    {
+        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var ir = await _userManager.ResetPasswordAsync(user, code, password);
+
+        if (!ir.Succeeded)
+        {
+            var error = ir.Errors.FirstOrDefault();
+            throw new BadRequestException(error?.Code + "", error?.Description + "");
+        }
     }
 
     #endregion
