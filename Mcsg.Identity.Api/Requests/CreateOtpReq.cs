@@ -2,7 +2,7 @@
 
 using Common.Core.Enums;
 
-public class CreateOtpReq : BaseUserReq
+public class CreateOtpReq : AuthenticationFormBaseR
 {
     public UserOtpType Type { get; set; }
 }

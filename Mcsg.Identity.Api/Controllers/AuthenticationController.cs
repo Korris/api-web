@@ -22,7 +22,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("check-register-info")]
-    public async Task<IActionResult> CheckRegisterUser(RegisterUserReq request)
+    public async Task<IActionResult> CheckRegisterUser(AuthenticationRegisterUserR request)
     {
         request.Analyze(HttpContext);
         await _authenticationService.CheckRegisterUser(request);
@@ -30,7 +30,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterUserReq request)
+    public async Task<IActionResult> Register(AuthenticationRegisterUserR request)
     {
         request.Analyze(HttpContext);
         var result = await _authenticationService.RegisterUser(request);
@@ -38,7 +38,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginUserReq request)
+    public async Task<IActionResult> Login(AuthenticationLoginUserR request)
     {
         request.Analyze(HttpContext);
         var result = await _authenticationService.LoginUser(request);
@@ -46,7 +46,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("social-login")]
-    public async Task<IActionResult> LoginSocial(LoginSocialReq request)
+    public async Task<IActionResult> LoginSocial(AuthenticationLoginSocialR request)
     {
         request.Analyze(HttpContext);
         var result = await _authenticationService.LoginSocial(request);
@@ -67,7 +67,7 @@ public class AuthenticationController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost("resend-otp")]
-    public async Task<IActionResult> ResendOtp(ResendOtpReq request)
+    public async Task<IActionResult> ResendOtp(AuthenticationResendOtpR request)
     {
         request.Analyze(HttpContext);
         var result = await _authenticationService.ResendOtp(request);
@@ -91,7 +91,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword(ResetPasswordReq request)
+    public async Task<IActionResult> ResetPassword(AuthenticationResetPasswordR request)
     {
         request.Analyze(HttpContext);
         var result = await _authenticationService.ResetPassword(request);

@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
-public class ForgotPasswordReq : BaseUserReq
+public class ForgotPasswordReq : AuthenticationFormBaseR
 {
 }

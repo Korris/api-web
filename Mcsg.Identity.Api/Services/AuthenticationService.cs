@@ -69,7 +69,7 @@ public partial class AuthenticationService : IAuthenticationService
         _userWalletService = userWalletService;
     }
 
-    public async Task CheckRegisterUser(RegisterUserReq request)
+    public async Task CheckRegisterUser(AuthenticationRegisterUserR request)
     {
         var vr = new AuthenticationRegisterUserV().Validate(request);
         if (!vr.IsValid)
@@ -98,7 +98,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<VerifyUserResponse> RegisterUser(RegisterUserReq request)
+    public async Task<VerifyUserResponse> RegisterUser(AuthenticationRegisterUserR request)
     {
         var vr = new AuthenticationRegisterUserV().Validate(request);
         if (!vr.IsValid)
@@ -175,7 +175,7 @@ public partial class AuthenticationService : IAuthenticationService
         return await SendOtp(user);
     }
 
-    public async Task<TokenDto> LoginUser(LoginUserReq request)
+    public async Task<TokenDto> LoginUser(AuthenticationLoginUserR request)
     {
         var vr = new AuthenticationLoginUserV().Validate(request);
         if (!vr.IsValid)
@@ -252,7 +252,7 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
-    public async Task<TokenDto> LoginSocial(LoginSocialReq request)
+    public async Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request)
     {
         var socialType = request.SocialType.ToLower();
         var socialToken = request.SocialToken;
@@ -415,7 +415,7 @@ public partial class AuthenticationService : IAuthenticationService
         return true;
     }
 
-    public async Task<VerifyUserResponse> ResendOtp(ResendOtpReq request)
+    public async Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request)
     {
         var res = new VerifyUserResponse();
 
@@ -629,7 +629,7 @@ public partial class AuthenticationService : IAuthenticationService
         return res;
     }
 
-    public async Task<bool> ResetPassword(ResetPasswordReq request)
+    public async Task<bool> ResetPassword(AuthenticationResetPasswordR request)
     {
         var user = await GetUserByEmailOrPhone(request.Type, request.Email, request.Phone);
         if (user == null)

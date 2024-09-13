@@ -9,14 +9,14 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class AuthenticationBaseUserReqV : AbstractValidator<BaseUserReq>
+public class AuthenticationFormBaseV : AbstractValidator<AuthenticationFormBaseR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public AuthenticationBaseUserReqV()
+    public AuthenticationFormBaseV()
     {
         When(p => string.IsNullOrWhiteSpace(p.Email) && string.IsNullOrWhiteSpace(p.Phone), () =>
         {

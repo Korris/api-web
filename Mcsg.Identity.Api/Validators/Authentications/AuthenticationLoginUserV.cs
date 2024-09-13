@@ -8,7 +8,7 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class AuthenticationLoginUserV : AbstractValidator<LoginUserReq>
+public class AuthenticationLoginUserV : AbstractValidator<AuthenticationLoginUserR>
 {
     #region -- Methods --
 
@@ -17,7 +17,7 @@ public class AuthenticationLoginUserV : AbstractValidator<LoginUserReq>
     /// </summary>
     public AuthenticationLoginUserV()
     {
-        Include(new AuthenticationBaseUserReqV());
+        Include(new AuthenticationFormBaseV());
 
         var t = nameof(Password);
         RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}");

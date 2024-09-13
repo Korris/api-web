@@ -2,7 +2,7 @@
 
 using Common.Core.Requests;
 
-public class BaseUserReq : BaseR
+public class AuthenticationFormBaseR : BaseR
 {
     public string? Email { get; set; }
 

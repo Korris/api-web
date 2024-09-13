@@ -2,7 +2,7 @@
 
 using Common.Core.Enums;
 
-public class ResetPasswordReq : BaseUserReq
+public class AuthenticationResetPasswordR : AuthenticationFormBaseR
 {
     public UserOtpType Type { get; set; }
     public string Password { get; set; }

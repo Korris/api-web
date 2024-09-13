@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
-public class CreateNewUserPasswordReq : BaseUserReq
+public class CreateNewUserPasswordReq : AuthenticationFormBaseR
 {
     public string Otp { get; set; }
     public string OtpToken { get; set; }
