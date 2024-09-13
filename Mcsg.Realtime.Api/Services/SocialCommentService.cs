@@ -132,8 +132,7 @@ public partial class SocialCommentService : ISocialCommentService
             response.AuthorName = authorName;
             response.PostHashId = pDto.HashId;
             response.PostCreatedBy = pDto.CreateBy;
-
-
+            response.UserAvatar = userAvatar;
 
             // Send notification
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
