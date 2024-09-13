@@ -121,6 +121,17 @@ public class ConfigController : ControllerBase
 
             res.SetSuccess(key.ToCamelCase(), val);
         }
+
+        var k = "ClientMaxBodySize";
+        if (dic.TryGetValue(k, out var v))
+        {
+            if (int.TryParse(v?.ToString(), out var mb))
+            {
+                var bytes = mb * 1024 * 1024;
+                res.SetSuccess(k.ToCamelCase(), bytes);
+            }
+        }
+
         #endregion
 
         return Ok(res.Data);
