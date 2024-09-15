@@ -38,19 +38,9 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 }
                 if (Path.GetFileName(orgfile) != Path.GetFileName(targetFile))
                 {
-                    int width = 0, height = 0;
-                    var command = "error -select_streams v:0 -show_entries stream=width,height -of csv=p=0";
-                    var output = RunFfprobe(orgfile, command);
-                    var dimensions = output.Trim().Split(',');
-                    if (dimensions.Length == 2)
-                    {
-                        width = Convert.ToInt32(dimensions[0]);
-                        height = Convert.ToInt32(dimensions[1]);
-                    }
-
                     //Run conversion
                     //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
-                    command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
+                    var command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
                     RunFfmpeg(orgfile, targetFile, command);
 
                     //upload
@@ -60,7 +50,7 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, width, height, length);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, length);
                 }
 
                 //clean up resource

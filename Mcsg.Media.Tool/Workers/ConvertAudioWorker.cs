@@ -51,7 +51,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, width, height, length);
+                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, length);
                 }
 
                 //clean up resource

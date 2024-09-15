@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FFMpegCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -135,6 +136,26 @@ public class FileService : IFileService
                 compressedSize = stream.Length;
                 await _sc.GetStrategy(minioInstance).PutObject(stream, objectNameOriginal, bucketName);
             }
+        }
+        else if (file.IsVideo())
+        {
+            using (var stream = file.OpenReadStream())
+            {
+                await _sc.GetStrategy(minioInstance).PutObject(stream, objectName, bucketName);
+
+                // Reset the stream position to the beginning
+                stream.Position = 0;
+
+                // Then, analyze the video
+                var mediaInfo = await FFProbe.AnalyseAsync(stream).ConfigureAwait(false);
+                var videoStream = mediaInfo.VideoStreams.FirstOrDefault();
+                if (videoStream != null)
+                {
+                    imgWidth = videoStream.Width;
+                    imgHeight = videoStream.Height;
+                }
+            }
+
         }
         else
         {
