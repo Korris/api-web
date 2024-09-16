@@ -2,6 +2,6 @@
 
 public class ComicChapterOrderSwapR
 {
-    public int Order1 { get; set; }
-    public int Order2 { get; set; }
+    public float Order1 { get; set; }
+    public float Order2 { get; set; }
 }

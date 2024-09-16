@@ -45,4 +45,5 @@ public interface IPostService
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
     Task<bool> FollowPost(Guid postId);
     Task<List<RewardDto>> CheckRewardsForSubPost(Guid currentUserId);
+    Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);
 }

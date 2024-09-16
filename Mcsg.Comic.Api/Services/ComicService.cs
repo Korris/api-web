@@ -132,6 +132,11 @@ public partial class ComicService : IComicService
         return (int)latestOrder + 1;
     }
 
+    public async Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders)
+    {
+        await _postService.MoveChapterOrder(hashId, orders);
+    }
+
     public async Task<List<PostSeriesTopResponse>> GetRecommended(ComicRecommendedR req)
     {
         return await _postService.GetTopNewSeries(_type, req);

@@ -1604,7 +1604,7 @@ public partial class PostService : IPostService
 
         if (loadReq.OrderBy == null)
         {
-            loadReq.OrderBy = nameof(ComicSubPost.Order);
+            loadReq.OrderBy = nameof(ComicSubPost.Sort);
         }
         var query = GetSeriesChaptersByHashId
             .Replace("[OrderBy]", loadReq.OrderBy);
@@ -1764,7 +1764,8 @@ public partial class PostService : IPostService
             HashId = PostConfig.SubHashLength.GetRandomString(),
             IsExclusive = false, //BCW-37
             IsPremium = request.IsPremium,
-            PostHashId = post.HashId
+            PostHashId = post.HashId,
+            Sort = newOrder,
         };
 
         post.ModifiedOn = DateTime.UtcNow;
@@ -1845,7 +1846,7 @@ public partial class PostService : IPostService
         subPost.IsPremium = request.IsPremium;
         subPost.PostHashId = request.PostHashId;
         subPost.Order = request.Order ?? request.ChapterOrder;
-
+        subPost.Sort = subPost.Sort;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
 
@@ -1934,7 +1935,7 @@ public partial class PostService : IPostService
             .Connection.QueryAsync<ComicSubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = hashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
 
         var currentUserId = _currentUserService.Session.UserId;
-        var chapter1 = subPosts.Where(x => x.Order == orders?.Order1).FirstOrDefault();
+        var chapter1 = subPosts.Where(x => x.Sort == orders?.Order1).FirstOrDefault();
         if (chapter1 == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, orders?.Order1));
@@ -1946,15 +1947,15 @@ public partial class PostService : IPostService
 
         try
         {
-            var chapter2 = subPosts.Where(x => x.Order == orders?.Order2).FirstOrDefault();
+            var chapter2 = subPosts.Where(x => x.Sort == orders?.Order2).FirstOrDefault();
             if (chapter2 != null)
             {
-                chapter2.Order = orders?.Order1 ?? 0;
+                chapter2.Sort = orders?.Order1 ?? 0;
                 await _subPostRepository.UpdateAsync(chapter2);
                 result.Add(MappingChapterResponse(chapter2));
             }
 
-            chapter1.Order = orders?.Order2 ?? 0;
+            chapter1.Sort = orders?.Order2 ?? 0;
             await _subPostRepository.UpdateAsync(chapter1);
             result.Add(MappingChapterResponse(chapter1));
 
@@ -1966,6 +1967,32 @@ public partial class PostService : IPostService
         }
 
         return result;
+    }
+
+    public async Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders)
+    {
+        var currentUserId = _currentUserService.Session.UserId;
+        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var chapterFr = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterTo = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
+        if (chapterFr == null || chapterTo == null)
+        {
+            throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, chapterFr == null ? orders?.Order1 : orders?.Order2));
+        }
+
+        // Check owner
+        if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
+        {
+            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+        }
+
+        // Update order of List chapter > chapter move
+        await _context.ComicSubPostAvailable.Where(p => p.Sort >= orders.Order2 && p.PostId == chapterFr.PostId && p.Id != chapterFr.Id)
+            .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
+
+        // Update order chapter from by order of chapter move to
+        chapterFr.Sort = chapterTo.Sort;
+        await _context.SaveChangesAsync(default);
     }
     #endregion
 

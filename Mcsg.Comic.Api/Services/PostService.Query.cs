@@ -756,7 +756,7 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"",sp.""IsPremium"", sp.""IsExclusive"",ux.""Id"" as ""UserExclusiveId"",
+                return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Sort"", sp.""Body"",sp.""IsPremium"", sp.""IsExclusive"",ux.""Id"" as ""UserExclusiveId"",
                 sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
                 sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", 
                 sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
@@ -966,14 +966,14 @@ LIMIT 1
         {
             get
             {
-                return @"SELECT sp.""Id"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
+                return @"SELECT sp.""Id"", sp.""Title"", sp.""PostId"", sp.""Sort"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
                 sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
                 sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
                 sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
 sp.""IsEnableComment"" 
             FROM ""comic"".""ComicSubPosts"" sp
             INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id""
-            WHERE p.""HashId"" = @HashId AND (sp.""Order"" = @Order1 OR sp.""Order"" = @Order2 )
+            WHERE p.""HashId"" = @HashId AND (sp.""Sort"" = @Order1 OR sp.""Sort"" = @Order2 )
             AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
             }
         }

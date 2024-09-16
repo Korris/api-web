@@ -25,4 +25,5 @@ public interface IComicService
     Task<bool> FollowPost(Guid postId);
     Task<float> GetLatestOrderChapter(string hashPostId);
     Task<List<PostSeriesTopResponse>> GetRecommended(ComicRecommendedR req);
+    Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);
 }

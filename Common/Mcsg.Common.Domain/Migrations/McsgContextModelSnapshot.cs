@@ -724,6 +724,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("PublishDate")
                         .HasColumnType("timestamp");
 
+                    b.Property<float>("Sort")
+                        .HasColumnType("real");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -3017,6 +3020,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("PublishDate")
                         .HasColumnType("timestamp");
+
+                    b.Property<float>("Sort")
+                        .HasColumnType("real");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

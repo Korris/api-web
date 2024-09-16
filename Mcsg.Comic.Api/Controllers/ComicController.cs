@@ -165,6 +165,14 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("{hashId}/chapter-move")]
+    [Authorize]
+    public async Task<IActionResult> MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders)
+    {
+        await _comicService.MoveChapterOrder(hashId, orders);
+        return Ok();
+    }
+
     [HttpDelete("{hashId}/chapter/{chapterOrder}"), Authorize]
     public async Task<IActionResult> DeleteChapter(string hashId, float chapterOrder)
     {

@@ -12,6 +12,7 @@ public class ChapterBasicResponse : SubPostBasic
     public bool IsEnableComment { get; set; }
     public Guid? UserExclusiveId { get; set; }
     public bool IsPremium { get; set; }
+    public float Sort { get; set; }
 }
 public class ChapterResponse : ChapterBasicResponse
 {

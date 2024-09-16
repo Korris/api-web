@@ -24,4 +24,5 @@ public interface IStoryService
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
     Task<bool> FollowPost(Guid postId);
     Task<float> GetLatestOrderChapter(string hashPostId);
+    Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders);
 }

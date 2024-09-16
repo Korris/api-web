@@ -39,6 +39,11 @@ public partial class StoryService : IStoryService
         return await _postService.SwapChapterOrder(hashId, orders);
     }
 
+    public async Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders)
+    {
+        await _postService.MoveChapterOrder(hashId, orders);
+    }
+
     public async Task<ChapterResponse> GetChapter(string hashId, float order)
     {
         return await _postService.GetSeriesChapter(hashId, order);
