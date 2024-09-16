@@ -51,10 +51,12 @@
                                                     u.""ProfileName"" as AuthorName,
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(CASE 
-                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
-                                                        ELSE NULL
-                                                    END) as ReplyCount, 
+                                                    (SELECT COUNT(*) 
+                                                     FROM ""story"".""StoryPostComments"" reply 
+	                                                 LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                     WHERE reply.""ParentId"" = pc.""Id"" 
+                                                     AND reply.""IsDelete"" = false
+	                                                 AND ur.""IsDelete"" = false) AS ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -87,10 +89,12 @@
                                                     u.""ProfileName"",
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(CASE 
-                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
-                                                        ELSE NULL
-                                                    END) ReplyCount,
+                                                    (SELECT COUNT(*) 
+                                                     FROM ""story"".""StorySubPostComments"" reply 
+	                                                 LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                     WHERE reply.""ParentId"" = spc.""Id"" 
+                                                     AND reply.""IsDelete"" = false
+	                                                 AND ur.""IsDelete"" = false) AS ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -98,7 +102,6 @@
                                                     COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
                                                 FROM ""story"".""StorySubPostComments"" spc
                                                 LEFT JOIN ""story"".""StorySubPostComments"" reply on reply.""ParentId"" = spc.""Id"" AND reply.""IsDelete"" = false
-                                                LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
                                                 INNER JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""story"".""StorySubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
                                                 LEFT JOIN ""story"".""StorySubPosts""  sp ON spc.""PostId"" = sp.""Id""

@@ -51,10 +51,12 @@
                                                     u.""ProfileName"" as AuthorName,
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(CASE 
-                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
-                                                        ELSE NULL
-                                                    END) as ReplyCount,  
+                                                   (SELECT COUNT(*) 
+                                                   FROM ""comic"".""ComicPostComments"" reply 
+                                                   LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                   WHERE reply.""ParentId"" = pc.""Id"" 
+                                                   AND reply.""IsDelete"" = false
+                                                   AND ur.""IsDelete"" = false) AS ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -62,7 +64,6 @@
                                                     COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count
                                                 FROM ""comic"".""ComicPostComments""  pc
                                                 LEFT JOIN ""comic"".""ComicPostComments"" reply on reply.""ParentId"" = pc.""Id"" AND reply.""IsDelete"" = false
-                                                LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
                                                 INNER JOIN identity.""Users"" u on pc.""AuthorId"" = u.""Id"" 
                                                 LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                                                 LEFT JOIN ""comic"".""ComicPosts""  p on pc.""PostId"" = p.""Id""
@@ -87,10 +88,12 @@
                                                     u.""ProfileName"",
                                                     u.""UserName"" as UserName,
                                                     u.""ProfileId"",
-                                                    COUNT(CASE 
-                                                        WHEN reply.""Id"" IS NOT NULL AND reply.""IsDelete"" = false AND ur.""IsDelete"" = false THEN reply.""Id""
-                                                        ELSE NULL
-                                                    END) ReplyCount,
+                                                    (SELECT COUNT(*) 
+                                                    FROM ""comic"".""ComicSubPostComments"" reply 
+                                                    LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
+                                                    WHERE reply.""ParentId"" = spc.""Id"" 
+                                                    AND reply.""IsDelete"" = false
+                                                    AND ur.""IsDelete"" = false) AS ReplyCount,
                                                     r.""Name"" as ResourceName,
                                                     r.""Url"" as ResourceUrl,
                                                     r.""MinioInstance"",
@@ -98,7 +101,6 @@
                                                     COALESCE(COUNT(spcr.""Id""), 0) AS reaction_count
                                                 FROM ""comic"".""ComicSubPostComments"" spc
                                                 LEFT JOIN ""comic"".""ComicSubPostComments"" reply on reply.""ParentId"" = spc.""Id"" AND reply.""IsDelete"" = false
-                                                LEFT JOIN identity.""Users"" ur on reply.""CreatedBy"" = ur.""Id""
                                                 INNER JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN ""comic"".""ComicSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
                                                 LEFT JOIN ""comic"".""ComicSubPosts""  sp ON spc.""PostId"" = sp.""Id""
