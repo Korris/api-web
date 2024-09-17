@@ -249,8 +249,10 @@ public partial class AuthenticationService : IAuthenticationService
             if (user.LastLoginDate != null)
             {
                 user.LastLoginDate = DateTime.UtcNow;
-                await _context.SaveChangesAsync(default);
             }
+
+            user.LastLoginIp = request.RemoteIp;
+            await _context.SaveChangesAsync(default);
 
             return response;
         }
@@ -331,6 +333,7 @@ public partial class AuthenticationService : IAuthenticationService
             {
                 user.LastLoginDate = DateTime.UtcNow;
             }
+            user.LastLoginIp = request.RemoteIp;
             await _context.SaveChangesAsync(default);
 
             return response;
@@ -409,7 +412,7 @@ public partial class AuthenticationService : IAuthenticationService
                 {
                     user.LastLoginDate = DateTime.UtcNow;
                 }
-
+                user.LastLoginIp = request.RemoteIp;
                 await _context.SaveChangesAsync(default);
 
                 return response;
