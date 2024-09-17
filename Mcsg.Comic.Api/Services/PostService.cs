@@ -1650,7 +1650,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         return await _context.ComicSubPostAvailable.Where(p => p.PostId == postId)
-            .OrderByDescending(p => p.Order)
+            .OrderBy(p => p.Order)
             .Select(p => new ChapterList
             {
                 Sort = p.Sort,
