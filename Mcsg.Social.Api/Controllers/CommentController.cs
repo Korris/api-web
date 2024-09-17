@@ -41,7 +41,8 @@ public class CommentController : ControllerBase
     [HttpGet("post")]
     public async Task<IActionResult> GetPostComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfPostAsync(request);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfPostAsync(request, req.UserId);
         return Ok(result);
     }
 
@@ -49,7 +50,8 @@ public class CommentController : ControllerBase
     [HttpGet("sub-post")]
     public async Task<IActionResult> GetSubPostComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed, req.UserId);
         return Ok(result);
     }
     #endregion
@@ -71,7 +73,8 @@ public class CommentController : ControllerBase
     [HttpGet("feed")]
     public async Task<IActionResult> GetFeedComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfPostAsync(request);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfPostAsync(request, req.UserId);
         return Ok(result);
     }
 
@@ -86,35 +89,40 @@ public class CommentController : ControllerBase
     [HttpGet("sub-feed")]
     public async Task<IActionResult> GetSubFeedComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Feed, req.UserId);
         return Ok(result);
     }
 
     [HttpGet("comic")]
     public async Task<IActionResult> GetComicComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfPostAsync(request);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfPostAsync(request, req.UserId);
         return Ok(result);
     }
 
     [HttpGet("comic-chapter")]
     public async Task<IActionResult> GetComicChapterComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Comic);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Comic, req.UserId);
         return Ok(result);
     }
 
     [HttpGet("story")]
     public async Task<IActionResult> GetStoryComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfPostAsync(request);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfPostAsync(request, req.UserId);
         return Ok(result);
     }
 
     [HttpGet("story-chapter")]
     public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentLoadR request)
     {
-        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Story);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetCommentsOfSubPostAsync(request, PostType.Story, req.UserId);
         return Ok(result);
     }
 
@@ -129,7 +137,8 @@ public class CommentController : ControllerBase
     [HttpGet("reply-by-comment")]
     public async Task<IActionResult> GetReplyByCommentId([FromQuery] CommentReplyByCommentR input)
     {
-        var result = await _commentService.GetReplyByCommentId(input);
+        var req = new BaseR(HttpContext);
+        var result = await _commentService.GetReplyByCommentId(input, req.UserId);
         return Ok(result);
     }
 

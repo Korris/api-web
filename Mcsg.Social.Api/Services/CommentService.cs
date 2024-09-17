@@ -193,7 +193,7 @@ public partial class CommentService : ICommentService
         return response;
     }
 
-    public async Task<PagedResponse<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input)
+    public async Task<PagedResponse<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input, Guid?  userId)
     {
         try
         {
@@ -213,6 +213,14 @@ public partial class CommentService : ICommentService
             var profiles = await _businessText.GetProfiles(body);
 
             var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
+
+            var tableName = input.IsSubPost ? $@"social.""SocialSubPostCommentReactions""" : $@"social.""SocialPostCommentReactions""";
+            var targetIds = items.Select(p => p.Id).ToList();
+            var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, tableName), new
+            {
+                TargetIds = targetIds,
+                UserId = input.UserId
+            });
 
             foreach (var item in items)
             {
@@ -489,7 +497,8 @@ public partial class CommentService : ICommentService
         }
         return result;
     }
-    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request)
+
+    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfPostAsync(CommentLoadR request, Guid? userId)
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))
         {
@@ -552,8 +561,6 @@ public partial class CommentService : ICommentService
             }
         }
         var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
-        var userId = request.UserId;
-
         var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
         {
             TargetIds = comments.Select(p => p.Id).ToList(),
@@ -575,7 +582,7 @@ public partial class CommentService : ICommentService
         return response;
     }
 
-    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadR request, PostType postType)
+    public async Task<CommentPagedResults<CommentResponse>> GetCommentsOfSubPostAsync(CommentLoadR request, PostType postType, Guid? userId)
     {
         var query = GetCommentOfSubPostQuery;
         var postId = request.PostId;
@@ -649,6 +656,22 @@ public partial class CommentService : ICommentService
                 }
 
                 comments.Add(comment);
+            }
+        }
+
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+        var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = comments.Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        foreach (var comment in comments)
+        {
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionCommentResponse(comment, postCommentReaction);
             }
         }
 
