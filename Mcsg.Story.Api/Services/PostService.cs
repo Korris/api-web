@@ -1649,7 +1649,7 @@ public partial class PostService : IPostService
             throw new NotFoundException(E204, M204);
         }
         return await _context.StorySubPostAvailable.Where(p => p.PostId == postId)
-            .OrderBy(p => p.Order)
+            .OrderBy(p => p.Sort)
             .Select(p => new ChapterList
             {
                 Sort = p.Sort,
@@ -1971,6 +1971,8 @@ public partial class PostService : IPostService
     {
         var currentUserId = _currentUserService.Session.UserId;
         var postId = await _context.StoryPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var fromOrder = orders.Order1;
+        var toOrder = orders.Order2;
         var chapterFr = await _context.StorySubPostAvailable.Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
         var chapterTo = await _context.StorySubPostAvailable.Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
         if (chapterFr == null || chapterTo == null)
@@ -1984,12 +1986,19 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
 
-        // Update order of List chapter > chapter move
-        await _context.StorySubPostAvailable.Where(p => p.Sort >= orders.Order2 && p.PostId == chapterFr.PostId && p.Id != chapterFr.Id)
-            .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
+        if (fromOrder < toOrder)
+        {
+            await _context.StorySubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort < toOrder)
+           .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort - 1));
+        }
+        else
+        {
+            await _context.StorySubPostAvailable.Where(c => c.Sort >= toOrder && c.Sort < fromOrder)
+          .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
+        }
 
-        // Update order chapter from by order of chapter move to
-        chapterFr.Sort = chapterTo.Sort;
+        chapterFr.Sort = fromOrder < toOrder ? toOrder - 1 : toOrder;
+
         await _context.SaveChangesAsync(default);
     }
     #endregion
