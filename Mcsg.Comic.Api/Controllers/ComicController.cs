@@ -150,6 +150,14 @@ public class ComicController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
+    [HttpGet("{hashId}/all-chapters")]
+    public async Task<IActionResult> GetAllChapters(string hashId)
+    {
+        var result = await _comicService.GetAllChapters(hashId);
+        return Ok(result);
+    }
+
     [HttpGet("{hashId}/chapters-list")]
     public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {

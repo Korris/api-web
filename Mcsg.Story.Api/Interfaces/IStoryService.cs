@@ -25,4 +25,5 @@ public interface IStoryService
     Task<bool> FollowPost(Guid postId);
     Task<float> GetLatestOrderChapter(string hashPostId);
     Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders);
+    Task<List<ChapterList>> GetAllChapters(string hashId);
 }

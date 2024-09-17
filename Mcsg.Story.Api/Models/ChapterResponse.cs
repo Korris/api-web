@@ -32,3 +32,10 @@ public class ChapterTOCExtendResponse : ChapterTOCResponse
 {
     public DateTime? PublishDate { get; set; }
 }
+
+public class ChapterList
+{
+    public float Sort { get; set; }
+    public float Order { get; set; }
+    public string? Title { get; set; }
+}

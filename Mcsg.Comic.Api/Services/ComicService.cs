@@ -86,6 +86,11 @@ public partial class ComicService : IComicService
         return await _postService.GetChapters(hashId, request);
     }
 
+    public async Task<List<ChapterList>> GetAllChapters(string hashId)
+    {
+        return await _postService.GetAllChapters(hashId);
+    }
+
     public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
     {
         return await _postService.GetChaptersListSimple(hashId);

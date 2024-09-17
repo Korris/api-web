@@ -1641,6 +1641,24 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
+    public async Task<List<ChapterList>> GetAllChapters(string hashId)
+    {
+        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        if (postId == Guid.Empty)
+        {
+            throw new NotFoundException(E204, M204);
+        }
+        return await _context.ComicSubPostAvailable.Where(p => p.PostId == postId)
+            .OrderByDescending(p => p.Order)
+            .Select(p => new ChapterList
+            {
+                Sort = p.Sort,
+                Order = p.Order,
+                Title = p.Title
+            }).ToListAsync();
+    }
+
     public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
     {
         PagedResponse<ChapterTOCResponse> results;

@@ -46,4 +46,5 @@ public interface IPostService
     Task<bool> FollowPost(Guid postId);
     Task<List<RewardDto>> CheckRewardsForSubPost(Guid currentUserId);
     Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);
+    Task<List<ChapterList>> GetAllChapters(string hashId);
 }
