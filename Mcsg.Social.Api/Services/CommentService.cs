@@ -193,16 +193,16 @@ public partial class CommentService : ICommentService
         return response;
     }
 
-    public async Task<PagedResponse<BasicCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input, Guid?  userId)
+    public async Task<PagedResponse<MostReactionCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input, Guid?  userId)
     {
         try
         {
-            PagedResponse<BasicCommentResponse> results;
+            PagedResponse<MostReactionCommentResponse> results;
 
             var query = string.Format(GetReplyByCommentIdQuery, input.IsSubPost ? _subPostCommentRepository.TableName : _postCommentRepository.TableName);
             var offset = input.PageSize * (input.PageNumber - 1);
             var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, new { input.CommentId, input.PageSize, Offset = offset });
-            var items = await multi.ReadAsync<BasicCommentResponse>().ConfigureAwait(false);
+            var items = await multi.ReadAsync<MostReactionCommentResponse>().ConfigureAwait(false);
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             var body = "";
@@ -219,7 +219,7 @@ public partial class CommentService : ICommentService
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, tableName), new
             {
                 TargetIds = targetIds,
-                UserId = input.UserId
+                UserId = userId
             });
 
             foreach (var item in items)
@@ -232,17 +232,22 @@ public partial class CommentService : ICommentService
                 }
 
                 item.Body = await _businessText.Process(item.Body, profiles);
+                var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postCommentReaction.Count > 0)
+                {
+                    MapReactionResponse(item, postCommentReaction);
+                }
             }
 
 
             if (items != null && items.Count() > 0)
             {
-                results = new PagedResponse<BasicCommentResponse>(totalItems, input.PageNumber, input.PageSize);
+                results = new PagedResponse<MostReactionCommentResponse>(totalItems, input.PageNumber, input.PageSize);
                 results.Items = items;
             }
             else
             {
-                results = new PagedResponse<BasicCommentResponse>(0);
+                results = new PagedResponse<MostReactionCommentResponse>(0);
             }
             return results;
         }

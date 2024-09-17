@@ -653,7 +653,7 @@ public partial class CommentService : ICommentService
                 comments.Add(comment);
             }
         }
-        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicSubPostCommentReactions""");
         var userId = request.UserId;
 
         var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new

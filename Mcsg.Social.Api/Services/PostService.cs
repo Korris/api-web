@@ -21,6 +21,7 @@ using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
+using Mcsg.Social.Api.Extensions;
 using Models;
 using Models.Earning;
 using Requests;
@@ -313,12 +314,37 @@ public partial class PostService : IPostService
         }
         var profiles = await _businessText.GetProfiles(body);
 
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
+        var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = result.Select(p => p.Id).ToList(),
+            UserId = input.UserId
+        });
+
         foreach (var item in result)
         {
             item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
             item.Body = await _businessText.Process(item.Body, profiles);
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionNewsFeedResponse(item, postCommentReaction);
+            }
         }
         return result;
+    }
+
+    private void MapReactionNewsFeedResponse(NewsFeedDto item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)

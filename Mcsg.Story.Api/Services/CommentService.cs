@@ -654,6 +654,24 @@ public partial class CommentService : ICommentService
             }
         }
 
+            var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
+        var userId = request.UserId;
+
+        var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = comments.Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        foreach (var comment in comments)
+        {
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionCommentResponse(comment, postCommentReaction);
+            }
+        }
+
         CommentPagedResults<CommentResponse> response = new CommentPagedResults<CommentResponse>(totalRecord, request.PageNumber, request.PageSize);
         response.Items = comments;
         response.TotalComments = totalComments;

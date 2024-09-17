@@ -26,5 +26,6 @@ public class NewsFeedDto
     public MinioInstanceType? MinioInstance { get; set; }
     public string? BucketName { get; set; }
     public string GifId { get; set; }
+    public ReactionsResponse Reaction { get; set; }
 }
 
