@@ -61,8 +61,16 @@ public class BusinessText : IBusinessText
         // Wrap links
         res = Regex.Replace(res, Link.Regex, match =>
         {
-            string url = match.Value;
-            return $"<a href=\"{url}\">{url}</a>";
+            var processedContent = "";
+            var text = match.Value;
+            var urls = Regex.Matches(text, @"https?://[^\s<]+", RegexOptions.IgnoreCase);
+            foreach (Match urlMatch in urls)
+            {
+                var href = urlMatch.Value;
+                var remainingContent = Regex.Split(text.Substring(urlMatch.Index + urlMatch.Length), @"https?://[^\s<]+")[0];
+                processedContent += $"<a href=\"{href}\">{href}</a>{remainingContent}";
+            }
+            return processedContent;
         });
 
         res = Regex.Replace(res, @"<(?!\/?a(?=>|\s.*>)|br\s*\/?>)\/?.*?>", "", RegexOptions.IgnoreCase);
