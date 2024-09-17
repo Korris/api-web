@@ -1,8 +1,8 @@
 [
     {
         "instance": 0,
-        "endPoint": "minio.teamsgsite.com",
-        "publicUrl": "https://minio.teamsgsite.com",
+        "endPoint": "minio-01.teamsgsite.com",
+        "publicUrl": "https://minio-01.teamsgsite.com",
         "publicPrefix": "",
         "bucketName": "bumcheo-dev",
         "location": "us-east-1",
@@ -11,8 +11,8 @@
     },
     {
         "instance": 1,
-        "endPoint": "minio.teamsgsite.com",
-        "publicUrl": "https://minio.teamsgsite.com",
+        "endPoint": "minio-02.teamsgsite.com",
+        "publicUrl": "https://minio-02.teamsgsite.com",
         "publicPrefix": "",
         "bucketName": "bumcheo-dev",
         "location": "us-east-1",
