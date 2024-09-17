@@ -50,7 +50,7 @@ public class JwtDto
     public string Audience { get; set; }
 
     /// <summary>
-    /// Time to live of AccessToken [1 - 1440] minutes
+    /// Time to live of AccessToken in minutes [1 - 86400] (max 60 days)
     /// </summary>
     public int TimeAt
     {
@@ -60,22 +60,13 @@ public class JwtDto
         }
         set
         {
-            if (value < 1)
-            {
-                value = 1;
-            }
-
-            if (value > 1440)
-            {
-                value = 1440;
-            }
-
-            _timeAt = value;
+            // Ensure the value is within the allowed range for AccessToken
+            _timeAt = Math.Max(1, Math.Min(value, 86400));
         }
     }
 
     /// <summary>
-    /// Time to live of RefreshToken [2 - 43200] minutes
+    /// Time to live of RefreshToken in minutes [2 - 129600] (max 90 days)
     /// </summary>
     public int TimeRt
     {
@@ -85,17 +76,8 @@ public class JwtDto
         }
         set
         {
-            if (value < 2)
-            {
-                value = 2;
-            }
-
-            if (value > 43200)
-            {
-                value = 43200;
-            }
-
-            _timeRt = value;
+            // Ensure the value is within the allowed range for RefreshToken
+            _timeRt = Math.Max(2, Math.Min(value, 129600));
         }
     }
 
