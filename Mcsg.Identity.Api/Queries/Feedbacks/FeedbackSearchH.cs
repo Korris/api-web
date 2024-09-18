@@ -22,12 +22,13 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.SeedWork.Responses;
 using Filters;
+using Interfaces;
 using Requests;
 
 /// <summary>
 /// Handler
 /// </summary>
-public class FeedbackSearchH : BaseH, IRequestHandler<FeedbackSearchR, SingleResponse>
+public class FeedbackSearchH : BaseMinioH, IRequestHandler<FeedbackSearchR, SingleResponse>
 {
     #region -- Methods --
 
@@ -35,7 +36,9 @@ public class FeedbackSearchH : BaseH, IRequestHandler<FeedbackSearchR, SingleRes
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public FeedbackSearchH(IMcsgContext context, IStorageClient sc) : base(context) { }
+    /// <param name="setting">Setting</param>
+    /// <param name="sc">Storage client</param>
+    public FeedbackSearchH(IMcsgContext context, ISetting setting, IStorageClient sc) : base(context, setting, sc) { }
 
     /// <summary>
     /// Handle
@@ -85,7 +88,14 @@ public class FeedbackSearchH : BaseH, IRequestHandler<FeedbackSearchR, SingleRes
             p.Comment,
             p.CreatedOn,
             p.UserId,
-            Resources = p.SystemResources.Select(q => new { q.Id, q.HashId, q.Url, q.BucketName, q.MinioInstance })
+            Resources = p.SystemResources.Select(q => new
+            {
+                q.Id,
+                q.HashId,
+                Url = _sc.GetPublicUrl(q.Url, q.BucketName, q.MinioInstance),
+                q.BucketName,
+                q.MinioInstance
+            })
         }).ToListAsync(cancellationToken);
 
         res.SetSuccess(data);
