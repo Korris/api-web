@@ -6,23 +6,22 @@ using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Constants;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
 using Lib.Data.Wallet.Entities;
 
 public class UserWalletService : IUserWalletService
 {
-    private readonly WalletDbContext _walletDbContext;
-    private readonly ICurrentUserService _currentUserService;
-    public UserWalletService(WalletDbContext walletDbContext,
-        ICurrentUserService currentUserService)
+    #region -- Methods --
+
+    public UserWalletService(WalletDbContext walletDbContext)
     {
-        _currentUserService = currentUserService;
         _walletDbContext = walletDbContext;
     }
 
     public async Task InitUserWalletAsync(User user, bool createWalletTransaction)
     {
+        var walletSetting = await _walletDbContext.WalletSettings.FirstOrDefaultAsync();
+
         var wallet = await _walletDbContext.UserWallets.AddAsync(new UserWallet
         {
             Address = await GennerateWalletAddress(),
@@ -30,13 +29,13 @@ public class UserWalletService : IUserWalletService
             ModifiedOn = DateTime.UtcNow,
             Id = Guid.NewGuid(),
             Point = 0,
-            RewardPoint = createWalletTransaction ? SystemConfig.DefaultRewardPoint : 0,
+            RewardPoint = createWalletTransaction ? DefaultRewardPoint : 0,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             ProfileName = user.ProfileName,
             Status = Lib.Data.Wallet.Enums.UserWalletStatus.APPROVED,
             UserId = user.Id,
-            WalletSettingId = (await _walletDbContext.WalletSettings.FirstOrDefaultAsync()).Id
+            WalletSettingId = walletSetting!.Id
         });
 
         if (!createWalletTransaction)
@@ -49,7 +48,7 @@ public class UserWalletService : IUserWalletService
         {
             CreatedOn = DateTime.UtcNow,
             Id = Guid.NewGuid(),
-            Amount = SystemConfig.DefaultRewardPoint,
+            Amount = DefaultRewardPoint,
             Content = ApiMessages.REWARD_FOR_NEW_USER,
             IsFromSystem = true,
             DestinationUserWalletId = wallet.Entity.Id,
@@ -64,13 +63,13 @@ public class UserWalletService : IUserWalletService
 
     private async Task<string> GennerateWalletAddress()
     {
-        string address = SystemConfig.WalletAddressLength.GetRandomString().ToLower();
+        string address = WalletAddressLength.GetRandomString().ToLower();
         while (true)
         {
             var isExisted = await _walletDbContext.UserWallets.AnyAsync(x => x.Address == address);
             if (isExisted)
             {
-                address = SystemConfig.WalletAddressLength.GetRandomString().ToLower();
+                address = WalletAddressLength.GetRandomString().ToLower();
             }
             else
             {
@@ -82,13 +81,13 @@ public class UserWalletService : IUserWalletService
 
     private async Task<string> GennerateWalletTransactionNumber()
     {
-        string number = SystemConfig.WalletTransactionLength.GetRandomString().ToLower();
+        string number = WalletTransactionLength.GetRandomString().ToLower();
         while (true)
         {
             var isExisted = await _walletDbContext.WalletTransactions.AnyAsync(x => x.ReferenceNumber == number);
             if (isExisted)
             {
-                number = SystemConfig.WalletTransactionLength.GetRandomString().ToLower();
+                number = WalletTransactionLength.GetRandomString().ToLower();
             }
             else
             {
@@ -97,4 +96,20 @@ public class UserWalletService : IUserWalletService
         }
         return number;
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly WalletDbContext _walletDbContext;
+
+    #endregion
+
+    #region -- Constants --
+
+    private const int WalletAddressLength = 12;
+    private const int WalletTransactionLength = 12;
+    private const int DefaultRewardPoint = 200000;
+
+    #endregion
 }
