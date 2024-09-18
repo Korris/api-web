@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -358,32 +359,21 @@ public partial class UserService : IUserService
 
         var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
-        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
+        var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
+        var hashFileName = file.GetHashName(hashId);
+        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{hashFileName}";
 
-        var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.GetStrategy(request.MinioInstance).StatObject(objectName, bucketName);
-            if (isExistFile != null)
+            var fs = file.OpenReadStream().ResizeImage(180, 180, 100);
+            if (fs != null)
             {
-                fileName = GenerateNewFileName(file.FileName);
-            }
-            else
-            {
-                fileName = file.FileName;
-            }
-            user.Avatar = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
+                await _sc.GetStrategy(request.MinioInstance).PutObject(fs, objectName, bucketName);
+                fs.Close();
 
-            Stream? newFormFile = null;
-            using (var imageContent = file.OpenReadStream())
-            {
-                newFormFile = imageContent.ResizeImage(180, 180);
+                user.Avatar = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
+                await _context.SaveChangesAsync(default);
             }
-
-            await _sc.GetStrategy(request.MinioInstance).PutObject(newFormFile, objectName, bucketName);
-            newFormFile.Close();
-
-            await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {
@@ -415,24 +405,14 @@ public partial class UserService : IUserService
 
         var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
-        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{file.FileName}";
+        var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
+        var hashFileName = file.GetHashName(hashId);
+        var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{hashFileName}";
 
-        var fileName = string.Empty;
         try
         {
-            var isExistFile = await _sc.GetStrategy(request.MinioInstance).StatObject(objectName, bucketName);
-            if (isExistFile != null)
-            {
-                fileName = GenerateNewFileName(file.FileName);
-            }
-            else
-            {
-                fileName = file.FileName;
-            }
-            user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
-
             await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
-
+            user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
             await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
@@ -534,11 +514,6 @@ public partial class UserService : IUserService
             ProfileId = profileId,
             ProfileName = profileName
         };
-    }
-
-    private string GenerateNewFileName(string fileName)
-    {
-        return $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}{Path.GetExtension(fileName)}";
     }
 
     private async Task<UserProfileResponse> CreateUserResponeByUsername(User? user)
