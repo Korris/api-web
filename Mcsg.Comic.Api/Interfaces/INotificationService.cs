@@ -6,7 +6,6 @@ using Requests;
 
 public interface INotificationService
 {
-    Task<NotificationModel> GetNotificationAsync(Guid id);
     Task<bool> ReadNotificationAsync(Guid id);
     Task<bool> ReadAllNotificationAsync();
     Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request);

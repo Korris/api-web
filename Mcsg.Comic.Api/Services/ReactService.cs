@@ -93,23 +93,8 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
 
             return false;
         }
-
     }
 
-    public async Task<T> GetReaction(Guid targetId, ReactionType type)
-    {
-        var currentUserId = _currentUserService.Session.UserId;
-        var query = string.Format(GetReactTypeAndUsersQuery, _reactRepository.TableName);
-
-        var checkDb = await _reactRepository
-                .Connection.QueryFirstOrDefaultAsync<T>(query, new
-                {
-                    TargetId = targetId,
-                    AuthorId = currentUserId,
-                    Type = type
-                });
-        return checkDb;
-    }
     public async Task<ReactionsResponse> GetReactions(Guid targetId)
     {
         var currentUserId = _currentUserService.Session?.UserId;

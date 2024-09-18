@@ -4,22 +4,6 @@
 
     public partial class NotificationService
     {
-        private string GetNotificationByIdQuery
-        {
-            get
-            {
-                return @$"SELECT noti.""Id"", noti.""ReceiverId""
-                            , noti.""Status"", obj.""LocationId"", obj.""LocationHashId""
-                            , obj.""EntityType"", obj.""EntityId"", obj.""EntityHashId"", obj.""Action"", obj.""CreatedOn""
-                            , obj.""ActorId""
-                            , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
-                            , us.""Avatar""
-                            FROM {_notiRepository.TableName} noti
-                            LEFT JOIN {_notiObjRepository.TableName} obj ON noti.""NotificationObjectId"" = obj.""Id""
-                            LEFT JOIN {_userRepository.TableName} us ON obj.""ActorId"" = us.""Id""
-                            WHERE noti.""Id"" = @Id ";
-            }
-        }
         private string GetNotificationByUserQuery
         {
             get

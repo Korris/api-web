@@ -2,18 +2,6 @@
 {
     public partial class TagService
     {
-        private string GetAllTagsByPostHashIdQuery
-        {
-            get
-            {
-                return @$"SELECT post.""HashId"" AS ""PostHashId"", tp.""PostId"", tag.""Id"", tag.""Title"", tag.""Name""
-                        FROM {_postRepository.TableName} post
-                        INNER JOIN {_tagPostRepository.TableName} tp ON tp.""PostId"" = post.""Id""
-                        INNER JOIN {_tagRepository.TableName} tag ON tp.""TagId"" = tag.""Id"" 
-                        WHERE post.""HashId"" = @PostHashId AND post.""IsDelete"" = false; ";
-            }
-        }
-
         private string GetSuggestTagsByNameQuery
         {
             get

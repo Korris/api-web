@@ -59,12 +59,6 @@ public partial class NotificationService : INotificationService
         _subPostCommentRepository = subPostCommentRepository;
     }
 
-    public async Task<NotificationModel> GetNotificationAsync(Guid id)
-    {
-        var result = await _notiRepository.Connection.QueryFirstOrDefaultAsync<NotificationQueryResult>(GetNotificationByIdQuery, new { Id = id });
-        return _mapper.Map<NotificationModel>(result);
-    }
-
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
     {
         var currentUser = await _currentUserService.GetCurrentUserAsync();

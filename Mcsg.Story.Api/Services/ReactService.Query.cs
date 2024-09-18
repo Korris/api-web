@@ -2,20 +2,6 @@
 {
     public partial class ReactService<T>
     {
-        private string GetReactTypeAndUsersQuery
-        {
-            get
-            {
-                return @"SELECT ""Id"", ""ParentId"", 
-                ""TargetId"", ""AuthorId"", ""Type"",
-                ""CreatedOn"", ""CreatedBy"",
-                ""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
-                    FROM {0}
-                    WHERE ""TargetId"" = @TargetId
-                    AND ( ""AuthorId"" IS NULL OR ""AuthorId"" = @AuthorId)
-                    AND ""Type"" = @Type";
-            }
-        }
         private string GetReactByUsersQuery
         {
             get

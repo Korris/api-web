@@ -21,17 +21,7 @@ public class SmartCountService : ISmartCountService
         _unitOfWork = unitOfWork;
         _distributeManager = distributeManager;
     }
-    public async Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType)
-    {
-        var smartCountPostAction = new SmartCountAction
-        {
-            ActionType = actionType,
-            Count = 0,
-            EntityType = type,
-            EntityId = entityId
-        };
-        await _smartCountActionRepository.InsertAsync(smartCountPostAction);
-    }
+
     public async Task QueueAddReactionCount(Guid entityId, EntityType type)
     {
         await _distributeManager.Deliver(new SmartCountDistributeItem

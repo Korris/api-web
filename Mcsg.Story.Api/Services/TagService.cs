@@ -8,7 +8,6 @@ using Common.Core.Enums;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Constants;
-using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
@@ -18,7 +17,6 @@ using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
-using Models.Tag;
 using Requests;
 
 public partial class TagService : ITagService
@@ -270,25 +268,6 @@ public partial class TagService : ITagService
                           Id = a.Id,
                           PostId = b.PostId
                       }).ToListAsync();
-    }
-
-    public async Task<List<TagByPostResponse>> GetTagsByPostHashIdAsync(string postHashId)
-    {
-        try
-        {
-            // Find all tag with post (TagPost)
-            var tagsPostDb = await _tagRepository
-                    .Connection.QueryAsync<TagByPostResponse>(GetAllTagsByPostHashIdQuery, new
-                    {
-                        PostHashId = postHashId
-                    });
-
-            return tagsPostDb.ToList();
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-        }
     }
 
     private async Task<List<Guid>> AddNewTags(List<string> tagNames, Guid userId)

@@ -125,23 +125,6 @@ public partial class FavoriteService : IFavoriteService
         return true;
     }
 
-    public async Task<PagedResponse<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req)
-    {
-        var offset = req.PageSize * (req.PageNumber - 1);
-        var multipleQuery = await _postFavoriteRepository.Connection.
-                QueryMultipleAsync(GetFavoritePostQuery, new
-                {
-                    PageSize = req.PageSize,
-                    Offet = offset
-                });
-
-        var items = await multipleQuery.ReadAsync<FavoritePostResponse>().ConfigureAwait(false);
-        var totalItems = await multipleQuery.ReadFirstAsync<int>().ConfigureAwait(false);
-        var response = new PagedResponse<FavoritePostResponse>(totalItems, req.PageNumber, req.PageSize);
-        response.Items = items;
-
-        return response;
-    }
     public async Task<PagedResponse<FeedDto>> GetPostFavoriteByUserAsync(FavoritePostR req)
     {
         try

@@ -60,29 +60,6 @@
             }
         }
 
-        private string GetFavoritePostQuery
-        {
-            get
-            {
-                return @$"SELECT post.""Id"", post.""Body"" , us.""Id"" AS ""AuthorId""
-                            , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
-                            , us.""Avatar"" AS AuthorAvatar
-                            FROM {_postRepository.TableName} post 
-                            INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
-                            LEFT JOIN {_userRepository.TableName} us ON post.""CreatedBy"" = us.""Id""
-                            WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false 
-                            ORDER BY post.""Title""
-                            LIMIT @PageSize
-                            OFFSET @Offet;
-
-                          SELECT count(postFavorites.*) AS TotalItems 
-                            FROM {_postRepository.TableName} post 
-                            INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
-                            WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false ;
-                        ";
-            }
-        }
-
         private string GetFavoritePostByUserQuery
         {
             get

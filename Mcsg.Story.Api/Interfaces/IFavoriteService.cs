@@ -14,7 +14,5 @@ public interface IFavoriteService
     Task<bool> RemoveTagToFavoriteAsync(Guid tagId);
 
     Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req);
-    Task<PagedResponse<FavoritePostResponse>> GetPostFavoriteAsync(FavoritePostR req);
     Task<PagedResponse<FeedDto>> GetPostFavoriteByUserAsync(FavoritePostR req);
-
 }
