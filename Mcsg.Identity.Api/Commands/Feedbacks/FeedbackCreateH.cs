@@ -55,6 +55,12 @@ public class FeedbackCreateH : BaseMinioH, IRequestHandler<FeedbackCreateR, Sing
             throw new BadRequestException(M109);
         }
 
+        // Create
+        var feedbackType = request.Type.ToEnum(FeedbackType.ReportAbuse);
+        var ett = Feedback.Create(feedbackType, request.UserId, request.Email!, request.Comment + ""!);
+        var feedback = await _context.Feedbacks.AddAsync(ett, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
         var files = request.Files;
         if (files?.Count > 0)
         {
@@ -73,7 +79,7 @@ public class FeedbackCreateH : BaseMinioH, IRequestHandler<FeedbackCreateR, Sing
 
                     await _sc.GetStrategy(MinioInstanceType.Default).PutObject(stream, objectName, bucketName);
 
-                    var resource = new ComicResource
+                    var resource = new SystemResource
                     {
                         AuthorId = request.UserId,
                         HashId = hashId,
@@ -87,21 +93,16 @@ public class FeedbackCreateH : BaseMinioH, IRequestHandler<FeedbackCreateR, Sing
                         Height = image.Height,
                         Size = file.Length,
                         CompressedSize = file.Length,
-                        MinioInstance = request.MinioInstance
+                        MinioInstance = request.MinioInstance,
+                        FeedbackId = feedback.Entity.Id,
                     };
 
-                    await _context.ComicResources.AddAsync(resource, cancellationToken);
+                    await _context.SystemResources.AddAsync(resource, cancellationToken);
                 }
             }
 
             await _context.SaveChangesAsync(cancellationToken);
         }
-
-        // Create
-        var feedbackType = request.Type.ToEnum(FeedbackType.ReportAbuse);
-        var ett = Feedback.Create(feedbackType, request.UserId, request.Email!, request.Comment + ""!);
-        await _context.Feedbacks.AddAsync(ett, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
 
         res.SetSuccess(ett.ToViewDto());
 

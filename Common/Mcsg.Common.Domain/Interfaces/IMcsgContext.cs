@@ -183,6 +183,8 @@ public interface IMcsgContext
 
     DbSet<StoryTagPost> StoryTagPosts { get; set; }
 
+    DbSet<SystemResource> SystemResources { get; set; }
+
     DbSet<SystemSetting> SystemSettings { get; set; }
 
     DbSet<SystemSettingHistory> SystemSettingHistories { get; set; }

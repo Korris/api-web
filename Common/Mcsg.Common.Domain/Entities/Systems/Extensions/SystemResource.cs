@@ -6,14 +6,14 @@ using Core.Enums;
 using SeedWork.Constants;
 using SeedWork.Dtos;
 
-partial class Feedback
+partial class SystemResource
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public Feedback()
+    public SystemResource()
     {
         Id = Guid.NewGuid();
         CreatedOn = DateTime.UtcNow;
@@ -75,8 +75,9 @@ partial class Feedback
 
     #region -- Properties --
 
-    [InverseProperty("Feedback")]
-    public virtual ICollection<SystemResource> SystemResources { get; set; } = new List<SystemResource>();
+    [ForeignKey("FeedbackId")]
+    [InverseProperty("SystemResources")]
+    public virtual Feedback? Feedback { get; set; }
 
     #endregion
 

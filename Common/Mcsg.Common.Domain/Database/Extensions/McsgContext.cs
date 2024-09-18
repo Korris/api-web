@@ -193,6 +193,8 @@ partial class McsgContext
 
     public IQueryable<StoryTagPost> StoryTagPostAvailable => StoryTagPosts.Where(p => !p.IsDelete);
 
+    public IQueryable<SystemResource> SystemResourceAvailable => SystemResources.Where(p => !p.IsDelete);
+
     public IQueryable<SystemSetting> SystemSettingAvailable => SystemSettings.Where(p => !p.IsDelete);
 
     public IQueryable<SystemSettingHistory> SystemSettingHistoryAvailable => SystemSettingHistories.Where(p => !p.IsDelete);

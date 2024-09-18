@@ -1,0 +1,97 @@
+﻿#region Information
+/*
+ * Author       : Toan Nguyen Van
+ * Email        : nvt87x@gmail.com
+ * Phone        : +84 345 515 010
+ * ------------------------------- *
+ * Create       : 2024-Jan-21 08:37
+ * Update       : 2024-Jan-21 08:37
+ * Checklist    : 1.0
+ * Status       : New
+ */
+#endregion
+
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace Mcsg.Identity.Api.Queries;
+
+using Commands;
+using Common.Core.Extensions;
+using Common.Core.Interfaces;
+using Common.Domain;
+using Common.SeedWork.Responses;
+using Filters;
+using Requests;
+
+/// <summary>
+/// Handler
+/// </summary>
+public class FeedbackSearchH : BaseH, IRequestHandler<FeedbackSearchR, SingleResponse>
+{
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context">DB context</param>
+    public FeedbackSearchH(IMcsgContext context, IStorageClient sc) : base(context) { }
+
+    /// <summary>
+    /// Handle
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Return the result</returns>
+    public async Task<SingleResponse> Handle(FeedbackSearchR request, CancellationToken cancellationToken)
+    {
+        var res = new SearchResponse(request.PageNum, request.PageSize, request.Paging);
+
+        var q = _context.FeedbackAvailable.AsNoTracking();
+
+        #region -- Filter --
+        string? keyword = null;
+
+        if (request.Filter != null)
+        {
+            keyword = request.Filter + "";
+            var ft = keyword.ToInstNull<FeedbackFilter.Search>();
+            if (ft != null)
+            {
+                keyword = ft.Keyword;
+            }
+        }
+
+        // Keyword
+        if (keyword != null)
+        {
+            q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || (p.Email + "").Contains(keyword));
+        }
+        #endregion
+
+        // Paging
+        res.TotalRecords = q.Count();
+        if (request.Paging)
+        {
+            q = q.Sort(request.Sort).PageBy(request.Offset, request.PageSize);
+        }
+
+        // Result
+        var data = await q.Select(p => new
+        {
+            p.Id,
+            p.Type,
+            p.Email,
+            p.Comment,
+            p.CreatedOn,
+            p.UserId,
+            Resources = p.SystemResources.Select(q => new { q.Id, q.HashId, q.Url, q.BucketName, q.MinioInstance })
+        }).ToListAsync(cancellationToken);
+
+        res.SetSuccess(data);
+
+        return res;
+    }
+
+    #endregion
+}

@@ -1262,6 +1262,43 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SystemResources",
+                schema: "system",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    FeedbackId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SystemResources_Feedbacks_FeedbackId",
+                        column: x => x.FeedbackId,
+                        principalSchema: "system",
+                        principalTable: "Feedbacks",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BackgroundMediaPosts",
                 columns: table => new
                 {
@@ -3246,6 +3283,26 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: new[] { "TagId", "PostId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_SystemResources_FeedbackId",
+                schema: "system",
+                table: "SystemResources",
+                column: "FeedbackId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemResources_HashId",
+                schema: "system",
+                table: "SystemResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemResources_Name",
+                schema: "system",
+                table: "SystemResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SystemSettingHistories_SystemSettingId",
                 schema: "system",
                 table: "SystemSettingHistories",
@@ -3437,10 +3494,6 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "Feedbacks",
-                schema: "system");
-
-            migrationBuilder.DropTable(
                 name: "Jobs",
                 schema: "system");
 
@@ -3553,6 +3606,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "story");
 
             migrationBuilder.DropTable(
+                name: "SystemResources",
+                schema: "system");
+
+            migrationBuilder.DropTable(
                 name: "SystemSettingHistories",
                 schema: "system");
 
@@ -3639,6 +3696,10 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.DropTable(
                 name: "StorySubPostComments",
                 schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "SystemSettings",

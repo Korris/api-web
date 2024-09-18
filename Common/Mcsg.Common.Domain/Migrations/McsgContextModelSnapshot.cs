@@ -3227,6 +3227,90 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("StoryTagPosts", "story");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemResource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BucketName")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid?>("FeedbackId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("MinioInstance")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackId");
+
+                    b.HasIndex("HashId")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("SystemResources", "system");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4684,6 +4768,15 @@ namespace Mcsg.Common.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemResource", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.Feedback", "Feedback")
+                        .WithMany("SystemResources")
+                        .HasForeignKey("FeedbackId");
+
+                    b.Navigation("Feedback");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSettingHistory", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.SystemSetting", null)
@@ -4841,6 +4934,11 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.Feedback", b =>
+                {
+                    b.Navigation("SystemResources");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
