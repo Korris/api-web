@@ -207,7 +207,6 @@ public class Program
         builder.Services.AddScoped(typeof(IReactService<>), typeof(ReactService<>));
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddScoped<IViewHistoryService, ViewHistoryService>();
         builder.Services.AddScoped<IEarningService, EarningService>();
         builder.Services.AddScoped<IAffiliateService, AffiliateService>();
         builder.Services.AddScoped<IWalletService, WalletService>();
