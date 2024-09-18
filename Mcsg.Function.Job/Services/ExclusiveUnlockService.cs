@@ -7,16 +7,14 @@ using Common.Domain.Entities;
 using Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Lib.Data.Wallet;
 using static Common.SeedWork.Constants.Setting;
 
 public class ExclusiveUnlockService : IExclusiveUnlockService
 {
-    public ExclusiveUnlockService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
+    public ExclusiveUnlockService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
         _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
-        _walletDbContext = walletDbContext;
     }
 
     public async Task Run()
@@ -57,7 +55,6 @@ public class ExclusiveUnlockService : IExclusiveUnlockService
 
     #region -- Fields --
 
-    private readonly WalletDbContext _walletDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<SocialSubPost> _subPostRepository;
 
