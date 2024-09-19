@@ -10,6 +10,7 @@ public static class NotificationContent
     public const string MentionOnPost = " đã đề cập bạn trong một bài viết của họ.";
     public const string MentionOnReply = " đã nhắc đến bạn trong một trả lời bình luận.";
     public const string ReactOnFeed = " đã bày tỏ cảm xúc về bài viết của bạn.";
+    public const string ReactOnComic = " đã bày tỏ cảm xúc về truyện của bạn.";
     public const string ReactOnComment = " đã bày tỏ cảm xúc về bình luận của bạn.";
     public const string ReactOnReply = " đã bày tỏ cảm xúc về trả lời của bạn.";
     public const string VideoUploadProcessing = "Video của bạn đang được đăng tải.";

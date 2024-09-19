@@ -84,7 +84,8 @@ public static class NotificationExtension
             }
             else
             {
-                return noti.ActorName + NotificationContent.ReactOnFeed;
+                var message = noti.EntityType == NotificationEntityType.PostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
+                return noti.ActorName + message;
             }
         }
         #endregion

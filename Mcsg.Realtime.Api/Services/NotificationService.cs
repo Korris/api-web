@@ -311,7 +311,8 @@ public class NotificationService : INotificationService
                 receiverId = post.UserId != null ? post.UserId : Guid.Empty;
                 locationId = post.Id;
                 locationHashId = post.HashId;
-                response.Message = reaction.AuthorName + NotificationContent.ReactOnFeed;
+                var message = reaction.EntityType == NotificationEntityType.PostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
+                response.Message = reaction.AuthorName + message;
             }
             response.TargetType = reaction.EntityType switch
             {
