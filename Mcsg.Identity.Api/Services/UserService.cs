@@ -365,7 +365,7 @@ public partial class UserService : IUserService
 
         try
         {
-            var fs = file.OpenReadStream().ResizeImage(180, 180, 100);
+            var fs = file.OpenReadStream().ResizeImage(500, 500, 85);
             if (fs != null)
             {
                 await _sc.GetStrategy(request.MinioInstance).PutObject(fs, objectName, bucketName);
