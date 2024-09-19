@@ -9,6 +9,7 @@ using Common.Core.Controllers;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
 /// Feedback controller
@@ -46,7 +47,7 @@ public class FeedbackController : BaseController
         return Ok(response);
     }
 
-    [HttpPatch("View"), Authorize]
+    [HttpPatch("View"), Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> View([FromBody] FeedbackSearchR request)
     {
