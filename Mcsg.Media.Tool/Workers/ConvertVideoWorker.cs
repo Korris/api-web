@@ -38,9 +38,31 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 }
                 if (Path.GetFileName(orgfile) != Path.GetFileName(targetFile))
                 {
-                    //Run conversion
-                    //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
-                    var command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
+                    /*Breakdown of the command:
+                     -c:v libx264                               : Use H.264 video codec
+                     -vf "scale=trunc(iw/3)*2:trunc(ih/3)*2"    : Scale video to 1 / 3 of original size, ensuring even dimensions
+                     -preset faster                             : Encoding speed preset(options: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow)
+                     -crf 28                                    : Constant Rate Factor(0 - 51, lower is better quality but larger file size)
+                     -maxrate 2M                                : Maximum bitrate cap at 2 Mbps
+                     -bufsize 4M                                : Video buffer size for rate control
+                     -c:a aac                                   : Use AAC audio codec
+                     -b:a 96k                                   : Set audio bitrate to 96 kbps
+
+                     Note: This command balances compression and quality.Adjust parameters as needed:
+                     - Lower CRF for better quality (e.g., 23 - 25 for high quality, 28 - 32 for smaller file size)
+                     - Change preset for different encoding speed / efficiency trade - offs
+                     - Modify scale factor to adjust output resolution
+                     - Alter maxrate and bufsize to control bitrate
+                     - Adjust audio bitrate(-b:a) for different audio quality levels
+                    */
+
+                    /*
+                    ffmpeg -i {input-file} -c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k {output-file} #compress video with low quality and small size
+                    ffmpeg -i {input-file} -c:v libx264 -vf "scale=trunc(iw/3)*2:trunc(ih/3)*2" -preset faster -crf 28 -maxrate 2M -bufsize 4M -c:a aac -b:a 96k {output-file} #compress video with good quality and normal size
+                    */
+
+                    //var command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
+                    var command = "-c:v libx264 -vf \"scale=trunc(iw/3)*2:trunc(ih/3)*2\" -preset faster -crf 28 -maxrate 2M -bufsize 4M -c:a aac -b:a 96k"; // optimizer
                     RunFfmpeg(orgfile, targetFile, command);
 
                     //upload
