@@ -1,7 +1,6 @@
-﻿namespace Mcsg.Lib.Data.Wallet.Enums
+﻿namespace Mcsg.Lib.Data.Wallet.Enums;
+
+public enum WalletSettingDetailType
 {
-    public enum WalletSettingDetailType
-    {
-        WithDrawNotify = 0
-    }
+    WithDrawNotify = 0
 }

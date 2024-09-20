@@ -1,12 +1,11 @@
-﻿namespace Mcsg.Lib.Data.Wallet.Enums
+﻿namespace Mcsg.Lib.Data.Wallet.Enums;
+
+public enum EarningType
 {
-    public enum EarningType
-    {
-        VIEW_FREE = 0,
-        VIEW_GUEST = 1,
-        VIEW_PREMIUM = 2,
-        SALE_CHAPTER = 3,
-        SALE_PREMIUM = 4,
-        AFF_PREMIUM = 5,
-    }
+    VIEW_FREE = 0,
+    VIEW_GUEST = 1,
+    VIEW_PREMIUM = 2,
+    SALE_CHAPTER = 3,
+    SALE_PREMIUM = 4,
+    AFF_PREMIUM = 5,
 }

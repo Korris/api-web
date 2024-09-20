@@ -1,8 +1,7 @@
-﻿namespace Mcsg.Lib.Data.Wallet.Enums
+﻿namespace Mcsg.Lib.Data.Wallet.Enums;
+
+public enum TransactionOtpType
 {
-    public enum TransactionOtpType
-    {
-        Email,
-        Phone
-    }
+    Email,
+    Phone
 }
