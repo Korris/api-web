@@ -1949,41 +1949,37 @@ public partial class PostService : IPostService
     public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
         var result = new List<ChapterResponse>();
-        var subPosts = await _postRepository
-            .Connection.QueryAsync<ComicSubPost>(GetSubPostsWithHashIdAndOrders, new { HashId = hashId, Order1 = orders?.Order1, Order2 = orders?.Order2 });
-
         var currentUserId = _currentUserService.Session.UserId;
-        var chapter1 = subPosts.Where(x => x.Sort == orders?.Order1).FirstOrDefault();
-        if (chapter1 == null)
+        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var fromOrder = orders.Order1;
+        var toOrder = orders.Order2;
+        var chapterFr = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterTo = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
+        if (chapterFr == null || chapterTo == null)
         {
-            throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, orders?.Order1));
+            throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, chapterFr == null ? orders?.Order1 : orders?.Order2));
         }
-        else if (chapter1.UserId != currentUserId)
+
+        // Check owner
+        if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
         {
             throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
         }
 
-        try
+        if (fromOrder < toOrder)
         {
-            var chapter2 = subPosts.Where(x => x.Sort == orders?.Order2).FirstOrDefault();
-            if (chapter2 != null)
-            {
-                chapter2.Sort = orders?.Order1 ?? 0;
-                await _subPostRepository.UpdateAsync(chapter2);
-                result.Add(MappingChapterResponse(chapter2));
-            }
-
-            chapter1.Sort = orders?.Order2 ?? 0;
-            await _subPostRepository.UpdateAsync(chapter1);
-            result.Add(MappingChapterResponse(chapter1));
-
+            await _context.ComicSubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort <= toOrder && c.PostId == postId)
+          .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort - 1));
         }
-        catch (Exception)
+        else
         {
-            _unitOfWork.RollbackTransaction();
-            throw;
+            await _context.ComicSubPostAvailable.Where(c => c.Sort < fromOrder && c.Sort >= toOrder && c.PostId == postId)
+        .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
         }
 
+        chapterFr.Sort = orders.Order2;
+
+        await _context.SaveChangesAsync(default);
         return result;
     }
 
@@ -2008,12 +2004,12 @@ public partial class PostService : IPostService
 
         if (fromOrder < toOrder)
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort < toOrder)
+            await _context.ComicSubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort < toOrder && c.PostId == postId)
            .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort - 1));
         }
         else
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort >= toOrder && c.Sort < fromOrder)
+            await _context.ComicSubPostAvailable.Where(c => c.Sort >= toOrder && c.Sort < fromOrder && c.PostId == postId)
           .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
         }
 

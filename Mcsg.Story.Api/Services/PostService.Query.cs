@@ -51,6 +51,7 @@
                         sp.""Status"",
                         sp.""IsPremium"",
                         sp.""Permission"",
+                        sp.""Sort"",
                         COUNT(DISTINCT spcm.""Id"") as ""CommentCount"",
                         subpostview.""ViewCount"",
                         sp.""CreatedOn"",
@@ -93,7 +94,7 @@ LIMIT 1
                         p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
                         sp.""Permission"",subpostview.""ViewCount"",
                         sp.""PublishDate""
-                        ORDER BY sp.""Order""
+                        ORDER BY sp.""Sort""
                         ";
             }
         }
