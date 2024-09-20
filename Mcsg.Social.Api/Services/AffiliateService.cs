@@ -57,7 +57,7 @@ public class AffiliateService : IAffiliateService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Status == TransactionStatus.SUCCESS);
+                        && x.Status == TransactionStatus.Success);
 
         if (date != null && date.HasValue)
         {
@@ -119,7 +119,7 @@ public class AffiliateService : IAffiliateService
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
                         && affiliateTransType.Contains(x.Type)
-                        && x.Status == TransactionStatus.SUCCESS);
+                        && x.Status == TransactionStatus.Success);
 
         var yearData = await query.GroupBy(x => new
         {
@@ -162,7 +162,7 @@ public class AffiliateService : IAffiliateService
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
                         && affiliateTransType.Contains(x.Type)
-                        && x.Status == TransactionStatus.SUCCESS);
+                        && x.Status == TransactionStatus.Success);
 
         var monthData = await query.GroupBy(x => new
         {
@@ -207,7 +207,7 @@ public class AffiliateService : IAffiliateService
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
                         && affiliateTransType.Contains(x.Type)
-                        && x.Status == TransactionStatus.SUCCESS);
+                        && x.Status == TransactionStatus.Success);
 
         var yearData = await query.GroupBy(x => new
         {
@@ -250,7 +250,7 @@ public class AffiliateService : IAffiliateService
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
                         && affiliateTransType.Contains(x.Type)
-                        && x.Status == TransactionStatus.SUCCESS);
+                        && x.Status == TransactionStatus.Success);
 
         var monthData = await query.GroupBy(x => new
         {

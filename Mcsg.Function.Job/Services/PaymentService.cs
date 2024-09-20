@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace Mcsg.Function.Job.Services;
 
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Interfaces;
 using Job.Constants;
@@ -14,7 +15,6 @@ using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
 using Lib.Data.Repositories.Interface;
 using Lib.Data.Wallet;
-using Lib.Data.Wallet.Enums;
 
 public class PaymentService : IPaymentService
 {
@@ -33,7 +33,7 @@ public class PaymentService : IPaymentService
                                     .FirstOrDefaultAsync(x => x.Id == data.TransactionId);
         if (transaction != null)
         {
-            if (transaction.Status == TransactionStatus.PENDING)
+            if (transaction.Status == TransactionStatus.Pending)
             {
                 var appTransId = transaction.ExternalId;
                 _logger.LogInformation($"PaymentService-ZPQueryOrderAsync-TransId: {transaction.Id} - appTransId: {appTransId}");
@@ -78,7 +78,7 @@ public class PaymentService : IPaymentService
                     if (responseData.ReturnCode != (int)ZaloPayReturnCode.PROCESSING)
                     {
                         _logger.LogInformation($"PaymentService-ZPQueryOrderAsync-TransId: {transaction.Id} - responseCode: {responseData.ReturnCode}");
-                        transaction.Status = responseData.ReturnCode == (int)ZaloPayReturnCode.SUCCESS ? TransactionStatus.SUCCESS : TransactionStatus.FAILED;
+                        transaction.Status = responseData.ReturnCode == (int)ZaloPayReturnCode.SUCCESS ? TransactionStatus.Success : TransactionStatus.Failed;
                         if (responseData.ReturnCode == (int)ZaloPayReturnCode.SUCCESS)
                         {
                             transaction.SourceUserWallet.Point += transaction.Amount;
@@ -89,7 +89,7 @@ public class PaymentService : IPaymentService
                         {
                             var realTimeReq = new RealTimeTransactionUpdateReq()
                             {
-                                PaymentType = PaymentMethodType.ZALO_PAY,
+                                PaymentType = PaymentMethodType.ZaloPay,
                                 ReferenceNumber = transaction.ReferenceNumber,
                                 TransactionId = data.TransactionId.ToString(),
                                 TransactionStatus = transaction.Status,

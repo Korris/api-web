@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Lib.Common.Models.RealTime;
 
-using Data.Wallet.Enums;
+using Mcsg.Common.Core.Enums;
 
 public class RealTimeTransactionUpdateReq
 {

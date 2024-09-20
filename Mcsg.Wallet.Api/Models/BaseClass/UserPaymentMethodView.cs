@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Models.BaseClass;
 
-using Lib.Data.Wallet.Enums;
+using Mcsg.Common.Core.Enums;
 
 public class UserPaymentMethodView
 {

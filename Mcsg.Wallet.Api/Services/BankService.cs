@@ -6,6 +6,7 @@ namespace Mcsg.Wallet.Api.Services;
 using Constants;
 using Interfaces;
 using Lib.Data.Wallet;
+using Mcsg.Common.Core.Enums;
 using Models;
 
 public class BankService : IBankService
@@ -21,7 +22,7 @@ public class BankService : IBankService
 
     public async Task<IEnumerable<BankResponse>> GetBanks()
     {
-        var bankListDb = await _dbContext.PaymentMethods.Where(x => x.Type == Lib.Data.Wallet.Enums.PaymentMethodType.BANKING && x.IsActive)
+        var bankListDb = await _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.IsActive)
             .AsNoTracking()
             .Select(x => new BankResponse
             {
@@ -53,7 +54,7 @@ public class BankService : IBankService
             var o2 = JsonConvert.DeserializeObject<BankListFromApiResp>(responseBody);
             bankList = o2.Data;
         }
-        var bankListDb = _dbContext.PaymentMethods.Where(x => x.Type == Lib.Data.Wallet.Enums.PaymentMethodType.BANKING).ToList();
+        var bankListDb = _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking).ToList();
 
         foreach (var bank in bankList)
         {
@@ -72,7 +73,7 @@ public class BankService : IBankService
                     ShortName = bank.ShortName,
                     SwiftCode = bank.Swift_Code,
                     IsActive = true,
-                    Type = Lib.Data.Wallet.Enums.PaymentMethodType.BANKING
+                    Type = PaymentMethodType.Banking
                 });
             }
             else

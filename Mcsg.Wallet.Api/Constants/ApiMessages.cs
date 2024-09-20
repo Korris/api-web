@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Constants;
 
+using Common.Core.Enums;
 using Lib.Data.Wallet.Enums;
 
 public class ApiMessages
@@ -27,9 +28,9 @@ public class ApiMessages
     public static IDictionary<TransactionStatus, string> WALLET_TRANSACTION_STATUS
        = new Dictionary<TransactionStatus, string>
    {
-        { TransactionStatus.FAILED, "Msg_Wallet_Status_Failed" },
-        { TransactionStatus.PENDING, "Msg_Wallet_Status_Pending" },
-        { TransactionStatus.SUCCESS, "Msg_Wallet_Success" }
+        { TransactionStatus.Failed, "Msg_Wallet_Status_Failed" },
+        { TransactionStatus.Pending, "Msg_Wallet_Status_Pending" },
+        { TransactionStatus.Success, "Msg_Wallet_Success" }
    };
     public const string ZALO_PAY_PAYMENT_ORDER = "ZaloPay - Thanh toán cho đơn hàng {0}";
 }

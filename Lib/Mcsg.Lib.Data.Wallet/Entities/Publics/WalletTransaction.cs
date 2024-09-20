@@ -3,6 +3,7 @@
 namespace Mcsg.Lib.Data.Wallet.Entities
 {
     using Enums;
+    using Mcsg.Common.Core.Enums;
     using Mcsg.Common.SeedWork;
 
     public class WalletTransaction : AuditableEntity

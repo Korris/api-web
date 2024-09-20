@@ -72,7 +72,7 @@ public partial class SyncDataService : ISyncDataService
                 ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
                 ModifiedOn = DateTime.UtcNow,
                 DestinationUserWalletId = userWallet.Id,
-                Status = TransactionStatus.SUCCESS,
+                Status = TransactionStatus.Success,
                 Type = TransactionType.REWARD,
                 IsConfirmed = true,
             };
@@ -127,7 +127,7 @@ public partial class SyncDataService : ISyncDataService
             }
 
             var transaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == buyPremiumData.TransactionId).FirstOrDefaultAsync();
-            transaction.Status = TransactionStatus.SUCCESS;
+            transaction.Status = TransactionStatus.Success;
 
             var nowDate = DateTime.UtcNow.Date;
 
@@ -214,7 +214,7 @@ public partial class SyncDataService : ISyncDataService
                 var transaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == buyItemData.TransactionId).FirstOrDefaultAsync();
                 if ((userWallet.Point + userWallet.RewardPoint) < transaction.Amount)
                 {
-                    transaction.Status = TransactionStatus.FAILED;
+                    transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = "Buy chapter failed, user not enough point";
                     await _walletDbContext.SaveChangesAsync();
                     return;//ko đủ số dư
@@ -229,7 +229,7 @@ public partial class SyncDataService : ISyncDataService
                 });
                 if (existBuy != null)
                 {
-                    transaction.Status = TransactionStatus.FAILED;
+                    transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", existBuy.CreatedOn.ToString());
                     await _walletDbContext.SaveChangesAsync();
                     return;//đã mua trước đó
@@ -267,7 +267,7 @@ public partial class SyncDataService : ISyncDataService
                     var userPurchase = await _walletDbContext.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyItemData.TransactionId);
                     userPurchase.Title = $"{post.Title} chapter {chapterTitle}";
                     userPurchase.Thumbnail = post.ThumbnailUrl;
-                    transaction.Status = TransactionStatus.SUCCESS;
+                    transaction.Status = TransactionStatus.Success;
                     transaction.IsConfirmed = true;
 
                     if (userPurchase.AffiliateUserId == null || userPurchase.AffiliateUserId == Guid.Empty)
@@ -282,7 +282,7 @@ public partial class SyncDataService : ISyncDataService
                 }
                 else
                 {
-                    transaction.Status = TransactionStatus.FAILED;
+                    transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = string.Format("Chapter id not found {0}", transaction.RelatedId);
                 }
 
@@ -343,7 +343,7 @@ public partial class SyncDataService : ISyncDataService
                     // Không có chapter nào cần mua thêm trong serie này.
                     if (notBoughtChapters.Count() == 0)
                     {
-                        transaction.Status = TransactionStatus.FAILED;
+                        transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", boughtChapters.FirstOrDefault().CreatedOn.ToString());
                         await _walletDbContext.SaveChangesAsync();
                         return;//đã mua trước đó
@@ -353,7 +353,7 @@ public partial class SyncDataService : ISyncDataService
 
                     if ((userWallet.Point + userWallet.RewardPoint) < estimateAmount)
                     {
-                        transaction.Status = TransactionStatus.FAILED;
+                        transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = "Buy chapter failed, user not enough point";
                         await _walletDbContext.SaveChangesAsync();
                         return;//ko đủ số dư
@@ -393,7 +393,7 @@ public partial class SyncDataService : ISyncDataService
                     userPurchase.Thumbnail = post.ThumbnailUrl;
 
                     transaction.Amount = estimateAmount;
-                    transaction.Status = TransactionStatus.SUCCESS;
+                    transaction.Status = TransactionStatus.Success;
                     transaction.IsConfirmed = true;
 
                     if (userPurchase.AffiliateUserId == null || userPurchase.AffiliateUserId == Guid.Empty)
@@ -408,7 +408,7 @@ public partial class SyncDataService : ISyncDataService
                 else
                 {
                     // Comic/Story has no chapters
-                    transaction.Status = TransactionStatus.FAILED;
+                    transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = string.Format("Serie Id : {0} not found any chapter ", transaction.RelatedId);
                 }
 
@@ -425,7 +425,7 @@ public partial class SyncDataService : ISyncDataService
     private async Task<WalletTransaction> LogError(Guid transactionId, string message)
     {
         var logTransaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == transactionId).FirstOrDefaultAsync();
-        logTransaction.Status = TransactionStatus.FAILED;
+        logTransaction.Status = TransactionStatus.Failed;
         logTransaction.SystemMessage = message;
         _walletDbContext.WalletTransactions.Update(logTransaction);
         await _walletDbContext.SaveChangesAsync();

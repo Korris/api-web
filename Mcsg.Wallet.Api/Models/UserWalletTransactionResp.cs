@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Models;
 
+using Common.Core.Enums;
 using Lib.Common.Models;
 using Lib.Data.Wallet.Enums;
 

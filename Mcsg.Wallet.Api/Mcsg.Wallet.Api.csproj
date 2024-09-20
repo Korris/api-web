@@ -15,6 +15,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
+        <ProjectReference Include="..\Lib\Mcsg.Lib.Data.Wallet\Mcsg.Lib.Data.Wallet.csproj" />
     </ItemGroup>
 
     <ItemGroup>

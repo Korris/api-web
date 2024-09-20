@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Lib.Common.Models;
 
-using Data.Wallet.Enums;
+using Mcsg.Common.Core.Enums;
 
 public class PaymentTransData
 {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Distributor;
+using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -107,7 +108,7 @@ public partial class PremiumService : IPremiumService
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
             ModifiedOn = now,
             SourceUserWalletId = userWallet.Id,
-            Status = TransactionStatus.PENDING,
+            Status = TransactionStatus.Pending,
             Type = TransactionType.BUY_PREMIUM
         };
         var purchaseHistory = new UserPurchaseTransaction
@@ -139,13 +140,13 @@ public partial class PremiumService : IPremiumService
         {
             if ((userWallet.Point + userWallet.RewardPoint) < transaction.Amount)
             {
-                transaction.Status = TransactionStatus.FAILED;
+                transaction.Status = TransactionStatus.Failed;
                 transaction.Content = transaction.Content + " không đủ point";
                 _dbContext.WalletTransactions.Update(transaction);
                 //await LogError(buyPremiumData.TransactionId, "Không đủ tiền");
                 return;//ko đủ số dư
             }
-            transaction.Status = TransactionStatus.SUCCESS;
+            transaction.Status = TransactionStatus.Success;
             var nowDate = DateTime.UtcNow.Date;
             //Select other userPackage
             var lastPackage = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
@@ -273,7 +274,7 @@ public partial class PremiumService : IPremiumService
             ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.ChapterId,
-            Status = TransactionStatus.PENDING,
+            Status = TransactionStatus.Pending,
             Type = TransactionType.BUY_CHAPTER
         };
 
@@ -369,7 +370,7 @@ public partial class PremiumService : IPremiumService
             ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.SerieId,
-            Status = TransactionStatus.PENDING,
+            Status = TransactionStatus.Pending,
             Type = TransactionType.BUY_SERIES
         };
 

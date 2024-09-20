@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Constants;
 using Interfaces;
@@ -14,7 +15,6 @@ using Lib.Common.Models.RealTime;
 using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
 using Lib.Data.Wallet;
-using Lib.Data.Wallet.Enums;
 using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
 
@@ -49,7 +49,7 @@ public class ZaloPayService : IZaloPayService
             {
                 // Update to db.
                 transaction.Status = status;
-                if (status == TransactionStatus.SUCCESS)
+                if (status == TransactionStatus.Success)
                 {
                     transaction.SourceUserWallet.Point += transaction.Amount;
                 }
@@ -59,7 +59,7 @@ public class ZaloPayService : IZaloPayService
                 // Send signalR to user.
                 var realTimeReq = new RealTimeTransactionUpdateReq()
                 {
-                    PaymentType = PaymentMethodType.ZALO_PAY,
+                    PaymentType = PaymentMethodType.ZaloPay,
                     ReferenceNumber = transaction.ReferenceNumber,
                     TransactionId = transactionId.ToString(),
                     TransactionStatus = status,
@@ -134,7 +134,7 @@ public class ZaloPayService : IZaloPayService
         var transaction = await _dbContext.WalletTransactions.FirstOrDefaultAsync(x => x.Id == transactionId);
         if (transaction != null)
         {
-            if (transaction.Status == TransactionStatus.PENDING)
+            if (transaction.Status == TransactionStatus.Pending)
             {
                 var appTransId = transaction.ExternalId;
                 if (!string.IsNullOrEmpty(appTransId))

@@ -7,6 +7,7 @@ using System.Data;
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Dtos;
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.SeedWork.Exceptions;
@@ -222,7 +223,7 @@ public class UserWalletService : IUserWalletService
         }
         CheckBalance(transaction.SourceUserWallet.Point, transaction.SourceUserWallet.RewardPoint, transaction.Amount);
 
-        transaction.Status = TransactionStatus.SUCCESS;
+        transaction.Status = TransactionStatus.Success;
         transaction.IsConfirmed = true;
 
         switch (transaction.Type)
@@ -662,7 +663,7 @@ public class UserWalletService : IUserWalletService
 
             string bankAccountName = _configuration["Bank:AdminBankName"];
             string bankAccountBin = _configuration["Bank:AdminBankBin"];
-            string bankName = (await _dbContext.PaymentMethods.Where(x => x.Type == Lib.Data.Wallet.Enums.PaymentMethodType.BANKING && x.Bin == bankAccountBin)
+            string bankName = (await _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.Bin == bankAccountBin)
                 .FirstOrDefaultAsync())?.Name;
 
             var depositResp = new DepositResp()
@@ -694,7 +695,7 @@ public class UserWalletService : IUserWalletService
                     Type = PaymentTransType.ZALO_PAY,
                     TransactionId = transaction.Id,
                     UserId = userId.Value,
-                    Status = TransactionStatus.PENDING
+                    Status = TransactionStatus.Pending
                 };
 
                 var msg = new QueueMessageDto(jobData);
@@ -755,7 +756,7 @@ public class UserWalletService : IUserWalletService
                 {
                     var transId = Guid.Parse(embedData.TransactionId);
                     var userId = Guid.Parse(embedData.UserId);
-                    await _zaloPayService.CompleteTransactionAsync(transId, userId, TransactionStatus.SUCCESS);
+                    await _zaloPayService.CompleteTransactionAsync(transId, userId, TransactionStatus.Success);
                     _logger.LogInformation($"WalletService.CallBackZaloPayAsync - CompleteTransaction: {transId} - userId: {userId}");
                     return new CallBackZaloPayResponse()
                     {
@@ -800,7 +801,7 @@ public class UserWalletService : IUserWalletService
         {
             throw new BadRequestException(ApiErrorCodes.TRANSACTION_NOT_FOUND, ApiErrorMessage.TRANSACTION_NOT_FOUND);
         }
-        transaction.Status = TransactionStatus.CANCELED;
+        transaction.Status = TransactionStatus.Canceled;
 
         _dbContext.WalletTransactions.Update(transaction);
         await _dbContext.SaveChangesAsync();
@@ -875,7 +876,7 @@ public class UserWalletService : IUserWalletService
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
             ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = sourceId,
-            Status = TransactionStatus.PENDING,
+            Status = TransactionStatus.Pending,
             Type = type
         };
         if (type == TransactionType.WITHDRAW || type == TransactionType.DEPOSIT)
