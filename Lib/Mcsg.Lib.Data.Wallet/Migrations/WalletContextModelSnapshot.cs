@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcsg.Lib.Data.Wallet.Migrations
 {
     [DbContext(typeof(WalletContext))]
-    partial class WalletDbContextModelSnapshot : ModelSnapshot
+    partial class WalletContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -32,10 +32,10 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<DateTime>("FromDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -44,7 +44,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -54,7 +54,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("ToDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Year")
                         .HasColumnType("integer");
@@ -77,7 +77,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("EarningPeriodId")
                         .HasColumnType("uuid");
@@ -92,7 +92,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PeriodId")
                         .HasColumnType("uuid");
@@ -123,7 +123,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<float>("DataValue")
                         .HasColumnType("real");
@@ -141,7 +141,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -175,7 +175,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -191,7 +191,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(255)
@@ -342,7 +342,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -351,7 +351,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid>("PaymentMethodId")
                         .HasColumnType("uuid");
@@ -378,10 +378,10 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -390,13 +390,13 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<int?>("PremiumPackageNo")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("UserWalletId")
                         .HasColumnType("uuid");
@@ -423,7 +423,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("CreatorUserId")
                         .HasColumnType("uuid");
@@ -438,7 +438,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Paymethod")
                         .HasColumnType("text");
@@ -475,7 +475,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
@@ -488,7 +488,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
@@ -535,7 +535,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -548,7 +548,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
@@ -566,9 +566,9 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         new
                         {
                             Id = new Guid("a2f9d301-b081-4cd8-850f-27bc996702e7"),
-                            CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
                             IsDelete = false,
-                            ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                            ModifiedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
                             Name = "BL Coin",
                             Symbol = "BL"
                         });
@@ -584,7 +584,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -596,7 +596,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
@@ -616,13 +616,13 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         new
                         {
                             Id = new Guid("5f65fed1-bddc-4c7c-ba57-cb33a54542c8"),
-                            CreatedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
                             Description = "With draw notify list email",
                             IsDelete = false,
-                            ModifiedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
+                            ModifiedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
                             Name = "WithDrawNotify",
                             Type = 0,
-                            Value = "dev@angelpj.com"
+                            Value = "info@bumcheo.vn"
                         });
                 });
 
@@ -643,7 +643,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<Guid?>("DestinationUserWalletId")
                         .HasColumnType("uuid");
@@ -664,7 +664,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("ReferenceNumber")
                         .HasMaxLength(32)
@@ -718,7 +718,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -727,7 +727,7 @@ namespace Mcsg.Lib.Data.Wallet.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Otp")
                         .HasColumnType("text");

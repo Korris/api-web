@@ -19,14 +19,15 @@ public class WalletContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
         builder.Entity<WalletSetting>().HasData(
             new WalletSetting
             {
                 Id = Guid.Parse("A2F9D301-B081-4CD8-850F-27BC996702E7"),
                 Name = "BL Coin",
                 Symbol = "BL",
-                CreatedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedOn = new DateTime(2023, 10, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04),
+                ModifiedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });
 
         builder.Entity<WalletSettingDetail>().HasData(
@@ -35,12 +36,11 @@ public class WalletContext : DbContext
                 Id = Guid.Parse("5F65FED1-BDDC-4C7C-BA57-CB33A54542C8"),
                 Name = nameof(WalletSettingDetailType.WithDrawNotify),
                 Type = WalletSettingDetailType.WithDrawNotify,
-                Value = "dev@angelpj.com",
+                Value = "info@bumcheo.vn",
                 Description = "With draw notify list email",
-                CreatedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984),
-                ModifiedOn = new DateTime(2023, 12, 11, 7, 33, 35, 791, DateTimeKind.Utc).AddTicks(4984)
+                CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04),
+                ModifiedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });
-
 
         builder.Entity<PremiumPackage>().HasData(
             new PremiumPackage
@@ -109,6 +109,7 @@ public class WalletContext : DbContext
                  IsPackage = false
              }
             );
+
         builder.Entity<UserPremiumPackage>(entity =>
         {
             entity.HasOne(x => x.PremiumPackage)
@@ -170,7 +171,6 @@ public class WalletContext : DbContext
             entity.HasOne(x => x.EarningSummary)
           .WithMany(x => x.SummaryDetails)
           .HasForeignKey(x => x.EarningSummaryId);
-
         });
     }
 
