@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Wallet.Api.Protos";
+
+package wallet;
+
+service UserWalletProto {
+    rpc Create (UserWalletCreateReq) returns (BaseRsp);
+}
+
+message BaseRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
+}
+
+message UserWalletCreateReq {
+    string id = 1;
+    google.protobuf.StringValue email = 2;
+    google.protobuf.StringValue phoneNumber = 3;
+    google.protobuf.StringValue profileName = 4;
+}

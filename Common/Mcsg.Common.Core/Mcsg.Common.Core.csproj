@@ -13,6 +13,7 @@
         <PackageReference Include="FirebaseAdmin" Version="3.0.1" />
         <PackageReference Include="FluentValidation" Version="11.10.0" />
         <PackageReference Include="Google.Apis.Sheets.v4" Version="1.68.0.3525" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
         <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.0.0" />
         <PackageReference Include="MediatR" Version="12.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />

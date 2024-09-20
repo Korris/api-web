@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Grpc.Core;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -31,22 +32,32 @@ public class ResponseExceptionWrapperMiddleware
     /// <returns>Return the result</returns>
     public async Task Invoke(HttpContext context)
     {
+        // Skip the middleware logic for gRPC requests
+        if (IsGrpcRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Handle other requests
         if (SkipApiResponseMiddleware(context))
         {
             await _next(context);
         }
         else
         {
-            var body = context.Response.Body;
-            using (var ms = new MemoryStream())
+            var originalBodyStream = context.Response.Body;
+            using (var memoryStream = new MemoryStream())
             {
-                context.Response.Body = ms;
+                context.Response.Body = memoryStream;
 
                 try
                 {
+                    // Proceed with the request pipeline
                     await _next.Invoke(context);
 
-                    var isV1 = (context.Request.Path.Value + "").Contains("v1");
+                    // Handle non-v1 HTTP responses (not gRPC)
+                    var isV1 = (context.Request.Path.Value ?? "").Contains("v1");
                     if (!isV1)
                     {
                         await HandleRequestAsync(context);
@@ -54,123 +65,107 @@ public class ResponseExceptionWrapperMiddleware
                 }
                 catch (Exception ex)
                 {
-                    if (ex.Message == "No password has been provided but the backend requires one (in MD5)")
-                    {
-                        await _next.Invoke(context);
-                    }
-                    else
-                    {
-                        await HandleExceptionAsync(context, ex);
-                    }
+                    // Handle the exception
+                    await HandleExceptionAsync(context, ex);
                 }
                 finally
                 {
-                    await PackageResponse(body, ms);
+                    await PackageResponse(originalBodyStream, memoryStream);
                 }
             }
         }
     }
 
     /// <summary>
-    /// Handle exception async
+    /// Handles exceptions and returns appropriate responses
     /// </summary>
-    /// <param name="context">HTTP context</param>
-    /// <param name="error">Error</param>
-    /// <returns>Return the result</returns>
     private async Task HandleExceptionAsync(HttpContext context, Exception error)
     {
-        var response = context.Response;
-        var status = error switch
-        {
-            ForbiddenAccessException => HttpStatusCode.Forbidden,
-            BadRequestException => HttpStatusCode.BadRequest,
-            NotFoundException => HttpStatusCode.NotFound,
-            UnauthorizedAccessException => HttpStatusCode.Unauthorized,
-            _ => HttpStatusCode.InternalServerError,
-        };
+        var isGrpc = IsGrpcRequest(context);
 
-        //TODO: logging exception error if need
-        response.StatusCode = (int)status;
-
-        await response.WriteAsJsonAsync(new ApiDataDto
+        if (isGrpc)
         {
-            Status = status.ToString(),
-            Error = new ApiErrorDto()
+            // Handle exceptions for gRPC requests
+            var status = StatusCode.Internal;
+
+            if (error is ForbiddenAccessException)
             {
-                Code = (error as BaseException)?.Code,
-                Message = error.Message,
-            },
-            Path = context.Request.Path
-        });
+                status = StatusCode.PermissionDenied;
+            }
+            else if (error is BadRequestException)
+            {
+                status = StatusCode.InvalidArgument;
+            }
+            else if (error is NotFoundException)
+            {
+                status = StatusCode.NotFound;
+            }
+            else if (error is UnauthorizedAccessException)
+            {
+                status = StatusCode.Unauthenticated;
+            }
+
+            // Throw gRPC-specific RpcException
+            throw new RpcException(new Status(status, error.Message));
+        }
+        else
+        {
+            // Handle exceptions for HTTP requests
+            var response = context.Response;
+            var status = error switch
+            {
+                ForbiddenAccessException => HttpStatusCode.Forbidden,
+                BadRequestException => HttpStatusCode.BadRequest,
+                NotFoundException => HttpStatusCode.NotFound,
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                _ => HttpStatusCode.InternalServerError,
+            };
+
+            response.StatusCode = (int)status;
+
+            // Write the exception as JSON response for HTTP requests
+            await response.WriteAsJsonAsync(new ApiDataDto
+            {
+                Status = status.ToString(),
+                Error = new ApiErrorDto
+                {
+                    Code = (error as BaseException)?.Code,
+                    Message = error.Message,
+                },
+                Path = context.Request.Path
+            });
+        }
     }
 
     /// <summary>
-    /// Package response
+    /// Wraps and formats the HTTP response body into a JSON object
     /// </summary>
-    /// <param name="originalBody">Original body</param>
-    /// <param name="responseBody">Response body</param>
-    /// <returns>Return the result</returns>
-    private async Task PackageResponse(Stream originalBody, MemoryStream responseBody)
-    {
-        responseBody.Seek(0, SeekOrigin.Begin);
-        await responseBody.CopyToAsync(originalBody);
-    }
-
-    /// <summary>
-    /// Skip API response middleware
-    /// </summary>
-    /// <param name="context">HTTP context</param>
-    /// <returns>Return the result</returns>
-    private bool SkipApiResponseMiddleware(HttpContext context)
-    {
-        return IsSwagger(context) || context.Request.Method == HttpMethods.Options;
-    }
-
-    /// <summary>
-    /// Is Swagger
-    /// </summary>
-    /// <param name="context">HTTP context</param>
-    /// <returns>Return the result</returns>
-    private bool IsSwagger(HttpContext context)
-    {
-        return context.Request.Path.StartsWithSegments("/swagger");
-    }
-
-    /// <summary>
-    /// Handle request async
-    /// </summary>
-    /// <param name="context">HTTP context</param>
-    /// <returns>Return the result</returns>
     private async Task HandleRequestAsync(HttpContext context)
     {
-        var body = await FormatResponse(context.Response);
-        await HandleRequestAsync(context, body);
+        var responseBody = await FormatResponse(context.Response);
+        await HandleRequestAsync(context, responseBody);
     }
 
-    /// <summary>
-    /// Handle request async
-    /// </summary>
-    /// <param name="context">HTTP context</param>
-    /// <param name="body"></param>
-    /// <returns>Return the result</returns>
     private async Task HandleRequestAsync(HttpContext context, object body)
     {
-        var code = context.Response.StatusCode;
+        var statusCode = context.Response.StatusCode;
 
         if (body != null)
         {
-            context.Response.Body.SetLength(0L);
-            var bodyString = body.ToString() + "";
+            context.Response.Body.SetLength(0L); // Clear current body
+            var bodyString = body.ToString() ?? string.Empty;
             dynamic? data = bodyString;
 
+            // Check if the response body is valid JSON
             if (IsValidJson(bodyString))
             {
                 data = JsonNode.Parse(bodyString);
             }
 
+            // Write the formatted response as JSON
             await context.Response.WriteAsJsonAsync(new ApiDataDto
             {
-                Status = code.ToString(),
+                Status = statusCode.ToString(),
                 Data = data,
                 Path = context.Request.Path
             });
@@ -178,11 +173,53 @@ public class ResponseExceptionWrapperMiddleware
     }
 
     /// <summary>
-    /// Is valid JSON
+    /// Utility to detect if the request is a gRPC request
     /// </summary>
-    /// <param name="json">JSON string</param>
-    /// <returns>Return the result</returns>
-    static bool IsValidJson(string json)
+    private bool IsGrpcRequest(HttpContext context)
+    {
+        return context.Request.ContentType == "application/grpc";
+    }
+
+    /// <summary>
+    /// Skip the middleware for certain requests like Swagger or HTTP OPTIONS
+    /// </summary>
+    private bool SkipApiResponseMiddleware(HttpContext context)
+    {
+        return IsSwagger(context) || context.Request.Method == HttpMethods.Options;
+    }
+
+    /// <summary>
+    /// Check if the request is for Swagger documentation
+    /// </summary>
+    private bool IsSwagger(HttpContext context)
+    {
+        return context.Request.Path.StartsWithSegments("/swagger");
+    }
+
+    /// <summary>
+    /// Copies the memory stream content back to the original response stream
+    /// </summary>
+    private async Task PackageResponse(Stream originalBody, MemoryStream responseBody)
+    {
+        responseBody.Seek(0, SeekOrigin.Begin);
+        await responseBody.CopyToAsync(originalBody);
+    }
+
+    /// <summary>
+    /// Formats the response body as a string
+    /// </summary>
+    private async Task<string> FormatResponse(HttpResponse response)
+    {
+        response.Body.Seek(0, SeekOrigin.Begin);
+        var responseBody = await new StreamReader(response.Body).ReadToEndAsync();
+        response.Body.Seek(0, SeekOrigin.Begin);
+        return responseBody;
+    }
+
+    /// <summary>
+    /// Checks if a string is valid JSON
+    /// </summary>
+    private static bool IsValidJson(string json)
     {
         try
         {
@@ -193,19 +230,6 @@ public class ResponseExceptionWrapperMiddleware
         {
             return false;
         }
-    }
-
-    /// <summary>
-    /// Format response
-    /// </summary>
-    /// <param name="response">Response</param>
-    /// <returns>Return the result</returns>
-    private async Task<string> FormatResponse(HttpResponse response)
-    {
-        response.Body.Seek(0, SeekOrigin.Begin);
-        var res = await new StreamReader(response.Body).ReadToEndAsync();
-        response.Body.Seek(0, SeekOrigin.Begin);
-        return res;
     }
 
     #endregion

@@ -118,6 +118,7 @@ public class Program
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions
                         .ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        builder.Services.AddGrpc();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -201,6 +202,7 @@ public class Program
         app.UseResponseCaching();
 
         app.UseCommonHub();
+        app.MapGrpcService<Protos.Services.UserWalletService>();
 
         app.Run();
     }

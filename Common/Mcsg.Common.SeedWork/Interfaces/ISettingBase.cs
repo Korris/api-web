@@ -122,6 +122,11 @@ public interface ISettingBase
     ApiDto Api { get; }
 
     /// <summary>
+    /// RPC
+    /// </summary>
+    ApiDto Rpc { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     string? Origins { get; set; }

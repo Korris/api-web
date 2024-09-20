@@ -151,7 +151,6 @@ public class Program
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddSSOService();
         builder.Services.AddScoped<IOtpService, OtpService>();
-        builder.Services.AddScoped<IUserWalletService, UserWalletService>();
 
         var app = builder.Build();
 
@@ -170,6 +169,7 @@ public class Program
             st.UserNameWaitingChangedAfter = Convert.ToDouble(dic[nameof(st.UserNameWaitingChangedAfter)]);
             st.UsernameIsReserved = dic[nameof(st.UsernameIsReserved)];
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         st.LogInfor();
         #endregion

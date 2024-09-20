@@ -140,6 +140,11 @@ public class SettingBase : ISettingBase
     public ApiDto Api { get; }
 
     /// <summary>
+    /// RPC
+    /// </summary>
+    public ApiDto Rpc { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     public string? Origins { get; set; }
@@ -170,6 +175,7 @@ public class SettingBase : ISettingBase
         Email = new NotificationDto();
         Minio = new MinioDto();
         Api = new ApiDto();
+        Rpc = new ApiDto();
 
         EncryptKey = string.Empty;
     }
@@ -184,7 +190,7 @@ public class SettingBase : ISettingBase
     {
         if (isLocal)
         {
-            dic = hasProtocol ? _hostDicHttp : _hostDicHttps;
+            dic = hasProtocol ? _hostDicHttp1 : _hostDicHttps;
         }
 
         if (dic == null)
@@ -192,30 +198,78 @@ public class SettingBase : ISettingBase
             return;
         }
 
+        string? val;
+
         #region -- Api.Admin --
-        Api.Admin.Analytic = dic["HostAnalyticAdmin"];
-        Api.Admin.Comic = dic["HostComicAdmin"];
-        Api.Admin.Identity = dic["HostIdentityAdmin"];
-        Api.Admin.Social = dic["HostSocialAdmin"];
-        Api.Admin.Story = dic["HostStoryAdmin"];
-        Api.Admin.Sync = dic["HostSyncAdmin"];
+        if (dic.TryGetValue("HostAnalyticAdmin", out val)) Api.Admin.Analytic = val;
+        if (dic.TryGetValue("HostComicAdmin", out val)) Api.Admin.Comic = val;
+        if (dic.TryGetValue("HostIdentityAdmin", out val)) Api.Admin.Identity = val;
+        if (dic.TryGetValue("HostSocialAdmin", out val)) Api.Admin.Social = val;
+        if (dic.TryGetValue("HostStoryAdmin", out val)) Api.Admin.Story = val;
+        if (dic.TryGetValue("HostSyncAdmin", out val)) Api.Admin.Sync = val;
         #endregion
 
         #region -- Api.Mobile --
-        Api.Mobile.Comic = dic["HostComicMobile"];
-        Api.Mobile.Identity = dic["HostIdentityMobile"];
-        Api.Mobile.Social = dic["HostSocialMobile"];
-        Api.Mobile.Story = dic["HostStoryMobile"];
+        if (dic.TryGetValue("HostComicMobile", out val)) Api.Mobile.Comic = val;
+        if (dic.TryGetValue("HostIdentityMobile", out val)) Api.Mobile.Identity = val;
+        if (dic.TryGetValue("HostSocialMobile", out val)) Api.Mobile.Social = val;
+        if (dic.TryGetValue("HostStoryMobile", out val)) Api.Mobile.Story = val;
         #endregion
 
         #region -- Api.Web --
-        Api.Web.Comic = dic["HostComic"];
-        Api.Web.Identity = dic["HostIdentity"];
-        Api.Web.Media = dic["HostMedia"];
-        Api.Web.Realtime = dic["HostRealtime"];
-        Api.Web.Social = dic["HostSocial"];
-        Api.Web.Story = dic["HostStory"];
-        Api.Web.Wallet = dic["HostWallet"];
+        if (dic.TryGetValue("HostComic", out val)) Api.Web.Comic = val;
+        if (dic.TryGetValue("HostIdentity", out val)) Api.Web.Identity = val;
+        if (dic.TryGetValue("HostMedia", out val)) Api.Web.Media = val;
+        if (dic.TryGetValue("HostRealtime", out val)) Api.Web.Realtime = val;
+        if (dic.TryGetValue("HostSocial", out val)) Api.Web.Social = val;
+        if (dic.TryGetValue("HostStory", out val)) Api.Web.Story = val;
+        if (dic.TryGetValue("HostWallet", out val)) Api.Web.Wallet = val;
+        #endregion
+    }
+
+    /// <summary>
+    /// Load RPC URL
+    /// </summary>
+    /// <param name="dic">Dictionary</param>
+    /// <param name="isLocal">Is local</param>
+    public void LoadRpcUrl(Dictionary<string, string>? dic, bool isLocal)
+    {
+        if (isLocal)
+        {
+            dic = _hostDicHttp2;
+        }
+
+        if (dic == null)
+        {
+            return;
+        }
+
+        string? val;
+
+        #region -- Rpc.Admin --
+        if (dic.TryGetValue("RpcAnalyticAdmin", out val)) Rpc.Admin.Analytic = val;
+        if (dic.TryGetValue("RpcComicAdmin", out val)) Rpc.Admin.Comic = val;
+        if (dic.TryGetValue("RpcIdentityAdmin", out val)) Rpc.Admin.Identity = val;
+        if (dic.TryGetValue("RpcSocialAdmin", out val)) Rpc.Admin.Social = val;
+        if (dic.TryGetValue("RpcStoryAdmin", out val)) Rpc.Admin.Story = val;
+        if (dic.TryGetValue("RpcSyncAdmin", out val)) Rpc.Admin.Sync = val;
+        #endregion
+
+        #region -- Rpc.Mobile --
+        if (dic.TryGetValue("RpcComicMobile", out val)) Rpc.Mobile.Comic = val;
+        if (dic.TryGetValue("RpcIdentityMobile", out val)) Rpc.Mobile.Identity = val;
+        if (dic.TryGetValue("RpcSocialMobile", out val)) Rpc.Mobile.Social = val;
+        if (dic.TryGetValue("RpcStoryMobile", out val)) Rpc.Mobile.Story = val;
+        #endregion
+
+        #region -- Rpc.Web --
+        if (dic.TryGetValue("RpcComic", out val)) Rpc.Web.Comic = val;
+        if (dic.TryGetValue("RpcIdentity", out val)) Rpc.Web.Identity = val;
+        if (dic.TryGetValue("RpcMedia", out val)) Rpc.Web.Media = val;
+        if (dic.TryGetValue("RpcRealtime", out val)) Rpc.Web.Realtime = val;
+        if (dic.TryGetValue("RpcSocial", out val)) Rpc.Web.Social = val;
+        if (dic.TryGetValue("RpcStory", out val)) Rpc.Web.Story = val;
+        if (dic.TryGetValue("RpcWallet", out val)) Rpc.Web.Wallet = val;
         #endregion
     }
 
@@ -250,9 +304,9 @@ public class SettingBase : ISettingBase
     };
 
     /// <summary>
-    /// Host dictionary
+    /// Host dictionary (Http1)
     /// </summary>
-    private readonly Dictionary<string, string> _hostDicHttp = new()
+    private readonly Dictionary<string, string> _hostDicHttp1 = new()
     {
         { "HostComic", "http://localhost:54103" },
         { "HostIdentity", "http://localhost:54105" },
@@ -273,6 +327,32 @@ public class SettingBase : ISettingBase
         { "HostSocialAdmin", "http://localhost:54117" },
         { "HostStoryAdmin", "http://localhost:54118" },
         { "HostSyncAdmin", "http://localhost:54119" }
+    };
+
+    /// <summary>
+    /// Rpc dictionary (Http2)
+    /// </summary>
+    private readonly Dictionary<string, string> _hostDicHttp2 = new()
+    {
+        { "RpcComic", "http://localhost:54203" },
+        { "RpcIdentity", "http://localhost:54205" },
+        { "RpcMedia", "http://localhost:54206" },
+        { "RpcRealtime", "http://localhost:54207" },
+        { "RpcSocial", "http://localhost:54208" },
+        { "RpcStory", "http://localhost:54209" },
+        { "RpcWallet", "http://localhost:54210" },
+
+        { "RpcComicMobile", "http://localhost:54211" },
+        { "RpcIdentityMobile", "http://localhost:54212" },
+        { "RpcSocialMobile", "http://localhost:54213" },
+        { "RpcStoryMobile", "http://localhost:54214" },
+
+        { "RpcAnalyticAdmin", "http://localhost:54202" },
+        { "RpcComicAdmin", "http://localhost:54215" },
+        { "RpcIdentityAdmin", "http://localhost:54216" },
+        { "RpcSocialAdmin", "http://localhost:54217" },
+        { "RpcStoryAdmin", "http://localhost:54218" },
+        { "RpcSyncAdmin", "http://localhost:54219" }
     };
 
     #endregion

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using FluentValidation;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +23,7 @@ using Lib.Data.Repositories.Interface;
 using Requests;
 using Response;
 using Validators;
+using Wallet.Api.Protos;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 using static Constants.SocialMediaConstants;
@@ -48,8 +50,7 @@ public partial class AuthenticationService : IAuthenticationService
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
     /// <param name="smartLookupRepository"></param>
-    /// <param name="userWalletService"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository, IUserWalletService userWalletService)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository)
     {
         _context = context;
         _setting = setting;
@@ -66,7 +67,6 @@ public partial class AuthenticationService : IAuthenticationService
         _serviceAccessor = serviceAccessor;
         _otpService = otpService;
         _smartLookupRepository = smartLookupRepository;
-        _userWalletService = userWalletService;
     }
 
     public async Task CheckRegisterUser(AuthenticationRegisterUserR request)
@@ -168,8 +168,7 @@ public partial class AuthenticationService : IAuthenticationService
             });
             await _userManager.AddToRoleAsync(user, RoleNames.User);
 
-            //setup wallet
-            await _userWalletService.InitUserWalletAsync(user, false);
+            _ = Task.Run(async () => await InitUserWallet(user));
         }
 
         if (request.IsForAdmin)
@@ -382,8 +381,7 @@ public partial class AuthenticationService : IAuthenticationService
 
                 await _userManager.AddToRoleAsync(user, RoleNames.User);
 
-                //setup wallet
-                await _userWalletService.InitUserWalletAsync(user, false);
+                _ = Task.Run(async () => await InitUserWallet(user));
 
                 var ettUserSocial = new UserSocial
                 {
@@ -1053,6 +1051,39 @@ public partial class AuthenticationService : IAuthenticationService
         }
     }
 
+    /// <summary>
+    /// Init UserWallet
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <returns>Return the result</returns>
+    private async Task<BaseRsp> InitUserWallet(User user)
+    {
+        var res = new BaseRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Wallet!);
+
+            var client = new UserWalletProto.UserWalletProtoClient(channel);
+            var request = new UserWalletCreateReq
+            {
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                ProfileName = user.ProfileName
+            };
+            var rsp = await client.CreateAsync(request);
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
     #endregion
 
     #region -- Fields --
@@ -1087,7 +1118,6 @@ public partial class AuthenticationService : IAuthenticationService
     private readonly SSOServiceResolver _serviceAccessor;
     private readonly IOtpService _otpService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly IUserWalletService _userWalletService;
 
     #endregion
 }
