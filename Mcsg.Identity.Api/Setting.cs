@@ -4,7 +4,6 @@ namespace Mcsg.Identity.Api;
 
 using Common.SeedWork;
 using Interfaces;
-using static Common.SeedWork.Dtos.ConnectionDto;
 using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
@@ -13,11 +12,6 @@ using static Common.SeedWork.Dtos.StorageDto;
 public class Setting : SettingBase, ISetting
 {
     #region -- Implements --
-
-    /// <summary>
-    /// Database Wallet
-    /// </summary>
-    public DatabaseDto DbWallet { get; }
 
     /// <summary>
     /// Notification exchange
@@ -78,11 +72,11 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public Setting()
     {
-        DbWallet = new DatabaseDto();
         NotificationExchange = string.Empty;
         NotificationQueueEmail = string.Empty;
         NotificationQueueSms = string.Empty;
         NotificationRoutingKey = string.Empty;
+        UsernameIsReserved = string.Empty;
     }
 
     /// <summary>

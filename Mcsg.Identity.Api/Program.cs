@@ -18,7 +18,6 @@ using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data.Wallet;
 using Models;
 using Services;
 using static Common.Core.Constants.Setting;
@@ -58,7 +57,6 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
-        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -100,7 +98,6 @@ public class Program
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(csDbWallet);
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
