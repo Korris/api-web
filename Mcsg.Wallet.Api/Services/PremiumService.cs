@@ -24,7 +24,7 @@ using static Common.Core.Constants.Setting;
 public partial class PremiumService : IPremiumService
 {
     private readonly IConfiguration _configuration;
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly DistributeManager _distributeManager;
     private readonly IBankService _bankService;
@@ -35,7 +35,7 @@ public partial class PremiumService : IPremiumService
           IBankService bankService,
            IUnitOfWork unitOfWork,
          ICurrentUserService currentUserService,
-        WalletDbContext walletDbContext)
+        WalletContext walletDbContext)
     {
         _configuration = configuration;
         _dbContext = walletDbContext;

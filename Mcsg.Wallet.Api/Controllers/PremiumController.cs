@@ -14,11 +14,11 @@ using Requests;
 public class PremiumController : ControllerBase
 {
     private readonly IPremiumService _premiumService;
-    readonly WalletDbContext _walletDbContext;
+    readonly WalletContext _walletDbContext;
     IRepository<User> _repository;
 
     public PremiumController(IPremiumService premiumService,
-        WalletDbContext walletDbContext,
+        WalletContext walletDbContext,
         IOtpService otpService,
         IRepository<User> repository)
     {

@@ -22,10 +22,10 @@ public class ZaloPayService : IZaloPayService
 {
     private readonly ZaloPaySetting _zaloPaySetting;
     private readonly ISignalRService _signalRService;
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
 
-    public ZaloPayService(WalletDbContext walletDbContext,
+    public ZaloPayService(WalletContext walletDbContext,
         ICurrentUserService currentUserService,
         ISignalRService signalRService,
         IOptions<ZaloPaySetting> zaloPaySettingOptions,

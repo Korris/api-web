@@ -11,9 +11,9 @@ using Models;
 public class BankService : IBankService
 {
     private readonly IConfiguration _configuration;
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
 
-    public BankService(IConfiguration configuration, WalletDbContext walletDbContext)
+    public BankService(IConfiguration configuration, WalletContext walletDbContext)
     {
         _configuration = configuration;
         _dbContext = walletDbContext;

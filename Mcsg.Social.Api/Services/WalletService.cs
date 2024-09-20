@@ -13,13 +13,13 @@ using Models.Earning;
 
 public class WalletService : IWalletService
 {
-    private readonly WalletDbContext _walletDbContext;
+    private readonly WalletContext _walletDbContext;
     private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     private readonly ILogger<WalletService> _logger;
     private readonly IMapper _mapper;
 
-    public WalletService(WalletDbContext walletDbContext
+    public WalletService(WalletContext walletDbContext
         , ICurrentUserService currentUserService
         , IConfiguration configuration
         , ILogger<WalletService> logger

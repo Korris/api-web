@@ -8,7 +8,7 @@ using Enums;
 /// <summary>
 /// WalletDbContext
 /// </summary>
-public class WalletDbContext : DbContext
+public class WalletContext : DbContext
 {
     #region -- Overrides --
 
@@ -182,7 +182,7 @@ public class WalletDbContext : DbContext
     /// Initialize
     /// </summary>
     /// <param name="options">Options</param>
-    public WalletDbContext(DbContextOptions<WalletDbContext> options) : base(options) { }
+    public WalletContext(DbContextOptions<WalletContext> options) : base(options) { }
 
     #endregion
 

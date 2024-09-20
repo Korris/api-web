@@ -18,7 +18,7 @@ using Lib.Data.Wallet.Enums;
 
 public class PaymentService : IPaymentService
 {
-    public PaymentService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
+    public PaymentService(IUnitOfWork unitOfWork, WalletContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
     {
         _unitOfWork = unitOfWork;
         _walletDbContext = walletDbContext;
@@ -129,7 +129,7 @@ public class PaymentService : IPaymentService
 
     #region -- Fields --
 
-    private readonly WalletDbContext _walletDbContext;
+    private readonly WalletContext _walletDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PaymentService> _logger;
 

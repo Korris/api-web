@@ -66,7 +66,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public UserWalletService(WalletDbContext context)
+    public UserWalletService(WalletContext context)
     {
         _context = context;
     }
@@ -114,7 +114,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly WalletDbContext _context;
+    private readonly WalletContext _context;
 
     #endregion
 

@@ -20,12 +20,12 @@ public class UserWalletController : ControllerBase
     private readonly IUserWalletService _userWalletService;
     private readonly IZaloPayService _zaloPayService;
     private readonly IOtpService _otpService;
-    readonly WalletDbContext _walletDbContext;
+    readonly WalletContext _walletDbContext;
     IRepository<User> _repository;
 
     public UserWalletController(IUserWalletService userWalletService,
         IZaloPayService zaloPayService,
-        WalletDbContext walletDbContext,
+        WalletContext walletDbContext,
         IOtpService otpService,
         IRepository<User> repository)
     {

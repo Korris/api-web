@@ -12,9 +12,9 @@ using Models;
 
 public class SystemService : ISystemService
 {
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
     private readonly DistributeManager _distributeManager;
-    public SystemService(WalletDbContext walletDbContext, DistributeManager distributeManager)
+    public SystemService(WalletContext walletDbContext, DistributeManager distributeManager)
     {
         _dbContext = walletDbContext;
         _distributeManager = distributeManager;

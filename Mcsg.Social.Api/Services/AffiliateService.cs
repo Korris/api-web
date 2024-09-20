@@ -17,13 +17,13 @@ using Models.Earning;
 
 public class AffiliateService : IAffiliateService
 {
-    private readonly WalletDbContext _walletDbContext;
+    private readonly WalletContext _walletDbContext;
     private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     private readonly ILogger<WalletService> _logger;
     private readonly IMapper _mapper;
 
-    public AffiliateService(WalletDbContext walletDbContext
+    public AffiliateService(WalletContext walletDbContext
         , ICurrentUserService currentUserService
         , IConfiguration configuration
         , ILogger<WalletService> logger

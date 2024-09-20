@@ -7,7 +7,7 @@ namespace Mcsg.Lib.Data.Wallet
     {
         public static void AddWalletDbContext(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContext<WalletDbContext>(o =>
+            services.AddDbContext<WalletContext>(o =>
             {
                 o.UseNpgsql(connectionString, options => options.EnableRetryOnFailure());
             });

@@ -6,18 +6,18 @@ namespace Mcsg.Lib.Data.Wallet;
 /// <summary>
 /// WalletDbContextFactory
 /// </summary>
-public class WalletDbContextFactory : IDesignTimeDbContextFactory<WalletDbContext>
+public class WalletContextFactory : IDesignTimeDbContextFactory<WalletContext>
 {
     /// <summary>
     /// CreateDbContext
     /// </summary>
     /// <param name="args">Arguments</param>
     /// <returns>Return the result</returns>
-    public WalletDbContext CreateDbContext(string[] args)
+    public WalletContext CreateDbContext(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<WalletDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<WalletContext>();
         optionsBuilder.UseNpgsql(args[0]); // args[0] as a connection string
 
-        return new WalletDbContext(optionsBuilder.Options);
+        return new WalletContext(optionsBuilder.Options);
     }
 }

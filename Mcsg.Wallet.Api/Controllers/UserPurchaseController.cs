@@ -17,11 +17,11 @@ public class UserPurchaseController : ControllerBase
     //https://vietqr.io/paymentRequests/#operation/paymentLink
     //https://vietqr.io/danh-sach-api/api-danh-sach-ma-ngan-hang
     private readonly IUserPurchaseService _userPurchaseService;
-    readonly WalletDbContext _walletDbContext;
+    readonly WalletContext _walletDbContext;
     IRepository<User> _repository;
 
     public UserPurchaseController(IUserPurchaseService userPurchaseService,
-        WalletDbContext walletDbContext,
+        WalletContext walletDbContext,
         IOtpService otpService,
         IRepository<User> repository)
     {

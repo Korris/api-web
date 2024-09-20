@@ -17,10 +17,10 @@ using Models;
 
 public class OtpService : IOtpService
 {
-    private readonly WalletDbContext _walletDbContext;
+    private readonly WalletContext _walletDbContext;
     private readonly DistributeManager _distributeManager;
     private readonly OtpSetting _otpSetting;
-    public OtpService(WalletDbContext walletDbContext,
+    public OtpService(WalletContext walletDbContext,
         DistributeManager distributeManager,
         IOptions<OtpSetting> otpSettingoptions)
     {

@@ -29,7 +29,7 @@ using static Common.Core.Constants.Setting;
 public class UserWalletService : IUserWalletService
 {
     public UserWalletService(
-        WalletDbContext walletDbContext,
+        WalletContext walletDbContext,
         ICurrentUserService currentUserService,
         IOtpService otpService,
         IBankService bankService,
@@ -911,7 +911,7 @@ public class UserWalletService : IUserWalletService
 
     #region -- Fields --
 
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly IConfiguration _configuration;
     private readonly IBankService _bankService;

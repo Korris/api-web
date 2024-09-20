@@ -20,14 +20,14 @@ using static Common.Core.Constants.Setting;
 
 public partial class SyncDataService : ISyncDataService
 {
-    private readonly WalletDbContext _walletDbContext;
+    private readonly WalletContext _walletDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialSubPost> _subPostRepository;
     private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
 
-    public SyncDataService(IUnitOfWork unitOfWork, WalletDbContext walletDbContext)
+    public SyncDataService(IUnitOfWork unitOfWork, WalletContext walletDbContext)
     {
         _unitOfWork = unitOfWork;
         _userRepository = unitOfWork.GetRepository<User>();

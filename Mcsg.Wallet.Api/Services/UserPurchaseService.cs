@@ -16,14 +16,14 @@ using Requests;
 
 public class UserPurchaseService : IUserPurchaseService
 {
-    private readonly WalletDbContext _dbContext;
+    private readonly WalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly IConfiguration _configuration;
     private readonly IBankService _bankService;
 
     private readonly IOtpService _otpService;
     private readonly ISystemService _systemService;
-    public UserPurchaseService(WalletDbContext walletDbContext,
+    public UserPurchaseService(WalletContext walletDbContext,
         ICurrentUserService currentUserService,
         IOtpService otpService,
         IBankService bankService,
