@@ -24,7 +24,6 @@ namespace Mcsg.Common.Core.Extensions;
 using Enums;
 using SeedWork.Enums;
 using SeedWork.Extensions;
-using SeedWork.Interfaces;
 using static Constants.Setting;
 using static SeedWork.Constants.Error;
 using static SeedWork.Constants.Message;
@@ -41,8 +40,7 @@ public static class StringExtension
     /// https://github.com/serilog/serilog/wiki/Getting-Started
     /// </summary>
     /// <param name="name">Log file name</param>
-    /// <param name="setting">Setting</param>
-    public static void StartLogger(this string name, ISettingBase setting)
+    public static void StartLogger(this string name)
     {
         // Ensure the logs directory exists
         var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"..\\..\\logs\\{name}").ToPathPlatform();
@@ -78,11 +76,6 @@ public static class StringExtension
             .CreateLogger();
 
         LogInfor($"{name} is started");
-
-        // Log information about the system environment
-        var st = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
-        var json = JsonConvert.SerializeObject(setting, Formatting.Indented, st);
-        LogInfor($"System environments: {json}");
     }
 
     /// <summary>

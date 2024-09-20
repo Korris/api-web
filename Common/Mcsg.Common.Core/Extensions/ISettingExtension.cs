@@ -69,5 +69,17 @@ public static class ISettingExtension
         }
     }
 
+    /// <summary>
+    /// Writes a log event at the information level
+    /// </summary>
+    /// <param name="setting">Setting</param>
+    public static void LogInfor(this ISettingBase setting)
+    {
+        // Log information about the system environment
+        var st = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+        var json = JsonConvert.SerializeObject(setting, Formatting.Indented, st);
+        $"System environments: {json}".LogInfor();
+    }
+
     #endregion
 }

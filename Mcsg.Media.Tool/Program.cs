@@ -65,6 +65,7 @@ internal class Program
             var cancellation = new CancellationTokenSource();
             await new WorkDistributor(context, st, sc!).Run(cancellation.Token);
         }
+        st.LogInfor();
         #endregion
 
         Console.ReadLine();

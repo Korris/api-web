@@ -47,7 +47,7 @@ public class Program
 
         // Start logger
         builder.Host.UseSerilog();
-        assembly!.StartLogger(st);
+        assembly!.StartLogger();
         builder.Services.AddSingleton(Log.Logger);
 
         #region -- Load HTTP protocols --
@@ -132,6 +132,7 @@ public class Program
 
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
         }
+        st.LogInfor();
         #endregion
 
         #region -- Swagger and CORS --
