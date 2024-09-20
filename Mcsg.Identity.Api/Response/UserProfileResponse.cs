@@ -1,6 +1,6 @@
-﻿using static Mcsg.Common.SeedWork.Constants.Setting;
+﻿namespace Mcsg.Identity.Api.Response;
 
-namespace Mcsg.Identity.Api.Response;
+using static Common.SeedWork.Constants.Setting;
 
 public class UserProfileResponse
 {

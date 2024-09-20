@@ -19,7 +19,7 @@ using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
-using static Mcsg.Common.Core.Constants.Setting;
+using static Common.Core.Constants.Setting;
 
 public class NotificationService : INotificationService
 {
