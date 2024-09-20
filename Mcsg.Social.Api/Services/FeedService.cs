@@ -413,8 +413,9 @@ public partial class FeedService : IFeedService
              }
         });
 
+        var tableName = data.Resources.Count == 1 ? $@"social.""SocialPostReactions""" : $@"social.""SocialSubPostReactions""";
         var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
-        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialSubPostReactions"""), new
+        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, tableName), new
         {
             TargetIds = new List<Guid>() { data.Id },
             UserId = userId
