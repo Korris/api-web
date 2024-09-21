@@ -13,6 +13,7 @@ using Dtos;
 using Interfaces;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
+using Mcsg.Common.Domain;
 using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
@@ -41,6 +42,7 @@ public partial class StoryReplyService : IStoryReplyService
         IRepository<StoryResource> resourceRepository,
         IRepository<Mention> mentionRepository,
         IStoryNotificationService notificationService,
+        IBusinessText businessText,
         IMentionService mentionService,
         IMapper mapper,
         ISetting setting,
@@ -59,6 +61,7 @@ public partial class StoryReplyService : IStoryReplyService
         _mapper = mapper;
         _setting = setting;
         _configuration = configuration;
+        _businessText = businessText;
     }
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
@@ -136,6 +139,8 @@ public partial class StoryReplyService : IStoryReplyService
             await _notificationService.AddReplyNotification(commentNotiRequest);
         }
 
+        response.UserAvatar = userAvatar;
+        response.ReplyText = await _businessText.Process(req.ReplyText);
         response.CustomNote = req.CustomNote;
 
         return response;
@@ -193,10 +198,10 @@ public partial class StoryReplyService : IStoryReplyService
         }
 
         response.AuthorName = authorName;
-        response.UserAvatar = userAvatar;
         response.UserName = userName;
+        response.UserAvatar = userAvatar;
+        response.ReplyText = await _businessText.Process(req.ReplyText);
         response.CustomNote = req.CustomNote;
-
         return response;
     }
     public async Task<ReplyCommentResp> DeleteReplyComment(DeleteReplyCommentReq req)
@@ -473,6 +478,11 @@ public partial class StoryReplyService : IStoryReplyService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    /// <summary>
+    /// Business text
+    /// </summary>
+    private readonly IBusinessText _businessText;
 
     #endregion
 }

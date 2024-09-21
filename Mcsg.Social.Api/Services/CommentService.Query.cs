@@ -27,6 +27,7 @@
                                                LEFT JOIN identity.""Users"" u on pc.""CreatedBy"" = u.""Id"" 
                                                WHERE pc.""ParentId"" = @CommentId AND u.""IsDelete"" = false
                                                AND pc.""IsDelete"" = false
+                                               ORDER BY pc.""CreatedOn"" 
                                                LIMIT @PageSize
                                                OFFSET @Offset;
                                                 
