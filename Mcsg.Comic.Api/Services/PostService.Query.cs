@@ -805,7 +805,7 @@ LIMIT 1
                     FROM ""comic"".""ComicSubPosts"" sp
                     INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false
-                    ORDER BY sp.""Order"";
+                    ORDER BY sp.""Sort"";
 
                         SELECT COUNT(*) AS TotalItems 
                         FROM (
