@@ -595,6 +595,7 @@ public partial class AuthenticationService : IAuthenticationService
     public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
     {
         var res = new VerifyUserResponse();
+        var code = "";
 
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
@@ -612,6 +613,7 @@ public partial class AuthenticationService : IAuthenticationService
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.ResetByEmail);
             res.Token = userOtp.Token;
+            code = userOtp.Code;
             res.IsEmail = true;
         }
 
@@ -625,7 +627,14 @@ public partial class AuthenticationService : IAuthenticationService
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.ResetByPhone);
             res.Token = userOtp.Token;
+            code = userOtp.Code;
             res.IsPhone = true;
+        }
+
+        if (_setting.DevMode)
+        {
+            res.Code = code;
+            res.UserName = user?.UserName;
         }
 
         return res;
