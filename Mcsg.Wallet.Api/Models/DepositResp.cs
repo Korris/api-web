@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Models;
 
-using Lib.Data.Wallet.Enums;
+using Domain.Enums;
 
 public class DepositResp
 {

@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Models;
 
 using Common.Core.Enums;
+using Domain.Enums;
 using Lib.Common.Models;
-using Lib.Data.Wallet.Enums;
 
 public class UserWalletTransactionResp
 {

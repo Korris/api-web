@@ -3,10 +3,11 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Common.Core.Enums;
 using Constants;
+using Domain;
+using Domain.Entities;
 using Interfaces;
-using Lib.Data.Wallet;
-using Mcsg.Common.Core.Enums;
 using Models;
 
 public class BankService : IBankService
@@ -61,7 +62,7 @@ public class BankService : IBankService
             var bankDb = bankListDb.FirstOrDefault(x => x.SelfId == bank.Id && x.Code == bank.Code);
             if (bankDb == null)
             {
-                _dbContext.PaymentMethods.Add(new Lib.Data.Wallet.Entities.PaymentMethod
+                _dbContext.PaymentMethods.Add(new PaymentMethod
                 {
                     Name = bank.Name,
                     Logo = bank.Logo,

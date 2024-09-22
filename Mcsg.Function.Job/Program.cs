@@ -14,8 +14,8 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Mail;
 using Lib.Common.Models;
-using Lib.Data.Wallet;
 using Services;
+using Wallet.Domain;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 

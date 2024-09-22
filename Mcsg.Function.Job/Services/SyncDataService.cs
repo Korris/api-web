@@ -13,9 +13,9 @@ using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Lib.Data.Wallet;
-using Lib.Data.Wallet.Entities;
-using Lib.Data.Wallet.Enums;
+using Wallet.Domain;
+using Wallet.Domain.Entities;
+using Wallet.Domain.Enums;
 using static Common.Core.Constants.Setting;
 
 public partial class SyncDataService : ISyncDataService

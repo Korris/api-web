@@ -23,10 +23,10 @@ using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Lib.Data.Wallet;
 using Models;
 using Services;
 using Validators;
+using Wallet.Domain;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 

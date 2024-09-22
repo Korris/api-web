@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Mcsg.Wallet.Api.Controllers;
 
 using Common.Domain.Entities;
+using Domain;
+using Domain.Enums;
 using Interfaces;
 using Lib.Data.Repositories;
-using Lib.Data.Wallet;
-using Lib.Data.Wallet.Enums;
 using Requests;
 
 [ApiController]

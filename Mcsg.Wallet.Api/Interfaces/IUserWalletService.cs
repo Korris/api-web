@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
 using Api.Models._3rdClass.ZaloPay.Response;
+using Domain.Enums;
 using Lib.Common.Models;
-using Lib.Data.Wallet.Enums;
 using Models;
 using Requests;
 

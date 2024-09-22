@@ -14,7 +14,7 @@ using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
 using Lib.Data.Repositories.Interface;
-using Lib.Data.Wallet;
+using Wallet.Domain;
 
 public class PaymentService : IPaymentService
 {

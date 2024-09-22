@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Wallet.Api.Constants;
 
 using Common.Core.Enums;
-using Lib.Data.Wallet.Enums;
+using Domain.Enums;
 
 public class ApiMessages
 {

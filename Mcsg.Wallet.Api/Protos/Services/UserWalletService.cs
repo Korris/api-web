@@ -5,9 +5,9 @@ namespace Mcsg.Wallet.Api.Protos.Services;
 
 using Common.Core.Extensions;
 using Common.SeedWork.Extensions;
-using Lib.Data.Wallet;
-using Lib.Data.Wallet.Entities;
-using Lib.Data.Wallet.Enums;
+using Domain;
+using Domain.Entities;
+using Domain.Enums;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>

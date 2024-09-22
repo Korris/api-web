@@ -8,13 +8,13 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Constants;
+using Domain;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
 using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
-using Lib.Data.Wallet;
 using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
 

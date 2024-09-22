@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
-using Lib.Data.Wallet.Entities;
-using Lib.Data.Wallet.Enums;
+using Domain.Entities;
+using Domain.Enums;
 using Models;
 
 public interface IOtpService

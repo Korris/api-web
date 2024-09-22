@@ -11,9 +11,9 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
-using Lib.Data.Wallet;
-using Lib.Data.Wallet.Enums;
 using Models.Earning;
+using Wallet.Domain;
+using Wallet.Domain.Enums;
 
 public class AffiliateService : IAffiliateService
 {

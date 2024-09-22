@@ -3,9 +3,9 @@
 namespace Mcsg.Wallet.Api.Controllers;
 
 using Common.Domain.Entities;
+using Domain;
 using Interfaces;
 using Lib.Data.Repositories;
-using Lib.Data.Wallet;
 using Requests;
 
 [ApiController]
