@@ -1,6 +1,12 @@
 ﻿namespace Mcsg.Wallet.Domain.Enums;
 
+/// <summary>
+/// WalletSettingDetailType
+/// </summary>
 public enum WalletSettingDetailType
 {
-    WithDrawNotify = 0
+    /// <summary>
+    /// WithDrawNotify
+    /// </summary>
+    WithDrawNotify
 }

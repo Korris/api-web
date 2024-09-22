@@ -126,10 +126,10 @@ public class UserWalletService : IUserWalletService
             .Select(x => new UserWalletTransactionItemResp
             {
                 Amount = x.Amount,
-                AmountSign = (x.Type == TransactionType.DEPOSIT
-                            || x.Type == TransactionType.REWARD
-                            || (x.Type == TransactionType.DONATE && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                AmountSign = (x.Type == TransactionType.Deposit
+                            || x.Type == TransactionType.Reward
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
@@ -164,10 +164,10 @@ public class UserWalletService : IUserWalletService
             .Select(x => new UserWalletTransactionItemDetailResp
             {
                 Amount = x.Amount,
-                AmountSign = (x.Type == TransactionType.DEPOSIT
-                            || x.Type == TransactionType.REWARD
-                            || (x.Type == TransactionType.DONATE && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                AmountSign = (x.Type == TransactionType.Deposit
+                            || x.Type == TransactionType.Reward
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
@@ -179,13 +179,13 @@ public class UserWalletService : IUserWalletService
                 PaymentMethod = (
                     x.UserPaymentMethods != null) ?
                     new PaymentMethodResp { Logo = x.UserPaymentMethods.PaymentMethod.Logo, Name = x.UserPaymentMethods.PaymentMethod.Name } :
-                    (x.Type == TransactionType.DEPOSIT && x.SystemMethod != null) ? new PaymentMethodResp
+                    (x.Type == TransactionType.Deposit && x.SystemMethod != null) ? new PaymentMethodResp
                     {
                         Name = x.SystemMethod == SystemPaymentMethod.Bank ? "Direct Banking" : x.SystemMethod == SystemPaymentMethod.ZaloPay ? "Zalo Pay" : ""
                     } : null,
                 ReferenceNumber = x.ReferenceNumber,
                 ToUser = x.DestinationUserWallet != null ? x.DestinationUserWallet.ProfileName : string.Empty,
-                ToUserId = x.DestinationUserWallet != null ? x.DestinationUserWallet.UserId : ((x.Type == TransactionType.DEPOSIT || x.Type == TransactionType.BUY_PREMIUM) ? Guid.Empty : null),
+                ToUserId = x.DestinationUserWallet != null ? x.DestinationUserWallet.UserId : ((x.Type == TransactionType.Deposit || x.Type == TransactionType.BuyPremium) ? Guid.Empty : null),
                 TransactionStatus = x.Status,
                 TransactionType = x.Type,
                 Id = x.Id,
@@ -228,13 +228,13 @@ public class UserWalletService : IUserWalletService
 
         switch (transaction.Type)
         {
-            case TransactionType.DEPOSIT:
+            case TransactionType.Deposit:
                 {
                     transaction.DestinationUserWallet.Point += transaction.Amount;
                     break;
                 }
-            case TransactionType.DONATE:
-            case TransactionType.TRANSFER:
+            case TransactionType.Donate:
+            case TransactionType.Transfer:
                 {
                     //Source
                     if (transaction.SourceUserWallet.RewardPoint >= transaction.Amount)
@@ -472,7 +472,7 @@ public class UserWalletService : IUserWalletService
                 userWallet.Id,
                 toUserWallet.Id,
                 req.Amount,
-                TransactionType.DONATE,
+                TransactionType.Donate,
                 req.Content,
                 ApiMessages.DONATE_TO_USER);
             transaction.SystemMethod = SystemPaymentMethod.Point;
@@ -518,7 +518,7 @@ public class UserWalletService : IUserWalletService
                 userWallet.Id,
                 toUserWallet.Id,
                 req.Amount,
-                TransactionType.TRANSFER,
+                TransactionType.Transfer,
                 req.Content,
                 ApiMessages.TRANSFER_TO_USER);
             transaction.SystemMethod = SystemPaymentMethod.Point;
@@ -586,7 +586,7 @@ public class UserWalletService : IUserWalletService
                 userWallet.Id,
                 req.UserPaymentMethodId,
                 req.Amount,
-                TransactionType.WITHDRAW,
+                TransactionType.Withdraw,
                 req.Content,
                 ApiMessages.WITHDRAW_MESSAGE);
         transaction.SystemMethod = SystemPaymentMethod.Bank;
@@ -597,7 +597,7 @@ public class UserWalletService : IUserWalletService
         var otpInfo = await _otpService.CreateAsync(transaction, TransactionOtpType.Email);
         otpInfo.ToProfileName = userWallet.ProfileName;
 
-        await _systemService.SendAdminNoti(nameof(TransactionType.WITHDRAW), _currentUserService?.Session?.ProfileId, transaction.Content);
+        await _systemService.SendAdminNoti(nameof(TransactionType.Withdraw), _currentUserService?.Session?.ProfileId, transaction.Content);
         await _dbContext.SaveChangesAsync();
 
         return otpInfo;
@@ -634,7 +634,7 @@ public class UserWalletService : IUserWalletService
                 userWallet.Id,
                 null,
                 req.PointAmount,
-                TransactionType.DEPOSIT,
+                TransactionType.Deposit,
                 "",
                 ApiMessages.DEPOSIT_MESSAGE);
         var currencyRatio = _bankService.GetCurrencyTypeRatios().FirstOrDefault(x => x.Type == req.CurrencyType)?.Ratio ?? 0;
@@ -670,13 +670,13 @@ public class UserWalletService : IUserWalletService
             {
                 QRCodeUrl = CreateQRCode(amountToDeposit, transaction.ReferenceNumber),
                 TransactionId = transaction.Id,
-                Type = TransactionType.DEPOSIT,
+                Type = TransactionType.Deposit,
                 ToBankName = bankName,
                 ToAccountName = bankAccountName,
                 ToAccountNumber = bankAccount,
             };
 
-            await _systemService.SendAdminNoti(nameof(TransactionType.DEPOSIT), _currentUserService?.Session?.ProfileId, transaction.Content);
+            await _systemService.SendAdminNoti(nameof(TransactionType.Deposit), _currentUserService?.Session?.ProfileId, transaction.Content);
 
             return depositResp;
         }
@@ -705,7 +705,7 @@ public class UserWalletService : IUserWalletService
                 {
                     QRCodeUrl = "",
                     TransactionId = transaction.Id,
-                    Type = TransactionType.DEPOSIT,
+                    Type = TransactionType.Deposit,
                     ToBankName = "",
                     ToAccountName = "",
                     ToAccountNumber = "",
@@ -796,7 +796,7 @@ public class UserWalletService : IUserWalletService
         }
 
         var transaction = await _dbContext.WalletTransactions.Where(x => x.Id == req.TransactionId
-        && x.SourceUserWalletId == userWallet.Id && x.Type == TransactionType.DEPOSIT).FirstOrDefaultAsync();
+        && x.SourceUserWalletId == userWallet.Id && x.Type == TransactionType.Deposit).FirstOrDefaultAsync();
         if (transaction == null)
         {
             throw new BadRequestException(ApiErrorCodes.TRANSACTION_NOT_FOUND, ApiErrorMessage.TRANSACTION_NOT_FOUND);
@@ -879,7 +879,7 @@ public class UserWalletService : IUserWalletService
             Status = TransactionStatus.Pending,
             Type = type
         };
-        if (type == TransactionType.WITHDRAW || type == TransactionType.DEPOSIT)
+        if (type == TransactionType.Withdraw || type == TransactionType.Deposit)
         {
             transaction.UserPaymentMethodId = destinationId;
         }

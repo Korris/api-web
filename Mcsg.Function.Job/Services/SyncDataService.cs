@@ -73,7 +73,7 @@ public partial class SyncDataService : ISyncDataService
                 ModifiedOn = DateTime.UtcNow,
                 DestinationUserWalletId = userWallet.Id,
                 Status = TransactionStatus.Success,
-                Type = TransactionType.REWARD,
+                Type = TransactionType.Reward,
                 IsConfirmed = true,
             };
 

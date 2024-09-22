@@ -54,17 +54,17 @@ public class UserPurchaseService : IUserPurchaseService
                 .Where(x =>
                     (
                         (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId)
-                        && (x.Type == TransactionType.BUY_PREMIUM || x.Type == TransactionType.BUY_CHAPTER)
+                        && (x.Type == TransactionType.BuyPremium || x.Type == TransactionType.BuyChapter)
                     )
                     )
                 .OrderByDescending(x => x.CreatedOn)
                 .Select(x => new UserPurchaseTransactionItemDetailResp
                 {
                     Amount = x.Amount,
-                    AmountSign = (x.Type == TransactionType.DEPOSIT
-                                || x.Type == TransactionType.REWARD
-                                || (x.Type == TransactionType.DONATE && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                                || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                    AmountSign = (x.Type == TransactionType.Deposit
+                                || x.Type == TransactionType.Reward
+                                || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                                || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                                 ) ? "+" : "-",
                     Content = x.Content,
                     CreatedOn = x.CreatedOn,
@@ -85,7 +85,7 @@ public class UserPurchaseService : IUserPurchaseService
 
             var countQuery = _dbContext.WalletTransactions
                 .Where(x => (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId)
-                        && (x.Type == TransactionType.BUY_PREMIUM || x.Type == TransactionType.BUY_CHAPTER)).AsNoTracking()
+                        && (x.Type == TransactionType.BuyPremium || x.Type == TransactionType.BuyChapter)).AsNoTracking()
                 .Select(x => new UserPurchaseTransactionItemDetailResp { Id = x.Id });
             //TODO
             var items = await query.ToListAsync();
@@ -134,10 +134,10 @@ public class UserPurchaseService : IUserPurchaseService
             .Select(x => new UserPurchaseTransactionItemDetailResp
             {
                 Amount = x.Amount,
-                AmountSign = (x.Type == TransactionType.DEPOSIT
-                            || x.Type == TransactionType.REWARD
-                            || (x.Type == TransactionType.DONATE && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.TRANSFER && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                AmountSign = (x.Type == TransactionType.Deposit
+                            || x.Type == TransactionType.Reward
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,

@@ -33,7 +33,7 @@ public class SystemService : ISystemService
     private async Task CreateEmailNotiAsync(string action, string to, string fromUser, string content)
     {
         var body = $"{action},{fromUser},{content}";
-        var jobType = action == nameof(TransactionType.DEPOSIT) ? JobType.DepositNoti : JobType.WithDrawNoti;
+        var jobType = action == nameof(TransactionType.Deposit) ? JobType.DepositNoti : JobType.WithDrawNoti;
         var emailJob = new EmailJobDistributeItem
         {
             Email = new Email { To = to, Body = body },

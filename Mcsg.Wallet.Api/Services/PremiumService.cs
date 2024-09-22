@@ -109,7 +109,7 @@ public partial class PremiumService : IPremiumService
             ModifiedOn = now,
             SourceUserWalletId = userWallet.Id,
             Status = TransactionStatus.Pending,
-            Type = TransactionType.BUY_PREMIUM
+            Type = TransactionType.BuyPremium
         };
         var purchaseHistory = new UserPurchaseTransaction
         {
@@ -275,7 +275,7 @@ public partial class PremiumService : IPremiumService
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.ChapterId,
             Status = TransactionStatus.Pending,
-            Type = TransactionType.BUY_CHAPTER
+            Type = TransactionType.BuyChapter
         };
 
         var purchaseHistory = new UserPurchaseTransaction
@@ -371,7 +371,7 @@ public partial class PremiumService : IPremiumService
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.SerieId,
             Status = TransactionStatus.Pending,
-            Type = TransactionType.BUY_SERIES
+            Type = TransactionType.BuySeries
         };
 
         var purchaseHistory = new UserPurchaseTransaction

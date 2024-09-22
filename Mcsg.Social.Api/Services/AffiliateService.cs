@@ -112,9 +112,9 @@ public class AffiliateService : IAffiliateService
 
         var transIds = detailTrans.Select(x => x.WalletTransactionId).ToList();
 
-        var affiliateTransType = new List<TransactionType>() { TransactionType.BUY_PREMIUM
-                                                , TransactionType.BUY_CHAPTER
-                                                , TransactionType.BUY_SERIES };
+        var affiliateTransType = new List<TransactionType>() { TransactionType.BuyPremium
+                                                , TransactionType.BuyChapter
+                                                , TransactionType.BuySeries };
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
@@ -155,9 +155,9 @@ public class AffiliateService : IAffiliateService
 
         var transIds = detailTrans.Select(x => x.WalletTransactionId).ToList();
 
-        var affiliateTransType = new List<TransactionType>() { TransactionType.BUY_PREMIUM
-                                                , TransactionType.BUY_CHAPTER
-                                                , TransactionType.BUY_SERIES };
+        var affiliateTransType = new List<TransactionType>() { TransactionType.BuyPremium
+                                                , TransactionType.BuyChapter
+                                                , TransactionType.BuySeries };
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
@@ -200,9 +200,9 @@ public class AffiliateService : IAffiliateService
 
         var transIds = detailTrans.Select(x => x.WalletTransactionId).ToList();
 
-        var affiliateTransType = new List<TransactionType>() { TransactionType.BUY_PREMIUM
-                                                , TransactionType.BUY_CHAPTER
-                                                , TransactionType.BUY_SERIES };
+        var affiliateTransType = new List<TransactionType>() { TransactionType.BuyPremium
+                                                , TransactionType.BuyChapter
+                                                , TransactionType.BuySeries };
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
@@ -243,9 +243,9 @@ public class AffiliateService : IAffiliateService
 
         var transIds = detailTrans.Select(x => x.WalletTransactionId).ToList();
 
-        var affiliateTransType = new List<TransactionType>() { TransactionType.BUY_PREMIUM
-                                                , TransactionType.BUY_CHAPTER
-                                                , TransactionType.BUY_SERIES };
+        var affiliateTransType = new List<TransactionType>() { TransactionType.BuyPremium
+                                                , TransactionType.BuyChapter
+                                                , TransactionType.BuySeries };
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)

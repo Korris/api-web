@@ -1,15 +1,57 @@
 ﻿namespace Mcsg.Wallet.Domain.Enums;
 
+/// <summary>
+/// TransactionType
+/// </summary>
 public enum TransactionType
 {
-    DEPOSIT,
-    DONATE,
-    WITHDRAW,
-    TRANSFER,
-    REWARD,
-    BUY_PREMIUM,
-    BUY_CHAPTER,
-    BUY_SERIES,
-    PLATFORM_PAY_AFFILIATE,
-    PLATFORM_PAY_CREATOR
+    /// <summary>
+    /// Deposit
+    /// </summary>
+    Deposit,
+
+    /// <summary>
+    /// Donate
+    /// </summary>
+    Donate,
+
+    /// <summary>
+    /// Withdraw
+    /// </summary>
+    Withdraw,
+
+    /// <summary>
+    /// Transfer
+    /// </summary>
+    Transfer,
+
+    /// <summary>
+    /// Reward
+    /// </summary>
+    Reward,
+
+    /// <summary>
+    /// BuyPremium
+    /// </summary>
+    BuyPremium,
+
+    /// <summary>
+    /// BuyChapter
+    /// </summary>
+    BuyChapter,
+
+    /// <summary>
+    /// BuySeries
+    /// </summary>
+    BuySeries,
+
+    /// <summary>
+    /// PlatformPayAffiliate
+    /// </summary>
+    PlatformPayAffiliate,
+
+    /// <summary>
+    /// PlatformPayCreator
+    /// </summary>
+    PlatformPayCreator
 }

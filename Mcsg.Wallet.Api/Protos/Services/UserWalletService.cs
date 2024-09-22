@@ -39,7 +39,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 ProfileName = request.ProfileName,
-                Status = UserWalletStatus.APPROVED,
+                Status = UserWalletStatus.Approved,
                 UserId = new Guid(request.Id),
                 WalletSettingId = walletSetting!.Id,
                 CreatedBy = CreatedBy.System

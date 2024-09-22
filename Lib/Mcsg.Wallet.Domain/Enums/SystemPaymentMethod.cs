@@ -1,10 +1,32 @@
 ﻿namespace Mcsg.Wallet.Domain.Enums;
 
+/// <summary>
+/// SystemPaymentMethod
+/// </summary>
 public enum SystemPaymentMethod
 {
-    Point = 0,
-    Bank = 1,
-    ZaloPay = 2,
-    Momo = 3,
-    GiftCode = 4
+    /// <summary>
+    /// Point
+    /// </summary>
+    Point,
+
+    /// <summary>
+    /// Bank
+    /// </summary>
+    Bank,
+
+    /// <summary>
+    /// ZaloPay
+    /// </summary>
+    ZaloPay,
+
+    /// <summary>
+    /// Momo
+    /// </summary>
+    Momo,
+
+    /// <summary>
+    /// GiftCode
+    /// </summary>
+    GiftCode
 }

@@ -18,11 +18,11 @@ public class ApiMessages
     public static IDictionary<TransactionType, string> WALLET_TRANSACTION_TYPE
         = new Dictionary<TransactionType, string>
     {
-        { TransactionType.DEPOSIT, "Msg_Wallet_Type_Deposit" },
-        { TransactionType.WITHDRAW, "Msg_Wallet_Type_WithDraw" },
-        { TransactionType.REWARD, "Msg_Wallet_Type_Reward" },
-        { TransactionType.TRANSFER, "Msg_Wallet_Type_Transer" },
-        { TransactionType.DONATE, "Msg_Wallet_Type_Donate" }
+        { TransactionType.Deposit, "Msg_Wallet_Type_Deposit" },
+        { TransactionType.Withdraw, "Msg_Wallet_Type_WithDraw" },
+        { TransactionType.Reward, "Msg_Wallet_Type_Reward" },
+        { TransactionType.Transfer, "Msg_Wallet_Type_Transer" },
+        { TransactionType.Donate, "Msg_Wallet_Type_Donate" }
     };
 
     public static IDictionary<TransactionStatus, string> WALLET_TRANSACTION_STATUS

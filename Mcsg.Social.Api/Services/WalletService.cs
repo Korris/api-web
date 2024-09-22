@@ -36,7 +36,7 @@ public class WalletService : IWalletService
     public async Task<int> GetTotalPurchaseOfChapterAsync(Guid chapterId, DateTime? date = null)
     {
         var query = _walletDbContext.WalletTransactions
-            .Where(x => x.Type == TransactionType.BUY_CHAPTER
+            .Where(x => x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success
                         && x.RelatedId == chapterId);
 
@@ -53,7 +53,7 @@ public class WalletService : IWalletService
     public async Task<List<ChapterPurchaseDto>> GetPurchaseOfChaptersAsync(List<Guid> chapterIds, DateTime? date = null)
     {
         var query = _walletDbContext.WalletTransactions
-            .Where(x => x.Type == TransactionType.BUY_CHAPTER
+            .Where(x => x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success
                         && x.RelatedId.HasValue
                         && chapterIds.Contains(x.RelatedId.Value));
@@ -94,7 +94,7 @@ public class WalletService : IWalletService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Type == TransactionType.BUY_CHAPTER
+                        && x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success);
 
         if (date != null && date.HasValue)
@@ -131,7 +131,7 @@ public class WalletService : IWalletService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Type == TransactionType.BUY_CHAPTER
+                        && x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success);
 
         var yearData = await query.GroupBy(x => new
@@ -170,7 +170,7 @@ public class WalletService : IWalletService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Type == TransactionType.BUY_CHAPTER
+                        && x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success);
 
         var monthData = await query.GroupBy(x => new
@@ -211,7 +211,7 @@ public class WalletService : IWalletService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Type == TransactionType.BUY_CHAPTER
+                        && x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success);
 
         var yearData = await query.GroupBy(x => new
@@ -250,7 +250,7 @@ public class WalletService : IWalletService
 
         var query = _walletDbContext.WalletTransactions
             .Where(x => transIds.Contains(x.Id)
-                        && x.Type == TransactionType.BUY_CHAPTER
+                        && x.Type == TransactionType.BuyChapter
                         && x.Status == TransactionStatus.Success);
 
         var monthData = await query.GroupBy(x => new
