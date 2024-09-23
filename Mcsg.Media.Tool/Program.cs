@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Mcsg.Media.Tool;
 
@@ -8,6 +9,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.SeedWork.Extensions;
+using Serilog;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -42,6 +44,12 @@ internal class Program
         Console.WriteLine($"{st.AppName} - v{st.AppVersion}");
 
         var services = new ServiceCollection();
+
+        // Start logger
+        var builder = new HostBuilder();
+        builder.UseSerilog();
+        assembly!.StartLogger();
+        services.AddSingleton(Log.Logger);
 
         // DbContext
         services.AddDbContext<McsgContext>(p => p.UseNpgsql(st.DefaultConnection, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);

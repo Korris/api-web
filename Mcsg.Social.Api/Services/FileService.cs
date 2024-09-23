@@ -1,5 +1,4 @@
-﻿using FFMpegCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -139,23 +138,58 @@ public class FileService : IFileService
         }
         else if (file.IsVideo())
         {
-            using (var stream = file.OpenReadStream())
+            var tempFolder = Path.GetTempPath();
+            var fileName = Path.GetFileName(file.FileName);
+            var orgfile = Path.Combine(tempFolder, fileName);
+
+            using (var fsOrgfile = new FileStream(orgfile, FileMode.Create))
             {
-                await _sc.GetStrategy(minioInstance).PutObject(stream, objectName, bucketName);
+                await file.CopyToAsync(fsOrgfile);
+                fsOrgfile.Position = 0; // reset stream position after writing
 
-                // Reset the stream position to the beginning
-                stream.Position = 0;
-
-                // Then, analyze the video
-                var mediaInfo = await FFProbe.AnalyseAsync(stream).ConfigureAwait(false);
-                var videoStream = mediaInfo.VideoStreams.FirstOrDefault();
-                if (videoStream != null)
+                try
                 {
-                    imgWidth = videoStream.Width;
-                    imgHeight = videoStream.Height;
+                    var dimensions = orgfile.GetWidthHeightVideo();
+                    if (dimensions.Length == 2)
+                    {
+                        imgWidth = Convert.ToInt32(dimensions[0]);
+                        imgHeight = Convert.ToInt32(dimensions[1]);
+
+                        await _sc.GetStrategy(minioInstance).PutObject(fsOrgfile, objectName, bucketName);
+                    }
+                }
+                catch
+                {
+                    "Fix file error".LogInfor();
+                    var targetFile = orgfile.AppendNameSuffix("-output");
+                    var command = "-c copy -movflags faststart ";
+                    orgfile.RunFfmpeg(targetFile, command);
+
+                    try
+                    {
+                        var dimensions = orgfile.GetWidthHeightVideo();
+                        if (dimensions.Length == 2)
+                        {
+                            imgWidth = Convert.ToInt32(dimensions[0]);
+                            imgHeight = Convert.ToInt32(dimensions[1]);
+
+                            using (var fsTargetFile = new FileStream(targetFile, FileMode.Open))
+                            {
+                                await _sc.GetStrategy(minioInstance).PutObject(fsTargetFile, objectName, bucketName);
+                            }
+
+                            "Clean up resource".LogInfor();
+                            File.Delete(orgfile);
+                            File.Delete(targetFile);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.Message.LogError();
+                        await _sc.GetStrategy(minioInstance).PutObject(fsOrgfile, objectName, bucketName);
+                    }
                 }
             }
-
         }
         else
         {

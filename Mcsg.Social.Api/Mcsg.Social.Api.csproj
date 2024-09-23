@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="FFMpegCore" Version="5.1.0" />
     </ItemGroup>
 
     <ItemGroup>

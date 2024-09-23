@@ -3,6 +3,7 @@
 namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
@@ -63,7 +64,7 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
 
                     //var command = "-c:v libx264 -vf \"scale=trunc(iw/6)*2:trunc(ih/6)*2\" -b:v 1000k -preset faster -crf 32 -c:a aac -b:a 64k"; // optimizer
                     var command = "-c:v libx264 -vf \"scale=trunc(iw/3)*2:trunc(ih/3)*2\" -preset faster -crf 28 -maxrate 2M -bufsize 4M -c:a aac -b:a 96k"; // optimizer
-                    RunFfmpeg(orgfile, targetFile, command);
+                    orgfile.RunFfmpeg(targetFile, command);
 
                     //upload
                     var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);

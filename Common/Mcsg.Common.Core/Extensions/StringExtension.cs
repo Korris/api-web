@@ -15,7 +15,9 @@ using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -729,5 +731,111 @@ public static class StringExtension
     public static string ForLexical(this string? text)
     {
         return string.IsNullOrEmpty(text) ? Default.CustomNote : text;
+    }
+
+    /// <summary>
+    /// RunProcess
+    /// </summary>
+    /// <param name="fileName">File name</param>
+    /// <param name="arguments">Arguments</param>
+    /// <returns>Returns the result</returns>
+    public static async Task<string> RunProcess(this string fileName, string arguments)
+    {
+        var psi = new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardError = true
+        };
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var enviromentPath = Environment.GetEnvironmentVariable("PATH");
+            var paths = (enviromentPath + "").Split(';');
+
+            var filePath = paths.Select(p => Path.Combine(p, $"{fileName}.exe")).Where(p => File.Exists(p)).FirstOrDefault();
+            if (filePath != null)
+            {
+                fileName = filePath;
+            }
+        }
+
+        // Start the process
+        using Process process = new() { StartInfo = psi };
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
+        // Capture the output
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                errorBuilder.AppendLine(e.Data);
+                Console.WriteLine(e.Data);
+            }
+        };
+
+        process.Start();
+
+        // Start reading output and error asynchronously
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        // Wait for process to exit asynchronously
+        await process.WaitForExitAsync();
+
+        var output = outputBuilder.ToString();
+        var error = errorBuilder.ToString();
+
+        return string.IsNullOrWhiteSpace(error) ? output : $"Error: {error}";
+    }
+
+    /// <summary>
+    /// RunFfmpeg
+    /// </summary>
+    /// <param name="input">Input file</param>
+    /// <param name="output">Output file</param>
+    /// <param name="command">Command</param>
+    /// <returns>Returns the result</returns>
+    public static string RunFfmpeg(this string input, string output, string command)
+    {
+        var arguments = $"-i {input} {command} {output}";
+        return "ffmpeg".RunProcess(arguments).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// RunFfprobe
+    /// </summary>
+    /// <param name="input">Input file</param>
+    /// <param name="command">Command</param>
+    /// <returns>Returns the result</returns>
+    public static string RunFfprobe(this string input, string command)
+    {
+        var arguments = $"-v {command} {input}";
+        return "ffprobe".RunProcess(arguments).GetAwaiter().GetResult();
+    }
+
+    /// <summary>
+    /// GetWidthHeightVideo
+    /// </summary>
+    /// <param name="input">Input file</param>
+    /// <returns>Returns the result</returns>
+    public static string[] GetWidthHeightVideo(this string input)
+    {
+        var command = "error -select_streams v:0 -show_entries stream=width,height -of csv=p=0";
+        var output = input.RunFfprobe(command);
+        return output.Trim().Split(',');
     }
 }

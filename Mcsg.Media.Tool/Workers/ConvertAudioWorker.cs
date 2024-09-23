@@ -3,6 +3,7 @@
 namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -42,7 +43,7 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                     //Run conversion
                     //veryslow,slower,slow, medium, fast,faster,veryfast,superfast, ultrafast 
                     string command = "-vn -ar 44100 -ac 2 -preset faster -b:a 128k"; // optimizer
-                    RunFfmpeg(orgfile, targetFile, command);
+                    orgfile.RunFfmpeg(targetFile, command);
 
                     //upload
                     var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
