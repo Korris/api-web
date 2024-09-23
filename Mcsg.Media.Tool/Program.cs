@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Mcsg.Media.Tool;
 
@@ -9,7 +10,6 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.SeedWork.Extensions;
-using Serilog;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -43,10 +43,10 @@ internal class Program
 
         Console.WriteLine($"{st.AppName} - v{st.AppVersion}");
 
+        var builder = new HostBuilder();
         var services = new ServiceCollection();
 
         // Start logger
-        var builder = new HostBuilder();
         builder.UseSerilog();
         assembly!.StartLogger();
         services.AddSingleton(Log.Logger);

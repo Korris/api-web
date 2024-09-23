@@ -139,8 +139,7 @@ public class FileService : IFileService
         else if (file.IsVideo())
         {
             var tempFolder = Path.GetTempPath();
-            var fileName = Path.GetFileName(file.FileName);
-            var orgfile = Path.Combine(tempFolder, fileName);
+            var orgfile = Path.Combine(tempFolder, hashFileName);
 
             using (var fsOrgfile = new FileStream(orgfile, FileMode.Create))
             {
@@ -150,7 +149,7 @@ public class FileService : IFileService
                 try
                 {
                     var dimensions = orgfile.GetWidthHeightVideo();
-                    if (dimensions.Length == 2)
+                    if (dimensions.Length > 1)
                     {
                         imgWidth = Convert.ToInt32(dimensions[0]);
                         imgHeight = Convert.ToInt32(dimensions[1]);
@@ -168,7 +167,7 @@ public class FileService : IFileService
                     try
                     {
                         var dimensions = orgfile.GetWidthHeightVideo();
-                        if (dimensions.Length == 2)
+                        if (dimensions.Length > 1)
                         {
                             imgWidth = Convert.ToInt32(dimensions[0]);
                             imgHeight = Convert.ToInt32(dimensions[1]);
