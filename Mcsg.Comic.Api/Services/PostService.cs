@@ -1783,7 +1783,8 @@ public partial class PostService : IPostService
             IsExclusive = false, //BCW-37
             IsPremium = request.IsPremium,
             PostHashId = post.HashId,
-            Sort = newOrder,
+            Sort = !await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id) ? 1 :
+                    await _context.ComicSubPostAvailable.Where(p => p.PostId == post.Id).MaxAsync(p => p.Order) + 1
         };
 
         post.ModifiedOn = DateTime.UtcNow;
