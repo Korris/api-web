@@ -2,10 +2,11 @@
 
 namespace Mcsg.Wallet.Domain.Entities;
 
+using Common.SeedWork;
+using Common.SeedWork.Enums;
 using Enums;
-using Mcsg.Common.SeedWork;
 
-public class UserWallet : AuditableEntity
+public partial class UserWallet : AuditableEntity
 {
     public Guid UserId { get; set; }
 
@@ -21,11 +22,11 @@ public class UserWallet : AuditableEntity
     public float Point { get; set; }
     public float RewardPoint { get; set; }
     public Guid WalletSettingId { get; set; }
-    public WalletSetting WalletSetting { get; set; }
-    public virtual ICollection<WalletTransaction> SourceUserWalletTransactions { get; set; }
-    public virtual ICollection<WalletTransaction> DestinationUserWalletTransactions { get; set; }
-
-    public virtual ICollection<PaymentMethod> PaymentMethods { get; set; }
     public UserWalletStatus Status { get; set; }
     public string? SystemMessage { get; set; }
+
+    /// <summary>
+    /// 0 Guest, 1 Free, 2 Premium, 3 Administrator
+    /// </summary>
+    public UserType Type { get; set; }
 }

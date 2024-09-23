@@ -1,11 +1,10 @@
 ﻿namespace Mcsg.Wallet.Domain.Entities;
 
-using Mcsg.Common.SeedWork;
+using Common.SeedWork;
 
-public class UserPurchaseTransaction : AuditableEntity
+public partial class UserPurchaseTransaction : AuditableEntity
 {
     public Guid WalletTransactionId { get; set; }
-    public WalletTransaction WalletTransaction { get; set; }
     public string? Title { get; set; }
     public string? Thumbnail { get; set; }
     public string? Paymethod { get; set; }

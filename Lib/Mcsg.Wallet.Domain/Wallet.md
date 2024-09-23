@@ -27,6 +27,6 @@ CREATE DATABASE local_bumcheo_wallet OWNER local;
 Install-Package Microsoft.EntityFrameworkCore
 Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
 Install-Package Microsoft.EntityFrameworkCore.Tools
-Update-Database InitData -Args "host=ntada.postgres;port=5433;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
+Update-Database InitData -Args "host=ntada.win;Port=65433;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
 Note:
 Revert Mcsg.Wallet.Domain.csproj file

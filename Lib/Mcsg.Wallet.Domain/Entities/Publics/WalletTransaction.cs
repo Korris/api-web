@@ -2,21 +2,18 @@
 
 namespace Mcsg.Wallet.Domain.Entities;
 
+using Common.Core.Enums;
+using Common.SeedWork;
 using Enums;
-using Mcsg.Common.Core.Enums;
-using Mcsg.Common.SeedWork;
 
-public class WalletTransaction : AuditableEntity
+public partial class WalletTransaction : AuditableEntity
 {
     [MaxLength(32)]
     public string? ReferenceNumber { get; set; }
     public Guid? SourceUserWalletId { get; set; }
-    public virtual UserWallet SourceUserWallet { get; set; }
 
     public Guid? DestinationUserWalletId { get; set; }
-    public virtual UserWallet DestinationUserWallet { get; set; }
     public Guid? UserPaymentMethodId { get; set; }
-    public virtual UserPaymentMethod UserPaymentMethods { get; set; }
     public SystemPaymentMethod? SystemMethod { get; set; }
     public TransactionType Type { get; set; }
     public TransactionStatus Status { get; set; }
@@ -30,8 +27,4 @@ public class WalletTransaction : AuditableEntity
     public bool IsConfirmed { get; set; }
     public Guid? RelatedId { get; set; }
     public string? ExternalId { get; set; }
-
-    public virtual ICollection<WalletTransactionOtp> WalletTransactionOtps { get; set; }
-    public virtual ICollection<UserPurchaseTransaction> UserPurchaseTransactions { get; set; }
-
 }

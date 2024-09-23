@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Wallet.Domain.Entities;
 
-using Mcsg.Common.SeedWork;
+using Common.SeedWork;
 
-public class EarningPeriod : AuditableEntity
+public partial class EarningPeriod : AuditableEntity
 {
     [MaxLength(50)]
     public string? Title { get; set; } // 2024-001 => Year - number of payment
@@ -17,6 +17,4 @@ public class EarningPeriod : AuditableEntity
 
     [Column(TypeName = "timestamp")]
     public DateTime ToDate { get; set; }
-
-    public virtual ICollection<EarningSummary> EarningSummaries { get; set; }
 }

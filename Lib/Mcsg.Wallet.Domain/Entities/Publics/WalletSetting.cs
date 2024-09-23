@@ -2,9 +2,9 @@
 
 namespace Mcsg.Wallet.Domain.Entities;
 
-using Mcsg.Common.SeedWork;
+using Common.SeedWork;
 
-public class WalletSetting : AuditableEntity
+public partial class WalletSetting : AuditableEntity
 {
     [MaxLength(50)]
     public string? Name { get; set; }
@@ -13,6 +13,4 @@ public class WalletSetting : AuditableEntity
 
     [MaxLength(255)]
     public string? Logo { get; set; }
-
-    public virtual ICollection<UserWallet> Wallets { get; set; }
 }

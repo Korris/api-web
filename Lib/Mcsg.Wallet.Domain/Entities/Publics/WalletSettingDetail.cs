@@ -2,8 +2,8 @@
 
 namespace Mcsg.Wallet.Domain.Entities;
 
+using Common.SeedWork;
 using Enums;
-using Mcsg.Common.SeedWork;
 
 public class WalletSettingDetail : AuditableEntity
 {

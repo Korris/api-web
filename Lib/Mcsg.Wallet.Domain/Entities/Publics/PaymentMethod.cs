@@ -2,10 +2,10 @@
 
 namespace Mcsg.Wallet.Domain.Entities;
 
-using Mcsg.Common.Core.Enums;
-using Mcsg.Common.SeedWork;
+using Common.Core.Enums;
+using Common.SeedWork;
 
-public class PaymentMethod : AuditableEntity
+public partial class PaymentMethod : AuditableEntity
 {
     [MaxLength(255)]
     public string? Name { get; set; }
@@ -20,5 +20,4 @@ public class PaymentMethod : AuditableEntity
     public string? SwiftCode { get; set; }
     public bool IsActive { get; set; }
     public PaymentMethodType Type { get; set; }
-    public virtual ICollection<UserPaymentMethod> UserPaymentMethods { get; set; }
 }
