@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -40,8 +41,8 @@ public class LinkPreviewService : ILinkPreviewService
 
                 return new MetaDataDto
                 {
-                    Title = title ?? "",
-                    Description = description ?? "",
+                    Title = HttpUtility.HtmlDecode(title) ?? "",
+                    Description = HttpUtility.HtmlDecode(description) ?? "",
                     Image = image ?? "",
                     Url = ogUrl ?? "",
                     Domain = uri.Host
