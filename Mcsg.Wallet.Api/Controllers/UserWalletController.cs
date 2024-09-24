@@ -170,15 +170,11 @@ public class UserWalletController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("wallet-info/{username}")]
-    public async Task<IActionResult> GetWalletAddressByUsername(string username)
+    [HttpGet("wallet-info/{userId}")]
+    public async Task<IActionResult> GetUserWalletAddress(Guid userId)
     {
-        if (!string.IsNullOrEmpty(username))
-        {
-            var result = await _userWalletService.GetUserWalletAddressByUsername(username);
-            return Ok(result);
-        }
-        return BadRequest();
+        var result = await _userWalletService.GetUserWalletAddress(userId);
+        return Ok(result);
     }
 
     #endregion

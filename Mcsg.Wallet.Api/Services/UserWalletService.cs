@@ -54,7 +54,6 @@ public class UserWalletService : IUserWalletService
         _dbContext = walletDbContext;
         _setting = serviceProvider.GetRequiredService<ISetting>();
         _logger = logger;
-        _context = context;
     }
 
     #region User info
@@ -255,22 +254,11 @@ public class UserWalletService : IUserWalletService
         _dbContext.Update(transaction);
     }
 
-    public async Task<UserWalletBasicResp> GetUserWalletAddressByUsername(string username)
+    public async Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId)
     {
         var result = new UserWalletBasicResp();
-        if (username == null)
-        {
-            return result;
-        }
 
-        var userId = await _context.UserAvailable
-            .AsNoTracking()
-            .Where(p => p.UserName == username)
-            .Select(p => p.Id)
-            .FirstOrDefaultAsync();
-
-        var userWallets = await _dbContext.UserWallets
-            .AsNoTracking()
+        var userWallets = await _dbContext.UserWallets.AsNoTracking()
             .Where(p => p.UserId == userId)
             .Select(p => new
             {
@@ -922,7 +910,6 @@ public class UserWalletService : IUserWalletService
     private readonly ZaloPaySetting _zaloPaySetting;
     private readonly ISignalRService _signalRService;
     private readonly ILogger<UserWalletService> _logger;
-    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

@@ -16,7 +16,7 @@ public interface IUserWalletService
     Task<AddUserPaymentMethodResp> AddUserPaymentMethod(UserWalletAddPaymentMethodR addUserPaymentMethodReq);
     Task<UpdateUserPaymentMethodResp> UpdateUserPaymentMethod(Guid userPaymentMethodId, UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq);
     Task<bool> RemoveUserPaymentMethod(Guid userPaymentMethodId);
-    Task<UserWalletBasicResp> GetUserWalletAddressByUsername(string username);
+    Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId);
 
     Task<bool> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req);
     Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType);
