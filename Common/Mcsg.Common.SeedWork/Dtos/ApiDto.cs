@@ -67,6 +67,11 @@ public class ApiDto
         /// Sync
         /// </summary>
         public string? Sync { get; set; }
+
+        /// <summary>
+        /// CloneSite
+        /// </summary>
+        public string? CloneSite { get; set; }
     }
 
     /// <summary>

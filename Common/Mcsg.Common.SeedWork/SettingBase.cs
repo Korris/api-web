@@ -207,6 +207,7 @@ public class SettingBase : ISettingBase
         if (dic.TryGetValue("HostSocialAdmin", out val)) Api.Admin.Social = val;
         if (dic.TryGetValue("HostStoryAdmin", out val)) Api.Admin.Story = val;
         if (dic.TryGetValue("HostSyncAdmin", out val)) Api.Admin.Sync = val;
+        if (dic.TryGetValue("HostCloneSiteAdmin", out val)) Api.Admin.CloneSite = val;
         #endregion
 
         #region -- Api.Mobile --
@@ -300,7 +301,8 @@ public class SettingBase : ISettingBase
         { "HostIdentityAdmin", "https://localhost:44316" },
         { "HostSocialAdmin", "https://localhost:44317" },
         { "HostStoryAdmin", "https://localhost:44318" },
-        { "HostSyncAdmin", "https://localhost:44319" }
+        { "HostSyncAdmin", "https://localhost:44319" },
+        { "HostCloneSiteAdmin", "https://localhost:44320" }
     };
 
     /// <summary>
@@ -326,7 +328,8 @@ public class SettingBase : ISettingBase
         { "HostIdentityAdmin", "http://localhost:54116" },
         { "HostSocialAdmin", "http://localhost:54117" },
         { "HostStoryAdmin", "http://localhost:54118" },
-        { "HostSyncAdmin", "http://localhost:54119" }
+        { "HostSyncAdmin", "http://localhost:54119" },
+        { "HostCloneSiteAdmin", "http://localhost:54120" }
     };
 
     /// <summary>

@@ -30,6 +30,7 @@ public class Setting : SeedWork.Constants.Setting
             return new Dictionary<string, string>
             {
                 { "Ana", MicroService.Analytic.ToString() },
+                { "Clo", MicroService.CloneSite.ToString() },
                 { "Cmc", MicroService.Comic.ToString() },
                 { "Job", MicroService.Job.ToString() },
                 { "Ide", MicroService.Identity.ToString() },

@@ -312,6 +312,20 @@ public static class Error
 
     #endregion
 
+    #region -- E6xx --
+
+    /// <summary>
+    /// Chapter not exits
+    /// </summary>
+    public const string E600 = "Chapter does not exist!";
+
+    /// <summary>
+    /// Need premium to read
+    /// </summary>
+    public const string E601 = "You need to upgrade to a premium account to view this content";
+
+    #endregion
+
     #region -- E9xx --
 
     /// <summary>

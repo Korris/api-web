@@ -37,6 +37,16 @@ public class BaseFilter
         /// </summary>
         public string? Keyword { get; set; }
 
+        /// <summary>
+        /// UserId
+        /// </summary>
+        public Guid? UserId { get; set; }
+
+        /// <summary>
+        /// UserName
+        /// </summary>
+        public string? UserName { get; set; }
+
         #endregion
     }
 

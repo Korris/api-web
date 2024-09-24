@@ -53,5 +53,15 @@ public enum MicroService
     /// <summary>
     /// 
     /// </summary>
-    Wallet
+    Wallet,
+
+    /// <summary>
+    /// CloneSite
+    /// </summary>
+    CloneSite,
+
+   /// <summary>
+    /// Function
+    /// </summary>
+    Function
 }
