@@ -1,29 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
-using Common.Domain.Entities;
-using Domain;
 using Interfaces;
-using Lib.Data.Repositories;
 using Requests;
 
 [ApiController]
-[Route("[controller]")]
-//[Authorize]
+[Route("[controller]"), Authorize]
 public class PremiumController : ControllerBase
 {
-    private readonly IPremiumService _premiumService;
-    readonly WalletContext _walletDbContext;
-    IRepository<User> _repository;
+    #region -- Methods --
 
-    public PremiumController(IPremiumService premiumService,
-        WalletContext walletDbContext,
-        IOtpService otpService,
-        IRepository<User> repository)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="premiumService"></param>
+    public PremiumController(IPremiumService premiumService)
     {
-        _repository = repository;
-        _walletDbContext = walletDbContext;
         _premiumService = premiumService;
     }
 
@@ -61,4 +55,12 @@ public class PremiumController : ControllerBase
         var result = await _premiumService.BuyPremium(req);
         return Ok(result);
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IPremiumService _premiumService;
+
+    #endregion
 }

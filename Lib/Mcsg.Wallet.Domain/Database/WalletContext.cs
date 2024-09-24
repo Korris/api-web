@@ -24,8 +24,8 @@ public class WalletContext : DbContext
             new WalletSetting
             {
                 Id = Guid.Parse("A2F9D301-B081-4CD8-850F-27BC996702E7"),
-                Name = "BL Coin",
-                Symbol = "BL",
+                Name = "BC",
+                Symbol = "BC",
                 CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04),
                 ModifiedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });

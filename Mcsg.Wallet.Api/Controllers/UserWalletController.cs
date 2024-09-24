@@ -3,85 +3,30 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
-using Common.Domain.Entities;
-using Domain;
 using Domain.Enums;
 using Interfaces;
-using Lib.Data.Repositories;
 using Requests;
 
 [ApiController]
-[Route("[controller]")]
-//[Authorize]
+[Route("[controller]"), Authorize]
 public class UserWalletController : ControllerBase
 {
-    //https://vietqr.io/paymentRequests/#operation/paymentLink
-    //https://vietqr.io/danh-sach-api/api-danh-sach-ma-ngan-hang
-    private readonly IUserWalletService _userWalletService;
-    private readonly IZaloPayService _zaloPayService;
-    private readonly IOtpService _otpService;
-    readonly WalletContext _walletDbContext;
-    IRepository<User> _repository;
+    #region -- Methods --
 
-    public UserWalletController(IUserWalletService userWalletService,
-        IZaloPayService zaloPayService,
-        WalletContext walletDbContext,
-        IOtpService otpService,
-        IRepository<User> repository)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="userWalletService"></param>
+    /// <param name="zaloPayService"></param>
+    public UserWalletController(IUserWalletService userWalletService, IZaloPayService zaloPayService)
     {
-        _repository = repository;
-        _walletDbContext = walletDbContext;
         _userWalletService = userWalletService;
         _zaloPayService = zaloPayService;
-        _otpService = otpService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetUserWalletInfo()
     {
-        //var users = await _repository.GetAllAsync();
-        ////    var wallet = await _walletDbContext.UserWallets.ToListAsync();
-        ////    foreach(var w in wallet)
-        ////    {
-        ////        var u = users.FirstOrDefault(x => x.Id == w.UserId);
-        ////        w.Email = u.Email;
-        ////        await _walletDbContext.SaveChangesAsync();
-        ////    }    
-        //foreach (var u in users)
-        //{
-        //    var address = StringHelper.GetRandomString(12).ToLower();
-        //    var wallet = await _walletDbContext.UserWallets.AddAsync(new Lib.Data.Wallet.Entities.UserWallet
-        //    {
-        //        Address = address,
-        //        CreatedOn = DateTime.UtcNow,
-        //        ModifiedOn = DateTime.UtcNow,
-        //        Id = Guid.NewGuid(),
-        //        Point = 0,
-        //        RewardPoint = 10,
-        //        ProfileName = u.ProfileName,
-        //        Email = u.Email,
-        //        Status = Lib.Data.Wallet.Enums.UserWalletStatus.APPROVED,
-        //        UserId = u.Id,
-        //        WalletSettingId = Guid.Parse("A2F9D301-B081-4CD8-850F-27BC996702E7"),
-        //    });
-
-        //    await _walletDbContext.WalletTransactions.AddAsync(new Lib.Data.Wallet.Entities.WalletTransaction
-        //    {
-        //        CreatedOn = DateTime.UtcNow,
-        //        Id = Guid.NewGuid(),
-        //        Amount = 10,
-        //        IsFromSystem = true,
-        //        Content = ApiMessages.REWARD_FOR_NEW_USER,
-        //        ReferenceNumber = StringHelper.GetRandomString(12).ToLower(),
-        //        ModifiedOn = DateTime.UtcNow,
-        //        DestinationUserWalletId = wallet.Entity.Id,
-        //        Status = Lib.Data.Wallet.Enums.TransactionStatus.SUCCESS,
-        //        Type = Lib.Data.Wallet.Enums.TransactionType.REWARD
-        //    });
-
-        //    await _walletDbContext.SaveChangesAsync();
-        //}
-
         var result = await _userWalletService.GetUserWalletAsync();
         return Ok(result);
     }
@@ -137,7 +82,6 @@ public class UserWalletController : ControllerBase
     }
 
     [HttpPost("donate")]
-    [Authorize]
     public async Task<IActionResult> Donate(UserWalletDonateR req)
     {
         var result = await _userWalletService.DonateAsync(req);
@@ -145,7 +89,6 @@ public class UserWalletController : ControllerBase
     }
 
     [HttpPost("transfer")]
-    [Authorize]
     public async Task<IActionResult> Transfer(UserWalletTransferR req)
     {
         var result = await _userWalletService.TransferAsync(req);
@@ -237,4 +180,18 @@ public class UserWalletController : ControllerBase
         }
         return BadRequest();
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// https://vietqr.io/paymentRequests/#operation/paymentLink
+    /// https://vietqr.io/danh-sach-api/api-danh-sach-ma-ngan-hang
+    /// </summary>
+    private readonly IUserWalletService _userWalletService;
+
+    private readonly IZaloPayService _zaloPayService;
+
+    #endregion
 }

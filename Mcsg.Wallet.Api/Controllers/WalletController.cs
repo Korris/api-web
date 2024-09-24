@@ -6,12 +6,15 @@ namespace Mcsg.Wallet.Api.Controllers;
 using Interfaces;
 
 [ApiController]
-[Route("[controller]")]
-[Authorize]
+[Route("[controller]"), Authorize]
 public class WalletController : ControllerBase
 {
-    private readonly IBankService _bankService;
+    #region -- Methods --
 
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="bankService"></param>
     public WalletController(IBankService bankService)
     {
         _bankService = bankService;
@@ -24,11 +27,18 @@ public class WalletController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
     [HttpPut("sync-bank-list")]
     public async Task<IActionResult> SyncBankList()
     {
         var result = await _bankService.SyncBanks();
         return Ok(result);
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IBankService _bankService;
+
+    #endregion
 }

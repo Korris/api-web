@@ -3,30 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
-using Common.Domain.Entities;
-using Domain;
 using Interfaces;
-using Lib.Data.Repositories;
 using Requests;
 
 [ApiController]
-[Route("[controller]")]
-[Authorize]
+[Route("[controller]"), Authorize]
 public class UserPurchaseController : ControllerBase
 {
-    //https://vietqr.io/paymentRequests/#operation/paymentLink
-    //https://vietqr.io/danh-sach-api/api-danh-sach-ma-ngan-hang
-    private readonly IUserPurchaseService _userPurchaseService;
-    readonly WalletContext _walletDbContext;
-    IRepository<User> _repository;
+    #region -- Methods --
 
-    public UserPurchaseController(IUserPurchaseService userPurchaseService,
-        WalletContext walletDbContext,
-        IOtpService otpService,
-        IRepository<User> repository)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="userPurchaseService"></param>
+    public UserPurchaseController(IUserPurchaseService userPurchaseService)
     {
-        _repository = repository;
-        _walletDbContext = walletDbContext;
         _userPurchaseService = userPurchaseService;
     }
 
@@ -43,4 +34,12 @@ public class UserPurchaseController : ControllerBase
         var result = await _userPurchaseService.GetUserPremiumPackageAsync();
         return Ok(result);
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IUserPurchaseService _userPurchaseService;
+
+    #endregion
 }
