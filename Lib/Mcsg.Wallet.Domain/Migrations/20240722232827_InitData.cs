@@ -14,6 +14,9 @@ namespace Mcsg.Wallet.Domain.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "system");
+
             migrationBuilder.CreateTable(
                 name: "EarningPeriods",
                 columns: table => new
@@ -54,6 +57,28 @@ namespace Mcsg.Wallet.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PremiumPackages", x => x.No);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemSettings",
+                schema: "system",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    Key = table.Column<string>(type: "text", nullable: true),
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -396,7 +421,7 @@ namespace Mcsg.Wallet.Domain.Migrations
             migrationBuilder.InsertData(
                 table: "WalletSettings",
                 columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDelete", "Logo", "ModifiedBy", "ModifiedOn", "Name", "Symbol" },
-                values: new object[] { new Guid("a2f9d301-b081-4cd8-850f-27bc996702e7"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "BL Coin", "BL" });
+                values: new object[] { new Guid("a2f9d301-b081-4cd8-850f-27bc996702e7"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "BC", "BC" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EarningPeriods_Year_Order_FromDate_ToDate",
@@ -514,6 +539,10 @@ namespace Mcsg.Wallet.Domain.Migrations
         {
             migrationBuilder.DropTable(
                 name: "EarningSummaryDetails");
+
+            migrationBuilder.DropTable(
+                name: "SystemSettings",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "UserPremiumPackages");

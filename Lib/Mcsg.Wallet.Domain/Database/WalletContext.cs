@@ -2,6 +2,7 @@
 
 namespace Mcsg.Wallet.Domain;
 
+using Common.Core.Constants;
 using Entities;
 using Enums;
 
@@ -120,6 +121,7 @@ public class WalletContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.UserWalletId);
         });
+
         builder.Entity<WalletTransaction>(entity =>
         {
             entity.HasOne(x => x.DestinationUserWallet)
@@ -161,10 +163,12 @@ public class WalletContext : DbContext
         {
             entity.HasIndex(x => new { x.Year, x.Order, x.FromDate, x.ToDate }).IsUnique();
         });
+
         builder.Entity<EarningSummary>(entity =>
         {
             entity.HasIndex(x => new { x.UserId, x.PeriodId }).IsUnique();
         });
+
         builder.Entity<EarningSummaryDetail>(entity =>
         {
             entity.HasIndex(x => x.EarningSummaryId);
@@ -172,6 +176,10 @@ public class WalletContext : DbContext
           .WithMany(x => x.SummaryDetails)
           .HasForeignKey(x => x.EarningSummaryId);
         });
+
+        #region -- Systems --
+        builder.Entity<SystemSetting>(entity => entity.ToTable("SystemSettings", DbSchema.System));
+        #endregion
     }
 
     #endregion

@@ -329,6 +329,48 @@ namespace Mcsg.Wallet.Domain.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Mcsg.Wallet.Domain.Entities.SystemSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemSettings", "system");
+                });
+
             modelBuilder.Entity("Mcsg.Wallet.Domain.Entities.UserPaymentMethod", b =>
                 {
                     b.Property<Guid>("Id")
@@ -575,8 +617,8 @@ namespace Mcsg.Wallet.Domain.Migrations
                             CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
                             IsDelete = false,
                             ModifiedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
-                            Name = "BL Coin",
-                            Symbol = "BL"
+                            Name = "BC",
+                            Symbol = "BC"
                         });
                 });
 
