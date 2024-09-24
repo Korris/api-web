@@ -139,7 +139,9 @@ public class StoryController : ControllerBase
     [HttpGet("{hashId}/chapter/{order}")]
     public async Task<IActionResult> GetChapter(string hashId, float order)
     {
-        var result = await _storyService.GetChapter(hashId, order);
+        var req = new ChapterOrderR { HashId = hashId, Order = order };
+        req.Analyze(HttpContext);
+        var result = await _storyService.GetChapter(req);
         return Ok(result);
     }
 

@@ -9,7 +9,7 @@ public interface IStoryService
 {
     Task<PostSeriesResponse> Get(StoryHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders);
-    Task<ChapterResponse> GetChapter(string hashId, float order);
+    Task<ChapterResponse> GetChapter(ChapterOrderR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(StoryTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(StoryTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(StoryTopPostR req);

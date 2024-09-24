@@ -44,9 +44,9 @@ public partial class StoryService : IStoryService
         await _postService.MoveChapterOrder(hashId, orders);
     }
 
-    public async Task<ChapterResponse> GetChapter(string hashId, float order)
+    public async Task<ChapterResponse> GetChapter(ChapterOrderR req)
     {
-        return await _postService.GetSeriesChapter(hashId, order);
+        return await _postService.GetSeriesChapter(req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(StoryTopPostR req)

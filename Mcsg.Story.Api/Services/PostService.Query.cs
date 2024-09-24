@@ -86,7 +86,7 @@ LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
                         WHERE 
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false 
-                            AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
+                            AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""UserName"" = @UserName))
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
                         p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"",
@@ -749,6 +749,7 @@ LIMIT 1
                                 ) count ON count.""EntityId"" = sp.""Id""
 
                     WHERE p.""HashId"" = @PostHashId AND sp.""Order"" = @SubPostOrder AND sp.""IsDelete"" = false
+                            AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""Id"" = @UserId))
                     ORDER BY rs.""Order"";";
             }
         }

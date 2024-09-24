@@ -9,7 +9,7 @@ public interface IComicService
 {
     Task<PostSeriesResponse> Get(ComicHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
-    Task<ChapterResponse> GetChapter(string hashId, float order);
+    Task<ChapterResponse> GetChapter(ChapterOrderR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(ComicTopPostR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(ComicTopPostR req);

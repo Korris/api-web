@@ -41,9 +41,9 @@ public partial class ComicService : IComicService
         return await _postService.SwapChapterOrder(hashId, orders);
     }
 
-    public async Task<ChapterResponse> GetChapter(string hashId, float order)
+    public async Task<ChapterResponse> GetChapter(ChapterOrderR req)
     {
-        return await _postService.GetSeriesChapter(hashId, order);
+        return await _postService.GetSeriesChapter(req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(ComicTopPostR req)

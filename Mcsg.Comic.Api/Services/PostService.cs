@@ -249,7 +249,8 @@ public partial class PostService : IPostService
                 IsAccessPrivate = false,
                 CurrentDate = DateTime.UtcNow,
                 UserId = currentUserId,
-                Hide = req.Hides
+                Hide = req.Hides,
+                req.UserName
             }, splitOn: "Id, Id");
         //Add view
         if (dbPost == null)
@@ -294,11 +295,13 @@ public partial class PostService : IPostService
         };
     }
 
-    public async Task<ChapterResponse> GetSeriesChapter(string hashId, float order)
+    public async Task<ChapterResponse> GetSeriesChapter(ChapterOrderR req)
     {
         var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
         var userIsPremium = _currentUserService?.Session?.IsPremium ?? false;
         var currentUserId = _currentUserService?.Session?.UserId;
+        var hashId = req.HashId;
+        var order = req.Order;
 
         ChapterResponse subpost = null;
         await _subPostRepository
@@ -336,7 +339,8 @@ public partial class PostService : IPostService
                 PostHashId = hashId,
                 IsAccessPrivate = false,
                 SubPostOrder = order,
-                UserId = currentUserId
+                UserId = currentUserId,
+                Hide = req.Hides
             }, splitOn: "Id, Id");
 
 
@@ -1097,7 +1101,7 @@ public partial class PostService : IPostService
         countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
 
         var result = new PostSeriesAllTopResponse();
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_MYSELF);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_MYSELF, loadReq.UserName);
 
 
         var multi = await _postRepository
@@ -1106,9 +1110,11 @@ public partial class PostService : IPostService
                     PostType = (int)type,
                     IsAccessPrivate = false,
                     UserId = currentUserId,
-                    PageSize = loadReq.PageSize,
+                    loadReq.PageSize,
                     Offet = offset,
-                    Hide = loadReq.Hides
+                    Hide = loadReq.Hides,
+                    ProfileName = loadReq.UserName,
+                    MySelf = true,
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
