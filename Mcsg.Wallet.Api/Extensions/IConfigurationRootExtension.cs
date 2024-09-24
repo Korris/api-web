@@ -11,8 +11,8 @@ public static class IConfigurationRootExtension
     /// Load NotSetting settings, if available
     /// </summary>
     /// <param name="config">Configuration</param>
-    /// <param name="setting">NotSetting setting</param>
-    /// <param name="prefix">Setting prefix</param>
+    /// <param name="setting">Setting object to be populated</param>
+    /// <param name="prefix">Configuration prefix for settings</param>
     public static void LoadSettings(this IConfigurationRoot config, Setting setting, string prefix)
     {
         if (string.IsNullOrEmpty(setting.NotificationExchange))

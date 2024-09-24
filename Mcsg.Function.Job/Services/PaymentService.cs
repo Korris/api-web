@@ -43,9 +43,11 @@ public class PaymentService : IPaymentService
                     var key1 = _setting.ZaloPay.Key1;
                     var url = _setting.ZaloPay.Url;
 
-                    var param = new Dictionary<string, string>();
-                    param.Add("app_id", appId);
-                    param.Add("app_trans_id", appTransId);
+                    var param = new Dictionary<string, string>
+                    {
+                        { "app_id", appId },
+                        { "app_trans_id", appTransId }
+                    };
                     var macData = appId + "|" + appTransId + "|" + key1;
 
                     param.Add("mac", HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key1, macData));

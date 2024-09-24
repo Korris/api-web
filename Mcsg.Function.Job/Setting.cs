@@ -3,7 +3,6 @@
 namespace Mcsg.Function.Job;
 
 using Common.SeedWork;
-using Common.SeedWork.Dtos;
 using Interfaces;
 using static Common.SeedWork.Dtos.ConnectionDto;
 using static Common.SeedWork.Dtos.StorageDto;
@@ -76,11 +75,6 @@ public class Setting : SettingBase, ISetting
     public bool AllowSendingEmail { get; set; }
 
     /// <summary>
-    /// ZaloPay
-    /// </summary>
-    public ZaloPayDto ZaloPay { get; }
-
-    /// <summary>
     /// The time in minutes after which the account will be deleted
     /// </summary>
     public uint AccountDeletedAfter { get; set; }
@@ -110,7 +104,6 @@ public class Setting : SettingBase, ISetting
         NotificationQueueSyncData = string.Empty;
         NotificationQueueViewHistory = string.Empty;
         NotificationRoutingKey = string.Empty;
-        ZaloPay = new ZaloPayDto();
     }
 
     /// <summary>

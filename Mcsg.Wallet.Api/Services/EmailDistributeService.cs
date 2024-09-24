@@ -14,6 +14,12 @@ using Models;
 
 public class EmailDistributeService : BaseDistributor
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="serviceProvider"></param>
     public EmailDistributeService(IServiceProvider serviceProvider)
     {
         _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
@@ -44,6 +50,8 @@ public class EmailDistributeService : BaseDistributor
         };
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueEmail, msg);
     }
+
+    #endregion
 
     #region -- Fields --
 

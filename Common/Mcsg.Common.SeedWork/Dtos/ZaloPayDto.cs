@@ -45,5 +45,25 @@ public class ZaloPayDto
     /// </summary>
     public string Url { get; set; } = default!;
 
+    /// <summary>
+    /// ConfigName
+    /// </summary>
+    public string ConfigName => "zalopayapp";
+
+    /// <summary>
+    /// RedirectUrl
+    /// </summary>
+    public string RedirectUrl { get; set; } = default!;
+
+    /// <summary>
+    /// CallBackUrl
+    /// </summary>
+    public string CallBackUrl { get; set; } = default!;
+
+    /// <summary>
+    /// QueryScheduleMinutes
+    /// </summary>
+    public int QueryScheduleMinutes { get; set; }
+
     #endregion
 }

@@ -1,6 +1,5 @@
 ﻿using HD.ZaloPay.Helper.Crypto;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Data;
 
@@ -27,10 +26,11 @@ using Models._3rdClass.ZaloPay.Response;
 using Requests;
 using static Common.Core.Constants.Setting;
 
-public class UserWalletService : IUserWalletService
+public class UserWalletService : BaseSettingS, IUserWalletService
 {
     public UserWalletService(
         WalletContext walletDbContext,
+        ISetting setting,
         ICurrentUserService currentUserService,
         IOtpService otpService,
         IBankService bankService,
@@ -38,10 +38,9 @@ public class UserWalletService : IUserWalletService
         IZaloPayService zaloPayService,
         IConfiguration configuration,
         ISignalRService signalRService,
-        IOptions<ZaloPaySetting> zaloPaySettingOptions,
         IServiceProvider serviceProvider,
         ILogger<UserWalletService> logger,
-        IMcsgContext context)
+        IMcsgContext context) : base(walletDbContext, setting)
     {
         _otpService = otpService;
         _configuration = configuration;
@@ -50,9 +49,7 @@ public class UserWalletService : IUserWalletService
         _systemService = systemService;
         _zaloPayService = zaloPayService;
         _signalRService = signalRService;
-        _zaloPaySetting = zaloPaySettingOptions.Value;
         _dbContext = walletDbContext;
-        _setting = serviceProvider.GetRequiredService<ISetting>();
         _logger = logger;
     }
 
@@ -296,7 +293,7 @@ public class UserWalletService : IUserWalletService
 
     public async Task<IEnumerable<UserPaymentMethodResponse>> GetUserPaymentMethods()
     {
-        string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+        string encryptKey = _setting.EncryptKey;
 
         var userPaymentMethods = await _dbContext.UserPaymentMethods
             .Include(x => x.PaymentMethod)
@@ -336,7 +333,7 @@ public class UserWalletService : IUserWalletService
         {
             throw new BadRequestException(ApiErrorCodes.ERROR_PAYMENT_METHOD_TYPE, ApiErrorMessage.ERROR_PAYMENT_METHOD_TYPE);
         }
-        string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+        string encryptKey = _setting.EncryptKey;
         var entity = new UserPaymentMethod
         {
             UserWalletId = userWallet.Id,
@@ -368,7 +365,7 @@ public class UserWalletService : IUserWalletService
         {
             throw new BadRequestException("NOT FOUND", ApiErrorMessage.ERROR_PAYMENT_METHOD_TYPE);
         }
-        string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+        string encryptKey = _setting.EncryptKey;
 
         userPaymentMethod.AccountNumber = updateUserPaymentMethodReq.AccountNumber != null ? CryptoHelper.Encrypt(updateUserPaymentMethodReq.AccountNumber, encryptKey) : null;
         userPaymentMethod.AccountName = updateUserPaymentMethodReq.AccountName != null ? CryptoHelper.Encrypt(updateUserPaymentMethodReq.AccountName, encryptKey) : null;
@@ -408,7 +405,7 @@ public class UserWalletService : IUserWalletService
         if (otpData == null)
             throw new BadRequestException(ApiErrorCodes.OTP_INVALID, ApiErrorMessage.OTP_INVALID);
 
-        if (DateTime.UtcNow.Subtract(otpData.CreatedOn).TotalMinutes > _configuration.OtpExpired())
+        if (DateTime.UtcNow.Subtract(otpData.CreatedOn).TotalMinutes > _setting.Otp.OtpExpired)
             throw new BadRequestException(ApiErrorCodes.OTP_EXPIRED, ApiErrorMessage.OTP_EXPIRED);
 
         await UpdateWalletInfor(req.TransactionId);
@@ -726,7 +723,7 @@ public class UserWalletService : IUserWalletService
                 };
             }
             var dataStr = JsonConvert.SerializeObject(req.Data);
-            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySetting.Key2, dataStr);
+            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _setting.ZaloPay.Key2, dataStr);
             _logger.LogInformation($"WalletService.CallBackZaloPayAsync - dataStr: {dataStr} - mac: {mac}");
             if (!req.Mac.Equals(mac))
             {
@@ -809,7 +806,7 @@ public class UserWalletService : IUserWalletService
             }
             var dataStr = Convert.ToString(cbdata["data"]);
             var reqMac = Convert.ToString(cbdata["mac"]);
-            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySetting.Key2, dataStr);
+            var mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _setting.ZaloPay.Key2, dataStr);
 
             _logger.LogInformation($"WalletService.CallBackZaloPay - data: {JsonConvert.SerializeObject(dataStr)} - reqMac: {JsonConvert.SerializeObject(reqMac)} - Mac: {JsonConvert.SerializeObject(mac)}");
 
@@ -907,14 +904,8 @@ public class UserWalletService : IUserWalletService
     private readonly IZaloPayService _zaloPayService;
     private readonly IOtpService _otpService;
     private readonly ISystemService _systemService;
-    private readonly ZaloPaySetting _zaloPaySetting;
     private readonly ISignalRService _signalRService;
     private readonly ILogger<UserWalletService> _logger;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     #endregion
 }

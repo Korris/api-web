@@ -8,6 +8,12 @@ using Models;
 
 public class SyncDataDistributeService : BaseDistributor
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="serviceProvider"></param>
     public SyncDataDistributeService(IServiceProvider serviceProvider)
     {
         _setting = serviceProvider.GetRequiredService<ISetting>();
@@ -25,6 +31,8 @@ public class SyncDataDistributeService : BaseDistributor
         var msg = new QueueMessageDto(distributeItem.Data);
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueSyncData, msg);
     }
+
+    #endregion
 
     #region -- Fields --
 

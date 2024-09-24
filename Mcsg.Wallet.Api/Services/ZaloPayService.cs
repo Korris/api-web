@@ -1,48 +1,37 @@
 ﻿using HD.ZaloPay.Helper.Crypto;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Constants;
 using Domain;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
-using Lib.Common.Web.RealTime.Services;
 using Lib.Common.Web.Security;
 using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
 
-public class ZaloPayService : IZaloPayService
+public class ZaloPayService : BaseSettingS, IZaloPayService
 {
-    private readonly ZaloPaySetting _zaloPaySetting;
-    private readonly ISignalRService _signalRService;
-    private readonly WalletContext _dbContext;
-    private readonly ICurrentUserService _currentUserService;
+    #region -- Methods --
 
-    public ZaloPayService(WalletContext walletDbContext,
-        ICurrentUserService currentUserService,
-        ISignalRService signalRService,
-        IOptions<ZaloPaySetting> zaloPaySettingOptions,
-        ISetting setting)
-    {
-        _dbContext = walletDbContext;
-        _currentUserService = currentUserService;
-        _signalRService = signalRService;
-        _zaloPaySetting = zaloPaySettingOptions.Value;
-        _setting = setting;
-    }
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="signalRService"></param>
+    public ZaloPayService(WalletContext context, ISetting setting, ICurrentUserService currentUserService) : base(context, setting) { }
 
     public async Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status)
     {
         try
         {
-            var transaction = await _dbContext.WalletTransactions
+            var transaction = await _context.WalletTransactions
                                         .Include(x => x.SourceUserWallet)
                                         .FirstOrDefaultAsync(x => x.Id == transactionId);
             if (transaction != null)
@@ -54,7 +43,7 @@ public class ZaloPayService : IZaloPayService
                     transaction.SourceUserWallet.Point += transaction.Amount;
                 }
 
-                await _dbContext.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 // Send signalR to user.
                 var realTimeReq = new RealTimeTransactionUpdateReq()
@@ -93,15 +82,11 @@ public class ZaloPayService : IZaloPayService
             var idRandom = rnd.Next(1000000000);
             var appTransId = DateTime.Now.ToString("yyMMdd") + "_" + idRandom;
 
-            var zalopayPayRequest = new CreateZalopayPayRequest(_zaloPaySetting.AppId, _zaloPaySetting.AppUser,
-            DateTime.Now.GetTimeStamp().ToString(), (long)amount!,
-            appTransId,
-                            SystemSettings.ZALO_PAY_BANK_CODE,
-                            content ?? string.Empty,
-                            _zaloPaySetting.CallBackUrl,
-                            embed_data, items);
-            zalopayPayRequest.MakeSignature(_zaloPaySetting.Key1);
-            var createOrderRes = zalopayPayRequest.GetLink(_zaloPaySetting.Url.CreateZpUrl());
+            var zp = _setting.ZaloPay;
+            var now = DateTime.Now.GetTimeStamp().ToString();
+            var zalopayPayRequest = new CreateZalopayPayRequest(zp.AppId, zp.AppUser, now, (long)amount!, appTransId, zp.ConfigName, content, zp.CallBackUrl, embed_data, items);
+            zalopayPayRequest.MakeSignature(zp.Key1);
+            var createOrderRes = zalopayPayRequest.GetLink(zp.Url.CreateZpUrl());
             if (createOrderRes != null)
             {
                 var orderRes = new CreateOrderResponse()
@@ -131,7 +116,7 @@ public class ZaloPayService : IZaloPayService
 
     public async Task<QueryZalopayPayResponse> QueryOrderAsync(Guid transactionId)
     {
-        var transaction = await _dbContext.WalletTransactions.FirstOrDefaultAsync(x => x.Id == transactionId);
+        var transaction = await _context.WalletTransactions.FirstOrDefaultAsync(x => x.Id == transactionId);
         if (transaction != null)
         {
             if (transaction.Status == TransactionStatus.Pending)
@@ -139,16 +124,18 @@ public class ZaloPayService : IZaloPayService
                 var appTransId = transaction.ExternalId;
                 if (!string.IsNullOrEmpty(appTransId))
                 {
-                    var param = new Dictionary<string, string>();
-                    param.Add("app_id", _zaloPaySetting.AppId.ToString());
-                    param.Add("app_trans_id", appTransId);
-                    var data = _zaloPaySetting.AppId.ToString() + "|" + appTransId + "|" + _zaloPaySetting.Key1;
+                    var param = new Dictionary<string, string>
+                    {
+                        { "app_id", _setting.ZaloPay.AppId.ToString() },
+                        { "app_trans_id", appTransId }
+                    };
+                    var data = _setting.ZaloPay.AppId.ToString() + "|" + appTransId + "|" + _setting.ZaloPay.Key1;
 
-                    param.Add("mac", HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _zaloPaySetting.Key1, data));
+                    param.Add("mac", HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, _setting.ZaloPay.Key1, data));
 
                     using var client = new HttpClient();
                     var content = new FormUrlEncodedContent(param);
-                    var response = client.PostAsync(_zaloPaySetting.Url.QueryZpUrl(), content).Result;
+                    var response = client.PostAsync(_setting.ZaloPay.Url.QueryZpUrl(), content).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -189,13 +176,6 @@ public class ZaloPayService : IZaloPayService
             return false;
         }
     }
-
-    #region -- Fields --
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     #endregion
 }

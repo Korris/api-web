@@ -15,11 +15,9 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
-using Lib.Common.Models;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Common.Web.RealTime.Services;
-using Models;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -54,6 +52,8 @@ public class Program
 
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
+        config.LoadSettingOtp(st, "OtpSetting");
+        config.LoadSettingZaloPay(st, "ZaloPay");
         #endregion
 
         // Update connection string
@@ -110,9 +110,6 @@ public class Program
         // Cookie name
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
-
-        builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
-        builder.Services.Configure<ZaloPaySetting>(builder.Configuration.GetSection(ZaloPaySetting.ConfigName));
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);

@@ -22,7 +22,7 @@ using Models;
 using Requests;
 using static Common.Core.Constants.Setting;
 
-public partial class PremiumService : IPremiumService
+public partial class PremiumService : BaseSettingS, IPremiumService
 {
     private readonly IConfiguration _configuration;
     private readonly WalletContext _dbContext;
@@ -32,11 +32,11 @@ public partial class PremiumService : IPremiumService
     private readonly IRepository<User> _userRepository;
 
     public PremiumService(IConfiguration configuration,
-         DistributeManager distributeManager,
-          IBankService bankService,
-           IUnitOfWork unitOfWork,
-         ICurrentUserService currentUserService,
-        WalletContext walletDbContext)
+        DistributeManager distributeManager,
+        IBankService bankService,
+        IUnitOfWork unitOfWork,
+        ICurrentUserService currentUserService,
+        WalletContext walletDbContext, ISetting setting) : base(walletDbContext, setting)
     {
         _configuration = configuration;
         _dbContext = walletDbContext;
@@ -119,7 +119,7 @@ public partial class PremiumService : IPremiumService
 
         if (!string.IsNullOrEmpty(req.AffiliateCode))
         {
-            string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+            string encryptKey = _setting.EncryptKey;
             var affiliateData = req.AffiliateCode.ToAffiliateData(encryptKey);
             if (affiliateData != null)
             {
@@ -289,7 +289,7 @@ public partial class PremiumService : IPremiumService
 
         if (!string.IsNullOrEmpty(req.AffiliateCode))
         {
-            string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+            string encryptKey = _setting.EncryptKey;
             var affiliateData = req.AffiliateCode.ToAffiliateData(encryptKey);
             if (affiliateData != null)
             {
@@ -384,7 +384,7 @@ public partial class PremiumService : IPremiumService
 
         if (!string.IsNullOrEmpty(req.AffiliateCode))
         {
-            string encryptKey = _configuration[SystemSettings.CONST_PAYMENT_ENCRYPTION_KEY];
+            string encryptKey = _setting.EncryptKey;
             var affiliateData = req.AffiliateCode.ToAffiliateData(encryptKey);
             if (affiliateData != null)
             {

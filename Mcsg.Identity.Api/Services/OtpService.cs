@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Identity.Api.Services;
 
@@ -20,7 +19,7 @@ using Models;
 /// <summary>
 /// OtpService
 /// </summary>
-public partial class OtpService : IOtpService
+public partial class OtpService : BaseSettingS, IOtpService
 {
     #region -- Methods --
 
@@ -28,22 +27,20 @@ public partial class OtpService : IOtpService
     /// Initialize
     /// </summary>
     /// <param name="context"></param>
+    /// <param name="setting"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="distributeManager"></param>
-    /// <param name="otpConfiguration"></param>
-    public OtpService(IMcsgContext context, IUnitOfWork unitOfWork, DistributeManager distributeManager, IOptions<OtpSetting> otpConfiguration)
+    public OtpService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork, DistributeManager distributeManager) : base(context, setting)
     {
         _distributeManager = distributeManager;
         _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
-        _otpSetting = otpConfiguration.Value;
-        _context = context;
     }
 
     public async Task<UserOtp> CreateAsync(Guid userId, string to, UserOtpType type, string otpToken = "")
     {
         var id = Guid.NewGuid();
-        var token = _otpSetting.OtpTokenLength.GetRandomString();
-        var otpCode = _otpSetting.OtpLength.GenerateOtp();
+        var token = _setting.Otp.OtpTokenLength.GetRandomString();
+        var otpCode = _setting.Otp.OtpLength.GenerateOtp();
         if (!string.IsNullOrEmpty(otpToken))
         {
             token = otpToken;
@@ -56,7 +53,7 @@ public partial class OtpService : IOtpService
             Destination = to,
             Token = token,
             OtpType = type,
-            ExpiryTime = DateTime.UtcNow.AddMinutes(_otpSetting.ExpiryInMinutes),
+            ExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Otp.ExpiryInMinutes),
         };
 
         try
@@ -178,9 +175,7 @@ public partial class OtpService : IOtpService
 
     #region -- Fields --
 
-    private readonly IMcsgContext _context;
     private readonly IRepository<UserOtp> _userOtpRepository;
-    private readonly OtpSetting _otpSetting;
     private readonly DistributeManager _distributeManager;
 
     private readonly IDictionary<UserOtpType, JobType> _otpJobTypeMapper = new Dictionary<UserOtpType, JobType> {

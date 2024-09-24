@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Mcsg.Wallet.Api.Services;
 
@@ -15,34 +14,35 @@ using Lib.Common.Constants;
 using Lib.Common.Models;
 using Models;
 
-public class OtpService : IOtpService
+public class OtpService : BaseSettingS, IOtpService
 {
-    private readonly WalletContext _walletDbContext;
-    private readonly DistributeManager _distributeManager;
-    private readonly OtpSetting _otpSetting;
-    public OtpService(WalletContext walletDbContext,
-        DistributeManager distributeManager,
-        IOptions<OtpSetting> otpSettingoptions)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="distributeManager"></param>
+    public OtpService(WalletContext context, ISetting setting, DistributeManager distributeManager) : base(context, setting)
     {
-        _otpSetting = otpSettingoptions.Value;
-        _walletDbContext = walletDbContext;
         _distributeManager = distributeManager;
     }
 
     public async Task<bool> ClearAllTransactionOtpOtpAsync(Guid transactionId)
     {
-        var removeItems = await _walletDbContext.WalletTransactionOtps
+        var removeItems = await _context.WalletTransactionOtps
             .Where(x => x.TransactionId == transactionId).Select(x => new WalletTransactionOtp { Id = x.Id }).ToListAsync();
-        _walletDbContext.RemoveRange(removeItems);
-        await _walletDbContext.SaveChangesAsync();
+        _context.RemoveRange(removeItems);
+        await _context.SaveChangesAsync();
         return true;
     }
 
     public async Task<TransactionOtpInfoResp> CreateAsync(WalletTransaction transaction, TransactionOtpType type, string otpToken = "")
     {
         var id = Guid.NewGuid();
-        var token = _otpSetting.OtpTokenLength.GetRandomString();
-        var otpCode = _otpSetting.OtpLength.GenerateOtp();
+        var token = _setting.Otp.OtpTokenLength.GetRandomString();
+        var otpCode = _setting.Otp.OtpLength.GenerateOtp();
 
         if (!string.IsNullOrEmpty(otpToken))
         {
@@ -62,8 +62,8 @@ public class OtpService : IOtpService
         };
         try
         {
-            await _walletDbContext.WalletTransactionOtps.AddAsync(otpInfo);
-            await _walletDbContext.SaveChangesAsync();
+            await _context.WalletTransactionOtps.AddAsync(otpInfo);
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -121,4 +121,12 @@ public class OtpService : IOtpService
        {  TransactionOtpType.Email, JobType.ConfirmEmailOtp },
        {  TransactionOtpType.Phone, JobType.SmsOtp }
     };
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly DistributeManager _distributeManager;
+
+    #endregion
 }

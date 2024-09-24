@@ -3,12 +3,11 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Request;
 
-using Constants;
 using Response;
 
 public class CreateZalopayPayRequest
 {
-    public CreateZalopayPayRequest(int appId, string appUser, string appTime,
+    public CreateZalopayPayRequest(string appId, string appUser, string appTime,
         long amount, string appTransId, string bankCode, string description, string callBackUrl, ZaloPayEmbedData embedData, List<ZaloPayItemData> items)
     {
         AppId = appId;
@@ -22,7 +21,8 @@ public class CreateZalopayPayRequest
         EmbedData = embedData;
         Items = items;
     }
-    public int AppId { get; set; }
+
+    public string AppId { get; set; }
     public string AppUser { get; set; } = string.Empty;
     public string AppTime { get; set; }
     public long Amount { get; set; }
@@ -40,29 +40,30 @@ public class CreateZalopayPayRequest
         var data = AppId + "|" + AppTransId + "|" + AppUser + "|" + Amount.ToString() + "|"
             + AppTime + "|" + JsonConvert.SerializeObject(EmbedData) + "|" + JsonConvert.SerializeObject(Items);
 
-        this.Mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key, data);
+        Mac = HmacHelper.Compute(ZaloPayHMAC.HMACSHA256, key, data);
     }
 
     public Dictionary<string, string> GetContent()
     {
-        Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+        var res = new Dictionary<string, string>
+        {
+            { "app_id", AppId },
+            { "app_user", AppUser },
+            { "app_time", AppTime },
+            { "amount", Amount.ToString() },
+            { "app_trans_id", AppTransId },
+            { "description", Description },
+            { "bank_code", "zalopayapp" },
+            { "item", JsonConvert.SerializeObject(Items) },
+            { "embed_data", JsonConvert.SerializeObject(EmbedData) },
+            { "callback_url", CallBackUrl },
+            { "mac", Mac }
+        };
 
-        keyValuePairs.Add("app_id", AppId.ToString());
-        keyValuePairs.Add("app_user", AppUser);
-        keyValuePairs.Add("app_time", AppTime.ToString());
-        keyValuePairs.Add("amount", Amount.ToString());
-        keyValuePairs.Add("app_trans_id", AppTransId);
-        keyValuePairs.Add("description", Description);
-        keyValuePairs.Add("bank_code", SystemSettings.ZALO_PAY_BANK_CODE);
-        keyValuePairs.Add("item", JsonConvert.SerializeObject(Items));
-        keyValuePairs.Add("embed_data", JsonConvert.SerializeObject(EmbedData));
-        keyValuePairs.Add("callback_url", CallBackUrl);
-        keyValuePairs.Add("mac", Mac);
-
-        return keyValuePairs;
+        return res;
     }
 
-    public CreateZalopayPayResponse GetLink(string paymentUrl)
+    public CreateZalopayPayResponse? GetLink(string paymentUrl)
     {
         using var client = new HttpClient();
         var content = new FormUrlEncodedContent(GetContent());

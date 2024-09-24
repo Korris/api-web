@@ -145,6 +145,16 @@ public class SettingBase : ISettingBase
     public ApiDto Rpc { get; }
 
     /// <summary>
+    /// OTP
+    /// </summary>
+    public OtpDto Otp { get; }
+
+    /// <summary>
+    /// ZaloPay
+    /// </summary>
+    public ZaloPayDto ZaloPay { get; }
+
+    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     public string? Origins { get; set; }
@@ -176,6 +186,8 @@ public class SettingBase : ISettingBase
         Minio = new MinioDto();
         Api = new ApiDto();
         Rpc = new ApiDto();
+        Otp = new OtpDto();
+        ZaloPay = new ZaloPayDto();
 
         EncryptKey = string.Empty;
     }

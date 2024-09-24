@@ -13,6 +13,12 @@ using Models;
 
 public class SmsDistributeService : BaseDistributor
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="serviceProvider"></param>
     public SmsDistributeService(IServiceProvider serviceProvider)
     {
         _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
@@ -43,6 +49,8 @@ public class SmsDistributeService : BaseDistributor
         };
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueSms, msg);
     }
+
+    #endregion
 
     #region -- Fields --
 

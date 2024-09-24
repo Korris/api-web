@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Function.Job.Interfaces;
 
-using Common.SeedWork.Dtos;
 using Common.SeedWork.Interfaces;
 using static Mcsg.Common.SeedWork.Dtos.ConnectionDto;
 
@@ -70,11 +69,6 @@ public interface ISetting : ISettingBase
     /// Allow sending email
     /// </summary>
     bool AllowSendingEmail { get; set; }
-
-    /// <summary>
-    /// ZaloPay
-    /// </summary>
-    ZaloPayDto ZaloPay { get; }
 
     /// <summary>
     /// The time in minutes after which the account will be deleted

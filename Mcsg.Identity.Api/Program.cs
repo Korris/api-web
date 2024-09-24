@@ -18,7 +18,6 @@ using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.Extensions.DependencyInjection;
-using Models;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -53,6 +52,7 @@ public class Program
 
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
+        config.LoadSettingOtp(st, "OtpSetting");
         #endregion
 
         // Update connection string
@@ -125,8 +125,6 @@ public class Program
         // Cookie name
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
         #endregion
-
-        builder.Services.Configure<OtpSetting>(builder.Configuration.GetSection("OtpSetting"));
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
