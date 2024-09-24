@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Wallet.Api.Protos.Services;
 
 using Common.Core.Extensions;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Domain;
 using Domain.Entities;
@@ -39,6 +40,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 ProfileName = request.ProfileName,
+                Type = UserType.Free,
                 Status = UserWalletStatus.Approved,
                 UserId = new Guid(request.Id),
                 WalletSettingId = walletSetting!.Id,

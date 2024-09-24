@@ -12,6 +12,7 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
@@ -143,7 +144,8 @@ public partial class AuthenticationService : IAuthenticationService
             user.ProfileId = user.UserName;
             user.CreatedIp = request.RemoteIp;
             user.MinioInstance = 0; // default MinIO
-            user.StorageLimit = 2048; // 2GB
+            user.StorageLimit = 1024; // 1GB
+            user.Type = UserType.Free;
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -362,7 +364,8 @@ public partial class AuthenticationService : IAuthenticationService
                 user.ProfileId = user.UserName;
                 user.CreatedIp = request.RemoteIp;
                 user.MinioInstance = 0; // default MinIO
-                user.StorageLimit = 2048; // 2GB
+                user.StorageLimit = 1024; // 1GB
+                user.Type = UserType.Free;
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
