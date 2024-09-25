@@ -6,6 +6,7 @@ public class ApiErrorMessage
     public const string OTP_EXPIRED = "Otp is expired";
     public const string BALANCE_NOT_ENOUGH = "Not enough balance";
     public const string USER_NOT_FOUND = "User is not found";
+    public const string PACKAGE_NOT_FOUND = "Package is not found";
     public const string TRANSACTION_NOT_FOUND = "Transaction not found";
     public const string USER_NOT_PERMISSION = "User not permission";
     public const string WALLET_ADDRESS_NOT_FOUND = "Wallet address is not found";

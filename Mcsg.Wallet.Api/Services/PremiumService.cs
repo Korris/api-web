@@ -1,10 +1,12 @@
-﻿using Dapper;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -12,6 +14,7 @@ using Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
+using Identity.Api.Protos;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
@@ -67,6 +70,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
         return packageResponses;
     }
+
     public async Task<bool> BuyPremium(PremiumBuyPremiumR req)
     {
         var userId = _currentUserService?.Session?.UserId;
@@ -78,8 +82,12 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         {
             throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
         }
+        if (package == null)
+        {
+            throw new BadRequestException(ApiErrorCodes.PACKAGE_NOT_FOUND, ApiErrorMessage.PACKAGE_NOT_FOUND);
+        }
 
-        if ((userWallet.Point + userWallet.RewardPoint) < package.FirstTimePrice)
+        if ((userWallet.Point + userWallet.RewardPoint) < package?.FirstTimePrice)
         {
             throw new BadRequestException(ApiErrorCodes.BALANCE_NOT_ENOUGH, ApiErrorMessage.BALANCE_NOT_ENOUGH);
         }
@@ -182,20 +190,10 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             transaction.IsConfirmed = true;
             _dbContext.UserWallets.Update(userWallet);
             _dbContext.WalletTransactions.Update(transaction);
-            await _userRepository.Connection.QueryAsync(UpdatePremiumDate, new
-            {
-                PremiumDate = DateOnly.FromDateTime(userPremium.EndDate),
-                UserId = userWallet.UserId,
-                DateTimeNow = nowDate
-            });
-            try
-            {
-                await _dbContext.SaveChangesAsync(default);
-            }
-            catch (Exception ex)
-            {
-                //await LogError(buyPremiumData.TransactionId, ex.Message);
-            }
+
+            await UpdatePremiumDate(userWallet.UserId, userPremium.EndDate);
+
+            await _dbContext.SaveChangesAsync(default);
         }
         else
         {
@@ -419,4 +417,36 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         });
     }
     #endregion
+
+    /// <summary>
+    /// UpdatePremiumDate
+    /// </summary>
+    /// <param name="userId">UserId</param>
+    /// <param name="premiumDate">PremiumDate</param>
+    /// <returns>Return the result</returns>
+    private async Task<BaseRsp> UpdatePremiumDate(Guid userId, DateTime premiumDate)
+    {
+        var res = new BaseRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Identity!);
+
+            var client = new UserProto.UserProtoClient(channel);
+            var request = new UserUpdateReq
+            {
+                UserUid = userId.ToString(),
+                PremiumDate = Timestamp.FromDateTime(premiumDate)
+            };
+            var rsp = await client.UpdateAsync(request);
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
 }

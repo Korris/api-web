@@ -147,6 +147,7 @@ public class Program
             var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         st.LogInfor();
         #endregion

@@ -129,6 +129,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddControllers();
+        builder.Services.AddGrpc();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -213,6 +214,8 @@ public class Program
         app.MapControllers();
         app.MapHealthChecks("/health");
         app.UseResponseCaching();
+
+        app.MapGrpcService<Protos.Services.UserService>();
 
         app.Run();
     }

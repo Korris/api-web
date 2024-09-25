@@ -6,7 +6,8 @@ public class ApiErrorCodes
     public const string OTP_EXPIRED = "ERR_WAL_0002";
 
     public const string BALANCE_NOT_ENOUGH = "ERR_WAL_0003"; //Not enough balance
-    public const string USER_NOT_FOUND = "ERR_WAL_0004"; //TRANSACTION_NOT_FOUND
+    public const string USER_NOT_FOUND = "ERR_WAL_0004";
+    public const string PACKAGE_NOT_FOUND = "ERR_WAL_1004";
     public const string TRANSACTION_NOT_FOUND = "ERR_WAL_0005";
     public const string USER_NOT_PERMISSION = "ERR_WAL_0006";
     public const string WALLET_ADDRESS_NOT_FOUND = "ERR_WAL_0007";
