@@ -152,12 +152,14 @@ LIMIT 1
                                (
                SELECT COUNT(*) 
                FROM ""story"".""StoryPostComments"" pc 
-               WHERE pc.""PostId"" = p.""Id"" AND pc.""IsDelete"" = FALSE
+               WHERE pc.""PostId"" = p.""Id"" AND pc.""IsDelete"" = FALSE 
+                    AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
            ) + (
                SELECT COUNT(*)
                 FROM ""story"".""StorySubPostComments"" spc
                INNER JOIN ""story"".""StorySubPosts"" sp ON spc.""PostId"" = sp.""Id""
-               WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE
+               WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE 
+                    AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
            ) AS ""TotalComment"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
@@ -179,6 +181,7 @@ LIMIT 1
                                 LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
                             
+                            WHERE (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",

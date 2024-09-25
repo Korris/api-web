@@ -498,7 +498,11 @@ public partial class PostService : IPostService
 
             var offset = request.PageSize * (request.PageNumber - 1);
 
-            string whereClause = " WHERE qpost1.\"Type\" = @PostType AND qpost1.\"Permission\" = @PostPermission AND qpost1.\"Status\" = @PostStatus AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId ";
+            string whereClause = " WHERE qpost1.\"Type\" = @PostType " +
+                "AND qpost1.\"Permission\" = @PostPermission " +
+                "AND qpost1.\"Status\" = @PostStatus " +
+                "AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId " +
+                "AND (NOT (qpost1.\"Hide\" = ANY (@Hide) AND qpost1.\"Hide\" = ANY (@Hide) IS NOT NULL) OR qpost1.\"UserId\" = @UserId) ";
             var tags = await _tagService.GetTagsByPostIdAsync(post.Id);
             var tagIds = new List<Guid>();
             if (tags != null && tags.Any())
@@ -526,14 +530,16 @@ public partial class PostService : IPostService
                     .Connection.QueryMultipleAsync(query, new
                     {
                         PostType = type,
-                        PageSize = request.PageSize,
+                        request.PageSize,
                         Offet = offset,
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
                         PostStatus = (int)PostStatus.Public,
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
-                        HashId = request.HashId,
-                        PostPermission = (int)PostPermission.Public
+                        request.HashId,
+                        PostPermission = (int)PostPermission.Public,
+                        Hide = request.Hides,
+                        request.UserId
                     });
 
             var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
