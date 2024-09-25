@@ -6,9 +6,9 @@ namespace Mcsg.Wallet.Api.Protos.Services;
 using Common.Core.Extensions;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
-using Domain;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Interfaces;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -68,7 +68,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public UserWalletService(WalletContext context)
+    public UserWalletService(IWalletContext context)
     {
         _context = context;
     }
@@ -116,7 +116,7 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
     /// <summary>
     /// DB context
     /// </summary>
-    private readonly WalletContext _context;
+    private readonly IWalletContext _context;
 
     #endregion
 

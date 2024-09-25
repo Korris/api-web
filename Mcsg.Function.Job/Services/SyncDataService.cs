@@ -13,21 +13,21 @@ using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Wallet.Domain;
 using Wallet.Domain.Entities;
 using Wallet.Domain.Enums;
+using Wallet.Domain.Interfaces;
 using static Common.Core.Constants.Setting;
 
 public partial class SyncDataService : ISyncDataService
 {
-    private readonly WalletContext _walletDbContext;
+    private readonly IWalletContext _walletDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialSubPost> _subPostRepository;
     private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
 
-    public SyncDataService(IUnitOfWork unitOfWork, WalletContext walletDbContext)
+    public SyncDataService(IUnitOfWork unitOfWork, IWalletContext walletDbContext)
     {
         _unitOfWork = unitOfWork;
         _userRepository = unitOfWork.GetRepository<User>();
@@ -47,7 +47,7 @@ public partial class SyncDataService : ISyncDataService
             userWallet.ProfileName = userData.ProfileName;
             userWallet.Email = userData.Email;
 
-            await _walletDbContext.SaveChangesAsync();
+            await _walletDbContext.SaveChangesAsync(default);
         }
     }
     public async Task SyncWalletUserRewardAsync(SyncData data)
@@ -77,9 +77,9 @@ public partial class SyncDataService : ISyncDataService
                 IsConfirmed = true,
             };
 
-            _walletDbContext.Update(userWallet);
+            _walletDbContext.UserWallets.Update(userWallet);
             await _walletDbContext.WalletTransactions.AddAsync(transaction);
-            await _walletDbContext.SaveChangesAsync();
+            await _walletDbContext.SaveChangesAsync(default);
         }
     }
 
@@ -183,7 +183,7 @@ public partial class SyncDataService : ISyncDataService
             });
             try
             {
-                await _walletDbContext.SaveChangesAsync();
+                await _walletDbContext.SaveChangesAsync(default);
             }
             catch (Exception ex)
             {
@@ -216,7 +216,7 @@ public partial class SyncDataService : ISyncDataService
                 {
                     transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = "Buy chapter failed, user not enough point";
-                    await _walletDbContext.SaveChangesAsync();
+                    await _walletDbContext.SaveChangesAsync(default);
                     return;//ko đủ số dư
                 }
 
@@ -231,7 +231,7 @@ public partial class SyncDataService : ISyncDataService
                 {
                     transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", existBuy.CreatedOn.ToString());
-                    await _walletDbContext.SaveChangesAsync();
+                    await _walletDbContext.SaveChangesAsync(default);
                     return;//đã mua trước đó
                 }
 
@@ -287,7 +287,7 @@ public partial class SyncDataService : ISyncDataService
                 }
 
                 _unitOfWork.CommitTransaction();
-                await _walletDbContext.SaveChangesAsync();
+                await _walletDbContext.SaveChangesAsync(default);
             }
             catch (Exception)
             {
@@ -345,7 +345,7 @@ public partial class SyncDataService : ISyncDataService
                     {
                         transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", boughtChapters.FirstOrDefault().CreatedOn.ToString());
-                        await _walletDbContext.SaveChangesAsync();
+                        await _walletDbContext.SaveChangesAsync(default);
                         return;//đã mua trước đó
                     }
                     // Amount need to spend for not bought chapters.
@@ -355,7 +355,7 @@ public partial class SyncDataService : ISyncDataService
                     {
                         transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = "Buy chapter failed, user not enough point";
-                        await _walletDbContext.SaveChangesAsync();
+                        await _walletDbContext.SaveChangesAsync(default);
                         return;//ko đủ số dư
                     }
 
@@ -413,7 +413,7 @@ public partial class SyncDataService : ISyncDataService
                 }
 
                 _unitOfWork.CommitTransaction();
-                await _walletDbContext.SaveChangesAsync();
+                await _walletDbContext.SaveChangesAsync(default);
             }
             catch (Exception)
             {
@@ -428,7 +428,7 @@ public partial class SyncDataService : ISyncDataService
         logTransaction.Status = TransactionStatus.Failed;
         logTransaction.SystemMessage = message;
         _walletDbContext.WalletTransactions.Update(logTransaction);
-        await _walletDbContext.SaveChangesAsync();
+        await _walletDbContext.SaveChangesAsync(default);
         return logTransaction;
     }
 }

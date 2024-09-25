@@ -9,9 +9,9 @@ using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
-using Domain;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
@@ -25,7 +25,7 @@ using static Common.Core.Constants.Setting;
 public partial class PremiumService : BaseSettingS, IPremiumService
 {
     private readonly IConfiguration _configuration;
-    private readonly WalletContext _dbContext;
+    private readonly IWalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly DistributeManager _distributeManager;
     private readonly IBankService _bankService;
@@ -36,7 +36,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         IBankService bankService,
         IUnitOfWork unitOfWork,
         ICurrentUserService currentUserService,
-        WalletContext walletDbContext, ISetting setting) : base(walletDbContext, setting)
+        IWalletContext walletDbContext, ISetting setting) : base(walletDbContext, setting)
     {
         _configuration = configuration;
         _dbContext = walletDbContext;
@@ -129,7 +129,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
         await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
         await _dbContext.WalletTransactions.AddAsync(transaction);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
         await SyncBuyPremium(userWallet, package, transaction);
 
         return true;
@@ -190,7 +190,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             });
             try
             {
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(default);
             }
             catch (Exception ex)
             {
@@ -300,7 +300,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
         await _dbContext.WalletTransactions.AddAsync(transaction);
         await SyncBuyChapter(userId ?? Guid.Empty, transaction.Id);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return true;
     }
@@ -395,7 +395,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
         await _dbContext.WalletTransactions.AddAsync(transaction);
         await SyncBuySerieAsync(userId ?? Guid.Empty, transaction.Id);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return true;
     }

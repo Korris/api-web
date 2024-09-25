@@ -12,9 +12,9 @@ using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
-using Domain;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Enums;
 using Lib.Common.Helpers;
@@ -29,7 +29,7 @@ using static Common.Core.Constants.Setting;
 public class UserWalletService : BaseSettingS, IUserWalletService
 {
     public UserWalletService(
-        WalletContext walletDbContext,
+        IWalletContext walletDbContext,
         ISetting setting,
         ICurrentUserService currentUserService,
         IOtpService otpService,
@@ -248,7 +248,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                     break;
                 }
         }
-        _dbContext.Update(transaction);
+        _dbContext.WalletTransactions.Update(transaction);
     }
 
     public async Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId)
@@ -285,7 +285,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             paymentMethod.IsDelete = true;
             _dbContext.UserPaymentMethods.Update(paymentMethod);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default);
         }
 
         return true;
@@ -343,7 +343,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         };
 
         _dbContext.UserPaymentMethods.Add(entity);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return new AddUserPaymentMethodResp
         {
@@ -383,7 +383,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         }
 
         _dbContext.UserPaymentMethods.Update(userPaymentMethod);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return new UpdateUserPaymentMethodResp
         {
@@ -410,7 +410,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
         await UpdateWalletInfor(req.TransactionId);
 
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
         await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
 
         return true;
@@ -468,7 +468,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             var otpInfo = await _otpService.CreateAsync(transaction, otpType);
             otpInfo.ToProfileName = toUserWallet.ProfileName;
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default);
 
             return otpInfo;
         }
@@ -515,7 +515,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             var otpInfo = await _otpService.CreateAsync(transaction, otpType);
             otpInfo.ToProfileName = toUserWallet.ProfileName;
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default);
 
             return otpInfo;
         }
@@ -583,7 +583,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         otpInfo.ToProfileName = userWallet.ProfileName;
 
         await _systemService.SendAdminNoti(nameof(TransactionType.Withdraw), _currentUserService?.Session?.ProfileId, transaction.Content);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return otpInfo;
     }
@@ -634,7 +634,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         try
         {
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default);
         }
         catch (Exception e)
         {
@@ -672,7 +672,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             if (createOrderRes != null && createOrderRes.ReturnCode == (int)ZaloPayReturnCode.SUCCESS)
             {
                 transaction.ExternalId = createOrderRes.AppTransId;
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(default);
 
                 // Send queue to check zalo order
                 var jobData = new PaymentTransData()
@@ -789,7 +789,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         transaction.Status = TransactionStatus.Canceled;
 
         _dbContext.WalletTransactions.Update(transaction);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(default);
 
         return true;
     }
@@ -897,7 +897,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
     #region -- Fields --
 
-    private readonly WalletContext _dbContext;
+    private readonly IWalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly IConfiguration _configuration;
     private readonly IBankService _bankService;

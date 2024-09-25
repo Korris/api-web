@@ -4,8 +4,8 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.SeedWork.Exceptions;
 using Constants;
-using Domain;
 using Domain.Enums;
+using Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -16,14 +16,14 @@ using Requests;
 
 public class UserPurchaseService : IUserPurchaseService
 {
-    private readonly WalletContext _dbContext;
+    private readonly IWalletContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
     private readonly IConfiguration _configuration;
     private readonly IBankService _bankService;
 
     private readonly IOtpService _otpService;
     private readonly ISystemService _systemService;
-    public UserPurchaseService(WalletContext walletDbContext,
+    public UserPurchaseService(IWalletContext walletDbContext,
         ICurrentUserService currentUserService,
         IOtpService otpService,
         IBankService bankService,

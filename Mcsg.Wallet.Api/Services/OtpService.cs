@@ -6,9 +6,9 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
-using Domain;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models;
@@ -24,7 +24,7 @@ public class OtpService : BaseSettingS, IOtpService
     /// <param name="context"></param>
     /// <param name="setting"></param>
     /// <param name="distributeManager"></param>
-    public OtpService(WalletContext context, ISetting setting, DistributeManager distributeManager) : base(context, setting)
+    public OtpService(IWalletContext context, ISetting setting, DistributeManager distributeManager) : base(context, setting)
     {
         _distributeManager = distributeManager;
     }
@@ -33,8 +33,8 @@ public class OtpService : BaseSettingS, IOtpService
     {
         var removeItems = await _context.WalletTransactionOtps
             .Where(x => x.TransactionId == transactionId).Select(x => new WalletTransactionOtp { Id = x.Id }).ToListAsync();
-        _context.RemoveRange(removeItems);
-        await _context.SaveChangesAsync();
+        _context.WalletTransactionOtps.RemoveRange(removeItems);
+        await _context.SaveChangesAsync(default);
         return true;
     }
 
@@ -63,7 +63,7 @@ public class OtpService : BaseSettingS, IOtpService
         try
         {
             await _context.WalletTransactionOtps.AddAsync(otpInfo);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {

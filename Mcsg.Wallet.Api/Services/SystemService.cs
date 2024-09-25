@@ -4,8 +4,8 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
-using Domain;
 using Domain.Enums;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Models;
 using Models;
@@ -19,7 +19,7 @@ public class SystemService : BaseS, ISystemService
     /// </summary>
     /// <param name="context"></param>
     /// <param name="distributeManager"></param>
-    public SystemService(WalletContext context, DistributeManager distributeManager) : base(context)
+    public SystemService(IWalletContext context, DistributeManager distributeManager) : base(context)
     {
         _distributeManager = distributeManager;
     }

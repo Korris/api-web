@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Wallet.Api.Services;
 
-using Domain;
+using Domain.Interfaces;
 using Interfaces;
 
 /// <summary>
@@ -10,14 +10,14 @@ using Interfaces;
 /// Initialize
 /// </remarks>
 /// <param name="context">DB context</param>
-public class BaseS(WalletContext context)
+public class BaseS(IWalletContext context)
 {
     #region -- Fields --
 
     /// <summary>
     /// DB context
     /// </summary>
-    protected readonly WalletContext _context = context;
+    protected readonly IWalletContext _context = context;
 
     #endregion
 }
@@ -30,7 +30,7 @@ public class BaseS(WalletContext context)
 /// </remarks>
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
-public class BaseSettingS(WalletContext context, ISetting setting) : BaseS(context)
+public class BaseSettingS(IWalletContext context, ISetting setting) : BaseS(context)
 {
     #region -- Fields --
 

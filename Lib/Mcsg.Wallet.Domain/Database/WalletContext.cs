@@ -5,11 +5,12 @@ namespace Mcsg.Wallet.Domain;
 using Common.Core.Constants;
 using Entities;
 using Enums;
+using Interfaces;
 
 /// <summary>
 /// WalletDbContext
 /// </summary>
-public class WalletContext : DbContext
+public partial class WalletContext : DbContext, IWalletContext
 {
     #region -- Overrides --
 
@@ -209,6 +210,8 @@ public class WalletContext : DbContext
     public virtual DbSet<EarningPeriod> EarningPeriods { get; set; }
     public virtual DbSet<EarningSummary> EarningSummaries { get; set; }
     public virtual DbSet<EarningSummaryDetail> EarningSummaryDetails { get; set; }
+
+    public virtual DbSet<SystemSetting> SystemSettings { get; set; }
 
     #endregion
 }

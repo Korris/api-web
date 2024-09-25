@@ -6,7 +6,7 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Domain;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
@@ -25,7 +25,7 @@ public class ZaloPayService : BaseSettingS, IZaloPayService
     /// <param name="context"></param>
     /// <param name="setting"></param>
     /// <param name="signalRService"></param>
-    public ZaloPayService(WalletContext context, ISetting setting, ICurrentUserService currentUserService) : base(context, setting) { }
+    public ZaloPayService(IWalletContext context, ISetting setting, ICurrentUserService currentUserService) : base(context, setting) { }
 
     public async Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status)
     {
@@ -43,7 +43,7 @@ public class ZaloPayService : BaseSettingS, IZaloPayService
                     transaction.SourceUserWallet.Point += transaction.Amount;
                 }
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(default);
 
                 // Send signalR to user.
                 var realTimeReq = new RealTimeTransactionUpdateReq()

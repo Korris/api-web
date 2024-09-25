@@ -12,18 +12,18 @@ using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Security;
 using Models.Earning;
-using Wallet.Domain;
 using Wallet.Domain.Enums;
+using Wallet.Domain.Interfaces;
 
 public class AffiliateService : IAffiliateService
 {
-    private readonly WalletContext _walletDbContext;
+    private readonly IWalletContext _walletDbContext;
     private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     private readonly ILogger<WalletService> _logger;
     private readonly IMapper _mapper;
 
-    public AffiliateService(WalletContext walletDbContext
+    public AffiliateService(IWalletContext walletDbContext
         , ICurrentUserService currentUserService
         , IConfiguration configuration
         , ILogger<WalletService> logger

@@ -14,11 +14,11 @@ using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
 using Lib.Data.Repositories.Interface;
-using Wallet.Domain;
+using Wallet.Domain.Interfaces;
 
 public class PaymentService : IPaymentService
 {
-    public PaymentService(IUnitOfWork unitOfWork, WalletContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
+    public PaymentService(IUnitOfWork unitOfWork, IWalletContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
     {
         _unitOfWork = unitOfWork;
         _walletDbContext = walletDbContext;
@@ -85,7 +85,7 @@ public class PaymentService : IPaymentService
                         {
                             transaction.SourceUserWallet.Point += transaction.Amount;
                         }
-                        var result = await _walletDbContext.SaveChangesAsync();
+                        var result = await _walletDbContext.SaveChangesAsync(default);
 
                         if (result > 0)
                         {
@@ -131,7 +131,7 @@ public class PaymentService : IPaymentService
 
     #region -- Fields --
 
-    private readonly WalletContext _walletDbContext;
+    private readonly IWalletContext _walletDbContext;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PaymentService> _logger;
 

@@ -5,17 +5,17 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Enums;
 using Constants;
-using Domain;
 using Domain.Entities;
+using Domain.Interfaces;
 using Interfaces;
 using Models;
 
 public class BankService : IBankService
 {
     private readonly IConfiguration _configuration;
-    private readonly WalletContext _dbContext;
+    private readonly IWalletContext _dbContext;
 
-    public BankService(IConfiguration configuration, WalletContext walletDbContext)
+    public BankService(IConfiguration configuration, IWalletContext walletDbContext)
     {
         _configuration = configuration;
         _dbContext = walletDbContext;
@@ -105,7 +105,7 @@ public class BankService : IBankService
                     _dbContext.PaymentMethods.Update(bankDb);
                 }
             }
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(default);
         }
 
         return bankList;

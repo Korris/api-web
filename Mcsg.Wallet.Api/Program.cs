@@ -8,9 +8,9 @@ namespace Mcsg.Wallet.Api;
 
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
-using Common.Domain;
 using Common.SeedWork.Extensions;
 using Domain;
+using Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
@@ -58,7 +58,6 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
-        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -99,8 +98,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(csDbWallet);
+        builder.Services.AddWalletDbContext(csDb);
         #endregion
 
         #region -- Setup token --
@@ -145,7 +143,7 @@ public class Program
         #region -- Load settings --
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
-            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var context = ss.ServiceProvider.GetRequiredService<IWalletContext>();
             var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
