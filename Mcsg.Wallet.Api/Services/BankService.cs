@@ -10,20 +10,22 @@ using Domain.Interfaces;
 using Interfaces;
 using Models;
 
-public class BankService : IBankService
+public class BankService : BaseS, IBankService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IWalletContext _dbContext;
+    #region -- Methods --
 
-    public BankService(IConfiguration configuration, IWalletContext walletDbContext)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    public BankService(IWalletContext context) : base(context)
     {
-        _configuration = configuration;
-        _dbContext = walletDbContext;
+        _context = context;
     }
 
     public async Task<IEnumerable<BankResponse>> GetBanks()
     {
-        var bankListDb = await _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.IsActive)
+        var bankListDb = await _context.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.IsActive)
             .AsNoTracking()
             .Select(x => new BankResponse
             {
@@ -46,7 +48,7 @@ public class BankService : IBankService
     public async Task<IEnumerable<BankFromApiResp>> SyncBanks()
     {
         using HttpClient httpClient = new HttpClient();
-        string bankApi = _configuration["Bank:BankListApi"];
+        string bankApi = "";
         HttpResponseMessage response = await httpClient.GetAsync(bankApi);
         var bankList = new List<BankFromApiResp>();
         if (response.IsSuccessStatusCode)
@@ -55,14 +57,14 @@ public class BankService : IBankService
             var o2 = JsonConvert.DeserializeObject<BankListFromApiResp>(responseBody);
             bankList = o2.Data;
         }
-        var bankListDb = _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking).ToList();
+        var bankListDb = _context.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking).ToList();
 
         foreach (var bank in bankList)
         {
             var bankDb = bankListDb.FirstOrDefault(x => x.SelfId == bank.Id && x.Code == bank.Code);
             if (bankDb == null)
             {
-                _dbContext.PaymentMethods.Add(new PaymentMethod
+                _context.PaymentMethods.Add(new PaymentMethod
                 {
                     Name = bank.Name,
                     Logo = bank.Logo,
@@ -102,10 +104,10 @@ public class BankService : IBankService
                 }
                 if (isUpdate)
                 {
-                    _dbContext.PaymentMethods.Update(bankDb);
+                    _context.PaymentMethods.Update(bankDb);
                 }
             }
-            await _dbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
         }
 
         return bankList;
@@ -165,4 +167,15 @@ public class BankService : IBankService
             Ratio = 1
         } };
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// DB context
+    /// </summary>
+    private readonly IWalletContext _context;
+
+    #endregion
 }

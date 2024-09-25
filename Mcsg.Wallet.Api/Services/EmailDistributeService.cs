@@ -8,8 +8,6 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 public class EmailDistributeService : BaseDistributor
@@ -22,7 +20,6 @@ public class EmailDistributeService : BaseDistributor
     /// <param name="serviceProvider"></param>
     public EmailDistributeService(IServiceProvider serviceProvider)
     {
-        _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
         _setting = serviceProvider.GetRequiredService<ISetting>();
     }
 
@@ -34,19 +31,18 @@ public class EmailDistributeService : BaseDistributor
 
     public override async Task ApplyAction(DistributedItem item)
     {
-        var emailItem = item as EmailJobDistributeItem;
+        var dItem = item as EmailJobDistributeItem;
         var job = new Job
         {
-            Id = emailItem.Id,
-            JobType = emailItem.JobType,
-            Data = JsonConvert.SerializeObject(emailItem.Email),
+            Id = dItem.Id,
+            JobType = dItem.JobType,
+            Data = JsonConvert.SerializeObject(dItem.Email),
             Status = JobStatus.Queued
         };
-        await _jobRepository.InsertAsync(job);
 
-        var msg = new QueueMessageDto
+        var msg = new QueueMessageDto(job)
         {
-            DevName = emailItem.Id.ToString()
+            DevName = dItem.Id.ToString()
         };
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueEmail, msg);
     }
@@ -54,11 +50,6 @@ public class EmailDistributeService : BaseDistributor
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// Job repository
-    /// </summary>
-    private readonly IRepository<Job> _jobRepository;
 
     /// <summary>
     /// Setting

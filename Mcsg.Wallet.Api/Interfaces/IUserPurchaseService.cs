@@ -6,5 +6,5 @@ using Requests;
 public interface IUserPurchaseService
 {
     Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(UserPurchasePaginatedR request);
-    Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync();
+    Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync(Guid userId);
 }

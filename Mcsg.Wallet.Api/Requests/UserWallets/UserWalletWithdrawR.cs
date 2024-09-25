@@ -1,8 +1,9 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
+using Common.Core.Requests;
 using Constants;
 
-public class UserWalletWithdrawR
+public class UserWalletWithdrawR : BaseR
 {
     public float Amount { get; set; }
     public string Content { get; set; }

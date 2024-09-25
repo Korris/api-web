@@ -7,8 +7,6 @@ using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 public class SmsDistributeService : BaseDistributor
@@ -21,7 +19,6 @@ public class SmsDistributeService : BaseDistributor
     /// <param name="serviceProvider"></param>
     public SmsDistributeService(IServiceProvider serviceProvider)
     {
-        _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
         _setting = serviceProvider.GetRequiredService<ISetting>();
     }
 
@@ -33,19 +30,18 @@ public class SmsDistributeService : BaseDistributor
 
     public override async Task ApplyAction(DistributedItem item)
     {
-        var smsItem = item as SmsJobDistributeItem;
+        var dItem = item as SmsJobDistributeItem;
         var job = new Job
         {
-            Id = smsItem.Id,
-            JobType = smsItem.JobType,
-            Data = smsItem.Sms.ToJson(),
+            Id = dItem.Id,
+            JobType = dItem.JobType,
+            Data = dItem.Sms.ToJson(),
             Status = JobStatus.Queued
         };
-        await _jobRepository.InsertAsync(job);
 
-        var msg = new QueueMessageDto
+        var msg = new QueueMessageDto(job)
         {
-            DevName = smsItem.Id.ToString()
+            DevName = dItem.Id.ToString()
         };
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueSms, msg);
     }
@@ -53,11 +49,6 @@ public class SmsDistributeService : BaseDistributor
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// Job repository
-    /// </summary>
-    private readonly IRepository<Job> _jobRepository;
 
     /// <summary>
     /// Setting

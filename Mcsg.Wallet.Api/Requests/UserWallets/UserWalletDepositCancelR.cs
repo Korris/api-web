@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class UserWalletDepositCancelR
+using Common.Core.Requests;
+
+public class UserWalletDepositCancelR : BaseR
 {
     public Guid TransactionId { get; set; }
 }

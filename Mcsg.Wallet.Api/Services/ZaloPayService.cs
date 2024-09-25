@@ -11,7 +11,6 @@ using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
-using Lib.Common.Web.Security;
 using Models._3rdClass.ZaloPay.Request;
 using Models._3rdClass.ZaloPay.Response;
 
@@ -24,8 +23,7 @@ public class ZaloPayService : BaseSettingS, IZaloPayService
     /// </summary>
     /// <param name="context"></param>
     /// <param name="setting"></param>
-    /// <param name="signalRService"></param>
-    public ZaloPayService(IWalletContext context, ISetting setting, ICurrentUserService currentUserService) : base(context, setting) { }
+    public ZaloPayService(IWalletContext context, ISetting setting) : base(context, setting) { }
 
     public async Task CompleteTransactionAsync(Guid transactionId, Guid userId, TransactionStatus status)
     {

@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mcsg.Wallet.Api.Requests;
 
+using Common.Core.Requests;
 using Constants;
 
-public class PremiumBuySerieR
+public class PremiumBuySerieR : BaseR
 {
     [Required]
     public Guid SerieId { get; set; }

@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class UserPaymentMethodReq
+using Common.Core.Requests;
+
+public class UserPaymentMethodReq : BaseR
 {
     public string AccountNumber { get; set; }
     public string AccountName { get; set; }

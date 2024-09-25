@@ -2,9 +2,10 @@
 
 namespace Mcsg.Wallet.Api.Requests;
 
+using Common.Core.Requests;
 using Constants;
 
-public class PremiumBuyChapterR
+public class PremiumBuyChapterR : BaseR
 {
     public Guid ChapterId { get; set; }
     [DefaultValue(PayMethods.POINT)]

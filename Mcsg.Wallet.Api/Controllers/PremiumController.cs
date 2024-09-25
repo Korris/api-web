@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -31,13 +32,15 @@ public class PremiumController : ControllerBase
     [HttpGet("select-package/{packageNo}")]
     public async Task<IActionResult> GetSelectPackage(int packageNo)
     {
-        var result = await _premiumService.SelectPremiumPackage(packageNo);
+        var req = new BaseR(HttpContext);
+        var result = await _premiumService.SelectPremiumPackage(req.UserId ?? Guid.Empty, packageNo);
         return Ok(result);
     }
 
     [HttpPost("buy-chapter")]
     public async Task<IActionResult> BuyChapter(PremiumBuyChapterR req)
     {
+        req.Analyze(HttpContext);
         var result = await _premiumService.BuyChapter(req);
         return Ok(result);
     }
@@ -45,6 +48,7 @@ public class PremiumController : ControllerBase
     [HttpPost("buy-serie")]
     public async Task<IActionResult> BuySeries(PremiumBuySerieR req)
     {
+        req.Analyze(HttpContext);
         var result = await _premiumService.BuySerieAsync(req);
         return Ok(result);
     }
@@ -52,6 +56,7 @@ public class PremiumController : ControllerBase
     [HttpPost("buy-premium")]
     public async Task<IActionResult> BuyPremium(PremiumBuyPremiumR req)
     {
+        req.Analyze(HttpContext);
         var result = await _premiumService.BuyPremium(req);
         return Ok(result);
     }

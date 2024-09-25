@@ -10,50 +10,38 @@ using Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models;
-using Lib.Common.Web.Security;
 using Models;
 using Requests;
 
-public class UserPurchaseService : IUserPurchaseService
+public class UserPurchaseService : BaseS, IUserPurchaseService
 {
-    private readonly IWalletContext _dbContext;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IConfiguration _configuration;
-    private readonly IBankService _bankService;
+    #region -- Methods --
 
-    private readonly IOtpService _otpService;
-    private readonly ISystemService _systemService;
-    public UserPurchaseService(IWalletContext walletDbContext,
-        ICurrentUserService currentUserService,
-        IOtpService otpService,
-        IBankService bankService,
-        ISystemService systemService,
-
-        IConfiguration configuration)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="bankService"></param>
+    public UserPurchaseService(IWalletContext context, IBankService bankService) : base(context)
     {
-        _otpService = otpService;
-        _configuration = configuration;
         _bankService = bankService;
-        _currentUserService = currentUserService;
-        _systemService = systemService;
-
-        _dbContext = walletDbContext;
     }
 
     public async Task<UserPurchaseOverallResp> GetUserPurchaseTransactionsAsync(UserPurchasePaginatedR request)
     {
         try
         {
-            UserPurchaseOverallResp results = new UserPurchaseOverallResp();
+            var results = new UserPurchaseOverallResp();
+            var userId = request.UserId;
 
             var data = new UserPurchaseTransactionItemDetailResp();
-            var query = _dbContext.WalletTransactions
+            var query = _context.WalletTransactions
                 .Include(x => x.SourceUserWallet)
                 .Include(x => x.DestinationUserWallet)
                 .Include(x => x.UserPurchaseTransactions)
                 .Where(x =>
                     (
-                        (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId)
+                        (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
                         && (x.Type == TransactionType.BuyPremium || x.Type == TransactionType.BuyChapter)
                     )
                     )
@@ -63,8 +51,8 @@ public class UserPurchaseService : IUserPurchaseService
                     Amount = x.Amount,
                     AmountSign = (x.Type == TransactionType.Deposit
                                 || x.Type == TransactionType.Reward
-                                || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                                || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                                || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                                || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
                                 ) ? "+" : "-",
                     Content = x.Content,
                     CreatedOn = x.CreatedOn,
@@ -83,8 +71,8 @@ public class UserPurchaseService : IUserPurchaseService
                 }).AsNoTracking();
 
 
-            var countQuery = _dbContext.WalletTransactions
-                .Where(x => (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId)
+            var countQuery = _context.WalletTransactions
+                .Where(x => (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
                         && (x.Type == TransactionType.BuyPremium || x.Type == TransactionType.BuyChapter)).AsNoTracking()
                 .Select(x => new UserPurchaseTransactionItemDetailResp { Id = x.Id });
             //TODO
@@ -123,9 +111,9 @@ public class UserPurchaseService : IUserPurchaseService
         }
     }
 
-    public async Task<UserPurchaseTransactionItemDetailResp> GetUserWalletTransactionByRefNumberAsync(string referenceNumber)
+    public async Task<UserPurchaseTransactionItemDetailResp> GetUserWalletTransactionByRefNumberAsync(Guid userId, string referenceNumber)
     {
-        var data = await _dbContext.WalletTransactions
+        var data = await _context.WalletTransactions
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Include(x => x.UserPaymentMethods).ThenInclude(x => x.PaymentMethod)
@@ -136,8 +124,8 @@ public class UserPurchaseService : IUserPurchaseService
                 Amount = x.Amount,
                 AmountSign = (x.Type == TransactionType.Deposit
                             || x.Type == TransactionType.Reward
-                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
@@ -164,14 +152,14 @@ public class UserPurchaseService : IUserPurchaseService
         return data;
     }
 
-    public async Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync()
+    public async Task<PremiumPackagePurchaseResponse> GetUserPremiumPackageAsync(Guid userId)
     {
         var data = new PremiumPackagePurchaseResponse();
-        var query = _dbContext.UserPremiumPackages
+        var query = _context.UserPremiumPackages
             .Include(x => x.PremiumPackage)
             .Include(x => x.UserWallet)
             .Where(x =>
-                    x.UserWallet.UserId == _currentUserService.Session.UserId
+                    x.UserWallet.UserId == userId
                     && x.PremiumPackage.IsPackage
                     && !x.IsDelete
                 )
@@ -194,4 +182,12 @@ public class UserPurchaseService : IUserPurchaseService
 
         return userPackage;
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IBankService _bankService;
+
+    #endregion
 }

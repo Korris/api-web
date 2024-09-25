@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -24,6 +25,7 @@ public class UserPurchaseController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUserPurchaseList([FromQuery] UserPurchasePaginatedR request)
     {
+        request.Analyze(HttpContext);
         var result = await _userPurchaseService.GetUserPurchaseTransactionsAsync(request);
         return Ok(result);
     }
@@ -31,7 +33,8 @@ public class UserPurchaseController : ControllerBase
     [HttpGet("current-package")]
     public async Task<IActionResult> GetUserPackageList()
     {
-        var result = await _userPurchaseService.GetUserPremiumPackageAsync();
+        var req = new BaseR(HttpContext);
+        var result = await _userPurchaseService.GetUserPremiumPackageAsync(req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 

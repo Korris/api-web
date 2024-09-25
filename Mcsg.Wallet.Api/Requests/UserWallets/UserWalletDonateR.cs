@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class UserWalletDonateR
+using Common.Core.Requests;
+
+public class UserWalletDonateR : BaseR
 {
     public Guid ToUserId { get; set; }
     public float Amount { get; set; }

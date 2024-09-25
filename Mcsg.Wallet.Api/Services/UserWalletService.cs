@@ -8,7 +8,7 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain;
+using Common.Core.Requests;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -19,8 +19,6 @@ using Interfaces;
 using Lib.Common.Enums;
 using Lib.Common.Helpers;
 using Lib.Common.Models;
-using Lib.Common.Web.RealTime.Services;
-using Lib.Common.Web.Security;
 using Models;
 using Models._3rdClass.ZaloPay.Response;
 using Requests;
@@ -28,41 +26,37 @@ using static Common.Core.Constants.Setting;
 
 public class UserWalletService : BaseSettingS, IUserWalletService
 {
-    public UserWalletService(
-        IWalletContext walletDbContext,
-        ISetting setting,
-        ICurrentUserService currentUserService,
-        IOtpService otpService,
-        IBankService bankService,
-        ISystemService systemService,
-        IZaloPayService zaloPayService,
-        IConfiguration configuration,
-        ISignalRService signalRService,
-        IServiceProvider serviceProvider,
-        ILogger<UserWalletService> logger,
-        IMcsgContext context) : base(walletDbContext, setting)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="otpService"></param>
+    /// <param name="bankService"></param>
+    /// <param name="systemService"></param>
+    /// <param name="zaloPayService"></param>
+    /// <param name="logger"></param>
+    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger) : base(context, setting)
     {
         _otpService = otpService;
-        _configuration = configuration;
         _bankService = bankService;
-        _currentUserService = currentUserService;
         _systemService = systemService;
         _zaloPayService = zaloPayService;
-        _signalRService = signalRService;
-        _dbContext = walletDbContext;
         _logger = logger;
     }
 
     #region User info
-    public async Task<IEnumerable<UserWalletResp>> GetUserWalletAsync()
+    public async Task<IEnumerable<UserWalletResp>> GetUserWalletAsync(BaseR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
+        var userId = req.UserId;
         if (userId == null)
         {
             return [];
         }
 
-        var data = await _dbContext.UserWallets.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+        var data = await _context.UserWallets.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
         if (data == null)
         {
             return [];
@@ -74,11 +68,11 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             Point = data.Point,
             RewardPoint = data.RewardPoint,
             TotalPoint = data.Point + data.RewardPoint,
-            Owner = _currentUserService.Session.ProfileName
+            Owner = req.ProfileName
         };
 
         // Select premium
-        var lastPackage = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == data.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
+        var lastPackage = await _context.UserPremiumPackages.Where(x => x.UserWalletId == data.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
         if (lastPackage != null)
         {
             user.PremiumDate = DateOnly.FromDateTime(lastPackage.EndDate);
@@ -89,7 +83,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
     public async Task<UserWalletBasicResp> GetUserWalletByAddressAsync(string address)
     {
-        var data = await _dbContext.UserWallets
+        var data = await _context.UserWallets
             .Where(x => x.Address == address)
             .AsNoTracking()
             .Select(x => new UserWalletBasicResp
@@ -106,16 +100,18 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
         return data;
     }
-    public async Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(int page = 1, int pageSize = 10)
+
+    public async Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(BaseR req, int page = 1, int pageSize = 10)
     {
+        var userId = req.UserId;
         var data = new UserWalletTransactionResp();
-        var query = _dbContext.WalletTransactions
+        var query = _context.WalletTransactions
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Where(x =>
                 (
-                    (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                    || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == _currentUserService.Session.UserId))
+                    (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                    || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId))
 
                 )
             .OrderByDescending(x => x.CreatedOn)
@@ -124,8 +120,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 Amount = x.Amount,
                 AmountSign = (x.Type == TransactionType.Deposit
                             || x.Type == TransactionType.Reward
-                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
@@ -141,17 +137,19 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             }).AsNoTracking();
 
 
-        var countQuery = _dbContext.WalletTransactions
+        var countQuery = _context.WalletTransactions
             .Where(x =>
-            (x.DestinationUserWallet.UserId == _currentUserService.Session.UserId
-            || x.SourceUserWallet.UserId == _currentUserService.Session.UserId))
+            (x.DestinationUserWallet.UserId == userId
+            || x.SourceUserWallet.UserId == userId))
             .AsNoTracking().Select(x => new UserWalletTransactionItemResp { Id = x.Id });
 
         return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(query, countQuery, page, pageSize);
     }
-    public async Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(string referenceNumber)
+
+    public async Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(BaseR req, string referenceNumber)
     {
-        var data = await _dbContext.WalletTransactions
+        var userId = req.UserId;
+        var data = await _context.WalletTransactions
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Include(x => x.UserPaymentMethods).ThenInclude(x => x.PaymentMethod)
@@ -162,8 +160,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 Amount = x.Amount,
                 AmountSign = (x.Type == TransactionType.Deposit
                             || x.Type == TransactionType.Reward
-                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
-                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == _currentUserService.Session.UserId)
+                            || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
                             ) ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
@@ -209,7 +207,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     }
     private async Task UpdateWalletInfor(Guid transactionId)
     {
-        var transaction = await _dbContext.WalletTransactions.AsNoTracking()
+        var transaction = await _context.WalletTransactions.AsNoTracking()
             .Include(x => x.DestinationUserWallet)
             .Include(x => x.SourceUserWallet)
             .FirstOrDefaultAsync(x => x.Id == transactionId);
@@ -248,14 +246,15 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                     break;
                 }
         }
-        _dbContext.WalletTransactions.Update(transaction);
+        _context.WalletTransactions.Update(transaction);
+        await _context.SaveChangesAsync(default);
     }
 
     public async Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId)
     {
         var result = new UserWalletBasicResp();
 
-        var userWallets = await _dbContext.UserWallets.AsNoTracking()
+        var userWallets = await _context.UserWallets.AsNoTracking()
             .Where(p => p.UserId == userId)
             .Select(p => new
             {
@@ -275,29 +274,29 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #endregion
 
     #region User payment method
-    public async Task<bool> RemoveUserPaymentMethod(Guid userPaymentMethodId)
+    public async Task<bool> RemoveUserPaymentMethod(Guid userId, Guid userPaymentMethodId)
     {
-        var paymentMethod = _dbContext.UserPaymentMethods.Where(
-             x => x.UserWallet.UserId == _currentUserService.Session.UserId && x.Id == userPaymentMethodId && x.IsDelete == false
+        var paymentMethod = _context.UserPaymentMethods.Where(
+             x => x.UserWallet.UserId == userId && x.Id == userPaymentMethodId && x.IsDelete == false
             ).FirstOrDefault();
 
         if (paymentMethod != null)
         {
             paymentMethod.IsDelete = true;
-            _dbContext.UserPaymentMethods.Update(paymentMethod);
-            await _dbContext.SaveChangesAsync(default);
+            _context.UserPaymentMethods.Update(paymentMethod);
+            await _context.SaveChangesAsync(default);
         }
 
         return true;
     }
 
-    public async Task<IEnumerable<UserPaymentMethodResponse>> GetUserPaymentMethods()
+    public async Task<IEnumerable<UserPaymentMethodResponse>> GetUserPaymentMethods(Guid userId)
     {
         string encryptKey = _setting.EncryptKey;
 
-        var userPaymentMethods = await _dbContext.UserPaymentMethods
+        var userPaymentMethods = await _context.UserPaymentMethods
             .Include(x => x.PaymentMethod)
-            .Where(x => x.UserWallet.UserId == _currentUserService.Session.UserId && !x.IsDelete)
+            .Where(x => x.UserWallet.UserId == userId && !x.IsDelete)
             .AsNoTracking()
             .Select(x => new UserPaymentMethodResponse
             {
@@ -324,10 +323,11 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
     public async Task<AddUserPaymentMethodResp> AddUserPaymentMethod(UserWalletAddPaymentMethodR addUserPaymentMethodReq)
     {
-        var paymentMethod = await _dbContext.PaymentMethods
+        var userId = addUserPaymentMethodReq.UserId;
+        var paymentMethod = await _context.PaymentMethods
                     .Where(x => x.Id == addUserPaymentMethodReq.PaymentMethodId)
                     .FirstOrDefaultAsync();
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == _currentUserService.Session.UserId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
         if (paymentMethod == null || paymentMethod.AllowWithdrawal == false)
         {
@@ -342,8 +342,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             AccountName = addUserPaymentMethodReq.AccountName != null ? CryptoHelper.Encrypt(addUserPaymentMethodReq.AccountName, encryptKey) : null
         };
 
-        _dbContext.UserPaymentMethods.Add(entity);
-        await _dbContext.SaveChangesAsync(default);
+        _context.UserPaymentMethods.Add(entity);
+        await _context.SaveChangesAsync(default);
 
         return new AddUserPaymentMethodResp
         {
@@ -353,13 +353,15 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             AccountName = addUserPaymentMethodReq.AccountName,
         };
     }
+
     public async Task<UpdateUserPaymentMethodResp> UpdateUserPaymentMethod(Guid userPaymentMethodId, UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq)
     {
-        var userPaymentMethod = await _dbContext.UserPaymentMethods
+        var userId = updateUserPaymentMethodReq.UserId;
+        var userPaymentMethod = await _context.UserPaymentMethods
             .Include(x => x.PaymentMethod)
                     .Where(x => x.Id == userPaymentMethodId)
                     .FirstOrDefaultAsync();
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == _currentUserService.Session.UserId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
         if (userPaymentMethod == null)
         {
@@ -371,7 +373,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         userPaymentMethod.AccountName = updateUserPaymentMethodReq.AccountName != null ? CryptoHelper.Encrypt(updateUserPaymentMethodReq.AccountName, encryptKey) : null;
         if (updateUserPaymentMethodReq?.PaymentMethodId != null && userPaymentMethod.PaymentMethodId != updateUserPaymentMethodReq?.PaymentMethodId)
         {
-            var paymentMethod = await _dbContext.PaymentMethods
+            var paymentMethod = await _context.PaymentMethods
                    .Where(x => x.Id == updateUserPaymentMethodReq.PaymentMethodId)
                    .FirstOrDefaultAsync();
 
@@ -382,8 +384,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             userPaymentMethod.PaymentMethod = paymentMethod;
         }
 
-        _dbContext.UserPaymentMethods.Update(userPaymentMethod);
-        await _dbContext.SaveChangesAsync(default);
+        _context.UserPaymentMethods.Update(userPaymentMethod);
+        await _context.SaveChangesAsync(default);
 
         return new UpdateUserPaymentMethodResp
         {
@@ -399,7 +401,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #region User OTP/transaction
     public async Task<bool> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
     {
-        var otpData = await _dbContext.WalletTransactionOtps.AsNoTracking()
+        var otpData = await _context.WalletTransactionOtps.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.TransactionId == req.TransactionId
                          && x.Otp == req.Otp && x.OtpToken == req.OtpToken);
         if (otpData == null)
@@ -410,14 +412,14 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
         await UpdateWalletInfor(req.TransactionId);
 
-        await _dbContext.SaveChangesAsync(default);
+        await _context.SaveChangesAsync(default);
         await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
 
         return true;
     }
     public async Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType)
     {
-        var transaction = await _dbContext.WalletTransactions.AsNoTracking()
+        var transaction = await _context.WalletTransactions.AsNoTracking()
             .Include(x => x.DestinationUserWallet)
             .Include(x => x.SourceUserWallet)
             .AsNoTracking()
@@ -434,15 +436,14 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #region Donate
     public async Task<TransactionOtpInfoResp> DonateAsync(UserWalletDonateR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-
+        var userId = req.UserId;
         if (userId.Equals(req.ToUserId))
         {
             throw new BadRequestException(ApiErrorCodes.USER_AS_THE_SAME_DONOR, ApiErrorMessage.USER_AS_THE_SAME_DONOR);
         }
 
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
-        var toUserWallet = await _dbContext.UserWallets.Where(x => x.UserId == req.ToUserId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var toUserWallet = await _context.UserWallets.Where(x => x.UserId == req.ToUserId).FirstOrDefaultAsync();
         if (toUserWallet != null)
         {
             if (string.IsNullOrEmpty(userWallet.Email)
@@ -453,22 +454,16 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
             CheckBalance(userWallet.Point, userWallet.RewardPoint, req.Amount);
 
-            var transaction = CreateTransaction(
-                userWallet.Id,
-                toUserWallet.Id,
-                req.Amount,
-                TransactionType.Donate,
-                req.Content,
-                ApiMessages.DONATE_TO_USER);
+            var transaction = CreateTransaction(userId, userWallet.Id, toUserWallet.Id, req.Amount, TransactionType.Donate, req.Content, ApiMessages.DONATE_TO_USER);
             transaction.SystemMethod = SystemPaymentMethod.Point;
-            await _dbContext.WalletTransactions.AddAsync(transaction);
+            await _context.WalletTransactions.AddAsync(transaction);
 
             var otpType = !string.IsNullOrEmpty(userWallet.Email) ? TransactionOtpType.Email : TransactionOtpType.Phone;
 
             var otpInfo = await _otpService.CreateAsync(transaction, otpType);
             otpInfo.ToProfileName = toUserWallet.ProfileName;
 
-            await _dbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
 
             return otpInfo;
         }
@@ -486,9 +481,9 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             throw new ForbiddenAccessException(ApiErrorCodes.CAN_NOT_TRANSFER_THEMSELEVE, ApiErrorMessage.CAN_NOT_TRANSFER_THEMSELEVE);
         }
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.Address == req.FromAddress).FirstOrDefaultAsync();
-        var toUserWallet = await _dbContext.UserWallets.Where(x => x.Address == req.ToAddress).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.Address == req.FromAddress).FirstOrDefaultAsync();
+        var toUserWallet = await _context.UserWallets.Where(x => x.Address == req.ToAddress).FirstOrDefaultAsync();
         //Check permission
         if (userWallet?.UserId != userId || userId == null)
         {
@@ -499,15 +494,9 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             CheckBalance(userWallet.Point, userWallet.RewardPoint, req.Amount);
 
-            var transaction = CreateTransaction(
-                userWallet.Id,
-                toUserWallet.Id,
-                req.Amount,
-                TransactionType.Transfer,
-                req.Content,
-                ApiMessages.TRANSFER_TO_USER);
+            var transaction = CreateTransaction(userId, userWallet.Id, toUserWallet.Id, req.Amount, TransactionType.Transfer, req.Content, ApiMessages.TRANSFER_TO_USER);
             transaction.SystemMethod = SystemPaymentMethod.Point;
-            await _dbContext.WalletTransactions.AddAsync(transaction);
+            await _context.WalletTransactions.AddAsync(transaction);
 
             transaction.SourceUserWallet = userWallet;
 
@@ -515,7 +504,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             var otpInfo = await _otpService.CreateAsync(transaction, otpType);
             otpInfo.ToProfileName = toUserWallet.ProfileName;
 
-            await _dbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
 
             return otpInfo;
         }
@@ -528,12 +517,11 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #endregion
 
     #region Withdraw
-    public async Task<WithDrawPrepareResp> WithdrawPrepareAsync()
+    public async Task<WithDrawPrepareResp> WithdrawPrepareAsync(Guid userId)
     {
         var result = new WithDrawPrepareResp();
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
-        result.UserPaymentMethods = _dbContext.UserPaymentMethods.Where(x => x.UserWalletId == userWallet.Id && !x.IsDelete)
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        result.UserPaymentMethods = _context.UserPaymentMethods.Where(x => x.UserWalletId == userWallet.Id && !x.IsDelete)
             .Include(x => x.PaymentMethod)
             .Select(y => new UserPaymentMethodResp
             {
@@ -551,8 +539,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
     public async Task<TransactionOtpInfoResp> WithdrawAsync(UserWalletWithdrawR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         if (userWallet == null)
         {
             throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
@@ -567,34 +555,27 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             throw new BadRequestException("MinimumPointCanWithDraw", "");
         }
 
-        var transaction = CreateTransaction(
-                userWallet.Id,
-                req.UserPaymentMethodId,
-                req.Amount,
-                TransactionType.Withdraw,
-                req.Content,
-                ApiMessages.WITHDRAW_MESSAGE);
+        var transaction = CreateTransaction(userId, userWallet.Id, req.UserPaymentMethodId, req.Amount, TransactionType.Withdraw, req.Content, ApiMessages.WITHDRAW_MESSAGE);
         transaction.SystemMethod = SystemPaymentMethod.Bank;
 
         transaction.Content = string.Format(ApiMessages.WITHDRAW_CONTENT, req.Amount, transaction.ReferenceNumber);
-        await _dbContext.WalletTransactions.AddAsync(transaction);
+        await _context.WalletTransactions.AddAsync(transaction);
 
         var otpInfo = await _otpService.CreateAsync(transaction, TransactionOtpType.Email);
         otpInfo.ToProfileName = userWallet.ProfileName;
 
-        await _systemService.SendAdminNoti(nameof(TransactionType.Withdraw), _currentUserService?.Session?.ProfileId, transaction.Content);
-        await _dbContext.SaveChangesAsync(default);
+        await _systemService.SendAdminNoti(nameof(TransactionType.Withdraw), req.ProfileId, transaction.Content);
+        await _context.SaveChangesAsync(default);
 
         return otpInfo;
     }
     #endregion
 
     #region Deposit
-    public async Task<DepositPrepareResp> DepositPrepareAsync()
+    public async Task<DepositPrepareResp> DepositPrepareAsync(Guid userId)
     {
         var result = new DepositPrepareResp();
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         result.DepositMethods = _bankService.GetDepositMethods();
         result.CurrencyTypes = _bankService.GetCurrencyTypeRatios();
         result.MinPointCanDeposit = Default.MinimumPointCanDeposit;
@@ -603,8 +584,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     }
     public async Task<DepositResp> DepositAsync(UserWalletDepositR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         if (userWallet == null)
         {
             throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
@@ -615,13 +596,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             throw new BadRequestException(ApiErrorCodes.MINIMUM_CAN_DEPOSIT, ApiErrorMessage.MINIMUM_CAN_DEPOSIT + Default.MinimumPointCanDeposit.ToString());
         }
 
-        var transaction = CreateTransaction(
-                userWallet.Id,
-                null,
-                req.PointAmount,
-                TransactionType.Deposit,
-                "",
-                ApiMessages.DEPOSIT_MESSAGE);
+        var transaction = CreateTransaction(userId, userWallet.Id, null, req.PointAmount, TransactionType.Deposit, "", ApiMessages.DEPOSIT_MESSAGE);
         var currencyRatio = _bankService.GetCurrencyTypeRatios().FirstOrDefault(x => x.Type == req.CurrencyType)?.Ratio ?? 0;
         var amountToDeposit = currencyRatio * req.PointAmount;
         transaction.SystemMessage = $"{transaction.SystemMessage} - RATIO: {currencyRatio} AMOUNT: {amountToDeposit}"; //TODO currencyTYPE
@@ -630,11 +605,11 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             SystemPaymentMethod.Bank : req.DepositMethodName == DepositMethods.ZALO_PAY ?
             SystemPaymentMethod.ZaloPay : null;
 
-        await _dbContext.WalletTransactions.AddAsync(transaction);
+        await _context.WalletTransactions.AddAsync(transaction);
         try
         {
 
-            await _dbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
         }
         catch (Exception e)
         {
@@ -644,11 +619,11 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         //Banking
         if (req.DepositMethodName == DepositMethods.BANK)
         {
-            string bankAccount = _configuration["Bank:AdminBankAccount"];
+            string bankAccount = "";
 
-            string bankAccountName = _configuration["Bank:AdminBankName"];
-            string bankAccountBin = _configuration["Bank:AdminBankBin"];
-            string bankName = (await _dbContext.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.Bin == bankAccountBin)
+            string bankAccountName = "";
+            string bankAccountBin = "";
+            string bankName = (await _context.PaymentMethods.Where(x => x.Type == PaymentMethodType.Banking && x.Bin == bankAccountBin)
                 .FirstOrDefaultAsync())?.Name;
 
             var depositResp = new DepositResp()
@@ -661,7 +636,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 ToAccountNumber = bankAccount,
             };
 
-            await _systemService.SendAdminNoti(nameof(TransactionType.Deposit), _currentUserService?.Session?.ProfileId, transaction.Content);
+            await _systemService.SendAdminNoti(nameof(TransactionType.Deposit), req.ProfileId, transaction.Content);
 
             return depositResp;
         }
@@ -672,7 +647,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             if (createOrderRes != null && createOrderRes.ReturnCode == (int)ZaloPayReturnCode.SUCCESS)
             {
                 transaction.ExternalId = createOrderRes.AppTransId;
-                await _dbContext.SaveChangesAsync(default);
+                await _context.SaveChangesAsync(default);
 
                 // Send queue to check zalo order
                 var jobData = new PaymentTransData()
@@ -773,14 +748,14 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
     public async Task<bool> DepositCancelAsync(UserWalletDepositCancelR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         if (userWallet == null)
         {
             throw new BadRequestException(ApiErrorCodes.USER_NOT_FOUND, ApiErrorMessage.USER_NOT_FOUND);
         }
 
-        var transaction = await _dbContext.WalletTransactions.Where(x => x.Id == req.TransactionId
+        var transaction = await _context.WalletTransactions.Where(x => x.Id == req.TransactionId
         && x.SourceUserWalletId == userWallet.Id && x.Type == TransactionType.Deposit).FirstOrDefaultAsync();
         if (transaction == null)
         {
@@ -788,8 +763,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         }
         transaction.Status = TransactionStatus.Canceled;
 
-        _dbContext.WalletTransactions.Update(transaction);
-        await _dbContext.SaveChangesAsync(default);
+        _context.WalletTransactions.Update(transaction);
+        await _context.SaveChangesAsync(default);
 
         return true;
     }
@@ -841,18 +816,12 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     }
     #endregion
 
-    #region Private Method
-    private WalletTransaction CreateTransaction(Guid sourceId,
-        Guid? destinationId,
-        float amount,
-        TransactionType type,
-        string content,
-        string systemMessage)
+    private WalletTransaction CreateTransaction(Guid? userId, Guid sourceId, Guid? destinationId, float amount, TransactionType type, string content, string systemMessage)
     {
         var transaction = new WalletTransaction
         {
             CreatedOn = DateTime.UtcNow,
-            CreatedBy = _currentUserService?.Session?.UserId,
+            CreatedBy = userId,
             Id = Guid.NewGuid(),
             Amount = amount,
             IsFromSystem = false,
@@ -884,27 +853,24 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         }
     }
 
-    //TODO        
+    //TODO
     private string CreateQRCode(float amount, string refCode)
     {
-        string bankAccount = _configuration["Bank:AdminBankAccount"];
-        string bankAccountName = _configuration["Bank:AdminBankName"];
-        string bankAccountBin = _configuration["Bank:AdminBankBin"];
+        string bankAccount = "";
+        string bankAccountName = "";
+        string bankAccountBin = "";
 
         return $"https://api.vietqr.io/image/{bankAccountBin}-{bankAccount}-PSYZ8LO.jpg?accountName={bankAccountName}&amount={amount}&addInfo={refCode}";
     }
+
     #endregion
 
     #region -- Fields --
 
-    private readonly IWalletContext _dbContext;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IConfiguration _configuration;
     private readonly IBankService _bankService;
     private readonly IZaloPayService _zaloPayService;
     private readonly IOtpService _otpService;
     private readonly ISystemService _systemService;
-    private readonly ISignalRService _signalRService;
     private readonly ILogger<UserWalletService> _logger;
 
     #endregion

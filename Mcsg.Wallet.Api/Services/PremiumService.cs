@@ -7,7 +7,6 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -18,40 +17,31 @@ using Identity.Api.Protos;
 using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
-using Lib.Common.Web.Security;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 using static Common.Core.Constants.Setting;
 
-public partial class PremiumService : BaseSettingS, IPremiumService
+public class PremiumService : BaseSettingS, IPremiumService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IWalletContext _dbContext;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly DistributeManager _distributeManager;
-    private readonly IBankService _bankService;
-    private readonly IRepository<User> _userRepository;
+    #region -- Methods --
 
-    public PremiumService(IConfiguration configuration,
-        DistributeManager distributeManager,
-        IBankService bankService,
-        IUnitOfWork unitOfWork,
-        ICurrentUserService currentUserService,
-        IWalletContext walletDbContext, ISetting setting) : base(walletDbContext, setting)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="distributeManager"></param>
+    /// <param name="bankService"></param>
+    public PremiumService(IWalletContext context, ISetting setting, DistributeManager distributeManager, IBankService bankService) : base(context, setting)
     {
-        _configuration = configuration;
-        _dbContext = walletDbContext;
         _bankService = bankService;
-        _currentUserService = currentUserService;
         _distributeManager = distributeManager;
-        _userRepository = unitOfWork.GetRepository<User>();
     }
+
     #region Premium package
     public async Task<IEnumerable<PremiumPackageResponse>> GetPremiumPackage()
     {
-        var packageResponses = await _dbContext.PremiumPackages
+        var packageResponses = await _context.PremiumPackages
             .AsNoTracking()
             .Select(x => new PremiumPackageResponse
             {
@@ -73,9 +63,9 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
     public async Task<bool> BuyPremium(PremiumBuyPremiumR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
-        var package = await _dbContext.PremiumPackages.Where(x => x.No == req.PremiumPackageNo).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var package = await _context.PremiumPackages.Where(x => x.No == req.PremiumPackageNo).FirstOrDefaultAsync();
         var now = DateTime.UtcNow;
 
         if (userWallet == null)
@@ -94,7 +84,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
         //CHECK DUPLICATE PURCHASE
         var minuteDate = now.AddSeconds(-30);
-        var checkPremium = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id
+        var checkPremium = await _context.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id
             && !x.IsDelete
             && x.PremiumPackageNo == package.No
             && x.CreatedOn > minuteDate
@@ -107,7 +97,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         var transaction = new WalletTransaction
         {
             CreatedOn = now,
-            CreatedBy = _currentUserService?.Session?.UserId,
+            CreatedBy = userId,
             Id = Guid.NewGuid(),
             Amount = package.FirstTimePrice,
             IsFromSystem = false,
@@ -135,13 +125,14 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             }
         }
 
-        await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
-        await _dbContext.WalletTransactions.AddAsync(transaction);
-        await _dbContext.SaveChangesAsync(default);
+        await _context.UserPurchaseTransactions.AddAsync(purchaseHistory);
+        await _context.WalletTransactions.AddAsync(transaction);
+        await _context.SaveChangesAsync(default);
         await SyncBuyPremium(userWallet, package, transaction);
 
         return true;
     }
+
     private async Task SyncBuyPremium(UserWallet userWallet, PremiumPackage package, WalletTransaction transaction)
     {
         if (userWallet != null)
@@ -150,14 +141,14 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             {
                 transaction.Status = TransactionStatus.Failed;
                 transaction.Content = transaction.Content + " không đủ point";
-                _dbContext.WalletTransactions.Update(transaction);
+                _context.WalletTransactions.Update(transaction);
                 //await LogError(buyPremiumData.TransactionId, "Không đủ tiền");
                 return;//ko đủ số dư
             }
             transaction.Status = TransactionStatus.Success;
             var nowDate = DateTime.UtcNow.Date;
             //Select other userPackage
-            var lastPackage = await _dbContext.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
+            var lastPackage = await _context.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
             var endDate = nowDate.AddDays(package.LiveTimeDay);
             var startDate = nowDate;
             if (lastPackage != null && lastPackage.EndDate >= nowDate)
@@ -175,7 +166,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
                 CreatedOn = DateTime.UtcNow
             };
             //Transaction purchase history 
-            await _dbContext.UserPremiumPackages.AddAsync(userPremium);
+            await _context.UserPremiumPackages.AddAsync(userPremium);
             //Remove point
             if (userWallet.RewardPoint >= transaction.Amount)
             {
@@ -187,24 +178,24 @@ public partial class PremiumService : BaseSettingS, IPremiumService
                 userWallet.RewardPoint = 0;
                 userWallet.Point -= remainingAmount;
             }
+
             transaction.IsConfirmed = true;
-            _dbContext.UserWallets.Update(userWallet);
-            _dbContext.WalletTransactions.Update(transaction);
+            _context.UserWallets.Update(userWallet);
+            _context.WalletTransactions.Update(transaction);
 
             await UpdatePremiumDate(userWallet.UserId, userPremium.EndDate);
 
-            await _dbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
         }
         else
         {
             //await LogError(buyPremiumData.TransactionId, $"Lỗi user id {userId}");
         }
     }
-    public async Task<BuyItemResp> SelectPremiumPackage(int? packageNo)
+    public async Task<BuyItemResp> SelectPremiumPackage(Guid userId, int? packageNo)
     {
         var result = new BuyItemResp();
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
         result.PayMethods = _bankService.GetPayMethods();
         result.CurrencyTypes = _bankService.GetCurrencyTypeRatios();
@@ -212,7 +203,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
         if (packageNo != null)
         {
-            var package = await _dbContext.PremiumPackages.Where(x => x.No == packageNo).FirstOrDefaultAsync();
+            var package = await _context.PremiumPackages.Where(x => x.No == packageNo).FirstOrDefaultAsync();
             result.Item = new ItemSeletedResp
             {
                 Name = package.Name,
@@ -237,8 +228,8 @@ public partial class PremiumService : BaseSettingS, IPremiumService
     #region Chapter
     public async Task<bool> BuyChapter(PremiumBuyChapterR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets
             .Include(x => x.SourceUserWalletTransactions.Where(y => y.SourceUserWallet.UserId == userId && y.RelatedId == req.ChapterId))
             .Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
@@ -262,7 +253,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         var transaction = new WalletTransaction
         {
             CreatedOn = DateTime.UtcNow,
-            CreatedBy = _currentUserService?.Session?.UserId,
+            CreatedBy = userId,
             Id = Guid.NewGuid(),
             Amount = Default.ChapterPrice,
             IsFromSystem = false,
@@ -295,10 +286,10 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             }
         }
 
-        await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
-        await _dbContext.WalletTransactions.AddAsync(transaction);
+        await _context.UserPurchaseTransactions.AddAsync(purchaseHistory);
+        await _context.WalletTransactions.AddAsync(transaction);
         await SyncBuyChapter(userId ?? Guid.Empty, transaction.Id);
-        await _dbContext.SaveChangesAsync(default);
+        await _context.SaveChangesAsync(default);
 
         return true;
     }
@@ -321,11 +312,11 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             }
         });
     }
-    public async Task<BuyItemResp> SelectChapterPackage(Guid chapterId)
+
+    public async Task<BuyItemResp> SelectChapterPackage(Guid userId, Guid chapterId)
     {
         var result = new BuyItemResp();
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         result.PayMethods = _bankService.GetDepositMethods();
         result.CurrencyTypes = _bankService.GetCurrencyTypeRatios();
         result.CurrentPoint = userWallet != null ? (userWallet.Point + userWallet.RewardPoint) : 0;
@@ -341,8 +332,8 @@ public partial class PremiumService : BaseSettingS, IPremiumService
     #region Serie
     public async Task<bool> BuySerieAsync(PremiumBuySerieR req)
     {
-        var userId = _currentUserService?.Session?.UserId;
-        var userWallet = await _dbContext.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
         var now = DateTime.UtcNow;
 
@@ -359,7 +350,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
         var transaction = new WalletTransaction
         {
             CreatedOn = DateTime.UtcNow,
-            CreatedBy = _currentUserService?.Session?.UserId,
+            CreatedBy = userId,
             Id = Guid.NewGuid(),
             IsFromSystem = false,
             Content = "BUY SERIES ID: " + req.SerieId,
@@ -390,10 +381,10 @@ public partial class PremiumService : BaseSettingS, IPremiumService
             }
         }
 
-        await _dbContext.UserPurchaseTransactions.AddAsync(purchaseHistory);
-        await _dbContext.WalletTransactions.AddAsync(transaction);
+        await _context.UserPurchaseTransactions.AddAsync(purchaseHistory);
+        await _context.WalletTransactions.AddAsync(transaction);
         await SyncBuySerieAsync(userId ?? Guid.Empty, transaction.Id);
-        await _dbContext.SaveChangesAsync(default);
+        await _context.SaveChangesAsync(default);
 
         return true;
     }
@@ -419,7 +410,7 @@ public partial class PremiumService : BaseSettingS, IPremiumService
     #endregion
 
     /// <summary>
-    /// UpdatePremiumDate
+    /// Update PremiumDate
     /// </summary>
     /// <param name="userId">UserId</param>
     /// <param name="premiumDate">PremiumDate</param>
@@ -449,4 +440,13 @@ public partial class PremiumService : BaseSettingS, IPremiumService
 
         return res;
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly DistributeManager _distributeManager;
+    private readonly IBankService _bankService;
+
+    #endregion
 }

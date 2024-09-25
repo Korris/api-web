@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Wallet.Api.Controllers;
 
+using Common.Core.Requests;
 using Domain.Enums;
 using Interfaces;
 using Requests;
@@ -27,7 +28,8 @@ public class UserWalletController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUserWalletInfo()
     {
-        var result = await _userWalletService.GetUserWalletAsync();
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.GetUserWalletAsync(req);
         return Ok(result);
     }
 
@@ -41,13 +43,15 @@ public class UserWalletController : ControllerBase
     [HttpGet("payment-method")]
     public async Task<IActionResult> GetUserPaymentMethod()
     {
-        var result = await _userWalletService.GetUserPaymentMethods();
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.GetUserPaymentMethods(req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 
     [HttpPost("payment-method/add")]
     public async Task<IActionResult> AddUserPaymentMethod([FromBody] UserWalletAddPaymentMethodR addUserPaymentMethodReq)
     {
+        addUserPaymentMethodReq.Analyze(HttpContext);
         var result = await _userWalletService.AddUserPaymentMethod(addUserPaymentMethodReq);
         return Ok(result);
     }
@@ -55,6 +59,7 @@ public class UserWalletController : ControllerBase
     [HttpPut("payment-method/{userPaymentMethodId}")]
     public async Task<IActionResult> UpdateUserPaymentMethod(Guid userPaymentMethodId, [FromBody] UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq)
     {
+        updateUserPaymentMethodReq.Analyze(HttpContext);
         var result = await _userWalletService.UpdateUserPaymentMethod(userPaymentMethodId, updateUserPaymentMethodReq);
         return Ok(result);
 
@@ -63,27 +68,31 @@ public class UserWalletController : ControllerBase
     [HttpDelete("payment-method/remove/{paymentMethodId}")]
     public async Task<IActionResult> RemoveUserPaymentMethod(Guid paymentMethodId)
     {
-        var result = await _userWalletService.RemoveUserPaymentMethod(paymentMethodId);
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.RemoveUserPaymentMethod(req.UserId ?? Guid.Empty, paymentMethodId);
         return Ok(result);
     }
 
     [HttpGet("transactions")]
     public async Task<IActionResult> GetUserWalletTransactions(int page = 1, int pageSize = 10)
     {
-        var result = await _userWalletService.GetUserWalletTransactionsAsync(page, pageSize);
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.GetUserWalletTransactionsAsync(req, page, pageSize);
         return Ok(result);
     }
 
     [HttpGet("transaction/{referenceNumber}")]
     public async Task<IActionResult> UserWalletTransactionDetail(string referenceNumber)
     {
-        var result = await _userWalletService.GetUserWalletTransactionByRefNumberAsync(referenceNumber);
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.GetUserWalletTransactionByRefNumberAsync(req, referenceNumber);
         return Ok(result);
     }
 
     [HttpPost("donate")]
     public async Task<IActionResult> Donate(UserWalletDonateR req)
     {
+        req.Analyze(HttpContext);
         var result = await _userWalletService.DonateAsync(req);
         return Ok(result);
     }
@@ -98,7 +107,8 @@ public class UserWalletController : ControllerBase
     [HttpGet("deposit-prepare")]
     public async Task<IActionResult> PrepareDeposit()
     {
-        var result = await _userWalletService.DepositPrepareAsync();
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.DepositPrepareAsync(req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 
@@ -119,7 +129,8 @@ public class UserWalletController : ControllerBase
     [HttpGet("withdraw-prepare")]
     public async Task<IActionResult> PrepareWithdraw()
     {
-        var result = await _userWalletService.WithdrawPrepareAsync();
+        var req = new BaseR(HttpContext);
+        var result = await _userWalletService.WithdrawPrepareAsync(req.UserId ?? Guid.Empty);
         return Ok(result);
     }
 

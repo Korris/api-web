@@ -2,9 +2,10 @@
 
 namespace Mcsg.Wallet.Api.Requests;
 
+using Common.Core.Requests;
 using Constants;
 
-public class PremiumBuyPremiumR
+public class PremiumBuyPremiumR : BaseR
 {
     public int PremiumPackageNo { get; set; }
     [DefaultValue(PayMethods.POINT)]

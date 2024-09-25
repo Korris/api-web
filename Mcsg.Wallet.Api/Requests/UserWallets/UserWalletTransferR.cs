@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Wallet.Api.Requests;
 
-public class UserWalletTransferR
+using Common.Core.Requests;
+
+public class UserWalletTransferR : BaseR
 {
     public string FromAddress { get; set; }
     public string ToAddress { get; set; }
