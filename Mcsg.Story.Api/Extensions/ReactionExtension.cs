@@ -4,14 +4,15 @@ public static class ReactionExtension
 {
     public static string GetReactionByTargetIdsQuery = @"SELECT ""Type"", ""TargetId"", SUM(""Count"") AS ""Count"", SUM(""ReactByCurrent"") AS ""ReactByCurrent""
                                                         FROM (
-                                                            SELECT ""Type"", ""TargetId"", COUNT(*) AS ""Count"", CASE
-                                                                WHEN ""AuthorId"" = @UserId THEN 1
+                                                            SELECT r.""Type"", r.""TargetId"", COUNT(*) AS ""Count"", CASE
+                                                                WHEN r.""AuthorId"" = @UserId THEN 1
                                                                 ELSE 0
                                                             END AS ""ReactByCurrent""
-                                                            FROM {0}
+                                                            FROM {0} r
+                                                            INNER JOIN ""identity"".""Users"" u ON r.""AuthorId"" = u.""Id"" AND u.""IsDelete"" = false
                                                             WHERE ""TargetId"" = ANY(@TargetIds)
-                                                            AND ""IsDelete"" = false
-                                                            GROUP BY ""Type"", ""TargetId"", ""AuthorId""
+                                                            AND r.""IsDelete"" = false
+                                                            GROUP BY r.""Type"", r.""TargetId"", r.""AuthorId""
                                                         ) react	
                                                         GROUP BY ""Type"", ""TargetId""
                                                         ORDER BY ""Count"" DESC;";
