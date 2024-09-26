@@ -201,6 +201,12 @@ public class BaseR : IRequest<SingleResponse>
     public bool FromAndroid => "android".Equals(DeviceType, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Platform
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public string Platform => FromAndroid ? "Android" : FromIos ? "iOS" : "Web";
+
+    /// <summary>
     /// Hides
     /// </summary>
     public List<int> Hides

@@ -25,22 +25,39 @@ public class GoogleSheet
     /// <summary>
     /// Write data to sheet
     /// </summary>
-    /// <param name="type">Type</param>
-    /// <param name="environment">Environment</param>
-    /// <param name="link">Link</param>
-    /// <param name="email">Email</param>
-    /// <param name="hashId">HashId</param>
-    /// <param name="userName">UserName</param>
-    /// <param name="createdOn">CreatedOn UTC</param>
-    /// <param name="body">Body</param>
-    /// <param name="remoteIp">Remote IP</param>
-    /// <param name="platform">Platform</param>
-    /// <returns>Returns the result</returns>
-    public async Task WriteDataToSheet(PostType type, string environment, string link, string? email, string? hashId, string? userName, DateTime createdOn, string? body, string? remoteIp, string platform)
+    /// <param name="o">Data transfer object</param>
+    /// <returns>Return the result</returns>
+    public async Task WriteDataToSheet(PostSheetDto o)
     {
-        var row = new List<object> { hashId + "", userName + "", createdOn.ToLocalTime(), link, body + "", email + "", remoteIp + "", platform };
+        var headers = new List<IList<object>>
+        {
+            new List<object> { "HashId", "UserName", "CreatedOn", "Link", "Title", "Platform", "SeriesName" }
+        };
+        var row = new List<object>
+        {
+            o.HashId, o.UserName ?? "", o.CreatedOn.ToLocalTime(), o.Link, o.Title ?? "", o.Platform, o.SeriesType.ToString()
+        };
         var values = new List<IList<object>> { row };
-        await WriteDataToSheet(type, environment, values);
+        await WriteDataToSheet(o.Type, o.Environment, "A1:G", headers, values);
+    }
+
+    /// <summary>
+    /// Write data to sheet with additional name field
+    /// </summary>
+    /// <param name="o">Data transfer object</param>
+    /// <returns>Return the result</returns>
+    public async Task WriteDataToSheet(SubPostSheetDto o)
+    {
+        var headers = new List<IList<object>>
+        {
+            new List<object> { "HashId", "UserName", "CreatedOn", "Link", "Title", "Platform", "SeriesType", "SeriesName" }
+        };
+        var row = new List<object>
+        {
+            o.HashId, o.UserName ?? "", o.CreatedOn.ToLocalTime(), o.Link, o.Title ?? "", o.Platform, o.SeriesType.ToString(), o.SeriesName ?? ""
+        };
+        var values = new List<IList<object>> { row };
+        await WriteDataToSheet(o.Type, o.Environment, "A1:H", headers, values);
     }
 
     /// <summary>
@@ -48,79 +65,38 @@ public class GoogleSheet
     /// </summary>
     /// <param name="type">Type</param>
     /// <param name="environment">Environment</param>
+    /// <param name="headerRange">Header range</param>
+    /// <param name="headers">Headers</param>
     /// <param name="values">Values</param>
     /// <returns>Returns the result</returns>
-    private async Task WriteDataToSheet(PostType type, string environment, List<IList<object>> values)
+    private async Task WriteDataToSheet(GoogleFileType type, string environment, string headerRange, List<IList<object>> headers, List<IList<object>> values)
     {
         try
         {
-            var spreadsheetId = GetSocialSheetId(environment);
-            if (type == PostType.Comic)
-            {
-                spreadsheetId = GetComicSheetId(environment);
-            }
-            if (type == PostType.Story)
-            {
-                spreadsheetId = GetStorySheetId(environment);
-            }
             var sheetName = DateTime.Now.ToString("yyyy-MM-dd");
+            var spreadsheetId = GetSocialSheetId(environment);
 
-            // Check if the sheet already exists
-            var spreadsheet = await _sheetsService.Spreadsheets.Get(spreadsheetId).ExecuteAsync();
-            var sheetExists = false;
-            foreach (var sheet in spreadsheet.Sheets)
+            switch (type)
             {
-                if (sheet.Properties.Title == sheetName)
-                {
-                    sheetExists = true;
+                case GoogleFileType.File1:
+                    sheetName = DateTime.Now.ToString("yyyy-MM");
+                    spreadsheetId = GetFile1SheetId(environment);
                     break;
-                }
+
+                case GoogleFileType.File2:
+                    spreadsheetId = GetFile2SheetId(environment);
+                    break;
             }
 
-            // If the sheet does not exist, create a new one and add headers
+            var spreadsheet = await _sheetsService.Spreadsheets.Get(spreadsheetId).ExecuteAsync();
+            var sheetExists = spreadsheet.Sheets.Any(sheet => sheet.Properties.Title == sheetName);
+
             if (!sheetExists)
             {
-                var addSheetRequest = new AddSheetRequest
-                {
-                    Properties = new SheetProperties
-                    {
-                        Title = sheetName,
-                        Index = 0 // Insert the new sheet at the beginning (index 0)
-                    }
-                };
-
-                var batchUpdateRequest = new BatchUpdateSpreadsheetRequest
-                {
-                    Requests = new List<Request> { new Request { AddSheet = addSheetRequest } }
-                };
-
-                await _sheetsService.Spreadsheets.BatchUpdate(batchUpdateRequest, spreadsheetId).ExecuteAsync();
-
-                // Define column headers
-                var headers = new List<IList<object>> { new List<object> { "HashId", "UserName", "CreatedOn", "Link", "Body", "Email", "IP", "Platform" } };
-
-                // Write headers to the first row
-                var headerRange = $"{sheetName}!A1:H"; // Write to the first row
-                var headerValueRange = new ValueRange
-                {
-                    Values = headers
-                };
-
-                var appendHeaderRequest = _sheetsService.Spreadsheets.Values.Append(headerValueRange, spreadsheetId, headerRange);
-                appendHeaderRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
-                await appendHeaderRequest.ExecuteAsync();
+                await CreateSheetWithHeaders(spreadsheetId, sheetName, headerRange, headers);
             }
 
-            // Now append the content to the rows below the headers
-            var contentRange = $"{sheetName}!A2:H"; // Append starting from row 2
-            var valueRange = new ValueRange
-            {
-                Values = values // The content you want to add
-            };
-
-            var appendContentRequest = _sheetsService.Spreadsheets.Values.Append(valueRange, spreadsheetId, contentRange);
-            appendContentRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
-            await appendContentRequest.ExecuteAsync();
+            await AppendContentToSheet(spreadsheetId, sheetName, headerRange, values);
         }
         catch (Exception ex)
         {
@@ -129,11 +105,60 @@ public class GoogleSheet
     }
 
     /// <summary>
-    /// Get comic sheet ID
+    /// Create a new sheet with headers
+    /// </summary>
+    /// <param name="sheetId">Spreadsheet ID</param>
+    /// <param name="sheetName">Sheet name</param>
+    /// <param name="headerRange">Header range</param>
+    /// <param name="headers">Headers</param>
+    /// <returns>Returns the result</returns>
+    private async Task CreateSheetWithHeaders(string sheetId, string sheetName, string headerRange, List<IList<object>> headers)
+    {
+        var addSheetRequest = new AddSheetRequest
+        {
+            Properties = new SheetProperties
+            {
+                Title = sheetName,
+                Index = 0 // insert the new sheet at the beginning (index 0)
+            }
+        };
+
+        var batchUpdateRequest = new BatchUpdateSpreadsheetRequest
+        {
+            Requests = [new Request { AddSheet = addSheetRequest }]
+        };
+
+        await _sheetsService.Spreadsheets.BatchUpdate(batchUpdateRequest, sheetId).ExecuteAsync();
+
+        var headerValueRange = new ValueRange { Values = headers };
+        var appendHeaderRequest = _sheetsService.Spreadsheets.Values.Append(headerValueRange, sheetId, headerRange);
+        appendHeaderRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
+        await appendHeaderRequest.ExecuteAsync();
+    }
+
+    /// <summary>
+    /// Append content to an existing sheet
+    /// </summary>
+    /// <param name="sheetId">Spreadsheet ID</param>
+    /// <param name="sheetName">Sheet name</param>
+    /// <param name="headerRange">Header range</param>
+    /// <param name="values">Values</param>
+    /// <returns>Returns the result</returns>
+    private async Task AppendContentToSheet(string sheetId, string sheetName, string headerRange, List<IList<object>> values)
+    {
+        var contentRange = $"{sheetName}!{headerRange}";
+        var valueRange = new ValueRange { Values = values };
+        var appendContentRequest = _sheetsService.Spreadsheets.Values.Append(valueRange, sheetId, contentRange);
+        appendContentRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.RAW;
+        await appendContentRequest.ExecuteAsync();
+    }
+
+    /// <summary>
+    /// Get file1 sheet ID
     /// </summary>
     /// <param name="environment">Environment</param>
     /// <returns>Returns the sheet ID</returns>
-    private string GetComicSheetId(string environment)
+    private string GetFile1SheetId(string environment)
     {
         return environment switch
         {
@@ -161,11 +186,11 @@ public class GoogleSheet
     }
 
     /// <summary>
-    /// Get story sheet ID
+    /// Get file2 sheet ID
     /// </summary>
     /// <param name="environment">Environment</param>
     /// <returns>Returns the sheet ID</returns>
-    private string GetStorySheetId(string environment)
+    private string GetFile2SheetId(string environment)
     {
         return environment switch
         {
@@ -173,22 +198,6 @@ public class GoogleSheet
             "stg" => "1_TBbNzEQCXCQytMKHO47RNA6eQkA1mCRy3wlshtwUyM",
             "uat" => "1LIooMGFGdjRxc0zdHK_3nRb1M5ND4534VPhs09JY66U",
             _ => "1tHHeB2pAKNGFHotWZoiyEVcj8UJ7h1PXefuqoW17efs"
-        };
-    }
-
-    /// <summary>
-    /// Get feedback sheet ID
-    /// </summary>
-    /// <param name="environment">Environment</param>
-    /// <returns>Returns the sheet ID</returns>
-    private string GetFeedbackSheetId(string environment)
-    {
-        return environment switch
-        {
-            "pro" => "1iTKAwXgyOTWplUP2m63eiKYiZCjISBJVdD-TC_nEzJI",
-            "stg" => "1ZbhWTE7L7lvV58kzhnMFNrCAZh3qanOOzk22KepmZnE",
-            "uat" => "1YJfeXR-3Ov7LyPJeCOT2WTkE8wA9ltLVcAhDX81qnzQ",
-            _ => "1q2r-qn0sQpcShTVtHYy94feRiOCPKfw3L7lFoevdt9I"
         };
     }
 
@@ -200,6 +209,80 @@ public class GoogleSheet
     /// Sheets service
     /// </summary>
     private readonly SheetsService _sheetsService;
+
+    #endregion
+
+    #region -- Classes --
+
+    /// <summary>
+    /// PostSheet
+    /// </summary>
+    public class PostSheetDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// Type
+        /// </summary>
+        public GoogleFileType Type { get; set; }
+
+        /// <summary>
+        /// PostType
+        /// </summary>
+        public PostType SeriesType { get; set; }
+
+        /// <summary>
+        /// Environment
+        /// </summary>
+        public string Environment { get; set; } = default!;
+
+        /// <summary>
+        /// Title
+        /// </summary>
+        public string? Title { get; set; }
+
+        /// <summary>
+        /// Link
+        /// </summary>
+        public string Link { get; set; } = default!;
+
+        /// <summary>
+        /// HashId
+        /// </summary>
+        public string HashId { get; set; } = default!;
+
+        /// <summary>
+        /// UserName
+        /// </summary>
+        public string? UserName { get; set; }
+
+        /// <summary>
+        /// CreatedOn
+        /// </summary>
+        public DateTime CreatedOn { get; set; }
+
+        /// <summary>
+        /// Platform
+        /// </summary>
+        public string Platform { get; set; } = default!;
+
+        #endregion
+    }
+
+    /// <summary>
+    /// SubPostSheetDto
+    /// </summary>
+    public class SubPostSheetDto : PostSheetDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// PostTitle
+        /// </summary>
+        public string? SeriesName { get; set; }
+
+        #endregion
+    }
 
     #endregion
 }

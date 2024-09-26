@@ -12,7 +12,6 @@
 #endregion
 
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
@@ -24,7 +23,6 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
-using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -33,6 +31,7 @@ using Extensions;
 using Interfaces;
 using Requests;
 using Validators;
+using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Message;
 
 /// <summary>
@@ -95,18 +94,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         }
 
         var userId = request.UserId.Value;
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId, cancellationToken);
-        if (user == null)
-        {
-            throw new BadRequestException(M119);
-        }
-
+        var userName = request.UserName;
+        var profileName = request.ProfileName;
+        var profileId = request.ProfileId;
+        var userFolder = request.UserFolder;
+        var userAvatar = request.UserAvatar;
         var receiverIds = request.Content.ToGuids();
-        var userName = user.UserName;
-        var profileName = user.ProfileName;
-        var profileId = user.ProfileId;
-        var userFolder = user.UserFolder;
-        var userAvatar = user.Avatar;
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
@@ -220,18 +213,19 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         res.SetSuccess(result);
 
         #region -- WriteDataToSheet --
-        var link = $"{_setting.Domain}/feed/detail?id={ett.HashId}";
-        var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
-        var platform = "Web";
-        if (request.FromAndroid)
+        var dto = new PostSheetDto
         {
-            platform = "Android";
-        }
-        if (request.FromIos)
-        {
-            platform = "iOS";
-        }
-        await _googleSheet.WriteDataToSheet(PostType.Feed, _setting.Environment, link, email, ett.HashId, request.UserName, ett.CreatedOn, ett.Body, request.RemoteIp, platform);
+            Type = GoogleFileType.Social,
+            SeriesType = PostType.Feed,
+            Environment = _setting.Environment,
+            Link = $"{_setting.Domain}/feed/detail?id={ett.HashId}",
+            HashId = ett.HashId,
+            UserName = request.UserName,
+            CreatedOn = ett.CreatedOn,
+            Title = ett.Body,
+            Platform = request.Platform
+        };
+        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
 
         return res;

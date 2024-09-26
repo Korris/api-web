@@ -14,7 +14,6 @@ using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
-using Common.SeedWork;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -34,6 +33,7 @@ using Models.Earning;
 using Requests;
 using Validators;
 using static Common.Core.Constants.Setting;
+using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -117,12 +117,6 @@ public partial class PostService : IPostService
         }
 
         var userId = request.UserId.Value;
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
-        if (user == null)
-        {
-            throw new BadRequestException(M119);
-        }
-
         var profileId = request.ProfileId;
         var profileName = request.ProfileName;
 
@@ -188,18 +182,19 @@ public partial class PostService : IPostService
         }
 
         #region -- WriteDataToSheet --
-        var link = $"{_setting.Domain}/comic/series?id={post.HashId}";
-        var email = SecurityAes.DecryptText(user.Email, false, _setting.EncryptKey);
-        var platform = "Web";
-        if (request.FromAndroid)
+        var dto = new PostSheetDto
         {
-            platform = "Android";
-        }
-        if (request.FromIos)
-        {
-            platform = "iOS";
-        }
-        await _googleSheet.WriteDataToSheet(PostType.Comic, _setting.Environment, link, email, post.HashId, request.UserName, post.CreatedOn, post.Body, request.RemoteIp, platform);
+            Type = GoogleFileType.File1,
+            SeriesType = PostType.Comic,
+            Environment = _setting.Environment,
+            Link = $"{_setting.Domain}/comic/series?id={post.HashId}",
+            HashId = post.HashId,
+            UserName = request.UserName,
+            CreatedOn = post.CreatedOn,
+            Title = post.Title,
+            Platform = request.Platform
+        };
+        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
 
         return result;
@@ -311,14 +306,14 @@ public partial class PostService : IPostService
                 if (subpostdb == null)
                 {
                     subpost = subpostdb;
-                    subpost.Body = System.Web.HttpUtility.HtmlDecode(subpostdb.Body);
+                    subpost.Body = HttpUtility.HtmlDecode(subpostdb.Body);
                 }
                 if (subpostdb != null)
                 {
                     if (subpost?.Id != subpostdb.Id)
                     {
                         subpost = subpostdb;
-                        subpost.Body = System.Web.HttpUtility.HtmlDecode(subpostdb.Body);
+                        subpost.Body = HttpUtility.HtmlDecode(subpostdb.Body);
                     }
 
                     if (subpost != null && subpost.Files == null)
@@ -1438,7 +1433,7 @@ public partial class PostService : IPostService
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
             ChapterCount = x.ChapterCount,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+            Body = HttpUtility.HtmlDecode(x.Body),
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
@@ -1469,7 +1464,7 @@ public partial class PostService : IPostService
             UserName = x.UserName,
             Title = x.Title,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+            Body = HttpUtility.HtmlDecode(x.Body),
             Tags = x.Tags,
             ThumbnailUrl = x.ThumbnailUrl,
             Id = x.Id,
@@ -1496,7 +1491,7 @@ public partial class PostService : IPostService
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
             ChapterCount = x.ChapterCount,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+            Body = HttpUtility.HtmlDecode(x.Body),
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
@@ -1643,7 +1638,7 @@ public partial class PostService : IPostService
             results = new PagedResponse<ChapterResponse>(totalItems, loadReq.PageNumber, loadReq.PageSize);
             foreach (var item in items)
             {
-                item.Body = System.Web.HttpUtility.HtmlDecode(item.Body);
+                item.Body = HttpUtility.HtmlDecode(item.Body);
             }
             results.Items = items;
         }
@@ -1816,6 +1811,23 @@ public partial class PostService : IPostService
             };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
+
+        #region -- WriteDataToSheet --
+        var dto = new SubPostSheetDto
+        {
+            SeriesName = post.Title,
+            Type = GoogleFileType.File2,
+            SeriesType = PostType.Comic,
+            Environment = _setting.Environment,
+            Link = $"{_setting.Domain}/comic/view-chapter?comicid={post.HashId}&order={subPost.Order}",
+            HashId = subPost.HashId,
+            UserName = request.UserName,
+            CreatedOn = subPost.CreatedOn,
+            Title = subPost.Title,
+            Platform = request.Platform
+        };
+        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
+        #endregion
 
         return result;
     }
