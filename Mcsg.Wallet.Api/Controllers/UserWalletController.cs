@@ -100,6 +100,7 @@ public class UserWalletController : ControllerBase
     [HttpPost("transfer")]
     public async Task<IActionResult> Transfer(UserWalletTransferR req)
     {
+        req.Analyze(HttpContext);
         var result = await _userWalletService.TransferAsync(req);
         return Ok(result);
     }

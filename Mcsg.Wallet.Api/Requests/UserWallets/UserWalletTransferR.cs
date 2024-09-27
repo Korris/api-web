@@ -4,7 +4,6 @@ using Common.Core.Requests;
 
 public class UserWalletTransferR : BaseR
 {
-    public string FromAddress { get; set; }
     public string ToAddress { get; set; }
     public float Amount { get; set; }
     public string Content { get; set; }

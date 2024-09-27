@@ -477,14 +477,25 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #region Transfer
     public async Task<TransactionOtpInfoResp> TransferAsync(UserWalletTransferR req)
     {
-        if (req.FromAddress == req.ToAddress)
+        var userId = req.UserId;
+        var userWallet = await _context.UserWallets.Where(x => x.UserId == req.UserId)
+                                                   .FirstOrDefaultAsync();
+
+        var toUserWallet = await _context.UserWallets.Where(x => x.Address == req.ToAddress)
+                                                     .FirstOrDefaultAsync();
+        //Check permission
+
+        if (userWallet == null || userWallet == null)
+        {
+            throw new ForbiddenAccessException(ApiErrorCodes.WALLET_ADDRESS_NOT_FOUND, ApiErrorMessage.WALLET_ADDRESS_NOT_FOUND);
+
+        }
+
+        if (userWallet.Address == toUserWallet.Address)
         {
             throw new ForbiddenAccessException(ApiErrorCodes.CAN_NOT_TRANSFER_THEMSELEVE, ApiErrorMessage.CAN_NOT_TRANSFER_THEMSELEVE);
         }
-        var userId = req.UserId;
-        var userWallet = await _context.UserWallets.Where(x => x.Address == req.FromAddress).FirstOrDefaultAsync();
-        var toUserWallet = await _context.UserWallets.Where(x => x.Address == req.ToAddress).FirstOrDefaultAsync();
-        //Check permission
+
         if (userWallet?.UserId != userId || userId == null)
         {
             throw new ForbiddenAccessException(ApiErrorCodes.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
