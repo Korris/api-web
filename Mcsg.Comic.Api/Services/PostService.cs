@@ -1341,7 +1341,8 @@ public partial class PostService : IPostService
                     UserId = res.UserId,
                     UserName = res.UserName,
                     isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow,
-                    Hide = res.Hide
+                    Hide = res.Hide,
+                    IsExternalSource = res.IsExternalSource
                 };
 
                 var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();

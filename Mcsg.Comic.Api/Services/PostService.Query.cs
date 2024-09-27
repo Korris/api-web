@@ -1070,6 +1070,7 @@ sp.""IsEnableComment""
                     p.""CreatedOn"",
                     GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
                     p.""Hide"",
+                    p.""ExternalResource"",
                     to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""comic"".""ComicPosts"" p
@@ -1105,7 +1106,8 @@ sp.""IsEnableComment""
                           u.""UserName"",
                           p.""ViewCount"",
                           sp_max.""LatestSubPostCreatedOn"",
-                          p.""Hide""
+                          p.""Hide"",
+                          p.""ExternalResource""
             ";
             }
         }
