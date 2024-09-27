@@ -127,7 +127,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     await MappingFeedInListResponse(item);
                 }
-
             }
 
             if (request.Tag == "all" || request.Tag == "story")
@@ -266,10 +265,10 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
             var resourceResponses = subPostResources?.Where(p => p != null).OrderBy(p => p.Order).ToList() ?? [];
             item.Resources = [];
 
-            foreach (var resourceResponse in resourceResponses)
+            foreach (var i in resourceResponses)
             {
-                resourceResponse.Url = await _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance);
-                item.Resources.Add(resourceResponse);
+                i.Url = await _sc.GetCdnUrlAsync(i.Url, i.BucketName, i.MinioInstance, i.Type);
+                item.Resources.Add(i);
             }
         }
         else if (item.Link != null)

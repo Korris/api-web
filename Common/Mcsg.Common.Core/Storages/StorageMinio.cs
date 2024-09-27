@@ -20,6 +20,7 @@ using System.Net;
 namespace Mcsg.Common.Core.Storages;
 
 using Dtos;
+using Enums;
 
 /// <summary>
 /// Storage MinIO
@@ -287,6 +288,29 @@ public class StorageMinio : StorageStrategy
 
         var arr = uri.Split('?');
         return arr.Length > 0 ? arr[0] : "";
+    }
+
+    /// <summary>
+    /// Get CDN URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="type">Resource type</param>
+    /// <returns>Return the CDN URL</returns>
+    public override async Task<string> GetCdnUrlAsync(string objectName, string? bucketName, ResourceType? type)
+    {
+        var res = await GetPublicUrl(objectName, bucketName);
+
+        if (type == ResourceType.Image && !string.IsNullOrWhiteSpace(_auth?.CdnImageUrl))
+        {
+            res = res.Replace($"{_auth?.PublicUrl}/{bucketName}", _auth?.CdnImageUrl);
+        }
+        else if (type == ResourceType.Video && !string.IsNullOrWhiteSpace(_auth?.CdnVideoUrl))
+        {
+            res = res.Replace($"{_auth?.PublicUrl}/{bucketName}", _auth?.CdnVideoUrl);
+        }
+
+        return res;
     }
 
     /// <summary>

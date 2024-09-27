@@ -15,6 +15,7 @@ using Minio.DataModel;
 
 namespace Mcsg.Common.Core.Interfaces;
 
+using Common.Core.Enums;
 using Dtos;
 using static SeedWork.Dtos.StorageDto;
 
@@ -108,9 +109,18 @@ public interface IStorageStrategy
     /// Get public URL
     /// </summary>
     /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the public URL</returns>
-    Task<string> GetPublicUrl(string objectName, string? bucketNamePublic);
+    Task<string> GetPublicUrl(string objectName, string? bucketName);
+
+    /// <summary>
+    /// Get CDN URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="type">Resource type</param>
+    /// <returns>Return the CDN URL</returns>
+    Task<string> GetCdnUrlAsync(string objectName, string? bucketName, ResourceType? type);
 
     /// <summary>
     /// Move folder

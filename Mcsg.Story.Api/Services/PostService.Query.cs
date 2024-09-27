@@ -726,7 +726,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                     sp.""IsEnableComment"", spcmc.""CommentCount"",
                     rs.""Id"", rs.""AuthorId"", rs.""Title"", rs.""Name"", rs.""Url"", rs.""Type"", rs.""CreatedOn"", 
                     rs.""CreatedBy"", rs.""ModifiedOn"", rs.""ModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
-                    rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order"", rs.""MinioInstance""
+                    rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order"", rs.""MinioInstance"", rs.""BucketName""
                     FROM ""story"".""StorySubPosts"" sp
                     INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
@@ -1070,6 +1070,7 @@ sp.""IsEnableComment""
                     p.""CreatedOn"",
                     GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
                     p.""Hide"",
+                    p.""ExternalResource"",
                     to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""story"".""StoryPosts"" p
@@ -1105,7 +1106,8 @@ sp.""IsEnableComment""
                           u.""UserName"",
                           p.""ViewCount"",
                           sp_max.""LatestSubPostCreatedOn"",
-                          p.""Hide""
+                          p.""Hide"",
+                          p.""ExternalResource""
             ";
             }
         }

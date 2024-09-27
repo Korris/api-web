@@ -337,7 +337,6 @@ public partial class PostService : IPostService
                 Hide = req.Hides
             }, splitOn: "Id, Id");
 
-
         if (subpost != null)
         {
             if (subpost.CreatedBy != currentUserId && subpost.UserId != currentUserId)
@@ -368,9 +367,9 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
         }
 
-
         return subpost;
     }
+
     public async Task<PostSeriesAllTopResponse> GetTopSeries(PostType type)
     {
         var result = new PostSeriesAllTopResponse();
@@ -1341,7 +1340,8 @@ public partial class PostService : IPostService
                     UserId = res.UserId,
                     UserName = res.UserName,
                     isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow,
-                    Hide = res.Hide
+                    Hide = res.Hide,
+                    IsExternalSource = res.IsExternalSource
                 };
 
                 var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();
@@ -1412,7 +1412,7 @@ public partial class PostService : IPostService
             HashId = resources.HashId,
             Order = resources.Order,
             Name = resources.Name,
-            Url = _sc.GetPublicUrl(resources.Url, resources.BucketName, resources.MinioInstance).GetAwaiter().GetResult(),
+            Url = _sc.GetCdnUrl(resources.Url, resources.BucketName, resources.MinioInstance, resources.Type),
             Height = resources.Height,
             Width = resources.Width,
             Type = resources.Type,

@@ -726,7 +726,7 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                     sp.""IsEnableComment"", spcmc.""CommentCount"",
                     rs.""Id"", rs.""AuthorId"", rs.""Title"", rs.""Name"", rs.""Url"", rs.""Type"", rs.""CreatedOn"", 
                     rs.""CreatedBy"", rs.""ModifiedOn"", rs.""ModifiedBy"", rs.""IsDelete"", rs.""HashId"", rs.""SubPostId"", 
-                    rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order"", rs.""MinioInstance""
+                    rs.""Status"", rs.""Size"", rs.""LocationType"", rs.""Height"", rs.""Width"", rs.""Order"", rs.""MinioInstance"", rs.""BucketName""
                     FROM ""comic"".""ComicSubPosts"" sp
                     INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
 LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId

@@ -59,6 +59,16 @@ public abstract class StorageDto
         public string PublicUrl { get; set; } = default!;
 
         /// <summary>
+        /// CDN image URL
+        /// </summary>
+        public string? CdnImageUrl { get; set; }
+
+        /// <summary>
+        /// CDN video URL
+        /// </summary>
+        public string? CdnVideoUrl { get; set; }
+
+        /// <summary>
         /// Public prefix
         /// </summary>
         public string? PublicPrefix { get; set; }

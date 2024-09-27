@@ -253,7 +253,7 @@ public class FileService : IFileService
             {
                 HashId = resource.HashId,
                 Order = resource.Order,
-                Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance)
+                Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type)
             });
         }
 

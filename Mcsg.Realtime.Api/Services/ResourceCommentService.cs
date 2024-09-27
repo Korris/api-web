@@ -81,7 +81,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance),
+            Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type),
             Id = resource.Id
         };
     }
@@ -121,7 +121,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance),
+            Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type),
             Id = resource.Id
         };
     }
@@ -161,7 +161,7 @@ public partial class ResourceCommentService : IResourceCommentService
         return new ResourceCommentResp
         {
             HashId = resource.HashId,
-            Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance),
+            Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type),
             Id = resource.Id
         };
     }

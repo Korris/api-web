@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Mcsg.Common.Core.Storages;
 
+using Enums;
 using Interfaces;
 using SeedWork.Enums;
 using static SeedWork.Dtos.StorageDto;
@@ -56,6 +57,32 @@ public class StorageClient : IStorageClient
     public Task<string> GetPublicUrl(string objectName, string? bucketNamePublic, MinioInstanceType? instance)
     {
         return GetStrategy(instance).GetPublicUrl(objectName, bucketNamePublic);
+    }
+
+    /// <summary>
+    /// Get CDN URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
+    /// <param name="type">Resource type</param>
+    /// <returns>Return the CDN URL</returns>
+    public async Task<string> GetCdnUrlAsync(string objectName, string? bucketNamePublic, MinioInstanceType? instance, ResourceType? type)
+    {
+        return await GetStrategy(instance).GetCdnUrlAsync(objectName, bucketNamePublic, type);
+    }
+
+    /// <summary>
+    /// Get CDN URL
+    /// </summary>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
+    /// <param name="type">Resource type</param>
+    /// <returns>Return the CDN URL</returns>
+    public string GetCdnUrl(string objectName, string? bucketNamePublic, MinioInstanceType? instance, ResourceType? type)
+    {
+        return GetStrategy(instance).GetCdnUrlAsync(objectName, bucketNamePublic, type).GetAwaiter().GetResult();
     }
 
     #endregion

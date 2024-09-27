@@ -377,28 +377,28 @@ public partial class FeedService : IFeedService
                 resourceResponses = [];
             }
 
-            foreach (var resourceResponse in resourceResponses)
+            foreach (var i in resourceResponses)
             {
-                if (resourceResponse == null)
+                if (i == null)
                 {
                     continue;
                 }
 
-                resourceResponse.Url = _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance).GetAwaiter().GetResult();
+                i.Url = _sc.GetCdnUrl(i.Url, i.BucketName, i.MinioInstance, i.Type);
 
-                itemResponse.Resources.Add(resourceResponse);
+                itemResponse.Resources.Add(i);
                 itemResponse.SubPosts.Add(new SubUploadFileDto
                 {
                     Files = new List<UploadFileDto>() {
                         new UploadFileDto() {
-                            Order = resourceResponse.Order,
-                            SubPostHashId = resourceResponse.SubPostHashId,
-                            HashId = resourceResponse.HashId,
-                            Height = resourceResponse.Height,
-                            Width = resourceResponse.Width,
-                            Url = resourceResponse.Url,
-                            Type = resourceResponse.Type,
-                            Name = resourceResponse.Name
+                            Order = i.Order,
+                            SubPostHashId = i.SubPostHashId,
+                            HashId = i.HashId,
+                            Height = i.Height,
+                            Width = i.Width,
+                            Url = i.Url,
+                            Type = i.Type,
+                            Name = i.Name
                         }
                     }
                 });
@@ -539,16 +539,16 @@ public partial class FeedService : IFeedService
                 resourceResponses = [];
             }
 
-            foreach (var resourceResponse in resourceResponses)
+            foreach (var i in resourceResponses)
             {
-                if (resourceResponse == null)
+                if (i == null)
                 {
                     continue;
                 }
 
-                resourceResponse.Url = _sc.GetPublicUrl(resourceResponse.Url, resourceResponse.BucketName, resourceResponse.MinioInstance).GetAwaiter().GetResult();
+                i.Url = _sc.GetCdnUrl(i.Url, i.BucketName, i.MinioInstance, i.Type);
 
-                itemResponse.Resources.Add(resourceResponse);
+                itemResponse.Resources.Add(i);
             }
         }
         else if (!string.IsNullOrEmpty(item.LinkUrl))
@@ -626,7 +626,7 @@ public partial class FeedService : IFeedService
                     continue;
                 }
 
-                var url = _sc.GetPublicUrl(fileDbs.Url, fileDbs.BucketName, fileDbs.MinioInstance).GetAwaiter().GetResult();
+                var url = _sc.GetCdnUrl(fileDbs.Url, fileDbs.BucketName, fileDbs.MinioInstance, fileDbs.Type);
 
                 itemResponse.Resources.Add(new ResourceDto
                 {
@@ -661,7 +661,7 @@ public partial class FeedService : IFeedService
                         var resource = new UploadFileDto
                         {
                             HashId = subPostdb.HashId,
-                            Url = _sc.GetPublicUrl(x.Url, x.BucketName, x.MinioInstance).GetAwaiter().GetResult(),
+                            Url = _sc.GetCdnUrl(x.Url, x.BucketName, x.MinioInstance, x.Type),
                             Name = x.Name,
                             Type = x.Type,
                             Status = x.Status,
@@ -669,8 +669,6 @@ public partial class FeedService : IFeedService
                             Height = x.Height,
                             Order = x.Order
                         };
-
-                        resource.Url = _sc.GetPublicUrl(x.Url, x.BucketName, x.MinioInstance).GetAwaiter().GetResult();
 
                         return resource;
                     }).ToList();

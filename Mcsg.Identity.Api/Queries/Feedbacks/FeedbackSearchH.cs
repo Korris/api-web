@@ -92,7 +92,7 @@ public class FeedbackSearchH : BaseMinioH, IRequestHandler<FeedbackSearchR, Sing
             {
                 q.Id,
                 q.HashId,
-                Url = _sc.GetPublicUrl(q.Url, q.BucketName, q.MinioInstance),
+                Url = _sc.GetCdnUrl(q.Url, q.BucketName, q.MinioInstance, q.Type),
                 q.BucketName,
                 q.MinioInstance
             })
