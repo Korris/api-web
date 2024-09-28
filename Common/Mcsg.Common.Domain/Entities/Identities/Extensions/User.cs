@@ -2,6 +2,8 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
+using Core;
+using Core.Dtos;
 using SeedWork.Dtos;
 using SeedWork.Enums;
 
@@ -46,6 +48,45 @@ partial class User
         return new T
         {
             //TODO
+        };
+    }
+
+    /// <summary>
+    /// Create JWT
+    /// </summary>
+    /// <param name="sessionId">SessionId</param>
+    /// <param name="jwt">JWT setting</param>
+    /// <param name="roles">Roles</param>
+    /// <returns>Returns the result</returns>
+    public TokenDto CreateJwt(Guid sessionId, JwtDto jwt, string? roles)
+    {
+        var payload = new PayloadDto
+        {
+            Id = Id,
+            UserName = UserName + "",
+            ProfileName = ProfileName + "",
+            ProfileId = ProfileId + "",
+            UserFolder = UserFolder,
+            UserAvatar = Avatar + "",
+            IsPremium = IsPremium,
+            IsWalletShowing = IsWalletShowing,
+            SessionId = sessionId,
+            MinioInstance = MinioInstance,
+            StorageLimit = StorageLimit
+        };
+
+        if (!string.IsNullOrWhiteSpace(roles))
+        {
+            payload.Roles = roles.Split(",");
+        }
+
+        var st = new SecurityToken(jwt, payload);
+        var delay = 30; // time delay between server and client (seconds)
+
+        return new TokenDto
+        {
+            AccessToken = st.Jwt,
+            ExpiredDate = st.ExpiredDate.AddSeconds(-delay)
         };
     }
 

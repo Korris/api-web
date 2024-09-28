@@ -235,7 +235,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (signinResult)
         {
             var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = _tokenService.GenerateAccessToken(session.Id, user);
+            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
             response.Roles = session.Roles;
 
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
@@ -319,7 +319,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
 
             var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = _tokenService.GenerateAccessToken(session.Id, user);
+            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
             response.Roles = session.Roles;
 
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
@@ -398,7 +398,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 await _context.UserSocials.AddAsync(ettUserSocial);
 
                 var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = _tokenService.GenerateAccessToken(session.Id, user);
+                var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
                 response.IsFirstTimeLoginBySocial = true;
 
                 var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
@@ -556,10 +556,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
     {
-        var res = new TokenDto();
-
         var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync((currentUser.UserId ?? Guid.Empty).ToString());
+        var user = await _userManager.FindByIdAsync((currentUser?.UserId ?? Guid.Empty).ToString());
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -578,19 +576,17 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         await SetPassword(user, password);
 
-        if (currentUser != null)
+        var roles = await _userManager.GetRolesAsync(user);
+        var response = user.CreateJwt(new Guid(currentUser.SessionId), _setting.Jwt, string.Join(",", roles));
+        var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
+        if (refreshToken != null)
         {
-            res = _tokenService.GenerateAccessToken(Guid.Parse(currentUser.SessionId), user);
-            var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-            if (refreshToken != null)
-            {
-                res.RefreshToken = refreshToken.RefreshToken;
-                res.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-                user.RefreshToken = refreshToken.RefreshToken;
-            }
+            response.RefreshToken = refreshToken.RefreshToken;
+            response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+            user.RefreshToken = refreshToken.RefreshToken;
         }
 
-        return res;
+        return response;
     }
 
     public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
@@ -715,8 +711,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             await _userManager.UpdateAsync(user);
             await _otpService.ClearAllUserOtpAsync(user.Id, type);
 
-            var sessionId = (await _sessionService.CreateSessionAsync(user, ""))?.Id.ToString();
-            var response = _tokenService.GenerateAccessToken(Guid.Parse(sessionId), user);
+            var session = await _sessionService.CreateSessionAsync(user, "");
+            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
             var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
             if (refreshToken != null)
             {
@@ -790,13 +786,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
 
         var userRefreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-        var sessionId = (await _sessionService.CreateSessionAsync(user, ""))?.Id.ToString();
-        var accessToken = _tokenService.GenerateAccessToken(Guid.Parse(sessionId), user);
+        var session = await _sessionService.CreateSessionAsync(user, "");
+        var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
 
         return new RefreshTokenResponse
         {
-            AccessToken = accessToken.AccessToken,
-            ExpiredDate = accessToken.ExpiredDate,
+            AccessToken = response.AccessToken,
+            ExpiredDate = response.ExpiredDate,
             RefreshToken = userRefreshToken.RefreshToken,
             RefreshTokenExpiredDate = userRefreshToken.RefreshTokenExpiryTime,
         };
@@ -984,7 +980,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     private async Task<TokenDto> CreateAccessToken(User user)
     {
         var session = await _sessionService.CreateSessionAsync(user, "");
-        TokenDto response = _tokenService.GenerateAccessToken(session.Id, user);
+        var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
         response.Roles = session.Roles;
 
         var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
