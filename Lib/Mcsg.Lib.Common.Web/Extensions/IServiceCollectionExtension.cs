@@ -2,6 +2,7 @@
 
 namespace Mcsg.Lib.Common.Web.Extensions;
 
+using Constants;
 using Security;
 
 /// <summary>
@@ -13,7 +14,7 @@ public static class IServiceCollectionExtension
     /// Add common web library
     /// </summary>
     /// <param name="service">Service</param>
-    /// <returns></returns>
+    /// <returns>Returns the result</returns>
     public static IServiceCollection AddCommonWebLibrary(this IServiceCollection service)
     {
         service.AddSingleton<ICurrentUserService, CurrentUserService>();
@@ -21,5 +22,30 @@ public static class IServiceCollectionExtension
 
         service.AddScoped<ISecurityService, SecurityService>();
         return service;
+    }
+
+    /// <summary>
+    /// AddSwaggerDocumentation
+    /// </summary>
+    /// <param name="services">Services</param>
+    /// <param name="scheme">Scheme</param>
+    /// <returns>Returns the result</returns>
+    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, string scheme)
+    {
+        services.AddSwaggerGen(options =>
+        {
+            switch (scheme)
+            {
+                case AuthenticationSchemes.JwtScheme:
+                    options.AddJwtSecurity();
+                    break;
+                case AuthenticationSchemes.ApiKeyScheme:
+                    options.AddApiKeySecurity();
+                    break;
+                default:
+                    break;
+            }
+        });
+        return services;
     }
 }

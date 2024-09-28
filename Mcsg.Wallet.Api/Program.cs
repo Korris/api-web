@@ -16,7 +16,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
-using Lib.Common.Web.Extensions.DependencyInjection;
 using Lib.Common.Web.RealTime.Services;
 using Services;
 using static Common.Core.Constants.Setting;

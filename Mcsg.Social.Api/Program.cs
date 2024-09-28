@@ -22,7 +22,6 @@ using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
 using Lib.Common.Web.Extensions;
-using Lib.Common.Web.Extensions.DependencyInjection;
 using Models;
 using Services;
 using Validators;

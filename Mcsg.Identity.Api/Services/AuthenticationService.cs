@@ -17,7 +17,6 @@ using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -306,7 +305,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         // Social user linked to db. Should return access token
         if (existUserId != Guid.Empty)
         {
-            var user = await _userManager.FindByIdAsync(existUserId.ToString());
+            var user = await _userManager.FindByIdAsync(existUserId);
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -442,7 +441,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (string.IsNullOrEmpty(otpToken))
         {
             var currentUser = await _currentUserService.GetCurrentUserAsync();
-            user = await _userManager.FindByIdAsync((currentUser.UserId ?? Guid.Empty).ToString());
+            user = await _userManager.FindByIdAsync(currentUser.UserId);
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -513,7 +512,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     public async Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
     {
-        var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -557,7 +556,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
     {
         var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync((currentUser?.UserId ?? Guid.Empty).ToString());
+        var user = await _userManager.FindByIdAsync(currentUser?.UserId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -807,7 +806,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new BadRequestException(E000, t);
         }
 
-        var user = await _userManager.FindByIdAsync((request.UserId ?? Guid.Empty).ToString());
+        var user = await _userManager.FindByIdAsync(request.UserId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);

@@ -1,14 +1,25 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Mcsg.Lib.Common.Web.Extensions.DependencyInjection;
+namespace Mcsg.Common.Domain.Extensions;
 
-using Mcsg.Common.Domain;
-using Mcsg.Common.Domain.Entities;
+using Domain;
+using Domain.Entities;
 
-public static class IdentityServiceCollectionExtensions
+/// <summary>
+/// IServiceCollection extension for using [this IServiceCollection] only
+/// </summary>
+public static class IServiceCollectionExtension
 {
-    public static IServiceCollection AddIdentity<TErrorDescriber>(this IServiceCollection services) where TErrorDescriber : IdentityErrorDescriber
+    #region -- Methods --
+
+    /// <summary>
+    /// AddIdentity
+    /// </summary>
+    /// <typeparam name="T">Error describer</typeparam>
+    /// <param name="services">Services</param>
+    /// <returns>Return the result</returns>
+    public static IServiceCollection AddIdentity<T>(this IServiceCollection services) where T : IdentityErrorDescriber
     {
         services.AddIdentityCore<User>(option =>
         {
@@ -22,11 +33,16 @@ public static class IdentityServiceCollectionExtensions
         .AddEntityFrameworkStores<McsgContext>()
         .AddDefaultTokenProviders()
         .AddUserManager<ApplicationUserManager>()
-        .AddErrorDescriber<TErrorDescriber>();
+        .AddErrorDescriber<T>();
 
         return services;
     }
 
+    /// <summary>
+    /// AddIdentity
+    /// </summary>
+    /// <param name="services">Services</param>
+    /// <returns>Return the result</returns>
     public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
         services.AddIdentityCore<User>(option =>
@@ -43,4 +59,6 @@ public static class IdentityServiceCollectionExtensions
 
         return services;
     }
+
+    #endregion
 }
