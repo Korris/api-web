@@ -13,12 +13,18 @@ using Interfaces;
 using Lib.Common.Extensions;
 using Lib.Common.Web;
 
-public class TokenService : ITokenService
+public class TokenService : BaseSettingS, ITokenService
 {
-    public TokenService(IMcsgContext context, ISetting setting, ApplicationUserManager userManager)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="userManager"></param>
+    public TokenService(IMcsgContext context, ISetting setting, ApplicationUserManager userManager) : base(context, setting)
     {
-        _context = context;
-        _setting = setting;
         _userManager = userManager;
     }
 
@@ -119,17 +125,9 @@ public class TokenService : ITokenService
         return count > 0;
     }
 
+    #endregion
+
     #region -- Fields --
-
-    /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     /// <summary>
     /// User manager

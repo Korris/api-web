@@ -27,39 +27,29 @@ using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 using SettingCore = Common.Core.Constants.Setting;
 
-public partial class UserService : IUserService
+public partial class UserService : BaseMinioS, IUserService
 {
-    private readonly ApplicationUserManager _userManager;
-    private readonly IRepository<User> _userRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly ISetting _setting;
-    private readonly ISecurityAes _aes;
-    private readonly IMcsgContext _context;
-    private IConfiguration _configuration;
-    private readonly IStorageClient _sc;
-    private readonly ILogger<UserService> _logger;
-    private readonly DistributeManager _distributeManager;
+    #region -- Methods --
 
-    public UserService(ApplicationUserManager userManager,
-        IRepository<User> userRepository,
-        ICurrentUserService currentUserService,
-        ISetting setting,
-        IMcsgContext context,
-        IConfiguration configuration,
-        IStorageClient sc,
-        ILogger<UserService> logger,
-        DistributeManager distributeManager
-        )
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="sc"></param>
+    /// <param name="userManager"></param>
+    /// <param name="userRepository"></param>
+    /// <param name="currentUserService"></param>
+    /// <param name="configuration"></param>
+    /// <param name="distributeManager"></param>
+    public UserService(IMcsgContext context, ISetting setting, IStorageClient sc, ApplicationUserManager userManager, IRepository<User> userRepository, ICurrentUserService currentUserService, IConfiguration configuration, DistributeManager distributeManager) : base(context, setting, sc)
     {
-        _currentUserService = currentUserService;
-        _userRepository = userRepository;
-        _userManager = userManager;
-        _setting = setting;
         _aes = new SecurityAes(_setting.EncryptKey);
-        _context = context;
+
+        _userManager = userManager;
+        _userRepository = userRepository;
+        _currentUserService = currentUserService;
         _configuration = configuration;
-        _sc = sc;
-        _logger = logger;
         _distributeManager = distributeManager;
     }
 
@@ -618,4 +608,21 @@ public partial class UserService : IUserService
                       where a.UserFollowerId == userId && b.IsDelete == false
                       select a).CountAsync();
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    /// <summary>
+    /// SecurityAes
+    /// </summary>
+    private readonly ISecurityAes _aes;
+
+    private readonly ApplicationUserManager _userManager;
+    private readonly IRepository<User> _userRepository;
+    private readonly ICurrentUserService _currentUserService;
+    private IConfiguration _configuration;
+    private readonly DistributeManager _distributeManager;
+
+    #endregion
 }

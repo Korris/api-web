@@ -30,7 +30,7 @@ using static Common.SeedWork.Constants.Message;
 using static Constants.SocialMediaConstants;
 using static SSORegister;
 
-public partial class AuthenticationService : IAuthenticationService
+public partial class AuthenticationService : BaseSettingS, IAuthenticationService
 {
     #region -- Methods --
 
@@ -51,12 +51,10 @@ public partial class AuthenticationService : IAuthenticationService
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
     /// <param name="smartLookupRepository"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
     {
-        _context = context;
-        _setting = setting;
-        _uniquenessChecker = uniquenessChecker;
         _aes = new SecurityAes(_setting.EncryptKey);
+        _uniquenessChecker = uniquenessChecker;
 
         _userManager = userManager;
         _userRepository = unitOfWork.GetRepository<User>();
@@ -1101,24 +1099,14 @@ public partial class AuthenticationService : IAuthenticationService
     #region -- Fields --
 
     /// <summary>
-    /// DB context
+    /// SecurityAes
     /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
+    private readonly ISecurityAes _aes;
 
     /// <summary>
     /// Uniqueness checker
     /// </summary>
     private readonly IUserNameUniquenessChecker _uniquenessChecker;
-
-    /// <summary>
-    /// SecurityAes
-    /// </summary>
-    private readonly ISecurityAes _aes;
 
     private readonly ApplicationUserManager _userManager;
     private readonly ITokenService _tokenService;

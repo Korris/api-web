@@ -2,18 +2,24 @@
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Domain;
 using Common.Domain.Entities;
 using Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 
-public partial class SessionService : ISessionService
+public partial class SessionService : BaseSettingS, ISessionService
 {
-    private readonly IRepository<Session> _sessionRepository;
+    #region -- Methods --
 
-    public SessionService(ISetting setting, IUnitOfWork unitOfWork)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="setting"></param>
+    /// <param name="unitOfWork"></param>
+    public SessionService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork) : base(context, setting)
     {
-        _setting = setting;
         _sessionRepository = unitOfWork.GetRepository<Session>();
     }
 
@@ -45,10 +51,17 @@ public partial class SessionService : ISessionService
         session.ExpiredDateUtc = DateTime.UtcNow;
         await _sessionRepository.UpdateAsync(session);
     }
+
     public async Task ExpireSessionByUserId(Guid userId)
     {
         await _sessionRepository.Connection.ExecuteAsync(ExpiredUserSessionsQuery, new { userid = userId });
     }
 
-    private readonly ISetting _setting;
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IRepository<Session> _sessionRepository;
+
+    #endregion
 }

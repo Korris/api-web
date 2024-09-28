@@ -1,5 +1,19 @@
-﻿namespace Mcsg.Realtime.Api.Services;
+﻿#region Information
+/*
+ * Author       : Toan Nguyen Van
+ * Email        : nvt87x@gmail.com
+ * Phone        : +84 345 515 010
+ * ------------------------------- *
+ * Create       : 2024-Jan-21 08:37
+ * Update       : 2024-Jan-21 08:37
+ * Checklist    : 1.0
+ * Status       : New
+ */
+#endregion
 
+namespace Mcsg.Realtime.Api.Services;
+
+using Common.Core.Interfaces;
 using Common.Domain;
 using Interfaces;
 
@@ -10,7 +24,7 @@ using Interfaces;
 /// Initialize
 /// </remarks>
 /// <param name="context">DB context</param>
-public class BaseS(IMcsgContext context)
+public abstract class BaseS(IMcsgContext context)
 {
     #region -- Fields --
 
@@ -30,7 +44,7 @@ public class BaseS(IMcsgContext context)
 /// </remarks>
 /// <param name="context">DB context</param>
 /// <param name="setting">Setting</param>
-public class BaseSettingS(IMcsgContext context, ISetting setting) : BaseS(context)
+public abstract class BaseSettingS(IMcsgContext context, ISetting setting) : BaseS(context)
 {
     #region -- Fields --
 
@@ -38,6 +52,27 @@ public class BaseSettingS(IMcsgContext context, ISetting setting) : BaseS(contex
     /// Setting
     /// </summary>
     protected readonly ISetting _setting = setting;
+
+    #endregion
+}
+
+/// <summary>
+/// Base service
+/// </summary>
+/// <remarks>
+/// Initialize
+/// </remarks>
+/// <param name="context">DB context</param>
+/// <param name="setting">Setting</param>
+/// <param name="sc">Storage client</param>
+public abstract class BaseMinioS(IMcsgContext context, ISetting setting, IStorageClient sc) : BaseSettingS(context, setting)
+{
+    #region -- Fields --
+
+    /// <summary>
+    /// Storage client
+    /// </summary>
+    protected readonly IStorageClient _sc = sc;
 
     #endregion
 }
