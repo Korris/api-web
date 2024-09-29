@@ -2,7 +2,6 @@
 using FluentValidation;
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Mcsg.Identity.Api.Services;
 
@@ -202,11 +201,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new ForbiddenAccessException(E305, M305);
         }
 
-        if (!request.Email.IsNullOrEmpty() && user.EmailConfirmed == false)
+        if (!string.IsNullOrEmpty(request.Email) && user.EmailConfirmed == false)
         {
             throw new ForbiddenAccessException(E307, M307);
         }
-        if (!request.Phone.IsNullOrEmpty() && user.PhoneNumberConfirmed == false)
+        if (!string.IsNullOrEmpty(request.Phone) && user.PhoneNumberConfirmed == false)
         {
             throw new ForbiddenAccessException(E308, M308);
         }

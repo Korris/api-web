@@ -26,53 +26,29 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
         builder.ApplyConfigurationsFromAssembly(typeof(SessionConfiguration).Assembly);
 
-        builder.Entity<User>(entity =>
+        builder.Entity<User>(p =>
         {
-            entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
-            entity.ToTable("Users", DbSchema.Identity);
-            entity.Property(e => e.FirstName)
-            .IsRequired(false)
-            .HasMaxLength(256);
-
-            entity.Property(e => e.LastName)
-            .IsRequired(false)
-            .HasMaxLength(256);
-
-            entity.Property(e => e.Avatar)
-            .IsRequired(false)
-            .HasMaxLength(500);
-
-            entity.Property(e => e.ProfileName)
-            .IsRequired(false)
-            .HasMaxLength(256);
-
-            entity.HasIndex(x => x.ReferralCode);
+            p.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
+            p.ToTable("Users", DbSchema.Identity);
+            p.Property(e => e.FirstName).IsRequired(false).HasMaxLength(256);
+            p.Property(e => e.LastName).IsRequired(false).HasMaxLength(256);
+            p.Property(e => e.Avatar).IsRequired(false).HasMaxLength(500);
+            p.Property(e => e.ProfileName).IsRequired(false).HasMaxLength(256);
+            p.HasIndex(x => x.ReferralCode);
         });
 
-        builder.Entity<IdentityUserClaim<Guid>>(entity =>
+        builder.Entity<IdentityUserClaim<Guid>>(p => { p.ToTable("UserClaims", DbSchema.Identity); });
+        builder.Entity<IdentityUserLogin<Guid>>(p => { p.ToTable("UserLogins", DbSchema.Identity); });
+        builder.Entity<IdentityUserToken<Guid>>(p => p.ToTable("UserTokens", DbSchema.Identity));
+
+        builder.Entity<Role>(p =>
         {
-            entity.ToTable("UserClaims", DbSchema.Identity);
+            p.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
+            p.ToTable("Roles", DbSchema.Identity);
         });
 
-        builder.Entity<IdentityUserLogin<Guid>>(entity =>
-        {
-            entity.ToTable("UserLogins", DbSchema.Identity);
-        });
-
-        builder.Entity<IdentityUserToken<Guid>>(entity => entity.ToTable("UserTokens", DbSchema.Identity));
-
-        builder.Entity<Role>(entity =>
-        {
-            entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()");
-            entity.ToTable("Roles", DbSchema.Identity);
-        });
-
-        builder.Entity<IdentityRoleClaim<Guid>>(entity =>
-        {
-            entity.ToTable("RoleClaims", DbSchema.Identity);
-        });
-
-        builder.Entity<IdentityUserRole<Guid>>(entity => entity.ToTable("UserRoles", DbSchema.Identity));
+        builder.Entity<IdentityRoleClaim<Guid>>(p => { p.ToTable("RoleClaims", DbSchema.Identity); });
+        builder.Entity<IdentityUserRole<Guid>>(p => p.ToTable("UserRoles", DbSchema.Identity));
 
         //DataSeeder.Seed(builder);
     }
