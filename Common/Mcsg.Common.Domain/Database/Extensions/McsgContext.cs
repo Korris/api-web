@@ -11,6 +11,8 @@
  */
 #endregion
 
+using OpenIddict.EntityFrameworkCore.Models;
+
 namespace Mcsg.Common.Domain;
 
 using Core.Enums;
@@ -118,6 +120,14 @@ partial class McsgContext
     public IQueryable<Notification> NotificationAvailable => Notifications.Where(p => !p.IsDelete);
 
     public IQueryable<NotificationObject> NotificationObjectAvailable => NotificationObjects.Where(p => !p.IsDelete);
+
+    public IQueryable<OpenIddictEntityFrameworkCoreApplication> OpenIdApplicationAvailable => OpenIdApplications;
+
+    public IQueryable<OpenIddictEntityFrameworkCoreAuthorization> OpenIdAuthorizationAvailable => OpenIdAuthorizations;
+
+    public IQueryable<OpenIddictEntityFrameworkCoreScope> OpenIdScopeAvailable => OpenIdScopes;
+
+    public IQueryable<OpenIddictEntityFrameworkCoreToken> OpenIdTokenAvailable => OpenIdTokens;
 
     public IQueryable<Rating> RatingAvailable => Ratings.Where(p => !p.IsDelete);
 

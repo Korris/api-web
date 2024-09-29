@@ -21,6 +21,11 @@ public class DbSchema
     public const string Identity = "identity";
 
     /// <summary>
+    /// OpenId
+    /// </summary>
+    public const string OpenId = "openid";
+
+    /// <summary>
     /// Social
     /// </summary>
     public const string Social = "social";

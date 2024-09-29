@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Mcsg.Common.Domain;
 
@@ -49,6 +50,11 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
         builder.Entity<IdentityRoleClaim<Guid>>(p => { p.ToTable("RoleClaims", DbSchema.Identity); });
         builder.Entity<IdentityUserRole<Guid>>(p => p.ToTable("UserRoles", DbSchema.Identity));
+
+        builder.Entity<OpenIddictEntityFrameworkCoreApplication>(p => p.ToTable("OpenIdApplications", DbSchema.OpenId));
+        builder.Entity<OpenIddictEntityFrameworkCoreAuthorization>(p => p.ToTable("OpenIdAuthorizations", DbSchema.OpenId));
+        builder.Entity<OpenIddictEntityFrameworkCoreScope>(p => p.ToTable("OpenIdScopes", DbSchema.OpenId));
+        builder.Entity<OpenIddictEntityFrameworkCoreToken>(p => p.ToTable("OpenIdTokens", DbSchema.OpenId));
 
         //DataSeeder.Seed(builder);
     }
@@ -157,6 +163,14 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<NotificationObject> NotificationObjects { get; set; }
+
+    public virtual DbSet<OpenIddictEntityFrameworkCoreApplication> OpenIdApplications { get; set; }
+
+    public virtual DbSet<OpenIddictEntityFrameworkCoreAuthorization> OpenIdAuthorizations { get; set; }
+
+    public virtual DbSet<OpenIddictEntityFrameworkCoreScope> OpenIdScopes { get; set; }
+
+    public virtual DbSet<OpenIddictEntityFrameworkCoreToken> OpenIdTokens { get; set; }
 
     public virtual DbSet<Rating> Ratings { get; set; }
 

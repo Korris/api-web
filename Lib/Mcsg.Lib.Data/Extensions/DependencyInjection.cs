@@ -21,8 +21,9 @@ public static class DependencyInjection
                     builder.MigrationsAssembly(typeof(McsgContext).Assembly.FullName);
                     builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     builder.EnableRetryOnFailure();
-                })
-            ;
+                });
+
+            options.UseOpenIddict();
         });
 
         services.AddScoped<IMcsgContext>(p => p.GetService<McsgContext>()!);

@@ -22,6 +22,9 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "system");
 
             migrationBuilder.EnsureSchema(
+                name: "openid");
+
+            migrationBuilder.EnsureSchema(
                 name: "social");
 
             migrationBuilder.EnsureSchema(
@@ -215,6 +218,53 @@ namespace Mcsg.Common.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NotificationObjects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIdApplications",
+                schema: "openid",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ApplicationType = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<string>(type: "text", nullable: true),
+                    ClientSecret = table.Column<string>(type: "text", nullable: true),
+                    ClientType = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "text", nullable: true),
+                    ConsentType = table.Column<string>(type: "text", nullable: true),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    DisplayNames = table.Column<string>(type: "text", nullable: true),
+                    JsonWebKeySet = table.Column<string>(type: "text", nullable: true),
+                    Permissions = table.Column<string>(type: "text", nullable: true),
+                    PostLogoutRedirectUris = table.Column<string>(type: "text", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
+                    RedirectUris = table.Column<string>(type: "text", nullable: true),
+                    Requirements = table.Column<string>(type: "text", nullable: true),
+                    Settings = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIdApplications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIdScopes",
+                schema: "openid",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Descriptions = table.Column<string>(type: "text", nullable: true),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    DisplayNames = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
+                    Resources = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIdScopes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -504,6 +554,32 @@ namespace Mcsg.Common.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserSocials", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIdAuthorizations",
+                schema: "openid",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ApplicationId = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "text", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
+                    Scopes = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: true),
+                    Subject = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIdAuthorizations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIdAuthorizations_OpenIdApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalSchema: "openid",
+                        principalTable: "OpenIdApplications",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1044,6 +1120,42 @@ namespace Mcsg.Common.Domain.Migrations
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIdTokens",
+                schema: "openid",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ApplicationId = table.Column<string>(type: "text", nullable: true),
+                    AuthorizationId = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "text", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Payload = table.Column<string>(type: "text", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
+                    RedemptionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReferenceId = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: true),
+                    Subject = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIdTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIdTokens_OpenIdApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalSchema: "openid",
+                        principalTable: "OpenIdApplications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OpenIdTokens_OpenIdAuthorizations_AuthorizationId",
+                        column: x => x.AuthorizationId,
+                        principalSchema: "openid",
+                        principalTable: "OpenIdAuthorizations",
                         principalColumn: "Id");
                 });
 
@@ -2875,6 +2987,24 @@ namespace Mcsg.Common.Domain.Migrations
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OpenIdAuthorizations_ApplicationId",
+                schema: "openid",
+                table: "OpenIdAuthorizations",
+                column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIdTokens_ApplicationId",
+                schema: "openid",
+                table: "OpenIdTokens",
+                column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIdTokens_AuthorizationId",
+                schema: "openid",
+                table: "OpenIdTokens",
+                column: "AuthorizationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ratings_UserId",
                 schema: "system",
                 table: "Ratings",
@@ -3507,6 +3637,14 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "system");
 
             migrationBuilder.DropTable(
+                name: "OpenIdScopes",
+                schema: "openid");
+
+            migrationBuilder.DropTable(
+                name: "OpenIdTokens",
+                schema: "openid");
+
+            migrationBuilder.DropTable(
                 name: "Ratings",
                 schema: "system");
 
@@ -3684,6 +3822,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "system");
 
             migrationBuilder.DropTable(
+                name: "OpenIdAuthorizations",
+                schema: "openid");
+
+            migrationBuilder.DropTable(
                 name: "SocialPostComments",
                 schema: "social");
 
@@ -3717,6 +3859,10 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.DropTable(
                 name: "ComicResources",
                 schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "OpenIdApplications",
+                schema: "openid");
 
             migrationBuilder.DropTable(
                 name: "SocialResources",

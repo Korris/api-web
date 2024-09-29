@@ -13,6 +13,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Mcsg.Common.Domain;
 
@@ -108,6 +109,14 @@ public interface IMcsgContext
     DbSet<Notification> Notifications { get; set; }
 
     DbSet<NotificationObject> NotificationObjects { get; set; }
+
+    DbSet<OpenIddictEntityFrameworkCoreApplication> OpenIdApplications { get; set; }
+
+    DbSet<OpenIddictEntityFrameworkCoreAuthorization> OpenIdAuthorizations { get; set; }
+
+    DbSet<OpenIddictEntityFrameworkCoreScope> OpenIdScopes { get; set; }
+
+    DbSet<OpenIddictEntityFrameworkCoreToken> OpenIdTokens { get; set; }
 
     DbSet<Rating> Ratings { get; set; }
 
@@ -270,6 +279,14 @@ public interface IMcsgContext
     IQueryable<Notification> NotificationAvailable { get; }
 
     IQueryable<NotificationObject> NotificationObjectAvailable { get; }
+
+    IQueryable<OpenIddictEntityFrameworkCoreApplication> OpenIdApplicationAvailable { get; }
+
+    IQueryable<OpenIddictEntityFrameworkCoreAuthorization> OpenIdAuthorizationAvailable { get; }
+
+    IQueryable<OpenIddictEntityFrameworkCoreScope> OpenIdScopeAvailable { get; }
+
+    IQueryable<OpenIddictEntityFrameworkCoreToken> OpenIdTokenAvailable { get; }
 
     IQueryable<Rating> RatingAvailable { get; }
 
