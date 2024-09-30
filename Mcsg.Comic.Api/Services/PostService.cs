@@ -142,7 +142,7 @@ public partial class PostService : IPostService
             Permission = request.Permission,
             Status = PostStatus.Public,
             CreatedBy = userId,
-            //TODO FAKE DATA
+            Hide = HideOption.All,
             ViewCount = 0
         };
 
