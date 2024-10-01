@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Common.Domain.Dtos;
 
-using Common.Core.Enums;
+using Core.Enums;
 using SeedWork.Enums;
 
 public class FeedbackResourceDto

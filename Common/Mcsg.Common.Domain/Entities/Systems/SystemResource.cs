@@ -2,10 +2,10 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-using Common.SeedWork.Enums;
 using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
+using SeedWork.Enums;
 
 public partial class SystemResource : AuditableEntity
 {

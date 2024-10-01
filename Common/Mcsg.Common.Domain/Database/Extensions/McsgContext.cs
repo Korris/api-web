@@ -13,9 +13,9 @@
 
 namespace Mcsg.Common.Domain;
 
-using Common.Core.Enums;
-using Common.Domain.Entities;
-using Common.SeedWork.Extensions;
+using Core.Enums;
+using Entities;
+using SeedWork.Extensions;
 
 /// <summary>
 /// McsgContext

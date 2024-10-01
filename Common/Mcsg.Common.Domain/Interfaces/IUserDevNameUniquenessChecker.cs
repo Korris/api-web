@@ -13,7 +13,7 @@
 
 namespace Mcsg.Common.Domain;
 
-using Common.Interfaces;
+using Interfaces;
 
 /// <summary>
 /// Marker interface to represent a DevName uniqueness checker

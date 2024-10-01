@@ -13,9 +13,9 @@
 
 namespace Mcsg.Common.Core.Rules;
 
-using Common.SeedWork.Interfaces;
 using Interfaces;
-using static Common.SeedWork.Constants.Message;
+using SeedWork.Interfaces;
+using static SeedWork.Constants.Message;
 
 /// <summary>
 /// Must be unique rule

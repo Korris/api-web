@@ -15,8 +15,8 @@ using FluentValidation.Results;
 
 namespace Mcsg.Common.Core.Extensions;
 
-using Common.SeedWork.Extensions;
 using SeedWork.Dtos;
+using SeedWork.Extensions;
 
 /// <summary>
 /// List extension for using [this List] only

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Mcsg.Common.Core.Extensions;
 
-using Common.SeedWork;
+using SeedWork;
 using SeedWork.Dtos;
 using static SeedWork.Dtos.ConnectionDto;
 

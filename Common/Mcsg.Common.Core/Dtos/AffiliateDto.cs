@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Common.Core.Dtos;
 
-using Common.Core.Enums;
+using Core.Enums;
 
 /// <summary>
 /// Affiliate data transfer object

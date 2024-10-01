@@ -15,7 +15,7 @@ using System.Text;
 
 namespace Mcsg.Common.SeedWork.Extensions;
 
-using Common.SeedWork.Enums;
+using SeedWork.Enums;
 
 /// <summary>
 /// StreamExtension extension for using [this StreamExtension] only

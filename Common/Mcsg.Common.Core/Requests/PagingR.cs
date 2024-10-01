@@ -13,8 +13,8 @@
 
 namespace Mcsg.Common.Core.Requests;
 
-using Common.SeedWork.Constants;
-using Common.SeedWork.Dtos;
+using SeedWork.Constants;
+using SeedWork.Dtos;
 
 /// <summary>
 /// Paging request for POST or PATCH method (support paging on server)

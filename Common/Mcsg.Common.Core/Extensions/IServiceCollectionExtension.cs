@@ -22,10 +22,10 @@ using System.Text;
 
 namespace Mcsg.Common.Core.Extensions;
 
-using Common.SeedWork.Dtos;
 using Distributor;
 using Interfaces;
 using Notifications;
+using SeedWork.Dtos;
 using Storages;
 using static SeedWork.Constants.Setting;
 using static SeedWork.Dtos.ConnectionDto;

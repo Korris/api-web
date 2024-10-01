@@ -20,12 +20,12 @@ using System.Text.Json;
 
 namespace Mcsg.Common.Core.Requests;
 
-using Common.Core.Enums;
-using Common.Core.Extensions;
-using Common.SeedWork.Constants;
-using Common.SeedWork.Enums;
-using Common.SeedWork.Responses;
-using static Common.SeedWork.Constants.Setting;
+using Core.Enums;
+using Core.Extensions;
+using SeedWork.Constants;
+using SeedWork.Enums;
+using SeedWork.Responses;
+using static SeedWork.Constants.Setting;
 
 /// <summary>
 /// Base request

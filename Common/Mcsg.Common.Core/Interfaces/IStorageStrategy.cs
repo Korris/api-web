@@ -15,7 +15,7 @@ using Minio.DataModel;
 
 namespace Mcsg.Common.Core.Interfaces;
 
-using Common.Core.Enums;
+using Core.Enums;
 using Dtos;
 using static SeedWork.Dtos.StorageDto;
 
