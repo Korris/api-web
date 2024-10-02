@@ -26,7 +26,6 @@ using Lib.Common.Web.Extensions.DependencyInjection;
 using Models;
 using Services;
 using Validators;
-using Wallet.Domain;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -64,7 +63,6 @@ public class Program
 
         // Update connection string
         var csDb = cs.SetDbParams(st.Db);
-        var csDbWallet = cs.SetDbParams(st.DbWallet);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -115,7 +113,6 @@ public class Program
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
-        builder.Services.AddWalletDbContext(csDbWallet);
 
         // Attribute
         builder.Services.AddScoped<MediaOnlyAttribute>();
@@ -207,9 +204,6 @@ public class Program
         builder.Services.AddScoped(typeof(IReactService<>), typeof(ReactService<>));
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
-        builder.Services.AddScoped<IEarningService, EarningService>();
-        builder.Services.AddScoped<IAffiliateService, AffiliateService>();
-        builder.Services.AddScoped<IWalletService, WalletService>();
 
         //validator
         builder.Services.AddScoped<IValidator<TagFavorite>, TagFavoriteValidator>();

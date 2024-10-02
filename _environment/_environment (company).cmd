@@ -6,8 +6,6 @@ setx Bumcheo_Cmc_Db_Port "5432"
 
 setx Bumcheo_Job_Db_Host "ntada.postgres"
 setx Bumcheo_Job_Db_Port "5432"
-setx Bumcheo_Job_DbWallet_Host "ntada.postgres"
-setx Bumcheo_Job_DbWallet_Port "5432"
 
 setx Bumcheo_Ide_Db_Host "ntada.postgres"
 setx Bumcheo_Ide_Db_Port "5432"
@@ -20,8 +18,6 @@ setx Bumcheo_Rea_Db_Port "5432"
 
 setx Bumcheo_Soc_Db_Host "ntada.postgres"
 setx Bumcheo_Soc_Db_Port "5432"
-setx Bumcheo_Soc_DbWallet_Host "ntada.postgres"
-setx Bumcheo_Soc_DbWallet_Port "5432"
 
 setx Bumcheo_Sto_Db_Host "ntada.postgres"
 setx Bumcheo_Sto_Db_Port "5432"
