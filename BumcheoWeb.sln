@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Web", "Lib\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{354BBCC4-6583-4444-A136-E4D5430024C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Lib\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{4CD39EC9-A8E7-44D8-80C2-B4EA46F412BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{4CD39EC9-A8E7-44D8-80C2-B4EA46F412BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Social.Api", "Mcsg.Social.Api\Mcsg.Social.Api.csproj", "{EEC2B46C-4B06-4F90-852A-AECECB5DA293}"
 EndProject

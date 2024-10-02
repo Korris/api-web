@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common.Web", "Lib\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Lib\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{6C09C2A6-6FDC-4BAA-AF5D-F14EE2E1FBC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.SeedWork", "Common\Mcsg.Common.SeedWork\Mcsg.Common.SeedWork.csproj", "{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}"
 EndProject

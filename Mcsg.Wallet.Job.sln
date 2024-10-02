@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common", "Common\Mcsg.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.Domain", "Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj", "{B6681C5E-EA52-4261-8F17-FB5D5908D875}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Lib\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{B033E302-CF72-4769-8464-0E6140D5C533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{B033E302-CF72-4769-8464-0E6140D5C533}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

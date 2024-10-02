@@ -1,7 +1,7 @@
 # Add migration
-Set as Startup Project: Lib\Mcsg.Wallet.Domain
+Set as Startup Project: Mcsg.Wallet.Domain
 Tools -> Nuget Package Manager -> Package Manager Console
-Default project: Lib\Mcsg.Wallet.Domain
+Default project: Mcsg.Wallet.Domain
 Run command below:
 Install-Package Microsoft.EntityFrameworkCore
 Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
