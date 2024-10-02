@@ -46,6 +46,32 @@ public class UserService : UserProto.UserProtoBase
         return res;
     }
 
+    public override async Task<BaseRsp> GetUserInfo(UserGetReq request, ServerCallContext context)
+    {
+        var res = new BaseRsp();
+
+        try
+        {
+            var id = request.UserUid.Split(";");
+            var listUsers = await _context.UserAvailable.Where(p => id.Contains(p.Id.ToString()))
+                .Select(p => new UserProtoDto
+                {
+                    UserId = p.Id.ToString(),
+                    UserName = p.UserName,
+                    ProfileName = p.ProfileName,
+                    UserAvatar = p.Avatar + "",
+                }).ToListAsync();
+            res.Users.AddRange(listUsers);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
     #endregion
 
     #region -- Methods --

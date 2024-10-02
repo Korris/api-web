@@ -15,6 +15,8 @@ using Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
+using Grpc.Net.Client;
+using Identity.Api.Protos;
 using Interfaces;
 using Lib.Common.Enums;
 using Lib.Common.Helpers;
@@ -22,7 +24,9 @@ using Lib.Common.Models;
 using Models;
 using Models._3rdClass.ZaloPay.Response;
 using Requests;
+using Validators;
 using static Common.Core.Constants.Setting;
+using static Common.SeedWork.Constants.Message;
 
 public class UserWalletService : BaseSettingS, IUserWalletService
 {
@@ -101,19 +105,72 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         return data;
     }
 
-    public async Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(BaseR req, int page = 1, int pageSize = 10)
+    public async Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(UserWalletTransactionSearchR request)
     {
-        var userId = req.UserId;
-        var data = new UserWalletTransactionResp();
+        var vr = new UserWalletTransactionSearchV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(M000, t);
+        }
+
+        if (request.UserId == null)
+        {
+            throw new BadRequestException(M109);
+        }
+
+        var userId = request.UserId;
+        var tz = request.TimezoneOffset;
         var query = _context.WalletTransactions
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Where(x =>
-                (
-                    (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
-                    || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId))
+                (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
+            );
 
-                )
+        if (!string.IsNullOrEmpty(request.ReferenceNumber))
+        {
+            query = query.Where(x => x.ReferenceNumber != null && x.ReferenceNumber.Contains(request.ReferenceNumber));
+        }
+
+        if (request.FromDate.HasValue)
+        {
+            var startOfDay = request.FromDate.Value.Date.StartOfDay();
+            var startOfDayUtc = startOfDay.AddMinutes(tz);
+            query = query.Where(x => x.CreatedOn >= startOfDayUtc);
+        }
+
+        if (request.ToDate.HasValue)
+        {
+            var endOfDay = request.ToDate.Value.Date.StartOfDay();
+            var endOfDayUtc = endOfDay.AddMinutes(tz);
+            query = query.Where(x => x.CreatedOn <= endOfDayUtc);
+        }
+
+        if (request.TransactionType != null && request.TransactionType.Count > 0)
+        {
+            var listTypes = new List<TransactionType>();
+            foreach (var type in request.TransactionType)
+            {
+                var transactionType = type.ToEnum(TransactionType.Transfer);
+                listTypes.Add(transactionType);
+            }
+            query = query.Where(x => listTypes.Contains(x.Type));
+        }
+
+        if (request.TransactionStatus != null && request.TransactionStatus.Count > 0)
+        {
+            var listStatus = new List<TransactionStatus>();
+            foreach (var status in request.TransactionStatus)
+            {
+                var transactionStatus = status.ToEnum(TransactionStatus.Success);
+                listStatus.Add(transactionStatus);
+            }
+            query = query.Where(x => listStatus.Contains(x.Status));
+        }
+
+        var resultQuery = query
             .OrderByDescending(x => x.CreatedOn)
             .Select(x => new UserWalletTransactionItemResp
             {
@@ -121,8 +178,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 AmountSign = (x.Type == TransactionType.Deposit
                             || x.Type == TransactionType.Reward
                             || (x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
-                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
-                            ) ? "+" : "-",
+                            || (x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId))
+                            ? "+" : "-",
                 Content = x.Content,
                 CreatedOn = x.CreatedOn,
                 FromAddress = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.Address,
@@ -130,20 +187,33 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 FromUser = x.IsFromSystem ? ApiMessages.FROM_SYSTEM : x.SourceUserWallet.ProfileName,
                 ReferenceNumber = x.ReferenceNumber,
                 ToUser = x.DestinationUserWallet != null ? x.DestinationUserWallet.ProfileName : string.Empty,
+                ToUserId = x.DestinationUserWallet != null ? x.DestinationUserWallet.UserId : Guid.Empty,
+                FromUserId = x.IsFromSystem ? Guid.Empty : (x.SourceUserWallet != null ? x.SourceUserWallet.UserId : Guid.Empty),
                 TransactionStatus = x.Status,
                 TransactionType = x.Type,
                 Id = x.Id,
                 SystemMessage = x.SystemMessage
             }).AsNoTracking();
 
+        var items = await resultQuery.Skip((request.PageNum - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
 
-        var countQuery = _context.WalletTransactions
-            .Where(x =>
-            (x.DestinationUserWallet.UserId == userId
-            || x.SourceUserWallet.UserId == userId))
-            .AsNoTracking().Select(x => new UserWalletTransactionItemResp { Id = x.Id });
+        var userIds = items.SelectMany(p => new List<Guid?> { p.ToUserId, p.FromUserId })
+                       .Where(id => id != null && id != Guid.Empty)
+                       .Distinct()
+                       .ToList();
 
-        return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(query, countQuery, page, pageSize);
+        var userInfo = await GetUserFromProto(userIds);
+
+        foreach (var item in items)
+        {
+            var toUserOfProto = item.ToUserId != null ? userInfo!.GetValueOrDefault(item.ToUserId.ToString()) : null;
+            var fromUserOfProto = item.FromUserId != null ? userInfo!.GetValueOrDefault(item.FromUserId.ToString()) : null;
+            item.ToUser = toUserOfProto?.UserName;
+            item.FromUser = fromUserOfProto?.UserName;
+            item.ToUserAvatar = toUserOfProto?.UserAvatar;
+        }
+
+        return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(items, resultQuery, request.PageNum, request.PageSize);
     }
 
     public async Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(BaseR req, string referenceNumber)
@@ -872,6 +942,30 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         string bankAccountBin = "";
 
         return $"https://api.vietqr.io/image/{bankAccountBin}-{bankAccount}-PSYZ8LO.jpg?accountName={bankAccountName}&amount={amount}&addInfo={refCode}";
+    }
+
+    private async Task<Dictionary<string, UserProtoDto>> GetUserFromProto(List<Guid?> userIds)
+    {
+        var res = new Dictionary<string, UserProtoDto>();
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Identity!);
+
+            var client = new UserProto.UserProtoClient(channel);
+            var request = new UserGetReq
+            {
+                UserUid = string.Join(';', userIds.Where(id => id != null).Select(id => id.ToString()))
+            };
+            var rsp = await client.GetUserInfoAsync(request);
+            return rsp.Users.ToDictionary(p => p.UserId, p => p);
+        }
+        catch (Exception ex)
+        {
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     #endregion

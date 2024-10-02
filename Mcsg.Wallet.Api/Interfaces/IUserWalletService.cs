@@ -11,7 +11,7 @@ public interface IUserWalletService
 {
     Task<IEnumerable<UserWalletResp>> GetUserWalletAsync(BaseR req);
     Task<UserWalletBasicResp> GetUserWalletByAddressAsync(string address);
-    Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(BaseR req, int page = 1, int pageSize = 10);
+    Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(UserWalletTransactionSearchR request);
     Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(BaseR req, string referenceNumber);
     Task<IEnumerable<UserPaymentMethodResponse>> GetUserPaymentMethods(Guid userId);
     Task<AddUserPaymentMethodResp> AddUserPaymentMethod(UserWalletAddPaymentMethodR addUserPaymentMethodReq);

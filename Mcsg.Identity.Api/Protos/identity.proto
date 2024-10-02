@@ -8,15 +8,29 @@ package identity;
 
 service UserProto {
     rpc Update (UserUpdateReq) returns (BaseRsp);
+    rpc GetUserInfo (UserGetReq) returns (BaseRsp);
 }
 
 message BaseRsp {
     bool success = 1;
     string message = 2;
     string id = 3;
+    string data = 4;
+    repeated UserProtoDto users = 5;
 }
 
 message UserUpdateReq {
     string userUid = 1;
     google.protobuf.Timestamp premiumDate = 2;
+}
+
+message UserGetReq {
+    string userUid = 1;
+}
+
+message UserProtoDto {    
+    string userId = 1;
+    string userName = 2;
+    string profileName = 3;
+    string userAvatar = 4;
 }

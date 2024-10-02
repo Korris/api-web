@@ -73,11 +73,11 @@ public class UserWalletController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("transactions")]
-    public async Task<IActionResult> GetUserWalletTransactions(int page = 1, int pageSize = 10)
+    [HttpPatch("transactions")]
+    public async Task<IActionResult> GetUserWalletTransactions([FromBody] UserWalletTransactionSearchR request)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _userWalletService.GetUserWalletTransactionsAsync(req, page, pageSize);
+        request.Analyze(HttpContext);
+        var result = await _userWalletService.GetUserWalletTransactionsAsync(request);
         return Ok(result);
     }
 

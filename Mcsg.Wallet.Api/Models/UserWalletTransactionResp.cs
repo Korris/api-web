@@ -1,6 +1,9 @@
-﻿namespace Mcsg.Wallet.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Wallet.Api.Models;
 
 using Common.Core.Enums;
+using Common.SeedWork.Converters;
 using Domain.Enums;
 using Lib.Common.Models;
 
@@ -17,17 +20,23 @@ public class UserWalletTransactionItemResp
     public Guid Id { get; set; }
     public string ReferenceNumber { get; set; }
     public string FromAddress { get; set; }
-    public string FromUser { get; set; }
+    public string? FromUser { get; set; }
+    public Guid? FromUserId { get; set; }
     public string ToAddress { get; set; }
-    public string ToUser { get; set; }
+    public string? ToUser { get; set; }
+    public string ProfileName { get; set; }
+    public Guid? ToUserId { get; set; }
     public float Amount { get; set; }
     public string AmountOfMoney { get; set; }
     public string AmountSign { get; set; }
     public TransactionType TransactionType { get; set; }
     public TransactionStatus TransactionStatus { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
     public string Content { get; set; }
     public string SystemMessage { get; set; }
+    public string? ToUserAvatar { get; set; }
 }
 public class UserWalletTransactionItemDetailResp : UserWalletTransactionItemResp
 {
