@@ -10,6 +10,9 @@ setx Bumcheo_Job_Db_Port "5432"
 setx Bumcheo_Ide_Db_Host "ntada.postgres"
 setx Bumcheo_Ide_Db_Port "5432"
 
+setx Bumcheo_Ope_Db_Host "ntada.postgres"
+setx Bumcheo_Ope_Db_Port "5432"
+
 setx Bumcheo_Med_Db_Host "ntada.postgres"
 setx Bumcheo_Med_Db_Port "5432"
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -79,12 +80,7 @@ public class Program
                     }
 
                     var port = Convert.ToInt32(arr[1]);
-                    var protocol = HttpProtocols.Http1;
-
-                    if (nameof(HttpProtocols.Http2) == arr[0])
-                    {
-                        protocol = HttpProtocols.Http2;
-                    }
+                    var protocol = nameof(HttpProtocols.Http2) == arr[0] ? HttpProtocols.Http2 : HttpProtocols.Http1;
 
                     p.ListenAnyIP(port, q => q.Protocols = protocol);
                 }
@@ -124,6 +120,20 @@ public class Program
 
         // Cookie name
         builder.Services.ConfigureApplicationCookie(p => { p.Cookie.Name = _prefix; });
+
+        // OpenIddict
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, p => { p.LoginPath = "/Account/Login"; });
+        builder.Services.AddOpenIddict()
+            .AddCore(p => { p.UseEntityFrameworkCore().UseDbContext<McsgContext>(); })
+            .AddServer(p =>
+            {
+                p.AllowClientCredentialsFlow().AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange().AllowRefreshTokenFlow();
+                p.SetTokenEndpointUris("/connect/token").SetAuthorizationEndpointUris("/connect/authorize").SetUserinfoEndpointUris("/connect/userinfo");
+                p.AddEphemeralEncryptionKey().AddEphemeralSigningKey().DisableAccessTokenEncryption();
+                p.RegisterScopes("api");
+                p.UseAspNetCore().DisableTransportSecurityRequirement().EnableTokenEndpointPassthrough().EnableAuthorizationEndpointPassthrough().EnableUserinfoEndpointPassthrough();
+            });
         #endregion
 
         // Add services to the container.

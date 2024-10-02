@@ -60,8 +60,13 @@ public enum MicroService
     /// </summary>
     CloneSite,
 
-   /// <summary>
+    /// <summary>
     /// Function
     /// </summary>
-    Function
+    Function,
+
+    /// <summary>
+    /// OpenId
+    /// </summary>
+    OpenId
 }

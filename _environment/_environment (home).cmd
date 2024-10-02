@@ -10,6 +10,9 @@ setx Bumcheo_Job_Db_Port "65432"
 setx Bumcheo_Ide_Db_Host "ntada.win"
 setx Bumcheo_Ide_Db_Port "65432"
 
+setx Bumcheo_Ope_Db_Host "ntada.win"
+setx Bumcheo_Ope_Db_Port "65432"
+
 setx Bumcheo_Med_Db_Host "ntada.win"
 setx Bumcheo_Med_Db_Port "65432"
 
