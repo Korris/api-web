@@ -12,4 +12,5 @@ _build.cmd local api-web Mcsg.Realtime.Api
 _build.cmd local api-web Mcsg.Social.Api
 _build.cmd local api-web Mcsg.Story.Api
 _build.cmd local api-web Mcsg.Wallet.Api
+_build.cmd local api-web Mcsg.Wallet.Job
 ```

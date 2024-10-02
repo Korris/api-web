@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
+        <ProjectReference Include="..\Lib\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj" />
     </ItemGroup>
 
 </Project>

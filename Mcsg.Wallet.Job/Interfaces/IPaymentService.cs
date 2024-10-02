@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Function.Job.Interfaces;
+﻿namespace Mcsg.Wallet.Job.Interfaces;
 
 using Lib.Common.Models;
 

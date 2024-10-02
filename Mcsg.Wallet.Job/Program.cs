@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-namespace Mcsg.Function.Job;
+namespace Mcsg.Wallet.Job;
 
 using Common.Core.Extensions;
 using Common.Domain;
@@ -123,13 +123,9 @@ public class Program
         builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
 
         // Service
-        builder.Services.AddScoped<IDeleteAccountService, DeleteAccountService>();
-        builder.Services.AddScoped<IDownloadImage, DownloadImage>();
-        builder.Services.AddScoped<IEmailService, EmailService>();
-        builder.Services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
         builder.Services.AddSingleton<IEmailSender, SmtpSender>();
-        builder.Services.AddScoped<ISmsService, SmsService>();
-        builder.Services.AddScoped<IExclusiveUnlockService, ExclusiveUnlockService>();
+        builder.Services.AddScoped<ISyncDataService, SyncDataService>();
+        builder.Services.AddScoped<IPaymentService, PaymentService>();
         #endregion
 
         #region -- Setup token --
@@ -143,15 +139,8 @@ public class Program
         builder.Services.AddControllers();
 
         // AddHostedService
-        builder.Services.AddHostedService<HostedDeleteAccount>();
-        //builder.Services.AddHostedService<HostedDownloadImage>(); not in use for now
-        builder.Services.AddHostedService<HostedEmail>();
-        builder.Services.AddHostedService<HostedExclusiveUnlock>();
-        builder.Services.AddHostedService<HostedSmartCountComment>();
-        builder.Services.AddHostedService<HostedSmartCountReact>();
-        builder.Services.AddHostedService<HostedSmartLoopkup>();
-        builder.Services.AddHostedService<HostedSms>();
-        builder.Services.AddHostedService<HostedViewHistory>();
+        builder.Services.AddHostedService<HostedPaymentTransaction>();
+        builder.Services.AddHostedService<HostedSyncData>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -229,7 +218,7 @@ public class Program
     /// <summary>
     /// Variable prefix
     /// </summary>
-    private static string _prefix = "Job";
+    private static string _prefix = "Wal";
 
     #endregion
 }

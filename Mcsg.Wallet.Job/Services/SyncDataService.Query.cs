@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Function.Job.Services
+﻿namespace Mcsg.Wallet.Job.Services
 {
     using Common.Core.Enums;
 

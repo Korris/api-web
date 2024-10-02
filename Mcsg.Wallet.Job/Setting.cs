@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Function.Job;
+namespace Mcsg.Wallet.Job;
 
 using Common.SeedWork;
 using Interfaces;

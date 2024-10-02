@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Function.Job", "Mcsg.Function.Job\Mcsg.Function.Job.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Job", "Mcsg.Wallet.Job\Mcsg.Wallet.Job.csproj", "{05A8BC17-39D8-4BBF-961B-C1DC9531CAC7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{8E5F8620-27CF-46BF-A3AA-3E7864723146}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common", "Common\Mcsg.Common\Mcsg.Common.csproj", "{69DD3CC3-7699-43C1-B4CE-ECCEE0EC6BF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.Domain", "Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj", "{B6681C5E-EA52-4261-8F17-FB5D5908D875}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Wallet.Domain", "Lib\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj", "{B033E302-CF72-4769-8464-0E6140D5C533}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{B6681C5E-EA52-4261-8F17-FB5D5908D875}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6681C5E-EA52-4261-8F17-FB5D5908D875}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6681C5E-EA52-4261-8F17-FB5D5908D875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B033E302-CF72-4769-8464-0E6140D5C533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B033E302-CF72-4769-8464-0E6140D5C533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B033E302-CF72-4769-8464-0E6140D5C533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B033E302-CF72-4769-8464-0E6140D5C533}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
-namespace Mcsg.Function.Job.Services;
+namespace Mcsg.Wallet.Job.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;

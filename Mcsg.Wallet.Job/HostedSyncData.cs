@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace Mcsg.Function.Job;
+namespace Mcsg.Wallet.Job;
 
 using Common.Core.Dtos;
 using Common.Core.Extensions;
@@ -14,7 +14,7 @@ using static Common.SeedWork.Constants.Information;
 /// <summary>
 /// Hosted service https://www.c-sharpcorner.com/article/consuming-rabbitmq-messages-in-asp-net-core
 /// </summary>
-public class HostedPaymentTransaction : BackgroundService
+public class HostedSyncData : BackgroundService
 {
     #region -- Overrides --
 
@@ -38,7 +38,7 @@ public class HostedPaymentTransaction : BackgroundService
         {
             var st = scope.ServiceProvider.GetRequiredService<ISetting>();
 
-            _channel.BasicConsume(st.NotificationQueuePayment, false, consumer);
+            _channel.BasicConsume(st.NotificationQueueSyncData, false, consumer);
         }
 
         return Task.CompletedTask;
@@ -63,9 +63,9 @@ public class HostedPaymentTransaction : BackgroundService
     /// </summary>
     /// <param name="ss">Service scope factory</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public HostedPaymentTransaction(IServiceScopeFactory ss)
+    public HostedSyncData(IServiceScopeFactory ss)
     {
-        $"Initialize {nameof(HostedPaymentTransaction)}".LogInfor();
+        $"Initialize {nameof(HostedSyncData)}".LogInfor();
 
         _ss = ss ?? throw new ArgumentNullException(nameof(ss));
 
@@ -80,13 +80,13 @@ public class HostedPaymentTransaction : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueuePayment, false, false, false, null);
-            _channel.QueueBind(st.NotificationQueuePayment, st.NotificationExchange, st.NotificationQueuePayment, null);
+            _channel.QueueDeclare(st.NotificationQueueSyncData, false, false, false, null);
+            _channel.QueueBind(st.NotificationQueueSyncData, st.NotificationExchange, st.NotificationQueueSyncData, null);
             _channel.BasicQos(0, 1, false);
 
             _connection.ConnectionShutdown += OnConnectionShutdown;
 
-            $"Finished {nameof(HostedPaymentTransaction)}".LogInfor();
+            $"Finished {nameof(HostedSyncData)}".LogInfor();
         }
     }
 
@@ -107,14 +107,33 @@ public class HostedPaymentTransaction : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var service = scope.ServiceProvider.GetRequiredService<IPaymentService>();
-            var payload = JsonConvert.DeserializeObject<PaymentTransData>(msg.Payload);
+            var service = scope.ServiceProvider.GetRequiredService<ISyncDataService>();
+            var payload = JsonConvert.DeserializeObject<SyncData>(msg.Payload);
 
-            switch (payload.Type)
+            switch (payload.TargetDb)
             {
-                case PaymentTransType.ZALO_PAY:
+                case SyncTargetDb.WALLETDB:
                     {
-                        await service.ZPQueryOrderAsync(payload);
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_INFO)
+                        {
+                            await service.SyncWalletUserInfoAsync(payload);
+                        }
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_REWARD)
+                        {
+                            await service.SyncWalletUserRewardAsync(payload);
+                        }
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_PREMIUM)
+                        {
+                            await service.SyncUserPremiumAsync(payload);
+                        }
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_CHAPTER)
+                        {
+                            await service.SyncUserBuyChapterAsync(payload);
+                        }
+                        if (payload.TargetEntity == SyncTargetEntity.WALLET_USER_BUY_SERIES)
+                        {
+                            await service.SyncUserBuySeriesAsync(payload);
+                        }
                         break;
                     }
 

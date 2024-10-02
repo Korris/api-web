@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Function.Job.Interfaces;
+﻿namespace Mcsg.Wallet.Job.Interfaces;
 
 using Common.SeedWork.Interfaces;
 
