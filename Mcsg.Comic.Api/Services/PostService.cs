@@ -975,7 +975,8 @@ public partial class PostService : IPostService
             SeriesStatus = item.ToSeriesStatus(),
             TotalComment = item.TotalComment,
             IsFollowing = item.IsFollowing,
-            ExternalResource = item.ExternalResource
+            ExternalResource = item.ExternalResource,
+            Hide = item.Hide
         };
 
         return itemResponse;
