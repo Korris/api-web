@@ -7,28 +7,27 @@ namespace Mcsg.Wallet.Job.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Domain.Interfaces;
 using Interfaces;
 using Job.Constants;
 using Lib.Common.Enums;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;
-using Lib.Data.Repositories.Interface;
-using Wallet.Domain.Interfaces;
 
-public class PaymentService : IPaymentService
+public class PaymentService : BaseS, IPaymentService
 {
-    public PaymentService(IUnitOfWork unitOfWork, IWalletContext walletDbContext, ILogger<PaymentService> logger, ISetting setting)
+    #region -- Methods --
+
+    public PaymentService(IWalletContext context, ILogger<PaymentService> logger, ISetting setting) : base(context)
     {
-        _unitOfWork = unitOfWork;
-        _walletDbContext = walletDbContext;
         _logger = logger;
         _setting = setting;
     }
 
     public async Task ZPQueryOrderAsync(PaymentTransData data)
     {
-        var transaction = await _walletDbContext.WalletTransactions
+        var transaction = await _context.WalletTransactions
                                     .Include(x => x.SourceUserWallet)
                                     .FirstOrDefaultAsync(x => x.Id == data.TransactionId);
         if (transaction != null)
@@ -85,7 +84,7 @@ public class PaymentService : IPaymentService
                         {
                             transaction.SourceUserWallet.Point += transaction.Amount;
                         }
-                        var result = await _walletDbContext.SaveChangesAsync(default);
+                        var result = await _context.SaveChangesAsync(default);
 
                         if (result > 0)
                         {
@@ -129,16 +128,16 @@ public class PaymentService : IPaymentService
         }
     }
 
-    #region -- Fields --
+    #endregion
 
-    private readonly IWalletContext _walletDbContext;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<PaymentService> _logger;
+    #region -- Fields --
 
     /// <summary>
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    private readonly ILogger<PaymentService> _logger;
 
     #endregion
 }

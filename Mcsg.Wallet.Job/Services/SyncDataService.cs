@@ -9,51 +9,45 @@ using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Constants;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Models;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
-using Wallet.Domain.Entities;
-using Wallet.Domain.Enums;
-using Wallet.Domain.Interfaces;
 using static Common.Core.Constants.Setting;
 
-public partial class SyncDataService : ISyncDataService
+public partial class SyncDataService : BaseS, ISyncDataService
 {
-    private readonly IWalletContext _walletDbContext;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<SocialPost> _postRepository;
-    private readonly IRepository<SocialSubPost> _subPostRepository;
-    private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
+    #region -- Methods --
 
-    public SyncDataService(IUnitOfWork unitOfWork, IWalletContext walletDbContext)
+    public SyncDataService(IWalletContext context, IUnitOfWork unitOfWork) : base(context)
     {
         _unitOfWork = unitOfWork;
         _userRepository = unitOfWork.GetRepository<User>();
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
         _userExclusiveSubPostRepository = unitOfWork.GetRepository<UserExclusiveSubPost>();
-        _walletDbContext = walletDbContext;
     }
 
     public async Task SyncWalletUserInfoAsync(SyncData data)
     {
         var profileData = data.Data.FirstOrDefault();
-        var userWallet = await _walletDbContext.UserWallets.FirstOrDefaultAsync(x => x.UserId == Guid.Parse(profileData.Key.ToString()));
+        var userWallet = await _context.UserWallets.FirstOrDefaultAsync(x => x.UserId == Guid.Parse(profileData.Key.ToString()));
         if (userWallet != null)
         {
             var userData = JsonConvert.DeserializeObject<User>(profileData.Value.ToString());
             userWallet.ProfileName = userData.ProfileName;
             userWallet.Email = userData.Email;
 
-            await _walletDbContext.SaveChangesAsync(default);
+            await _context.SaveChangesAsync(default);
         }
     }
     public async Task SyncWalletUserRewardAsync(SyncData data)
     {
         var profileData = data.Data.FirstOrDefault();
-        var userWallet = await _walletDbContext.UserWallets.FirstOrDefaultAsync(x => x.UserId == Guid.Parse(profileData.Key.ToString()));
+        var userWallet = await _context.UserWallets.FirstOrDefaultAsync(x => x.UserId == Guid.Parse(profileData.Key.ToString()));
         if (userWallet != null)
         {
             var reward = JsonConvert.DeserializeObject<RewardSyncData>(profileData.Value.ToString());
@@ -77,9 +71,9 @@ public partial class SyncDataService : ISyncDataService
                 IsConfirmed = true,
             };
 
-            _walletDbContext.UserWallets.Update(userWallet);
-            await _walletDbContext.WalletTransactions.AddAsync(transaction);
-            await _walletDbContext.SaveChangesAsync(default);
+            _context.UserWallets.Update(userWallet);
+            await _context.WalletTransactions.AddAsync(transaction);
+            await _context.SaveChangesAsync(default);
         }
     }
 
@@ -114,11 +108,11 @@ public partial class SyncDataService : ISyncDataService
     {
         var profileData = data.Data.FirstOrDefault();
         var userId = Guid.Parse(profileData.Key.ToString());
-        var userWallet = await _walletDbContext.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
+        var userWallet = await _context.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
         if (userWallet != null)
         {
             var buyPremiumData = JsonConvert.DeserializeObject<BuyPremiumData>(profileData.Value.ToString());
-            var package = await _walletDbContext.PremiumPackages.FirstOrDefaultAsync(x => x.No == buyPremiumData.PackageNo);
+            var package = await _context.PremiumPackages.FirstOrDefaultAsync(x => x.No == buyPremiumData.PackageNo);
 
             if ((userWallet.Point + userWallet.RewardPoint) < package.Price)
             {
@@ -126,13 +120,13 @@ public partial class SyncDataService : ISyncDataService
                 return;//ko đủ số dư
             }
 
-            var transaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == buyPremiumData.TransactionId).FirstOrDefaultAsync();
+            var transaction = await _context.WalletTransactions.Where(x => x.Id == buyPremiumData.TransactionId).FirstOrDefaultAsync();
             transaction.Status = TransactionStatus.Success;
 
             var nowDate = DateTime.UtcNow.Date;
 
             //Select other userPackage
-            var lastPackage = await _walletDbContext.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
+            var lastPackage = await _context.UserPremiumPackages.Where(x => x.UserWalletId == userWallet.Id).OrderByDescending(x => x.EndDate).FirstOrDefaultAsync();
             var endDate = nowDate.AddDays(package.LiveTimeDay);
             var startDate = nowDate;
             if (lastPackage != null && lastPackage.EndDate >= nowDate)
@@ -151,14 +145,14 @@ public partial class SyncDataService : ISyncDataService
                 CreatedOn = DateTime.UtcNow
             };
             //Transaction purchase history 
-            var userPurchase = await _walletDbContext.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyPremiumData.TransactionId);
+            var userPurchase = await _context.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyPremiumData.TransactionId);
             userPurchase.Title = package.Name;
             userPurchase.Thumbnail = ThumbnailCodes.Premium;
 
             // In case buy Premium package, platform get 100% revenue. No need pay money for creator when have no affiliate share.
-            _walletDbContext.UserPurchaseTransactions.Update(userPurchase);
+            _context.UserPurchaseTransactions.Update(userPurchase);
 
-            await _walletDbContext.UserPremiumPackages.AddAsync(userPremium);
+            await _context.UserPremiumPackages.AddAsync(userPremium);
 
             //Remove point
             if (userWallet.RewardPoint >= transaction.Amount)
@@ -173,8 +167,8 @@ public partial class SyncDataService : ISyncDataService
             }
 
             transaction.IsConfirmed = true;
-            _walletDbContext.UserWallets.Update(userWallet);
-            _walletDbContext.WalletTransactions.Update(transaction);
+            _context.UserWallets.Update(userWallet);
+            _context.WalletTransactions.Update(transaction);
             await _userRepository.Connection.QueryAsync(UpdatePremiumDate, new
             {
                 PremiumDate = DateOnly.FromDateTime(userPremium.EndDate),
@@ -183,7 +177,7 @@ public partial class SyncDataService : ISyncDataService
             });
             try
             {
-                await _walletDbContext.SaveChangesAsync(default);
+                await _context.SaveChangesAsync(default);
             }
             catch (Exception ex)
             {
@@ -202,7 +196,7 @@ public partial class SyncDataService : ISyncDataService
     {
         var profileData = data.Data.FirstOrDefault();
         var userId = Guid.Parse(profileData.Key.ToString());
-        var userWallet = await _walletDbContext.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
+        var userWallet = await _context.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
         if (userWallet != null)
         {
             try
@@ -211,12 +205,12 @@ public partial class SyncDataService : ISyncDataService
 
                 var buyItemData = JsonConvert.DeserializeObject<BuyItemData>(profileData.Value.ToString());
 
-                var transaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == buyItemData.TransactionId).FirstOrDefaultAsync();
+                var transaction = await _context.WalletTransactions.Where(x => x.Id == buyItemData.TransactionId).FirstOrDefaultAsync();
                 if ((userWallet.Point + userWallet.RewardPoint) < transaction.Amount)
                 {
                     transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = "Buy chapter failed, user not enough point";
-                    await _walletDbContext.SaveChangesAsync(default);
+                    await _context.SaveChangesAsync(default);
                     return;//ko đủ số dư
                 }
 
@@ -231,7 +225,7 @@ public partial class SyncDataService : ISyncDataService
                 {
                     transaction.Status = TransactionStatus.Failed;
                     transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", existBuy.CreatedOn.ToString());
-                    await _walletDbContext.SaveChangesAsync(default);
+                    await _context.SaveChangesAsync(default);
                     return;//đã mua trước đó
                 }
 
@@ -264,7 +258,7 @@ public partial class SyncDataService : ISyncDataService
                     transaction.Content = string.Format("User {0} order {1} chapter {2} ", user.ProfileName, post.Title, chapterTitle);
 
                     //Transaction purchase history 
-                    var userPurchase = await _walletDbContext.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyItemData.TransactionId);
+                    var userPurchase = await _context.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyItemData.TransactionId);
                     userPurchase.Title = $"{post.Title} chapter {chapterTitle}";
                     userPurchase.Thumbnail = post.ThumbnailUrl;
                     transaction.Status = TransactionStatus.Success;
@@ -275,9 +269,9 @@ public partial class SyncDataService : ISyncDataService
                         userPurchase.CreatorUserId = chapter.CreatedBy;// paid money for creator when have no affiliate share.
                     }
 
-                    _walletDbContext.UserPurchaseTransactions.Update(userPurchase);
-                    _walletDbContext.UserWallets.Update(userWallet);
-                    _walletDbContext.WalletTransactions.Update(transaction);
+                    _context.UserPurchaseTransactions.Update(userPurchase);
+                    _context.UserWallets.Update(userWallet);
+                    _context.WalletTransactions.Update(transaction);
 
                 }
                 else
@@ -287,7 +281,7 @@ public partial class SyncDataService : ISyncDataService
                 }
 
                 _unitOfWork.CommitTransaction();
-                await _walletDbContext.SaveChangesAsync(default);
+                await _context.SaveChangesAsync(default);
             }
             catch (Exception)
             {
@@ -300,7 +294,7 @@ public partial class SyncDataService : ISyncDataService
     {
         var profileData = data.Data.FirstOrDefault();
         var userId = Guid.Parse(profileData.Key.ToString());
-        var userWallet = await _walletDbContext.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
+        var userWallet = await _context.UserWallets.FirstOrDefaultAsync(x => x.UserId == userId);
         if (userWallet != null)
         {
             try
@@ -309,7 +303,7 @@ public partial class SyncDataService : ISyncDataService
 
                 var buyItemData = JsonConvert.DeserializeObject<BuyItemData>(profileData.Value.ToString());
 
-                var transaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == buyItemData.TransactionId).FirstOrDefaultAsync();
+                var transaction = await _context.WalletTransactions.Where(x => x.Id == buyItemData.TransactionId).FirstOrDefaultAsync();
                 if (transaction == null || !transaction.RelatedId.HasValue)
                 {
                     return;// Has no transaction
@@ -345,7 +339,7 @@ public partial class SyncDataService : ISyncDataService
                     {
                         transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = string.Format("Chapter purchase failed, because you previously purchased it on {0}", boughtChapters.FirstOrDefault().CreatedOn.ToString());
-                        await _walletDbContext.SaveChangesAsync(default);
+                        await _context.SaveChangesAsync(default);
                         return;//đã mua trước đó
                     }
                     // Amount need to spend for not bought chapters.
@@ -355,7 +349,7 @@ public partial class SyncDataService : ISyncDataService
                     {
                         transaction.Status = TransactionStatus.Failed;
                         transaction.SystemMessage = "Buy chapter failed, user not enough point";
-                        await _walletDbContext.SaveChangesAsync(default);
+                        await _context.SaveChangesAsync(default);
                         return;//ko đủ số dư
                     }
 
@@ -388,7 +382,7 @@ public partial class SyncDataService : ISyncDataService
                     transaction.Content = string.Format("User {0} buy {1} chapters of serie {2} ", user.ProfileName, notBoughtChapters.Count(), post.Title);
 
                     //Transaction purchase history 
-                    var userPurchase = await _walletDbContext.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyItemData.TransactionId);
+                    var userPurchase = await _context.UserPurchaseTransactions.FirstOrDefaultAsync(x => x.WalletTransactionId == buyItemData.TransactionId);
                     userPurchase.Title = $"Serie {post.Title} . Number of chapter {notBoughtChapters.Count()}";
                     userPurchase.Thumbnail = post.ThumbnailUrl;
 
@@ -401,9 +395,9 @@ public partial class SyncDataService : ISyncDataService
                         userPurchase.CreatorUserId = post.CreatedBy;// paid money for creator when have no affiliate share.
                     }
 
-                    _walletDbContext.UserPurchaseTransactions.Update(userPurchase);
-                    _walletDbContext.UserWallets.Update(userWallet);
-                    _walletDbContext.WalletTransactions.Update(transaction);
+                    _context.UserPurchaseTransactions.Update(userPurchase);
+                    _context.UserWallets.Update(userWallet);
+                    _context.WalletTransactions.Update(transaction);
                 }
                 else
                 {
@@ -413,7 +407,7 @@ public partial class SyncDataService : ISyncDataService
                 }
 
                 _unitOfWork.CommitTransaction();
-                await _walletDbContext.SaveChangesAsync(default);
+                await _context.SaveChangesAsync(default);
             }
             catch (Exception)
             {
@@ -424,11 +418,23 @@ public partial class SyncDataService : ISyncDataService
 
     private async Task<WalletTransaction> LogError(Guid transactionId, string message)
     {
-        var logTransaction = await _walletDbContext.WalletTransactions.Where(x => x.Id == transactionId).FirstOrDefaultAsync();
+        var logTransaction = await _context.WalletTransactions.Where(x => x.Id == transactionId).FirstOrDefaultAsync();
         logTransaction.Status = TransactionStatus.Failed;
         logTransaction.SystemMessage = message;
-        _walletDbContext.WalletTransactions.Update(logTransaction);
-        await _walletDbContext.SaveChangesAsync(default);
+        _context.WalletTransactions.Update(logTransaction);
+        await _context.SaveChangesAsync(default);
         return logTransaction;
     }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<SocialPost> _postRepository;
+    private readonly IRepository<SocialSubPost> _subPostRepository;
+    private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
+
+    #endregion
 }
