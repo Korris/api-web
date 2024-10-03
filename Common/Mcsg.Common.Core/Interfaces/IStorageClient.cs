@@ -40,30 +40,30 @@ public interface IStorageClient
     /// Get public URL
     /// </summary>
     /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
     /// <returns>Return the public URL</returns>
-    Task<string> GetPublicUrl(string objectName, string? bucketNamePublic, MinioInstanceType? instance);
+    Task<string> GetPublicUrl(string objectName, string? bucketName, MinioInstanceType? instance);
 
     /// <summary>
     /// Get CDN URL
     /// </summary>
     /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
     /// <param name="type">Resource type</param>
     /// <returns>Return the CDN URL</returns>
-    Task<string> GetCdnUrlAsync(string objectName, string? bucketNamePublic, MinioInstanceType? instance, ResourceType? type);
+    Task<string> GetCdnUrlAsync(string objectName, string? bucketName, MinioInstanceType? instance, ResourceType? type);
 
     /// <summary>
     /// Get CDN URL
     /// </summary>
     /// <param name="objectName">Object name (include full path and file extension)</param>
-    /// <param name="bucketNamePublic">Bucket name public (if it is null, get the default from the setting)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <param name="instance">The type of the <see cref="MinioInstanceType"/> to retrieve the strategy for.</param>
     /// <param name="type">Resource type</param>
     /// <returns>Return the CDN URL</returns>
-    string GetCdnUrl(string objectName, string? bucketNamePublic, MinioInstanceType? instance, ResourceType? type);
+    string GetCdnUrl(string objectName, string? bucketName, MinioInstanceType? instance, ResourceType? type);
 
     #endregion
 }

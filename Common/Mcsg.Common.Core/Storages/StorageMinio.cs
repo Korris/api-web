@@ -299,18 +299,26 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the CDN URL</returns>
     public override async Task<string> GetCdnUrlAsync(string objectName, string? bucketName, ResourceType? type)
     {
-        var res = await GetPublicUrl(objectName, bucketName);
+        var uri = await PresignedGetObject(objectName, bucketName);
 
+        var url = $"{_auth?.PublicUrl}/{bucketName}";
         if (type == ResourceType.Image && !string.IsNullOrWhiteSpace(_auth?.CdnImageUrl))
         {
-            res = res.Replace($"{_auth?.PublicUrl}/{bucketName}", _auth?.CdnImageUrl);
+            uri = uri.Replace(url, _auth?.CdnImageUrl);
         }
         else if (type == ResourceType.Video && !string.IsNullOrWhiteSpace(_auth?.CdnVideoUrl))
         {
-            res = res.Replace($"{_auth?.PublicUrl}/{bucketName}", _auth?.CdnVideoUrl);
+            uri = uri.Replace(url, _auth?.CdnVideoUrl);
         }
 
-        return res;
+        var hasCdn = !uri.Contains(url);
+        if (hasCdn)
+        {
+            var arr = uri.Split('?');
+            return arr.Length > 0 ? arr[0] : "";
+        }
+
+        return uri;
     }
 
     /// <summary>

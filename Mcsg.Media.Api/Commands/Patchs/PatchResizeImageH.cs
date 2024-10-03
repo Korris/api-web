@@ -40,8 +40,8 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
         var storyThumbnailUrls = await _context.StoryPostAvailable.AsNoTracking().Select(p => p.ThumbnailUrl).ToListAsync(cancellationToken);
 
         var thumbnailUrls = comicThumbnailUrls.Union(storyThumbnailUrls);
-        var bucketNamePublic = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
-        var publicUrl = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketNamePublic, null);
+        var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
+        var publicUrl = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, null);
         var count = 0;
 
         foreach (var i in thumbnailUrls)
@@ -52,7 +52,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
             }
 
             var resizeName = i.Replace(publicUrl, "");
-            var fsResize = await _sc.GetStrategy(request.MinioInstance).GetObject(resizeName, bucketNamePublic);
+            var fsResize = await _sc.GetStrategy(request.MinioInstance).GetObject(resizeName, bucketName);
             if (fsResize == null)
             {
                 continue;
@@ -60,14 +60,14 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
 
             // Backup the original image
             var originalName = resizeName.AppendNameSuffix();
-            var stat = await _sc.GetStrategy(request.MinioInstance).StatObject(originalName, bucketNamePublic);
+            var stat = await _sc.GetStrategy(request.MinioInstance).StatObject(originalName, bucketName);
             if (stat == null)
             {
-                await _sc.GetStrategy(request.MinioInstance).PutObject(fsResize, originalName, bucketNamePublic);
+                await _sc.GetStrategy(request.MinioInstance).PutObject(fsResize, originalName, bucketName);
             }
 
             // Skip processing if the original file name is longer than the resized file name
-            var fsOriginal = await _sc.GetStrategy(request.MinioInstance).GetObject(originalName, bucketNamePublic);
+            var fsOriginal = await _sc.GetStrategy(request.MinioInstance).GetObject(originalName, bucketName);
             if (fsOriginal?.Length >= fsResize.Length)
             {
                 continue;
@@ -86,7 +86,7 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
                 fs = fsOriginal;
             }
 
-            await _sc.GetStrategy(request.MinioInstance).PutObject(fs, resizeName, bucketNamePublic);
+            await _sc.GetStrategy(request.MinioInstance).PutObject(fs, resizeName, bucketName);
             count++;
         }
 
