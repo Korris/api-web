@@ -132,6 +132,17 @@ public class ConfigController : ControllerBase
             }
         }
 
+        k = "AllowUploadSeries";
+        if (dic.TryGetValue(k, out v))
+        {
+            res.SetSuccess(k.ToCamelCase(), v == "true");
+        }
+        k = "AllowUploadChapter";
+        if (dic.TryGetValue(k, out v))
+        {
+            res.SetSuccess(k.ToCamelCase(), v == "true");
+        }
+
         #endregion
 
         return Ok(res.Data);

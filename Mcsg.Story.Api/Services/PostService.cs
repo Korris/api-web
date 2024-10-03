@@ -141,7 +141,7 @@ public partial class PostService : IPostService
             Permission = request.Permission,
             Status = PostStatus.Public,
             CreatedBy = userId,
-            Hide = HideOption.All,
+            Hide = HideOption.None,
             ViewCount = 0
         };
 
