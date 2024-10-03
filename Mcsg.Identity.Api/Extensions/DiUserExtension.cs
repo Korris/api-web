@@ -4,6 +4,7 @@ namespace Mcsg.Identity.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
+using Queries;
 using Requests;
 
 /// <summary>
@@ -41,6 +42,7 @@ public static class DiUserExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddUserQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<UserHistoryGetLatestR, SingleResponse>, UserHistoryGetLatestH>(life);
     }
 
     #endregion

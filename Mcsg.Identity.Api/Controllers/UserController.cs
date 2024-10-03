@@ -124,6 +124,22 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    #region -- UserHistory --
+    /// <summary>
+    /// Get lastest username
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Returns the result</returns>
+    [HttpPost("v1/UserHistoryGetLatest"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> UserHistoryGetLatest([FromBody] UserHistoryGetLatestR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+    #endregion
+
     #endregion
 
     #region -- Fields --
