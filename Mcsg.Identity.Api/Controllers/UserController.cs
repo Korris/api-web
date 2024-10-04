@@ -130,7 +130,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="request">Request</param>
     /// <returns>Returns the result</returns>
-    [HttpPost("v1/UserHistoryGetLatest"), Authorize]
+    [HttpPost("v1/UserHistoryGetLatest")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> UserHistoryGetLatest([FromBody] UserHistoryGetLatestR request)
     {
