@@ -73,10 +73,12 @@ public interface IWalletContext
     DbSet<EarningSummary> EarningSummaries { get; set; }
     DbSet<EarningSummaryDetail> EarningSummaryDetails { get; set; }
 
+    DbSet<Job> Jobs { get; set; }
     DbSet<SystemSetting> SystemSettings { get; set; }
     #endregion
 
     #region -- IQueryable --
+    IQueryable<Job> JobAvailable { get; }
     IQueryable<SystemSetting> SystemSettingAvailable { get; }
     #endregion
 

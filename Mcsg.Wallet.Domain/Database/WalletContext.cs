@@ -179,6 +179,7 @@ public partial class WalletContext : DbContext, IWalletContext
         });
 
         #region -- Systems --
+        builder.Entity<Job>(entity => entity.ToTable("Jobs", DbSchema.System));
         builder.Entity<SystemSetting>(entity => entity.ToTable("SystemSettings", DbSchema.System));
         #endregion
     }
@@ -211,6 +212,7 @@ public partial class WalletContext : DbContext, IWalletContext
     public virtual DbSet<EarningSummary> EarningSummaries { get; set; }
     public virtual DbSet<EarningSummaryDetail> EarningSummaryDetails { get; set; }
 
+    public virtual DbSet<Job> Jobs { get; set; }
     public virtual DbSet<SystemSetting> SystemSettings { get; set; }
 
     #endregion

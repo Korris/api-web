@@ -65,6 +65,7 @@ partial class WalletContext
     }
 
     #region -- IQueryable --
+    public IQueryable<Job> JobAvailable => Jobs.Where(p => !p.IsDelete);
     public IQueryable<SystemSetting> SystemSettingAvailable => SystemSettings.Where(p => !p.IsDelete);
     #endregion
 

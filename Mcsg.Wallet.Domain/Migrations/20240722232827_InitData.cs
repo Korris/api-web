@@ -39,6 +39,28 @@ namespace Mcsg.Wallet.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Jobs",
+                schema: "system",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    JobType = table.Column<int>(type: "integer", nullable: false),
+                    JobCategory = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Error = table.Column<string>(type: "text", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Jobs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PremiumPackages",
                 columns: table => new
                 {
@@ -539,6 +561,10 @@ namespace Mcsg.Wallet.Domain.Migrations
         {
             migrationBuilder.DropTable(
                 name: "EarningSummaryDetails");
+
+            migrationBuilder.DropTable(
+                name: "Jobs",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "SystemSettings",
