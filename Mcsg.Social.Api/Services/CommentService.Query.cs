@@ -105,7 +105,7 @@
                                                 LEFT JOIN social.""SocialSubPostComments"" reply on reply.""ParentId"" = spc.""Id""  AND reply.""IsDelete"" = false
                                                 INNER JOIN identity.""Users"" u on spc.""CreatedBy"" = u.""Id""
                                                 LEFT JOIN social.""SocialSubPostCommentReactions""  spcr ON spc.""Id"" = spcr.""TargetId""
-                                                LEFT JOIN social.""SocialSubPosts""  sp ON spc.""PostId"" = sp.""Id""
+                                                LEFT JOIN social.""SocialSubPosts""  sp ON spc.""PostId"" = sp.""Id"" AND sp.""IsDelete"" = false
                                                 LEFT JOIN social.""SocialResources"" r on spc.""ResourceId"" = r.""Id""
                                                 WHERE sp.""PostId"" = (SELECT ""Id"" FROM social.""SocialPosts""  WHERE ""HashId"" =@HashId) 
                                                 AND spc.""ParentId"" is null AND u.""IsDelete"" = false
@@ -165,7 +165,7 @@
                                                         +
                                                         (SELECT COUNT(*)
                                                          FROM social.""SocialSubPostComments"" spc
-                                                         JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id""
+                                                         JOIN social.""SocialSubPosts"" sp ON spc.""PostId""= sp.""Id"" AND sp.""IsDelete"" = false
                                                          JOIN social.""SocialPosts"" p ON sp.""PostId""= p.""Id""
                                                          INNER JOIN identity.""Users"" u on spc.""AuthorId"" = u.""Id"" AND u.""IsDelete"" = false
                                                          WHERE p.""HashId"" = @HashId 
