@@ -727,7 +727,7 @@ public partial class PostService : IPostService
         }
         else
         {
-            queryCondition = $@" WHERE p.""Title"" ILIKE '%{input.Keyword}%'
+            queryCondition = $@" WHERE unaccent(p.""Title"") ILIKE unaccent('%{input.Keyword}%')
                                      AND p.""Type""=@PostType
                                      AND p.""Status""=@PostStatus
                                      AND p.""Permission""=@Permission
