@@ -10,6 +10,7 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Requests;
+using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -42,13 +43,15 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     /// <param name="systemService"></param>
     /// <param name="zaloPayService"></param>
     /// <param name="logger"></param>
-    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger) : base(context, setting)
+    /// <param name="aes"></param>
+    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger, ISecurityAes aes) : base(context, setting)
     {
         _otpService = otpService;
         _bankService = bankService;
         _systemService = systemService;
         _zaloPayService = zaloPayService;
         _logger = logger;
+        _aes = aes;
     }
 
     #region User info
@@ -92,9 +95,10 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             .AsNoTracking()
             .Select(x => new UserWalletBasicResp
             {
-                WalletAddress = x.Address,
-                ProfileName = x.ProfileName,
-                Email = string.IsNullOrWhiteSpace(x.Email) ? x.ProfileName : x.Email.MaskDigits(3, 3)
+                WalletAddress = x.Address + "",
+                ProfileName = x.ProfileName + "",
+                Email = x.Email + "",
+                UserId = x.UserId
             }).FirstOrDefaultAsync();
 
         if (data == null)
@@ -102,6 +106,13 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             throw new BadRequestException(ApiErrorCodes.WALLET_ADDRESS_NOT_FOUND, ApiErrorMessage.WALLET_ADDRESS_NOT_FOUND);
         }
 
+        var userInfo = await GetUserFromProto(new List<Guid?> { data.UserId });
+        if (userInfo != null)
+        {
+            data.Email = _aes.DecryptText(data.Email) + "";
+            data.Avatar = userInfo.GetValueOrDefault(data.UserId?.ToString())?.UserAvatar;
+            data.ProfileName = userInfo.GetValueOrDefault(data.UserId?.ToString())?.ProfileName + "";
+        }
         return data;
     }
 
@@ -977,6 +988,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     private readonly IOtpService _otpService;
     private readonly ISystemService _systemService;
     private readonly ILogger<UserWalletService> _logger;
+    private readonly ISecurityAes _aes;
 
     #endregion
 }

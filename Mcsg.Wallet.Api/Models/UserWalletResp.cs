@@ -14,4 +14,6 @@ public class UserWalletBasicResp
     public string WalletAddress { get; set; }
     public string ProfileName { get; set; }
     public string Email { get; set; }
+    public string? Avatar { get; set; }
+    public Guid? UserId { get; set; }
 }
