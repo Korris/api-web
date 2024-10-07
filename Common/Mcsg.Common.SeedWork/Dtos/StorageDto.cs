@@ -69,6 +69,11 @@ public abstract class StorageDto
         public string? CdnVideoUrl { get; set; }
 
         /// <summary>
+        /// Use CDN
+        /// </summary>
+        public bool UseCdn { get; set; }
+
+        /// <summary>
         /// Public prefix
         /// </summary>
         public string? PublicPrefix { get; set; }

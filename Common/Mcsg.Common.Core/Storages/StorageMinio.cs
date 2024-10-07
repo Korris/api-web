@@ -299,6 +299,11 @@ public class StorageMinio : StorageStrategy
     /// <returns>Return the CDN URL</returns>
     public override async Task<string> GetCdnUrlAsync(string objectName, string? bucketName, ResourceType? type)
     {
+        if (_auth != null && _auth.UseCdn != true)
+        {
+            return _auth.GetPublicUrl(bucketName, objectName);
+        }
+
         var uri = await PresignedGetObject(objectName, bucketName);
 
         var url = $"{_auth?.PublicUrl}/{bucketName}";
