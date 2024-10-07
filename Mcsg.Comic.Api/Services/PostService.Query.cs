@@ -52,6 +52,7 @@
                         sp.""IsPremium"",
                         sp.""Permission"",
                         sp.""Sort"",
+                        sp.""UserId"",
                         COUNT(DISTINCT spcm.""Id"") as ""CommentCount"",
                         subpostview.""ViewCount"",
                         sp.""CreatedOn"",
@@ -63,7 +64,9 @@
                         LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
                         LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id"" AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
-                        LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false [WithPermission]  [Not-load-chapter]    
+                        LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
+                        AND sp.""Status"" = ANY (@PostStatus) 
+                        [WithPermission]  [Not-load-chapter]
                         LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
                         LEFT JOIN ""comic"".""ComicSubPostComments"" spcm ON spcm.""PostId"" = sp.""Id"" AND spcm.""IsDelete"" = false
                         --post view count
@@ -86,13 +89,14 @@ LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
                         WHERE 
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false 
-                            AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""UserName"" = @UserName))
+                            AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL))
+                            AND p.""Status"" = ANY (@PostStatus)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
                         p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
-                        sp.""Permission"",subpostview.""ViewCount"",
+                        sp.""Permission"", sp.""UserId"",subpostview.""ViewCount"",
                         sp.""PublishDate""
                         ORDER BY sp.""Sort""
                         ";
@@ -154,12 +158,14 @@ LIMIT 1
                FROM ""comic"".""ComicPostComments"" pc 
                WHERE pc.""PostId"" = p.""Id"" AND pc.""IsDelete"" = FALSE 
                     AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
+                    AND p.""Status"" = ANY (@PostStatus)
            ) + (
                SELECT COUNT(*)
                 FROM ""comic"".""ComicSubPostComments"" spc
                INNER JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId"" = sp.""Id""
                WHERE sp.""PostId"" = p.""Id"" AND spc.""IsDelete"" = FALSE 
                     AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
+                    AND p.""Status"" = ANY (@PostStatus)
            ) AS ""TotalComment"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
                              
@@ -182,6 +188,7 @@ LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
                             
                             WHERE (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (p.""UserId"" = @UserId))
+                            AND p.""Status"" = ANY (@PostStatus)
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",
@@ -245,6 +252,7 @@ LEFT JOIN LATERAL (
 LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
                             WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
+                            AND p.""Status"" = ANY (@PostStatus)
                             [Permission]
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
@@ -313,7 +321,7 @@ LIMIT 1
                                 FROM ""comic"".""ComicPosts"" qpost
                                  INNER JOIN ""comic"".""ComicPostComments"" pcm ON pcm.""PostId"" = qpost.""Id"" 
                                 AND pcm.""CreatedOn"" > @LastWeek
-                                WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = @PostStatus AND pcm.""IsDelete"" = false 
+                                WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = ANY (@PostStatus) AND pcm.""IsDelete"" = false 
                                 AND qpost.""IsDelete"" = false                                 
                                 GROUP BY qpost.""Id""
                                 ORDER BY COUNTCM DESC
@@ -330,7 +338,7 @@ LIMIT 1
                                 FROM ""comic"".""ComicPosts"" qpost
                                  INNER JOIN ""comic"".""ComicPostComments"" pcm ON pcm.""PostId"" = qpost.""Id"" 
                                 AND pcm.""CreatedOn"" > @LastWeek
-                                WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = @PostStatus AND pcm.""IsDelete"" = false 
+                                WHERE  qpost.""Type"" = @PostType AND qpost.""Status"" = ANY (@PostStatus) AND pcm.""IsDelete"" = false 
                                 AND qpost.""IsDelete"" = false                                 
                                 GROUP BY qpost.""Id""";
             }
@@ -349,12 +357,14 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id"", psp1.""CreatedOn""
                                 ORDER BY psp1.""CreatedOn"" DESC
@@ -372,11 +382,13 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                WHERE qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }
@@ -395,7 +407,8 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -403,7 +416,8 @@ LIMIT 1
                                 LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""Permission"" = @PostPermission
                                 AND qpost1.""IsDelete"" = false
                                 AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL)
@@ -424,7 +438,8 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -448,14 +463,15 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
                                 LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
-                                AND qpost1.""Permission"" = @PostPermission
+                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }
@@ -470,7 +486,8 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
@@ -493,7 +510,8 @@ LIMIT 1
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -503,7 +521,8 @@ LIMIT 1
 INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
 
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id"", psp1.""CreatedOn""
                                 ORDER BY psp1.""CreatedOn"" DESC
@@ -521,14 +540,16 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                 --Lastest subpost                                     
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  AND sp1.""Status"" = @PostStatus
+                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
+                                    AND sp1.""Status"" = ANY (@PostStatus)
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
                                 LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
 INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }
@@ -543,7 +564,8 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                 return @"SELECT qpost1.""Id"", 0 as COUNTCM, qpost1.""CreatedOn"", 2 AS ""SelectType""
                                  FROM ""comic"".""ComicPosts"" qpost1
 
-                                WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  qpost1.""Type"" = @PostType 
+1                               AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false AND qpost1.""IsCompleted"" = true                    
 
                                 ORDER BY qpost1.""CreatedOn"" DESC
@@ -557,7 +579,8 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT qpost2.""Id""
                                  FROM ""comic"".""ComicPosts"" qpost2
-                                WHERE  qpost2.""Type"" = @PostType AND qpost2.""Status"" = @PostStatus
+                                WHERE  qpost2.""Type"" = @PostType 
+                                AND qpost2.""Status"" = ANY (@PostStatus)
                                 AND qpost2.""IsDelete"" = false AND qpost2.""IsCompleted"" = true";
             }
         }
@@ -571,7 +594,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""CreatedOn"", 4 AS ""SelectType""
                                 FROM ""comic"".""ComicPosts"" qpost1                                 
-                                WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  qpost1.""Type"" = @PostType AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id"", qpost1.""CreatedOn""
                                 ORDER BY qpost1.""CreatedOn"" DESC
@@ -590,7 +613,8 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                  FROM ""comic"".""ComicPosts"" qpost1        
                                  INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
                                 GROUP BY qpost1.""Id"", qpost1.""ModifiedOn""
@@ -608,7 +632,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                  INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
-AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false                            
+                                AND qpost1.""Status"" = ANY (@PostStatus) AND qpost1.""IsDelete"" = false                            
                                 GROUP BY qpost1.""Id""";
             }
         }
@@ -639,7 +663,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                                 FROM ""comic"".""ComicPosts"" qpost 
                                 LEFT JOIN ""comic"".""ComicPostFavorites"" cfp on qpost.""Id"" = cfp.""PostId""
                                 WHERE cfp.""UserId"" = @UserId AND cfp.""IsDelete"" = false  AND qpost.""IsDelete"" = false
-                                AND NOT (qpost.""Hide"" = ANY (@Hide) AND qpost.""Hide"" IS NOT NULL)";
+                                AND NOT (qpost.""Hide"" = ANY (@Hide) AND qpost.""Hide"" IS NOT NULL)
+                                AND qpost.""Status"" = ANY (@PostStatus)";
             }
         }
         #endregion
@@ -689,7 +714,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""comic"".""ComicPosts"" qpost1        
                                  INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
-                                WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
                                 GROUP BY qpost1.""Id"", qpost1.""ModifiedOn""
@@ -706,7 +732,8 @@ AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false
                 return @"SELECT qpost1.""Id""
                                  FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
-                                WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType 
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false
                                 GROUP BY qpost1.""Id""";
             }
@@ -753,6 +780,7 @@ LIMIT 1
 
                     WHERE p.""HashId"" = @PostHashId AND sp.""Order"" = @SubPostOrder AND sp.""IsDelete"" = false
                             AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""Id"" = @UserId))
+                            AND sp.""Status"" = ANY (@PostStatus)
                     ORDER BY rs.""Order"";";
             }
         }
@@ -1070,6 +1098,7 @@ sp.""IsEnableComment""
                     p.""CreatedOn"",
                     GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
                     p.""Hide"",
+                    p.""Status"",
                     p.""ExternalResource"",
                     to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
@@ -1093,6 +1122,7 @@ sp.""IsEnableComment""
                     GROUP BY ""PostId""
                 ) sp_max ON p.""Id"" = sp_max.""PostId""
                 WHERE p.""HashId"" = ANY(@HashIds) AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
+                AND p.""Status"" = ANY (@PostStatus)
                 GROUP BY  
                           p.""HashId"",
                           p.""Id"",
@@ -1107,6 +1137,7 @@ sp.""IsEnableComment""
                           p.""ViewCount"",
                           sp_max.""LatestSubPostCreatedOn"",
                           p.""Hide"",
+                          p.""Status"",
                           p.""ExternalResource""
             ";
             }

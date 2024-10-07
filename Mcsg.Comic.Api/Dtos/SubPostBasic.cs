@@ -22,4 +22,6 @@ public class SubPostBasic
     public Guid? UserId { get; set; }
     public string CreatorNote { get; set; }
     public bool IsExclusive { get; set; }
+    public bool IsArchived => Status == PostStatus.Inactive;
+    public bool IsCensor { get; set; }
 }

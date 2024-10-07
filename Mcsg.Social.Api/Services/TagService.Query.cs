@@ -136,6 +136,7 @@
                             SELECT  tp.""TagId"", COUNT(*) AS post_count
                             FROM social.""SocialTagPosts"" tp
                             JOIN social.""SocialPosts"" p ON tp.""PostId"" = p.""Id""
+                            AND p.""Status"" = ANY (@PostStatus)
                             WHERE tp.""IsDelete"" = false AND p.""IsDelete"" = false
                             GROUP BY tp.""TagId""
                         ) tp ON t.""Id"" = tp.""TagId""
@@ -143,6 +144,7 @@
                         SELECT ""TagId"", COUNT(*) AS comic_count
                         FROM comic.""ComicTagPosts"" ctp
                         JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
+                        AND cp.""Status"" = ANY (@PostStatus)
                         WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
                         GROUP BY  ""TagId""
                         ) tc ON t.""Id"" = tc.""TagId""
@@ -150,6 +152,7 @@
                         SELECT stp.""TagId"", COUNT(*) AS story_count
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
+                        AND sp.""Status"" = ANY (@PostStatus)
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
@@ -163,6 +166,7 @@
                             SELECT  tp.""TagId""
                             FROM social.""SocialTagPosts"" tp
                             JOIN social.""SocialPosts"" p ON tp.""PostId"" = p.""Id""
+                            AND p.""Status"" = ANY (@PostStatus)
                             WHERE tp.""IsDelete"" = false AND p.""IsDelete"" = false
                             GROUP BY tp.""TagId""
                         ) tp ON t.""Id"" = tp.""TagId""
@@ -170,6 +174,7 @@
                         SELECT ""TagId""
                         FROM comic.""ComicTagPosts"" ctp
                         JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
+                        AND cp.""Status"" = ANY (@PostStatus)
                         WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
                         GROUP BY  ""TagId""
                         ) tc ON t.""Id"" = tc.""TagId""
@@ -177,6 +182,7 @@
                         SELECT stp.""TagId""
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
+                        AND sp.""Status"" = ANY (@PostStatus)
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""

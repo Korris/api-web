@@ -49,6 +49,7 @@ public class TagController : ControllerBase
     [HttpGet("search-tag")]
     public async Task<IActionResult> SearchTag([FromQuery] TagSearchR input)
     {
+        input.Analyze(HttpContext);
         var result = await _tagService.SearchTagbyKeyword(input);
         return Ok(result);
     }

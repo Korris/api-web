@@ -231,6 +231,7 @@ public partial class PostService : IPostService
                     if (subpost != null && subpost.Id != Guid.Empty)
                     {
                         subpost.ViewCount = subpost.ViewCount ?? 0;
+                        subpost.IsCensor = !req.IsRoleAdmin && subpost.Status == PostStatus.Inactive && req.UserId != subpost.UserId;
                         dbPost.Chapters.Add(subpost);
                     }
 
@@ -244,6 +245,7 @@ public partial class PostService : IPostService
                 CurrentDate = DateTime.UtcNow,
                 UserId = currentUserId,
                 Hide = req.Hides,
+                PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                 req.UserName
             }, splitOn: "Id, Id");
         //Add view
@@ -251,7 +253,7 @@ public partial class PostService : IPostService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (dbPost.Status == PostStatus.Inactive || (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId))
+        if (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId)
         {
             throw new NotFoundException(E204, M204);
         }
@@ -272,7 +274,10 @@ public partial class PostService : IPostService
         {
             MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
         }
+        result.IsCensor = (req.UserName != result.UserName && !req.IsRoleAdmin && result.Status == PostStatus.Inactive);
+        result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
         result.FollowCount = await _context.StoryPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
+
         return result;
     }
 
@@ -334,7 +339,8 @@ public partial class PostService : IPostService
                 IsAccessPrivate = false,
                 SubPostOrder = order,
                 UserId = currentUserId,
-                Hide = req.Hides
+                Hide = req.Hides,
+                PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
             }, splitOn: "Id, Id");
 
         if (subpost != null)
@@ -366,6 +372,7 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
         }
+        subpost.IsCensor = !req.IsRoleAdmin && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
 
         return subpost;
     }
@@ -441,7 +448,7 @@ public partial class PostService : IPostService
                     PageSize = request.PageSize,
                     Offet = offset,
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                     PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
                     UserId = currentUserId,
@@ -469,6 +476,8 @@ public partial class PostService : IPostService
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
                 item.isNewChapter = item.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow;
+                item.IsCensor = !request.IsRoleAdmin && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
             var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
@@ -493,7 +502,7 @@ public partial class PostService : IPostService
 
             string whereClause = " WHERE qpost1.\"Type\" = @PostType " +
                 "AND qpost1.\"Permission\" = @PostPermission " +
-                "AND qpost1.\"Status\" = @PostStatus " +
+                "AND qpost1.\"Status\" = ANY (@PostStatus) " +
                 "AND qpost1.\"IsDelete\" = false AND qpost1.\"HashId\" != @HashId " +
                 "AND (NOT (qpost1.\"Hide\" = ANY (@Hide) AND qpost1.\"Hide\" = ANY (@Hide) IS NOT NULL) OR qpost1.\"UserId\" = @UserId) ";
             var tags = await _tagService.GetTagsByPostIdAsync(post.Id);
@@ -526,7 +535,7 @@ public partial class PostService : IPostService
                         request.PageSize,
                         Offet = offset,
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                        PostStatus = (int)PostStatus.Public,
+                        PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
                         request.HashId,
@@ -636,7 +645,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     loadReq.PageSize,
                     Offet = offset,
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                     ProfileName = profileName,
                     Hide = loadReq.Hides,
                     MySelf = isMySelf
@@ -659,6 +668,8 @@ public partial class PostService : IPostService
 
             foreach (var item in results.Items)
             {
+                item.IsCensor = (loadReq.UserName != item.UserName && !loadReq.IsRoleAdmin && item.Status == PostStatus.Inactive);
+                item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
                 var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
                 if (postReaction.Count > 0)
                 {
@@ -720,7 +731,7 @@ public partial class PostService : IPostService
             queryCondition = $@"WHERE u.""ProfileName""=@ProfileName 
                                    AND u.""IsDelete"" = false
                                    AND p.""Type""=@PostType
-                                   AND p.""Status""=@PostStatus
+                                   AND p.""Status"" = ANY (@PostStatus)
                                    AND p.""Permission""=@Permission
                                    AND p.""IsDelete""=false
                                    AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
@@ -729,7 +740,7 @@ public partial class PostService : IPostService
         {
             queryCondition = $@" WHERE unaccent(p.""Title"") ILIKE unaccent('%{input.Keyword}%')
                                      AND p.""Type""=@PostType
-                                     AND p.""Status""=@PostStatus
+                                     AND p.""Status"" = ANY (@PostStatus)
                                      AND p.""Permission""=@Permission
                                      AND p.""IsDelete""=false
                                      AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" IS NOT NULL)";
@@ -743,6 +754,7 @@ public partial class PostService : IPostService
                                   p.""HashId"",
                                   p.""Type"",
                                   p.""Hide"",
+                                  p.""Status"",
                                   p.""ExternalResource"",
                                   u.""ProfileName"",
                                   u.""UserName"",
@@ -767,7 +779,7 @@ public partial class PostService : IPostService
                                             LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
-                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide"", p.""ExternalResource""
+                                  GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide"", p.""Status"", p.""ExternalResource""
                                   ORDER BY p.""CreatedOn"" desc  
                                   OFFSET @Offset
                                   LIMIT @PageSize;
@@ -785,7 +797,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = input.PageSize,
                     Offset = offset,
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                     Permission = (int)PostPermission.Public,
                     ProfileName = input.Keyword,
                     Hide = input.Hides
@@ -800,6 +812,8 @@ public partial class PostService : IPostService
             results.Items = MappingToPostBoxResponse(items);
             foreach (var item in results.Items)
             {
+                item.IsCensor = input.UserName != item.UserName && !input.IsRoleAdmin && item.Status == PostStatus.Inactive;
+                item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
                 item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
             }
 
@@ -1298,7 +1312,12 @@ public partial class PostService : IPostService
     public async Task<List<PostBoxResponse>> GetPostDetails(PaginatedR req)
     {
         var hashIds = req.HashIds;
-        var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };
+        var param = new
+        {
+            HashIds = hashIds.Split(',').ToList(),
+            Hide = req.Hides,
+            PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
+        };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
@@ -1342,7 +1361,10 @@ public partial class PostService : IPostService
                     UserName = res.UserName,
                     isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow,
                     Hide = res.Hide,
-                    IsExternalSource = res.IsExternalSource
+                    Status = res.Status,
+                    IsExternalSource = res.IsExternalSource,
+                    IsCensor = !req.IsRoleAdmin && req.UserName != res.UserName && res.Status == PostStatus.Inactive,
+                    IsBlur = res.Status == PostStatus.Inactive || res.IsMature == true,
                 };
 
                 var postReaction = postReactionResponse.Where(p => p.TargetId == res.Id).ToList();
@@ -1358,7 +1380,7 @@ public partial class PostService : IPostService
         }
         else
         {
-            return new List<PostBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+            return new List<PostBoxResponse>();
         }
     }
 
@@ -1473,6 +1495,7 @@ public partial class PostService : IPostService
             Type = x.Type,
             Chapters = MappingTopChapter(x.SubPostStr),
             Hide = x.Hide,
+            Status = x.Status,
             ExternalResource = x.ExternalResource
         }).ToList();
     }

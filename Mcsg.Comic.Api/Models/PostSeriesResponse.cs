@@ -110,4 +110,8 @@ public class PostBoxResposne
     public bool HideAndroid => (Hide & HideOption.Android) == HideOption.Android;
     public bool HideWeb => (Hide & HideOption.Web) == HideOption.Web;
     public bool HideAll => (Hide & HideOption.All) == HideOption.All;
+    public PostStatus Status { get; set; }
+    public bool IsArchived => Status == PostStatus.Inactive;
+    public bool IsCensor { get; set; }
+    public bool IsBlur { get; set; }
 }

@@ -63,9 +63,9 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         }
         #endregion
 
-        var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara, @HideList)";
-        var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara, @HideList)";
-        var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @PostStatus, @PageSize, @OffSetPara, @HideList)";
+        var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara, @HideList, @StatusList)";
+        var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
+        var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
 
         var recordComic = 0;
         var recordSocial = 0;
@@ -75,6 +75,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         IEnumerable<PostSeriesTopQueryDbResponse> dataSocial = [];
         IEnumerable<PostSeriesTopQueryDbResponse> dataStory = [];
 
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
         using (var connection = _context.Database.GetDbConnection())
         {
             if (request.Tag == "all" || request.Tag == "comic")
@@ -83,7 +84,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Comic,
-                    PostStatus = (int)PostStatus.Public,
+                    StatusList = statusList,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
@@ -95,7 +96,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Comic
-                          && qpost.Status == PostStatus.Public
+                          && statusList.Contains((int)qpost.Status)
                           && qpost.Permission != PostPermission.Private
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
@@ -110,7 +111,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PostType = (int)PostType.Feed,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
-                    HideList = request.Hides
+                    HideList = request.Hides,
+                    StatusList = statusList,
                 });
 
                 recordSocial = (
@@ -119,6 +121,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.TagAvailable on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Feed
+                          && statusList.Contains((int)qpost.Status)
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
                 ).Distinct().Count();
@@ -135,7 +138,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Story,
-                    PostStatus = (int)PostStatus.Public,
+                    StatusList = statusList,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
@@ -147,7 +150,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Story
-                          && qpost.Status == PostStatus.Public
+                          && statusList.Contains((int)qpost.Status)
                           && qpost.Permission != PostPermission.Private
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
@@ -160,6 +163,13 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TargetIds = dataSocial.Select(p => p.Id).ToList(),
                     UserId = request?.UserId
                 });
+
+                foreach (var item in dataSocial)
+                {
+                    item.IsCensor = !request.IsRoleAdmin && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                    item.IsBlur = item.Status == PostStatus.Inactive;
+                }
+
                 if (postReactionResponse.Count() > 0)
                 {
                     foreach (var item in dataSocial)
@@ -180,6 +190,13 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TargetIds = dataComic.Select(p => p.Id).ToList(),
                     UserId = request?.UserId
                 });
+
+                foreach (var item in dataComic)
+                {
+                    item.IsCensor = !request.IsRoleAdmin && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
+                    item.IsBlur = item.Status == PostStatus.Inactive;
+                }
+
                 if (postReactionResponse.Count() > 0)
                 {
                     foreach (var item in dataComic)
@@ -200,6 +217,13 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     TargetIds = dataStory.Select(p => p.Id).ToList(),
                     UserId = request?.UserId
                 });
+
+                foreach (var item in dataStory)
+                {
+                    item.IsCensor = !request.IsRoleAdmin && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
+                    item.IsBlur = item.Status == PostStatus.Inactive;
+                }
+
                 if (postReactionResponse.Count() > 0)
                 {
                     foreach (var item in dataStory)

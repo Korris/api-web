@@ -88,7 +88,6 @@ public partial class FeedService : IFeedService
             query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
 
             var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
-
             if (feedLoadReq.NewUserName != null)
             {
                 var newUserNameQuery = $@"OR (u.""UserName"" = @NewUserName AND @MySelf)";
@@ -107,7 +106,7 @@ public partial class FeedService : IFeedService
                         feedLoadReq.PageSize,
                         Offet = offset,
                         Date = date,
-                        Status = PostStatus.Public,
+                        PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                         DateOnly = DateOnly.FromDateTime(date),
                         Hide = feedLoadReq.Hides,
                         MySelf = isMySelf,
@@ -130,6 +129,12 @@ public partial class FeedService : IFeedService
             {
                 item.Body = await _businessText.Process(item.Body, profiles);
                 listItemResponse.Add(MappingFeedInListRespone(item, postIds, isMySelf));
+            }
+
+            foreach (var item in listItemResponse)
+            {
+                item.IsCensor = !feedLoadReq.IsRoleAdmin && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsBlur = item.Status == PostStatus.Inactive;
             }
 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
@@ -183,14 +188,14 @@ public partial class FeedService : IFeedService
                                 WHERE u.""ProfileName""=@ProfileName 
                                    AND u.""IsDelete"" = false
                                    AND qpost.""Type""=@PostType
-                                   AND qpost.""Status""=@PostStatus
+                                   AND qpost.""Status"" = ANY (@PostStatus)
                                    AND qpost.""IsDelete""=false";
         }
         else
         {
             queryCondition = $@" WHERE qpost.""Body"" ILIKE '%{feedLoadReq.Keyword}%'
                                      AND qpost.""Type""=@PostType
-                                     AND qpost.""Status""=@PostStatus
+                                     AND qpost.""Status"" = ANY (@PostStatus)
                                      AND qpost.""IsDelete""=false";
         }
 
@@ -209,7 +214,7 @@ public partial class FeedService : IFeedService
                        PageSize = feedLoadReq.PageSize,
                        Offet = offset,
                        ProfileName = feedLoadReq.Keyword,
-                       PostStatus = (int)PostStatus.Public,
+                       PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
                        Hide = feedLoadReq.Hides
                    });
         var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
@@ -230,10 +235,17 @@ public partial class FeedService : IFeedService
         }
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
+        foreach (var item in listItemResponse)
+        {
+            item.IsCensor = !feedLoadReq.IsRoleAdmin && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+            item.IsBlur = item.Status == PostStatus.Inactive;
+        }
+
         if (items != null && items.Count() > 0)
         {
             results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
             results.Items = listItemResponse;
+
         }
         else
         {
@@ -472,7 +484,8 @@ public partial class FeedService : IFeedService
             {
                 HashId = hashId,
                 IsAccessPrivate = false,
-                Hide = req.Hides
+                Hide = req.Hides,
+                PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
             }, splitOn: "Id, Id, Id, Id, Id");
 
         //Add view
@@ -484,7 +497,7 @@ public partial class FeedService : IFeedService
         // Will map later
         var sound = await _soundService.GetSoundByPostAsync(dbFeed.Id);
 
-        if (dbFeed.Status == PostStatus.Inactive || (dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
+        if ((dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
             throw new NotFoundException(E204, M204);
         }
@@ -531,7 +544,8 @@ public partial class FeedService : IFeedService
             CustomNote = res.CustomNote.ForLexical(),
             IsFavorite = postId == null ? false : postId.Contains(res.Id),
             IsCurrentUserAuthor = res.UserId == currentUserId,
-            Hide = res.Hide
+            Hide = res.Hide,
+            Status = res.Status,
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
@@ -601,7 +615,12 @@ public partial class FeedService : IFeedService
         var hashIds = req.HashIds;
         var userId = req.UserId;
 
-        var param = new { HashIds = hashIds.Split(',').ToList(), Hide = req.Hides };
+        var param = new
+        {
+            HashIds = hashIds.Split(',').ToList(),
+            Hide = req.Hides,
+            PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
+        };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
 
         var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId)
@@ -624,6 +643,12 @@ public partial class FeedService : IFeedService
                 UserId = userId
             });
 
+            foreach (var item in listFeedDetails)
+            {
+                item.IsCensor = !req.IsRoleAdmin && req.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsBlur = item.Status == PostStatus.Inactive;
+            }
+
             if (postReactionResponse.Count() > 0)
             {
                 foreach (var item in listFeedDetails)
@@ -640,7 +665,7 @@ public partial class FeedService : IFeedService
         }
         else
         {
-            return new List<FeedBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+            return new List<FeedBoxResponse>();
         }
     }
 

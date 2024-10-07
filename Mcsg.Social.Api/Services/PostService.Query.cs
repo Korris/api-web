@@ -1050,7 +1050,7 @@ sp.""IsEnableComment""
     FROM social.""SocialPosts""
     WHERE ""IsDelete"" = false
     AND ""Type"" = 0
-    AND ""Status"" = 1
+    AND ""Status"" IN(1,2)
 ),
 ranked_story AS (
     SELECT sp.""Id"", 
@@ -1062,7 +1062,7 @@ ranked_story AS (
     WHERE sp.""IsDelete"" = false
     AND ssp.""IsDelete"" = false
     AND sp.""Type"" = 1
-    AND sp.""Status"" = 1
+    AND sp.""Status"" IN(1,2)
     AND sp.""Permission"" = 0
     GROUP BY sp.""Id"", sp.""CreatedOn"", sp.""HashId""
 ),
@@ -1076,7 +1076,7 @@ ranked_comic AS (
     WHERE cp.""IsDelete"" = false
     AND csp.""IsDelete"" = false
     AND cp.""Type"" = 2
-    AND cp.""Status"" = 1
+    AND cp.""Status""  IN(1,2)
     AND cp.""Permission"" = 0
     GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
 ),
@@ -1241,19 +1241,19 @@ ORDER BY group_number, row_num;
                                                     (SELECT COUNT(*) 
                                                    FROM ""comic"".""ComicPosts""
                                                    WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" = 1
+                                                   AND ""Status"" IN(1,2)
                                                    AND ""Permission"" = 1)
                                                     +
                                                     (SELECT COUNT(*) 
                                                    FROM ""story"".""StoryPosts""
                                                    WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" = 1
+                                                   AND ""Status"" IN(1,2)
                                                    AND ""Permission"" = 1)
                                                     +
                                                     (SELECT COUNT(*)
                                                    FROM social.""SocialPosts""
                                                    WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" = 1)
+                                                   AND ""Status"" IN(1,2))
                                                     )";
 
         private string GetCountPostByTagQuery => $@"SELECT (

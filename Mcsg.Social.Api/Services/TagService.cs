@@ -368,7 +368,8 @@ public partial class TagService : ITagService
         var multi = await _tagRepository.Connection.QueryMultipleAsync(query, new
         {
             Offset = offset,
-            PageSize = input.PageSize
+            PageSize = input.PageSize,
+            PostStatus = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public },
         });
         var items = await multi.ReadAsync<TagSearchResponse>().ConfigureAwait(false);
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
