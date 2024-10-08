@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,9 +8,8 @@ namespace Mcsg.Wallet.Job;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Domain.Entities;
+using Domain.Interfaces;
 using Interfaces;
-using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>
@@ -108,14 +108,14 @@ public class HostedEmail : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
+            var context = scope.ServiceProvider.GetRequiredService<IWalletContext>();
             var jobId = new Guid(msg.DevName); // TODO
 
-            var jobDb = await jobRepository.GetByIdAsync(jobId);
+            var jobDb = await context.JobAvailable.FirstOrDefaultAsync(p => p.Id == jobId);
             if (jobDb != null && jobDb.Status != JobStatus.Success)
             {
                 jobDb.Status = JobStatus.Processing;
-                await jobRepository.UpdateAsync(jobDb);
+                await context.SaveChangesAsync(default);
 
                 try
                 {
@@ -123,13 +123,13 @@ public class HostedEmail : BackgroundService
                     await service.SendEmailAsync(jobDb);
 
                     jobDb.Status = JobStatus.Success;
-                    await jobRepository.UpdateAsync(jobDb);
+                    await context.SaveChangesAsync(default);
                 }
                 catch (Exception ex)
                 {
                     jobDb.Status = JobStatus.Failed;
                     jobDb.Error = $"{ex.Message} {ex.StackTrace}";
-                    await jobRepository.UpdateAsync(jobDb);
+                    await context.SaveChangesAsync(default);
 
                     throw;
                 }

@@ -209,7 +209,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
                 SystemMessage = x.SystemMessage
             }).AsNoTracking();
 
-        var items = await resultQuery.Skip((request.PageNum - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
+        var items = await resultQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
 
         var userIds = items.SelectMany(p => new List<Guid?> { p.ToUserId, p.FromUserId })
                        .Where(id => id != null && id != Guid.Empty)
@@ -227,7 +227,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             item.ToUserAvatar = toUserOfProto?.UserAvatar;
         }
 
-        return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(items, resultQuery, request.PageNum, request.PageSize);
+        return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(items, resultQuery, request.PageNumber, request.PageSize);
     }
 
     public async Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(BaseR req, string referenceNumber)

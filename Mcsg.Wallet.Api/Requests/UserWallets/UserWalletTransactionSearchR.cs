@@ -2,7 +2,7 @@
 
 using Common.Core.Requests;
 
-public class UserWalletTransactionSearchR : PagingR
+public class UserWalletTransactionSearchR : PaginatedR
 {
     public DateTime? ToDate { get; set; }
     public DateTime? FromDate { get; set; }
