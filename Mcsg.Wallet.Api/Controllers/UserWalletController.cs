@@ -36,7 +36,9 @@ public class UserWalletController : ControllerBase
     [HttpGet("info/{address}")]
     public async Task<IActionResult> GetUserBasicWallet(string address)
     {
-        var result = await _userWalletService.GetUserWalletByAddressAsync(address);
+        var req = new UserWalletGetInfoByAddressR { Address = address };
+        req.Analyze(HttpContext);
+        var result = await _userWalletService.GetUserWalletByAddressAsync(req);
         return Ok(result);
     }
 
@@ -185,7 +187,9 @@ public class UserWalletController : ControllerBase
     [HttpGet("wallet-info/{userId}")]
     public async Task<IActionResult> GetUserWalletAddress(Guid userId)
     {
-        var result = await _userWalletService.GetUserWalletAddress(userId);
+        var req = new UserWalletGetUserWalletAddressByUserIdR { WalletOwnerId = userId };
+        req.Analyze(HttpContext);
+        var result = await _userWalletService.GetUserWalletAddress(req);
         return Ok(result);
     }
 

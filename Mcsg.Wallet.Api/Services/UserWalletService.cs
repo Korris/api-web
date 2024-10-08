@@ -88,16 +88,15 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         return [user];
     }
 
-    public async Task<UserWalletBasicResp> GetUserWalletByAddressAsync(string address)
+    public async Task<UserWalletBasicResp> GetUserWalletByAddressAsync(UserWalletGetInfoByAddressR request)
     {
         var data = await _context.UserWallets
-            .Where(x => x.Address == address)
+            .Where(x => x.Address == request.Address)
             .AsNoTracking()
             .Select(x => new UserWalletBasicResp
             {
                 WalletAddress = x.Address + "",
                 ProfileName = x.ProfileName + "",
-                Email = x.Email + "",
                 UserId = x.UserId
             }).FirstOrDefaultAsync();
 
@@ -106,12 +105,16 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             throw new BadRequestException(ApiErrorCodes.WALLET_ADDRESS_NOT_FOUND, ApiErrorMessage.WALLET_ADDRESS_NOT_FOUND);
         }
 
-        var userInfo = await GetUserFromProto(new List<Guid?> { data.UserId });
-        if (userInfo != null)
+        var userInfoList = await GetUserFromProto(new List<Guid?> { data.UserId, request.UserId });
+
+        var walletUserInfo = userInfoList.GetValueOrDefault(data.UserId?.ToString());
+        var myUserInfo = userInfoList.GetValueOrDefault(request.UserId.ToString());
+
+        if (walletUserInfo != null)
         {
-            data.Email = _aes.DecryptText(data.Email) + "";
-            data.Avatar = userInfo.GetValueOrDefault(data.UserId?.ToString())?.UserAvatar;
-            data.ProfileName = userInfo.GetValueOrDefault(data.UserId?.ToString())?.ProfileName + "";
+            data.Email = _aes.DecryptText(myUserInfo?.Email) + "";
+            data.Avatar = walletUserInfo?.UserAvatar;
+            data.ProfileName = walletUserInfo?.ProfileName + "";
         }
         return data;
     }
@@ -331,24 +334,35 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         await _context.SaveChangesAsync(default);
     }
 
-    public async Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId)
+    public async Task<UserWalletBasicResp> GetUserWalletAddress(UserWalletGetUserWalletAddressByUserIdR request)
     {
         var result = new UserWalletBasicResp();
 
         var userWallets = await _context.UserWallets.AsNoTracking()
-            .Where(p => p.UserId == userId)
+            .Where(p => p.UserId == request.WalletOwnerId)
             .Select(p => new
             {
                 p.Address,
-                p.Email,
-                p.ProfileName
+                p.ProfileName,
+                p.UserId
             }).FirstOrDefaultAsync();
+
+        if (userWallets == null)
+        {
+            throw new BadRequestException(ApiErrorCodes.WALLET_ADDRESS_NOT_FOUND, ApiErrorMessage.WALLET_ADDRESS_NOT_FOUND);
+        }
+
+        var userInfoList = await GetUserFromProto(new List<Guid?> { userWallets.UserId, request.UserId });
+
+        var walletUserInfo = userInfoList.GetValueOrDefault(userWallets.UserId.ToString());
+        var myUserInfo = userInfoList.GetValueOrDefault(request.UserId.ToString());
 
         return result = new UserWalletBasicResp
         {
-            Email = userWallets?.Email + "",
+            Email = _aes.DecryptText(myUserInfo?.Email) + "",
             WalletAddress = userWallets?.Address + "",
-            ProfileName = userWallets?.ProfileName + ""
+            ProfileName = walletUserInfo?.ProfileName + "",
+            Avatar = walletUserInfo?.UserAvatar,
         };
     }
 

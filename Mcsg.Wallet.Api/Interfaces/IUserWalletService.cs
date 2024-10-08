@@ -10,14 +10,14 @@ using Requests;
 public interface IUserWalletService
 {
     Task<IEnumerable<UserWalletResp>> GetUserWalletAsync(BaseR req);
-    Task<UserWalletBasicResp> GetUserWalletByAddressAsync(string address);
+    Task<UserWalletBasicResp> GetUserWalletByAddressAsync(UserWalletGetInfoByAddressR request);
     Task<PaginatedList<UserWalletTransactionItemResp>> GetUserWalletTransactionsAsync(UserWalletTransactionSearchR request);
     Task<UserWalletTransactionItemResp> GetUserWalletTransactionByRefNumberAsync(BaseR req, string referenceNumber);
     Task<IEnumerable<UserPaymentMethodResponse>> GetUserPaymentMethods(Guid userId);
     Task<AddUserPaymentMethodResp> AddUserPaymentMethod(UserWalletAddPaymentMethodR addUserPaymentMethodReq);
     Task<UpdateUserPaymentMethodResp> UpdateUserPaymentMethod(Guid userPaymentMethodId, UserWalletUpdatePaymentMethodR updateUserPaymentMethodReq);
     Task<bool> RemoveUserPaymentMethod(Guid userId, Guid userPaymentMethodId);
-    Task<UserWalletBasicResp> GetUserWalletAddress(Guid userId);
+    Task<UserWalletBasicResp> GetUserWalletAddress(UserWalletGetUserWalletAddressByUserIdR request);
 
     Task<bool> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req);
     Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType);
