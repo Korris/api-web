@@ -51,7 +51,7 @@ public enum MicroService
     Sync,
 
     /// <summary>
-    /// 
+    /// Wallet
     /// </summary>
     Wallet,
 
@@ -68,5 +68,10 @@ public enum MicroService
     /// <summary>
     /// OpenId
     /// </summary>
-    OpenId
+    OpenId,
+
+    /// <summary>
+    /// WalletJob
+    /// </summary>
+    WalletJob
 }

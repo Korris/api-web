@@ -27,33 +27,9 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueuePayment = config[$"{prefix}:QueuePayment"] + "";
         }
-        if (string.IsNullOrEmpty(setting.NotificationQueuePostComment))
-        {
-            setting.NotificationQueuePostComment = config[$"{prefix}:QueuePostComment"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationQueuePostReact))
-        {
-            setting.NotificationQueuePostReact = config[$"{prefix}:QueuePostReact"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationQueueSmartLookup))
-        {
-            setting.NotificationQueueSmartLookup = config[$"{prefix}:QueueSmartLookup"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationQueueSms))
-        {
-            setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
-        }
         if (string.IsNullOrEmpty(setting.NotificationQueueSyncData))
         {
             setting.NotificationQueueSyncData = config[$"{prefix}:QueueSyncData"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationQueueViewHistory))
-        {
-            setting.NotificationQueueViewHistory = config[$"{prefix}:QueueViewHistory"] + "";
-        }
-        if (string.IsNullOrEmpty(setting.NotificationRoutingKey))
-        {
-            setting.NotificationRoutingKey = config[$"{prefix}:RoutingKey"] + "";
         }
     }
 

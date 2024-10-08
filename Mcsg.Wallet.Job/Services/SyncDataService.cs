@@ -44,6 +44,7 @@ public partial class SyncDataService : BaseS, ISyncDataService
             await _context.SaveChangesAsync(default);
         }
     }
+
     public async Task SyncWalletUserRewardAsync(SyncData data)
     {
         var profileData = data.Data.FirstOrDefault();
@@ -183,7 +184,6 @@ public partial class SyncDataService : BaseS, ISyncDataService
             {
                 await LogError(buyPremiumData.TransactionId, ex.Message);
             }
-
         }
         else
         {

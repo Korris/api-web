@@ -29,54 +29,9 @@ public class Setting : SettingBase, ISetting
     public string NotificationQueuePayment { get; set; }
 
     /// <summary>
-    /// Notification queue post comment
-    /// </summary>
-    public string NotificationQueuePostComment { get; set; }
-
-    /// <summary>
-    /// Notification queue post react
-    /// </summary>
-    public string NotificationQueuePostReact { get; set; }
-
-    /// <summary>
-    /// Notification queue smart lookup
-    /// </summary>
-    public string NotificationQueueSmartLookup { get; set; }
-
-    /// <summary>
-    /// Notification queue sms
-    /// </summary>
-    public string NotificationQueueSms { get; set; }
-
-    /// <summary>
     /// Notification queue sync data
     /// </summary>
     public string NotificationQueueSyncData { get; set; }
-
-    /// <summary>
-    /// Notification queue view history
-    /// </summary>
-    public string NotificationQueueViewHistory { get; set; }
-
-    /// <summary>
-    /// Notification routing key
-    /// </summary>
-    public string NotificationRoutingKey { get; set; }
-
-    /// <summary>
-    /// Allow sending email
-    /// </summary>
-    public bool AllowSendingEmail { get; set; }
-
-    /// <summary>
-    /// The time in minutes after which the account will be deleted
-    /// </summary>
-    public uint AccountDeletedAfter { get; set; }
-
-    /// <summary>
-    /// The time in minutes after which the account can be created
-    /// </summary>
-    public uint AccountCreatedAfter { get; set; }
 
     #endregion
 
@@ -90,13 +45,7 @@ public class Setting : SettingBase, ISetting
         NotificationExchange = string.Empty;
         NotificationQueueEmail = string.Empty;
         NotificationQueuePayment = string.Empty;
-        NotificationQueuePostComment = string.Empty;
-        NotificationQueuePostReact = string.Empty;
-        NotificationQueueSmartLookup = string.Empty;
-        NotificationQueueSms = string.Empty;
         NotificationQueueSyncData = string.Empty;
-        NotificationQueueViewHistory = string.Empty;
-        NotificationRoutingKey = string.Empty;
     }
 
     /// <summary>

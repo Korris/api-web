@@ -7,9 +7,10 @@ using Serilog;
 namespace Mcsg.Wallet.Job;
 
 using Common.Core.Extensions;
-using Common.Domain;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
+using Domain;
+using Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Lib.Common.Mail;
@@ -96,7 +97,7 @@ public class Program
         builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddWalletDbContext(csDb);
 
         // Notification sent via email (using SMTP)
         builder.Services.AddNotification(p =>
@@ -123,8 +124,9 @@ public class Program
         builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
 
         // Service
+        builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddSingleton<IEmailSender, SmtpSender>();
-        builder.Services.AddScoped<ISyncDataService, SyncDataService>();
+        //builder.Services.AddScoped<ISyncDataService, SyncDataService>();
         builder.Services.AddScoped<IPaymentService, PaymentService>();
         #endregion
 
@@ -139,8 +141,9 @@ public class Program
         builder.Services.AddControllers();
 
         // AddHostedService
+        builder.Services.AddHostedService<HostedEmail>();
         builder.Services.AddHostedService<HostedPaymentTransaction>();
-        builder.Services.AddHostedService<HostedSyncData>();
+        //builder.Services.AddHostedService<HostedSyncData>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -156,11 +159,9 @@ public class Program
         #region -- Load settings --
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
-            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var context = ss.ServiceProvider.GetRequiredService<IWalletContext>();
             var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
 
-            st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
-            st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
         }
         st.LogInfor();
@@ -218,7 +219,7 @@ public class Program
     /// <summary>
     /// Variable prefix
     /// </summary>
-    private static string _prefix = "Wal";
+    private static string _prefix = "Wjo";
 
     #endregion
 }

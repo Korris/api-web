@@ -41,7 +41,8 @@ public class Setting : SeedWork.Constants.Setting
                 { "Wal", MicroService.Wallet.ToString() },
                 { "Clo", MicroService.CloneSite.ToString() },
                 { "Fun", MicroService.Function.ToString() },
-                { "Ope", MicroService.OpenId.ToString() }
+                { "Ope", MicroService.OpenId.ToString() },
+                { "Wjo", MicroService.WalletJob.ToString() }
             };
         }
     }
