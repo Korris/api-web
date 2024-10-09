@@ -494,7 +494,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #endregion
 
     #region User OTP/transaction
-    public async Task<bool> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
+    public async Task<string> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
     {
         var otpData = await _context.WalletTransactionOtps.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.TransactionId == req.TransactionId
@@ -509,8 +509,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
 
         await _context.SaveChangesAsync(default);
         await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
-
-        return true;
+        var referenceNumber = await _context.WalletTransactions.Where(r => r.Id == req.TransactionId).Select(i => i.ReferenceNumber).FirstOrDefaultAsync();
+        return referenceNumber;
     }
     public async Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType)
     {
