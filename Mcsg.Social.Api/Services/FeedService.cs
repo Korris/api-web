@@ -533,6 +533,7 @@ public partial class FeedService : IFeedService
             IsCurrentUserAuthor = res.UserId == currentUserId,
             Hide = res.Hide
         };
+        itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
         if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
         {
