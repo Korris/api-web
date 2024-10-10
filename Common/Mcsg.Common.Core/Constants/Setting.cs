@@ -330,6 +330,16 @@ public class Setting : SeedWork.Constants.Setting
         /// FollowPost
         /// </summary>
         public const string FollowPost = "FollowPost";
+
+        /// <summary>
+        /// DonateTransaction
+        /// </summary>
+        public const string DonateTransaction = "DonateTransaction";
+
+        /// <summary>
+        /// DonateTransaction
+        /// </summary>
+        public const string TransferTransaction = "TransferTransaction";
     }
 
     /// <summary>
@@ -446,6 +456,11 @@ public class Setting : SeedWork.Constants.Setting
         /// FollowStoryPost
         /// </summary>
         public const string FollowStoryPost = "FollowStoryPost";
+
+        /// <summary>
+        /// Transaction
+        /// </summary>
+        public const string Transaction = "Transaction";
     }
 
     /// <summary>

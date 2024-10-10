@@ -253,6 +253,9 @@ public static class NotificationExtension
 
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationTargetType.FollowUser,
 
+            NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationTargetType.Transaction,
+            NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationTargetType.Transaction,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
@@ -300,6 +303,9 @@ public static class NotificationExtension
             NotificationEntityType.FollowUser => Common.Core.Constants.Setting.NotificationType.FollowUser,
             NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationType.FollowPost,
             NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationType.FollowPost,
+            NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationType.TransferTransaction,
+            NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationType.DonateTransaction,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }

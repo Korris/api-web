@@ -21,4 +21,6 @@ public class NotificationResponse
     public string? UserAvatar { get; set; }
     public float Order { get; set; }
     public ReactionType ReactionType { get; set; }
+    public string? Amount { get; set; }
+    public string? ReferenceNumber { get; set; }
 }

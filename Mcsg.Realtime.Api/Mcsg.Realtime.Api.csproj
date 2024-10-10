@@ -14,6 +14,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
+        <ProjectReference Include="..\Mcsg.Wallet.Domain\Mcsg.Wallet.Domain.csproj" />
     </ItemGroup>
 
 </Project>

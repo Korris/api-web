@@ -176,7 +176,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
+        builder.Services.AddGrpc();
         builder.Services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new IsoDateTimeConverter());

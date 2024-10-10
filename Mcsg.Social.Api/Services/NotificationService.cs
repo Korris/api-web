@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Grpc.Net.Client;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
@@ -18,6 +19,7 @@ using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
+using Wallet.Api.Protos;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -110,6 +112,7 @@ public partial class NotificationService : INotificationService
             await CheckDataCommentReaction(resDto);
             await CheckDataReplyCommentReaction(resDto);
             await CheckDataFollowUser(resDto);
+            await CheckDataTransaction(resDto);
             var response = new PagedResponse<NotificationModel>(totalItems, request.PageNumber, request.PageSize);
             response.Items = resDto;
 
@@ -118,6 +121,33 @@ public partial class NotificationService : INotificationService
         else
         {
             return new PagedResponse<NotificationModel>(0);
+        }
+    }
+
+    private async Task CheckDataTransaction(List<NotificationModel> resDto)
+    {
+        var listData = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.TransferTransaction ||
+                                         p.NotificationEntityType == NotificationEntityType.DonateTransaction)
+            .ToList();
+
+        if (listData.Any())
+        {
+            var data = await GetTransactionFromProto(listData.Select(p => p.EntityId).Distinct().ToList());
+            foreach (var item in listData)
+            {
+                var transactionData = data.GetValueOrDefault(item.EntityId.ToString());
+                var amount = transactionData.Amount.ToString("N0");
+                if (item.NotificationEntityType == NotificationEntityType.DonateTransaction)
+                {
+                    item.Message = string.Format(NotificationContent.DonateTransaction, item.ActorName);
+                }
+                else
+                {
+                    item.Message = string.Format(NotificationContent.TransferTransaction, amount, item.ActorName);
+                }
+                item.Amount = amount;
+                item.ReferenceNumber = transactionData.ReferenceNumber;
+            }
         }
     }
     private async Task CheckDataReplyCommentReaction(List<NotificationModel> resDto)
@@ -627,6 +657,31 @@ public partial class NotificationService : INotificationService
             }
         }
     }
+
+    private async Task<Dictionary<string, TransactionProtoDto>> GetTransactionFromProto(List<Guid?> transactionIds)
+    {
+        var res = new Dictionary<string, TransactionProtoDto>();
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Wallet!);
+
+            var client = new UserWalletProto.UserWalletProtoClient(channel);
+            var request = new TransactionGetReq
+            {
+                TransactionId = string.Join(';', transactionIds.Where(id => id != null).Select(id => id.ToString()))
+            };
+            var rsp = await client.GetTransactionInfoAsync(request);
+            return rsp.Transactions.ToDictionary(p => p.TransactionId, p => p);
+        }
+        catch (Exception ex)
+        {
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
     #region -- Fields --
 
     /// <summary>

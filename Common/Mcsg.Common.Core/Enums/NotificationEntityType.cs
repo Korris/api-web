@@ -234,4 +234,14 @@ public enum NotificationEntityType
     /// StorySubPostCommentReplyReaction
     /// </summary>
     StorySubPostCommentReplyReaction,
+
+    /// <summary>
+    /// TransferTransaction
+    /// </summary>
+    TransferTransaction,
+
+    /// <summary>
+    /// DonateTransaction
+    /// </summary>
+    DonateTransaction
 }

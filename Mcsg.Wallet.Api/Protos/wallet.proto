@@ -8,12 +8,14 @@ package wallet;
 
 service UserWalletProto {
     rpc Create (UserWalletCreateReq) returns (BaseRsp);
+    rpc GetTransactionInfo (TransactionGetReq) returns (BaseRsp);
 }
 
 message BaseRsp {
     bool success = 1;
     string message = 2;
     string id = 3;
+    repeated TransactionProtoDto transactions = 4;
 }
 
 message UserWalletCreateReq {
@@ -21,4 +23,14 @@ message UserWalletCreateReq {
     google.protobuf.StringValue email = 2;
     google.protobuf.StringValue phoneNumber = 3;
     google.protobuf.StringValue profileName = 4;
+}
+
+message TransactionGetReq {
+    string transactionId = 1;
+}
+
+message TransactionProtoDto {
+    string transactionId = 1;
+    string referenceNumber = 2;
+    float amount = 3;
 }

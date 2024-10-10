@@ -19,6 +19,7 @@ using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
+using Wallet.Domain.Enums;
 using static Common.Core.Constants.Setting;
 
 public class NotificationService : INotificationService
@@ -75,6 +76,48 @@ public class NotificationService : INotificationService
         _subPostRepository = subPostRepository;
     }
 
+    public async Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req)
+    {
+        var response = new NotificationResponse();
+
+        var noti = new NotificationDto();
+
+        NotificationEntityType notificationEntityType = req.TransactionType switch
+        {
+            TransactionType.Transfer => NotificationEntityType.TransferTransaction,
+            TransactionType.Donate => NotificationEntityType.DonateTransaction,
+            _ => NotificationEntityType.TransferTransaction
+        };
+
+        noti = await AddNotificationAsync(
+                            actorId: req.AuthorId
+                          , receiverId: req.ReceiverId
+                          , action: NotificationAction.Transaction
+                          , entityType: notificationEntityType
+                          , entityId: req.Id);
+        var userInfo = await _context.UserAvailable.Where(p => p.Id == req.AuthorId)
+            .Select(p => new
+            {
+                ProfileName = p.ProfileName + "",
+                UserAvatar = p.Avatar
+            })
+            .FirstOrDefaultAsync();
+        var amount = req.Amount.ToString("N0");
+        response.Id = noti.Id;
+        response.Amount = amount;
+        response.Status = noti.Status;
+        response.EntityId = req.Id;
+        response.ReferenceNumber = req.ReferenceNumber;
+        response.ActorId = req.AuthorId;
+        response.ActorName = userInfo.ProfileName;
+        response.Message = GetMessageTransaction(amount, userInfo.ProfileName, notificationEntityType);
+        response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+        response.NotificationType = GetTransactionType(notificationEntityType);
+        response.UserAvatar = userInfo.UserAvatar;
+        await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        return response;
+    }
+
     public async Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment)
     {
         var response = new NotificationResponse();
@@ -129,6 +172,24 @@ public class NotificationService : INotificationService
             default:
                 return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Feed : Common.Core.Constants.Setting.NotificationTargetType.SubFeed;
         }
+    }
+
+    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType)
+    {
+        return notificationEntityType switch
+        {
+            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
+            NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
+        };
+    }
+
+    private string GetTransactionType(NotificationEntityType notificationEntityType)
+    {
+        return notificationEntityType switch
+        {
+            NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationType.TransferTransaction,
+            NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationType.DonateTransaction
+        };
     }
 
     private string GetMessage(CommentNotificationReq comment)

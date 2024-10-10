@@ -91,6 +91,30 @@ public class UserWalletService : UserWalletProto.UserWalletProtoBase
         return address;
     }
 
+    public override async Task<BaseRsp> GetTransactionInfo(TransactionGetReq req, ServerCallContext context)
+    {
+        var res = new BaseRsp();
+        try
+        {
+            var id = req.TransactionId.Split(";");
+            var listUsers = await _context.WalletTransactions.Where(p => id.Contains(p.Id.ToString()))
+                .Select(p => new TransactionProtoDto
+                {
+                    TransactionId = p.Id.ToString(),
+                    Amount = p.Amount,
+                    ReferenceNumber = p.ReferenceNumber,
+                }).ToListAsync();
+            res.Transactions.AddRange(listUsers);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
     private async Task<string> GennerateWalletTransactionNumber()
     {
         string number = WalletTransactionLength.GetRandomString().ToLower();

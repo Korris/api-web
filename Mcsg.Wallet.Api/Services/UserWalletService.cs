@@ -44,7 +44,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     /// <param name="zaloPayService"></param>
     /// <param name="logger"></param>
     /// <param name="aes"></param>
-    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger, ISecurityAes aes) : base(context, setting)
+    /// <param name="notificationService"></param>
+    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger, ISecurityAes aes, INotificationService notificationService) : base(context, setting)
     {
         _otpService = otpService;
         _bankService = bankService;
@@ -52,6 +53,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         _zaloPayService = zaloPayService;
         _logger = logger;
         _aes = aes;
+        _notificationService = notificationService;
     }
 
     #region User info
@@ -349,6 +351,15 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         }
         _context.WalletTransactions.Update(transaction);
         await _context.SaveChangesAsync(default);
+        await _notificationService.AddTransactionNotificationAsync(new Requests.Notification.TransactionNotificationReq
+        {
+            Amount = transaction.Amount,
+            TransactionType = transaction.Type,
+            Id = transaction.Id,
+            AuthorId = transaction.SourceUserWallet.UserId,
+            ReceiverId = transaction.DestinationUserWallet.UserId,
+            ReferenceNumber = transaction.ReferenceNumber
+        });
 
         var item = new UserWalletTransactionItemResp
         {
@@ -1064,6 +1075,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     private readonly ISystemService _systemService;
     private readonly ILogger<UserWalletService> _logger;
     private readonly ISecurityAes _aes;
+    private readonly INotificationService _notificationService;
 
     #endregion
 }

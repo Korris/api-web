@@ -32,6 +32,8 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     public Guid? CommentId { get; set; }
     public Guid? ReplyCommentId { get; set; }
     public NotificationEntityType NotificationEntityType { get; set; }
+    public string? ReferenceNumber { get; set; }
+    public string? Amount { get; set; }
 
     public void Mapping(Profile profile)
     {

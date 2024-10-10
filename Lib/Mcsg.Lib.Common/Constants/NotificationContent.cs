@@ -18,4 +18,6 @@ public static class NotificationContent
     public const string VideoUploadFailed = "Video của bạn đã bị lỗi và đăng tải không thành công.";
     public const string FollowUser = " đã theo dõi bạn.";
     public const string FollowPost = "{0} đã theo dõi truyện {1} của bạn.";
+    public const string TransferTransaction = "Bạn vừa nhận {0} BC từ {1}.";
+    public const string DonateTransaction = "Bạn đã nhận được Donate từ {0}.";
 }

@@ -138,6 +138,7 @@ public class Program
         builder.Services.AddScoped<IPremiumService, PremiumService>();
         builder.Services.AddScoped<IUserPurchaseService, UserPurchaseService>();
         builder.Services.AddScoped<IZaloPayService, ZaloPayService>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
 
         var app = builder.Build();
 

@@ -57,4 +57,11 @@ public class NotificationController : ControllerBase
         await _notificationService.AddPostMentionNotification(request);
         return Ok();
     }
+
+    [HttpPost("transaction")]
+    public async Task<IActionResult> AddTransactionNotification([FromBody] TransactionNotificationReq request)
+    {
+        await _notificationService.AddTransactionNotification(request);
+        return Ok();
+    }
 }
