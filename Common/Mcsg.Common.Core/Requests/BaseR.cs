@@ -154,7 +154,7 @@ public class BaseR : IRequest<SingleResponse>
     /// User IsPremium
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool? IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean();
+    public bool IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean() == true || IsRoleAdmin;
 
     /// <summary>
     /// User MinioInstance

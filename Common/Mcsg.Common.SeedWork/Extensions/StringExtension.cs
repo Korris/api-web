@@ -22,6 +22,7 @@ namespace Mcsg.Common.SeedWork.Extensions;
 using SeedWork.Constants;
 using static Constants.Validator;
 using static Dtos.ConnectionDto;
+using static SeedWork.Constants.Setting;
 
 /// <summary>
 /// String extension for using [this string] only
@@ -677,6 +678,22 @@ public static class StringExtension
     public static int ToInt(this string text)
     {
         return int.TryParse(text, out int res) ? res : 0;
+    }
+
+    /// <summary>
+    /// Checks if the role is admin.
+    /// </summary>
+    /// <param name="roles">Comma-separated string of roles.</param>
+    /// <returns>True if the user has an admin role; otherwise, false.</returns>
+    public static bool IsRoleAdmin(this string? roles)
+    {
+        if (string.IsNullOrWhiteSpace(roles))
+        {
+            return false;
+        }
+
+        var arr = roles.Split(",");
+        return arr.Contains(McsgRole.SysAdmin) || arr.Contains(McsgRole.Admin) || arr.Contains(McsgRole.ContentAdmin);
     }
 
     #endregion

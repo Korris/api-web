@@ -85,7 +85,7 @@ public partial class UserService : BaseMinioS, IUserService
         return iResult > 0;
     }
 
-    public async Task<UserProfileResponse> GetCurrentUserAsync()
+    public async Task<User.FullProfileDto> GetCurrentUserAsync()
     {
         var ss = _currentUserService.Session;
         if (ss == null)
@@ -94,9 +94,7 @@ public partial class UserService : BaseMinioS, IUserService
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
-
-        var res = await CreateUserRespone(user);
-        res.Roles = ss.Roles;
+        var res = await CreateUserRespone(user, ss.Roles, true);
 
         // Check first login
         if (user != null && user.LastLoginDate == null)
@@ -108,10 +106,16 @@ public partial class UserService : BaseMinioS, IUserService
         return res;
     }
 
-    public async Task<UserProfileResponse> GetUserByUserNameAsync(string userName)
+    public async Task<User.FullProfileDto> GetUserByUserNameAsync(string userName)
     {
         var user = await _userManager.UserAvailable.FirstOrDefaultAsync(p => p.UserName == userName);
-        return await CreateUserResponeByUsername(user);
+        if (user == null)
+        {
+            return new User.FullProfileDto();
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return await CreateUserRespone(user, string.Join(",", roles), false);
     }
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
@@ -252,7 +256,7 @@ public partial class UserService : BaseMinioS, IUserService
         return profiles.ToList();
     }
 
-    public async Task<UserProfileResponse> UpdateUserProfile(UserProfileUpdateR req)
+    public async Task<User.FullProfileDto> UpdateUserProfile(UserProfileUpdateR req)
     {
         var vr = new UserProfileUpdateV().Validate(req);
         if (!vr.IsValid)
@@ -302,10 +306,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         await SyncWalletUserInfo(user);
 
-        var res = await CreateUserRespone(user);
-        res.Roles = ss.Roles;
-
-        return res;
+        return await CreateUserRespone(user, ss.Roles, true);
     }
 
     public async Task<UserProfileAvatarResponse?> GetUserAvatar(Guid userId)
@@ -505,81 +506,29 @@ public partial class UserService : BaseMinioS, IUserService
         };
     }
 
-    private async Task<UserProfileResponse> CreateUserResponeByUsername(User? user)
+    private async Task<User.FullProfileDto> CreateUserRespone(User? user, string? roles, bool decryptEmail)
     {
         var currentUserId = _currentUserService.Session?.UserId;
         if (user == null)
         {
-            return new UserProfileResponse();
+            return new User.FullProfileDto();
         }
 
-        var followingCount = await GetFollowingCountAsync(user.Id);
-        var followersCount = await GetFollowerCountAsync(user.Id);
+        var res = user.ToFullProfileDto(roles);
+        res.NumberOfFollowing = await GetFollowingCountAsync(user.Id);
+        res.NumberOfFollowers = await GetFollowerCountAsync(user.Id);
+        res.IsFollowing = currentUserId != null && await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id);
 
-        return new UserProfileResponse
+        if (decryptEmail)
         {
-            Id = user.Id,
-            AvatarUrl = user.Avatar,
-            Email = _aes.DecryptText(user.Email) + "",
-            JoinDate = user.CreatedOn,
-            ProfileName = user.ProfileName,
-            UserName = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            DateOfBirth = user.DateOfBirth,
-            Gender = user.Gender,
-            PhoneNumber = user.PhoneNumber,
-            CoverPhotoUrl = user.CoverPhoto,
-            Location = user.Location,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-            EmailConfirmed = user.EmailConfirmed,
-            ProfileId = user.ProfileId,
-            PremiumDate = user.PremiumDate,
-            LastLoginDate = user.LastLoginDate,
-            IsPremium = user.IsPremium,
-            NumberOfFollowing = followingCount,
-            NumberOfFollowers = followersCount,
-            IsFollowing = currentUserId == null ? false : await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id),
-            IsWalletShowing = user.IsWalletShowing
-        };
-    }
-
-    private async Task<UserProfileResponse> CreateUserRespone(User? user)
-    {
-        if (user == null)
+            res.Email = _aes.DecryptText(user.Email);
+        }
+        else
         {
-            return new UserProfileResponse();
+            res.Email = null;
         }
 
-        var followingCount = await GetFollowingCountAsync(user.Id);
-        var followersCount = await GetFollowerCountAsync(user.Id);
-
-        return new UserProfileResponse
-        {
-            Id = user.Id,
-            AvatarUrl = user.Avatar,
-            Email = _aes.DecryptText(user.Email) + "",
-            JoinDate = user.CreatedOn,
-            ProfileName = user.ProfileName,
-            UserName = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            DateOfBirth = user.DateOfBirth,
-            Gender = user.Gender,
-            PhoneNumber = user.PhoneNumber,
-            CoverPhotoUrl = user.CoverPhoto,
-            Location = user.Location,
-            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-            EmailConfirmed = user.EmailConfirmed,
-            ProfileId = user.ProfileId,
-            PremiumDate = user.PremiumDate,
-            LastLoginDate = user.LastLoginDate,
-            IsPremium = user.IsPremium,
-            NumberOfFollowing = followingCount,
-            NumberOfFollowers = followersCount,
-            IsWalletShowing = user.IsWalletShowing,
-            ReferralCode = user.ReferralCode,
-        };
+        return res;
     }
 
     private async Task<int> GetFollowerCountAsync(Guid userId)

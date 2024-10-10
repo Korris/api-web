@@ -19,7 +19,7 @@ public class UserNameUpdateV : AbstractValidator<UserNameUpdateR>
     public UserNameUpdateV()
     {
         var t = "";
-        When(p => p.IsPremium == true, () =>
+        When(p => p.IsPremium, () =>
         {
             t = nameof(UserNamePremium);
             RuleFor(p => p.NewUserName.Triz())
@@ -30,7 +30,7 @@ public class UserNameUpdateV : AbstractValidator<UserNameUpdateR>
             .Matches(UserNamePremium.Regex).WithMessage($"{t} {UserNamePremium.Message}");
         });
 
-        When(p => p.IsPremium != true, () =>
+        When(p => !p.IsPremium, () =>
         {
             t = nameof(UserNameFree);
             RuleFor(p => p.NewUserName.Triz())

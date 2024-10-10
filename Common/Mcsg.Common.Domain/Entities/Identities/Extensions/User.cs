@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core;
 using Core.Dtos;
 using SeedWork.Dtos;
-using SeedWork.Enums;
+using SeedWork.Extensions;
 
 partial class User
 {
@@ -17,7 +17,6 @@ partial class User
     public User()
     {
         Id = Guid.NewGuid();
-        Type = UserType.Guest;
         CreatedOn = DateTime.UtcNow;
     }
 
@@ -52,6 +51,39 @@ partial class User
     }
 
     /// <summary>
+    /// Convert to data transfer object
+    /// </summary>
+    /// <param name="roles">Roles</param>
+    /// <returns>Return the DTO</returns>
+    public FullProfileDto ToFullProfileDto(string? roles)
+    {
+        return new FullProfileDto
+        {
+            Id = Id,
+            AvatarUrl = Avatar,
+            JoinDate = CreatedOn,
+            ProfileName = ProfileName,
+            UserName = UserName,
+            FirstName = FirstName,
+            LastName = LastName,
+            DateOfBirth = DateOfBirth,
+            Gender = Gender,
+            PhoneNumber = PhoneNumber,
+            CoverPhotoUrl = CoverPhoto,
+            Location = Location,
+            PhoneNumberConfirmed = PhoneNumberConfirmed,
+            EmailConfirmed = EmailConfirmed,
+            ProfileId = ProfileId,
+            PremiumDate = PremiumDate,
+            LastLoginDate = LastLoginDate,
+            IsPremium = IsPremium || roles.IsRoleAdmin(),
+            IsWalletShowing = IsWalletShowing,
+            ReferralCode = ReferralCode,
+            Roles = roles
+        };
+    }
+
+    /// <summary>
     /// Create JWT
     /// </summary>
     /// <param name="sessionId">SessionId</param>
@@ -68,7 +100,7 @@ partial class User
             ProfileId = ProfileId + "",
             UserFolder = UserFolder,
             UserAvatar = Avatar + "",
-            IsPremium = IsPremium,
+            IsPremium = IsPremium || roles.IsRoleAdmin(),
             IsWalletShowing = IsWalletShowing,
             SessionId = sessionId,
             MinioInstance = MinioInstance,
@@ -157,6 +189,36 @@ partial class User
         public string? ProfileName { get; set; }
 
         #endregion
+    }
+
+    /// <summary>
+    /// FullProfile
+    /// </summary>
+    public class FullProfileDto : ProfileDto
+    {
+        public string? Email { get; set; }
+        public string? AvatarUrl { get; set; }
+        public DateTime JoinDate { get; set; }
+        public DateTime? LastLoginDate { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public int? Gender { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? CoverPhotoUrl { get; set; }
+        public string? Location { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public string? ProfileId { get; set; }
+        public DateOnly? PremiumDate { get; set; }
+        public bool IsPremium { get; set; }
+        public int? NumberOfFollowing { get; set; }
+        public int? NumberOfFollowers { get; set; }
+        public bool IsFollowing { get; set; } = false;
+        public bool? IsWalletShowing { get; set; }
+        public string? ReferralCode { get; set; }
+        public string? Roles { get; set; }
+        public bool IsRoleAdmin => Roles.IsRoleAdmin();
     }
 
     #endregion
