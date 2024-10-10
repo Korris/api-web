@@ -287,9 +287,26 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             throw new BadRequestException(ApiErrorCodes.TRANSACTION_NOT_FOUND, ApiErrorMessage.TRANSACTION_NOT_FOUND);
         }
 
+        var userIds = new List<Guid?> { data.ToUserId, data.FromUserId }
+               .Where(id => id != null && id != Guid.Empty)
+               .Distinct()
+               .ToList();
+
+        var userInfo = await GetUserFromProto(userIds);
+
+        if (userInfo != null)
+        {
+            var toUserOfProto = data.ToUserId != null ? userInfo.GetValueOrDefault(data.ToUserId.ToString()) : null;
+            var fromUserOfProto = data.FromUserId != null ? userInfo.GetValueOrDefault(data.FromUserId.ToString()) : null;
+            data.ToUser = toUserOfProto?.UserName;
+            data.FromUser = fromUserOfProto?.UserName;
+            data.ToUserAvatar = toUserOfProto?.UserAvatar;
+            data.FromUserAvatar = fromUserOfProto?.UserAvatar;
+        }
+
         return data;
     }
-    private async Task UpdateWalletInfor(Guid transactionId)
+    private async Task<UserWalletTransactionItemResp> UpdateWalletInfor(Guid transactionId)
     {
         var transaction = await _context.WalletTransactions.AsNoTracking()
             .Include(x => x.DestinationUserWallet)
@@ -332,6 +349,49 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         }
         _context.WalletTransactions.Update(transaction);
         await _context.SaveChangesAsync(default);
+
+        var item = new UserWalletTransactionItemResp
+        {
+            Amount = transaction.Amount,
+            AmountSign = (transaction.Type == TransactionType.Deposit
+                        || transaction.Type == TransactionType.Reward
+                        || (transaction.Type == TransactionType.Donate && transaction.DestinationUserWallet != null && transaction.DestinationUserWallet.UserId == transaction.SourceUserWallet.UserId)
+                        || (transaction.Type == TransactionType.Transfer && transaction.DestinationUserWallet != null && transaction.DestinationUserWallet.UserId == transaction.SourceUserWallet.UserId)
+                        ) ? "+" : "-",
+            Content = transaction.Content + "",
+            CreatedOn = transaction.CreatedOn,
+            FromAddress = transaction.IsFromSystem ? ApiMessages.FROM_SYSTEM : transaction.SourceUserWallet.Address,
+            ToAddress = transaction.DestinationUserWallet != null ? transaction.DestinationUserWallet.Address : string.Empty,
+            FromUser = transaction.IsFromSystem ? ApiMessages.FROM_SYSTEM : transaction.SourceUserWallet.ProfileName,
+            ReferenceNumber = transaction.ReferenceNumber + "",
+            ToUser = transaction.DestinationUserWallet != null ? transaction.DestinationUserWallet.ProfileName : string.Empty,
+            ToUserId = transaction.DestinationUserWallet != null ? transaction.DestinationUserWallet.UserId : Guid.Empty,
+            FromUserId = transaction.IsFromSystem ? Guid.Empty : transaction.SourceUserWallet.UserId,
+            TransactionStatus = transaction.Status,
+            TransactionType = transaction.Type,
+            Id = transaction.Id,
+            SystemMessage = transaction.SystemMessage + ""
+        };
+
+        var userIds = new List<Guid?> { item.ToUserId, item.FromUserId }
+                  .Where(id => id != null && id != Guid.Empty)
+                  .Distinct()
+                  .ToList();
+
+        var userInfo = await GetUserFromProto(userIds);
+
+        if (userInfo != null)
+        {
+            var toUserOfProto = item.ToUserId != null ? userInfo.GetValueOrDefault(item.ToUserId.ToString()) : null;
+            var fromUserOfProto = item.FromUserId != null ? userInfo.GetValueOrDefault(item.FromUserId.ToString()) : null;
+            item.ToUser = toUserOfProto?.UserName;
+            item.FromUser = fromUserOfProto?.UserName;
+            item.ToUserAvatar = toUserOfProto?.UserAvatar;
+            item.FromUserAvatar = fromUserOfProto?.UserAvatar;
+        }
+
+        return item;
+
     }
 
     public async Task<UserWalletBasicResp> GetUserWalletAddress(UserWalletGetUserWalletAddressByUserIdR request)
@@ -363,6 +423,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             WalletAddress = userWallets?.Address + "",
             ProfileName = walletUserInfo?.ProfileName + "",
             Avatar = walletUserInfo?.UserAvatar,
+            UserId = userWallets?.UserId
         };
     }
 
@@ -494,7 +555,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #endregion
 
     #region User OTP/transaction
-    public async Task<string> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
+    public async Task<UserWalletTransactionItemResp> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
     {
         var otpData = await _context.WalletTransactionOtps.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.TransactionId == req.TransactionId
@@ -505,12 +566,12 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         if (DateTime.UtcNow.Subtract(otpData.CreatedOn).TotalMinutes > _setting.Otp.OtpExpired)
             throw new BadRequestException(ApiErrorCodes.OTP_EXPIRED, ApiErrorMessage.OTP_EXPIRED);
 
-        await UpdateWalletInfor(req.TransactionId);
+        var userWalletResponse = await UpdateWalletInfor(req.TransactionId);
 
         await _context.SaveChangesAsync(default);
         await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
         var referenceNumber = await _context.WalletTransactions.Where(r => r.Id == req.TransactionId).Select(i => i.ReferenceNumber).FirstOrDefaultAsync();
-        return referenceNumber;
+        return userWalletResponse;
     }
     public async Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType)
     {

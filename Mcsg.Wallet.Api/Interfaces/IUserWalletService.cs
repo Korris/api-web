@@ -19,7 +19,7 @@ public interface IUserWalletService
     Task<bool> RemoveUserPaymentMethod(Guid userId, Guid userPaymentMethodId);
     Task<UserWalletBasicResp> GetUserWalletAddress(UserWalletGetUserWalletAddressByUserIdR request);
 
-    Task<string> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req);
+    Task<UserWalletTransactionItemResp> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req);
     Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType);
     Task<TransactionOtpInfoResp> DonateAsync(UserWalletDonateR req);
     Task<TransactionOtpInfoResp> TransferAsync(UserWalletTransferR req);

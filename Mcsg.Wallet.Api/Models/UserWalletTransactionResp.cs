@@ -37,6 +37,7 @@ public class UserWalletTransactionItemResp
     public string Content { get; set; }
     public string SystemMessage { get; set; }
     public string? ToUserAvatar { get; set; }
+    public string? FromUserAvatar { get; set; }
 }
 public class UserWalletTransactionItemDetailResp : UserWalletTransactionItemResp
 {
