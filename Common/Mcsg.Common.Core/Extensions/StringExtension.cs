@@ -11,6 +11,7 @@
  */
 #endregion
 
+using Ganss.Xss;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
@@ -731,6 +732,25 @@ public static class StringExtension
     public static string ForLexical(this string? text)
     {
         return string.IsNullOrEmpty(text) ? Default.CustomNote : text;
+    }
+
+    /// <summary>
+    /// Sanitizes the input text to remove any malicious content such as scripts or harmful HTML.
+    /// </summary>
+    /// <param name="text">The input text to be sanitized.</param>
+    /// <returns>A sanitized version of the input text, or an empty string if the input is null or whitespace.</returns>
+    public static string RemoveMaliciousText(this string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        var sanitizer = new HtmlSanitizer();
+        sanitizer.AllowedTags.Clear(); // ensures that no HTML tags are allowed, making the input text safe.
+        var sanitizedText = sanitizer.Sanitize(text);
+
+        return sanitizedText;
     }
 
     /// <summary>
