@@ -227,6 +227,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             item.ToUser = toUserOfProto?.UserName;
             item.FromUser = fromUserOfProto?.UserName;
             item.ToUserAvatar = toUserOfProto?.UserAvatar;
+            item.FromUserAvatar = fromUserOfProto?.UserAvatar;
         }
 
         return await PaginatedList<UserWalletTransactionItemResp>.CreateAsync(items, resultQuery, request.PageNumber, request.PageSize);
