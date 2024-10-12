@@ -154,7 +154,7 @@ public class BaseR : IRequest<SingleResponse>
     /// User IsPremium
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean() == true || IsRoleAdmin;
+    public bool IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean() == true || IsAdministrator;
 
     /// <summary>
     /// User MinioInstance
@@ -215,7 +215,7 @@ public class BaseR : IRequest<SingleResponse>
         {
             var res = new List<HideOption>();
 
-            if (IsRoleAdmin)
+            if (IsAdministrator)
             {
                 return [];
             }
@@ -354,13 +354,31 @@ public class BaseR : IRequest<SingleResponse>
     }
 
     /// <summary>
-    /// Is role admin
+    /// Is Administrator (IsRoleSysAdmin || IsRoleAdmin || IsRoleContentAdmin)
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true || _hc?.User?.IsInRole(McsgRole.Admin) == true || _hc?.User?.IsInRole(McsgRole.ContentAdmin) == true;
+    public bool IsAdministrator => IsRoleSysAdmin || IsRoleAdmin || IsRoleContentAdmin;
 
     /// <summary>
-    /// Is role user
+    /// Is role SysAdmin
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsRoleSysAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true;
+
+    /// <summary>
+    /// Is role Admin
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.Admin) == true;
+
+    /// <summary>
+    /// Is role ContentAdmin
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsRoleContentAdmin => _hc?.User?.IsInRole(McsgRole.ContentAdmin) == true;
+
+    /// <summary>
+    /// Is role User
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
     public bool IsRoleUser => _hc?.User?.IsInRole(McsgRole.User) == true;

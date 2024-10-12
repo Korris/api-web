@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Mcsg.Identity.Api.Controllers;
 
-using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
@@ -45,18 +45,20 @@ public class ConfigController : ControllerBase
     {
         var res = new MultipleResponse();
 
-        var logMsg = "This is a log message with method and namespace information.";
-        logMsg.ToFullMessage().LogInfor();
-
         var s = _setting;
-        res.SetSuccess(nameof(s.DevMode).ToCamelCase(), s.DevMode);
-        res.SetSuccess(nameof(s.IsLocal).ToCamelCase(), s.IsLocal);
-        res.SetSuccess(nameof(s.Environment).ToCamelCase(), s.Environment);
-        res.SetSuccess(nameof(s.IsProduction).ToCamelCase(), s.IsProduction);
+        var req = new BaseR(HttpContext);
+        var isRoleAdmin = req.IsRoleAdmin;
+
+        if (isRoleAdmin)
+        {
+            res.SetSuccess(nameof(s.DevMode).ToCamelCase(), s.DevMode);
+            res.SetSuccess(nameof(s.IsLocal).ToCamelCase(), s.IsLocal);
+            res.SetSuccess(nameof(s.Environment).ToCamelCase(), s.Environment);
+            res.SetSuccess(nameof(s.IsProduction).ToCamelCase(), s.IsProduction);
+            res.SetSuccess(nameof(s.Api).ToCamelCase(), s.Api);
+        }
+
         res.SetSuccess(nameof(DateTime.UtcNow).ToCamelCase(), DateTime.UtcNow.ToString("yyyy/MM/dd HH:mm:ss"));
-
-        res.SetSuccess(nameof(s.Api).ToCamelCase(), s.Api);
-
         res.SetSuccess(nameof(s.AccountDeletedAfter).ToCamelCase(), s.AccountDeletedAfter);
         res.SetSuccess(nameof(s.AccountCreatedAfter).ToCamelCase(), s.AccountCreatedAfter);
 
@@ -100,7 +102,7 @@ public class ConfigController : ControllerBase
         {
             var file = "config/validators.json";
             var ms = await _sc.GetStrategy(MinioInstanceType.Default).GetObject(file, null);
-            var jsonFile = new StringBuilder(Common.SeedWork.Extensions.StreamExtension.ToString(ms)).ToString();
+            var jsonFile = new StringBuilder(StreamExtension.ToString(ms)).ToString();
             res.SetSuccess(nameof(jsonFile), jsonFile);
         }
         catch { }

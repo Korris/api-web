@@ -232,7 +232,7 @@ public partial class PostService : IPostService
                     if (subpost != null && subpost.Id != Guid.Empty)
                     {
                         subpost.ViewCount = subpost.ViewCount ?? 0;
-                        subpost.IsCensor = !req.IsRoleAdmin && subpost.Status == PostStatus.Inactive && req.UserId != subpost.UserId;
+                        subpost.IsCensor = !req.IsAdministrator && subpost.Status == PostStatus.Inactive && req.UserId != subpost.UserId;
                         dbPost.Chapters.Add(subpost);
                     }
 
@@ -278,7 +278,7 @@ public partial class PostService : IPostService
         }
 
         result.FollowCount = await _context.ComicPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
-        result.IsCensor = !req.IsRoleAdmin && result.Status == PostStatus.Inactive && req.UserName != result.UserName;
+        result.IsCensor = !req.IsAdministrator && result.Status == PostStatus.Inactive && req.UserName != result.UserName;
         result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
 
         return result;
@@ -375,7 +375,7 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
         }
-        subpost.IsCensor = !req.IsRoleAdmin && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
+        subpost.IsCensor = !req.IsAdministrator && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
         return subpost;
     }
 
@@ -479,7 +479,7 @@ public partial class PostService : IPostService
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
                 item.isNewChapter = item.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow;
-                item.IsCensor = request.UserName != item.UserName && !request.IsRoleAdmin && item.Status == PostStatus.Inactive;
+                item.IsCensor = request.UserName != item.UserName && !request.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
 
@@ -559,7 +559,7 @@ public partial class PostService : IPostService
                 var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
                 foreach (var item in items)
                 {
-                    item.IsCensor = !request.IsRoleAdmin && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                    item.IsCensor = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature;
                 }
                 results.Items = items;
@@ -683,7 +683,7 @@ public partial class PostService : IPostService
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
-                item.IsCensor = !loadReq.IsRoleAdmin && loadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsCensor = !loadReq.IsAdministrator && loadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
         }
@@ -823,7 +823,7 @@ public partial class PostService : IPostService
             results.Items = MappingToPostBoxResponse(items);
             foreach (var item in results.Items)
             {
-                item.IsCensor = input.UserName != item.UserName && !input.IsRoleAdmin && item.Status == PostStatus.Inactive;
+                item.IsCensor = input.UserName != item.UserName && !input.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
                 item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
             }
@@ -1376,7 +1376,7 @@ public partial class PostService : IPostService
                     Hide = res.Hide,
                     Status = res.Status,
                     IsExternalSource = res.IsExternalSource,
-                    IsCensor = !req.IsRoleAdmin && req.UserName != res.UserName && res.Status == PostStatus.Inactive,
+                    IsCensor = !req.IsAdministrator && req.UserName != res.UserName && res.Status == PostStatus.Inactive,
                     IsBlur = res.Status == PostStatus.Inactive || res.IsMature == true,
                 };
 

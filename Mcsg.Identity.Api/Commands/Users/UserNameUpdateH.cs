@@ -57,7 +57,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res;
         }
 
-        if (!request.IsRoleAdmin && CheckUsernameIsReserved(newUserName))
+        if (!request.IsAdministrator && CheckUsernameIsReserved(newUserName))
         {
             res.SetError(E107, M107);
             return res;

@@ -76,7 +76,7 @@ partial class User
             ProfileId = ProfileId,
             PremiumDate = PremiumDate,
             LastLoginDate = LastLoginDate,
-            IsPremium = IsPremium || roles.IsRoleAdmin(),
+            IsPremium = IsPremium || roles.IsIsAdministrator(),
             IsWalletShowing = IsWalletShowing,
             ReferralCode = ReferralCode,
             Roles = roles
@@ -100,7 +100,7 @@ partial class User
             ProfileId = ProfileId + "",
             UserFolder = UserFolder,
             UserAvatar = Avatar + "",
-            IsPremium = IsPremium || roles.IsRoleAdmin(),
+            IsPremium = IsPremium || roles.IsIsAdministrator(),
             IsWalletShowing = IsWalletShowing,
             SessionId = sessionId,
             MinioInstance = MinioInstance,
@@ -218,7 +218,7 @@ partial class User
         public bool? IsWalletShowing { get; set; }
         public string? ReferralCode { get; set; }
         public string? Roles { get; set; }
-        public bool IsRoleAdmin => Roles.IsRoleAdmin();
+        public bool IsAdministrator => Roles.IsIsAdministrator();
     }
 
     #endregion

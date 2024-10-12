@@ -133,7 +133,7 @@ public partial class FeedService : IFeedService
 
             foreach (var item in listItemResponse)
             {
-                item.IsCensor = !feedLoadReq.IsRoleAdmin && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsCensor = !feedLoadReq.IsAdministrator && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive;
             }
 
@@ -237,7 +237,7 @@ public partial class FeedService : IFeedService
 
         foreach (var item in listItemResponse)
         {
-            item.IsCensor = !feedLoadReq.IsRoleAdmin && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+            item.IsCensor = !feedLoadReq.IsAdministrator && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
             item.IsBlur = item.Status == PostStatus.Inactive;
         }
 
@@ -645,7 +645,7 @@ public partial class FeedService : IFeedService
 
             foreach (var item in listFeedDetails)
             {
-                item.IsCensor = !req.IsRoleAdmin && req.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsCensor = !req.IsAdministrator && req.UserName != item.UserName && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive;
             }
 

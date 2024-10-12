@@ -685,7 +685,7 @@ public static class StringExtension
     /// </summary>
     /// <param name="roles">Comma-separated string of roles.</param>
     /// <returns>True if the user has an admin role; otherwise, false.</returns>
-    public static bool IsRoleAdmin(this string? roles)
+    public static bool IsIsAdministrator(this string? roles)
     {
         if (string.IsNullOrWhiteSpace(roles))
         {
