@@ -98,8 +98,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         }
         if (ett.CreatedBy != userId)
         {
-            //TODO check permission
-            //throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new ForbiddenAccessException(nameof(E309), E309);
         }
         if (ett.IsCompleted == true)
         {

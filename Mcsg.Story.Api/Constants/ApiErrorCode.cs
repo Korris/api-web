@@ -11,7 +11,6 @@ public static class ApiErrorCode
     public const string TAG_NOT_EXIST = "ERR_API_100001";
 
     //Post
-    public const string USER_NOT_PERMISSION = "ERR_API_200002";
     public const string POST_HAS_COMPLETED = "ERR_API_200007";
     public const string CHAPTER_NOT_EXIST = "ERR_API_200008";
     public const string POST_REQ_TOTAL_EXCEEDS_LIMIT = "ERR_API_200009";

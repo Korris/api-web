@@ -277,6 +277,11 @@ public static class Error
     /// </summary>
     public const string E308 = "E308";
 
+    /// <summary>
+    /// This user not permission to do this action
+    /// </summary>
+    public const string E309 = "This user not permission to do this action";
+
     #endregion
 
     #region -- E4xx --

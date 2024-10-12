@@ -90,7 +90,7 @@ public partial class PostService : IPostService
         }
         else if (feedDb.UserId != currentUserId)
         {
-            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new BadRequestException(nameof(E309), E309);
         }
         else
         {
@@ -894,7 +894,7 @@ public partial class PostService : IPostService
         }
         if (post.CreatedBy != userId)
         {
-            throw new ForbiddenAccessException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new ForbiddenAccessException(nameof(E309), E309);
         }
 
         var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
@@ -1958,7 +1958,7 @@ public partial class PostService : IPostService
         }
         else if (subPost.UserId != currentUserId)
         {
-            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new BadRequestException(nameof(E309), E309);
         }
         else
         {
@@ -2024,7 +2024,7 @@ public partial class PostService : IPostService
         // Check owner
         if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
         {
-            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new BadRequestException(nameof(E309), E309);
         }
 
         if (fromOrder < toOrder)
@@ -2060,7 +2060,7 @@ public partial class PostService : IPostService
         // Check owner
         if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
         {
-            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new BadRequestException(nameof(E309), E309);
         }
 
         if (fromOrder < toOrder)

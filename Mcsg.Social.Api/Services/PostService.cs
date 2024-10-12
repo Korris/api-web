@@ -72,7 +72,7 @@ public partial class PostService : IPostService
         }
         else if (feedDb.UserId != currentUserId)
         {
-            throw new BadRequestException(ApiErrorCode.USER_NOT_PERMISSION, ApiErrorMessage.USER_NOT_PERMISSION);
+            throw new BadRequestException(nameof(E309), E309);
         }
         else
         {

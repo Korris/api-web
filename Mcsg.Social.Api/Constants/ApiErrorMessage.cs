@@ -10,7 +10,6 @@ public static class ApiErrorMessage
     public const string TAG_NOT_EXIST = "Tag does not exist";
 
     //Post
-    public const string USER_NOT_PERMISSION = "This user not permission to do this action";
     public const string POST_HAS_COMPLETED = "This post has completed, can not add more chapter";
     public const string CHAPTER_NOT_EXIST = "Chapter order {0} not exist!";
     public const string POST_REQ_TOTAL_EXCEEDS_LIMIT = "The total number of items cannot exceed 100";
