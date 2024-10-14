@@ -73,6 +73,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     {
         var res = new SingleResponse();
         request.Tags = request.Content?.ExtractHashtags();
+        request.Content = request.Content.RemoveMaliciousText();
 
         var vr = new PostUpdateV().Validate(request);
         if (!vr.IsValid)

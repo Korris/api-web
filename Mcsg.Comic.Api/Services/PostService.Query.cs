@@ -142,8 +142,8 @@ LIMIT 1
                         post.""Status"", post.""Type"",post.""ViewCount"",post.""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
                         post.""SubPostStr"", 
-                        CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE null END AS ReactionByPostStr,
-                        COUNT(r.""Type"") AS TotalReact,
+                        CASE WHEN COUNT(DISTINCT r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE null END AS ReactionByPostStr,
+                        COUNT(DISTINCT r.""Type"") AS TotalReact,
                         array_agg(DISTINCT tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  

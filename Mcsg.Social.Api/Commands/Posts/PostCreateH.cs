@@ -80,6 +80,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     {
         var res = new SingleResponse();
         request.Tags = request.Content?.ExtractHashtags();
+        request.Content = request.Content.RemoveMaliciousText();
 
         var vr = new PostCreateV().Validate(request);
         if (!vr.IsValid)
