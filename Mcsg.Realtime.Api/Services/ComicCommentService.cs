@@ -102,6 +102,7 @@ public partial class ComicCommentService : IComicCommentService
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
         var order = 0.0f;
+        req.CommentText = req.CommentText.RemoveMaliciousText();
 
         if (req.Type == PostTypes.Post)
         {
@@ -200,6 +201,7 @@ public partial class ComicCommentService : IComicCommentService
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
 
+        req.CommentText = req.CommentText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
@@ -271,6 +273,7 @@ public partial class ComicCommentService : IComicCommentService
     #region Add New Comment
     private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
+        req.CommentText = req.CommentText.RemoveMaliciousText();
         var comment = new ComicPostComment
         {
             AuthorId = author.Id,
@@ -309,7 +312,7 @@ public partial class ComicCommentService : IComicCommentService
         var comment = new ComicSubPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -354,7 +357,7 @@ public partial class ComicCommentService : IComicCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
@@ -391,7 +394,7 @@ public partial class ComicCommentService : IComicCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;

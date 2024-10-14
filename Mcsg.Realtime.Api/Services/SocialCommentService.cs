@@ -88,6 +88,7 @@ public partial class SocialCommentService : ISocialCommentService
         }
         var response = new PostCommentResp();
 
+        req.CommentText = req.CommentText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
         var receiverIds = req.CommentText.ToGuids();
@@ -189,6 +190,7 @@ public partial class SocialCommentService : ISocialCommentService
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
 
+        req.CommentText = req.CommentText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
@@ -230,6 +232,7 @@ public partial class SocialCommentService : ISocialCommentService
         response.AuthorName = authorName;
         response.UserAvatar = userAvatar;
         response.CustomNote = req.CustomNote;
+        response.CommentText = await _businessText.Process(req.CommentText);
 
         return response;
     }
@@ -262,7 +265,7 @@ public partial class SocialCommentService : ISocialCommentService
         var comment = new SocialPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -297,7 +300,7 @@ public partial class SocialCommentService : ISocialCommentService
         var comment = new SocialSubPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -342,7 +345,7 @@ public partial class SocialCommentService : ISocialCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
@@ -379,7 +382,7 @@ public partial class SocialCommentService : ISocialCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;

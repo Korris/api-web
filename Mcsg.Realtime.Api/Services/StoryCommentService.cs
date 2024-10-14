@@ -182,7 +182,7 @@ public partial class StoryCommentService : IStoryCommentService
         }
 
         response.UserAvatar = userAvatar;
-        response.CommentText = await _businessText.Process(req.CommentText);
+        response.CommentText = await _businessText.Process(req.CommentText.RemoveMaliciousText());
         response.CustomNote = req.CustomNote;
 
         return response;
@@ -241,6 +241,7 @@ public partial class StoryCommentService : IStoryCommentService
         response.AuthorName = authorName;
         response.UserAvatar = userAvatar;
         response.CustomNote = req.CustomNote;
+        response.CommentText = req.CommentText.RemoveMaliciousText();
 
         return response;
     }
@@ -273,7 +274,7 @@ public partial class StoryCommentService : IStoryCommentService
         var comment = new StoryPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -308,7 +309,7 @@ public partial class StoryCommentService : IStoryCommentService
         var comment = new StorySubPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -353,7 +354,7 @@ public partial class StoryCommentService : IStoryCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
@@ -390,7 +391,7 @@ public partial class StoryCommentService : IStoryCommentService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.CommentText;
+        comment.Body = req.CommentText.RemoveMaliciousText();
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;

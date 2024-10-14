@@ -6,6 +6,7 @@ namespace Mcsg.Realtime.Api.Services;
 
 using Common.Core.Constants;
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -78,6 +79,7 @@ public partial class SocialReplyService : ISocialReplyService
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
 
+        req.ReplyText = req.ReplyText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
@@ -147,6 +149,7 @@ public partial class SocialReplyService : ISocialReplyService
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
 
+        req.ReplyText = req.ReplyText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
@@ -223,7 +226,7 @@ public partial class SocialReplyService : ISocialReplyService
         var comment = new SocialPostComment
         {
             AuthorId = author.Id,
-            Body = req.ReplyText,
+            Body = req.ReplyText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ParentId = req.ReplyToCommentId,
             ModifiedBy = author.Id,
@@ -261,7 +264,7 @@ public partial class SocialReplyService : ISocialReplyService
         var comment = new SocialSubPostComment
         {
             AuthorId = author.Id,
-            Body = req.ReplyText,
+            Body = req.ReplyText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ParentId = req.ReplyToCommentId,
             ModifiedBy = author.Id,
@@ -309,7 +312,7 @@ public partial class SocialReplyService : ISocialReplyService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.ReplyText;
+        comment.Body = req.ReplyText.RemoveMaliciousText();
         comment.ParentId = req.ReplyToCommentId;
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
@@ -349,7 +352,7 @@ public partial class SocialReplyService : ISocialReplyService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
-        comment.Body = req.ReplyText;
+        comment.Body = req.ReplyText.RemoveMaliciousText();
         comment.ParentId = req.ReplyToCommentId;
         comment.ModifiedBy = author.Id;
         comment.ModifiedOn = DateTime.UtcNow;
