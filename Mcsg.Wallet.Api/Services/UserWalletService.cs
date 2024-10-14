@@ -164,15 +164,31 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             query = query.Where(x => x.CreatedOn <= endOfDayUtc);
         }
 
+        var listTransferTransactionTypes = new List<TransferTransactionType>();
         if (request.TransactionType != null && request.TransactionType.Count > 0)
         {
-            var listTypes = new List<TransactionType>();
             foreach (var type in request.TransactionType)
             {
-                var transactionType = type.ToEnum(TransactionType.Transfer);
-                listTypes.Add(transactionType);
+                var transactionStatus = type.ToEnum(TransferTransactionType.ReceiveBC);
+                listTransferTransactionTypes.Add(transactionStatus);
             }
-            query = query.Where(x => listTypes.Contains(x.Type));
+        }
+
+        if (listTransferTransactionTypes.Count > 0)
+        {
+            query = query.Where(x =>
+                (listTransferTransactionTypes.Contains(TransferTransactionType.ReceiveDonateBC) &&
+                 x.Type == TransactionType.Donate && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId) ||
+
+                (listTransferTransactionTypes.Contains(TransferTransactionType.DonateBC) &&
+                 x.Type == TransactionType.Donate && x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId) ||
+
+                (listTransferTransactionTypes.Contains(TransferTransactionType.ReceiveBC) &&
+                 x.Type == TransactionType.Transfer && x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId) ||
+
+                (listTransferTransactionTypes.Contains(TransferTransactionType.SendBC) &&
+                 x.Type == TransactionType.Transfer && x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
+            );
         }
 
         if (request.TransactionStatus != null && request.TransactionStatus.Count > 0)
@@ -224,9 +240,10 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             var toUserOfProto = item.ToUserId != null ? userInfo!.GetValueOrDefault(item.ToUserId.ToString()) : null;
             var fromUserOfProto = item.FromUserId != null ? userInfo!.GetValueOrDefault(item.FromUserId.ToString()) : null;
-            item.ToUser = toUserOfProto?.UserName;
-            item.FromUser = fromUserOfProto?.UserName;
+            item.ToUser = toUserOfProto?.ProfileName;
+            item.FromUser = fromUserOfProto?.ProfileName;
             item.ToUserAvatar = toUserOfProto?.UserAvatar;
+            item.ProfileName = toUserOfProto?.ProfileName + "";
             item.FromUserAvatar = fromUserOfProto?.UserAvatar;
         }
 
@@ -301,8 +318,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             var toUserOfProto = data.ToUserId != null ? userInfo.GetValueOrDefault(data.ToUserId.ToString()) : null;
             var fromUserOfProto = data.FromUserId != null ? userInfo.GetValueOrDefault(data.FromUserId.ToString()) : null;
-            data.ToUser = toUserOfProto?.UserName;
-            data.FromUser = fromUserOfProto?.UserName;
+            data.ToUser = toUserOfProto?.ProfileName;
+            data.FromUser = fromUserOfProto?.ProfileName;
             data.ToUserAvatar = toUserOfProto?.UserAvatar;
             data.FromUserAvatar = fromUserOfProto?.UserAvatar;
         }
@@ -396,8 +413,8 @@ public class UserWalletService : BaseSettingS, IUserWalletService
         {
             var toUserOfProto = item.ToUserId != null ? userInfo.GetValueOrDefault(item.ToUserId.ToString()) : null;
             var fromUserOfProto = item.FromUserId != null ? userInfo.GetValueOrDefault(item.FromUserId.ToString()) : null;
-            item.ToUser = toUserOfProto?.UserName;
-            item.FromUser = fromUserOfProto?.UserName;
+            item.ToUser = toUserOfProto?.ProfileName;
+            item.FromUser = fromUserOfProto?.ProfileName;
             item.ToUserAvatar = toUserOfProto?.UserAvatar;
             item.FromUserAvatar = fromUserOfProto?.UserAvatar;
         }
