@@ -133,20 +133,24 @@ public partial class NotificationService : INotificationService
         if (listData.Any())
         {
             var data = await GetTransactionFromProto(listData.Select(p => p.EntityId).Distinct().ToList());
-            foreach (var item in listData)
+            if (data.Any())
             {
-                var transactionData = data.GetValueOrDefault(item.EntityId.ToString());
-                var amount = transactionData.Amount.ToString("N0");
-                if (item.NotificationEntityType == NotificationEntityType.DonateTransaction)
+                foreach (var item in listData)
                 {
-                    item.Message = string.Format(NotificationContent.DonateTransaction, item.ActorName);
+                    var transactionData = data.GetValueOrDefault(item.EntityId.ToString());
+                    var amount = transactionData.Amount.ToString("N0");
+                    if (item.NotificationEntityType == NotificationEntityType.DonateTransaction)
+                    {
+                        item.Message = string.Format(NotificationContent.DonateTransaction, item.ActorName);
+                    }
+                    else
+                    {
+                        item.Message = string.Format(NotificationContent.TransferTransaction, amount, item.ActorName);
+                    }
+                    item.Amount = amount;
+                    item.ReferenceNumber = transactionData.ReferenceNumber;
                 }
-                else
-                {
-                    item.Message = string.Format(NotificationContent.TransferTransaction, amount, item.ActorName);
-                }
-                item.Amount = amount;
-                item.ReferenceNumber = transactionData.ReferenceNumber;
+
             }
         }
     }

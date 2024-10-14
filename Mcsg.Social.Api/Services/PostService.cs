@@ -657,30 +657,62 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = $@"SELECT sp.""HashId""
-                               FROM social.""SocialSubPosts"" sp
-                               JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
-                               JOIN social.""SocialResources"" r on sp.""Id"" = r.""SubPostId""
-                               WHERE p.""IsDelete"" = false
-                               AND sp.""IsDelete"" = false
-                               [QueryByType]
-                               [IgnoreQuery]
-                               AND sp.""Order"" = (
-                                                    SELECT MIN(sp_inner.""Order"")
-                                                    FROM social.""SocialSubPosts"" sp_inner
-                                                    WHERE sp_inner.""PostId"" = sp.""PostId""
-                                                    AND sp_inner.""IsDelete"" = false
-                                                    )
-                               ORDER BY RANDOM()
-                               LIMIT @PageSize";
-            query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
-            query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
-            return await _postReportRepository.Connection.QueryAsync<string>(query, new
-            {
-                PostRandomIds = input.PostRandomIds?.ToList(),
-                PageSize = input.AmountItem
-            });
+            var results = new List<string>();
+            int daysToCheck = 0; // Number of days to check
+            DateTime? targetDate = null;
 
+            while (results.Count < input.AmountItem) // Limit check to 30 days
+            {
+                var query = $@"SELECT sp.""HashId""
+                        FROM social.""SocialSubPosts"" sp
+                        JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
+                        JOIN social.""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
+                        WHERE p.""IsDelete"" = false
+                        AND sp.""IsDelete"" = false
+                        AND p.""CreatedOn""::date = @TargetDate
+                        [QueryByType]
+                        [IgnoreQuery]
+                        AND sp.""Order"" = (
+                                             SELECT MIN(sp_inner.""Order"")
+                                             FROM social.""SocialSubPosts"" sp_inner
+                                             WHERE sp_inner.""PostId"" = sp.""PostId""
+                                             AND sp_inner.""IsDelete"" = false
+                                             )
+                        ORDER BY RANDOM()
+                        LIMIT @PageSize";
+
+                if (targetDate.HasValue)
+                {
+                    targetDate = targetDate.Value.Date.AddDays(-1);
+                }
+                else
+                {
+                    var lastHashId = input.PostRandomIds?.LastOrDefault();
+                    var isDataFromSubPost = await _context.SocialSubPostAvailable.AnyAsync(p => p.HashId == lastHashId);
+                    var tableName = isDataFromSubPost ? @"social.""SocialSubPosts""" : @"social.""SocialPosts""";
+                    var createdOnQuery = $@"SELECT sp.""CreatedOn""
+                                            FROM {tableName} sp 
+                                            WHERE sp.""HashId"" = @LastHashId";
+
+                    targetDate = await _postReportRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new
+                    {
+                        LastHashId = lastHashId
+                    });
+                }
+
+                query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
+                query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
+
+                var subPostIds = await _postReportRepository.Connection.QueryAsync<string>(query, new
+                {
+                    PostRandomIds = input.PostRandomIds?.ToList(),
+                    PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
+                    TargetDate = targetDate.Value // Ensure a non-null value is used
+                });
+
+                results.AddRange(subPostIds); // Add new results to the list
+            }
+            return results.Take(input.AmountItem); // Return the required amount
         }
         catch (Exception ex)
         {
