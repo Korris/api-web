@@ -200,8 +200,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                         Order = file.Order
                     };
 
-                    //resource.Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
-
                     resourceResponse.Add(resource);
                 }
             }

@@ -210,8 +210,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
                         SubPostHashId = subPost.HashId,
                     };
 
-                    resource.Url = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
-
                     resourceResponse.Add(resource);
                 }
             }
