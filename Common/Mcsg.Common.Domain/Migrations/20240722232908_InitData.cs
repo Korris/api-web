@@ -396,10 +396,13 @@ namespace Mcsg.Common.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
-                    Key = table.Column<string>(type: "text", nullable: false),
+                    Key = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
+                    DataType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Group = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MicroService = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -906,6 +909,43 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserBlocks",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserId1 = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId2 = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Reason = table.Column<string>(type: "text", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserBlocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserBlocks_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserBlocks_Users_UserId2",
+                        column: x => x.UserId2,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClaims",
                 schema: "identity",
                 columns: table => new
@@ -1325,6 +1365,39 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ComicPostShares",
+                schema: "comic",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComicPostShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComicPostShares_ComicPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "comic",
+                        principalTable: "ComicPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ComicPostShares_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ComicSubPosts",
                 schema: "comic",
                 columns: table => new
@@ -1609,6 +1682,39 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SocialPostShares",
+                schema: "social",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SocialPostShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SocialPostShares_SocialPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "social",
+                        principalTable: "SocialPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SocialPostShares_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SocialSubPosts",
                 schema: "social",
                 columns: table => new
@@ -1814,6 +1920,39 @@ namespace Mcsg.Common.Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StoryPostReports_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoryPostShares",
+                schema: "story",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoryPostShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StoryPostShares_StoryPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "story",
+                        principalTable: "StoryPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StoryPostShares_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -2876,6 +3015,18 @@ namespace Mcsg.Common.Domain.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComicPostShares_PostId",
+                schema: "comic",
+                table: "ComicPostShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComicPostShares_UserId",
+                schema: "comic",
+                table: "ComicPostShares",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ComicResources_AuthorId",
                 schema: "comic",
                 table: "ComicResources",
@@ -3132,6 +3283,18 @@ namespace Mcsg.Common.Domain.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SocialPostShares_PostId",
+                schema: "social",
+                table: "SocialPostShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SocialPostShares_UserId",
+                schema: "social",
+                table: "SocialPostShares",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SocialResources_AuthorId",
                 schema: "social",
                 table: "SocialResources",
@@ -3322,6 +3485,18 @@ namespace Mcsg.Common.Domain.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_StoryPostShares_PostId",
+                schema: "story",
+                table: "StoryPostShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StoryPostShares_UserId",
+                schema: "story",
+                table: "StoryPostShares",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StoryResources_AuthorId",
                 schema: "story",
                 table: "StoryResources",
@@ -3475,6 +3650,18 @@ namespace Mcsg.Common.Domain.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserBlocks_UserId1",
+                schema: "identity",
+                table: "UserBlocks",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBlocks_UserId2",
+                schema: "identity",
+                table: "UserBlocks",
+                column: "UserId2");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
                 schema: "identity",
                 table: "UserClaims",
@@ -3604,6 +3791,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
+                name: "ComicPostShares",
+                schema: "comic");
+
+            migrationBuilder.DropTable(
                 name: "ComicSubPostCommentReactions",
                 schema: "comic");
 
@@ -3694,6 +3885,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "social");
 
             migrationBuilder.DropTable(
+                name: "SocialPostShares",
+                schema: "social");
+
+            migrationBuilder.DropTable(
                 name: "SocialSubPostCommentReactions",
                 schema: "social");
 
@@ -3734,6 +3929,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "story");
 
             migrationBuilder.DropTable(
+                name: "StoryPostShares",
+                schema: "story");
+
+            migrationBuilder.DropTable(
                 name: "StorySubPostCommentReactions",
                 schema: "story");
 
@@ -3755,6 +3954,10 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "TagFavorites");
+
+            migrationBuilder.DropTable(
+                name: "UserBlocks",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserClaims",

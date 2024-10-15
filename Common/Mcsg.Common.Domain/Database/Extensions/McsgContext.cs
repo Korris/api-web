@@ -93,6 +93,8 @@ partial class McsgContext
 
     public IQueryable<ComicPostReport> ComicPostReportAvailable => ComicPostReports.Where(p => !p.IsDelete);
 
+    public IQueryable<ComicPostShare> ComicPostShareAvailable => ComicPostShares.Where(p => !p.IsDelete);
+
     public IQueryable<ComicResource> ComicResourceAvailable => ComicResources.Where(p => !p.IsDelete);
 
     public IQueryable<ComicSubPost> ComicSubPostAvailable => ComicSubPosts.Where(p => !p.IsDelete);
@@ -161,6 +163,8 @@ partial class McsgContext
 
     public IQueryable<SocialPostReport> SocialPostReportAvailable => SocialPostReports.Where(p => !p.IsDelete);
 
+    public IQueryable<SocialPostShare> SocialPostShareAvailable => SocialPostShares.Where(p => !p.IsDelete);
+
     public IQueryable<SocialResource> SocialResourceAvailable => SocialResources.Where(p => !p.IsDelete);
 
     public IQueryable<SocialSubPost> SocialSubPostAvailable => SocialSubPosts.Where(p => !p.IsDelete);
@@ -191,6 +195,8 @@ partial class McsgContext
 
     public IQueryable<StoryPostReport> StoryPostReportAvailable => StoryPostReports.Where(p => !p.IsDelete);
 
+    public IQueryable<StoryPostShare> StoryPostShareAvailable => StoryPostShares.Where(p => !p.IsDelete);
+
     public IQueryable<StoryResource> StoryResourceAvailable => StoryResources.Where(p => !p.IsDelete);
 
     public IQueryable<StorySubPost> StorySubPostAvailable => StorySubPosts.Where(p => !p.IsDelete);
@@ -214,6 +220,8 @@ partial class McsgContext
     public IQueryable<TagFavorite> TagFavoriteAvailable => TagFavorites.Where(p => !p.IsDelete);
 
     public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
+
+    public IQueryable<UserBlock> UserBlockAvailable => UserBlocks.Where(p => !p.IsDelete);
 
     //public IQueryable<UserClaim> UserClaimAvailable => UserClaims;
 

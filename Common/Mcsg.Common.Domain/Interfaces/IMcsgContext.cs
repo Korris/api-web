@@ -82,6 +82,8 @@ public interface IMcsgContext
 
     DbSet<ComicPostReport> ComicPostReports { get; set; }
 
+    DbSet<ComicPostShare> ComicPostShares { get; set; }
+
     DbSet<ComicResource> ComicResources { get; set; }
 
     DbSet<ComicSubPost> ComicSubPosts { get; set; }
@@ -150,6 +152,8 @@ public interface IMcsgContext
 
     DbSet<SocialPostReport> SocialPostReports { get; set; }
 
+    DbSet<SocialPostShare> SocialPostShares { get; set; }
+
     DbSet<SocialResource> SocialResources { get; set; }
 
     DbSet<SocialSubPost> SocialSubPosts { get; set; }
@@ -180,6 +184,8 @@ public interface IMcsgContext
 
     DbSet<StoryPostReport> StoryPostReports { get; set; }
 
+    DbSet<StoryPostShare> StoryPostShares { get; set; }
+
     DbSet<StoryResource> StoryResources { get; set; }
 
     DbSet<StorySubPost> StorySubPosts { get; set; }
@@ -203,6 +209,8 @@ public interface IMcsgContext
     DbSet<TagFavorite> TagFavorites { get; set; }
 
     DbSet<User> Users { get; set; }
+
+    DbSet<UserBlock> UserBlocks { get; set; }
 
     //DbSet<UserClaim> UserClaims { get; set; }
 
@@ -251,6 +259,8 @@ public interface IMcsgContext
     IQueryable<ComicPostReaction> ComicPostReactionAvailable { get; }
 
     IQueryable<ComicPostReport> ComicPostReportAvailable { get; }
+
+    IQueryable<ComicPostShare> ComicPostShareAvailable { get; }
 
     IQueryable<ComicResource> ComicResourceAvailable { get; }
 
@@ -320,6 +330,8 @@ public interface IMcsgContext
 
     IQueryable<SocialPostReport> SocialPostReportAvailable { get; }
 
+    IQueryable<SocialPostShare> SocialPostShareAvailable { get; }
+
     IQueryable<SocialResource> SocialResourceAvailable { get; }
 
     IQueryable<SocialSubPost> SocialSubPostAvailable { get; }
@@ -350,6 +362,8 @@ public interface IMcsgContext
 
     IQueryable<StoryPostReport> StoryPostReportAvailable { get; }
 
+    IQueryable<StoryPostShare> StoryPostShareAvailable { get; }
+
     IQueryable<StoryResource> StoryResourceAvailable { get; }
 
     IQueryable<StorySubPost> StorySubPostAvailable { get; }
@@ -371,6 +385,8 @@ public interface IMcsgContext
     IQueryable<TagFavorite> TagFavoriteAvailable { get; }
 
     IQueryable<User> UserAvailable { get; }
+
+    IQueryable<UserBlock> UserBlockAvailable { get; }
 
     //IQueryable<UserClaim> UserClaimAvailable { get; }
 
