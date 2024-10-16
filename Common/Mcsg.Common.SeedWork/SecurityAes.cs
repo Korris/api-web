@@ -140,10 +140,10 @@ public class SecurityAes : ISecurityAes
     }
 
     /// <summary>
-    /// Encrypt
+    /// Encrypts the given plain text using AES encryption with a random key and IV (initialization vector).
     /// </summary>
-    /// <param name="plainText">Plain text</param>
-    /// <returns>Return the result</returns>
+    /// <param name="plainText">The plain text to encrypt.</param>
+    /// <returns>Returns the encrypted text concatenated with the key and IV.</returns>
     public static string Encrypt(string plainText)
     {
         var keyS = 16.GetRandomString();
@@ -174,10 +174,10 @@ public class SecurityAes : ISecurityAes
     }
 
     /// <summary>
-    /// Decrypt
+    /// Decrypts the given cipher text using the embedded key and IV (initialization vector).
     /// </summary>
-    /// <param name="cipherText">Cipher text</param>
-    /// <returns>Return the result</returns>
+    /// <param name="cipherText">The cipher text to decrypt, which should include the key and IV.</param>
+    /// <returns>Returns the decrypted string or null if decryption fails.</returns>
     public static string? Decrypt(string? cipherText)
     {
         if (string.IsNullOrWhiteSpace(cipherText))
@@ -185,16 +185,63 @@ public class SecurityAes : ISecurityAes
             return null;
         }
 
-        var ivS = cipherText.Substring(cipherText.Length - 16, 16);
-        var ivB = Encoding.UTF8.GetBytes(ivS);
+        try
+        {
+            var ivS = cipherText.Substring(cipherText.Length - 16, 16);
+            var ivB = Encoding.UTF8.GetBytes(ivS);
 
-        var keyS = cipherText.Substring(cipherText.Length - 32, 16);
-        var keyB = Encoding.UTF8.GetBytes(keyS);
+            var keyS = cipherText.Substring(cipherText.Length - 32, 16);
+            var keyB = Encoding.UTF8.GetBytes(keyS);
 
-        var data = cipherText.Substring(0, cipherText.Length - 32);
-        var encrypted = Convert.FromBase64String(data);
+            var data = cipherText.Substring(0, cipherText.Length - 32);
+            var encrypted = Convert.FromBase64String(data);
 
-        return DecryptStringFromBytes(encrypted, keyB, ivB);
+            return DecryptStringFromBytes(encrypted, keyB, ivB);
+        }
+        catch { }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Validates the encrypted cipher text by decrypting it, extracting the timestamp, and comparing it with the provided plain text and time validity.
+    /// </summary>
+    /// <param name="cipherText">The encrypted cipher text to be validated.</param>
+    /// <param name="plainText">The expected plain text for comparison after decryption.</param>
+    /// <param name="validSecond">The time in seconds within which the validation should pass, default is 60 seconds.</param>
+    /// <returns>Returns true if validation is successful and the timestamp is within the valid time frame; otherwise, false.</returns>
+    public static bool Validate(string? cipherText, string? plainText, ushort validSecond = 60)
+    {
+        // Check if cipherText or plainText is null or empty.
+        if (string.IsNullOrWhiteSpace(cipherText) || string.IsNullOrWhiteSpace(plainText))
+        {
+            return false;
+        }
+
+        // Decrypt the cipher text.
+        var decryptedText = Decrypt(cipherText);
+
+        // Check if decryption was successful and if the decrypted text is not empty.
+        if (string.IsNullOrWhiteSpace(decryptedText))
+        {
+            return false;
+        }
+
+        // Split the decrypted text by semicolon and check if it has at least two components.
+        var parts = decryptedText.Split(';');
+        if (parts.Length < 2 || !long.TryParse(parts[1], out long unixTimestamp))
+        {
+            return false;
+        }
+
+        // Convert the Unix timestamp to a DateTime object in UTC.
+        var dateTimeFromUnix = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).UtcDateTime;
+
+        // Calculate the time difference between now (UTC) and the timestamp.
+        var timeDifference = DateTime.UtcNow - dateTimeFromUnix;
+
+        // Validate if the timestamp is within the valid time frame and if the decrypted text matches the expected plainText.
+        return timeDifference.TotalSeconds <= validSecond && parts[0] == plainText;
     }
 
     /// <summary>

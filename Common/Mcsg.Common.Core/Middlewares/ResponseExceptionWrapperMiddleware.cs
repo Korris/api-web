@@ -7,6 +7,7 @@ using System.Text.Json.Nodes;
 namespace Mcsg.Common.Core.Middlewares;
 
 using Dtos;
+using SeedWork;
 using SeedWork.Exceptions;
 
 /// <summary>
@@ -36,6 +37,21 @@ public class ResponseExceptionWrapperMiddleware
         if (IsGrpcRequest(context))
         {
             await _next(context);
+            return;
+        }
+
+        // Skip the middleware logic for WebSocket requests
+        if (IsWebsocketRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Skip the middleware logic for XApiKey requests
+        if (!IsAuthenticated(context))
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await context.Response.WriteAsJsonAsync(new { message = "Oops server error..." });
             return;
         }
 
@@ -146,6 +162,9 @@ public class ResponseExceptionWrapperMiddleware
         await HandleRequestAsync(context, responseBody);
     }
 
+    /// <summary>
+    /// Wraps and formats the HTTP response body into a JSON object
+    /// </summary>
     private async Task HandleRequestAsync(HttpContext context, object body)
     {
         var statusCode = context.Response.StatusCode;
@@ -175,14 +194,42 @@ public class ResponseExceptionWrapperMiddleware
     /// <summary>
     /// Utility to detect if the request is a gRPC request
     /// </summary>
+    /// <param name="context">HTTP context</param>
+    /// <returns>Return the result</returns>
     private bool IsGrpcRequest(HttpContext context)
     {
         return context.Request.ContentType == "application/grpc";
     }
 
     /// <summary>
+    /// Utility to detect if the request is a WebSocket request
+    /// </summary>
+    /// <param name="context">HTTP context</param>
+    /// <returns>Return the result</returns>
+    private bool IsWebsocketRequest(HttpContext context)
+    {
+        return context.Request.Headers["Upgrade"] == "websocket";
+    }
+
+    /// <summary>
+    /// Utility to detect if the request is a xApiKey request
+    /// </summary>
+    /// <param name="context">HTTP context</param>
+    /// <returns>Return the result</returns>
+    private bool IsAuthenticated(HttpContext context)
+    {
+        var r = context.Request;
+        var skipPath = r.Path == "/config" || r.Path == "/health";
+        r.Headers.TryGetValue("x-api-key", out var xApiKey);
+        var ok = SecurityAes.Validate(xApiKey, SettingBase.XApiKey);
+        return ok || SettingBase.DevelopmentMode || skipPath;
+    }
+
+    /// <summary>
     /// Skip the middleware for certain requests like Swagger or HTTP OPTIONS
     /// </summary>
+    /// <param name="context">HTTP context</param>
+    /// <returns>Return the result</returns>
     private bool SkipApiResponseMiddleware(HttpContext context)
     {
         return IsSwagger(context) || context.Request.Method == HttpMethods.Options;
@@ -191,6 +238,8 @@ public class ResponseExceptionWrapperMiddleware
     /// <summary>
     /// Check if the request is for Swagger documentation
     /// </summary>
+    /// <param name="context">HTTP context</param>
+    /// <returns>Return the result</returns>
     private bool IsSwagger(HttpContext context)
     {
         return context.Request.Path.StartsWithSegments("/swagger");

@@ -179,13 +179,16 @@ public class Program
                 .ToList();
 
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
-            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out var ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
+            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
 
             var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
             st.LoadRpcUrl(dic, st.IsLocal);
         }
+
+        Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
         #endregion
 

@@ -171,11 +171,14 @@ public class Program
                 .ToList();
 
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>("string") ?? "";
 
             var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
             st.LoadRpcUrl(dic, st.IsLocal);
         }
+
+        Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
         #endregion
 

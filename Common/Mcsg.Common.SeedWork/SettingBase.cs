@@ -288,6 +288,20 @@ public class SettingBase : ISettingBase
 
     #endregion
 
+    #region -- Properties --
+
+    /// <summary>
+    /// X API key
+    /// </summary>
+    public static string? XApiKey { get; set; }
+
+    /// <summary>
+    /// Development mode
+    /// </summary>
+    public static bool DevelopmentMode { get; set; }
+
+    #endregion
+
     #region -- Fields --
 
     /// <summary>
