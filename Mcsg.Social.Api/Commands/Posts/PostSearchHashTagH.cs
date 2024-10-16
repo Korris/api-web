@@ -166,7 +166,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
                 foreach (var item in dataSocial)
                 {
-                    item.IsCensor = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                    item.IsCensored = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive;
                 }
 
@@ -193,7 +193,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
                 foreach (var item in dataComic)
                 {
-                    item.IsCensor = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
+                    item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive;
                 }
 
@@ -220,7 +220,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
                 foreach (var item in dataStory)
                 {
-                    item.IsCensor = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
+                    item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive;
                 }
 

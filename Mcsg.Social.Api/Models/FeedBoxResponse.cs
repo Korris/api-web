@@ -58,6 +58,6 @@ public class FeedBox
     public bool HideAll => (Hide & HideOption.All) == HideOption.All;
     public PostStatus Status { get; set; }
     public bool IsArchived => Status == PostStatus.Inactive;
-    public bool IsCensor { get; set; }
+    public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
 }

@@ -23,5 +23,5 @@ public class SubPostBasic
     public string CreatorNote { get; set; }
     public bool IsExclusive { get; set; }
     public bool IsArchived => Status == PostStatus.Inactive;
-    public bool IsCensor { get; set; }
+    public bool IsCensored { get; set; }
 }
