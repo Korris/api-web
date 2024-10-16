@@ -139,7 +139,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             ProfileId = profileId,
             UserAvatar = userAvatar,
             Rewards = rewards,
-            CustomNote = ett.CustomNote
+            CustomNote = ett.CustomNote,
+            MetaData = request.MetaData
         };
 
         await _context.SaveChangesAsync(default);
