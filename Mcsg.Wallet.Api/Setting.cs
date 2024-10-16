@@ -48,6 +48,11 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// Transaction fee as percentage
+    /// </summary>
+    public double TransactionChargeFee { get; set; }
+
     #endregion
 
     #region -- Methods --

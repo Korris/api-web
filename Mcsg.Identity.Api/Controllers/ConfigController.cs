@@ -144,6 +144,11 @@ public class ConfigController : ControllerBase
         {
             res.SetSuccess(k.ToCamelCase(), v == "true");
         }
+        k = "TransactionChargeFee";
+        if (dic.TryGetValue(k, out v))
+        {
+            res.SetSuccess(k.ToCamelCase(), v.Cast<double?>("double") ?? 0);
+        }
 
         #endregion
 

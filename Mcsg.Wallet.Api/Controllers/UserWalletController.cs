@@ -17,10 +17,12 @@ public class UserWalletController : ControllerBase
     /// <summary>
     /// Initialize
     /// </summary>
+    /// <param name="setting"></param>
     /// <param name="userWalletService"></param>
     /// <param name="zaloPayService"></param>
-    public UserWalletController(IUserWalletService userWalletService, IZaloPayService zaloPayService)
+    public UserWalletController(ISetting setting, IUserWalletService userWalletService, IZaloPayService zaloPayService)
     {
+        _setting = setting;
         _userWalletService = userWalletService;
         _zaloPayService = zaloPayService;
     }
@@ -193,9 +195,21 @@ public class UserWalletController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("transaction-charge/{amount}"), Authorize]
+    public IActionResult CalculateTransactionChargeFee(double amount)
+    {
+        var res = Math.Round(amount * _setting.TransactionChargeFee, 2);
+        return Ok(res);
+    }
+
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Setting
+    /// </summary>
+    private readonly ISetting _setting;
 
     /// <summary>
     /// https://vietqr.io/paymentRequests/#operation/paymentLink

@@ -159,6 +159,7 @@ public class Program
 
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
             if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>("string") ?? "";
+            if (set.TryGetValue(nameof(st.TransactionChargeFee), out ett)) st.TransactionChargeFee = ett.Value.Cast<double?>("double") ?? 0;
 
             var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));

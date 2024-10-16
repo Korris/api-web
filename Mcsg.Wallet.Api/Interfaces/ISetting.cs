@@ -44,5 +44,10 @@ public interface ISetting : ISettingBase
     /// </summary>
     bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// Transaction fee as percentage
+    /// </summary>
+    public double TransactionChargeFee { get; set; }
+
     #endregion
 }
