@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Services;
@@ -33,6 +34,7 @@ public partial class SocialReplyService : ISocialReplyService
     private readonly IMentionService _mentionService;
     private readonly IMapper _mapper;
     private IConfiguration _configuration;
+    private readonly IMcsgContext _context;
 
     public SocialReplyService(ICurrentUserService currentUserService,
         IRepository<SocialPost> postRepository,
@@ -47,7 +49,8 @@ public partial class SocialReplyService : ISocialReplyService
         IMapper mapper,
         ISetting setting,
         IBusinessText businessText,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IMcsgContext context)
     {
         _currentUserService = currentUserService;
         _postRepository = postRepository;
@@ -63,6 +66,7 @@ public partial class SocialReplyService : ISocialReplyService
         _setting = setting;
         _configuration = configuration;
         _businessText = businessText;
+        _context = context;
     }
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
@@ -148,6 +152,28 @@ public partial class SocialReplyService : ISocialReplyService
         {
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
+
+        #region -- Validate on server --
+        // Commnent
+        var ett = req.Type == "post"
+                ? await _context.SocialPostCommentAvailable
+                        .Where(p => p.Id == req.ReplyCommentId)
+                        .Select(p => new { p.CreatedBy })
+                        .FirstOrDefaultAsync()
+                : await _context.SocialSubPostCommentAvailable
+                        .Where(p => p.Id == req.ReplyCommentId)
+                        .Select(p => new { p.CreatedBy })
+                        .FirstOrDefaultAsync();
+
+        if (ett == null)
+        {
+            throw new NotFoundException(E204, M204);
+        }
+        if (ett.CreatedBy != user.UserId)
+        {
+            throw new ForbiddenAccessException(nameof(E309), E309);
+        }
+        #endregion
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";

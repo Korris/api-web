@@ -200,6 +200,28 @@ public partial class StoryCommentService : IStoryCommentService
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
 
+        #region -- Validate on server --
+        // Commnent
+        var ett = req.Type == "post"
+                ? await _context.StoryPostCommentAvailable
+                        .Where(p => p.Id == req.CommentId)
+                        .Select(p => new { p.CreatedBy })
+                        .FirstOrDefaultAsync()
+                : await _context.StorySubPostCommentAvailable
+                        .Where(p => p.Id == req.CommentId)
+                        .Select(p => new { p.CreatedBy })
+                        .FirstOrDefaultAsync();
+
+        if (ett == null)
+        {
+            throw new NotFoundException(E204, M204);
+        }
+        if (ett.CreatedBy != user.UserId)
+        {
+            throw new ForbiddenAccessException(nameof(E309), E309);
+        }
+        #endregion
+
         var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
         var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
