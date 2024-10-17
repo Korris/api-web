@@ -415,9 +415,9 @@ public class PremiumService : BaseSettingS, IPremiumService
     /// <param name="userId">UserId</param>
     /// <param name="premiumDate">PremiumDate</param>
     /// <returns>Return the result</returns>
-    private async Task<BaseRsp> UpdatePremiumDate(Guid userId, DateTime premiumDate)
+    private async Task<UserUpdateRsp> UpdatePremiumDate(Guid userId, DateTime premiumDate)
     {
-        var res = new BaseRsp { Success = true };
+        var res = new UserUpdateRsp { Success = true };
 
         try
         {

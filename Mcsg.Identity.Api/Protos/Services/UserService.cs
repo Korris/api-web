@@ -16,9 +16,9 @@ public class UserService : UserProto.UserProtoBase
     /// <param name="request">Request</param>
     /// <param name="context">Context</param>
     /// <returns>Return the result</returns>
-    public override async Task<BaseRsp> Update(UserUpdateReq request, ServerCallContext context)
+    public override async Task<UserUpdateRsp> Update(UserUpdateReq request, ServerCallContext context)
     {
-        var res = new BaseRsp();
+        var res = new UserUpdateRsp();
 
         try
         {
@@ -46,9 +46,15 @@ public class UserService : UserProto.UserProtoBase
         return res;
     }
 
-    public override async Task<BaseRsp> GetUserInfo(UserGetReq request, ServerCallContext context)
+    /// <summary>
+    /// Search
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <param name="context">Context</param>
+    /// <returns>Return the result</returns>
+    public override async Task<UserSearchRsp> Search(UserSearchReq request, ServerCallContext context)
     {
-        var res = new BaseRsp();
+        var res = new UserSearchRsp();
 
         try
         {
@@ -60,8 +66,9 @@ public class UserService : UserProto.UserProtoBase
                     UserName = p.UserName,
                     ProfileName = p.ProfileName,
                     UserAvatar = p.Avatar + "",
+                    Email = p.Email + "",
                 }).ToListAsync();
-            res.Users.AddRange(listUsers);
+            res.Items.AddRange(listUsers);
         }
         catch (Exception ex)
         {

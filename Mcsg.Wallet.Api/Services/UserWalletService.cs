@@ -1,4 +1,5 @@
-﻿using HD.ZaloPay.Helper.Crypto;
+﻿using Grpc.Net.Client;
+using HD.ZaloPay.Helper.Crypto;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Data;
@@ -15,7 +16,6 @@ using Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
-using Grpc.Net.Client;
 using Identity.Api.Protos;
 using Interfaces;
 using Lib.Common.Enums;
@@ -953,12 +953,12 @@ public class UserWalletService : BaseSettingS, IUserWalletService
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Identity!);
 
             var client = new UserProto.UserProtoClient(channel);
-            var request = new UserGetReq
+            var request = new UserSearchReq
             {
                 UserUid = string.Join(';', userIds.Where(id => id != null).Select(id => id.ToString()))
             };
-            var rsp = await client.GetUserInfoAsync(request);
-            return rsp.Users.ToDictionary(p => p.UserId, p => p);
+            var rsp = await client.SearchAsync(request);
+            return rsp.Items.ToDictionary(p => p.UserId, p => p);
         }
         catch (Exception ex)
         {
