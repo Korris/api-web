@@ -8,6 +8,7 @@ namespace Mcsg.Function.Job;
 
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -168,11 +169,22 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
 
-            st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
-            st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out var ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         st.LogInfor();
         #endregion

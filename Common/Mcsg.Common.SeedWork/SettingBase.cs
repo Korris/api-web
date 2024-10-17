@@ -213,30 +213,30 @@ public class SettingBase : ISettingBase
         string? val;
 
         #region -- Api.Admin --
-        if (dic.TryGetValue("HostAnalyticAdmin", out val)) Api.Admin.Analytic = val;
-        if (dic.TryGetValue("HostComicAdmin", out val)) Api.Admin.Comic = val;
-        if (dic.TryGetValue("HostIdentityAdmin", out val)) Api.Admin.Identity = val;
-        if (dic.TryGetValue("HostSocialAdmin", out val)) Api.Admin.Social = val;
-        if (dic.TryGetValue("HostStoryAdmin", out val)) Api.Admin.Story = val;
-        if (dic.TryGetValue("HostSyncAdmin", out val)) Api.Admin.Sync = val;
-        if (dic.TryGetValue("HostCloneSiteAdmin", out val)) Api.Admin.CloneSite = val;
+        if (dic.TryGetValue("ApiAnalyticAdmin", out val)) Api.Admin.Analytic = val;
+        if (dic.TryGetValue("ApiComicAdmin", out val)) Api.Admin.Comic = val;
+        if (dic.TryGetValue("ApiIdentityAdmin", out val)) Api.Admin.Identity = val;
+        if (dic.TryGetValue("ApiSocialAdmin", out val)) Api.Admin.Social = val;
+        if (dic.TryGetValue("ApiStoryAdmin", out val)) Api.Admin.Story = val;
+        if (dic.TryGetValue("ApiSyncAdmin", out val)) Api.Admin.Sync = val;
+        if (dic.TryGetValue("ApiCloneSiteAdmin", out val)) Api.Admin.CloneSite = val;
         #endregion
 
         #region -- Api.Mobile --
-        if (dic.TryGetValue("HostComicMobile", out val)) Api.Mobile.Comic = val;
-        if (dic.TryGetValue("HostIdentityMobile", out val)) Api.Mobile.Identity = val;
-        if (dic.TryGetValue("HostSocialMobile", out val)) Api.Mobile.Social = val;
-        if (dic.TryGetValue("HostStoryMobile", out val)) Api.Mobile.Story = val;
+        if (dic.TryGetValue("ApiComicMobile", out val)) Api.Mobile.Comic = val;
+        if (dic.TryGetValue("ApiIdentityMobile", out val)) Api.Mobile.Identity = val;
+        if (dic.TryGetValue("ApiSocialMobile", out val)) Api.Mobile.Social = val;
+        if (dic.TryGetValue("ApiStoryMobile", out val)) Api.Mobile.Story = val;
         #endregion
 
         #region -- Api.Web --
-        if (dic.TryGetValue("HostComic", out val)) Api.Web.Comic = val;
-        if (dic.TryGetValue("HostIdentity", out val)) Api.Web.Identity = val;
-        if (dic.TryGetValue("HostMedia", out val)) Api.Web.Media = val;
-        if (dic.TryGetValue("HostRealtime", out val)) Api.Web.Realtime = val;
-        if (dic.TryGetValue("HostSocial", out val)) Api.Web.Social = val;
-        if (dic.TryGetValue("HostStory", out val)) Api.Web.Story = val;
-        if (dic.TryGetValue("HostWallet", out val)) Api.Web.Wallet = val;
+        if (dic.TryGetValue("ApiComicWeb", out val)) Api.Web.Comic = val;
+        if (dic.TryGetValue("ApiIdentityWeb", out val)) Api.Web.Identity = val;
+        if (dic.TryGetValue("ApiMediaWeb", out val)) Api.Web.Media = val;
+        if (dic.TryGetValue("ApiRealtimeWeb", out val)) Api.Web.Realtime = val;
+        if (dic.TryGetValue("ApiSocialWeb", out val)) Api.Web.Social = val;
+        if (dic.TryGetValue("ApiStoryWeb", out val)) Api.Web.Story = val;
+        if (dic.TryGetValue("ApiWalletWeb", out val)) Api.Web.Wallet = val;
         #endregion
     }
 
@@ -276,13 +276,13 @@ public class SettingBase : ISettingBase
         #endregion
 
         #region -- Rpc.Web --
-        if (dic.TryGetValue("RpcComic", out val)) Rpc.Web.Comic = val;
-        if (dic.TryGetValue("RpcIdentity", out val)) Rpc.Web.Identity = val;
-        if (dic.TryGetValue("RpcMedia", out val)) Rpc.Web.Media = val;
-        if (dic.TryGetValue("RpcRealtime", out val)) Rpc.Web.Realtime = val;
-        if (dic.TryGetValue("RpcSocial", out val)) Rpc.Web.Social = val;
-        if (dic.TryGetValue("RpcStory", out val)) Rpc.Web.Story = val;
-        if (dic.TryGetValue("RpcWallet", out val)) Rpc.Web.Wallet = val;
+        if (dic.TryGetValue("RpcComicWeb", out val)) Rpc.Web.Comic = val;
+        if (dic.TryGetValue("RpcIdentityWeb", out val)) Rpc.Web.Identity = val;
+        if (dic.TryGetValue("RpcMediaWeb", out val)) Rpc.Web.Media = val;
+        if (dic.TryGetValue("RpcRealtimeWeb", out val)) Rpc.Web.Realtime = val;
+        if (dic.TryGetValue("RpcSocialWeb", out val)) Rpc.Web.Social = val;
+        if (dic.TryGetValue("RpcStoryWeb", out val)) Rpc.Web.Story = val;
+        if (dic.TryGetValue("RpcWalletWeb", out val)) Rpc.Web.Wallet = val;
         #endregion
     }
 
@@ -295,26 +295,26 @@ public class SettingBase : ISettingBase
     /// </summary>
     private readonly Dictionary<string, string> _hostDicHttps = new()
     {
-        { "HostComic", "https://localhost:44303" },
-        { "HostIdentity", "https://localhost:44305" },
-        { "HostMedia", "https://localhost:44306" },
-        { "HostRealtime", "https://localhost:44307" },
-        { "HostSocial", "https://localhost:44308" },
-        { "HostStory", "https://localhost:44309" },
-        { "HostWallet", "https://localhost:44310" },
+        { "ApiComicWeb", "https://localhost:44303" },
+        { "ApiIdentityWeb", "https://localhost:44305" },
+        { "ApiMediaWeb", "https://localhost:44306" },
+        { "ApiRealtimeWeb", "https://localhost:44307" },
+        { "ApiSocialWeb", "https://localhost:44308" },
+        { "ApiStoryWeb", "https://localhost:44309" },
+        { "ApiWalletWeb", "https://localhost:44310" },
 
-        { "HostComicMobile", "https://localhost:44311" },
-        { "HostIdentityMobile", "https://localhost:44312" },
-        { "HostSocialMobile", "https://localhost:44313" },
-        { "HostStoryMobile", "https://localhost:44314" },
+        { "ApiComicMobile", "https://localhost:44311" },
+        { "ApiIdentityMobile", "https://localhost:44312" },
+        { "ApiSocialMobile", "https://localhost:44313" },
+        { "ApiStoryMobile", "https://localhost:44314" },
 
-        { "HostAnalyticAdmin", "https://localhost:44302" },
-        { "HostComicAdmin", "https://localhost:44315" },
-        { "HostIdentityAdmin", "https://localhost:44316" },
-        { "HostSocialAdmin", "https://localhost:44317" },
-        { "HostStoryAdmin", "https://localhost:44318" },
-        { "HostSyncAdmin", "https://localhost:44319" },
-        { "HostCloneSiteAdmin", "https://localhost:44320" }
+        { "ApiAnalyticAdmin", "https://localhost:44302" },
+        { "ApiComicAdmin", "https://localhost:44315" },
+        { "ApiIdentityAdmin", "https://localhost:44316" },
+        { "ApiSocialAdmin", "https://localhost:44317" },
+        { "ApiStoryAdmin", "https://localhost:44318" },
+        { "ApiSyncAdmin", "https://localhost:44319" },
+        { "ApiCloneSiteAdmin", "https://localhost:44320" }
     };
 
     /// <summary>
@@ -322,26 +322,26 @@ public class SettingBase : ISettingBase
     /// </summary>
     private readonly Dictionary<string, string> _hostDicHttp1 = new()
     {
-        { "HostComic", "http://localhost:54103" },
-        { "HostIdentity", "http://localhost:54105" },
-        { "HostMedia", "http://localhost:54106" },
-        { "HostRealtime", "http://localhost:54107" },
-        { "HostSocial", "http://localhost:54108" },
-        { "HostStory", "http://localhost:54109" },
-        { "HostWallet", "http://localhost:54110" },
+        { "ApiComicWeb", "http://localhost:54103" },
+        { "ApiIdentityWeb", "http://localhost:54105" },
+        { "ApiMediaWeb", "http://localhost:54106" },
+        { "ApiRealtimeWeb", "http://localhost:54107" },
+        { "ApiSocialWeb", "http://localhost:54108" },
+        { "ApiStoryWeb", "http://localhost:54109" },
+        { "ApiWalletWeb", "http://localhost:54110" },
 
-        { "HostComicMobile", "http://localhost:54111" },
-        { "HostIdentityMobile", "http://localhost:54112" },
-        { "HostSocialMobile", "http://localhost:54113" },
-        { "HostStoryMobile", "http://localhost:54114" },
+        { "ApiComicMobile", "http://localhost:54111" },
+        { "ApiIdentityMobile", "http://localhost:54112" },
+        { "ApiSocialMobile", "http://localhost:54113" },
+        { "ApiStoryMobile", "http://localhost:54114" },
 
-        { "HostAnalyticAdmin", "http://localhost:54102" },
-        { "HostComicAdmin", "http://localhost:54115" },
-        { "HostIdentityAdmin", "http://localhost:54116" },
-        { "HostSocialAdmin", "http://localhost:54117" },
-        { "HostStoryAdmin", "http://localhost:54118" },
-        { "HostSyncAdmin", "http://localhost:54119" },
-        { "HostCloneSiteAdmin", "http://localhost:54120" }
+        { "ApiAnalyticAdmin", "http://localhost:54102" },
+        { "ApiComicAdmin", "http://localhost:54115" },
+        { "ApiIdentityAdmin", "http://localhost:54116" },
+        { "ApiSocialAdmin", "http://localhost:54117" },
+        { "ApiStoryAdmin", "http://localhost:54118" },
+        { "ApiSyncAdmin", "http://localhost:54119" },
+        { "ApiCloneSiteAdmin", "http://localhost:54120" }
     };
 
     /// <summary>
@@ -349,13 +349,13 @@ public class SettingBase : ISettingBase
     /// </summary>
     private readonly Dictionary<string, string> _hostDicHttp2 = new()
     {
-        { "RpcComic", "http://localhost:54203" },
-        { "RpcIdentity", "http://localhost:54205" },
-        { "RpcMedia", "http://localhost:54206" },
-        { "RpcRealtime", "http://localhost:54207" },
-        { "RpcSocial", "http://localhost:54208" },
-        { "RpcStory", "http://localhost:54209" },
-        { "RpcWallet", "http://localhost:54210" },
+        { "RpcComicWeb", "http://localhost:54203" },
+        { "RpcIdentityWeb", "http://localhost:54205" },
+        { "RpcMediaWeb", "http://localhost:54206" },
+        { "RpcRealtimeWeb", "http://localhost:54207" },
+        { "RpcSocialWeb", "http://localhost:54208" },
+        { "RpcStoryWeb", "http://localhost:54209" },
+        { "RpcWalletWeb", "http://localhost:54210" },
 
         { "RpcComicMobile", "http://localhost:54211" },
         { "RpcIdentityMobile", "http://localhost:54212" },

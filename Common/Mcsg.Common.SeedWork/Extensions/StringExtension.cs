@@ -696,5 +696,60 @@ public static class StringExtension
         return arr.Contains(McsgRole.SysAdmin) || arr.Contains(McsgRole.Admin) || arr.Contains(McsgRole.ContentAdmin);
     }
 
+    /// <summary>
+    /// Casts a string value to a specified type.
+    /// </summary>
+    /// <typeparam name="T">Target type</typeparam>
+    /// <param name="value">The value to be cast</param>
+    /// <param name="dataType">The type as a string (e.g., "int", "bool", "datetime")</param>
+    /// <returns>Cast value of type T, or default if conversion fails</returns>
+    public static T? Cast<T>(this string? value, string? dataType)
+    {
+        // Early return if input is null or empty
+        if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(dataType))
+        {
+            return default;
+        }
+
+        // Dictionary to map string data types to system types
+        var typeMap = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) {
+            { "int", typeof(int) },
+            { "uint", typeof(uint) },
+            { "long", typeof(long) },
+            { "ulong", typeof(ulong) },
+            { "bool", typeof(bool) },
+            { "double", typeof(double) },
+            { "decimal", typeof(decimal) },
+            { "datetime", typeof(DateTime) },
+            { "guid", typeof(Guid) }
+        };
+
+        // Default to string type if the provided dataType is not in the dictionary
+        var targetType = typeMap.ContainsKey(dataType) ? typeMap[dataType] : typeof(string);
+
+        // Handle nullable types
+        targetType = Nullable.GetUnderlyingType(typeof(T)) ?? targetType;
+
+        try
+        {
+            // Convert value to the target type and cast to T
+            return (T?)Convert.ChangeType(value, targetType);
+        }
+        catch (InvalidCastException)
+        {
+            Console.WriteLine($"Cannot cast {value} to {targetType}.");
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine($"Invalid format for {value} when converting to {targetType}.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+        return default;
+    }
+
     #endregion
 }

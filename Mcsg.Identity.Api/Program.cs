@@ -11,6 +11,7 @@ using Checkers;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.Domain.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
@@ -167,13 +168,23 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
 
-            st.AccountDeletedAfter = Convert.ToUInt32(dic[nameof(st.AccountDeletedAfter)]);
-            st.AccountCreatedAfter = Convert.ToUInt32(dic[nameof(st.AccountCreatedAfter)]);
-            st.UserNameChangedInRemaining = Convert.ToDouble(dic[nameof(st.UserNameChangedInRemaining)]);
-            st.UserNameWaitingChangedAfter = Convert.ToDouble(dic[nameof(st.UserNameWaitingChangedAfter)]);
-            st.UsernameIsReserved = dic[nameof(st.UsernameIsReserved)];
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out var ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UserNameChangedInRemaining), out ett)) st.UserNameChangedInRemaining = ett.Value.Cast<double?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
+
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
             st.LoadRpcUrl(dic, st.IsLocal);
         }

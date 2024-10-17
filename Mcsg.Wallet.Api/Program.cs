@@ -8,8 +8,10 @@ namespace Mcsg.Wallet.Api;
 
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
+using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Domain;
+using Domain.Entities;
 using Domain.Interfaces;
 using Extensions;
 using Interfaces;
@@ -96,6 +98,9 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
+        // SecurityAes
+        builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
+
         // DbContext
         builder.Services.AddWalletDbContext(csDb);
         #endregion
@@ -143,8 +148,18 @@ public class Program
         using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IWalletContext>();
-            var dic = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
 
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
             st.LoadRpcUrl(dic, st.IsLocal);
         }
