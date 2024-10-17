@@ -379,9 +379,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("DataType")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
+
+                    b.Property<string>("Group")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -390,7 +398,12 @@ namespace Mcsg.Wallet.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Key")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("MicroService")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
