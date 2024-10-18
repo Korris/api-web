@@ -61,10 +61,6 @@ public class UserWalletService : BaseRedisS, IUserWalletService
     #region User info
     public async Task<IEnumerable<UserWalletResp>> GetUserWalletAsync(BaseR req)
     {
-        /* For testing
-        var ok = await _rs.RedisCache.SetAddAsync("Toan", "1");
-        var values = await _rs.RedisCache.SetMembersAsync("Toan");*/
-
         var userId = req.UserId;
         if (userId == null)
         {
@@ -147,7 +143,7 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Where(x =>
-                (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId)
+                (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId && x.Status != TransactionStatus.Pending)
                 || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
             );
 
@@ -230,7 +226,8 @@ public class UserWalletService : BaseRedisS, IUserWalletService
                 TransactionStatus = x.Status,
                 TransactionType = x.Type,
                 Id = x.Id,
-                SystemMessage = x.SystemMessage
+                SystemMessage = x.SystemMessage,
+                TransactionFee = x.TransactionFee
             }).AsNoTracking();
 
         var items = await resultQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
@@ -293,7 +290,8 @@ public class UserWalletService : BaseRedisS, IUserWalletService
                 TransactionStatus = x.Status,
                 TransactionType = x.Type,
                 Id = x.Id,
-                SystemMessage = x.SystemMessage
+                SystemMessage = x.SystemMessage,
+                TransactionFee = x.TransactionFee
             }).FirstOrDefaultAsync();
 
         if (data.ToUserId == null || data.ToUserId == Guid.Empty)
@@ -332,16 +330,8 @@ public class UserWalletService : BaseRedisS, IUserWalletService
 
         return data;
     }
-    private async Task<UserWalletTransactionItemResp> UpdateWalletInfor(Guid transactionId)
+    private async Task<UserWalletTransactionWithDetailsResp> UpdateWalletInfor(WalletTransaction transaction)
     {
-        var transaction = await _context.WalletTransactions.AsNoTracking()
-            .Include(x => x.DestinationUserWallet)
-            .Include(x => x.SourceUserWallet)
-            .FirstOrDefaultAsync(x => x.Id == transactionId);
-        if (transaction == null)
-        {
-            throw new BadRequestException(ApiErrorCodes.TRANSACTION_NOT_FOUND, ApiErrorMessage.TRANSACTION_NOT_FOUND);
-        }
         CheckBalance(transaction.SourceUserWallet.Point, transaction.SourceUserWallet.RewardPoint, transaction.Amount);
 
         transaction.Status = TransactionStatus.Success;
@@ -358,17 +348,17 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             case TransactionType.Transfer:
                 {
                     //Source
-                    if (transaction.SourceUserWallet.RewardPoint >= transaction.Amount)
+                    if (transaction.SourceUserWallet.RewardPoint >= (transaction.Amount + (float)(_setting.TransactionChargeFee * transaction.Amount)))
                     {
-                        transaction.SourceUserWallet.RewardPoint -= transaction.Amount;
+                        transaction.SourceUserWallet.RewardPoint -= (transaction.Amount + (float)(_setting.TransactionChargeFee * transaction.Amount));
                     }
                     else
                     {
-                        var remainingAmount = transaction.Amount - transaction.SourceUserWallet.RewardPoint;
+                        var remainingAmount = (transaction.Amount + (float)(_setting.TransactionChargeFee * transaction.Amount)) - transaction.SourceUserWallet.RewardPoint;
                         transaction.SourceUserWallet.RewardPoint = 0;
                         transaction.SourceUserWallet.Point -= remainingAmount;
                     }
-
+                    transaction.TransactionFee = (float)(_setting.TransactionChargeFee * transaction.Amount);
                     transaction.DestinationUserWallet.Point += transaction.Amount;
                     break;
                 }
@@ -385,7 +375,7 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             ReferenceNumber = transaction.ReferenceNumber
         });
 
-        var item = new UserWalletTransactionItemResp
+        var item = new UserWalletTransactionWithDetailsResp
         {
             Amount = transaction.Amount,
             AmountSign = (transaction.Type == TransactionType.Deposit
@@ -405,7 +395,8 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             TransactionStatus = transaction.Status,
             TransactionType = transaction.Type,
             Id = transaction.Id,
-            SystemMessage = transaction.SystemMessage + ""
+            SystemMessage = transaction.SystemMessage + "",
+            TransactionFee = transaction.TransactionFee
         };
 
         var userIds = new List<Guid?> { item.ToUserId, item.FromUserId }
@@ -424,7 +415,7 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             item.ToUserAvatar = toUserOfProto?.UserAvatar;
             item.FromUserAvatar = fromUserOfProto?.UserAvatar;
         }
-
+        item.IsValid = true;
         return item;
 
     }
@@ -590,22 +581,71 @@ public class UserWalletService : BaseRedisS, IUserWalletService
     #endregion
 
     #region User OTP/transaction
-    public async Task<UserWalletTransactionItemResp> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
+    public async Task<UserWalletTransactionWithDetailsResp> VerifyTransactionOtpAsync(UserWalletVerifyTransactionOtpR req)
     {
+        var userWalletResponse = new UserWalletTransactionWithDetailsResp();
+
+        var transaction = await _context.WalletTransactions
+             .Include(x => x.DestinationUserWallet)
+             .Include(x => x.SourceUserWallet)
+             .FirstOrDefaultAsync(p => p.Id == req.TransactionId);
+
+        if (transaction == null)
+        {
+            throw new BadRequestException(ApiErrorCodes.TRANSACTION_NOT_FOUND, ApiErrorMessage.TRANSACTION_NOT_FOUND);
+        }
+
+        if (transaction.Status != TransactionStatus.Pending)
+        {
+            throw new BadRequestException(ApiErrorCodes.TRANSACTION_ALREADY_PROCESSED, ApiErrorMessage.TRANSACTION_ALREADY_PROCESSED);
+        }
+
+
         var otpData = await _context.WalletTransactionOtps.AsNoTracking()
                     .FirstOrDefaultAsync(x => x.TransactionId == req.TransactionId
                          && x.Otp == req.Otp && x.OtpToken == req.OtpToken);
         if (otpData == null)
-            throw new BadRequestException(ApiErrorCodes.OTP_INVALID, ApiErrorMessage.OTP_INVALID);
+        {
+            var cacheKey = $"{req.TransactionId}";
+            var attemptCountRedis = await _rs.RedisCache.StringGetAsync(cacheKey);
+
+            int attemptCount = attemptCountRedis.HasValue ? (int)attemptCountRedis : MaxAttempts;
+
+            if (attemptCount == MaxAttempts)
+            {
+                await _rs.RedisCache.StringSetAsync(cacheKey, attemptCount, TimeSpan.FromMinutes(60));
+            }
+
+            attemptCount--;
+            var ttl = await _rs.RedisCache.KeyTimeToLiveAsync(cacheKey);
+            await _rs.RedisCache.StringSetAsync(cacheKey, attemptCount, ttl.Value, when: StackExchange.Redis.When.Exists);
+
+            if (attemptCount < 1)
+            {
+                if (transaction != null)
+                {
+                    transaction.Status = TransactionStatus.Failed;
+                    transaction.IsConfirmed = true;
+                    _context.WalletTransactions.Update(transaction);
+                    await _context.SaveChangesAsync(default);
+                    await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
+                }
+                await _rs.RedisCache.KeyDeleteAsync(cacheKey);
+                userWalletResponse.RemainingAttempts = attemptCount;
+                return userWalletResponse;
+            }
+            userWalletResponse.RemainingAttempts = attemptCount;
+            return userWalletResponse;
+        }
 
         if (DateTime.UtcNow.Subtract(otpData.CreatedOn).TotalMinutes > _setting.Otp.OtpExpired)
             throw new BadRequestException(ApiErrorCodes.OTP_EXPIRED, ApiErrorMessage.OTP_EXPIRED);
 
-        var userWalletResponse = await UpdateWalletInfor(req.TransactionId);
+        userWalletResponse = await UpdateWalletInfor(transaction);
 
         await _context.SaveChangesAsync(default);
         await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
-        var referenceNumber = await _context.WalletTransactions.Where(r => r.Id == req.TransactionId).Select(i => i.ReferenceNumber).FirstOrDefaultAsync();
+
         return userWalletResponse;
     }
     public async Task<TransactionOtpInfoResp> ResentTransactionOtpAsync(Guid transactionId, TransactionOtpType otpType)
@@ -1100,6 +1140,12 @@ public class UserWalletService : BaseRedisS, IUserWalletService
     private readonly ILogger<UserWalletService> _logger;
     private readonly ISecurityAes _aes;
     private readonly INotificationService _notificationService;
+
+    #endregion
+
+    #region -- Constants --
+
+    private const int MaxAttempts = 3;
 
     #endregion
 }

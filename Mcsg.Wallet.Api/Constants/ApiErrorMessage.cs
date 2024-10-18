@@ -18,4 +18,5 @@ public class ApiErrorMessage
     public const string ZALO_PAY_MAC_NOT_EQUAL = "mac not equal";
     public const string ALREADY_PURCHARED = "already purchased";
     public const string USER_AS_THE_SAME_DONOR = "User can not send donate to yourself";
+    public const string TRANSACTION_ALREADY_PROCESSED = "Transaction has been processed";
 }

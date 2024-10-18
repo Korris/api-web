@@ -15,6 +15,12 @@ public class UserWalletTransactionResp
     public IEnumerable<UserWalletTransactionItemResp> Transactions { get; set; }
 }
 
+public class UserWalletTransactionWithDetailsResp : UserWalletTransactionItemResp
+{
+    public bool IsValid { get; set; }
+    public int RemainingAttempts { get; set; }
+}
+
 public class UserWalletTransactionItemResp
 {
     public Guid Id { get; set; }
@@ -38,6 +44,7 @@ public class UserWalletTransactionItemResp
     public string SystemMessage { get; set; }
     public string? ToUserAvatar { get; set; }
     public string? FromUserAvatar { get; set; }
+    public float TransactionFee { get; set; }
 }
 public class UserWalletTransactionItemDetailResp : UserWalletTransactionItemResp
 {

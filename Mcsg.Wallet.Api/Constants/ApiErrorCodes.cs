@@ -18,4 +18,5 @@ public class ApiErrorCodes
     public const string ZALO_PAY_CALLBACK_FAIL = "ERR_WAL_00012";
     public const string ALREADY_PURCHARED = "ERR_WAL_0013";
     public const string USER_AS_THE_SAME_DONOR = "ERR_WAL_0014"; //Can not send donate to yourself
+    public const string TRANSACTION_ALREADY_PROCESSED = "ERR_WAL_0015";
 }
