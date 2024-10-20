@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Mcsg.OpenId.Mvc.Helpers;
+namespace Mcsg.Common.Domain;
 
-using Lib.Common.Constants;
+using Common.Core.Constants;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 

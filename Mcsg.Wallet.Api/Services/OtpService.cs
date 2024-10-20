@@ -2,6 +2,7 @@
 
 namespace Mcsg.Wallet.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.SeedWork.Exceptions;
@@ -10,7 +11,6 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Models;
 using Models;
 

@@ -3,6 +3,7 @@ using Dapper;
 
 namespace Mcsg.Story.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -13,7 +14,6 @@ using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
@@ -667,7 +667,7 @@ public partial class CommentService : ICommentService
             }
         }
 
-            var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
         var userId = request.UserId;
 
         var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new

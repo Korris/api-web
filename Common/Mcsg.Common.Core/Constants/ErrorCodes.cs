@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Common.Constants;
+﻿namespace Mcsg.Common.Core.Constants;
 
 public class ErrorCodes
 {

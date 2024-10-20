@@ -3,6 +3,7 @@ using Dapper;
 
 namespace Mcsg.Comic.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -13,7 +14,6 @@ using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -209,9 +209,9 @@ public partial class CommentService : ICommentService
             var profiles = await _businessText.GetProfiles(body);
 
             var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = items.Select(p => p.Id).ToList() });
-            
+
             var tableName = input.IsSubPost ? $@"comic.""ComicSubPostCommentReactions""" : $@"comic.""ComicPostCommentReactions""";
-            var targetIds = items.Select(p=>p.Id).ToList();
+            var targetIds = items.Select(p => p.Id).ToList();
             var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, tableName), new
             {
                 TargetIds = targetIds,
@@ -234,7 +234,6 @@ public partial class CommentService : ICommentService
                     MapReactionResponse(item, postCommentReaction);
                 }
             }
-   
 
             if (items != null && items.Count() > 0)
             {

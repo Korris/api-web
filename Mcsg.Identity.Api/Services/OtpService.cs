@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain;
@@ -10,7 +11,6 @@ using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Models;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
