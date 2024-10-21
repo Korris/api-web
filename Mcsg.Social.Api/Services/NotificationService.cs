@@ -482,7 +482,7 @@ public partial class NotificationService : INotificationService
         var offset = request.PageSize * (request.PageNumber - 1);
         var query = GetNotificationByUserQuery;
         query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");
-        query = query.Replace("[UnreadCountCondition]", $@"AND ""Status"" = 0");
+        query = query.Replace("[UnreadCountCondition]", $@"AND noti.""Status"" = 0");
         var multi = await _notiRepository.Connection.QueryMultipleAsync(query,
                                                                         new
                                                                         {

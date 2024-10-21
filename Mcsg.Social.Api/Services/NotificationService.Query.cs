@@ -28,7 +28,7 @@
                             , COALESCE(pr.""Type"", spr.""Type""))))))))))) AS ""ReactionType""
                             FROM {_notiRepository.TableName} noti
                             LEFT JOIN {_notiObjRepository.TableName} obj ON noti.""NotificationObjectId"" = obj.""Id""
-                            LEFT JOIN {_userRepository.TableName} us ON obj.""ActorId"" = us.""Id""
+                            RIGHT JOIN {_userRepository.TableName} us ON obj.""ActorId"" = us.""Id"" AND us.""IsDelete"" = false
                             LEFT JOIN {_subPostReactionRepository.TableName} subpr ON obj.""EntityId"" = subpr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostReaction}
                             LEFT JOIN {_postReactionRepository.TableName} pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostReaction}
                             LEFT JOIN {_comicPostReactionRepository.TableName} cpr ON obj.""EntityId"" = cpr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.ComicPostReaction}
@@ -44,7 +44,9 @@
                             LIMIT @PageSize
                             OFFSET @Offet ;
 
-                            SELECT COUNT(""Id"") FROM {_notiRepository.TableName} 
+                            SELECT COUNT(noti.""Id"") FROM {_notiRepository.TableName} noti
+                            LEFT JOIN {_notiObjRepository.TableName} obj ON noti.""NotificationObjectId"" = obj.""Id""
+                            RIGHT JOIN {_userRepository.TableName} us ON obj.""ActorId"" = us.""Id"" AND us.""IsDelete"" = false
                             WHERE ""ReceiverId"" = @ReceiverId [UnreadCountCondition] ;";
             }
         }
