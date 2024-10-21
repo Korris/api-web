@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Mcsg.Wallet.Api\Protos\wallet.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Clients\wallet.proto" GrpcServices="Client" />
     </ItemGroup>
 
 </Project>

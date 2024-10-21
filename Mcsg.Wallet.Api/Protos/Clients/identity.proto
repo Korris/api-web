@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Mcsg.Identity.Api.Protos";
+
+package identity;
+
+service UserProto {
+    rpc Update (UserUpdateReq) returns (UserUpdateRsp);
+    rpc Search (UserSearchReq) returns (UserSearchRsp);
+}
+
+message UserUpdateReq {
+    string userUid = 1;
+    google.protobuf.Timestamp premiumDate = 2;
+}
+
+message UserUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
+    string data = 4;
+}
+
+message UserSearchReq {
+    string userUid = 1;
+}
+
+message UserSearchRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
+    string data = 4;
+    repeated UserProtoDto items = 5;
+}
+
+message UserProtoDto {
+    string userId = 1;
+    string userName = 2;
+    string profileName = 3;
+    string userAvatar = 4;
+    string email = 5;
+}
