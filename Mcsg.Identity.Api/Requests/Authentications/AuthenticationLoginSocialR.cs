@@ -2,8 +2,22 @@
 
 using Common.Core.Requests;
 
+/// <summary>
+/// Request
+/// </summary>
 public class AuthenticationLoginSocialR : BaseR
 {
-    public string SocialType { get; set; }
-    public string SocialToken { get; set; }
+    #region -- Properties --
+
+    /// <summary>
+    /// SocialType
+    /// </summary>
+    public string SocialType { get; set; } = default!;
+
+    /// <summary>
+    /// SocialToken
+    /// </summary>
+    public string SocialToken { get; set; } = default!;
+
+    #endregion
 }

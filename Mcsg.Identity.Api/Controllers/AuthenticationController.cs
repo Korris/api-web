@@ -38,11 +38,6 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Creates an account as an admin.
-    /// </summary>
-    /// <param name="request">The request object containing user registration details.</param>
-    /// <returns>An IActionResult indicating the result of the operation.</returns>
     [HttpPost("create-account"), Authorize(Roles = McsgRole.Admin)]
     public async Task<IActionResult> CreateAccount([FromBody] AuthenticationRegisterUserR request)
     {
@@ -68,8 +63,7 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
-    [HttpPost("logout")]
+    [HttpPost("logout"), Authorize]
     public async Task<IActionResult> Logout()
     {
         var result = await _authenticationService.LogOut();
@@ -90,18 +84,18 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken(RefreshTokenReq request)
+    public async Task<IActionResult> RefreshToken(AuthenticationRefreshTokenR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.VerifyRefreshToken(request.RefreshToken);
+        var result = await _authenticationService.VerifyRefreshToken(request);
         return Ok(result);
     }
 
     [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword(ForgotPasswordReq request)
+    public async Task<IActionResult> ForgotPassword(AuthenticationForgotPasswordR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.ForgotPassword(request.Email, request.Phone);
+        var result = await _authenticationService.ForgotPassword(request);
         return Ok(result);
     }
 
@@ -113,20 +107,19 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
-    [HttpPut("change-password")]
-    public async Task<IActionResult> ChangePassword(ChangePasswordReq request)
+    [HttpPut("change-password"), Authorize]
+    public async Task<IActionResult> ChangePassword(AuthenticationChangePasswordR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.ChangePassword(request.OldPassword, request.NewPassword, request.ConfirmPassword);
+        var result = await _authenticationService.ChangePassword(request);
         return Ok(result);
     }
 
     [HttpPost("create-new-user-password")]
-    public async Task<IActionResult> CreateNewUserPassword(CreateNewUserPasswordReq request)
+    public async Task<IActionResult> CreateNewUserPassword(AuthenticationSetPasswordR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.CreateNewUserPassword(request.Email, request.Phone, request.Otp, request.OtpToken, request.Password, request.ConfirmPassword);
+        var result = await _authenticationService.CreateNewUserPassword(request);
         return Ok(result);
     }
 

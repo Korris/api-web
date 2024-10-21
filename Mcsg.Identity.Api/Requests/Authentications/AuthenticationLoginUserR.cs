@@ -1,6 +1,16 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
 
+/// <summary>
+/// Request
+/// </summary>
 public class AuthenticationLoginUserR : AuthenticationFormBaseR
 {
-    public string Password { get; set; }
+    #region -- Properties --
+
+    /// <summary>
+    /// Password
+    /// </summary>
+    public string Password { get; set; } = default!;
+
+    #endregion
 }

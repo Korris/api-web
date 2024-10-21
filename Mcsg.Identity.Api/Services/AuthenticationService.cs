@@ -263,9 +263,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     public async Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request)
     {
         var socialType = request.SocialType.ToLower();
-        var socialToken = request.SocialToken;
         var socialMedias = new List<string> { Facebook.MediaCode, Google.MediaCode, Apple.MediaCode };
-
         if (string.IsNullOrEmpty(socialType) || !socialMedias.Contains(socialType))
         {
             throw new BadRequestException(ErrorCodes.SocialPlatformNotSupport, ErrorMessage.SocialPlatformNotSupport);
@@ -273,7 +271,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         // Verify token
         var _ssoService = _serviceAccessor(socialType);
-        var verifyTokenResponse = await _ssoService.VerifyToken(socialToken) ?? throw new BadRequestException(ErrorCodes.InvalidSocialToken, ErrorMessage.SocialIdNotPublic);
+        var verifyTokenResponse = await _ssoService.VerifyToken(request.SocialToken) ?? throw new BadRequestException(ErrorCodes.InvalidSocialToken, ErrorMessage.SocialIdNotPublic);
         if (verifyTokenResponse.Error.Count > 0)
         {
             throw new BadRequestException(ErrorCodes.InvalidSocialToken, verifyTokenResponse.Error.FirstOrDefault());
@@ -510,7 +508,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         return res;
     }
 
-    public async Task<TokenDto> ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+    public async Task<TokenDto> ChangePassword(AuthenticationChangePasswordR request)
     {
         var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId);
         if (user == null)
@@ -518,23 +516,23 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new NotFoundException(E303, M303);
         }
 
-        var isCurrentPassword = await _userManager.CheckPasswordAsync(user, oldPassword);
+        var isCurrentPassword = await _userManager.CheckPasswordAsync(user, request.OldPassword);
         if (!isCurrentPassword)
         {
             throw new BadRequestException(ErrorCodes.CurrentPasswordNotMatch, ErrorMessage.CurrentPasswordNotMatch);
         }
 
-        if (oldPassword == newPassword)
+        if (request.OldPassword == request.NewPassword)
         {
             throw new BadRequestException(ErrorCodes.NewPasswordShouldDifferentCurrent, ErrorMessage.NewPasswordShouldDifferentCurrent);
         }
 
-        if (newPassword != confirmPassword)
+        if (request.NewPassword != request.ConfirmPassword)
         {
             throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
         }
 
-        var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
 
         TokenDto res;
         if (changePasswordResult.Succeeded)
@@ -588,11 +586,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         return response;
     }
 
-    public async Task<VerifyUserResponse> ForgotPassword(string? email, string? phone)
+    public async Task<VerifyUserResponse> ForgotPassword(AuthenticationForgotPasswordR request)
     {
         var res = new VerifyUserResponse();
         var code = "";
 
+        var email = request.Email;
+        var phone = request.Phone;
         var encryptedEmail = _aes.EncryptText(email);
         var encryptedPhone = _aes.EncryptText(phone);
 
@@ -694,48 +694,16 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         return resetPass.Succeeded;
     }
 
-    public async Task<TokenDto> VerifyRegisterOtp(UserOtpType type, string? email, string? phone, string otp, string otpToken)
+    public async Task<bool> CreateNewUserPassword(AuthenticationSetPasswordR request)
     {
-        var valid = await _otpService.VerifyAsync(otpToken, otp, type);
-        if (valid)
-        {
-            //EmailConfirmed user
-            var user = await GetUserByEmailOrPhone(type, email, phone);
-            if (user == null)
-            {
-                throw new NotFoundException(E303, M303);
-            }
-
-            user.EmailConfirmed = true;
-            await _userManager.UpdateAsync(user);
-            await _otpService.ClearAllUserOtpAsync(user.Id, type);
-
-            var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
-            var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-            if (refreshToken != null)
-            {
-                response.RefreshToken = refreshToken.RefreshToken;
-                response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-            }
-
-            return response;
-        }
-
-        throw new BadRequestException(E301, M301);
-    }
-
-    public async Task<bool> CreateNewUserPassword(string? email, string? phone, string otp, string otpToken, string password, string confirmPassword)
-    {
-        var otpType = !string.IsNullOrEmpty(email) ? UserOtpType.VerifyEmail : UserOtpType.VerifyPhone;
-        var valid = await _otpService.VerifyAsync(otpToken, otp, otpType);
+        var otpType = !string.IsNullOrEmpty(request.Email) ? UserOtpType.VerifyEmail : UserOtpType.VerifyPhone;
+        var valid = await _otpService.VerifyAsync(request.OtpToken, request.Otp, otpType);
         if (!valid)
         {
             throw new BadRequestException(E301, M301);
         }
 
-        //EmailConfirmed user
-        var user = await GetUserByEmailOrPhone(otpType, email, phone);
+        var user = await GetUserByEmailOrPhone(otpType, request.Email, request.Phone);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -747,12 +715,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new NotFoundException(ErrorCodes.UserAlreadyHasPassword, ErrorMessage.UserAlreadyHasPassword);
         }
 
-        if (password != confirmPassword)
+        if (request.Password != request.ConfirmPassword)
         {
             throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
         }
 
-        await SetPassword(user, password);
+        await SetPassword(user, request.Password);
 
         if (otpType == UserOtpType.VerifyEmail)
         {
@@ -770,9 +738,9 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         return true;
     }
 
-    public async Task<RefreshTokenResponse> VerifyRefreshToken(string refreshToken)
+    public async Task<RefreshTokenResponse> VerifyRefreshToken(AuthenticationRefreshTokenR request)
     {
-        var userId = await _tokenService.IsValidRefreshTokenAsync(refreshToken);
+        var userId = await _tokenService.IsValidRefreshTokenAsync(request.RefreshToken);
         if (userId == Guid.Empty)
         {
             throw new UnauthorizedAccessException(E302, M302);
@@ -1038,7 +1006,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     }
 
     /// <summary>
-    /// ResetPassword
+    /// SetPassword
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="password">Password</param>

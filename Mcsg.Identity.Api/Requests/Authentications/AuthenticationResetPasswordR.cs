@@ -1,12 +1,25 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
-
-using Common.Core.Enums;
-
-public class AuthenticationResetPasswordR : AuthenticationFormBaseR
+/// <summary>
+/// Request
+/// </summary>
+public class AuthenticationResetPasswordR : AuthenticationResendOtpR
 {
-    public UserOtpType Type { get; set; }
-    public string Password { get; set; }
-    public string RetypePassword { get; set; }
-    public string OtpToken { get; set; }
-    public string OtpCode { get; set; }
+    #region -- Properties --
+
+    /// <summary>
+    /// Password
+    /// </summary>
+    public string Password { get; set; } = default!;
+
+    /// <summary>
+    /// RetypePassword
+    /// </summary>
+    public string RetypePassword { get; set; } = default!;
+
+    /// <summary>
+    /// OtpCode
+    /// </summary>
+    public string OtpCode { get; set; } = default!;
+
+    #endregion
 }
