@@ -72,6 +72,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new BadRequestException(M000, t);
         }
 
+        var user = await GetUserByEmailOrPhone(request.Email, request.Phone, true);
+        if (!string.IsNullOrEmpty(request.Email) && user != null && user.EmailConfirmed == false)
+        {
+            throw new ForbiddenAccessException(E307, M307);
+        }
+
         VerifyUserResponse response = new();
         if (IsAccountExisted(request.Email, request.Phone, out string code, out string message))
         {
