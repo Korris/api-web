@@ -6,7 +6,9 @@ using System.Text.Json.Serialization;
 
 namespace Mcsg.Wallet.Api;
 
+using Common.Core;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Core.Middlewares;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
@@ -22,6 +24,7 @@ using Lib.Common.Web.RealTime.Services;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Program
@@ -97,6 +100,9 @@ public class Program
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
+
+        // RedisStore
+        builder.Services.AddSingleton<IRedisStore>(p => new RedisStore(new RedisDto { Host = "ntada.redis", Port = 6379 }));
 
         // SecurityAes
         builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));

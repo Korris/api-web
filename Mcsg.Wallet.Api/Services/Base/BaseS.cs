@@ -76,3 +76,24 @@ public abstract class BaseMinioS(IWalletContext context, ISetting setting, IStor
 
     #endregion
 }
+
+/// <summary>
+/// Base service
+/// </summary>
+/// <remarks>
+/// Initialize
+/// </remarks>
+/// <param name="context">DB context</param>
+/// <param name="setting">Setting</param>
+/// <param name="rs">Redis store</param>
+public abstract class BaseRedisS(IWalletContext context, ISetting setting, IRedisStore rs) : BaseSettingS(context, setting)
+{
+    #region -- Fields --
+
+    /// <summary>
+    /// Redis store
+    /// </summary>
+    protected readonly IRedisStore _rs = rs;
+
+    #endregion
+}

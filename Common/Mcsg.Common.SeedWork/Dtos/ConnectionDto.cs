@@ -154,5 +154,68 @@ public abstract class ConnectionDto
         #endregion
     }
 
+    /// <summary>
+    /// Redis
+    /// </summary>
+    public class RedisDto : ConnectionDto
+    {
+        #region -- Methods --
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        public RedisDto() : base() { }
+
+        #endregion
+
+        #region -- Properties --
+
+        /// <summary>
+        /// Allow admin
+        /// </summary>
+        public bool AllowAdmin { get; set; }
+
+        /// <summary>
+        /// Default connection string
+        /// </summary>
+        public string ConnectionString => $"{Host}:{Port}";
+
+        /// <summary>
+        /// Database name [0 - 15]
+        /// </summary>
+        public int Database
+        {
+            get
+            {
+                return _database;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    value = 0;
+                }
+
+                if (value > 15)
+                {
+                    value = 15;
+                }
+
+                _database = value;
+            }
+        }
+
+        #endregion
+
+        #region -- Fields --
+
+        /// <summary>
+        /// Database name [0 - 15]
+        /// </summary>
+        private int _database;
+
+        #endregion
+    }
+
     #endregion
 }

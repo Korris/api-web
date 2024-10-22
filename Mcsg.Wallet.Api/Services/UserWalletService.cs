@@ -9,6 +9,7 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.SeedWork;
 using Common.SeedWork.Exceptions;
@@ -29,7 +30,7 @@ using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Message;
 
-public class UserWalletService : BaseSettingS, IUserWalletService
+public class UserWalletService : BaseRedisS, IUserWalletService
 {
     #region -- Methods --
 
@@ -38,6 +39,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     /// </summary>
     /// <param name="context"></param>
     /// <param name="setting"></param>
+    /// <param name="rs"></param>
     /// <param name="otpService"></param>
     /// <param name="bankService"></param>
     /// <param name="systemService"></param>
@@ -45,7 +47,7 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     /// <param name="logger"></param>
     /// <param name="aes"></param>
     /// <param name="notificationService"></param>
-    public UserWalletService(IWalletContext context, ISetting setting, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger, ISecurityAes aes, INotificationService notificationService) : base(context, setting)
+    public UserWalletService(IWalletContext context, ISetting setting, IRedisStore rs, IOtpService otpService, IBankService bankService, ISystemService systemService, IZaloPayService zaloPayService, ILogger<UserWalletService> logger, ISecurityAes aes, INotificationService notificationService) : base(context, setting, rs)
     {
         _otpService = otpService;
         _bankService = bankService;
@@ -59,6 +61,10 @@ public class UserWalletService : BaseSettingS, IUserWalletService
     #region User info
     public async Task<IEnumerable<UserWalletResp>> GetUserWalletAsync(BaseR req)
     {
+        /* For testing
+        var ok = await _rs.RedisCache.SetAddAsync("Toan", "1");
+        var values = await _rs.RedisCache.SetMembersAsync("Toan");*/
+
         var userId = req.UserId;
         if (userId == null)
         {
