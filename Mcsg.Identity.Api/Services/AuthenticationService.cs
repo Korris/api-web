@@ -19,7 +19,6 @@ using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Requests;
 using Response;
 using Validators;
@@ -40,7 +39,6 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     /// <param name="setting"></param>
     /// <param name="uniquenessChecker"></param>
     /// <param name="userManager"></param>
-    /// <param name="unitOfWork"></param>
     /// <param name="sessionService"></param>
     /// <param name="tokenService"></param>
     /// <param name="userService"></param>
@@ -50,14 +48,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
     /// <param name="smartLookupRepository"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, IUnitOfWork unitOfWork, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
     {
         _aes = new SecurityAes(_setting.EncryptKey);
         _uniquenessChecker = uniquenessChecker;
 
         _userManager = userManager;
-        _userRepository = unitOfWork.GetRepository<User>();
-        _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
         _sessionService = sessionService;
         _tokenService = tokenService;
         _userService = userService;
@@ -228,6 +224,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
             }
+        }
+
+        if (request.IsForAdmin && user.Type != UserType.Administrator)
+        {
+            throw new ForbiddenAccessException(nameof(E309), E309);
         }
 
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
@@ -496,8 +497,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 res.IsEmail = otp.OtpType == UserOtpType.VerifyEmail;
                 res.IsPhone = otp.OtpType == UserOtpType.VerifyPhone;
 
-                //Clear old
-                await _userOtpRepository.DeleteAsync(otp.Id);
+                // Delete
+                await _context.UserOtps.Where(p => p.Id == otp.Id).ExecuteDeleteAsync();
             }
             else
             {
@@ -746,7 +747,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new UnauthorizedAccessException(E302, M302);
         }
 
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -1073,8 +1074,6 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     private readonly ApplicationUserManager _userManager;
     private readonly ITokenService _tokenService;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<UserOtp> _userOtpRepository;
     private readonly ISessionService _sessionService;
     private readonly IUserService _userService;
     private readonly ICurrentUserService _currentUserService;

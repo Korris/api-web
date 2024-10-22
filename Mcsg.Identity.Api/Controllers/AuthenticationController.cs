@@ -47,6 +47,15 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("login-admin")]
+    public async Task<IActionResult> LoginAdmin(AuthenticationLoginUserR request)
+    {
+        request.SetForAdmin(true);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginUser(request);
+        return Ok(result);
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login(AuthenticationLoginUserR request)
     {
@@ -70,11 +79,6 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// ResendOtp with Auth no need token
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
     [HttpPost("resend-otp")]
     public async Task<IActionResult> ResendOtp(AuthenticationResendOtpR request)
     {
