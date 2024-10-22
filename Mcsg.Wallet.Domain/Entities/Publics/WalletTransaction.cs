@@ -27,4 +27,5 @@ public partial class WalletTransaction : AuditableEntity
     public bool IsConfirmed { get; set; }
     public Guid? RelatedId { get; set; }
     public string? ExternalId { get; set; }
+    public float TransactionFee { get; set; }
 }

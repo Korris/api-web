@@ -787,6 +787,9 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<int?>("SystemMethod")
                         .HasColumnType("integer");
 
+                    b.Property<float>("TransactionFee")
+                        .HasColumnType("real");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 

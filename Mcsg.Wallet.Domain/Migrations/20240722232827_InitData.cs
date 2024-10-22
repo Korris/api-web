@@ -344,6 +344,7 @@ namespace Mcsg.Wallet.Domain.Migrations
                     IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     RelatedId = table.Column<Guid>(type: "uuid", nullable: true),
                     ExternalId = table.Column<string>(type: "text", nullable: true),
+                    TransactionFee = table.Column<float>(type: "real", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
