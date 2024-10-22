@@ -925,7 +925,7 @@ public partial class PostService : IPostService
         post.CoverUrl = coverUrl;
         post.IsMature = request.IsMature;
         post.Permission = request.Permission;
-        post.Status = request.IsSaveAndPublish ? PostStatus.Public : PostStatus.Draft;
+        post.Status = request.IsSaveAndPublish ? post.Status : PostStatus.Draft;
         post.IsCompleted = request.IsCompleted;
 
         var result = new PostSeriesResponse
