@@ -20,10 +20,11 @@ using System.Text.Json;
 
 namespace Mcsg.Common.Core.Requests;
 
-using Core.Enums;
-using Core.Extensions;
+using Enums;
+using Extensions;
 using SeedWork.Constants;
 using SeedWork.Enums;
+using SeedWork.Extensions;
 using SeedWork.Responses;
 using static SeedWork.Constants.Setting;
 
@@ -92,6 +93,58 @@ public class BaseR : IRequest<SingleResponse>
         }
 
         return domain + rewriteUrl;
+    }
+
+    /// <summary>
+    /// Set the cookie
+    /// </summary>
+    /// <param name="key">Key (unique indentifier)</param>
+    /// <param name="value">Value to store in cookie object</param>
+    /// <param name="timeout">Timeout</param>
+    /// <param name="type">Time type</param>
+    /// <param name="httpOnly">true if a cookie must not be accessible by client-side script; otherwise, false</param>
+    public void SetCookie(string key, string value, double timeout, TimeType type, bool httpOnly)
+    {
+        if (_hc == null)
+        {
+            return;
+        }
+
+        if (timeout < 0)
+        {
+            timeout = 1;
+        }
+
+        TimeSpan? age = null;
+        if (type == TimeType.Minute)
+        {
+            age = TimeSpan.FromMinutes(timeout);
+        }
+        else if (type == TimeType.Hour)
+        {
+            age = TimeSpan.FromHours(timeout);
+        }
+        else if (type == TimeType.Day)
+        {
+            age = TimeSpan.FromDays(timeout);
+        }
+
+        var option = new CookieOptions { HttpOnly = httpOnly, MaxAge = age };
+        _hc.Response.Cookies.Append(key, value, option);
+    }
+
+    /// <summary>
+    /// Delete the cookie
+    /// </summary>
+    /// <param name="key">Key (unique indentifier)</param>
+    public void DelCookie(string key)
+    {
+        if (_hc == null)
+        {
+            return;
+        }
+
+        _hc.Response.Cookies.Delete(key);
     }
 
     /// <summary>
@@ -258,7 +311,8 @@ public class BaseR : IRequest<SingleResponse>
             var key = "X-Forwarded-For";
             if (headers != null && headers.ContainsKey(key))
             {
-                return headers[key].ToString();
+                var t = headers[key].ToString().Split(',', StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Distinct();
+                return string.Join(",", t);
             }
             else
             {
@@ -389,6 +443,30 @@ public class BaseR : IRequest<SingleResponse>
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true)]
     public bool UtMode { get; set; }
+
+    /// <summary>
+    /// Old Client ID in cookie
+    /// </summary>
+    public Guid ClientId
+    {
+        get
+        {
+            var t = _hc?.Request.Cookies[nameof(ClientId)];
+            return t.ToGuid();
+        }
+    }
+
+    /// <summary>
+    /// Old Session ID in cookie
+    /// </summary>
+    public Guid SessionId
+    {
+        get
+        {
+            var t = _hc?.Request.Cookies[nameof(SessionId)];
+            return t.ToGuid();
+        }
+    }
 
     /// <summary>
     /// Payload

@@ -111,5 +111,46 @@ public static class ObjectExtension
         return res;
     }
 
+    #region -- Guid --
+    /// <summary>
+    /// Converts the specified object representation of a Guid to an equivalent Guid
+    /// </summary>
+    /// <param name="o">String Guid</param>
+    /// <returns>Return the Guid</returns>
+    public static Guid ToGuid(this object? o)
+    {
+        var t = o + string.Empty;
+        Guid.TryParse(t, out Guid res);
+
+        if (res == Guid.Empty)
+        {
+            res = Guid.NewGuid();
+        }
+
+        return res;
+    }
+
+    /// <summary>
+    /// Converts the specified object representation of a Guid to an equivalent Guid
+    /// </summary>
+    /// <param name="o">String Guid</param>
+    /// <returns>Return the Guid (nullable)</returns>
+    public static Guid? ToGuidN(this object? o)
+    {
+        Guid? res = null;
+
+        if (o != null)
+        {
+            var t = o + string.Empty;
+            if (!string.IsNullOrEmpty(t))
+            {
+                res = o.ToGuid();
+            }
+        }
+
+        return res;
+    }
+    #endregion
+
     #endregion
 }

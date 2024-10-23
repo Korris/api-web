@@ -23,5 +23,10 @@ public enum PostStatus
     /// <summary>
     /// Waiting for download
     /// </summary>
-    WaitingForDownload
+    WaitingForDownload,
+
+    /// <summary>
+    /// Deleted
+    /// </summary>
+    Deleted
 }

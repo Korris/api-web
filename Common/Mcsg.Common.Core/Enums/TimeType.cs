@@ -1,27 +1,22 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// Post type
+/// Time type
 /// </summary>
-public enum PostType
+public enum TimeType
 {
     /// <summary>
-    /// Feed
+    /// Minute
     /// </summary>
-    Feed,
+    Minute,
 
     /// <summary>
-    /// Story
+    /// Hour
     /// </summary>
-    Story,
+    Hour,
 
     /// <summary>
-    /// Comic
+    /// Day
     /// </summary>
-    Comic,
-
-    /// <summary>
-    /// None
-    /// </summary>
-    None
+    Day
 }
