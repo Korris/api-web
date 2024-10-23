@@ -374,7 +374,12 @@ public partial class PostService : IPostService
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
         }
+
         subpost.IsCensored = !req.IsAdministrator && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
+        if (subpost.IsCensored)
+        {
+            subpost.Body = "";
+        }
 
         return subpost;
     }
