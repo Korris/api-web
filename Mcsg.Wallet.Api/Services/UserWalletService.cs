@@ -143,7 +143,7 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             .Include(x => x.SourceUserWallet)
             .Include(x => x.DestinationUserWallet)
             .Where(x =>
-                (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId && x.Status != TransactionStatus.Pending)
+                (x.DestinationUserWallet != null && x.DestinationUserWallet.UserId == userId && x.Status != TransactionStatus.Pending && x.Status != TransactionStatus.Failed)
                 || (x.SourceUserWallet != null && x.SourceUserWallet.UserId == userId)
             );
 
@@ -631,8 +631,8 @@ public class UserWalletService : BaseRedisS, IUserWalletService
                     await _otpService.ClearAllTransactionOtpOtpAsync(req.TransactionId);
                 }
                 await _rs.RedisCache.KeyDeleteAsync(cacheKey);
-                userWalletResponse.RemainingAttempts = attemptCount;
-                return userWalletResponse;
+
+                throw new BadRequestException(ApiErrorCodes.TRANSACTION_ALREADY_PROCESSED, ApiErrorMessage.TRANSACTION_ALREADY_PROCESSED);
             }
             userWalletResponse.RemainingAttempts = attemptCount;
             return userWalletResponse;
