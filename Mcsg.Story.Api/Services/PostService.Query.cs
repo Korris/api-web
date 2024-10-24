@@ -65,7 +65,7 @@
                         LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = p.""Id"" AND tp.""IsDelete"" = false
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
                         LEFT JOIN ""story"".""StorySubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false 
-                        AND sp.""Status"" = ANY (@PostStatus)
+                        AND sp.""Status"" = ANY (@PostStatus) AND sp.""PublishDate"" <= @CurrentDate
                         [WithPermission]  [Not-load-chapter]
                         LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
                         LEFT JOIN ""story"".""StorySubPostComments"" spcm ON spcm.""PostId"" = sp.""Id"" AND spcm.""IsDelete"" = false
@@ -829,6 +829,7 @@ LIMIT 1
                     FROM ""story"".""StorySubPosts"" sp
                     INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false and sp.""Status"" = 1
+                    AND sp.""IsPremium"" = false AND sp.""PublishDate"" < @CurrentDate
                     ORDER BY sp.""Sort"";
 
                         SELECT COUNT(*) AS TotalItems 

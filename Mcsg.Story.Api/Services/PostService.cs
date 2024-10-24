@@ -1709,7 +1709,8 @@ public partial class PostService : IPostService
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
                 {
-                    PostHashId = hashId
+                    PostHashId = hashId,
+                    CurrentDate = DateTime.UtcNow
                 });
         var items = await multi.ReadAsync<ChapterTOCResponse>().ConfigureAwait(false);
 
