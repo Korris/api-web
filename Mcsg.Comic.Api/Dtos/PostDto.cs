@@ -26,7 +26,7 @@ public class PostDto
     public PostStatus Status { get; set; }
     public PostPermission Permission { get; set; }
     public List<SubUploadFileDto> SubPosts { get; set; } = [];
-    public string CustomNote { get; set; }
+    public string? CustomNote { get; set; }
     public bool IsArchived => Status == PostStatus.Inactive;
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }

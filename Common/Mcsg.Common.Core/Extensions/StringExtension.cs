@@ -406,6 +406,39 @@ public static class StringExtension
         return default;
     }
 
+    /// <summary>
+    /// Validates whether the provided string is a well-formed JSON.
+    /// </summary>
+    /// <param name="s">The JSON string to validate.</param>
+    /// <returns><c>true</c> if the string is valid JSON; otherwise, <c>false</c>.</returns>
+    public static bool IsValidJson(this string? s)
+    {
+        // Return false if the string is null, empty, or whitespace.
+        if (string.IsNullOrWhiteSpace(s))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Attempt to deserialize the string to an object.
+            var obj = JsonConvert.DeserializeObject(s);
+
+            // Return true if deserialization succeeded, false otherwise.
+            return obj != null;
+        }
+        catch (JsonReaderException)
+        {
+            // Catch only JSON-specific exceptions for clarity.
+            return false;
+        }
+        catch (Exception)
+        {
+            // Optionally handle other exceptions, but assume it's invalid JSON by default.
+            return false;
+        }
+    }
+
     #endregion
 
     #region -- HttpClient --
@@ -729,9 +762,9 @@ public static class StringExtension
     /// </summary>
     /// <param name="text">The input text</param>
     /// <returns>Returns the default custom note if the input text is null or empty; otherwise, returns the input text</returns>
-    public static string ForLexical(this string? text)
+    public static string? ForLexical(this string? text)
     {
-        return string.IsNullOrEmpty(text) ? Default.CustomNote : text;
+        return text.IsValidJson() ? text : Default.CustomNote;
     }
 
     /// <summary>

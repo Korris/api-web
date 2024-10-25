@@ -27,7 +27,7 @@ public class PostDto
     public PostStatus Status { get; set; }
     public PostPermission Permission { get; set; }
     public List<SubUploadFileDto> SubPosts { get; set; } = [];
-    public string CustomNote { get; set; }
+    public string? CustomNote { get; set; }
 
     public HideOption Hide { get; set; }
     public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
