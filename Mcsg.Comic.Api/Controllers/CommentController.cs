@@ -129,6 +129,7 @@ public class CommentController : ControllerBase
     [HttpGet("reply-by-comment")]
     public async Task<IActionResult> GetReplyByCommentId([FromQuery] CommentReplyByCommentR input)
     {
+        input.Analyze(HttpContext);
         var result = await _commentService.GetReplyByCommentId(input);
         return Ok(result);
     }
