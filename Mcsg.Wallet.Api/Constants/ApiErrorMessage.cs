@@ -19,4 +19,5 @@ public class ApiErrorMessage
     public const string ALREADY_PURCHARED = "already purchased";
     public const string USER_AS_THE_SAME_DONOR = "User can not send donate to yourself";
     public const string TRANSACTION_ALREADY_PROCESSED = "Transaction has been processed";
+    public const string INVALID_AMOUNT = "The amount must be a positive number greater than zero.";
 }

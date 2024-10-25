@@ -673,6 +673,11 @@ public class UserWalletService : BaseRedisS, IUserWalletService
             throw new BadRequestException(ApiErrorCodes.USER_AS_THE_SAME_DONOR, ApiErrorMessage.USER_AS_THE_SAME_DONOR);
         }
 
+        if (req.Amount <= 0 || float.IsNaN(req.Amount))
+        {
+            throw new BadRequestException(ApiErrorCodes.INVALID_AMOUNT, ApiErrorMessage.INVALID_AMOUNT);
+        }
+
         var userWallet = await _context.UserWallets.Where(x => x.UserId == userId).FirstOrDefaultAsync();
         var toUserWallet = await _context.UserWallets.Where(x => x.UserId == req.ToUserId).FirstOrDefaultAsync();
         if (toUserWallet != null)
@@ -708,6 +713,11 @@ public class UserWalletService : BaseRedisS, IUserWalletService
     #region Transfer
     public async Task<TransactionOtpInfoResp> TransferAsync(UserWalletTransferR req)
     {
+        if (req.Amount <= 0 || float.IsNaN(req.Amount))
+        {
+            throw new BadRequestException(ApiErrorCodes.INVALID_AMOUNT, ApiErrorMessage.INVALID_AMOUNT);
+        }
+
         var userId = req.UserId;
         var userWallet = await _context.UserWallets.Where(x => x.UserId == req.UserId)
                                                    .FirstOrDefaultAsync();
