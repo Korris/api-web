@@ -158,6 +158,38 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<Device> Devices { get; set; }
 
+    public virtual DbSet<DocumentMetaData> DocumentMetaDatas { get; set; }
+
+    public virtual DbSet<DocumentPost> DocumentPosts { get; set; }
+
+    public virtual DbSet<DocumentPostComment> DocumentPostComments { get; set; }
+
+    public virtual DbSet<DocumentPostCommentReaction> DocumentPostCommentReactions { get; set; }
+
+    public virtual DbSet<DocumentPostFavorite> DocumentPostFavorites { get; set; }
+
+    public virtual DbSet<DocumentPostHide> DocumentPostHides { get; set; }
+
+    public virtual DbSet<DocumentPostLink> DocumentPostLinks { get; set; }
+
+    public virtual DbSet<DocumentPostReaction> DocumentPostReactions { get; set; }
+
+    public virtual DbSet<DocumentPostReport> DocumentPostReports { get; set; }
+
+    public virtual DbSet<DocumentPostShare> DocumentPostShares { get; set; }
+
+    public virtual DbSet<DocumentResource> DocumentResources { get; set; }
+
+    public virtual DbSet<DocumentSubPost> DocumentSubPosts { get; set; }
+
+    public virtual DbSet<DocumentSubPostComment> DocumentSubPostComments { get; set; }
+
+    public virtual DbSet<DocumentSubPostCommentReaction> DocumentSubPostCommentReactions { get; set; }
+
+    public virtual DbSet<DocumentSubPostReaction> DocumentSubPostReactions { get; set; }
+
+    public virtual DbSet<DocumentTagPost> DocumentTagPosts { get; set; }
+
     public virtual DbSet<Feedback> Feedbacks { get; set; }
 
     public virtual DbSet<Mention> Mentions { get; set; }

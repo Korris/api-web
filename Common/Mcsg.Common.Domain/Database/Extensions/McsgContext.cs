@@ -115,6 +115,38 @@ partial class McsgContext
 
     public IQueryable<Device> DeviceAvailable => Devices.Where(p => !p.IsDelete);
 
+    public IQueryable<DocumentMetaData> DocumentMetaDataAvailable => DocumentMetaDatas;
+
+    public IQueryable<DocumentPost> DocumentPostAvailable => DocumentPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostComment> DocumentPostCommentAvailable => DocumentPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostCommentReaction> DocumentPostCommentReactionAvailable => DocumentPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostFavorite> DocumentPostFavoriteAvailable => DocumentPostFavorites.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostHide> DocumentPostHideAvailable => DocumentPostHides.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostLink> DocumentPostLinkAvailable => DocumentPostLinks.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostReaction> DocumentPostReactionAvailable => DocumentPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostReport> DocumentPostReportAvailable => DocumentPostReports.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentPostShare> DocumentPostShareAvailable => DocumentPostShares.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentResource> DocumentResourceAvailable => DocumentResources.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentSubPost> DocumentSubPostAvailable => DocumentSubPosts.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentSubPostComment> DocumentSubPostCommentAvailable => DocumentSubPostComments.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentSubPostCommentReaction> DocumentSubPostCommentReactionAvailable => DocumentSubPostCommentReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentSubPostReaction> DocumentSubPostReactionAvailable => DocumentSubPostReactions.Where(p => !p.IsDelete);
+
+    public IQueryable<DocumentTagPost> DocumentTagPostAvailable => DocumentTagPosts.Where(p => !p.IsDelete);
+
     public IQueryable<Feedback> FeedbackAvailable => Feedbacks.Where(p => !p.IsDelete);
 
     public IQueryable<Mention> MentionAvailable => Mentions.Where(p => !p.IsDelete);

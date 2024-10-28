@@ -11,6 +11,11 @@ public class DbSchema
     public const string Comic = "comic";
 
     /// <summary>
+    /// Document
+    /// </summary>
+    public const string Document = "document";
+
+    /// <summary>
     /// Default
     /// </summary>
     public const string Default = "public.";
@@ -44,6 +49,11 @@ public class DbSchema
     /// Comic tables
     /// </summary>
     public const string ComicTables = "ComicMetaDatas;ComicPostCommentReactions;ComicPostComments;ComicPostFavorites;ComicPostHides;ComicPostLinks;ComicPostReactions;ComicPostReports;ComicPosts;ComicResources;ComicSubPostCommentReactions;ComicSubPostComments;ComicSubPostReactions;ComicSubPosts;ComicTagPosts";
+
+    /// <summary>
+    /// Document tables
+    /// </summary>
+    public const string DocumentTables = "DocumentMetaDatas;DocumentPostCommentReactions;DocumentPostComments;DocumentPostFavorites;DocumentPostHides;DocumentPostLinks;DocumentPostReactions;DocumentPostReports;DocumentPosts;DocumentResources;DocumentSubPostCommentReactions;DocumentSubPostComments;DocumentSubPostReactions;DocumentSubPosts;DocumentTagPosts";
 
     /// <summary>
     /// Identity tables

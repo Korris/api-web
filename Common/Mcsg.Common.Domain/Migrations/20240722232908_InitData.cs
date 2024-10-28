@@ -19,6 +19,9 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "identity");
 
             migrationBuilder.EnsureSchema(
+                name: "document");
+
+            migrationBuilder.EnsureSchema(
                 name: "system");
 
             migrationBuilder.EnsureSchema(
@@ -149,6 +152,26 @@ namespace Mcsg.Common.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Devices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentMetaDatas",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    Domain = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostCommentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SubPostCommentId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentMetaDatas", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -644,6 +667,49 @@ namespace Mcsg.Common.Domain.Migrations
                     table.PrimaryKey("PK_ComicPosts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ComicPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPosts",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    CoverUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    AuthorName = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    StatusReason = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ExternalCode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    IsMature = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPosts_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -1448,6 +1514,254 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DocumentPostFavorites",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostFavorites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostFavorites_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostFavorites_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostHides",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostHides", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostHides_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostHides_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostLinks",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostLinks_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostReactions",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostReactions_DocumentPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostReports",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReasonType = table.Column<int>(type: "integer", nullable: false),
+                    ReasonText = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostReports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostReports_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostReports_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostShares",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostShares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostShares_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostShares_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentSubPosts",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Order = table.Column<float>(type: "real", nullable: false),
+                    IsPremium = table.Column<bool>(type: "boolean", nullable: false),
+                    Sort = table.Column<float>(type: "real", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Permission = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CreatorNote = table.Column<string>(type: "text", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentSubPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPosts_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SystemResources",
                 schema: "system",
                 columns: table => new
@@ -2043,6 +2357,38 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DocumentTagPosts",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentTagPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentTagPosts_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentTagPosts_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SocialTagPosts",
                 schema: "social",
                 columns: table => new
@@ -2212,6 +2558,88 @@ namespace Mcsg.Common.Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ComicSubPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentResources",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentResources_DocumentSubPosts_SubPostId",
+                        column: x => x.SubPostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentSubPosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DocumentResources_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentSubPostReactions",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentSubPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostReactions_DocumentSubPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "document",
+                        principalTable: "DocumentSubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostReactions_Users_AuthorId",
                         column: x => x.AuthorId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -2510,6 +2938,100 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DocumentPostComments",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostComments_DocumentPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostComments_DocumentResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "document",
+                        principalTable: "DocumentResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DocumentPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentSubPostComments",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentSubPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostComments_DocumentResources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalSchema: "document",
+                        principalTable: "DocumentResources",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostComments_DocumentSubPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "document",
+                        principalTable: "DocumentSubPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SocialPostComments",
                 schema: "social",
                 columns: table => new
@@ -2760,6 +3282,76 @@ namespace Mcsg.Common.Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ComicSubPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentPostCommentReactions",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostCommentReactions_DocumentPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "document",
+                        principalTable: "DocumentPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentSubPostCommentReactions",
+                schema: "document",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentSubPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostCommentReactions_DocumentSubPostComments_Tar~",
+                        column: x => x.TargetId,
+                        principalSchema: "document",
+                        principalTable: "DocumentSubPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentSubPostCommentReactions_Users_AuthorId",
                         column: x => x.AuthorId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -3117,6 +3709,208 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "IX_ComicTagPosts_TagId_PostId",
                 schema: "comic",
                 table: "ComicTagPosts",
+                columns: new[] { "TagId", "PostId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostCommentReactions_AuthorId",
+                schema: "document",
+                table: "DocumentPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostComments_AuthorId",
+                schema: "document",
+                table: "DocumentPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostComments_PostId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostComments_ResourceId",
+                schema: "document",
+                table: "DocumentPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostFavorites_PostId",
+                schema: "document",
+                table: "DocumentPostFavorites",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostFavorites_UserId",
+                schema: "document",
+                table: "DocumentPostFavorites",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostHides_PostId",
+                schema: "document",
+                table: "DocumentPostHides",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostHides_UserId",
+                schema: "document",
+                table: "DocumentPostHides",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostLinks_PostId",
+                schema: "document",
+                table: "DocumentPostLinks",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostReactions_AuthorId",
+                schema: "document",
+                table: "DocumentPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostReactions_TargetId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostReports_PostId",
+                schema: "document",
+                table: "DocumentPostReports",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostReports_UserId",
+                schema: "document",
+                table: "DocumentPostReports",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPosts_HashId_UserId_Type_Id",
+                schema: "document",
+                table: "DocumentPosts",
+                columns: new[] { "HashId", "UserId", "Type", "Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPosts_UserId",
+                schema: "document",
+                table: "DocumentPosts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostShares_PostId",
+                schema: "document",
+                table: "DocumentPostShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentPostShares_UserId",
+                schema: "document",
+                table: "DocumentPostShares",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentResources_AuthorId",
+                schema: "document",
+                table: "DocumentResources",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentResources_HashId",
+                schema: "document",
+                table: "DocumentResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentResources_Name",
+                schema: "document",
+                table: "DocumentResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentResources_SubPostId",
+                schema: "document",
+                table: "DocumentResources",
+                column: "SubPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostCommentReactions_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostComments_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostComments_PostId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostComments_ResourceId",
+                schema: "document",
+                table: "DocumentSubPostComments",
+                column: "ResourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostReactions_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPostReactions_TargetId_ParentId_AuthorId",
+                schema: "document",
+                table: "DocumentSubPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPosts_PostId_HashId_AuthorId",
+                schema: "document",
+                table: "DocumentSubPosts",
+                columns: new[] { "PostId", "HashId", "AuthorId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentSubPosts_UserId",
+                schema: "document",
+                table: "DocumentSubPosts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentTagPosts_PostId",
+                schema: "document",
+                table: "DocumentTagPosts",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentTagPosts_TagId_PostId",
+                schema: "document",
+                table: "DocumentTagPosts",
                 columns: new[] { "TagId", "PostId" });
 
             migrationBuilder.CreateIndex(
@@ -3817,6 +4611,50 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
+                name: "DocumentMetaDatas",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostCommentReactions",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostFavorites",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostHides",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostLinks",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostReactions",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostReports",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPostShares",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentSubPostCommentReactions",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentSubPostReactions",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentTagPosts",
+                schema: "document");
+
+            migrationBuilder.DropTable(
                 name: "Jobs",
                 schema: "system");
 
@@ -4021,6 +4859,14 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
+                name: "DocumentPostComments",
+                schema: "document");
+
+            migrationBuilder.DropTable(
+                name: "DocumentSubPostComments",
+                schema: "document");
+
+            migrationBuilder.DropTable(
                 name: "NotificationObjects",
                 schema: "system");
 
@@ -4064,6 +4910,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
+                name: "DocumentResources",
+                schema: "document");
+
+            migrationBuilder.DropTable(
                 name: "OpenIdApplications",
                 schema: "openid");
 
@@ -4080,6 +4930,10 @@ namespace Mcsg.Common.Domain.Migrations
                 schema: "comic");
 
             migrationBuilder.DropTable(
+                name: "DocumentSubPosts",
+                schema: "document");
+
+            migrationBuilder.DropTable(
                 name: "SocialSubPosts",
                 schema: "social");
 
@@ -4090,6 +4944,10 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.DropTable(
                 name: "ComicPosts",
                 schema: "comic");
+
+            migrationBuilder.DropTable(
+                name: "DocumentPosts",
+                schema: "document");
 
             migrationBuilder.DropTable(
                 name: "SocialPosts",

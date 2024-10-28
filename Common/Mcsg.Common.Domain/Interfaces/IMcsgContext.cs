@@ -104,6 +104,38 @@ public interface IMcsgContext
 
     DbSet<Device> Devices { get; set; }
 
+    DbSet<DocumentMetaData> DocumentMetaDatas { get; set; }
+
+    DbSet<DocumentPost> DocumentPosts { get; set; }
+
+    DbSet<DocumentPostComment> DocumentPostComments { get; set; }
+
+    DbSet<DocumentPostCommentReaction> DocumentPostCommentReactions { get; set; }
+
+    DbSet<DocumentPostFavorite> DocumentPostFavorites { get; set; }
+
+    DbSet<DocumentPostHide> DocumentPostHides { get; set; }
+
+    DbSet<DocumentPostLink> DocumentPostLinks { get; set; }
+
+    DbSet<DocumentPostReaction> DocumentPostReactions { get; set; }
+
+    DbSet<DocumentPostReport> DocumentPostReports { get; set; }
+
+    DbSet<DocumentPostShare> DocumentPostShares { get; set; }
+
+    DbSet<DocumentResource> DocumentResources { get; set; }
+
+    DbSet<DocumentSubPost> DocumentSubPosts { get; set; }
+
+    DbSet<DocumentSubPostComment> DocumentSubPostComments { get; set; }
+
+    DbSet<DocumentSubPostCommentReaction> DocumentSubPostCommentReactions { get; set; }
+
+    DbSet<DocumentSubPostReaction> DocumentSubPostReactions { get; set; }
+
+    DbSet<DocumentTagPost> DocumentTagPosts { get; set; }
+
     DbSet<Feedback> Feedbacks { get; set; }
 
     DbSet<Mention> Mentions { get; set; }
@@ -281,6 +313,38 @@ public interface IMcsgContext
     IQueryable<Job> JobAvailable { get; }
 
     IQueryable<Device> DeviceAvailable { get; }
+
+    IQueryable<DocumentMetaData> DocumentMetaDataAvailable { get; }
+
+    IQueryable<DocumentPost> DocumentPostAvailable { get; }
+
+    IQueryable<DocumentPostComment> DocumentPostCommentAvailable { get; }
+
+    IQueryable<DocumentPostCommentReaction> DocumentPostCommentReactionAvailable { get; }
+
+    IQueryable<DocumentPostFavorite> DocumentPostFavoriteAvailable { get; }
+
+    IQueryable<DocumentPostHide> DocumentPostHideAvailable { get; }
+
+    IQueryable<DocumentPostLink> DocumentPostLinkAvailable { get; }
+
+    IQueryable<DocumentPostReaction> DocumentPostReactionAvailable { get; }
+
+    IQueryable<DocumentPostReport> DocumentPostReportAvailable { get; }
+
+    IQueryable<DocumentPostShare> DocumentPostShareAvailable { get; }
+
+    IQueryable<DocumentResource> DocumentResourceAvailable { get; }
+
+    IQueryable<DocumentSubPost> DocumentSubPostAvailable { get; }
+
+    IQueryable<DocumentSubPostComment> DocumentSubPostCommentAvailable { get; }
+
+    IQueryable<DocumentSubPostCommentReaction> DocumentSubPostCommentReactionAvailable { get; }
+
+    IQueryable<DocumentSubPostReaction> DocumentSubPostReactionAvailable { get; }
+
+    IQueryable<DocumentTagPost> DocumentTagPostAvailable { get; }
 
     IQueryable<Feedback> FeedbackAvailable { get; }
 
