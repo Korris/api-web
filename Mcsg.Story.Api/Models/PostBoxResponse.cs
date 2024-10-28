@@ -3,6 +3,7 @@
 namespace Mcsg.Story.Api.Models;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.SeedWork.Converters;
 using Dtos;
 
@@ -10,14 +11,20 @@ public class PostBoxResponse : PostBox
 {
     public List<SubPostDto>? Chapters { get; set; }
     public List<string>? Tags { get; set; }
-    public bool isNewChapter { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
     public bool IsExternalSource { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime LatestCreatedOn { get; set; }
 }
 public class PostBoxQueryResponse : PostBox
 {
     public string? SubPosts { get; set; }
     public string? Tags { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime LatestCreatedOn { get; set; }
+
     [JsonIgnore]
     public ExternalResource ExternalResource { get; set; }
     public bool IsExternalSource => ExternalResource != ExternalResource.None;

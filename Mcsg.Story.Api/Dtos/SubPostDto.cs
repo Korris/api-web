@@ -11,4 +11,7 @@ public class SubPostDto
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime PublishDate { get; set; }
 }

@@ -489,7 +489,6 @@ public partial class PostService : IPostService
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
-                item.isNewChapter = item.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow;
                 item.IsCensored = request.UserName != item.UserName && !request.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
@@ -782,6 +781,7 @@ public partial class PostService : IPostService
                                   p.""Hide"",
                                   p.""Status"",
                                   p.""ExternalResource"",
+                                  GREATEST(p.""CreatedOn"", MAX(sp.""PublishDate"")) AS ""LatestCreatedOn"",
                                   u.""ProfileName"",
                                   u.""UserName"",
                                   CASE 
@@ -797,9 +797,9 @@ public partial class PostService : IPostService
                                   LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
                                   LEFT JOIN LATERAL 
                                         (
-                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn""
+                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn"",sp.""PublishDate""
                                             FROM ""comic"".""ComicSubPosts"" sp 
-                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
+                                            WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false AND sp.""PublishDate"" < @CurrentDate
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
                                             ORDER BY sp.""Order"" DESC
                                             LIMIT 2
@@ -826,7 +826,8 @@ public partial class PostService : IPostService
                     PostStatus = statusList,
                     Permission = (int)PostPermission.Public,
                     ProfileName = input.Keyword,
-                    Hide = input.Hides
+                    Hide = input.Hides,
+                    CurrentDate = DateTime.UtcNow
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -841,6 +842,7 @@ public partial class PostService : IPostService
                 item.IsCensored = input.UserName != item.UserName && !input.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
                 item.Chapters = item.Chapters.DistinctBy(p => p.Order).ToList();
+                item.ChapterCount = item.Chapters.Count();
             }
 
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
@@ -1349,7 +1351,8 @@ public partial class PostService : IPostService
         {
             HashIds = hashIds.Split(',').ToList(),
             Hide = req.Hides,
-            PostStatus = statusList
+            PostStatus = statusList,
+            CurrentDate = DateTime.UtcNow
         };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
         var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
@@ -1392,7 +1395,7 @@ public partial class PostService : IPostService
                     ProfileName = res.ProfileName,
                     UserId = res.UserId,
                     UserName = res.UserName,
-                    isNewChapter = res.LatestCreatedOn.AddDays(2) >= DateTime.UtcNow,
+                    LatestCreatedOn = res.LatestCreatedOn,
                     Hide = res.Hide,
                     Status = res.Status,
                     IsExternalSource = res.IsExternalSource,
@@ -1507,7 +1510,8 @@ public partial class PostService : IPostService
             HashId = x.HashId,
             Chapters = MappingTopChapter(x.SubPostStr),
             Hide = x.Hide,
-            ExternalResource = x.ExternalResource
+            ExternalResource = x.ExternalResource,
+            LatestCreatedOn = x.LatestCreatedOn
         }).ToList();
     }
 
@@ -1529,7 +1533,8 @@ public partial class PostService : IPostService
             Chapters = MappingTopChapter(x.SubPostStr),
             Hide = x.Hide,
             ExternalResource = x.ExternalResource,
-            Status = x.Status
+            Status = x.Status,
+            LatestCreatedOn = x.LatestCreatedOn
         }).ToList();
     }
 

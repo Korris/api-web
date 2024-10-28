@@ -3,6 +3,8 @@
 namespace Mcsg.Story.Api.Models;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
+using Common.SeedWork.Converters;
 using Dtos;
 using Enums;
 
@@ -60,7 +62,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public string UserName { get; set; }
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
-    public bool isNewChapter { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
@@ -95,6 +97,7 @@ public class PostBoxResposne
     public string ThumbnailUrl { get; set; }
     public int CommentCount { get; set; }
     public int ReactionCount { get; set; }
+    public int ChapterCount { get; set; }
     public bool IsMature { get; set; }
     public string HashId { get; set; }
     public PostType Type { get; set; }
@@ -114,4 +117,8 @@ public class PostBoxResposne
     public bool IsArchived => Status == PostStatus.Inactive;
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime LatestCreatedOn { get; set; }
 }

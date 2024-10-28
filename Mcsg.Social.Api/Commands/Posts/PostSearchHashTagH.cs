@@ -195,6 +195,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive;
+                    item.Chapters = MappingTopChapter(item.SubPostStr);
                 }
 
                 if (postReactionResponse.Count() > 0)
@@ -222,6 +223,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive;
+                    item.Chapters = MappingTopChapter(item.SubPostStr);
                 }
 
                 if (postReactionResponse.Count() > 0)
@@ -323,6 +325,19 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 Url = item.MetaUrl ?? ""
             };
         }
+    }
+
+    private List<ChapterBasicResponse> MappingTopChapter(string subPostStr)
+    {
+        var listChapter = (JsonConvert.DeserializeObject<List<ChapterBasicResponse>>(subPostStr))?.Where(x => x != null).
+            OrderByDescending(x => x.Order).ToList();
+
+        listChapter.ForEach(x =>
+        {
+            if (x.ViewCount == null) { x.ViewCount = 0; }
+        });
+
+        return listChapter;
     }
 
     #endregion

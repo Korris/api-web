@@ -1,6 +1,10 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Models;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
+using Common.SeedWork.Converters;
 using Dtos;
 using Enums;
 
@@ -64,6 +68,10 @@ public class PostSeriesTopQueryDbResponse : PostSeriesResponse
     public string? MetaDescription { get; set; }
     public string? Url { get; set; }
     public ReactionsResponse Reaction { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime LatestCreatedOn { get; set; }
 }
 
 public class NewPostSeriesResponse : PostSeriesResponse

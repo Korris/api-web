@@ -233,7 +233,7 @@ LIMIT 1
 SUM(""CommentCount"") as ""TotalSubPostComment"",
                             --sp.""ChapterCount"" AS ""ChapterCount"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
-                            GREATEST(p.""[OrderBy]"", MAX(sp.""[OrderBy]"")) AS ""LatestCreatedOn""
+                            GREATEST(p.""[OrderBy]"", MAX(sp.""PublishDate"")) AS ""LatestCreatedOn""
                             FROM ""story"".""StoryPosts"" p
                               INNER JOIN-- Select Id
                              (
@@ -286,7 +286,7 @@ LIMIT 1
             {
                 return @"LEFT JOIN LATERAL 
                             (
-                                SELECT sp.""Id"",sp.""HashId"",sp.""PostId"",sp.""CreatedOn"",sp.""Title"",sp.""Order"", sp.""IsExclusive"",
+                                SELECT sp.""Id"",sp.""HashId"",sp.""PostId"",sp.""CreatedOn"",sp.""Title"",sp.""Order"", sp.""IsExclusive"", sp.""PublishDate"" ,
 COUNT(spcm.""Id"") as ""CommentCount"",subpostview.""ViewCount"",
 count(*) OVER() AS ""Total"" 
                                 FROM ""story"".""StorySubPosts"" sp 
@@ -1089,11 +1089,11 @@ sp.""IsEnableComment""
                     p.""ViewCount"",
                     p.""IsMature"",
                     p.""CreatedOn"",
-                    GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostCreatedOn"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
+                    GREATEST(p.""CreatedOn"", COALESCE(sp_max.""LatestSubPostPublishDate"", p.""CreatedOn"")) AS ""LatestCreatedOn"",
                     p.""Hide"",
                     p.""Status"",
                     p.""ExternalResource"",
-                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL))AS ""SubPosts"",
+                    to_json(array_agg(distinct(sp.*)) FILTER (WHERE sp.* IS NOT NULL AND sp.""PublishDate"" < @CurrentDate))AS ""SubPosts"",
                     to_json(array_agg(distinct (t.""Name""))  FILTER (WHERE t.""Name"" IS NOT NULL)) AS ""Tags""
                 FROM ""story"".""StoryPosts"" p
                 LEFT JOIN ""story"".""StoryTagPosts"" tp ON p.""Id"" = tp.""PostId""
@@ -1104,14 +1104,15 @@ sp.""IsEnableComment""
                            ""Title"",
                            ""Order"",
                            ""CreatedOn"",
+                           ""PublishDate"",
                            ROW_NUMBER() OVER (PARTITION BY ""PostId"" ORDER BY ""Order"" desc) AS rn
                     FROM ""story"".""StorySubPosts""
                     WHERE ""IsDelete"" = false
                 ) sp ON p.""Id"" = sp.""PostId""
                 LEFT JOIN (
-                    SELECT ""PostId"", MAX(""CreatedOn"") AS ""LatestSubPostCreatedOn""
+                    SELECT ""PostId"", MAX(""PublishDate"") AS ""LatestSubPostPublishDate""
                     FROM ""story"".""StorySubPosts""
-                    WHERE ""IsDelete"" = false
+                    WHERE ""IsDelete"" = false AND ""PublishDate"" < @CurrentDate
                     GROUP BY ""PostId""
                 ) sp_max ON p.""Id"" = sp_max.""PostId""
                 WHERE p.""HashId"" = ANY(@HashIds) AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
@@ -1128,7 +1129,7 @@ sp.""IsEnableComment""
                           u.""ProfileName"",
                           u.""UserName"",
                           p.""ViewCount"",
-                          sp_max.""LatestSubPostCreatedOn"",
+                          sp_max.""LatestSubPostPublishDate"",
                           p.""Hide"",
                           p.""Status"",
                           p.""ExternalResource""
