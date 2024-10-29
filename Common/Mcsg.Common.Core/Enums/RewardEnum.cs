@@ -29,5 +29,11 @@ public enum RewardType
     /// FirstStory
     /// </summary>
     [Display(Name = "FIRST STORY")]
-    FirstStory
+    FirstStory,
+
+    /// <summary>
+    /// FirstDocument
+    /// </summary>
+    [Display(Name = "FIRST DOCUMENT")]
+    FirstDocument
 }

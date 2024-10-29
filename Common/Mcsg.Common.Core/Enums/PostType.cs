@@ -23,5 +23,10 @@ public enum PostType
     /// <summary>
     /// None
     /// </summary>
-    None
+    None,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document
 }

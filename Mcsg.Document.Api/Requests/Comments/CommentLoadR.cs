@@ -1,0 +1,13 @@
+﻿using System.ComponentModel;
+
+namespace Mcsg.Document.Api.Requests;
+
+using Common.Core.Requests;
+
+public class CommentLoadR : PaginatedR
+{
+    public Guid PostId { get; set; }
+
+    [DefaultValue("ModifiedOn")]
+    public new string? OrderBy { get; set; } = "ModifiedOn";
+}

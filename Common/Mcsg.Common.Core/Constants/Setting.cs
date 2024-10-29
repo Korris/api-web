@@ -484,6 +484,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string Story = "story";
 
         /// <summary>
+        /// Document
+        /// </summary>
+        public const string Document = "document";
+
+        /// <summary>
         /// Image
         /// </summary>
         public const string Image = "images";

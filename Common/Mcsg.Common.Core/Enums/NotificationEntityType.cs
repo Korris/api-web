@@ -243,5 +243,35 @@ public enum NotificationEntityType
     /// <summary>
     /// DonateTransaction
     /// </summary>
-    DonateTransaction
+    DonateTransaction,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document,
+
+    /// <summary>
+    /// DocumentPostReaction
+    /// </summary>
+    DocumentPostReaction,
+
+    /// <summary>
+    /// DocumentPostCommentReplyReaction
+    /// </summary>
+    DocumentPostCommentReplyReaction,
+
+    /// <summary>
+    /// DocumentPostCommentReaction
+    /// </summary>
+    DocumentPostCommentReaction,
+
+    /// <summary>
+    /// DocumentSubPostCommentReplyReaction
+    /// </summary>
+    DocumentSubPostCommentReplyReaction,
+
+    /// <summary>
+    /// DocumentSubPostCommentReaction
+    /// </summary>
+    DocumentSubPostCommentReaction
 }

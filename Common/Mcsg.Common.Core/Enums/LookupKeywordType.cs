@@ -33,5 +33,10 @@ public enum LookupKeywordType
     /// <summary>
     /// Social
     /// </summary>
-    Social
+    Social,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document
 }

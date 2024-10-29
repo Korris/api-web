@@ -73,5 +73,10 @@ public enum MicroService
     /// <summary>
     /// WalletJob
     /// </summary>
-    WalletJob
+    WalletJob,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document
 }
