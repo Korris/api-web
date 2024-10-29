@@ -42,7 +42,8 @@ public class Setting : SeedWork.Constants.Setting
                 { "Clo", MicroService.CloneSite.ToString() },
                 { "Fun", MicroService.Function.ToString() },
                 { "Ope", MicroService.OpenId.ToString() },
-                { "Wjo", MicroService.WalletJob.ToString() }
+                { "Wjo", MicroService.WalletJob.ToString() },
+                { "Doc", MicroService.Document.ToString() }
             };
         }
     }

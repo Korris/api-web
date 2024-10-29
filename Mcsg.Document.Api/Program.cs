@@ -296,7 +296,7 @@ public class Program
     /// <summary>
     /// Variable prefix
     /// </summary>
-    private static string _prefix = "Cmc";
+    private static string _prefix = "Doc";
 
     /// <summary>
     /// Media extension allow
