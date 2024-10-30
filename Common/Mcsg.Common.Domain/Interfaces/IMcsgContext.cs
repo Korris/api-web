@@ -17,7 +17,7 @@ using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Mcsg.Common.Domain;
 
-using Domain.Entities;
+using Entities;
 
 /// <summary>
 /// Interface McsgContext
@@ -84,6 +84,10 @@ public interface IMcsgContext
 
     DbSet<ComicPostShare> ComicPostShares { get; set; }
 
+    DbSet<ComicReport> ComicReports { get; set; }
+
+    DbSet<ComicReportDetail> ComicReportDetails { get; set; }
+
     DbSet<ComicResource> ComicResources { get; set; }
 
     DbSet<ComicSubPost> ComicSubPosts { get; set; }
@@ -99,8 +103,6 @@ public interface IMcsgContext
     DbSet<CrawComic> CrawComics { get; set; }
 
     DbSet<CrawComicChapter> CrawComicChapters { get; set; }
-
-    DbSet<Job> Jobs { get; set; }
 
     DbSet<Device> Devices { get; set; }
 
@@ -124,6 +126,10 @@ public interface IMcsgContext
 
     DbSet<DocumentPostShare> DocumentPostShares { get; set; }
 
+    DbSet<DocumentReport> DocumentReports { get; set; }
+
+    DbSet<DocumentReportDetail> DocumentReportDetails { get; set; }
+
     DbSet<DocumentResource> DocumentResources { get; set; }
 
     DbSet<DocumentSubPost> DocumentSubPosts { get; set; }
@@ -137,6 +143,8 @@ public interface IMcsgContext
     DbSet<DocumentTagPost> DocumentTagPosts { get; set; }
 
     DbSet<Feedback> Feedbacks { get; set; }
+
+    DbSet<Job> Jobs { get; set; }
 
     DbSet<Mention> Mentions { get; set; }
 
@@ -186,6 +194,10 @@ public interface IMcsgContext
 
     DbSet<SocialPostShare> SocialPostShares { get; set; }
 
+    DbSet<SocialReport> SocialReports { get; set; }
+
+    DbSet<SocialReportDetail> SocialReportDetails { get; set; }
+
     DbSet<SocialResource> SocialResources { get; set; }
 
     DbSet<SocialSubPost> SocialSubPosts { get; set; }
@@ -217,6 +229,10 @@ public interface IMcsgContext
     DbSet<StoryPostReport> StoryPostReports { get; set; }
 
     DbSet<StoryPostShare> StoryPostShares { get; set; }
+
+    DbSet<StoryReport> StoryReports { get; set; }
+
+    DbSet<StoryReportDetail> StoryReportDetails { get; set; }
 
     DbSet<StoryResource> StoryResources { get; set; }
 
@@ -294,6 +310,10 @@ public interface IMcsgContext
 
     IQueryable<ComicPostShare> ComicPostShareAvailable { get; }
 
+    IQueryable<ComicReport> ComicReportAvailable { get; }
+
+    IQueryable<ComicReportDetail> ComicReportDetailAvailable { get; }
+
     IQueryable<ComicResource> ComicResourceAvailable { get; }
 
     IQueryable<ComicSubPost> ComicSubPostAvailable { get; }
@@ -309,8 +329,6 @@ public interface IMcsgContext
     IQueryable<CrawComic> CrawComicAvailable { get; }
 
     IQueryable<CrawComicChapter> CrawComicChapterAvailable { get; }
-
-    IQueryable<Job> JobAvailable { get; }
 
     IQueryable<Device> DeviceAvailable { get; }
 
@@ -334,6 +352,10 @@ public interface IMcsgContext
 
     IQueryable<DocumentPostShare> DocumentPostShareAvailable { get; }
 
+    IQueryable<DocumentReport> DocumentReportAvailable { get; }
+
+    IQueryable<DocumentReportDetail> DocumentReportDetailAvailable { get; }
+
     IQueryable<DocumentResource> DocumentResourceAvailable { get; }
 
     IQueryable<DocumentSubPost> DocumentSubPostAvailable { get; }
@@ -347,6 +369,8 @@ public interface IMcsgContext
     IQueryable<DocumentTagPost> DocumentTagPostAvailable { get; }
 
     IQueryable<Feedback> FeedbackAvailable { get; }
+
+    IQueryable<Job> JobAvailable { get; }
 
     IQueryable<Mention> MentionAvailable { get; }
 
@@ -396,6 +420,10 @@ public interface IMcsgContext
 
     IQueryable<SocialPostShare> SocialPostShareAvailable { get; }
 
+    IQueryable<SocialReport> SocialReportAvailable { get; }
+
+    IQueryable<SocialReportDetail> SocialReportDetailAvailable { get; }
+
     IQueryable<SocialResource> SocialResourceAvailable { get; }
 
     IQueryable<SocialSubPost> SocialSubPostAvailable { get; }
@@ -428,6 +456,10 @@ public interface IMcsgContext
 
     IQueryable<StoryPostShare> StoryPostShareAvailable { get; }
 
+    IQueryable<StoryReport> StoryReportAvailable { get; }
+
+    IQueryable<StoryReportDetail> StoryReportDetailAvailable { get; }
+
     IQueryable<StoryResource> StoryResourceAvailable { get; }
 
     IQueryable<StorySubPost> StorySubPostAvailable { get; }
@@ -439,6 +471,8 @@ public interface IMcsgContext
     IQueryable<StorySubPostReaction> StorySubPostReactionAvailable { get; }
 
     IQueryable<StoryTagPost> StoryTagPostAvailable { get; }
+
+    IQueryable<SystemResource> SystemResourceAvailable { get; }
 
     IQueryable<SystemSetting> SystemSettingAvailable { get; }
 

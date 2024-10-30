@@ -48,12 +48,12 @@ public class DbSchema
     /// <summary>
     /// Comic tables
     /// </summary>
-    public const string ComicTables = "ComicMetaDatas;ComicPostCommentReactions;ComicPostComments;ComicPostFavorites;ComicPostHides;ComicPostLinks;ComicPostReactions;ComicPostReports;ComicPosts;ComicResources;ComicSubPostCommentReactions;ComicSubPostComments;ComicSubPostReactions;ComicSubPosts;ComicTagPosts";
+    public const string ComicTables = "ComicMetaDatas;ComicPostCommentReactions;ComicPostComments;ComicPostFavorites;ComicPostHides;ComicPostLinks;ComicPostReactions;ComicPostReports;ComicReports;ComicReportDetails;ComicPosts;ComicResources;ComicSubPostCommentReactions;ComicSubPostComments;ComicSubPostReactions;ComicSubPosts;ComicTagPosts";
 
     /// <summary>
     /// Document tables
     /// </summary>
-    public const string DocumentTables = "DocumentMetaDatas;DocumentPostCommentReactions;DocumentPostComments;DocumentPostFavorites;DocumentPostHides;DocumentPostLinks;DocumentPostReactions;DocumentPostReports;DocumentPosts;DocumentResources;DocumentSubPostCommentReactions;DocumentSubPostComments;DocumentSubPostReactions;DocumentSubPosts;DocumentTagPosts";
+    public const string DocumentTables = "DocumentMetaDatas;DocumentPostCommentReactions;DocumentPostComments;DocumentPostFavorites;DocumentPostHides;DocumentPostLinks;DocumentPostReactions;DocumentPostReports;DocumentReports;DocumentReportDetails;DocumentPosts;DocumentResources;DocumentSubPostCommentReactions;DocumentSubPostComments;DocumentSubPostReactions;DocumentSubPosts;DocumentTagPosts";
 
     /// <summary>
     /// Identity tables
@@ -63,12 +63,12 @@ public class DbSchema
     /// <summary>
     /// Social tables
     /// </summary>
-    public const string SocialTables = "SocialMetaDatas;SocialPostCommentReactions;SocialPostComments;SocialPostFavorites;SocialPostHides;SocialPostLinks;SocialPostReactions;SocialPostReports;SocialPosts;SocialResources;SocialSubPostCommentReactions;SocialSubPostComments;SocialSubPostReactions;SocialSubPosts;SocialTagPosts";
+    public const string SocialTables = "SocialMetaDatas;SocialPostCommentReactions;SocialPostComments;SocialPostFavorites;SocialPostHides;SocialPostLinks;SocialPostReactions;SocialPostReports;SocialReports;SocialReportDetails;SocialPosts;SocialResources;SocialSubPostCommentReactions;SocialSubPostComments;SocialSubPostReactions;SocialSubPosts;SocialTagPosts";
 
     /// <summary>
     /// Story tables
     /// </summary>
-    public const string StoryTables = "StoryMetaDatas;StoryPostCommentReactions;StoryPostComments;StoryPostFavorites;StoryPostHides;StoryPostLinks;StoryPostReactions;StoryPostReports;StoryPosts;StoryResources;StorySubPostCommentReactions;StorySubPostComments;StorySubPostReactions;StorySubPosts;StoryTagPosts";
+    public const string StoryTables = "StoryMetaDatas;StoryPostCommentReactions;StoryPostComments;StoryPostFavorites;StoryPostHides;StoryPostLinks;StoryPostReactions;StoryPostReports;StoryReports;StoryReportDetails;;StoryPosts;StoryResources;StorySubPostCommentReactions;StorySubPostComments;StorySubPostReactions;StorySubPosts;StoryTagPosts";
 
     /// <summary>
     /// System tables

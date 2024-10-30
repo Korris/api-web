@@ -6,8 +6,8 @@ using OpenIddict.EntityFrameworkCore.Models;
 namespace Mcsg.Common.Domain;
 
 using Core.Constants;
-using Domain.Entities;
-using Domain.Entities.Configurations;
+using Entities;
+using Entities.Configurations;
 using SeedWork.Extensions;
 
 /// <summary>
@@ -138,6 +138,10 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<ComicPostShare> ComicPostShares { get; set; }
 
+    public virtual DbSet<ComicReport> ComicReports { get; set; }
+
+    public virtual DbSet<ComicReportDetail> ComicReportDetails { get; set; }
+
     public virtual DbSet<ComicResource> ComicResources { get; set; }
 
     public virtual DbSet<ComicSubPost> ComicSubPosts { get; set; }
@@ -153,8 +157,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<CrawComic> CrawComics { get; set; }
 
     public virtual DbSet<CrawComicChapter> CrawComicChapters { get; set; }
-
-    public virtual DbSet<Job> Jobs { get; set; }
 
     public virtual DbSet<Device> Devices { get; set; }
 
@@ -178,6 +180,10 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<DocumentPostShare> DocumentPostShares { get; set; }
 
+    public virtual DbSet<DocumentReport> DocumentReports { get; set; }
+
+    public virtual DbSet<DocumentReportDetail> DocumentReportDetails { get; set; }
+
     public virtual DbSet<DocumentResource> DocumentResources { get; set; }
 
     public virtual DbSet<DocumentSubPost> DocumentSubPosts { get; set; }
@@ -191,6 +197,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<DocumentTagPost> DocumentTagPosts { get; set; }
 
     public virtual DbSet<Feedback> Feedbacks { get; set; }
+
+    public virtual DbSet<Job> Jobs { get; set; }
 
     public virtual DbSet<Mention> Mentions { get; set; }
 
@@ -240,6 +248,10 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<SocialPostShare> SocialPostShares { get; set; }
 
+    public virtual DbSet<SocialReport> SocialReports { get; set; }
+
+    public virtual DbSet<SocialReportDetail> SocialReportDetails { get; set; }
+
     public virtual DbSet<SocialResource> SocialResources { get; set; }
 
     public virtual DbSet<SocialSubPost> SocialSubPosts { get; set; }
@@ -271,6 +283,10 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<StoryPostReport> StoryPostReports { get; set; }
 
     public virtual DbSet<StoryPostShare> StoryPostShares { get; set; }
+
+    public virtual DbSet<StoryReport> StoryReports { get; set; }
+
+    public virtual DbSet<StoryReportDetail> StoryReportDetails { get; set; }
 
     public virtual DbSet<StoryResource> StoryResources { get; set; }
 

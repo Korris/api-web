@@ -23,5 +23,10 @@ public enum EntityType
     /// <summary>
     /// User
     /// </summary>
-    User
+    User,
+
+    /// <summary>
+    /// Comment
+    /// </summary>
+    Comment
 }
