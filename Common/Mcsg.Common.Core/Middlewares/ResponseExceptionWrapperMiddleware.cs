@@ -73,7 +73,7 @@ public class ResponseExceptionWrapperMiddleware
                     await _next.Invoke(context);
 
                     // Handle non-v1 HTTP responses (not gRPC)
-                    var isV1 = (context.Request.Path.Value ?? "").Contains("v1");
+                    var isV1 = (context.Request.Path.Value ?? "").Contains("/v1/");
                     if (!isV1)
                     {
                         await HandleRequestAsync(context);
