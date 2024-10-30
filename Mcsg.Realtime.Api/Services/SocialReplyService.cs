@@ -102,6 +102,8 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
             };
         }
 
+        await _notificationService.SendSuccessReplyNotification(response, req.MicroService);
+
         if (!string.IsNullOrWhiteSpace(pDto.HashId))
         {
             response.AuthorName = authorName;

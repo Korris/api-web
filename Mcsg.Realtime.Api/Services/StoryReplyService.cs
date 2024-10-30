@@ -32,7 +32,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
     /// <param name="notificationService"></param>
     /// <param name="mentionService"></param>
     /// <param name="mapper"></param>
-    public StoryReplyService(IMcsgContext context, IBusinessText businessText, IRepository<StoryPostComment> postCommentRepository, IRepository<StorySubPostComment> subPostCommentRepository, IResourceCommentService resourceCommentService, IRepository<StoryResource> resourceRepository, IRepository<Mention> mentionRepository, IStoryNotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
+    public StoryReplyService(IMcsgContext context, IBusinessText businessText, IRepository<StoryPostComment> postCommentRepository, IRepository<StorySubPostComment> subPostCommentRepository, IResourceCommentService resourceCommentService, IRepository<StoryResource> resourceRepository, IRepository<Mention> mentionRepository, INotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
     {
         _businessText = businessText;
 
@@ -101,6 +101,8 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
                 response.PostIdOfPost = subPost.PostId;
             };
         }
+
+        await _notificationService.SendSuccessReplyNotification(response, req.MicroService);
 
         if (!string.IsNullOrWhiteSpace(pDto.HashId))
         {
@@ -490,7 +492,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
     private readonly IResourceCommentService _resourceCommentService;
     private readonly IRepository<StoryResource> _resourceRepository;
     private readonly IRepository<Mention> _mentionRepository;
-    private readonly IStoryNotificationService _notificationService;
+    private readonly INotificationService _notificationService;
     private readonly IMentionService _mentionService;
     private readonly IMapper _mapper;
 

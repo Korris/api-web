@@ -15,6 +15,7 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
     public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostComment;
     public string? PostHashId { get; set; }
     public string LocationHashId { get; set; }
+    public string MicroServiceType { get; set; } = MicroService.Social.ToString();
     public void Mapping(Profile profile)
     {
         profile.CreateMap<PostCommentResp, CommentNotificationReq>()

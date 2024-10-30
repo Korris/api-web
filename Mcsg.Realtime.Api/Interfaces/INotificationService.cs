@@ -22,4 +22,6 @@ public interface INotificationService
     Task AddPostMentionNotification(MentionPostNotificationReq request);
     Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req);
     Task<NotificationResponse> AddDeletion(NotificationAddDeletionR request);
+    Task SendSuccessCommentNotification(PostCommentResp comment, string microService);
+    Task SendSuccessReplyNotification(ReplyCommentResp comment, string microService);
 }

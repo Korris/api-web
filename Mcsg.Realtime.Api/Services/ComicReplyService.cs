@@ -32,7 +32,7 @@ public partial class ComicReplyService : BaseS, IComicReplyService
     /// <param name="notificationService"></param>
     /// <param name="mentionService"></param>
     /// <param name="mapper"></param>
-    public ComicReplyService(IMcsgContext context, IBusinessText businessText, IRepository<ComicPostComment> postCommentRepository, IRepository<ComicSubPostComment> subPostCommentRepository, IResourceCommentService resourceCommentService, IRepository<ComicResource> resourceRepository, IRepository<Mention> mentionRepository, IComicNotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
+    public ComicReplyService(IMcsgContext context, IBusinessText businessText, IRepository<ComicPostComment> postCommentRepository, IRepository<ComicSubPostComment> subPostCommentRepository, IResourceCommentService resourceCommentService, IRepository<ComicResource> resourceRepository, IRepository<Mention> mentionRepository, INotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
     {
         _businessText = businessText;
 
@@ -101,6 +101,8 @@ public partial class ComicReplyService : BaseS, IComicReplyService
                 response.PostIdOfPost = subPost.PostId;
             };
         }
+
+        await _notificationService.SendSuccessReplyNotification(response, req.MicroService);
 
         if (!string.IsNullOrWhiteSpace(pDto.HashId))
         {
@@ -490,7 +492,7 @@ public partial class ComicReplyService : BaseS, IComicReplyService
     private readonly IResourceCommentService _resourceCommentService;
     private readonly IRepository<ComicResource> _resourceRepository;
     private readonly IRepository<Mention> _mentionRepository;
-    private readonly IComicNotificationService _notificationService;
+    private readonly INotificationService _notificationService;
     private readonly IMentionService _mentionService;
     private readonly IMapper _mapper;
 

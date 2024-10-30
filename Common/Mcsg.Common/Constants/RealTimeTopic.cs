@@ -14,6 +14,7 @@ public static class RealTimeTopic
     #region Notification
     public const string ReceiveNotification = "ReceiveNotification";
     public const string ReceiveTransactionUpdate = "ReceiveTransactionUpdate";
+    public const string ReceiveSendSuccessComment = "ReceiveSendSuccessComment";
     #endregion
 
     #region Follow

@@ -104,6 +104,9 @@ public partial class ComicCommentService : BaseS, IComicCommentService
                 response.PostIdOfPost = subPost.PostId;
             };
         }
+
+        await _notificationService.SendSuccessCommentNotification(response, req.MicroService);
+
         response.PostType = PostType.Comic;
         /// Check createdby in mention will not send this notification to notice that someone comment on their post
         if (!string.IsNullOrEmpty(pDto.HashId) && !receiverIds.Contains(pDto.CreateBy))

@@ -97,6 +97,20 @@ public class NotificationService : BaseS, INotificationService
         return response;
     }
 
+    public async Task SendSuccessCommentNotification(PostCommentResp comment, string microService)
+    {
+        var isPost = comment.Type == "post";
+        var response = new NotificationSuccessResponse
+        {
+            CommentId = comment.Id,
+            MicroService = microService,
+            PostId = isPost ? comment.PostId : comment.PostIdOfPost,
+            SubPostId = isPost ? null : comment.PostId
+        };
+
+        await _hubcontext.Clients.Group(comment.AuthorId.ToString()).SendAsync(RealTimeTopic.ReceiveSendSuccessComment, JsonConvert.SerializeObject(response));
+    }
+
     public async Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment)
     {
         var response = new NotificationResponse();
@@ -184,6 +198,20 @@ public class NotificationService : BaseS, INotificationService
                 ;
 
         }
+    }
+
+    public async Task SendSuccessReplyNotification(ReplyCommentResp comment, string microService)
+    {
+        var isPost = comment.Type == "post";
+        var response = new NotificationSuccessResponse
+        {
+            CommentId = comment.Id,
+            MicroService = microService,
+            PostId = isPost ? comment.PostId : comment.PostIdOfPost,
+            SubPostId = isPost ? null : comment.PostId
+        };
+
+        await _hubcontext.Clients.Group(comment.AuthorId.ToString()).SendAsync(RealTimeTopic.ReceiveSendSuccessComment, JsonConvert.SerializeObject(response));
     }
 
     public async Task<NotificationResponse> AddReplyNotification(CommentNotificationReq comment)
