@@ -49,7 +49,6 @@ public class Program
 
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
-        config.LoadSettings(st.Email, "Notification:Email");
         #endregion
 
         // Update connection string
