@@ -1,0 +1,42 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package story_sub;
+
+service StorySubProto {
+    rpc Create (StorySubCreateReq) returns (StorySubCreateRsp);
+    rpc Delete (StorySubDeleteReq) returns (StorySubDeleteRsp);
+}
+
+message StorySubCreateReq {
+    repeated StorySubProtoDto items = 1;
+}
+
+message StorySubDeleteReq {
+    string subPostId = 1;
+}
+
+message StorySubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated StorySubOutputDto items = 3;
+}
+
+message StorySubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StorySubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    string createdOn = 4;
+    string createdBy = 5;
+}
+
+message StorySubOutputDto {
+    int64 id = 1;
+}

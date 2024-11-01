@@ -1900,6 +1900,8 @@ public partial class PostService : IPostService
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
 
+        await CreateSubPost(subPost);
+
         return result;
     }
 
@@ -2000,6 +2002,9 @@ public partial class PostService : IPostService
             await _postRepository.Connection.QueryAsync(ExecSoftDeleteSubPost, new { SubPostId = subPost.Id, Date = DateTime.UtcNow, UserId = currentUserId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
+
+            await DeleteSubPost(subPost.Id);
+
             return true;
         }
     }
@@ -2381,6 +2386,72 @@ public partial class PostService : IPostService
             var request = new ComicDeleteReq
             {
                 PostId = id.ToString()
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+    #endregion
+
+    #region -- SubPost --
+    private async Task<ComicSubCreateRsp> CreateSubPost(ComicSubPost ett)
+    {
+        var res = new ComicSubCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new ComicSubProto.ComicSubProtoClient(channel);
+            var request = new ComicSubCreateReq
+            {
+                Items =
+                {
+                    new ComicSubProtoDto
+                    {
+                        PostId = ett.PostId.ToString(),
+                        SubPostId = ett.Id.ToString(),
+                        UserId = ett.UserId.ToString(),
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy.ToString()
+                    }
+                }
+            };
+
+            var rsp = await client.CreateAsync(request);
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<ComicSubDeleteRsp> DeleteSubPost(Guid id)
+    {
+        var res = new ComicSubDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new ComicSubProto.ComicSubProtoClient(channel);
+            var request = new ComicSubDeleteReq
+            {
+                SubPostId = id.ToString()
             };
 
             var rsp = await client.DeleteAsync(request);

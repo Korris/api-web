@@ -1,0 +1,42 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package comic_sub;
+
+service ComicSubProto {
+    rpc Create (ComicSubCreateReq) returns (ComicSubCreateRsp);
+    rpc Delete (ComicSubDeleteReq) returns (ComicSubDeleteRsp);
+}
+
+message ComicSubCreateReq {
+    repeated ComicSubProtoDto items = 1;
+}
+
+message ComicSubDeleteReq {
+    string subPostId = 1;
+}
+
+message ComicSubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated ComicSubOutputDto items = 3;
+}
+
+message ComicSubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicSubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    string createdOn = 4;
+    string createdBy = 5;
+}
+
+message ComicSubOutputDto {
+    int64 id = 1;
+}
