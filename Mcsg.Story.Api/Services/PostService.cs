@@ -1870,7 +1870,7 @@ public partial class PostService : IPostService
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
 
-        await CreateSubPost(subPost);
+        _ = Task.Run(async () => await SyncCreateSubToAna(subPost));
 
         return result;
     }
@@ -1963,7 +1963,7 @@ public partial class PostService : IPostService
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
 
-            await DeleteSubPost(subPost.Id);
+            _ = Task.Run(async () => await SyncDeleteToAna(subPost.Id));
 
             return true;
         }
@@ -2364,7 +2364,7 @@ public partial class PostService : IPostService
     #endregion
 
     #region -- SubPost --
-    private async Task<StorySubCreateRsp> CreateSubPost(StorySubPost ett)
+    private async Task<StorySubCreateRsp> SyncCreateSubToAna(StorySubPost ett)
     {
         var res = new StorySubCreateRsp { Success = true };
 
@@ -2401,7 +2401,7 @@ public partial class PostService : IPostService
         return res;
     }
 
-    private async Task<StorySubDeleteRsp> DeleteSubPost(Guid id)
+    private async Task<StorySubDeleteRsp> SyncDeleteSubToAna(Guid id)
     {
         var res = new StorySubDeleteRsp { Success = true };
 

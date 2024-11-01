@@ -1,13 +1,16 @@
-﻿using MediatR;
+﻿using Grpc.Net.Client;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Commands;
 
+using Analytic.Application.Protos;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
+using Interfaces;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
@@ -16,7 +19,7 @@ using static Common.SeedWork.Constants.Message;
 /// <summary>
 /// Handler
 /// </summary>
-public class SubPostsDeleteH : BaseH, IRequestHandler<SubPostDeleteR, SingleResponse>
+public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, SingleResponse>
 {
     #region -- Methods --
 
@@ -24,7 +27,7 @@ public class SubPostsDeleteH : BaseH, IRequestHandler<SubPostDeleteR, SingleResp
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public SubPostsDeleteH(IMcsgContext context) : base(context) { }
+    public SubPostsDeleteH(IMcsgContext context, ISetting setting) : base(context, setting) { }
 
     /// <summary>
     /// Handle
@@ -72,6 +75,38 @@ public class SubPostsDeleteH : BaseH, IRequestHandler<SubPostDeleteR, SingleResp
         // Delete
         ett.Delete(userId);
         await _context.SaveChangesAsync(cancellationToken);
+
+        _ = Task.Run(async () => await SyncDeleteToAna(ett.Id));
+
+        return res;
+    }
+
+    private async Task<SocialSubDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new SocialSubDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new SocialSubProto.SocialSubProtoClient(channel);
+            var request = new SocialSubDeleteReq
+            {
+                Items =
+                {
+                    new SocialSubDeleteDto {Id = id.ToString()}
+                }
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Items.Add(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
 
         return res;
     }

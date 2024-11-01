@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.Net.Client;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -443,6 +445,7 @@ public class FileService : IFileService
     {
         var response = new List<SocialResource>();
         var subPostResponses = new List<SubUploadFileDto>();
+        var subPosts = new List<SocialSubPost>();
 
         if (string.IsNullOrWhiteSpace(dto.UserFolder))
         {
@@ -503,6 +506,7 @@ public class FileService : IFileService
                 };
 
                 await _context.SocialSubPosts.AddAsync(subPost);
+                subPosts.Add(subPost);
                 subPostId = subPost.Id;
 
                 subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
@@ -516,6 +520,11 @@ public class FileService : IFileService
 
             await _jobService.CreateConvertJob(resource, dto.UserName, dto.UserAvatar, targetObjectName);
             response.Add(resource);
+        }
+
+        if (subPosts.Count > 0)
+        {
+            _ = Task.Run(async () => await SyncCreateSubToAna(subPosts));
         }
 
         response = response.OrderBy(x => x.Order).ToList();
@@ -560,6 +569,9 @@ public class FileService : IFileService
             var b = await _context.SocialSubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
             b.ForEach(p => p.IsDelete = true);
 
+            var deletedIds = b.Select(p => p.Id).ToList();
+            _ = Task.Run(async () => await SyncDeleteSubToAna(deletedIds));
+
             willDelete = true;
         }
 
@@ -568,6 +580,75 @@ public class FileService : IFileService
             await _context.SaveChangesAsync(default);
         }
     }
+
+    #region -- Subpost --
+    private async Task<SocialSubCreateRsp> SyncCreateSubToAna(List<SocialSubPost> etts)
+    {
+        var res = new SocialSubCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new SocialSubProto.SocialSubProtoClient(channel);
+            var request = new SocialSubCreateReq
+            {
+                Items = { etts.Select(p => new SocialSubProtoDto
+                {
+                    PostId = p.PostId.ToString(),
+                    SubPostId = p.Id.ToString(),
+                    UserId = p.UserId.ToString(),
+                    CreatedOn = p.CreatedOn.ToString(),
+                    CreatedBy = p.CreatedBy.ToString()
+                }).ToList()}
+            };
+
+            var rsp = await client.CreateAsync(request);
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<SocialSubDeleteRsp> SyncDeleteSubToAna(List<Guid> Ids)
+    {
+
+        using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+        var client = new SocialSubProto.SocialSubProtoClient(channel);
+
+        var res = new SocialSubDeleteRsp { Success = true };
+
+        try
+        {
+            var request = new SocialSubDeleteReq
+            {
+                Items =
+                {
+                    Ids.Select(p => new SocialSubDeleteDto {Id = p.ToString()})
+                }
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Items.Add(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    #endregion
 
     #region -- Fields --
 

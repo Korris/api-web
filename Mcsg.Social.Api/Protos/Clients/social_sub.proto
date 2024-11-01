@@ -1,0 +1,46 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package social_sub;
+
+service SocialSubProto {
+    rpc Create (SocialSubCreateReq) returns (SocialSubCreateRsp);
+    rpc Delete (SocialSubDeleteReq) returns (SocialSubDeleteRsp);
+}
+
+message SocialSubCreateReq {
+    repeated SocialSubProtoDto items = 1;
+}
+
+message SocialSubDeleteReq {
+    repeated SocialSubDeleteDto items = 1;
+}
+
+message SocialSubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated SocialSubOutputDto items = 3;
+}
+
+message SocialSubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    repeated SocialSubOutputDto items = 3;
+}
+
+message SocialSubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    string createdOn = 4;
+    string createdBy = 5;
+}
+
+message SocialSubOutputDto {
+    int64 id = 1;
+}
+
+message SocialSubDeleteDto {
+    string id = 1;
+}

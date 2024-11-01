@@ -1,4 +1,4 @@
-syntax = "proto3";
+﻿syntax = "proto3";
 
 option csharp_namespace = "Mcsg.Analytic.Application.Protos";
 
@@ -44,7 +44,7 @@ message UserDeleteRsp {
 message UserProtoDto {
     string userId = 1;
     string username = 2;
-    int64 userStatus = 3;
+    int32 userStatus = 3;
     string profileId = 4;
     string createdOn = 5;
     string createdBy = 6;
