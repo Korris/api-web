@@ -44,9 +44,10 @@ message ComicDeleteRsp {
 message ComicProtoDto {
     string postId = 1;
     string hashId = 2;
-    string title = 3;
-    string createdOn = 4;
-    string createdBy = 5;
+    string userId = 3;
+    string title = 4;
+    string createdOn = 5;
+    string createdBy = 6;
 }
 
 message ComicOutputDto {

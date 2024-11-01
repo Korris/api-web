@@ -2311,7 +2311,7 @@ public partial class PostService : IPostService
     #region -- Post --
     private async Task<ComicCreateRsp> SyncCreateToAna(ComicPost ett)
     {
-        var res = new ComicCreateRsp() { Success = true };
+        var res = new ComicCreateRsp { Success = true };
 
         try
         {
@@ -2326,6 +2326,7 @@ public partial class PostService : IPostService
                     {
                         PostId = ett.Id.ToString(),
                         HashId = ett.HashId,
+                        UserId = ett.UserId.ToString(),
                         Title = ett.Title,
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy.ToString()
@@ -2376,7 +2377,7 @@ public partial class PostService : IPostService
 
     private async Task<ComicDeleteRsp> SyncDeleteToAna(Guid id)
     {
-        var res = new ComicDeleteRsp() { Success = true };
+        var res = new ComicDeleteRsp { Success = true };
 
         try
         {

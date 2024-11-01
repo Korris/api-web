@@ -242,7 +242,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             var request = new SocialUpdateReq
             {
                 PostId = ett.Id.ToString(),
-                Body = ett.Body,
+                Body = ett.Body
             };
 
             var rsp = await client.UpdateAsync(request);

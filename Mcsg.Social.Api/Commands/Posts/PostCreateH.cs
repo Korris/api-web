@@ -246,16 +246,17 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             var request = new SocialCreateReq
             {
                 Items =
-            {
-                new SocialProtoDto
                 {
-                    PostId = ett.Id.ToString(),
-                    HashId = ett.HashId,
-                    Body = ett.Body,
-                    CreatedOn = ett.CreatedOn.ToString(),
-                    CreatedBy = ett.CreatedBy.ToString()
+                    new SocialProtoDto
+                    {
+                        PostId = ett.Id.ToString(),
+                        HashId = ett.HashId,
+                        UserId = ett.UserId.ToString(),
+                        Body = ett.Body,
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy.ToString()
+                    }
                 }
-            }
             };
 
             var rsp = await client.CreateAsync(request);

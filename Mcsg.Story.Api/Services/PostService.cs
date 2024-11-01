@@ -2286,6 +2286,7 @@ public partial class PostService : IPostService
                     {
                         PostId = ett.Id.ToString(),
                         HashId = ett.HashId,
+                        UserId = ett.UserId.ToString(),
                         Title = ett.Title,
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy.ToString()
