@@ -1963,7 +1963,7 @@ public partial class PostService : IPostService
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
 
-            _ = Task.Run(async () => await SyncDeleteToAna(subPost.Id));
+            _ = Task.Run(async () => await SyncDeleteSubToAna(subPost.Id));
 
             return true;
         }

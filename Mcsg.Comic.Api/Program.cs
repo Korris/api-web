@@ -160,6 +160,7 @@ public class Program
 
             p.AddDiPost();
             p.AddDiPostReport();
+            p.AddDiSubPost();
         });
         #endregion
 

@@ -33,6 +33,7 @@ public static class DiUserExtension
     public static void AddUserCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<UserNameUpdateR, SingleResponse>, UserNameUpdateH>(life);
+        p.AddBehavior<IRequestHandler<UserSyncToAnaR, SingleResponse>, UserSyncToAnaH>(life);
     }
 
     /// <summary>

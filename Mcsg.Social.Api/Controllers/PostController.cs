@@ -10,6 +10,7 @@ using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 [ApiController]
 [Route("[controller]")]
@@ -113,6 +114,20 @@ public class PostController : ControllerBase
 
         var response = await _mediator.Send(request);
         return Ok(response);
+    }
+
+    /// <summary>
+    /// SyncToAna
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("v1/SyncToAna"), Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> SyncToAna([FromBody] PostSyncToAnaR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
     }
 
     #endregion

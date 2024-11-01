@@ -1,4 +1,4 @@
-﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -161,6 +161,7 @@ public class Program
             p.AddDiPost();
             p.AddDiPostFavorite();
             p.AddDiPostReport();
+            p.AddDiSubPost();
         });
         #endregion
 

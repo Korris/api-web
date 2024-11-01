@@ -8,6 +8,7 @@ namespace Mcsg.Identity.Api.Controllers;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
 /// User controller
@@ -66,7 +67,7 @@ public class UserController : ControllerBase
     /// <returns>Returns the result</returns>
     [HttpPost("v1/UpdateUserName"), Authorize]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> UpdateUserName([FromBody] UserNameUpdateR request)
+    public async Task<IActionResult> UpdateUserName([FromBody] UserSyncToAnaR request)
     {
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
@@ -139,6 +140,20 @@ public class UserController : ControllerBase
         return Ok(response);
     }
     #endregion
+
+    /// <summary>
+    /// SyncToAna
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Returns the result</returns>
+    [HttpPost("v1/SyncToAna"), Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> SyncToAna([FromBody] UserSyncToAnaR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
 
     #endregion
 

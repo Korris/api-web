@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Mcsg.Social.Api.Controllers;
+namespace Mcsg.Comic.Api.Controllers;
 
 using Common.Core.Controllers;
 using Common.SeedWork.Responses;
@@ -27,22 +27,6 @@ public class SubPostController : BaseController
     {
         _setting = setting;
         DomainName = _setting.Domain;
-    }
-
-    /// <summary>
-    /// Delete
-    /// </summary>
-    /// <returns>Return the result</returns>
-    [HttpDelete("Delete"), Authorize]
-    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Delete([FromBody] SubPostDeleteR request)
-    {
-        request.Analyze(HttpContext);
-
-        var response = await _mediator.Send(request);
-        response.ReturnUrl = AbsoluteUri;
-
-        return Ok(response);
     }
 
     /// <summary>

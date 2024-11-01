@@ -46,6 +46,7 @@ public static class DiPostExtension
     {
         p.AddBehavior<IRequestHandler<PostCreateR, SingleResponse>, PostCreateH>(life);
         p.AddBehavior<IRequestHandler<PostUpdateR, SingleResponse>, PostUpdateH>(life);
+        p.AddBehavior<IRequestHandler<PostSyncToAnaR, SingleResponse>, PostSyncToAnaH>(life);
     }
 
     /// <summary>

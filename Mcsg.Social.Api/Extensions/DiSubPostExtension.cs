@@ -13,7 +13,7 @@
 
 using MediatR;
 
-namespace Mcsg.Story.Api.Extensions;
+namespace Mcsg.Social.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
@@ -22,7 +22,7 @@ using Requests;
 /// <summary>
 /// DI extension
 /// </summary>
-public static class DiPostExtension
+public static class DiSubPostExtension
 {
     #region -- Methods --
 
@@ -31,10 +31,10 @@ public static class DiPostExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddDiPost(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddDiSubPost(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
-        p.AddPostCommands(life);
-        p.AddPostQueries(life);
+        p.AddSubPostCommands(life);
+        p.AddSubPostQueries(life);
     }
 
     /// <summary>
@@ -42,11 +42,9 @@ public static class DiPostExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddPostCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddSubPostCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
-        p.AddBehavior<IRequestHandler<PostCreateR, SingleResponse>, PostCreateH>(life);
-        p.AddBehavior<IRequestHandler<PostUpdateR, SingleResponse>, PostUpdateH>(life);
-        p.AddBehavior<IRequestHandler<PostSyncToAnaR, SingleResponse>, PostSyncToAnaH>(life);
+        p.AddBehavior<IRequestHandler<SubPostSyncToAnaR, SingleResponse>, SubPostSyncToAnaH>(life);
     }
 
     /// <summary>
@@ -54,7 +52,7 @@ public static class DiPostExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddSubPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
     }
 

@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Mcsg.Comic.Api.Controllers;
 
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 [ApiController]
 [Route("[controller]")]
@@ -13,8 +18,9 @@ public class PostController : ControllerBase
 {
     #region -- Methods --
 
-    public PostController(IPostService postService)
+    public PostController(IMediator mediator, IPostService postService)
     {
+        _mediator = mediator;
         _postService = postService;
     }
 
@@ -58,9 +64,28 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// SyncToAna
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("v1/SyncToAna"), Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> SyncToAna([FromBody] PostSyncToAnaR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
+    }
+
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly IPostService _postService;
 
