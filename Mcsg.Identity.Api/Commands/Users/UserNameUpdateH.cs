@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using Grpc.Net.Client;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Commands;
 
+using Analytic.Application.Protos;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -134,6 +136,8 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             remainingTime = dto.TimeRemaining
         };
 
+        _ = Task.Run(async () => await SyncUpdateToAna(user));
+
         res.SetSuccess(data);
         return res;
     }
@@ -202,6 +206,34 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         }
 
         return false;
+    }
+
+    private async Task<UserUpdateRsp> SyncUpdateToAna(User ett)
+    {
+        var res = new UserUpdateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new UserProto.UserProtoClient(channel);
+            var request = new UserUpdateReq
+            {
+                UserId = ett.Id.ToString(),
+                Username = ett.UserName,
+            };
+
+            var rsp = await client.UpdateAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     #endregion

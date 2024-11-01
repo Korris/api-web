@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package user;
+
+service UserProto {
+    rpc Create (UserCreateReq) returns (UserCreateRsp);
+    rpc Update (UserUpdateReq) returns (UserUpdateRsp);
+    rpc Delete (UserDeleteReq) returns (UserDeleteRsp);
+}
+
+message UserCreateReq {
+    repeated UserProtoDto items = 1;
+}
+
+message UserUpdateReq {
+    string userId = 1;
+    string username = 2;
+}
+
+message UserDeleteReq {
+    string userId = 1;
+}
+
+message UserCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated UserOutputDto items = 3;
+}
+
+message UserUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message UserDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message UserProtoDto {
+    string userId = 1;
+    string username = 2;
+    int64 userStatus = 3;
+    string profileId = 4;
+    string createdOn = 5;
+    string createdBy = 6;
+}
+
+message UserOutputDto {
+    int64 id = 1;
+}

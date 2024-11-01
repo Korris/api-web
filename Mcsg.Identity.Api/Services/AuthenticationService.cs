@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
@@ -170,6 +171,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             await _userManager.AddToRoleAsync(user, RoleNames.User);
 
             _ = Task.Run(async () => await InitUserWallet(user));
+            _ = Task.Run(async () => await SyncCreateToAna(user));
         }
 
         if (request.IsForAdmin)
@@ -387,6 +389,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 await _userManager.AddToRoleAsync(user, RoleNames.User);
 
                 _ = Task.Run(async () => await InitUserWallet(user));
+                _ = Task.Run(async () => await SyncCreateToAna(user));
 
                 var ettUserSocial = new UserSocial
                 {
@@ -807,6 +810,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         await _userManager.UpdateAsync(user);
 
+        _ = Task.Run(async () => await SyncDeleteToAna(user.Id));
+
         return true;
     }
 
@@ -1053,6 +1058,71 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 ProfileName = user.ProfileName
             };
             var rsp = await client.CreateAsync(request);
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<UserCreateRsp> SyncCreateToAna(User ett)
+    {
+        var res = new UserCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new UserProto.UserProtoClient(channel);
+            var request = new UserCreateReq
+            {
+                Items =
+                {
+                    new UserProtoDto
+                    {
+                        UserId = ett.Id.ToString(),
+                        Username = ett.ProfileName,
+                        UserStatus = (int)UserStatus.Active,
+                        ProfileId = ett.ProfileId,
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy.ToString()
+                    }
+                }
+            };
+
+            var rsp = await client.CreateAsync(request);
+            res.Message = rsp.Message;
+            res.Items.Add(rsp.Items.Select(item => new UserOutputDto { Id = item.Id }));
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<UserDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new UserDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new UserProto.UserProtoClient(channel);
+            var request = new UserDeleteReq
+            {
+                UserId = id.ToString()
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
             res.Id = rsp.Id;
         }
         catch (Exception ex)
