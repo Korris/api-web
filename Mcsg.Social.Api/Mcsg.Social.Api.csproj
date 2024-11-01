@@ -19,6 +19,7 @@
 
     <ItemGroup>
         <Protobuf Include="Protos\Clients\wallet.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Clients\social.proto" GrpcServices="Client" />
     </ItemGroup>
 
 </Project>

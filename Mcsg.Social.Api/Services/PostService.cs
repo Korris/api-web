@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Dapper;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -79,6 +81,9 @@ public partial class PostService : IPostService
             await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = currentUserId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
+
+            _ = Task.Run(async () => await SyncDeleteToAna(postId));
+
             return true;
         }
     }
@@ -769,6 +774,35 @@ public partial class PostService : IPostService
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
+
+    #region -- Post --
+    private async Task<SocialDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new SocialDeleteRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new SocialProto.SocialProtoClient(channel);
+            var request = new SocialDeleteReq
+            {
+                PostId = id.ToString()
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+    #endregion
 
     #endregion
 

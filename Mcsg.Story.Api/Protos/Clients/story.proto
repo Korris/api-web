@@ -1,0 +1,54 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package story;
+
+service StoryProto {
+    rpc Create (StoryCreateReq) returns (StoryCreateRsp);
+    rpc Update (StoryUpdateReq) returns (StoryUpdateRsp);
+    rpc Delete (StoryDeleteReq) returns (StoryDeleteRsp);
+}
+
+message StoryCreateReq {
+    repeated StoryProtoDto items = 1;
+}
+
+message StoryUpdateReq {
+    string postId = 1;
+    string title = 2;
+}
+
+message StoryDeleteReq {
+    string postId = 1;
+}
+
+message StoryCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated StoryOutputDto items = 3;
+}
+
+message StoryUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StoryDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StoryProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string title = 3;
+    string createdOn = 4;
+    string createdBy = 5;
+}
+
+message StoryOutputDto {
+    int64 id = 1;
+}

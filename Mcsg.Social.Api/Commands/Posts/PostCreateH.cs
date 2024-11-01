@@ -11,11 +11,13 @@
  */
 #endregion
 
+using Grpc.Net.Client;
 using MediatR;
 using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
 
+using Analytic.Application.Protos;
 using Common.Core;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -226,6 +228,45 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         };
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
+
+        _ = Task.Run(async () => await SyncCreateToAna(ett));
+
+        return res;
+    }
+
+    private async Task<SocialCreateRsp> SyncCreateToAna(SocialPost ett)
+    {
+        var res = new SocialCreateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new SocialProto.SocialProtoClient(channel);
+            var request = new SocialCreateReq
+            {
+                Items =
+            {
+                new SocialProtoDto
+                {
+                    PostId = ett.Id.ToString(),
+                    HashId = ett.HashId,
+                    Body = ett.Body,
+                    CreatedOn = ett.CreatedOn.ToString(),
+                    CreatedBy = ett.CreatedBy.ToString()
+                }
+            }
+            };
+
+            var rsp = await client.CreateAsync(request);
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
 
         return res;
     }

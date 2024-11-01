@@ -10,10 +10,15 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Lib\Mcsg.Lib.Common.Web\Mcsg.Lib.Common.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\Clients\story.proto" GrpcServices="Client" />
     </ItemGroup>
 
 </Project>

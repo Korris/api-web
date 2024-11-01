@@ -1,0 +1,54 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package comic;
+
+service ComicProto {
+    rpc Create (ComicCreateReq) returns (ComicCreateRsp);
+    rpc Update (ComicUpdateReq) returns (ComicUpdateRsp);
+    rpc Delete (ComicDeleteReq) returns (ComicDeleteRsp);
+}
+
+message ComicCreateReq {
+    repeated ComicProtoDto items = 1;
+}
+
+message ComicUpdateReq {
+    string postId = 1;
+    string title = 2;
+}
+
+message ComicDeleteReq {
+    string postId = 1;
+}
+
+message ComicCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated ComicOutputDto items = 3;
+}
+
+message ComicUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string title = 3;
+    string createdOn = 4;
+    string createdBy = 5;
+}
+
+message ComicOutputDto {
+    int64 id = 1;
+}

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Dapper;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Web;
 
 namespace Mcsg.Comic.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core;
 using Common.Core.Constants;
 using Common.Core.Enums;
@@ -97,6 +99,9 @@ public partial class PostService : IPostService
             await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = currentUserId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
+
+            _ = Task.Run(async () => await SyncDeleteToAna(postId));
+
             return true;
         }
     }
@@ -196,6 +201,8 @@ public partial class PostService : IPostService
         };
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
+
+        _ = Task.Run(async () => await SyncCreateToAna(post));
 
         return result;
     }
@@ -966,6 +973,8 @@ public partial class PostService : IPostService
                 currentEntity.Keyword = request.Title;
                 await _smartLookupRepository.UpdateAsync(currentEntity);
             }
+
+            _ = Task.Run(async () => await SyncUpdateToAna(post));
         }
 
         result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, userId)).ToArray();
@@ -2293,6 +2302,101 @@ public partial class PostService : IPostService
 
         return res;
     }
+
+    #region -- Post --
+    private async Task<ComicCreateRsp> SyncCreateToAna(ComicPost ett)
+    {
+        var res = new ComicCreateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new ComicProto.ComicProtoClient(channel);
+            var request = new ComicCreateReq
+            {
+                Items =
+                {
+                    new ComicProtoDto
+                    {
+                        PostId = ett.Id.ToString(),
+                        HashId = ett.HashId,
+                        Title = ett.Title,
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy.ToString()
+                    }
+                }
+            };
+
+            var rsp = await client.CreateAsync(request);
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<ComicUpdateRsp> SyncUpdateToAna(ComicPost ett)
+    {
+        var res = new ComicUpdateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new ComicProto.ComicProtoClient(channel);
+            var request = new ComicUpdateReq
+            {
+                PostId = ett.Id.ToString(),
+                Title = ett.Title,
+            };
+
+            var rsp = await client.UpdateAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<ComicDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new ComicDeleteRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new ComicProto.ComicProtoClient(channel);
+            var request = new ComicDeleteReq
+            {
+                PostId = id.ToString()
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+    #endregion
+
     #endregion
 
     #region -- Fields --

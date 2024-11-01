@@ -11,16 +11,19 @@
  */
 #endregion
 
+using Grpc.Net.Client;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Commands;
 
+using Analytic.Application.Protos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -220,7 +223,38 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
+
+        _ = Task.Run(async () => await SyncUpdateToAna(ett));
+
         res.SetSuccess(result);
+        return res;
+    }
+
+    private async Task<SocialUpdateRsp> SyncUpdateToAna(SocialPost ett)
+    {
+        var res = new SocialUpdateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+
+            var client = new SocialProto.SocialProtoClient(channel);
+            var request = new SocialUpdateReq
+            {
+                PostId = ett.Id.ToString(),
+                Body = ett.Body,
+            };
+
+            var rsp = await client.UpdateAsync(request);
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
         return res;
     }
 
