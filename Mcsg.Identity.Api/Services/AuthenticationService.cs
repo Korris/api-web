@@ -146,6 +146,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user.MinioInstance = 0; // default MinIO
             user.StorageLimit = 1024; // 1GB
             user.Type = UserType.Free;
+            user.CreatedBy = request.IsForAdmin ? request.UserId : user.Id;
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -370,6 +371,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 user.MinioInstance = 0; // default MinIO
                 user.StorageLimit = 1024; // 1GB
                 user.Type = UserType.Free;
+                user.CreatedBy = user.Id;
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
