@@ -236,13 +236,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
     private async Task<SocialCreateRsp> SyncCreateToAna(SocialPost ett)
     {
-        var res = new SocialCreateRsp() { Success = true };
+        var res = new SocialCreateRsp { Success = true };
 
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new SocialProto.SocialProtoClient(channel);
+
             var request = new SocialCreateReq
             {
                 Items =
@@ -254,12 +254,14 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                         UserId = ett.UserId.ToString(),
                         Body = ett.Body,
                         CreatedOn = ett.CreatedOn.ToString(),
-                        CreatedBy = ett.CreatedBy.ToString()
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
                     }
                 }
             };
-
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }

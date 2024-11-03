@@ -2271,13 +2271,13 @@ public partial class PostService : IPostService
     #region -- Post --
     private async Task<StoryCreateRsp> SyncCreateToAna(StoryPost ett)
     {
-        var res = new StoryCreateRsp() { Success = true };
+        var res = new StoryCreateRsp { Success = true };
 
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StoryProto.StoryProtoClient(channel);
+
             var request = new StoryCreateReq
             {
                 Items =
@@ -2289,12 +2289,14 @@ public partial class PostService : IPostService
                         UserId = ett.UserId.ToString(),
                         Title = ett.Title,
                         CreatedOn = ett.CreatedOn.ToString(),
-                        CreatedBy = ett.CreatedBy.ToString()
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
                     }
                 }
             };
-
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }
@@ -2314,15 +2316,17 @@ public partial class PostService : IPostService
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StoryProto.StoryProtoClient(channel);
+
             var request = new StoryUpdateReq
             {
                 PostId = ett.Id.ToString(),
                 Title = ett.Title,
+                ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
             };
-
             var rsp = await client.UpdateAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }
@@ -2337,19 +2341,19 @@ public partial class PostService : IPostService
 
     private async Task<StoryDeleteRsp> SyncDeleteToAna(Guid id)
     {
-        var res = new StoryDeleteRsp() { Success = true };
+        var res = new StoryDeleteRsp { Success = true };
 
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StoryProto.StoryProtoClient(channel);
+
             var request = new StoryDeleteReq
             {
                 PostId = id.ToString()
             };
-
             var rsp = await client.DeleteAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }
@@ -2371,8 +2375,8 @@ public partial class PostService : IPostService
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StorySubProto.StorySubProtoClient(channel);
+
             var request = new StorySubCreateReq
             {
                 Items =
@@ -2383,12 +2387,14 @@ public partial class PostService : IPostService
                         SubPostId = ett.Id.ToString(),
                         UserId = ett.UserId.ToString(),
                         CreatedOn = ett.CreatedOn.ToString(),
-                        CreatedBy = ett.CreatedBy.ToString()
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
                     }
                 }
             };
-
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }
@@ -2408,14 +2414,14 @@ public partial class PostService : IPostService
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StorySubProto.StorySubProtoClient(channel);
+
             var request = new StorySubDeleteReq
             {
                 SubPostId = id.ToString()
             };
-
             var rsp = await client.DeleteAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }

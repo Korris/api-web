@@ -1078,8 +1078,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new UserProto.UserProtoClient(channel);
+
             var request = new UserCreateReq
             {
                 Items =
@@ -1091,12 +1091,14 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                         UserStatus = (int)UserStatus.Active,
                         ProfileId = ett.ProfileId,
                         CreatedOn = ett.CreatedOn.ToString(),
-                        CreatedBy = ett.CreatedBy.ToString()
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
                     }
                 }
             };
-
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.Add(rsp.Items.Select(item => new UserOutputDto { Id = item.Id }));
         }
@@ -1116,14 +1118,14 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new UserProto.UserProtoClient(channel);
+
             var request = new UserDeleteReq
             {
                 UserId = id.ToString()
             };
-
             var rsp = await client.DeleteAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }

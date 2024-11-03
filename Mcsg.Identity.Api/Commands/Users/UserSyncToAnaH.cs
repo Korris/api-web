@@ -13,6 +13,7 @@
 
 using Grpc.Net.Client;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Commands;
 
@@ -68,25 +69,27 @@ public class UserSyncToAnaH : BaseSettingH, IRequestHandler<UserSyncToAnaR, Sing
     {
         var res = new UserCreateRsp { Success = true };
 
-        var l = _context.Users.Select(ett => new UserProtoDto
-        {
-            UserId = ett.Id.ToString(),
-            Username = ett.UserName,
-            UserStatus = (int)ett.Status,
-            ProfileId = ett.ProfileId,
-            CreatedOn = ett.CreatedOn.ToString(),
-            CreatedBy = (ett.CreatedBy == null ? ett.Id : ett.CreatedBy).ToString()
-        }).OrderBy(p => p.CreatedOn).ToList();
-
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new UserProto.UserProtoClient(channel);
-            var request = new UserCreateReq();
-            request.Items.AddRange(l);
 
+            var etts = await _context.Users.Select(p => new UserProtoDto
+            {
+                UserId = p.Id.ToString(),
+                Username = p.UserName,
+                UserStatus = (int)p.Status,
+                ProfileId = p.ProfileId,
+                CreatedOn = p.CreatedOn.ToString(),
+                CreatedBy = (p.CreatedBy == null ? p.Id : p.CreatedBy).ToString(),
+                ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),
+                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString()
+            }).OrderBy(p => p.CreatedOn).ToListAsync();
+
+            var request = new UserCreateReq();
+            request.Items.AddRange(etts);
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }

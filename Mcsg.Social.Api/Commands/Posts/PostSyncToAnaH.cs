@@ -13,6 +13,7 @@
 
 using Grpc.Net.Client;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Commands;
 
@@ -68,24 +69,25 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
     {
         var res = new SocialCreateRsp { Success = true };
 
-        var l = _context.SocialPosts.Select(ett => new SocialProtoDto
-        {
-            PostId = ett.Id.ToString(),
-            HashId = ett.HashId,
-            UserId = ett.UserId.ToString(),
-            Body = ett.Body,
-            CreatedOn = ett.CreatedOn.ToString(),
-            CreatedBy = ett.CreatedBy.ToString()
-        }).OrderBy(p => p.CreatedOn).ToList();
-
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new SocialProto.SocialProtoClient(channel);
-            var request = new SocialCreateReq();
-            request.Items.AddRange(l);
 
+            var etts = await _context.SocialPosts.Select(p => new SocialProtoDto
+            {
+                PostId = p.Id.ToString(),
+                HashId = p.HashId,
+                UserId = p.UserId.ToString(),
+                Body = p.Body,
+                CreatedOn = p.CreatedOn.ToString(),
+                CreatedBy = p.CreatedBy == null ? null : p.CreatedBy.ToString(),
+                ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),
+                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString()
+            }).OrderBy(p => p.CreatedOn).ToListAsync();
+
+            var request = new SocialCreateReq();
+            request.Items.AddRange(etts);
             var rsp = await client.CreateAsync(request);
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);

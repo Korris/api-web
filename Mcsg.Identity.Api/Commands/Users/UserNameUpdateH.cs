@@ -215,15 +215,17 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new UserProto.UserProtoClient(channel);
+
             var request = new UserUpdateReq
             {
                 UserId = ett.Id.ToString(),
                 Username = ett.UserName,
+                ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
             };
-
             var rsp = await client.UpdateAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }

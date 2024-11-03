@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "Mcsg.Analytic.Application.Protos";
 
 package comic;
@@ -17,6 +19,8 @@ message ComicCreateReq {
 message ComicUpdateReq {
     string postId = 1;
     string title = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
 }
 
 message ComicDeleteReq {
@@ -47,7 +51,9 @@ message ComicProtoDto {
     string userId = 3;
     string title = 4;
     string createdOn = 5;
-    string createdBy = 6;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
 }
 
 message ComicOutputDto {

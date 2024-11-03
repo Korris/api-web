@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "Mcsg.Analytic.Application.Protos";
 
 package social_sub;
@@ -34,7 +36,9 @@ message SocialSubProtoDto {
     string subPostId = 2;
     string userId = 3;
     string createdOn = 4;
-    string createdBy = 5;
+    google.protobuf.StringValue createdBy = 5;
+    google.protobuf.StringValue modifiedOn = 6;
+    google.protobuf.StringValue modifiedBy = 7;
 }
 
 message SocialSubOutputDto {

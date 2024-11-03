@@ -13,6 +13,7 @@
 
 using Grpc.Net.Client;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Story.Api.Commands;
 
@@ -68,25 +69,27 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
     {
         var res = new StoryCreateRsp { Success = true };
 
-        var l = _context.StoryPosts.Select(ett => new StoryProtoDto
-        {
-            PostId = ett.Id.ToString(),
-            HashId = ett.HashId,
-            UserId = ett.UserId.ToString(),
-            Title = ett.Title,
-            CreatedOn = ett.CreatedOn.ToString(),
-            CreatedBy = ett.CreatedBy.ToString()
-        }).OrderBy(p => p.CreatedOn).ToList();
-
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new StoryProto.StoryProtoClient(channel);
-            var request = new StoryCreateReq();
-            request.Items.AddRange(l);
 
+            var etts = await _context.StoryPosts.Select(p => new StoryProtoDto
+            {
+                PostId = p.Id.ToString(),
+                HashId = p.HashId,
+                UserId = p.UserId.ToString(),
+                Title = p.Title,
+                CreatedOn = p.CreatedOn.ToString(),
+                CreatedBy = p.CreatedBy == null ? null : p.CreatedBy.ToString(),
+                ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),
+                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString()
+            }).OrderBy(p => p.CreatedOn).ToListAsync();
+
+            var request = new StoryCreateReq();
+            request.Items.AddRange(etts);
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }

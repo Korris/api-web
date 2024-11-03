@@ -13,6 +13,7 @@
 
 using Grpc.Net.Client;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Comic.Api.Commands;
 
@@ -68,24 +69,26 @@ public class SubPostSyncToAnaH : BaseSettingH, IRequestHandler<SubPostSyncToAnaR
     {
         var res = new ComicSubCreateRsp { Success = true };
 
-        var l = _context.ComicSubPosts.Select(ett => new ComicSubProtoDto
-        {
-            PostId = ett.PostId.ToString(),
-            SubPostId = ett.Id.ToString(),
-            UserId = ett.UserId.ToString(),
-            CreatedOn = ett.CreatedOn.ToString(),
-            CreatedBy = ett.CreatedBy.ToString()
-        }).OrderBy(p => p.CreatedOn).ToList();
-
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new ComicSubProto.ComicSubProtoClient(channel);
-            var request = new ComicSubCreateReq();
-            request.Items.AddRange(l);
 
+            var etts = await _context.ComicSubPosts.Select(p => new ComicSubProtoDto
+            {
+                PostId = p.PostId.ToString(),
+                SubPostId = p.Id.ToString(),
+                UserId = p.UserId.ToString(),
+                CreatedOn = p.CreatedOn.ToString(),
+                CreatedBy = p.CreatedBy == null ? null : p.CreatedBy.ToString(),
+                ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),
+                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString()
+            }).OrderBy(p => p.CreatedOn).ToListAsync();
+
+            var request = new ComicSubCreateReq();
+            request.Items.AddRange(etts);
             var rsp = await client.CreateAsync(request);
+
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
         }

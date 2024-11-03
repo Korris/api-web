@@ -778,19 +778,19 @@ public partial class PostService : IPostService
     #region -- Post --
     private async Task<SocialDeleteRsp> SyncDeleteToAna(Guid id)
     {
-        var res = new SocialDeleteRsp() { Success = true };
+        var res = new SocialDeleteRsp { Success = true };
 
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
-
             var client = new SocialProto.SocialProtoClient(channel);
+
             var request = new SocialDeleteReq
             {
                 PostId = id.ToString()
             };
-
             var rsp = await client.DeleteAsync(request);
+
             res.Message = rsp.Message;
             res.Id = rsp.Id;
         }
