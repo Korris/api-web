@@ -53,6 +53,42 @@ public static class StreamExtension
     }
 
     /// <summary>
+    /// Checks if the given stream is an image by inspecting its file signature (header).
+    /// </summary>
+    /// <param name="fs">The input stream to check.</param>
+    /// <returns>Returns true if the stream represents an image in a supported format; otherwise, false.</returns>
+    public static bool IsImage(this Stream? fs)
+    {
+        if (fs == null)
+        {
+            return false;
+        }
+
+        var buffer = new byte[12];
+        fs.Read(buffer, 0, buffer.Length);
+
+        return buffer.IsImage();
+    }
+
+    /// <summary>
+    /// Checks if the given stream is a video by inspecting its file signature (header).
+    /// </summary>
+    /// <param name="fs">The input stream to check.</param>
+    /// <returns>Returns true if the stream represents a video in a supported format; otherwise, false.</returns>
+    public static bool IsVideo(this Stream? fs)
+    {
+        if (fs == null)
+        {
+            return false;
+        }
+
+        var buffer = new byte[12];
+        fs.Read(buffer, 0, buffer.Length);
+
+        return buffer.IsVideo();
+    }
+
+    /// <summary>
     /// Convert stream to string
     /// </summary>
     /// <param name="fs">Stream</param>

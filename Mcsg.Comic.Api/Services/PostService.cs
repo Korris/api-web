@@ -1831,6 +1831,11 @@ public partial class PostService : IPostService
             throw new ForbiddenAccessException(ApiErrorCode.POST_HAS_COMPLETED, ApiErrorMessage.POST_HAS_COMPLETED);
         }
 
+        if (post.UserId != request.UserId)
+        {
+            throw new ForbiddenAccessException(nameof(E309), E309);
+        }
+
         var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
         if (hasSubPost)
         {
@@ -1933,6 +1938,11 @@ public partial class PostService : IPostService
         if (post == null)
         {
             throw new NotFoundException(E204, M204);
+        }
+
+        if (post.UserId != request.UserId)
+        {
+            throw new ForbiddenAccessException(nameof(E309), E309);
         }
 
         var subPost = await FindSubPost(request.PostHashId, request.ChapterOrder);

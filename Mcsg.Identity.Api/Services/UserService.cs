@@ -388,6 +388,12 @@ public partial class UserService : BaseMinioS, IUserService
 
         try
         {
+            var isImage = file.OpenReadStream().IsImage();
+            if (!isImage)
+            {
+                throw new BadRequestException(E202, M202);
+            }
+
             await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
             user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
             await _context.SaveChangesAsync(default);
