@@ -6,6 +6,8 @@ namespace Mcsg.Realtime.Api.Hubs;
 
 using Common.Constants;
 using Common.Core.Enums;
+using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -22,6 +24,13 @@ public class CommentHub : Hub
     /// <returns>A <see cref="Task"/> that represents the asynchronous connect.</returns>
     public override async Task OnConnectedAsync()
     {
+        var hc = Context.GetHttpContext();
+        var req = new BaseR(hc);
+        var userId = req.UserId;
+        var deviceType = hc?.Request.Query["deviceType"];
+
+        await SaveConnectionDataAsync(userId != null ? userId.Value.ToString() : "", Context.ConnectionId, deviceType + "");
+
         await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
     }
 
@@ -29,9 +38,16 @@ public class CommentHub : Hub
     /// Called when a connection with the hub is terminated.
     /// </summary>
     /// <returns>A <see cref="Task"/> that represents the asynchronous disconnect.</returns>
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        return base.OnDisconnectedAsync(exception);
+        var req = new BaseR(Context.GetHttpContext());
+        var userId = req.UserId;
+
+        var key = userId != null
+            ? $"user:{userId}:connection:{Context.ConnectionId}"
+            : $"anon:connection:{Context.ConnectionId}";
+
+        await _rs.RedisCache.KeyDeleteAsync(key);
     }
 
     #endregion
@@ -49,7 +65,8 @@ public class CommentHub : Hub
     /// <param name="socialReplyService"></param>
     /// <param name="storyCommentService"></param>
     /// <param name="storyReplyService"></param>
-    public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, IDocumentCommentService documentCommentService, IDocumentReplyService documentReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
+    /// <param name="rs"></param>
+    public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, IDocumentCommentService documentCommentService, IDocumentReplyService documentReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService, IRedisStore rs)
     {
         _comicCommentService = comicCommentService;
         _comicReplyService = comicReplyService;
@@ -62,6 +79,8 @@ public class CommentHub : Hub
 
         _storyCommentService = storyCommentService;
         _storyReplyService = storyReplyService;
+
+        _rs = rs;
     }
 
     /// <summary>
@@ -190,6 +209,22 @@ public class CommentHub : Hub
         };
     }
 
+    private async Task SaveConnectionDataAsync(string userId, string contextId, string deviceType)
+    {
+        // Use context ID as the primary key if user ID is null
+        var key = !string.IsNullOrEmpty(userId) ? $"user:{userId}:connection:{contextId}" : $"anon:connection:{contextId}";
+
+        var data = new
+        {
+            ContextId = contextId,
+            DeviceType = deviceType,
+            UserId = userId,
+            CreatedOn = DateTime.UtcNow,
+        };
+
+        await _rs.RedisCache.StringSetAsync(key, JsonConvert.SerializeObject(data));
+    }
+
     /// <summary>
     /// Send to author to call API tracking
     /// </summary>
@@ -231,6 +266,8 @@ public class CommentHub : Hub
 
     private readonly IStoryCommentService _storyCommentService;
     private readonly IStoryReplyService _storyReplyService;
+
+    private readonly IRedisStore _rs;
 
     #endregion
 }
