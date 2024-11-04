@@ -3,6 +3,7 @@ using Dapper;
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -38,12 +39,12 @@ public partial class PostService : IPostService
     /// <summary>
     /// Initialize
     /// </summary>
-    /// <param name="context"></param>
-    /// <param name="setting"></param>
-    /// <param name="sc"></param>
+    /// <param name="context">DB context</param>
+    /// <param name="setting">Setting</param>
+    /// <param name="sc">Storage client</param>
     /// <param name="unitOfWork"></param>
-    /// <param name="mapper"></param>
     /// <param name="currentUserService"></param>
+    /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
     public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService, IBusinessText businessText)
     {
@@ -52,13 +53,14 @@ public partial class PostService : IPostService
         _sc = sc;
         _businessText = businessText;
 
+        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
-        _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
         _postReportRepository = unitOfWork.GetRepository<SocialPostReport>();
-        _mapper = mapper;
+        _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
         _currentUserService = currentUserService;
+        _mapper = mapper;
         _smartLookupService = smartLookupService;
+        _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
     }
 
     public async Task<bool> Delete(Guid postId)
@@ -250,18 +252,17 @@ public partial class PostService : IPostService
                                                 .Where(p => p.UserFollowerId == user.Id)
                                                 .Select(p => p.UserFollowerId)
                                                 .ToListAsync();
+
         var fromDate = DateTime.Today.AddDays(-2);
-        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",
-                    pc.""CreatedOn"",
+        var query = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"",p.""Type"" , 
                     pc.""GifId"",
                     sr.""Url"" as ResourceUrl,
                     sr.""MinioInstance"",
-                    p.""Type"" , 
                     p.""HashId"" as HashPostId,
                     FALSE as IsSubPost , 
                     NULL as Order
-                    from social.""SocialPostComments"" pc 
-                    left join social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
+                    from ""social"".""SocialPostComments"" pc 
+                    left join ""social"".""SocialPosts"" p on  pc.""PostId"" = p.""Id""
                     LEFT JOIN ""social"".""SocialResources"" sr on pc.""ResourceId"" = sr.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
@@ -275,22 +276,22 @@ public partial class PostService : IPostService
 
         var data = await _postCommentRepository.Connection.QueryAsync<NewsFeedDto>(query, new
         {
+            FromDate = DateTime.Today,
             UserIds = userFollowingIds,
-            CurrentUserId = user.Id,
-            FromDate = fromDate
+            CurrentUserId = user.Id
         });
         var amountDataNeedToTake = data != null ? input.PageSize - data.Count() : input.PageSize;
-        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"", pc.""GifId"",
+        var queryDataNeedToTake = @"select u.""Avatar"" as UserAvatar,u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",pc.""CreatedOn"", pc.""GifId"", p.""Type"" ,
                     sr.""Url"" as ResourceUrl,
-                    sr.""MinioInstance"",p.""Type"" , 
+                    sr.""MinioInstance"",
                         p.""HashId"" as HashPostId,
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
-                        FROM social.""SocialPostComments"" pc 
+                        FROM ""social"".""SocialPostComments"" pc
                         LEFT JOIN ""social"".""SocialResources"" sr on pc.""ResourceId"" = sr.""Id""
-                        LEFT JOIN social.""SocialPosts"" p on  pc.""PostId"" = p.""Id""
-                        LEFT JOIN social.""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
+                        LEFT JOIN ""social"".""SocialPosts"" p on  pc.""PostId"" = p.""Id""
+                        LEFT JOIN ""social"".""SocialPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
                         AND pc.""CreatedBy"" != @CurrentUserId
@@ -298,7 +299,7 @@ public partial class PostService : IPostService
                         AND pc.""IsDelete"" = false
                         AND pc.""CreatedOn"" > @FromDate
                         GROUP BY p.""HashId"", u.""Avatar"",u.""UserName"",u.""ProfileName"",pc.""Body"",pc.""PostId"",pc.""Id"",p.""Type"",sr.""Url"",sr.""MinioInstance""
-                      
+
                         ORDER BY sort_key
                         LIMIT @Limit";
 
@@ -426,7 +427,6 @@ public partial class PostService : IPostService
                     Type = res.Type,
                     HashId = res.HashId,
                     CreatedOn = res.CreatedOn,
-
                 };
 
                 listPostDetails.Add(postDetails);
@@ -436,7 +436,7 @@ public partial class PostService : IPostService
         }
         else
         {
-            return new List<PostBoxResponse>(); // Trả về danh sách rỗng nếu không có kết quả
+            return new List<PostBoxResponse>();
         }
     }
 
@@ -452,7 +452,7 @@ public partial class PostService : IPostService
             ViewCount = x.ViewCount ?? 0,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
             ChapterCount = x.ChapterCount,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+            Body = HttpUtility.HtmlDecode(x.Body),
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
@@ -480,7 +480,7 @@ public partial class PostService : IPostService
             UserName = x.UserName,
             Title = x.Title,
             CommentCount = x.CommentCount ?? 0 + x.TotalSubPostComment,
-            Body = System.Web.HttpUtility.HtmlDecode(x.Body),
+            Body = HttpUtility.HtmlDecode(x.Body),
             Tags = x.Tags,
             ThumbnailUrl = x.ThumbnailUrl,
             Id = x.Id,
@@ -538,7 +538,6 @@ public partial class PostService : IPostService
                     break;
                 }
         }
-
 
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
@@ -630,7 +629,7 @@ public partial class PostService : IPostService
     {
         var res = new List<RewardDto>();
 
-        var check = await _context.SocialPosts.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
+        var check = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
             var rewardType = RewardType.FirstFeed;
@@ -669,9 +668,9 @@ public partial class PostService : IPostService
             while (results.Count < input.AmountItem) // Limit check to 30 days
             {
                 var query = $@"SELECT sp.""HashId""
-                        FROM social.""SocialSubPosts"" sp
-                        JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
-                        JOIN social.""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
+                        FROM ""social"".""SocialSubPosts"" sp
+                        JOIN ""social"".""SocialPosts"" p ON sp.""PostId"" = p.""Id""
+                        JOIN ""social"".""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
                         WHERE p.""IsDelete"" = false
                         AND sp.""IsDelete"" = false
                         AND p.""CreatedOn""::date = @TargetDate
@@ -679,7 +678,7 @@ public partial class PostService : IPostService
                         [IgnoreQuery]
                         AND sp.""Order"" = (
                                              SELECT MIN(sp_inner.""Order"")
-                                             FROM social.""SocialSubPosts"" sp_inner
+                                             FROM ""social"".""SocialSubPosts"" sp_inner
                                              WHERE sp_inner.""PostId"" = sp.""PostId""
                                              AND sp_inner.""IsDelete"" = false
                                              )
@@ -729,7 +728,7 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From social.""SocialPosts"" 
+            var query = @$"SELECT ""HashId"" From ""social"".""SocialPosts"" 
                                 WHERE ""IsDelete"" = false
                                 [QueryByType]
                                 [IgnoreQuery]
@@ -828,13 +827,13 @@ public partial class PostService : IPostService
     /// </summary>
     private readonly IBusinessText _businessText;
 
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IRepository<SocialPostReport> _postReportRepository;
-
-    private readonly IMapper _mapper;
+    private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
 
     #endregion

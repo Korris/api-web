@@ -213,9 +213,9 @@ public partial class PostService : IPostService
         var query = string.Format(GetSeriesQuery, _postRepository.TableName);
         string subNotLoadChapter = (isLoadChapters ? "" : @" AND sp.""Id"" IS NULL ");
         query = query.Replace("[Not-load-chapter]", subNotLoadChapter);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var currentUserId = _currentUserService?.Session?.UserId;
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         //TODO Premium            
         query = AddWithPermission(query, currentUserId);
@@ -278,13 +278,15 @@ public partial class PostService : IPostService
             TargetIds = new List<Guid>() { dbPost.Id },
             UserId = currentUserId
         });
+
         if (postReactionResponse.Count() > 0)
         {
             MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
         }
-        result.IsCensored = (req.UserName != result.UserName && !req.IsAdministrator && result.Status == PostStatus.Inactive);
-        result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
+
         result.FollowCount = await _context.StoryPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
+        result.IsCensored = !req.IsAdministrator && result.Status == PostStatus.Inactive && req.UserName != result.UserName;
+        result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
 
         return result;
     }
@@ -394,6 +396,8 @@ public partial class PostService : IPostService
     public async Task<PostSeriesAllTopResponse> GetTopSeries(PostType type)
     {
         var result = new PostSeriesAllTopResponse();
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
+
         string allSubQuery = $@"({GetTopPostHitQuery})
                         UNION ALL
                         ({GetTopLatestPostHitQuery})
@@ -414,7 +418,7 @@ public partial class PostService : IPostService
                 PageSize = 10,
                 Offet = 0,
                 LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                PostStatus = (int)PostStatus.Public
+                PostStatus = statusList
             });
         result = new PostSeriesAllTopResponse();// MappingTopSeries(dbFeed);
         var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.HIT).ToList();
@@ -426,6 +430,7 @@ public partial class PostService : IPostService
 
         return result;
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, StoryPostListSeriesR request)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
@@ -482,6 +487,7 @@ public partial class PostService : IPostService
                 TargetIds = items.Select(p => p.Id).ToList(),
                 UserId = currentUserId
             });
+
             foreach (var item in items)
             {
                 var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
@@ -489,11 +495,13 @@ public partial class PostService : IPostService
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
-                item.IsCensored = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsCensored = request.UserName != item.UserName && !request.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
+
             var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
             results.Items = items;
+
             return results;
         }
         else
@@ -501,6 +509,7 @@ public partial class PostService : IPostService
             return new PagedResponse<PostSeriesTopResponse>(0);
         }
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, StoryRelationPostSeriesR request)
     {
         try
@@ -566,6 +575,11 @@ public partial class PostService : IPostService
             if (items != null && items.Count() > 0)
             {
                 var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
+                foreach (var item in items)
+                {
+                    item.IsCensored = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                    item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature;
+                }
                 results.Items = items;
                 return results;
             }
@@ -618,6 +632,7 @@ public partial class PostService : IPostService
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -626,7 +641,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = loadReq.PageSize,
                     Offet = offset,
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = statusList,
                     TagName = tagName
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -644,6 +659,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, StoryTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
@@ -683,19 +699,20 @@ public partial class PostService : IPostService
 
             foreach (var item in results.Items)
             {
-                item.IsCensored = (loadReq.UserName != item.UserName && !loadReq.IsAdministrator && item.Status == PostStatus.Inactive);
-                item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
                 var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
                 if (postReaction.Count > 0)
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
+                item.IsCensored = !loadReq.IsAdministrator && loadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
+                item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
             }
         }
         else
         {
             results = new PagedResponse<PostSeriesTopResponse>(0);
         }
+
         return results;
     }
 
@@ -704,8 +721,8 @@ public partial class PostService : IPostService
         ValidateTotalItem(input.PageSize);
         PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
-
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -714,7 +731,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = input.PageSize,
                     Offet = offset,
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = statusList,
                     TagName = input.TagName,
                     Hide = input.Hides
                 });
@@ -863,6 +880,7 @@ public partial class PostService : IPostService
         var number = req.Number;
         ValidateTotalItem(number);
         var query = GetQuerySelectPage(PostSeriesSelectedType.RECOMMEND);
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var items = await _postRepository
                 .Connection.QueryAsync<PostSeriesTopQueryDbResponse>(query, new
@@ -870,7 +888,7 @@ public partial class PostService : IPostService
                     PostType = (int)type,
                     IsAccessPrivate = false,
                     PageSize = number,
-                    PostStatus = (int)PostStatus.Public,
+                    PostStatus = statusList,
                     Hide = req.Hides
                 });
 
@@ -1063,6 +1081,7 @@ public partial class PostService : IPostService
         var currentUserId = _currentUserService?.Session?.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         if (loadReq.OrderBy == null)
         {
@@ -1085,7 +1104,8 @@ public partial class PostService : IPostService
                     UserId = currentUserId,
                     PageSize = loadReq.PageSize,
                     Offet = offset,
-                    Hide = loadReq.Hides
+                    Hide = loadReq.Hides,
+                    PostStatus = statusList
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -1124,6 +1144,7 @@ public partial class PostService : IPostService
         var currentUserId = _currentUserService?.Session?.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
+        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         if (loadReq.OrderBy == null)
         {
@@ -1148,6 +1169,7 @@ public partial class PostService : IPostService
                     loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
+                    PostStatus = statusList,
                     ProfileName = loadReq.UserName,
                     MySelf = true,
                 });
@@ -1180,6 +1202,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<List<MyPostSeriesResponse>> GetMyAllSeries()
     {
         try
@@ -1233,7 +1256,7 @@ public partial class PostService : IPostService
                     FALSE as IsSubPost , 
                     NULL as Order
                     from ""story"".""StoryPostComments"" pc 
-                    left join ""story"".""StoryPosts""  p on  pc.""PostId"" = p.""Id""
+                    left join ""story"".""StoryPosts"" p on  pc.""PostId"" = p.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
@@ -1272,8 +1295,8 @@ public partial class PostService : IPostService
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
-                        FROM ""story"".""StoryPostComments"" pc 
-                        LEFT JOIN ""story"".""StoryPosts""  p on  pc.""PostId"" = p.""Id""
+                        FROM ""story"".""StoryPostComments"" pc
+                        LEFT JOIN ""story"".""StoryPosts"" p on  pc.""PostId"" = p.""Id""
                         LEFT JOIN ""story"".""StoryPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
@@ -1467,6 +1490,7 @@ public partial class PostService : IPostService
             Size = resources.Size
         };
     }
+
     private List<PostSeriesTopResponse> MappingTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
     {
         return posts.Select(x => new PostSeriesTopResponse
@@ -1520,8 +1544,8 @@ public partial class PostService : IPostService
             Type = x.Type,
             Chapters = MappingTopChapter(x.SubPostStr),
             Hide = x.Hide,
-            Status = x.Status,
             ExternalResource = x.ExternalResource,
+            Status = x.Status,
             LatestCreatedOn = x.LatestCreatedOn
         }).ToList();
     }
@@ -1741,6 +1765,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, StoryChapterListR loadReq)
     {
         PagedResponse<ChapterTOCExtendResponse> results;
@@ -1939,7 +1964,9 @@ public partial class PostService : IPostService
 
         await _context.SaveChangesAsync(default);
 
-        return MappingChapterResponse(subPost);
+        var result = MappingChapterResponse(subPost);
+
+        return result;
     }
 
     public async Task<bool> DeleteChapter(string hashId, float order)
@@ -2146,7 +2173,7 @@ public partial class PostService : IPostService
             var query = $@"SELECT sp.""HashId""
                                FROM ""story"".""StorySubPosts"" sp
                                JOIN ""story"".""StoryPosts""  p ON sp.""PostId"" = p.""Id""
-                               JOIN ""story"".""StoryResources"" r on sp.""Id"" = r.""SubPostId""
+                               JOIN ""story"".""StoryResources"" r ON sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
                                AND sp.""IsDelete"" = false
                                [QueryByType]
@@ -2178,7 +2205,7 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From ""story"".""StoryPosts""  
+            var query = @$"SELECT ""HashId"" From ""story"".""StoryPosts""
                                 WHERE ""IsDelete"" = false
                                 [QueryByType]
                                 [IgnoreQuery]

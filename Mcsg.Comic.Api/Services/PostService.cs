@@ -262,7 +262,7 @@ public partial class PostService : IPostService
         {
             throw new NotFoundException(E204, M204);
         }
-        if ((dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId))
+        if (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId)
         {
             throw new NotFoundException(E204, M204);
         }
@@ -431,6 +431,7 @@ public partial class PostService : IPostService
 
         return result;
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
     {
         var currentUserId = _currentUserService?.Session?.UserId;
@@ -441,7 +442,6 @@ public partial class PostService : IPostService
         string allSubQuery = $@"
                         ({GetTopLatestPostByTagQuery})";
         string countTopQuery = PaginationCountResult;
-
 
         if (isFavorite && request.HashTag == null)
         {
@@ -510,6 +510,7 @@ public partial class PostService : IPostService
             return new PagedResponse<PostSeriesTopResponse>(0);
         }
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetRelationSeriesAsync(PostType type, ComicRelationPostSeriesR request)
     {
         try
@@ -659,6 +660,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<PagedResponse<PostSeriesTopResponse>> GetSeriesByUserByPage(PostType type, string profileName, ComicTopPostR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
@@ -804,7 +806,7 @@ public partial class PostService : IPostService
                                   LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
                                   LEFT JOIN LATERAL 
                                         (
-                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn"",sp.""PublishDate""
+                                            SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn"", sp.""PublishDate""
                                             FROM ""comic"".""ComicSubPosts"" sp 
                                             WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false AND sp.""PublishDate"" < @CurrentDate
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
@@ -1201,6 +1203,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<List<MyPostSeriesResponse>> GetMyAllSeries()
     {
         try
@@ -1254,7 +1257,7 @@ public partial class PostService : IPostService
                     FALSE as IsSubPost , 
                     NULL as Order
                     from ""comic"".""ComicPostComments"" pc 
-                    left join ""comic"".""ComicPosts""  p on  pc.""PostId"" = p.""Id""
+                    left join ""comic"".""ComicPosts"" p on  pc.""PostId"" = p.""Id""
                     left join ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                     WHERE pc.""CreatedBy"" = ANY(@UserIds)
                     AND pc.""CreatedBy"" != @CurrentUserId
@@ -1293,8 +1296,8 @@ public partial class PostService : IPostService
                         FALSE as IsSubPost, NULL as Order,
                         COALESCE(COUNT(pcr.""Id""), 0) AS reaction_count,
                          RANDOM() AS sort_key
-                        FROM ""comic"".""ComicPostComments"" pc 
-                        LEFT JOIN ""comic"".""ComicPosts""  p on  pc.""PostId"" = p.""Id""
+                        FROM ""comic"".""ComicPostComments"" pc
+                        LEFT JOIN ""comic"".""ComicPosts"" p on  pc.""PostId"" = p.""Id""
                         LEFT JOIN ""comic"".""ComicPostCommentReactions"" pcr on pc.""Id"" = pcr.""TargetId""
                         LEFT JOIN ""identity"".""Users"" u on pc.""CreatedBy"" = u.""Id""
                         WHERE pc.""Id"" <> ALL (ARRAY[@CommentIds]) 
@@ -1488,6 +1491,7 @@ public partial class PostService : IPostService
             Size = resources.Size
         };
     }
+
     private List<PostSeriesTopResponse> MappingTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
     {
         return posts.Select(x => new PostSeriesTopResponse
@@ -1762,6 +1766,7 @@ public partial class PostService : IPostService
         }
         return results;
     }
+
     public async Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, ComicChapterListR loadReq)
     {
         PagedResponse<ChapterTOCExtendResponse> results;
@@ -2186,7 +2191,7 @@ public partial class PostService : IPostService
             var query = $@"SELECT sp.""HashId""
                                FROM ""comic"".""ComicSubPosts"" sp
                                JOIN ""comic"".""ComicPosts""  p ON sp.""PostId"" = p.""Id""
-                               JOIN ""comic"".""ComicResources"" r on sp.""Id"" = r.""SubPostId""
+                               JOIN ""comic"".""ComicResources"" r ON sp.""Id"" = r.""SubPostId""
                                WHERE p.""IsDelete"" = false
                                AND sp.""IsDelete"" = false
                                [QueryByType]
@@ -2218,7 +2223,7 @@ public partial class PostService : IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From ""comic"".""ComicPosts""  
+            var query = @$"SELECT ""HashId"" From ""comic"".""ComicPosts""
                                 WHERE ""IsDelete"" = false
                                 [QueryByType]
                                 [IgnoreQuery]
