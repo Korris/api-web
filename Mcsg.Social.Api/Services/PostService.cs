@@ -652,28 +652,10 @@ public partial class PostService : BaseMinioS, IPostService
         try
         {
             var results = new List<string>();
-            int daysToCheck = 0; // Number of days to check
             DateTime? targetDate = null;
 
-            while (results.Count < input.AmountItem) // Limit check to 30 days
+            while (results.Count < input.AmountItem)
             {
-                var query = $@"SELECT sp.""HashId""
-                        FROM ""social"".""SocialSubPosts"" sp
-                        JOIN ""social"".""SocialPosts"" p ON sp.""PostId"" = p.""Id""
-                        JOIN ""social"".""SocialResources"" r ON sp.""Id"" = r.""SubPostId""
-                        WHERE p.""IsDelete"" = false
-                        AND sp.""IsDelete"" = false
-                        AND p.""CreatedOn""::date = @TargetDate
-                        [QueryByType]
-                        [IgnoreQuery]
-                        AND sp.""Order"" = (
-                                             SELECT MIN(sp_inner.""Order"")
-                                             FROM ""social"".""SocialSubPosts"" sp_inner
-                                             WHERE sp_inner.""PostId"" = sp.""PostId""
-                                             AND sp_inner.""IsDelete"" = false
-                                             )
-                        ORDER BY RANDOM()
-                        LIMIT @PageSize";
 
                 if (targetDate.HasValue)
                 {
@@ -681,27 +663,33 @@ public partial class PostService : BaseMinioS, IPostService
                 }
                 else
                 {
-                    var lastHashId = input.PostRandomIds?.LastOrDefault();
-                    var isDataFromSubPost = await _context.SocialSubPostAvailable.AnyAsync(p => p.HashId == lastHashId);
-                    var tableName = isDataFromSubPost ? @"social.""SocialSubPosts""" : @"social.""SocialPosts""";
-                    var createdOnQuery = $@"SELECT sp.""CreatedOn""
-                                            FROM {tableName} sp 
-                                            WHERE sp.""HashId"" = @LastHashId";
-
-                    targetDate = await _postRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new
+                    if (input.PostRandomIds?.Count == 1)
                     {
-                        LastHashId = lastHashId
-                    });
+                        targetDate = DateTime.Now.Date;
+                    }
+                    else
+                    {
+                        var lastHashId = input.PostRandomIds?.LastOrDefault();
+                        var isDataFromSubPost = await _context.SocialSubPostAvailable.AnyAsync(p => p.HashId == lastHashId);
+                        var tableName = isDataFromSubPost ? @"social.""SocialSubPosts""" : @"social.""SocialPosts""";
+                        var createdOnQuery = $@"SELECT sp.""CreatedOn""
+                                                FROM {tableName} sp 
+                                                WHERE sp.""HashId"" = @LastHashId";
+
+                        targetDate = await _postRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new
+                        {
+                            LastHashId = lastHashId
+                        });
+                    }
+
                 }
 
-                query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
-                query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
-
+                var query = @$"SELECT * FROM social.fn_social_subposts_random(@TargetDate,@PageSize,@Ids)";
                 var subPostIds = await _postRepository.Connection.QueryAsync<string>(query, new
                 {
-                    PostRandomIds = input.PostRandomIds?.ToList(),
+                    Ids = input.PostRandomIds?.ToList(),
                     PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
-                    TargetDate = targetDate.Value // Ensure a non-null value is used
+                    TargetDate = targetDate.Value.Date // Ensure a non-null value is used
                 });
 
                 results.AddRange(subPostIds); // Add new results to the list
@@ -718,19 +706,44 @@ public partial class PostService : BaseMinioS, IPostService
     {
         try
         {
-            var query = @$"SELECT ""HashId"" From ""social"".""SocialPosts"" 
-                                WHERE ""IsDelete"" = false
-                                [QueryByType]
-                                [IgnoreQuery]
-                                ORDER BY RANDOM()
-                                LIMIT @PageSize";
-            query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND ""Type"" = {(int)PostType.Feed}");
-            query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT ""HashId"" = ANY(@PostRandomIds)");
-            return await _postRepository.Connection.QueryAsync<string>(query, new
+            var results = new List<string>();
+            DateTime? targetDate = null;
+
+            while (results.Count < input.AmountItem)
             {
-                PostRandomIds = input.PostRandomIds?.ToList(),
-                PageSize = input.AmountItem
-            });
+                if (targetDate.HasValue)
+                {
+                    targetDate = targetDate.Value.Date.AddDays(-1);
+                }
+                else
+                {
+                    if (input.PostRandomIds?.Count == 1)
+                    {
+                        targetDate = DateTime.Now.Date;
+                    }
+                    else
+                    {
+                        var lastHashId = input.PostRandomIds?.LastOrDefault();
+                        var createdOnQuery = @"SELECT ""CreatedOn""
+                                               FROM ""social"".""SocialPosts""  
+                                               WHERE ""HashId"" = @LastHashId";
+
+                        targetDate = await _postRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new { LastHashId = lastHashId });
+                    }
+
+                }
+
+                var query = @$"SELECT * FROM social.fn_social_posts_random(@TargetDate,@PageSize,@Ids)";
+                var postIds = await _postRepository.Connection.QueryAsync<string>(query, new
+                {
+                    Ids = input.PostRandomIds?.ToList(),
+                    PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
+                    TargetDate = targetDate.Value.Date // Ensure a non-null value is used
+                });
+
+                results.AddRange(postIds); // Add new results to the list
+            }
+            return results.Take(input.AmountItem); // Return the required amount
         }
         catch (Exception ex)
         {
