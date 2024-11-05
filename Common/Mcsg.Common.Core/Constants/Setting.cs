@@ -247,6 +247,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Allow play after upload
         /// </summary>
         public static string[] AllowPlayAfterUpload = { ".mp4", ".webm", ".ogg", ".mp3" };
+
+        /// <summary>
+        /// Documents
+        /// </summary>
+        public static string[] Documents = { ".pdf", ".ppt", ".pptx", ".doc", ".docx" };
     }
 
     /// <summary>

@@ -161,7 +161,7 @@ public class FileService : IFileService
             Name = hashFileName,
             Url = objectName,
             BucketName = bucketName,
-            Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
+            Type = file.IsImageType() ? ResourceType.Image : ResourceType.Document,
             CreatedBy = request.UserId,
             Width = imgWidth,
             Height = imgHeight,

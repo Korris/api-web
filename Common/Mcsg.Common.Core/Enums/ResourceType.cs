@@ -38,5 +38,10 @@ public enum ResourceType
     /// <summary>
     /// Vimeo
     /// </summary>
-    Vimeo
+    Vimeo,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document
 }

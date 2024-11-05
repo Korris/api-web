@@ -21,6 +21,7 @@ namespace Mcsg.Common.Core.Storages;
 
 using Dtos;
 using Enums;
+using static Common.Core.Constants.Setting;
 
 /// <summary>
 /// Storage MinIO
@@ -99,6 +100,14 @@ public class StorageMinio : StorageStrategy
         fs.Position = 0;
 
         var putArg = new PutObjectArgs().WithBucket(bucketName).WithObject(objectName).WithStreamData(fs).WithObjectSize(fs.Length);
+
+        var ext = Path.GetExtension(objectName);
+        if (FileExt.Documents.Contains(ext))
+        {
+            _dicMimeType.TryGetValue(ext, out var mimeType);
+            putArg = putArg.WithContentType(mimeType);
+        }
+
         await Mc.PutObjectAsync(putArg);
     }
 
@@ -412,6 +421,18 @@ public class StorageMinio : StorageStrategy
     /// The maximum expiry time in seconds (default is 1 days).
     /// </summary>
     private int _maxExpiryInSeconds = 1 * 24 * 60 * 60; // 1 days
+
+    /// <summary>
+    /// Dictionary mime type
+    /// </summary>
+    private Dictionary<string, string> _dicMimeType = new()
+    {
+        { ".pdf", "application/pdf" },
+        { ".ppt", "application/vnd.ms-powerpoint" },
+        { ".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation" },
+        { ".doc", "application/msword" },
+        { ".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
+    };
 
     #endregion
 }
