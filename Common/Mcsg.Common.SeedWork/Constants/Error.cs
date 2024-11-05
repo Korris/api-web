@@ -184,6 +184,16 @@ public static class Error
     /// </summary>
     public const string E128 = "E128";
 
+    /// <summary>
+    /// Has been blocked
+    /// </summary>
+    public const string E129 = "Has been blocked";
+
+    /// <summary>
+    /// Unable to report yourself
+    /// </summary>
+    public const string E130 = "Unable to report yourself";
+
     #endregion
 
     #region -- E2xx --

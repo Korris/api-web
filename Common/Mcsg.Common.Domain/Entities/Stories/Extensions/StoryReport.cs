@@ -23,17 +23,15 @@ partial class StoryReport
     /// </summary>
     /// <param name="entityId"></param>
     /// <param name="entityType"></param>
-    /// <param name="status"></param>
-    /// <param name="ExpiredBlock"></param>
+    /// <param name="createdBy"></param>
     /// <returns>Return the result</returns>
-    public static StoryReport Create(Guid entityId, EntityType entityType, ReportStatus status, DateTime? ExpiredBlock)
+    public static StoryReport Create(Guid entityId, EntityType entityType, Guid createdBy)
     {
         var res = new StoryReport
         {
             EntityId = entityId,
             EntityType = entityType,
-            Status = status,
-            ExpiredBlock = ExpiredBlock
+            CreatedBy = createdBy
         };
 
         return res;
@@ -51,10 +49,17 @@ partial class StoryReport
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
+    /// <param name="reasonType"></param>
+    /// <param name="reasonText"></param>
     /// <returns>Return the DTO</returns>
-    public ViewDto ToViewDto()
+    public ViewDto ToViewDto(ReasonType reasonType, string? reasonText)
     {
-        return ToBaseDto<ViewDto>();
+        var res = ToBaseDto<ViewDto>();
+
+        res.ReasonType = reasonType;
+        res.ReasonText = reasonText;
+
+        return res;
     }
 
     /// <summary>
@@ -65,11 +70,7 @@ partial class StoryReport
     {
         return new T
         {
-            Id = Id,
-            EntityId = EntityId,
-            EntityType = EntityType.ToString(),
-            Status = Status,
-            ExpiredBlock = ExpiredBlock
+            Id = Id
         };
     }
 
@@ -82,35 +83,6 @@ partial class StoryReport
     /// </summary>
     public class BaseDto : IdDto
     {
-        #region -- Properties --
-
-        /// <summary>
-        /// EntityId
-        /// </summary>
-        public Guid? EntityId { get; set; }
-
-        /// <summary>
-        /// Entity type
-        /// </summary>
-        public string? EntityType { get; set; }
-
-        /// <summary>
-        /// Status
-        /// </summary>
-        [JsonIgnore]
-        public ReportStatus Status { get; set; }
-
-        /// <summary>
-        /// StatusName
-        /// </summary>
-        public string StatusName => Status.ToString();
-
-        /// <summary>
-        /// Expired block
-        /// </summary>
-        public DateTime? ExpiredBlock { get; set; }
-
-        #endregion
     }
 
     /// <summary>
@@ -125,6 +97,25 @@ partial class StoryReport
     /// </summary>
     public class ViewDto : BaseDto
     {
+        #region -- Properties --
+
+        /// <summary>
+        /// ReasonType
+        /// </summary>
+        [JsonIgnore]
+        public ReasonType ReasonType { get; set; }
+
+        /// <summary>
+        /// ReasonTypeName
+        /// </summary>
+        public string ReasonTypeName => ReasonType.ToString();
+
+        /// <summary>
+        /// ReasonText
+        /// </summary>
+        public string? ReasonText { get; set; }
+
+        #endregion
     }
 
     #endregion

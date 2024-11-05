@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Mcsg.Comic.Api.Extensions;
+namespace Mcsg.Social.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
@@ -9,7 +9,7 @@ using Requests;
 /// <summary>
 /// DI extension
 /// </summary>
-public static class DiPostReportExtension
+public static class DiReportExtension
 {
     #region -- Methods --
 
@@ -18,10 +18,10 @@ public static class DiPostReportExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddDiPostReport(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddDiReport(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
-        p.AddPostReportCommands(life);
-        p.AddPostReportQueries(life);
+        p.AddReportCommands(life);
+        p.AddReportQueries(life);
     }
 
     /// <summary>
@@ -29,9 +29,9 @@ public static class DiPostReportExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddPostReportCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddReportCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
-        p.AddBehavior<IRequestHandler<PostReportCreateR, SingleResponse>, PostReportCreateH>(life);
+        p.AddBehavior<IRequestHandler<ReportCreateR, SingleResponse>, ReportCreateH>(life);
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public static class DiPostReportExtension
     /// </summary>
     /// <param name="p">MediatRServiceConfiguration</param>
     /// <param name="life">ServiceLifetime</param>
-    public static void AddPostReportQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
+    public static void AddReportQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
     }
 

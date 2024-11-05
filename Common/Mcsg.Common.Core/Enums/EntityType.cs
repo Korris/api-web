@@ -26,7 +26,12 @@ public enum EntityType
     User,
 
     /// <summary>
-    /// Comment
+    /// CommentPost
     /// </summary>
-    Comment
+    CommentPost,
+
+    /// <summary>
+    /// CommentSubPost
+    /// </summary>
+    CommentSubPost
 }

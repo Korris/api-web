@@ -5,14 +5,19 @@ using Common.Core.Requests;
 /// <summary>
 /// Request
 /// </summary>
-public class PostReportCreateR : BaseR
+public class ReportCreateR : BaseR
 {
     #region -- Properties --
 
     /// <summary>
-    /// PostId
+    /// EntityId
     /// </summary>
-    public Guid PostId { get; set; }
+    public string? EntityId { get; set; }
+
+    /// <summary>
+    /// EntityType
+    /// </summary>
+    public string? EntityType { get; set; }
 
     /// <summary>
     /// ReasonType

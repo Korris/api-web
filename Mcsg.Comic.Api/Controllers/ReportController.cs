@@ -1,22 +1,9 @@
-#region Information
-/*
- * Author       : Toan Nguyen Van
- * Email        : nvt87x@gmail.com
- * Phone        : +84 345 515 010
- * ------------------------------- *
- * Create       : 2024-Jan-21 08:37
- * Update       : 2024-Jan-21 08:37
- * Checklist    : 1.0
- * Status       : New
- */
-#endregion
-
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Mcsg.Social.Api.Controllers;
+namespace Mcsg.Comic.Api.Controllers;
 
 using Common.Core.Controllers;
 using Common.SeedWork.Responses;
@@ -24,9 +11,9 @@ using Interfaces;
 using Requests;
 
 /// <summary>
-/// PostReport controller
+/// Report controller
 /// </summary>
-public class PostReportController : BaseController
+public class ReportController : BaseController
 {
     #region -- Methods --
 
@@ -35,7 +22,7 @@ public class PostReportController : BaseController
     /// </summary>
     /// <param name="mediator">Mediator</param>
     /// <param name="setting">Setting</param>
-    public PostReportController(IMediator mediator, ISetting setting) : base(mediator)
+    public ReportController(IMediator mediator, ISetting setting) : base(mediator)
     {
         _setting = setting;
         DomainName = _setting.Domain;
@@ -47,7 +34,7 @@ public class PostReportController : BaseController
     /// <returns>Return the result</returns>
     [HttpPost("Create"), Authorize]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Create([FromBody] PostReportCreateR request)
+    public async Task<IActionResult> Create([FromBody] ReportCreateR request)
     {
         request.Analyze(HttpContext);
 

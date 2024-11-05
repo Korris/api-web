@@ -11,9 +11,9 @@ using Interfaces;
 using Requests;
 
 /// <summary>
-/// PostReport controller
+/// Report controller
 /// </summary>
-public class PostReportController : BaseController
+public class ReportController : BaseController
 {
     #region -- Methods --
 
@@ -22,7 +22,7 @@ public class PostReportController : BaseController
     /// </summary>
     /// <param name="mediator">Mediator</param>
     /// <param name="setting">Setting</param>
-    public PostReportController(IMediator mediator, ISetting setting) : base(mediator)
+    public ReportController(IMediator mediator, ISetting setting) : base(mediator)
     {
         _setting = setting;
         DomainName = _setting.Domain;
@@ -34,7 +34,7 @@ public class PostReportController : BaseController
     /// <returns>Return the result</returns>
     [HttpPost("Create"), Authorize]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Create([FromBody] PostReportCreateR request)
+    public async Task<IActionResult> Create([FromBody] ReportCreateR request)
     {
         request.Analyze(HttpContext);
 
