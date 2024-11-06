@@ -1,14 +1,13 @@
 ﻿namespace Mcsg.Social.Api.Interfaces;
 
-using Common.Core.Enums;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
 public interface ISubPostReactService
 {
-    Task<bool> AddReactionToSubPost(Guid postId, ReactionType type);
-    Task<bool> RemoveReactionToSubPost(Guid postId);
-    Task<ReactionsResponse> GetReactions(Guid postId);
+    Task<bool> AddReactionToSubPost(ReactionReactR request);
+    Task<bool> RemoveReactionToSubPost(ReactionReactR request);
+    Task<ReactionsResponse> GetReactions(ReactionReactR request);
     Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request);
 }

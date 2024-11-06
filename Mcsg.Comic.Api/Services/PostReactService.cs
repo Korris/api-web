@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
-using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -15,24 +14,24 @@ public partial class PostReactService : IPostReactService
     {
         _reactService = reactService;
     }
-    public async Task<bool> AddReactionToPost(Guid postId, ReactionType type)
+
+    public async Task<bool> AddReactionToPost(ReactionReactR request)
     {
-        var reactRes = await _reactService.AddReaction(postId, type);
-
-
-        return reactRes;
+        return await _reactService.AddReaction(request);
     }
 
-    public async Task<ReactionsResponse> GetReactions(Guid postId)
+    public async Task<ReactionsResponse> GetReactions(ReactionReactR request)
     {
-        return await _reactService.GetReactions(postId);
+        return await _reactService.GetReactions(request);
     }
+
     public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {
         return await _reactService.GetReactionsByTargetAsync(targetId, request);
     }
-    public async Task<bool> RemoveReactionToPost(Guid postId)
+
+    public async Task<bool> RemoveReactionToPost(ReactionReactR request)
     {
-        return await _reactService.RemoveReaction(postId);
+        return await _reactService.RemoveReaction(request);
     }
 }

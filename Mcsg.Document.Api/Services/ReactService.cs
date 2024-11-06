@@ -5,13 +5,13 @@ namespace Mcsg.Document.Api.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -19,33 +19,25 @@ using Requests;
 
 public partial class ReactService<T> : IReactService<T> where T : BaseReaction, new()
 {
-    private readonly IRepository<T> _reactRepository;
-    private readonly ICurrentUserService _currentUserService;
-    private readonly INotificationService _notificationService;
-    private readonly ISmartCountService _smartCountService;
-    private IConfiguration _configuration;
     public ReactService(IUnitOfWork unitOfWork,
-        ICurrentUserService currentUserService,
         INotificationService notificationService,
-        IConfiguration configuration,
-        ISetting setting,
         ISmartCountService smartCountService,
         IMcsgContext context)
     {
         _reactRepository = unitOfWork.GetRepository<T>();
-        _currentUserService = currentUserService;
         _notificationService = notificationService;
         _smartCountService = smartCountService;
-        _setting = setting;
-        _configuration = configuration;
         _context = context;
     }
-    public async Task<bool> AddReaction(Guid targetId, ReactionType type, bool isReply = false)
+
+    public async Task<bool> AddReaction(ReactionReactR request)
     {
-        var currentUserId = _currentUserService.Session.UserId;
+        var targetId = request.TargetId;
+        var userId = request.UserId ?? Guid.Empty;
+        var type = request.Type;
+        var isReply = request.IsReply ?? false;
 
-        var reactionDb = await GetReactionByUser(targetId, currentUserId);
-
+        var reactionDb = await GetReactionByUser(request);
         if (reactionDb != null)
         {
             bool isChange = false;
@@ -68,25 +60,21 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
                 var updateResult = await _reactRepository.UpdateAsync(reactionDb);
 
                 // Send Notification
-                await SendReactNotificationAsync(reactionDb.Id, targetId, type, isReply);
+                await SendReactNotificationAsync(reactionDb.Id, request, targetId, type, isReply);
 
                 return updateResult;
             }
             else
             {
-                //DO NOTHING
                 return false;
             }
-
         }
         else
         {
-            var insertResult = await AddNewReaction(targetId, type, currentUserId);
-
-            // Send Notification
+            var insertResult = await AddNewReaction(targetId, type, userId);
             if (insertResult != null)
             {
-                await SendReactNotificationAsync(insertResult.Id, targetId, type, isReply);
+                await SendReactNotificationAsync(insertResult.Id, request, targetId, type, isReply);
                 await AddCountQueue(targetId);
                 return true;
             }
@@ -95,16 +83,16 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         }
     }
 
-    public async Task<ReactionsResponse> GetReactions(Guid targetId)
+    public async Task<ReactionsResponse> GetReactions(ReactionReactR request)
     {
-        var currentUserId = _currentUserService.Session?.UserId;
+        var targetId = request.TargetId;
         var query = string.Format(GetReactByTargetQuery, _reactRepository.TableName);
 
         var reactionsDb = await _reactRepository
                 .Connection.QueryAsync<ReactionResponseQuery>(query, new
                 {
                     TargetId = targetId,
-                    UserId = currentUserId
+                    request.UserId
                 });
         var currentUserReact = reactionsDb.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
         var result = new ReactionsResponse
@@ -120,6 +108,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         }
         return result;
     }
+
     public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {
         int? reactType = !request.Type.IsNumeric() ? null : request.Type.ToInt();
@@ -132,14 +121,14 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
                                             {
                                                 TargetId = targetId,
                                                 Type = reactType,
-                                                PageSize = request.PageSize,
+                                                request.PageSize,
                                                 Offet = offset
                                             });
 
         var items = await multi.ReadAsync<ReactionsUserModel>().ConfigureAwait(false);
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var userId = request.UserId;
         var followingList = await _context.UserFollowAvailable
-                            .Where(p => currentUserId == p.UserFollowerId)
+                            .Where(p => userId == p.UserFollowerId)
                             .Select(p => p.UserFollowingId)
                             .ToListAsync();
 
@@ -163,31 +152,31 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
         }
     }
 
-    public async Task<bool> RemoveReaction(Guid targetId)
+    public async Task<bool> RemoveReaction(ReactionReactR request)
     {
-        var currentUserId = _currentUserService.Session.UserId;
-
-        var checkDb = await GetReactionByUser(targetId, currentUserId);
-        if (checkDb == null)
+        var res = await GetReactionByUser(request);
+        if (res == null)
         {
-            //DO NOTHING
             return false;
         }
-        checkDb.IsDelete = true;
-        await RemoveCountQueue(targetId);
-        return await _reactRepository.UpdateAsync(checkDb);
+
+        res.IsDelete = true;
+        await RemoveCountQueue(request.TargetId);
+
+        return await _reactRepository.UpdateAsync(res);
     }
-    public async Task<T> GetReactionByUser(Guid targetId, Guid userId)
+    public async Task<T?> GetReactionByUser(ReactionReactR request)
     {
         var query = string.Format(GetReactByUsersQuery, _reactRepository.TableName);
 
-        var checkDb = await _reactRepository
+        var res = await _reactRepository
                 .Connection.QueryFirstOrDefaultAsync<T>(query, new
                 {
-                    TargetId = targetId,
-                    AuthorId = userId
+                    request.TargetId,
+                    AuthorId = request.UserId
                 });
-        return checkDb;
+
+        return res;
     }
 
     private async Task<T> AddNewReaction(Guid targetId, ReactionType type, Guid userId)
@@ -209,20 +198,19 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
             return null;
         }
     }
-    private async Task SendReactNotificationAsync(Guid reactionId, Guid targetId, ReactionType reactionType, bool isReply = false)
+
+    private async Task SendReactNotificationAsync(Guid reactionId, BaseR request, Guid targetId, ReactionType reactionType, bool isReply = false)
     {
-        var authorName = !string.IsNullOrWhiteSpace(_currentUserService.Session.ProfileName)
-                                        ? _currentUserService.Session.ProfileName
-                                        : _currentUserService.Session.UserName;
+        var authorName = !string.IsNullOrWhiteSpace(request.ProfileName) ? request.ProfileName : request.UserName;
 
         var notiReq = new ReactionNotificationReq()
         {
             Id = reactionId,
             TargetId = targetId,
-            AuthorId = _currentUserService.Session.UserId,
+            AuthorId = request.UserId ?? Guid.Empty,
             AuthorName = authorName,
             ReactionType = reactionType,
-            UserAvatar = _currentUserService.Session.UserAvatar ?? "",
+            UserAvatar = request.UserAvatar ?? "",
             IsReplyReaction = isReply
         };
 
@@ -237,7 +225,6 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
 
         await _notificationService.AddReactionNotificationAsync(notiReq);
     }
-
 
     private async Task AddCountQueue(Guid targetId)
     {
@@ -262,33 +249,30 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
     {
         switch (typeof(T))
         {
-            case
-           var cls when cls == typeof(DocumentPostReaction):
+            case var cls when cls == typeof(DocumentPostReaction):
                 {
                     await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.Post);
                     break;
                 }
-            case
-            var cls when cls == typeof(DocumentSubPostReaction):
+
+            case var cls when cls == typeof(DocumentSubPostReaction):
                 {
                     await _smartCountService.QueueRemoveReactionCount(targetId, EntityType.SubPost);
                     break;
                 }
-
         }
     }
 
     #region -- Fields --
 
     /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
     /// DB context
     /// </summary>
     private readonly IMcsgContext _context;
+
+    private readonly IRepository<T> _reactRepository;
+    private readonly INotificationService _notificationService;
+    private readonly ISmartCountService _smartCountService;
 
     #endregion
 }

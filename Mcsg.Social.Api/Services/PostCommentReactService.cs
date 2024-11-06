@@ -1,6 +1,5 @@
 ﻿namespace Mcsg.Social.Api.Services;
 
-using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -10,25 +9,29 @@ using Requests;
 public partial class PostCommentReactService : IPostCommentReactService
 {
     private readonly IReactService<SocialPostCommentReaction> _reactService;
+
     public PostCommentReactService(IReactService<SocialPostCommentReaction> reactService)
     {
         _reactService = reactService;
     }
-    public async Task<bool> AddReaction(Guid commentPostId, ReactionType type, bool isReply = false)
+
+    public async Task<bool> AddReaction(ReactionReactR request)
     {
-        return await _reactService.AddReaction(commentPostId, type, isReply);
+        return await _reactService.AddReaction(request);
     }
+
     public async Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request)
     {
         return await _reactService.GetReactionsByTargetAsync(targetId, request);
     }
 
-    public async Task<ReactionsResponse> GetReactions(Guid commentPostId)
+    public async Task<ReactionsResponse> GetReactions(ReactionReactR request)
     {
-        return await _reactService.GetReactions(commentPostId);
+        return await _reactService.GetReactions(request);
     }
-    public async Task<bool> RemoveReaction(Guid commentPostId)
+
+    public async Task<bool> RemoveReaction(ReactionReactR request)
     {
-        return await _reactService.RemoveReaction(commentPostId);
+        return await _reactService.RemoveReaction(request);
     }
 }

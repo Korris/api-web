@@ -1,14 +1,13 @@
 ﻿namespace Mcsg.Document.Api.Interfaces;
 
-using Common.Core.Enums;
 using Common.SeedWork.Responses;
 using Models;
 using Requests;
 
 public interface IPostReactService
 {
-    Task<bool> AddReactionToPost(Guid postId, ReactionType type);
-    Task<bool> RemoveReactionToPost(Guid postId);
-    Task<ReactionsResponse> GetReactions(Guid postId);
+    Task<bool> AddReactionToPost(ReactionReactR request);
+    Task<bool> RemoveReactionToPost(ReactionReactR request);
+    Task<ReactionsResponse> GetReactions(ReactionReactR request);
     Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request);
 }

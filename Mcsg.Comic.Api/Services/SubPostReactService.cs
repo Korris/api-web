@@ -1,28 +1,31 @@
 ﻿namespace Mcsg.Comic.Api.Services;
 
-using Common.Core.Enums;
 using Common.Domain.Entities;
 using Interfaces;
 using Models;
+using Requests;
 
 public partial class SubPostReactService : ISubPostReactService
 {
     private readonly IReactService<ComicSubPostReaction> _reactService;
+
     public SubPostReactService(IReactService<ComicSubPostReaction> reactService)
     {
         _reactService = reactService;
     }
-    public async Task<bool> AddReactionToSubPost(Guid postId, ReactionType type)
+
+    public async Task<bool> AddReactionToSubPost(ReactionReactR request)
     {
-        return await _reactService.AddReaction(postId, type);
+        return await _reactService.AddReaction(request);
     }
 
-    public async Task<ReactionsResponse> GetReactions(Guid postId)
+    public async Task<ReactionsResponse> GetReactions(ReactionReactR request)
     {
-        return await _reactService.GetReactions(postId);
+        return await _reactService.GetReactions(request);
     }
-    public async Task<bool> RemoveReactionToSubPost(Guid postId)
+
+    public async Task<bool> RemoveReactionToSubPost(ReactionReactR request)
     {
-        return await _reactService.RemoveReaction(postId);
+        return await _reactService.RemoveReaction(request);
     }
 }

@@ -23,7 +23,8 @@ public class ReactionController : ControllerBase
     [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetPostReacts(Guid postId)
     {
-        var result = await _postReactService.GetReactions(postId);
+        var req = new ReactionReactR(HttpContext) { TargetId = postId };
+        var result = await _postReactService.GetReactions(req);
         return Ok(result);
     }
 
@@ -31,7 +32,8 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddPostReact(ReactionReactR request)
     {
-        var result = await _postReactService.AddReactionToPost(request.TargetId, request.Type);
+        request.Analyze(HttpContext);
+        var result = await _postReactService.AddReactionToPost(request);
         return Ok(result);
     }
 
@@ -39,14 +41,16 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteReact(Guid postId)
     {
-        var result = await _postReactService.RemoveReactionToPost(postId);
+        var req = new ReactionReactR(HttpContext) { TargetId = postId };
+        var result = await _postReactService.RemoveReactionToPost(req);
         return Ok(result);
     }
 
     [HttpGet("sub-post/{subPostId}")]
     public async Task<IActionResult> GetSubPostReacts(Guid subPostId)
     {
-        var result = await _subPostReactService.GetReactions(subPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = subPostId };
+        var result = await _subPostReactService.GetReactions(req);
         return Ok(result);
     }
 
@@ -54,7 +58,8 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddSubPostReact(ReactionReactR request)
     {
-        var result = await _subPostReactService.AddReactionToSubPost(request.TargetId, request.Type);
+        request.Analyze(HttpContext);
+        var result = await _subPostReactService.AddReactionToSubPost(request);
         return Ok(result);
     }
 
@@ -62,14 +67,16 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteSubPostReact(Guid subPostId)
     {
-        var result = await _subPostReactService.RemoveReactionToSubPost(subPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = subPostId };
+        var result = await _subPostReactService.RemoveReactionToSubPost(req);
         return Ok(result);
     }
 
     [HttpGet("comment-post/{commentPostId}")]
     public async Task<IActionResult> GetCommentPostReacts(Guid commentPostId)
     {
-        var result = await _postCommentReactService.GetReactions(commentPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = commentPostId };
+        var result = await _postCommentReactService.GetReactions(req);
         return Ok(result);
     }
 
@@ -77,7 +84,8 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddCommentPostReact(ReactionReactR request)
     {
-        var result = await _postCommentReactService.AddReaction(request.TargetId, request.Type, request.IsReply ?? false);
+        request.Analyze(HttpContext);
+        var result = await _postCommentReactService.AddReaction(request);
         return Ok(result);
     }
 
@@ -85,14 +93,16 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteCommentPostReact(Guid commentPostId)
     {
-        var result = await _postCommentReactService.RemoveReaction(commentPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = commentPostId };
+        var result = await _postCommentReactService.RemoveReaction(req);
         return Ok(result);
     }
 
     [HttpGet("comment-subpost/{commentSubPostId}")]
     public async Task<IActionResult> GetCommentSubPostReacts(Guid commentSubPostId)
     {
-        var result = await _subPostCommentReactService.GetReactions(commentSubPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = commentSubPostId };
+        var result = await _subPostCommentReactService.GetReactions(req);
         return Ok(result);
     }
 
@@ -100,7 +110,7 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddCommentSubPostReact(ReactionReactR request)
     {
-        var result = await _subPostCommentReactService.AddReaction(request.TargetId, request.Type, request.IsReply ?? false);
+        var result = await _subPostCommentReactService.AddReaction(request);
         return Ok(result);
     }
 
@@ -108,7 +118,8 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteCommentSubPostReact(Guid commentSubPostId)
     {
-        var result = await _subPostCommentReactService.RemoveReaction(commentSubPostId);
+        var req = new ReactionReactR(HttpContext) { TargetId = commentSubPostId };
+        var result = await _subPostCommentReactService.RemoveReaction(req);
         return Ok(result);
     }
 
