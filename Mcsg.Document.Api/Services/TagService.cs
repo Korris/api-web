@@ -13,7 +13,6 @@ using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -23,7 +22,6 @@ public partial class TagService : ITagService
 {
     private readonly IRepository<Tag> _tagRepository;
     private readonly IRepository<DocumentTagPost> _tagPostRepository;
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly ISmartLookupService _smartLookupService;
     private readonly IRepository<DocumentPost> _postRepository;
@@ -31,7 +29,6 @@ public partial class TagService : ITagService
 
     public TagService(
         IMcsgContext context,
-        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         ISmartLookupService smartLookupService,
         IRepository<SmartLookup> smartLookupRepository,
@@ -39,7 +36,6 @@ public partial class TagService : ITagService
         IConfiguration configuration)
     {
         _context = context;
-        _currentUserService = currentUserService;
         _tagPostRepository = unitOfWork.GetRepository<DocumentTagPost>();
         _tagRepository = unitOfWork.GetRepository<Tag>();
         _smartLookupRepository = smartLookupRepository;
