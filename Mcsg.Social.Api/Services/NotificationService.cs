@@ -14,7 +14,6 @@ using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -25,56 +24,12 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class NotificationService : INotificationService
 {
-    private readonly IRepository<Notification> _notiRepository;
-    private readonly IRepository<NotificationObject> _notiObjRepository;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<SocialPost> _postRepository;
-
-    private readonly IRepository<SocialPostReaction> _postReactionRepository;
-    private readonly IRepository<ComicPostReaction> _comicPostReactionRepository;
-    private readonly IRepository<StoryPostReaction> _storyPostReactionRepository;
-
-    private readonly IRepository<SocialSubPostReaction> _subPostReactionRepository;
-
-    private readonly IRepository<SocialPostCommentReaction> _postCommentReactionRepository;
-    private readonly IRepository<ComicPostCommentReaction> _comicPostCommentReactionRepository;
-    private readonly IRepository<StoryPostCommentReaction> _storyPostCommentReactionRepository;
-
-    private readonly IRepository<SocialSubPostCommentReaction> _subPostCommentReactionRepository;
-    private readonly IRepository<ComicSubPostCommentReaction> _comicSubPostCommentReactionRepository;
-    private readonly IRepository<StorySubPostCommentReaction> _storySubPostCommentReactionRepository;
-
-
-    private readonly IMapper _mapper;
-    private IConfiguration _configuration;
-
-    public NotificationService(ICurrentUserService currentUserService
-        , IUnitOfWork unitOfWork
-        , IMapper mapper
-        , IConfiguration configuration
-        , ISetting setting
-        , IRepository<User> userRepository)
+    public NotificationService(ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _notiRepository = unitOfWork.GetRepository<Notification>();
-        _notiObjRepository = unitOfWork.GetRepository<NotificationObject>();
-        _userRepository = unitOfWork.GetRepository<User>();
-        _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _mapper = mapper;
         _setting = setting;
-        _configuration = configuration;
 
-        _postReactionRepository = unitOfWork.GetRepository<SocialPostReaction>();
-        _comicPostReactionRepository = unitOfWork.GetRepository<ComicPostReaction>();
-        _storyPostReactionRepository = unitOfWork.GetRepository<StoryPostReaction>();
-
-        _subPostReactionRepository = unitOfWork.GetRepository<SocialSubPostReaction>();
-
-        _postCommentReactionRepository = unitOfWork.GetRepository<SocialPostCommentReaction>();
-        _comicPostCommentReactionRepository = unitOfWork.GetRepository<ComicPostCommentReaction>();
-        _storyPostCommentReactionRepository = unitOfWork.GetRepository<StoryPostCommentReaction>();
-        _subPostCommentReactionRepository = unitOfWork.GetRepository<SocialSubPostCommentReaction>();
-        _comicSubPostCommentReactionRepository = unitOfWork.GetRepository<ComicSubPostCommentReaction>();
-        _storySubPostCommentReactionRepository = unitOfWork.GetRepository<StorySubPostCommentReaction>();
+        _notiRepository = unitOfWork.GetRepository<Notification>();
+        _mapper = mapper;
     }
 
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
@@ -687,6 +642,9 @@ public partial class NotificationService : INotificationService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    private readonly IRepository<Notification> _notiRepository;
+    private readonly IMapper _mapper;
 
     #endregion
 }

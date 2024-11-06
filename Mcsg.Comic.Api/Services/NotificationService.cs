@@ -21,38 +21,12 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class NotificationService : INotificationService
 {
-    private readonly IRepository<Notification> _notiRepository;
-    private readonly IRepository<NotificationObject> _notiObjRepository;
-    private readonly IRepository<ComicPost> _postRepository;
-    private readonly IRepository<User> _userRepository;
-
-    private readonly IRepository<ComicPostReaction> _postReacRepository;
-    private readonly IRepository<ComicSubPostReaction> _subPostReacRepository;
-    private readonly IRepository<ComicPostCommentReaction> _postCommentRepository;
-    private readonly IRepository<ComicSubPostCommentReaction> _subPostCommentRepository;
-    private readonly IMapper _mapper;
-    private IConfiguration _configuration;
-
-    public NotificationService(IUnitOfWork unitOfWork
-        , IMapper mapper
-        , IConfiguration configuration
-        , IRepository<ComicPostReaction> postReacRepository
-        , IRepository<ComicSubPostReaction> subPostReacRepository
-        , IRepository<ComicPostCommentReaction> postCommentRepository
-        , ISetting setting
-        , IRepository<ComicSubPostCommentReaction> subPostCommentRepository)
+    public NotificationService(ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _notiRepository = unitOfWork.GetRepository<Notification>();
-        _notiObjRepository = unitOfWork.GetRepository<NotificationObject>();
-        _userRepository = unitOfWork.GetRepository<User>();
-        _postRepository = unitOfWork.GetRepository<ComicPost>();
-        _mapper = mapper;
-        _configuration = configuration;
-        _postReacRepository = postReacRepository;
-        _subPostReacRepository = subPostReacRepository;
-        _postCommentRepository = postCommentRepository;
         _setting = setting;
-        _subPostCommentRepository = subPostCommentRepository;
+
+        _notiRepository = unitOfWork.GetRepository<Notification>();
+        _mapper = mapper;
     }
 
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
@@ -192,6 +166,9 @@ public partial class NotificationService : INotificationService
     /// Setting
     /// </summary>
     private readonly ISetting _setting;
+
+    private readonly IRepository<Notification> _notiRepository;
+    private readonly IMapper _mapper;
 
     #endregion
 }
