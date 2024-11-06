@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Document.Api.Requests;
 
-public class DocumentChapterOrderSwapR
+using Common.Core.Requests;
+
+public class DocumentChapterOrderSwapR : BaseR
 {
     public float Order1 { get; set; }
     public float Order2 { get; set; }

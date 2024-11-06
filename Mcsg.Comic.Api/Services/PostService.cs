@@ -27,7 +27,6 @@ using Enums;
 using Extensions;
 using Interfaces;
 using Lib.Common.Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -54,12 +53,11 @@ public partial class PostService : IPostService
     /// <param name="tagService"></param>
     /// <param name="smartLookupRepository"></param>
     /// <param name="fileService"></param>
-    /// <param name="currentUserService"></param>
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
     /// <param name="postReportValidator"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, ICurrentUserService currentUserService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<ComicPostReport> postReportValidator, IRepository<ComicPostComment> postCommentRepository)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<ComicPostReport> postReportValidator, IRepository<ComicPostComment> postCommentRepository)
     {
         _context = context;
         _setting = setting;
@@ -73,30 +71,29 @@ public partial class PostService : IPostService
         _tagService = tagService;
         _smartLookupRepository = smartLookupRepository;
         _fileService = fileService;
-        _currentUserService = currentUserService;
         _mapper = mapper;
         _smartLookupService = smartLookupService;
         _postCommentRepository = postCommentRepository;
     }
 
-    public async Task<bool> Delete(Guid postId)
+    public async Task<bool> Delete(IdBaseR request)
     {
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileName = ss.ProfileName;
+        var postId = request.Id;
+        var userId = request.UserId;
+        var profileName = request.ProfileName;
 
         var feedDb = await _postRepository.GetByIdAsync(postId);
         if (feedDb == null)
         {
             throw new BadRequestException(E204, M204);
         }
-        else if (feedDb.UserId != currentUserId)
+        else if (feedDb.UserId != userId)
         {
             throw new BadRequestException(nameof(E309), E309);
         }
         else
         {
-            await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = currentUserId });
+            await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = userId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
 
@@ -215,11 +212,11 @@ public partial class PostService : IPostService
         string subNotLoadChapter = (isLoadChapters ? "" : @" AND sp.""Id"" IS NULL ");
         query = query.Replace("[Not-load-chapter]", subNotLoadChapter);
 
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var userId = req.UserId;
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         //TODO Premium            
-        query = AddWithPermission(query, currentUserId);
+        query = AddWithPermission(query, userId);
         //
         PostSeriesQueryDbResponse dbPost = null;
         await _postRepository
@@ -252,7 +249,7 @@ public partial class PostService : IPostService
                 HashId = hashId,
                 IsAccessPrivate = false,
                 CurrentDate = DateTime.UtcNow,
-                UserId = currentUserId,
+                UserId = userId,
                 Hide = req.Hides,
                 PostStatus = statusList,
                 req.UserName
@@ -262,13 +259,13 @@ public partial class PostService : IPostService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (dbPost.Status == PostStatus.Draft && dbPost.UserId != currentUserId)
+        if (dbPost.Status == PostStatus.Draft && dbPost.UserId != userId)
         {
             throw new NotFoundException(E204, M204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
-        dbPost.IsFollowing = currentUserId == null ? false : await _context.ComicPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == currentUserId && p.PostId == dbPost.Id);
-        var result = MappingFeedRespone(dbPost);
+        dbPost.IsFollowing = userId == null ? false : await _context.ComicPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
+        var result = MappingFeedRespone(dbPost, req.UserId);
 
         result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
         result.ThumbnailHashId = Path.GetFileNameWithoutExtension(result.ThumbnailUrl.RemoveNameSuffix());
@@ -277,7 +274,7 @@ public partial class PostService : IPostService
         var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
         {
             TargetIds = new List<Guid>() { dbPost.Id },
-            UserId = currentUserId
+            UserId = userId
         });
 
         if (postReactionResponse.Count() > 0)
@@ -307,11 +304,12 @@ public partial class PostService : IPostService
 
     public async Task<ChapterResponse> GetSeriesChapter(ChapterOrderR req)
     {
-        var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
-        var userIsPremium = _currentUserService?.Session?.IsPremium ?? false;
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var isPremium = req.IsPremium;
+        var userId = req.UserId;
         var hashId = req.HashId;
         var order = req.Order;
+
+        var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         ChapterResponse subpost = null;
@@ -350,14 +348,14 @@ public partial class PostService : IPostService
                 PostHashId = hashId,
                 IsAccessPrivate = false,
                 SubPostOrder = order,
-                UserId = currentUserId,
+                UserId = userId,
                 Hide = req.Hides,
                 PostStatus = statusList,
             }, splitOn: "Id, Id");
 
         if (subpost != null)
         {
-            if (subpost.CreatedBy != currentUserId && subpost.UserId != currentUserId)
+            if (subpost.CreatedBy != userId && subpost.UserId != userId)
             {
                 if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
                 {
@@ -373,7 +371,7 @@ public partial class PostService : IPostService
                 {
                     throw new BadRequestException(ApiErrorCode.NEED_BUY_TO_READ, ApiErrorMessage.NEED_BUY_TO_READ);
                 }
-                if (subpost.Permission == PostPermission.Premium && (!userIsPremium && subpost.UserExclusiveId == null))
+                if (subpost.Permission == PostPermission.Premium && (!isPremium && subpost.UserExclusiveId == null))
                 {
                     //Todo implement Premium
                     throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_READ, ApiErrorMessage.NEED_PREMIUM_TO_READ);
@@ -434,8 +432,8 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
     {
-        var currentUserId = _currentUserService?.Session?.UserId;
-        var isFavorite = currentUserId == null ? false : request.IsFavorite;
+        var userId = request.UserId;
+        var isFavorite = userId == null ? false : request.IsFavorite;
         var offset = request.PageSize * (request.PageNumber - 1);
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
@@ -471,7 +469,7 @@ public partial class PostService : IPostService
                     PostStatus = statusList,
                     PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
-                    UserId = currentUserId,
+                    UserId = userId,
                     Hide = request.Hides
                 });
 
@@ -479,14 +477,14 @@ public partial class PostService : IPostService
 
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
-        var items = MapTopSeries(dbFeed.ToList());
+        var items = MapTopSeries(dbFeed.ToList(), request.UserId);
         if (items != null && items.Count() > 0)
         {
             var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
             {
                 TargetIds = items.Select(p => p.Id).ToList(),
-                UserId = currentUserId
+                UserId = userId
             });
 
             foreach (var item in items)
@@ -572,7 +570,7 @@ public partial class PostService : IPostService
 
             var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
-            var items = MapTopSeries(dbFeed.ToList());
+            var items = MapTopSeries(dbFeed.ToList(), request.UserId);
             if (items != null && items.Count() > 0)
             {
                 var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
@@ -695,7 +693,7 @@ public partial class PostService : IPostService
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
             {
                 TargetIds = items.Select(p => p.Id).ToList(),
-                UserId = _currentUserService?.Session?.UserId
+                loadReq.UserId
             });
 
             foreach (var item in results.Items)
@@ -857,7 +855,7 @@ public partial class PostService : IPostService
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
             {
                 TargetIds = items.Select(p => p.Id).ToList(),
-                UserId = _currentUserService?.Session?.UserId
+                input.UserId
             });
 
             foreach (var item in results.Items)
@@ -984,13 +982,14 @@ public partial class PostService : IPostService
         return result;
     }
 
-    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item)
+    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item, Guid? userId)
     {
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
         if (item == null)
+        {
             return new PostSeriesResponse();
-        var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
+        }
 
+        var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
         var freeChapters = item.Chapters.Where(x => x.Permission == PostPermission.Public).Count();
         var exclusiveChapters = item.Chapters.Where(x => x.UserExclusiveId.HasValue).Count();
         var totalChapters = item.Chapters.Count;
@@ -1003,7 +1002,7 @@ public partial class PostService : IPostService
             HashId = item.HashId,
             UserId = item.UserId,
             AuthorName = item.AuthorName,
-            IsCurrentUserAuthor = currentUserId == item.UserId,
+            IsCurrentUserAuthor = userId == item.UserId,
             ThumbnailUrl = item.ThumbnailUrl.AppendNameSuffix(),
             CoverUrl = item.CoverUrl,
             CreatedOn = item.CreatedOn,
@@ -1035,10 +1034,12 @@ public partial class PostService : IPostService
         return itemResponse;
     }
 
-    public async Task<bool> FollowPost(Guid postId)
+    public async Task<bool> FollowPost(IdBaseR request)
     {
-        var currentUserId = _currentUserService?.Session?.UserId;
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == currentUserId);
+        var postId = request.Id;
+        var userId = request.UserId;
+
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
         if (user == null)
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
@@ -1077,9 +1078,8 @@ public partial class PostService : IPostService
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq)
     {
-
         ValidateTotalItem(loadReq.PageSize);
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var userId = loadReq.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
@@ -1102,7 +1102,7 @@ public partial class PostService : IPostService
                 .Connection.QueryMultipleAsync(query, new
                 {
                     IsAccessPrivate = false,
-                    UserId = currentUserId,
+                    UserId = userId,
                     PageSize = loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
@@ -1142,7 +1142,7 @@ public partial class PostService : IPostService
     public async Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, ComicPostListSeriesR loadReq)
     {
         ValidateTotalItem(loadReq.PageSize);
-        var currentUserId = _currentUserService?.Session?.UserId;
+        var userId = loadReq.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
@@ -1166,7 +1166,7 @@ public partial class PostService : IPostService
                 {
                     PostType = (int)type,
                     IsAccessPrivate = false,
-                    UserId = currentUserId,
+                    UserId = userId,
                     loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
@@ -1204,17 +1204,16 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<List<MyPostSeriesResponse>> GetMyAllSeries()
+    public async Task<List<MyPostSeriesResponse>> GetMyAllSeries(Guid userId)
     {
         try
         {
-            var currentUserId = _currentUserService?.Session?.UserId;
             var query = string.Format(GetMyAllQuery);
 
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new
                     {
-                        UserId = currentUserId
+                        UserId = userId
                     });
             var queryResults = await multi.ReadAsync<MyPostSeriesQueryResult>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
@@ -1356,6 +1355,7 @@ public partial class PostService : IPostService
 
     public async Task<List<PostBoxResponse>> GetPostDetails(PaginatedR req)
     {
+        var userId = req.UserId;
         var hashIds = req.HashIds;
         var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
@@ -1366,9 +1366,8 @@ public partial class PostService : IPostService
             PostStatus = statusList,
             CurrentDate = DateTime.UtcNow
         };
-        var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
 
+        var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
         if (result != null && result.Any())
         {
             var listPostDetails = new List<PostBoxResponse>();
@@ -1377,7 +1376,7 @@ public partial class PostService : IPostService
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
             {
                 TargetIds = result.Select(p => p.Id).ToList(),
-                UserId = currentUserId
+                UserId = userId
             });
 
             foreach (var res in result)
@@ -1391,7 +1390,7 @@ public partial class PostService : IPostService
                 {
                     Id = res.Id,
                     IsMature = res.IsMature,
-                    IsCurrentUserAuthor = res.UserId == currentUserId,
+                    IsCurrentUserAuthor = res.UserId == userId,
                     ThumbnailUrl = res.ThumbnailUrl,
                     Body = res.Body,
                     Title = res.Title,
@@ -1551,10 +1550,8 @@ public partial class PostService : IPostService
         }).ToList();
     }
 
-    private List<PostSeriesTopResponse> MapTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts)
+    private List<PostSeriesTopResponse> MapTopSeries(IEnumerable<PostSeriesTopQueryDbResponse> posts, Guid? userId)
     {
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
-
         return posts.Select(x => new PostSeriesTopResponse
         {
             ProfileId = x.ProfileId,
@@ -1569,7 +1566,7 @@ public partial class PostService : IPostService
             Tags = x.Tags,
             Type = x.Type,
             AuthorName = x.AuthorName,
-            IsCurrentUserAuthor = currentUserId == x.UserId,
+            IsCurrentUserAuthor = userId == x.UserId,
             AuthorId = x.AuthorId,
             CoverUrl = x.CoverUrl,
             ThumbnailUrl = x.ThumbnailUrl,
@@ -1687,21 +1684,20 @@ public partial class PostService : IPostService
         {
             loadReq.OrderBy = nameof(ComicSubPost.Sort);
         }
-        var query = GetSeriesChaptersByHashId
-            .Replace("[OrderBy]", loadReq.OrderBy);
+        var query = GetSeriesChaptersByHashId.Replace("[OrderBy]", loadReq.OrderBy);
 
         //TODO Premium
-        var currentUserId = _currentUserService?.Session?.UserId;
-        query = AddWithPermission(query, currentUserId);
+        var userId = loadReq.UserId;
+        query = AddWithPermission(query, userId);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
                 {
                     IsAccessPrivate = false,
                     PostHashId = hashId,
-                    PageSize = loadReq.PageSize,
+                    loadReq.PageSize,
                     Offet = offset,
-                    UserId = currentUserId
+                    UserId = userId
                 });
         var items = await multi.ReadAsync<ChapterResponse>().ConfigureAwait(false);
 
@@ -1997,24 +1993,23 @@ public partial class PostService : IPostService
         return result;
     }
 
-    public async Task<bool> DeleteChapter(string hashId, float order)
+    public async Task<bool> DeleteChapter(string hashId, float order, BaseR request)
     {
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileName = ss.ProfileName;
+        var userId = request.UserId;
+        var profileName = request.ProfileName;
 
         var subPost = await FindSubPost(hashId, order);
         if (subPost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, order));
         }
-        else if (subPost.UserId != currentUserId)
+        else if (subPost.UserId != userId)
         {
             throw new BadRequestException(nameof(E309), E309);
         }
         else
         {
-            await _postRepository.Connection.QueryAsync(ExecSoftDeleteSubPost, new { SubPostId = subPost.Id, Date = DateTime.UtcNow, UserId = currentUserId });
+            await _postRepository.Connection.QueryAsync(ExecSoftDeleteSubPost, new { SubPostId = subPost.Id, Date = DateTime.UtcNow, UserId = userId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
 
@@ -2065,7 +2060,7 @@ public partial class PostService : IPostService
     public async Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
         var result = new List<ChapterResponse>();
-        var currentUserId = _currentUserService.Session.UserId;
+        var userId = orders.UserId;
         var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         var fromOrder = orders.Order1;
         var toOrder = orders.Order2;
@@ -2077,7 +2072,7 @@ public partial class PostService : IPostService
         }
 
         // Check owner
-        if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
+        if (chapterFr.UserId != userId || chapterTo.UserId != userId)
         {
             throw new BadRequestException(nameof(E309), E309);
         }
@@ -2101,7 +2096,7 @@ public partial class PostService : IPostService
 
     public async Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
-        var currentUserId = _currentUserService.Session.UserId;
+        var userId = orders.UserId;
         var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         var fromOrder = orders.Order1;
         var toOrder = orders.Order2;
@@ -2113,7 +2108,7 @@ public partial class PostService : IPostService
         }
 
         // Check owner
-        if (chapterFr.UserId != currentUserId || chapterTo.UserId != currentUserId)
+        if (chapterFr.UserId != userId || chapterTo.UserId != userId)
         {
             throw new BadRequestException(nameof(E309), E309);
         }
@@ -2522,7 +2517,6 @@ public partial class PostService : IPostService
     private readonly ITagService _tagService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IFileService _fileService;
-    private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
 

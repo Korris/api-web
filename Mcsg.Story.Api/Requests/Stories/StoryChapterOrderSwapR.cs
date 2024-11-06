@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Story.Api.Requests;
 
-public class StoryChapterOrderSwapR
+using Common.Core.Requests;
+
+public class StoryChapterOrderSwapR : BaseR
 {
     public float Order1 { get; set; }
     public float Order2 { get; set; }

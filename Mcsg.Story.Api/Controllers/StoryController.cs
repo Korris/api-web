@@ -17,8 +17,8 @@ public class StoryController : ControllerBase
     public StoryController(ISetting setting, IStoryService storyService, IPostService postService, IPostReactService postReactService)
     {
         _setting = setting;
-        _storyService = storyService;
         _postService = postService;
+        _storyService = storyService;
         _postReactService = postReactService;
     }
 
@@ -148,6 +148,7 @@ public class StoryController : ControllerBase
     [HttpGet("{hashId}/chapters")]
     public async Task<IActionResult> GetChapters(string hashId, [FromQuery] StoryChapterListR request)
     {
+        request.Analyze(HttpContext);
         var result = await _storyService.GetChapters(hashId, request);
         return Ok(result);
     }
@@ -171,6 +172,7 @@ public class StoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
+        orders.Analyze(HttpContext);
         var result = await _storyService.SwapChapterOrder(hashId, orders);
         return Ok(result);
     }
@@ -179,6 +181,7 @@ public class StoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders)
     {
+        orders.Analyze(HttpContext);
         await _storyService.MoveChapterOrder(hashId, orders);
         return Ok();
     }
@@ -186,14 +189,16 @@ public class StoryController : ControllerBase
     [HttpDelete("{hashId}/chapter/{chapterOrder}"), Authorize]
     public async Task<IActionResult> DeleteChapter(string hashId, float chapterOrder)
     {
-        var result = await _postService.DeleteChapter(hashId, chapterOrder);
+        var req = new BaseR(HttpContext);
+        var result = await _postService.DeleteChapter(hashId, chapterOrder, req);
         return Ok(result);
     }
 
     [HttpDelete("{postId}"), Authorize]
     public async Task<IActionResult> Delete(Guid postId)
     {
-        var result = await _postService.Delete(postId);
+        var req = new IdBaseR(HttpContext) { Id = postId };
+        var result = await _postService.Delete(req);
         return Ok(result);
     }
 
@@ -233,7 +238,8 @@ public class StoryController : ControllerBase
     [HttpPost("follow-post/{postId}")]
     public async Task<IActionResult> FollowPost(Guid postId)
     {
-        var result = await _storyService.FollowPost(postId);
+        var req = new IdBaseR(HttpContext) { Id = postId };
+        var result = await _storyService.FollowPost(req);
         return Ok(result);
     }
 

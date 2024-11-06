@@ -14,7 +14,7 @@ public interface IFeedService
     Task<FeedDto> GetFeedAsync(string hashId, Guid userId);
     Task<PagedResponse<FeedDto>> GetFeedByKeywordAsync(string tagName, FeedSearchKeywordR feedLoadReq);
     FeedDisplayConfig GetFeedDisplayConfig();
-    Task<bool> DeleteFeedAsync(Guid postId);
+    Task<bool> DeleteFeedAsync(IdBaseR request);
     FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item);
     Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request);
     Task<List<FeedBoxResponse>> GetFeedsByIds(PaginatedR request);

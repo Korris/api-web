@@ -7,17 +7,15 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Models;
 using Requests;
 
 public partial class UserService : IUserService
 {
-    public UserService(IMcsgContext context, ICurrentUserService currentUserService, IRepository<User> userRepository)
+    public UserService(IMcsgContext context, IRepository<User> userRepository)
     {
         _context = context;
-        _currentUserService = currentUserService;
         _userRepository = userRepository;
     }
 
@@ -71,7 +69,7 @@ public partial class UserService : IUserService
         if (items.Any())
         {
             results = new PagedResponse<UserSearchResponse>(totalItems, input.PageNumber, input.PageSize);
-            var userId = _currentUserService.Session?.UserId;
+            var userId = input.UserId;
             bool isHaveUser = false;
             var userFollowingIds = new List<Guid>();
             if (userId != null)
@@ -107,7 +105,6 @@ public partial class UserService : IUserService
     /// </summary>
     private readonly IMcsgContext _context;
 
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<User> _userRepository;
 
     #endregion

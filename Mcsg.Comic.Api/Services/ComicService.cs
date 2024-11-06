@@ -111,9 +111,9 @@ public partial class ComicService : IComicService
         return await _postService.GetFollowedPost(input);
     }
 
-    public async Task<bool> FollowPost(Guid postId)
+    public async Task<bool> FollowPost(IdBaseR request)
     {
-        return await _postService.FollowPost(postId);
+        return await _postService.FollowPost(request);
     }
 
     public async Task<float> GetLatestOrderChapter(string hashPostId)

@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Comic.Api.Requests;
 
-public class ComicChapterOrderSwapR
+using Common.Core.Requests;
+
+public class ComicChapterOrderSwapR : BaseR
 {
     public float Order1 { get; set; }
     public float Order2 { get; set; }

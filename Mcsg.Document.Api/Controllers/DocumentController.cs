@@ -148,6 +148,7 @@ public class DocumentController : ControllerBase
     [HttpGet("{hashId}/chapters")]
     public async Task<IActionResult> GetChapters(string hashId, [FromQuery] DocumentChapterListR request)
     {
+        request.Analyze(HttpContext);
         var result = await _documentService.GetChapters(hashId, request);
         return Ok(result);
     }
@@ -171,6 +172,7 @@ public class DocumentController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SwapChapterOrder(string hashId, DocumentChapterOrderSwapR orders)
     {
+        orders.Analyze(HttpContext);
         var result = await _documentService.SwapChapterOrder(hashId, orders);
         return Ok(result);
     }
@@ -179,6 +181,7 @@ public class DocumentController : ControllerBase
     [Authorize]
     public async Task<IActionResult> MoveChapterOrder(string hashId, DocumentChapterOrderSwapR orders)
     {
+        orders.Analyze(HttpContext);
         await _documentService.MoveChapterOrder(hashId, orders);
         return Ok();
     }
@@ -186,14 +189,16 @@ public class DocumentController : ControllerBase
     [HttpDelete("{hashId}/chapter/{chapterOrder}"), Authorize]
     public async Task<IActionResult> DeleteChapter(string hashId, float chapterOrder)
     {
-        var result = await _postService.DeleteChapter(hashId, chapterOrder);
+        var req = new BaseR(HttpContext);
+        var result = await _postService.DeleteChapter(hashId, chapterOrder, req);
         return Ok(result);
     }
 
     [HttpDelete("{postId}"), Authorize]
     public async Task<IActionResult> Delete(Guid postId)
     {
-        var result = await _postService.Delete(postId);
+        var req = new IdBaseR(HttpContext) { Id = postId };
+        var result = await _postService.Delete(req);
         return Ok(result);
     }
 
@@ -231,9 +236,10 @@ public class DocumentController : ControllerBase
 
     [Authorize]
     [HttpPost("follow-post/{postId}")]
-    public async Task<IActionResult> FollowPost(FollowPostReq input)
+    public async Task<IActionResult> FollowPost(Guid postId)
     {
-        var result = await _documentService.FollowPost(input);
+        var req = new IdBaseR(HttpContext) { Id = postId };
+        var result = await _documentService.FollowPost(req);
         return Ok(result);
     }
 

@@ -22,7 +22,6 @@ using Dtos;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -43,10 +42,9 @@ public partial class PostService : IPostService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="unitOfWork"></param>
-    /// <param name="currentUserService"></param>
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ISmartLookupService smartLookupService, IBusinessText businessText)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ISmartLookupService smartLookupService, IBusinessText businessText)
     {
         _context = context;
         _setting = setting;
@@ -57,30 +55,29 @@ public partial class PostService : IPostService
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _postReportRepository = unitOfWork.GetRepository<SocialPostReport>();
         _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
-        _currentUserService = currentUserService;
         _mapper = mapper;
         _smartLookupService = smartLookupService;
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
     }
 
-    public async Task<bool> Delete(Guid postId)
+    public async Task<bool> Delete(IdBaseR request)
     {
-        var ss = _currentUserService.Session;
-        var currentUserId = ss.UserId;
-        var profileName = ss.ProfileName;
+        var postId = request.Id;
+        var userId = request.UserId;
+        var profileName = request.ProfileName;
 
         var feedDb = await _postRepository.GetByIdAsync(postId);
         if (feedDb == null)
         {
             throw new BadRequestException(E204, M204);
         }
-        else if (feedDb.UserId != currentUserId)
+        else if (feedDb.UserId != userId)
         {
             throw new BadRequestException(nameof(E309), E309);
         }
         else
         {
-            await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = currentUserId });
+            await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = userId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
 
@@ -124,17 +121,17 @@ public partial class PostService : IPostService
         return results;
     }
 
-    public async Task<List<MyPostSeriesResponse>> GetMyAllSeries()
+    public async Task<List<MyPostSeriesResponse>> GetMyAllSeries(BaseR request)
     {
         try
         {
-            var currentUserId = _currentUserService?.Session?.UserId;
+            var userId = request.UserId;
             var query = string.Format(GetMyAllQuery);
 
             var multi = await _postRepository
                     .Connection.QueryMultipleAsync(query, new
                     {
-                        UserId = currentUserId
+                        UserId = userId
                     });
             var queryResults = await multi.ReadAsync<MyPostSeriesQueryResult>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
@@ -393,11 +390,11 @@ public partial class PostService : IPostService
         }).ToList();
     }
 
-    public async Task<List<PostBoxResponse>> GetPostDetails(string hashIds)
+    public async Task<List<PostBoxResponse>> GetPostDetails(string hashIds, BaseR request)
     {
         var param = new { HashIds = hashIds.Split(',').ToList() };
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
-        var currentUserId = _currentUserService.Session?.UserId ?? Guid.Empty;
+        var userId = request.UserId;
 
         if (result != null && result.Any())
         {
@@ -414,7 +411,7 @@ public partial class PostService : IPostService
                 {
                     Id = res.Id,
                     IsMature = res.IsMature,
-                    IsCurrentUserAuthor = res.UserId == currentUserId,
+                    IsCurrentUserAuthor = res.UserId == userId,
                     ThumbnailUrl = res.ThumbnailUrl,
                     Body = res.Body,
                     Title = res.Title,
@@ -750,12 +747,12 @@ public partial class PostService : IPostService
 
     public async Task<Tuple<int, int>> GetFollowedPostCount(BaseR req)
     {
-        var currentUserId = _currentUserService.Session?.UserId;
+        var userId = req.UserId;
         var followedComicCount = await (
             from a in _context.ComicPostAvailable.AsNoTracking()
             join b in _context.ComicPostFavoriteAvailable.AsNoTracking()
                 on a.Id equals b.PostId
-            where b.UserId == currentUserId
+            where b.UserId == userId
                   && !a.IsDelete
                   && (!req.Hides.Contains((int)a.Hide))
             select a
@@ -765,7 +762,7 @@ public partial class PostService : IPostService
             from a in _context.StoryPosts.AsNoTracking()
             join b in _context.StoryPostFavoriteAvailable.AsNoTracking()
                 on a.Id equals b.PostId
-            where b.UserId == currentUserId
+            where b.UserId == userId
                   && !b.IsDelete
                   && !a.IsDelete
                   && (!req.Hides.Contains((int)a.Hide))
@@ -832,7 +829,6 @@ public partial class PostService : IPostService
     private readonly IRepository<SocialPostComment> _postCommentRepository;
     private readonly IRepository<SocialPostReport> _postReportRepository;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
-    private readonly ICurrentUserService _currentUserService;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
 

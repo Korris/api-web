@@ -111,9 +111,9 @@ public partial class DocumentService : IDocumentService
         return await _postService.GetFollowedPost(input);
     }
 
-    public async Task<bool> FollowPost(FollowPostReq input)
+    public async Task<bool> FollowPost(IdBaseR request)
     {
-        return await _postService.FollowPost(input);
+        return await _postService.FollowPost(request);
     }
 
     public async Task<float> GetLatestOrderChapter(string hashPostId)

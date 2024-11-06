@@ -22,7 +22,7 @@ public interface IComicService
     Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetByTagName(ComicPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
-    Task<bool> FollowPost(Guid postId);
+    Task<bool> FollowPost(IdBaseR request);
     Task<float> GetLatestOrderChapter(string hashPostId);
     Task<List<PostSeriesTopResponse>> GetRecommended(ComicRecommendedR req);
     Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);

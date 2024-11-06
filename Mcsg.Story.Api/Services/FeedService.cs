@@ -500,9 +500,9 @@ public partial class FeedService : IFeedService
         return _feedDisplayConfig;
     }
 
-    public async Task<bool> DeleteFeedAsync(Guid postId)
+    public async Task<bool> DeleteFeedAsync(IdBaseR request)
     {
-        return await _postService.Delete(postId);
+        return await _postService.Delete(request);
     }
 
     public FeedDto MappingFeedInListRespone(FeedsListQueryDbDto item)

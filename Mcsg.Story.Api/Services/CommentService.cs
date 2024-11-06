@@ -14,7 +14,6 @@ using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -31,8 +30,7 @@ public partial class CommentService : ICommentService
     /// <param name="businessBodyText"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="mapper"></param>
-    /// <param name="currentUserService"></param>
-    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService)
+    public CommentService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _context = context;
         _setting = setting;

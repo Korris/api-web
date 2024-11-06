@@ -39,11 +39,6 @@ public partial class StoryService : IStoryService
         return await _postService.SwapChapterOrder(hashId, orders);
     }
 
-    public async Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders)
-    {
-        await _postService.MoveChapterOrder(hashId, orders);
-    }
-
     public async Task<ChapterResponse> GetChapter(ChapterOrderR req)
     {
         return await _postService.GetSeriesChapter(req);
@@ -114,9 +109,9 @@ public partial class StoryService : IStoryService
         return await _postService.GetFollowedPost(input);
     }
 
-    public async Task<bool> FollowPost(Guid postId)
+    public async Task<bool> FollowPost(IdBaseR request)
     {
-        return await _postService.FollowPost(postId);
+        return await _postService.FollowPost(request);
     }
 
     public async Task<float> GetLatestOrderChapter(string hashPostId)
@@ -138,6 +133,11 @@ public partial class StoryService : IStoryService
             .FirstOrDefaultAsync();
 
         return (int)latestOrder + 1;
+    }
+
+    public async Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders)
+    {
+        await _postService.MoveChapterOrder(hashId, orders);
     }
 
     #endregion

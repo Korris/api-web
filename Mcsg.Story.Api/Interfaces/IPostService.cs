@@ -12,7 +12,7 @@ using Requests;
 
 public interface IPostService
 {
-    Task<bool> Delete(Guid postId);
+    Task<bool> Delete(IdBaseR request);
     Task<PostSeriesResponse> PostCreate(StoryPostCreateR request);
     Task<PostSeriesResponse> PostUpdate(StoryPostUpdateR request);
     Task<PostSeriesResponse> GetSeries(StoryHashIdR req);
@@ -32,10 +32,10 @@ public interface IPostService
     Task<ChapterResponse> SubPostCreate(StorySubPostCreateR request);
     Task<ChapterResponse> SubPostUpdate(StorySubPostUpdateR request);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, StoryChapterOrderSwapR orders);
-    Task<bool> DeleteChapter(string hashId, float order);
+    Task<bool> DeleteChapter(string hashId, float order, BaseR request);
     ChapterResponse MappingChapterResponse(StorySubPost newChapter);
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
-    Task<List<MyPostSeriesResponse>> GetMyAllSeries();
+    Task<List<MyPostSeriesResponse>> GetMyAllSeries(Guid userId);
     Task<PagedResponse<PostBoxResposne>> GetPostByUserProfileName(PostType type, StoryPostByProFileNameR input);
     Task<PagedResponse<PostBoxResposne>> GetPostByTagName(PostType type, StoryPostByTagNameR input);
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
@@ -43,7 +43,7 @@ public interface IPostService
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
-    Task<bool> FollowPost(Guid postId);
+    Task<bool> FollowPost(IdBaseR request);
     Task<List<RewardDto>> CheckRewardsForSubPost(Guid currentUserId);
     Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders);
     Task<List<ChapterList>> GetAllChapters(string hashId);
