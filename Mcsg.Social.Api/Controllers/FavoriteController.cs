@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 
@@ -32,13 +33,15 @@ public class FavoriteController : ControllerBase
     [HttpPost("add-tag-favorite")]
     public async Task<IActionResult> AddTagToFavorite([FromBody] Guid tagId)
     {
-        var result = await _favoriteService.AddTagToFavoriteAsync(tagId);
+        var req = new IdBaseR(HttpContext) { Id = tagId };
+        var result = await _favoriteService.AddTagToFavoriteAsync(req);
         return Ok(result);
     }
 
     [HttpGet("tag-favorite")]
     public async Task<IActionResult> GetTagFavorite([FromQuery] FavoriteTagR req)
     {
+        req.Analyze(HttpContext);
         var result = await _favoriteService.GetTagFavoriteAsync(req);
         return Ok(result);
     }
@@ -46,6 +49,7 @@ public class FavoriteController : ControllerBase
     [HttpGet("post-favorite")]
     public async Task<IActionResult> GetPostFavorite([FromQuery] FavoritePostR req)
     {
+        req.Analyze(HttpContext);
         var result = await _favoriteService.GetPostFavoriteByUserAsync(req);
         return Ok(result);
     }
@@ -53,14 +57,16 @@ public class FavoriteController : ControllerBase
     [HttpDelete("remove-tag/{tagid}")]
     public async Task<IActionResult> RemoveTagFavorite(Guid tagid)
     {
-        var result = await _favoriteService.RemoveTagToFavoriteAsync(tagid);
+        var req = new IdBaseR(HttpContext) { Id = tagid };
+        var result = await _favoriteService.RemoveTagToFavoriteAsync(req);
         return Ok(result);
     }
 
     [HttpDelete("remove-post/{postId}")]
     public async Task<IActionResult> RemovePostFavorite(Guid postId)
     {
-        var result = await _favoriteService.RemovePostToFavoriteAsync(postId);
+        var req = new IdBaseR(HttpContext) { Id = postId };
+        var result = await _favoriteService.RemovePostToFavoriteAsync(req);
         return Ok(result);
     }
 

@@ -11,7 +11,7 @@
                 return @$"select tag.""Id"", tag.""Name"" 
                             from {_tagRepository.TableName} tag 
                             inner join {_tagFavoriteRepository.TableName} tagfavorites on tag.""Id"" = tagfavorites.""TagId"" 
-                            where tagfavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND tag.""IsDelete"" = false 
+                            where tagfavorites.""UserId"" = '@UserId' AND tag.""IsDelete"" = false 
                             order by tag.""Name""
                             LIMIT @PageSize
                             OFFSET @Offet;
@@ -19,7 +19,7 @@
                           select count(tagfavorites.*) AS TotalItems 
                             from {_tagRepository.TableName} tag 
                             inner join {_tagFavoriteRepository.TableName} tagfavorites on tag.""Id"" = tagfavorites.""TagId"" 
-                            where tagfavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND tag.""IsDelete"" = false ;
+                            where tagfavorites.""UserId"" = '@UserId' AND tag.""IsDelete"" = false ;
                         ";
             }
         }
@@ -97,8 +97,8 @@
                             pl.""Url"" AS ""LinkUrl"",
                             pl.""Type"" AS ""LinkType""
                             FROM {_postRepository.TableName} p
-                            INNER JOIN {_postFavoriteRepository.TableName} pf ON p.""Id"" = pf.""PostId""AND pf.""IsDelete"" = false
-                            LEFT JOIN {_userRepository.TableName} u ON p.""UserId"" = u.""Id""                        
+                            INNER JOIN {_postFavoriteRepository.TableName} pf ON p.""Id"" = pf.""PostId""
+                            LEFT JOIN {_userRepository.TableName} u ON p.""UserId"" = u.""Id""
                             LEFT JOIN {_metaDataRepository.TableName} md ON md.""PostId"" = p.""Id""
                             LEFT JOIN {_postLinkRepository.TableName} pl ON pl.""PostId"" = p.""Id"" AND pl.""IsDelete"" = false
                             LEFT JOIN LATERAL 
@@ -112,7 +112,7 @@
                             ) sp ON sp.""PostId"" = p.""Id""
                             LEFT JOIN LATERAL
                             (
-                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
+                                SELECT ""SubPostId"",""Type"",""Status"",""BucketName"",""Url"",""MinioInstance"",""Name"",""HashId"",""Width"",""Height"",sp.""Order""
                                  FROM {_resourceRepository.TableName} 
                                  WHERE ""SubPostId"" = sp.""Id"" AND ""IsDelete"" = false
                                 LIMIT 1
@@ -158,8 +158,8 @@
 
                         SELECT count(postFavorites.*) AS TotalItems 
                         FROM {_postRepository.TableName} post 
-                        INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" AND postFavorites.""IsDelete"" = false
-                        WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false ;
+                        INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
+                        WHERE postFavorites.""UserId"" = '@UserId' AND post.""IsDelete"" = false ;
                         ";
             }
         }

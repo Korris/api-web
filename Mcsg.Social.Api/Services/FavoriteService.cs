@@ -5,6 +5,7 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Core.Constants;
 using Common.Core.Enums;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
@@ -13,7 +14,6 @@ using Dtos;
 using Extensions;
 using Interfaces;
 using Lib.Common.Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -26,7 +26,6 @@ public partial class FavoriteService : IFavoriteService
     private readonly IValidator<TagFavorite> _tagFavoriteValidator;
     private readonly IValidator<SocialPostFavorite> _postFavoriteValidator;
 
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Tag> _tagRepository;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialSubPost> _subPostRepository;
@@ -39,8 +38,6 @@ public partial class FavoriteService : IFavoriteService
     private readonly IFeedService _feedService;
 
     public FavoriteService(
-        IMcsgContext context,
-        ICurrentUserService currentUserService,
         IUnitOfWork unitOfWork,
         IValidator<TagFavorite> tagFavoriteValidator,
         IValidator<SocialPostFavorite> postFavoriteValidator,
@@ -56,8 +53,6 @@ public partial class FavoriteService : IFavoriteService
         IRepository<SocialTagPost> tagPostRepository,
         IFeedService feedService)
     {
-        _context = context;
-        _currentUserService = currentUserService;
         _tagFavoriteRepository = tagFavoriteRepository;
         _tagFavoriteValidator = tagFavoriteValidator;
         _postFavoriteRepository = postFavoriteRepository;
@@ -75,12 +70,12 @@ public partial class FavoriteService : IFavoriteService
     }
 
     #region Tags
-    public async Task<bool> AddTagToFavoriteAsync(Guid tagId)
+    public async Task<bool> AddTagToFavoriteAsync(IdBaseR request)
     {
         var tagFavorite = new TagFavorite
         {
-            TagId = tagId,
-            UserId = _currentUserService.Session.UserId,
+            TagId = request.Id,
+            UserId = request.UserId ?? Guid.Empty
         };
         await _tagFavoriteValidator.OnValidate(tagFavorite);
 
@@ -99,8 +94,9 @@ public partial class FavoriteService : IFavoriteService
         var multipleQuery = await _tagFavoriteRepository.Connection.
                 QueryMultipleAsync(GetFavoriteTagQuery, new
                 {
-                    PageSize = req.PageSize,
-                    Offet = offset
+                    req.PageSize,
+                    Offet = offset,
+                    UserId = req.UserId ?? Guid.Empty
                 });
 
         var items = await multipleQuery.ReadAsync<FavoriteTagResponse>().ConfigureAwait(false);
@@ -111,17 +107,17 @@ public partial class FavoriteService : IFavoriteService
         return response;
     }
 
-    public async Task<bool> RemoveTagToFavoriteAsync(Guid tagId)
+    public async Task<bool> RemoveTagToFavoriteAsync(IdBaseR request)
     {
-        await _tagFavoriteRepository.Connection.ExecuteAsync(DeleteTagFavoriteByUserIdAndTagIdQuery, new { tagId, userId = _currentUserService.Session.UserId });
+        await _tagFavoriteRepository.Connection.ExecuteAsync(DeleteTagFavoriteByUserIdAndTagIdQuery, new { tagId = request.Id, userId = request.UserId });
         return true;
     }
     #endregion
 
     #region Post
-    public async Task<bool> RemovePostToFavoriteAsync(Guid postId)
+    public async Task<bool> RemovePostToFavoriteAsync(IdBaseR request)
     {
-        await _tagFavoriteRepository.Connection.ExecuteAsync(DeletePostFavoriteByUserIdAndPostIdQuery, new { postId, userId = _currentUserService.Session.UserId });
+        await _tagFavoriteRepository.Connection.ExecuteAsync(DeletePostFavoriteByUserIdAndPostIdQuery, new { postId = request.Id, userId = request.UserId });
         return true;
     }
 
@@ -129,17 +125,17 @@ public partial class FavoriteService : IFavoriteService
     {
         try
         {
+            var userId = req.UserId ?? Guid.Empty;
             PagedResponse<FeedDto> results;
-            var userId = _currentUserService.Session.UserId;
 
             var offset = req.PageSize * (req.PageNumber - 1);
             var multi = await _postRepository
                         .Connection.QueryMultipleAsync(GetFavoritePostByUserQuery, new
                         {
-                            @UserId = userId,
                             Type = (int)PostType.Feed,
-                            PageSize = req.PageSize,
+                            req.PageSize,
                             Offet = offset,
+                            UserId = userId
                         });
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();

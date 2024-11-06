@@ -11,7 +11,7 @@
                 return @$"select tag.""Id"", tag.""Name"" 
                             from {_tagRepository.TableName} tag 
                             inner join {_tagFavoriteRepository.TableName} tagfavorites on tag.""Id"" = tagfavorites.""TagId"" 
-                            where tagfavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND tag.""IsDelete"" = false 
+                            where tagfavorites.""UserId"" = '@UserId' AND tag.""IsDelete"" = false 
                             order by tag.""Name""
                             LIMIT @PageSize
                             OFFSET @Offet;
@@ -19,7 +19,7 @@
                           select count(tagfavorites.*) AS TotalItems 
                             from {_tagRepository.TableName} tag 
                             inner join {_tagFavoriteRepository.TableName} tagfavorites on tag.""Id"" = tagfavorites.""TagId"" 
-                            where tagfavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND tag.""IsDelete"" = false ;
+                            where tagfavorites.""UserId"" = '@UserId' AND tag.""IsDelete"" = false ;
                         ";
             }
         }
@@ -159,7 +159,7 @@
                         SELECT count(postFavorites.*) AS TotalItems 
                         FROM {_postRepository.TableName} post 
                         INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
-                        WHERE postFavorites.""UserId"" = '{_currentUserService.Session.UserId}' AND post.""IsDelete"" = false ;
+                        WHERE postFavorites.""UserId"" = '@UserId' AND post.""IsDelete"" = false ;
                         ";
             }
         }
