@@ -12,7 +12,6 @@ using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -22,7 +21,6 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class NotificationService : INotificationService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<Notification> _notiRepository;
     private readonly IRepository<NotificationObject> _notiObjRepository;
     private readonly IRepository<ComicPost> _postRepository;
@@ -35,8 +33,7 @@ public partial class NotificationService : INotificationService
     private readonly IMapper _mapper;
     private IConfiguration _configuration;
 
-    public NotificationService(ICurrentUserService currentUserService
-        , IUnitOfWork unitOfWork
+    public NotificationService(IUnitOfWork unitOfWork
         , IMapper mapper
         , IConfiguration configuration
         , IRepository<ComicPostReaction> postReacRepository
@@ -45,7 +42,6 @@ public partial class NotificationService : INotificationService
         , ISetting setting
         , IRepository<ComicSubPostCommentReaction> subPostCommentRepository)
     {
-        _currentUserService = currentUserService;
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _notiObjRepository = unitOfWork.GetRepository<NotificationObject>();
         _userRepository = unitOfWork.GetRepository<User>();
@@ -61,18 +57,18 @@ public partial class NotificationService : INotificationService
 
     public async Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request)
     {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
+        var userId = request.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
-        var receiverId = currentUser.UserId;
+
         var offset = request.PageSize * (request.PageNumber - 1);
         var multi = await _notiRepository.Connection.QueryMultipleAsync(GetNotificationByUserQuery,
                                                                         new
                                                                         {
-                                                                            ReceiverId = receiverId,
-                                                                            PageSize = request.PageSize,
+                                                                            ReceiverId = userId,
+                                                                            request.PageSize,
                                                                             Offet = offset
                                                                         });
 
@@ -97,18 +93,18 @@ public partial class NotificationService : INotificationService
 
     public async Task<PagedResponse<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request)
     {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
+        var userId = request.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
-        var receiverId = currentUser.UserId;
+
         var offset = request.PageSize * (request.PageNumber - 1);
         var multi = await _notiRepository.Connection.QueryMultipleAsync(GetNotificationUnReadByUserQuery,
                                                                         new
                                                                         {
-                                                                            ReceiverId = receiverId,
-                                                                            PageSize = request.PageSize,
+                                                                            ReceiverId = userId,
+                                                                            request.PageSize,
                                                                             Offet = offset
                                                                         });
 
@@ -130,34 +126,31 @@ public partial class NotificationService : INotificationService
         }
     }
 
-    public async Task<bool> ReadAllNotificationAsync()
+    public async Task<bool> ReadAllNotificationAsync(Guid? userId)
     {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
 
-
-        var receiverId = currentUser.UserId;
         var result = await _notiRepository.Connection.ExecuteAsync(UpdateNotificationStatusQuery, new
         {
             Status = NotificationStatus.Read,
-            ReceiverId = receiverId,
+            ReceiverId = userId
         });
 
         return result > 0;
     }
 
-    public async Task<bool> ReadNotificationAsync(Guid id)
+    public async Task<bool> ReadNotificationAsync(NotificationUpdateR request)
     {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        if (currentUser == null || string.IsNullOrWhiteSpace(currentUser.SessionId))
+        var userId = request.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
 
-        var notification = await _notiRepository.GetByIdAsync(id);
+        var notification = await _notiRepository.GetByIdAsync(request.NotificationId);
         if (notification == null)
         {
             throw new NotFoundException(ErrorCodes.QueryEmpty, ErrorCodes.QueryEmpty);
@@ -165,7 +158,7 @@ public partial class NotificationService : INotificationService
 
         notification.Status = NotificationStatus.Read;
         notification.ModifiedOn = DateTime.UtcNow;
-        notification.ModifiedBy = currentUser.UserId;
+        notification.ModifiedBy = userId;
 
         return await _notiRepository.UpdateAsync(notification);
     }

@@ -2,7 +2,9 @@
 
 namespace Mcsg.Comic.Api.Requests;
 
-public class NotificationUpdateR
+using Common.Core.Requests;
+
+public class NotificationUpdateR : BaseR
 {
     [Required]
     public Guid NotificationId { get; set; }
