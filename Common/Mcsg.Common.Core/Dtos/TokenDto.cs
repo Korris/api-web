@@ -30,7 +30,7 @@ public class TokenDto
     /// <summary>
     /// Roles
     /// </summary>
-    public string Roles { get; set; } = default!;
+    public string? Roles { get; set; }
 
     /// <summary>
     /// Check user is register by social account

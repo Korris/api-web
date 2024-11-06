@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers;
 
+using Common.Core.Requests;
 using Interfaces;
 using Requests;
 using static Common.SeedWork.Constants.Setting;
@@ -75,7 +76,8 @@ public class AuthenticationController : ControllerBase
     [HttpPost("logout"), Authorize]
     public async Task<IActionResult> Logout()
     {
-        var result = await _authenticationService.LogOut();
+        var req = new BaseR(HttpContext);
+        var result = await _authenticationService.LogOut(req);
         return Ok(result);
     }
 

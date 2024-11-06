@@ -5,6 +5,7 @@ using System.Net;
 
 namespace Mcsg.Identity.Api.Controllers;
 
+using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
@@ -35,13 +36,15 @@ public class UserController : ControllerBase
     [HttpGet("info/{userName}")]
     public async Task<IActionResult> GetUser(string userName)
     {
-        var result = await _userService.GetUserByUserNameAsync(userName);
+        var req = new BaseR(HttpContext);
+        var result = await _userService.GetUserByUserNameAsync(req.UserId, userName);
         return Ok(result);
     }
 
     [HttpGet("following")]
     public async Task<IActionResult> GetFollowingProfiles([FromQuery] UserNamePagingR request)
     {
+        request.Analyze(HttpContext);
         var result = await _userService.GetFollowingProfilesAsync(request);
         return Ok(result);
     }
@@ -49,6 +52,7 @@ public class UserController : ControllerBase
     [HttpGet("followed")]
     public async Task<IActionResult> GetFollowedUser([FromQuery] UserNamePagingR request)
     {
+        request.Analyze(HttpContext);
         var result = await _userService.GetFollowedProfileAsync(request);
         return Ok(result);
     }
@@ -56,7 +60,8 @@ public class UserController : ControllerBase
     [HttpGet("current-user"), Authorize]
     public async Task<IActionResult> GetCurrentUser()
     {
-        var result = await _userService.GetCurrentUserAsync();
+        var req = new BaseR(HttpContext);
+        var result = await _userService.GetCurrentUserAsync(req.UserId);
         return Ok(result);
     }
 
@@ -77,6 +82,7 @@ public class UserController : ControllerBase
     [HttpPut("profile"), Authorize]
     public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateR request)
     {
+        request.Analyze(HttpContext);
         var result = await _userService.UpdateUserProfile(request);
         return Ok(result);
     }
@@ -121,7 +127,8 @@ public class UserController : ControllerBase
     [HttpGet("suggested-profiles-not-followed")]
     public async Task<IActionResult> GetSuggestedProfilesNotFollowed([FromQuery] string userName)
     {
-        var result = await _userService.GetSuggestedProfilesNotFollowedAsync(userName);
+        var req = new BaseR(HttpContext);
+        var result = await _userService.GetSuggestedProfilesNotFollowedAsync(req.UserId, userName);
         return Ok(result);
     }
 

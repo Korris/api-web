@@ -53,10 +53,11 @@ partial class User
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
-    /// <param name="roles">Roles</param>
     /// <returns>Return the DTO</returns>
-    public FullProfileDto ToFullProfileDto(string? roles)
+    public FullProfileDto ToFullProfileDto()
     {
+        var roles = string.Join(",", Roles);
+
         return new FullProfileDto
         {
             Id = Id,
@@ -86,12 +87,12 @@ partial class User
     /// <summary>
     /// Create JWT
     /// </summary>
-    /// <param name="sessionId">SessionId</param>
     /// <param name="jwt">JWT setting</param>
-    /// <param name="roles">Roles</param>
     /// <returns>Returns the result</returns>
-    public TokenDto CreateJwt(Guid sessionId, JwtDto jwt, string? roles)
+    public TokenDto CreateJwt(JwtDto jwt)
     {
+        var roles = string.Join(",", Roles);
+
         var payload = new PayloadDto
         {
             Id = Id,
@@ -100,17 +101,13 @@ partial class User
             ProfileId = ProfileId + "",
             UserFolder = UserFolder,
             UserAvatar = Avatar + "",
+            Roles = Roles,
             IsPremium = IsPremium || roles.IsIsAdministrator(),
             IsWalletShowing = IsWalletShowing,
-            SessionId = sessionId,
+            SessionId = SessionId,
             MinioInstance = MinioInstance,
             StorageLimit = StorageLimit
         };
-
-        if (!string.IsNullOrWhiteSpace(roles))
-        {
-            payload.Roles = roles.Split(",");
-        }
 
         var st = new SecurityToken(jwt, payload);
         var delay = 30; // time delay between server and client (seconds)
@@ -118,7 +115,8 @@ partial class User
         return new TokenDto
         {
             AccessToken = st.Jwt,
-            ExpiredDate = st.ExpiredDate.AddSeconds(-delay)
+            ExpiredDate = st.ExpiredDate.AddSeconds(-delay),
+            Roles = roles
         };
     }
 
@@ -145,6 +143,18 @@ partial class User
     /// </summary>
     [NotMapped]
     public string UserFolder => ProfileId + "";
+
+    /// <summary>
+    /// SessionId
+    /// </summary>
+    [NotMapped]
+    public Guid SessionId { get; set; }
+
+    /// <summary>
+    /// Roles
+    /// </summary>
+    [NotMapped]
+    public IList<string> Roles { get; set; }
 
     #endregion
 

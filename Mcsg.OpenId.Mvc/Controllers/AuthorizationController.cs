@@ -135,8 +135,9 @@ public class AuthorizationController : Controller
             throw new InvalidOperationException("User cannot be null.");
         }
 
-        var session = await _sessionService.CreateSessionAsync(user, "");
-        var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
+        user.SessionId = Guid.NewGuid();
+        user.Roles = await _userManager.GetRolesAsync(user);
+        var response = user.CreateJwt(_setting.Jwt);
 
         return Ok(new { access_token = response.AccessToken });
     }

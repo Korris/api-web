@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Identity.Api.Interfaces;
 
 using Common.Core.Dtos;
+using Common.Core.Requests;
 using Requests;
 using Response;
 
@@ -10,10 +11,9 @@ public interface IAuthenticationService
     Task<VerifyUserResponse> RegisterUser(AuthenticationRegisterUserR request);
     Task<TokenDto> LoginUser(AuthenticationLoginUserR request);
     Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request);
-    Task<bool> LogOut();
+    Task<bool> LogOut(BaseR request);
     Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request);
     Task<TokenDto> ChangePassword(AuthenticationChangePasswordR request);
-    Task<TokenDto> SetUserPassword(string password, string confirmPassword);
     Task<VerifyUserResponse> ForgotPassword(AuthenticationForgotPasswordR request);
     Task<bool> ResetPassword(AuthenticationResetPasswordR request);
     Task<bool> CreateNewUserPassword(AuthenticationSetPasswordR request);

@@ -17,7 +17,6 @@ using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using Response;
@@ -38,16 +37,14 @@ public partial class UserService : BaseMinioS, IUserService
     /// <param name="sc"></param>
     /// <param name="userManager"></param>
     /// <param name="userRepository"></param>
-    /// <param name="currentUserService"></param>
     /// <param name="configuration"></param>
     /// <param name="distributeManager"></param>
-    public UserService(IMcsgContext context, ISetting setting, IStorageClient sc, ApplicationUserManager userManager, IRepository<User> userRepository, ICurrentUserService currentUserService, IConfiguration configuration, DistributeManager distributeManager) : base(context, setting, sc)
+    public UserService(IMcsgContext context, ISetting setting, IStorageClient sc, ApplicationUserManager userManager, IRepository<User> userRepository, IConfiguration configuration, DistributeManager distributeManager) : base(context, setting, sc)
     {
         _aes = new SecurityAes(_setting.EncryptKey);
 
         _userManager = userManager;
         _userRepository = userRepository;
-        _currentUserService = currentUserService;
         _configuration = configuration;
         _distributeManager = distributeManager;
     }
@@ -63,38 +60,37 @@ public partial class UserService : BaseMinioS, IUserService
         return referralCode;
     }
 
-    public async Task<bool> ConfirmEmailAsync(string email)
+    public async Task<bool> ConfirmEmailAsync(Guid userId, string email)
     {
         var iResult = await _userRepository.Connection.ExecuteAsync(UpdateEmailConfirmedCommand, new
         {
             email,
-            id = _currentUserService.Session.UserId
+            id = userId
         });
 
         return iResult > 0;
     }
 
-    public async Task<bool> ConfirmPhoneNumberAsync(string phone)
+    public async Task<bool> ConfirmPhoneNumberAsync(Guid userId, string phone)
     {
         var iResult = await _userRepository.Connection.ExecuteAsync(UpdatePhoneNumberConfirmedCommand, new
         {
             phone,
-            id = _currentUserService.Session.UserId
+            id = userId
         });
 
         return iResult > 0;
     }
 
-    public async Task<User.FullProfileDto> GetCurrentUserAsync()
+    public async Task<User.FullProfileDto> GetCurrentUserAsync(Guid? userId)
     {
-        var ss = _currentUserService.Session;
-        if (ss == null)
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+        if (user == null)
         {
-            throw new BadRequestException(E119, M119);
+            return new User.FullProfileDto();
         }
 
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
-        var res = await CreateUserRespone(user, ss.Roles, true);
+        var res = await CreateUserRespone(user, true);
 
         // Check first login
         if (user != null && user.LastLoginDate == null)
@@ -106,7 +102,7 @@ public partial class UserService : BaseMinioS, IUserService
         return res;
     }
 
-    public async Task<User.FullProfileDto> GetUserByUserNameAsync(string userName)
+    public async Task<User.FullProfileDto> GetUserByUserNameAsync(Guid? userFollowerId, string userName)
     {
         var user = await _userManager.UserAvailable.FirstOrDefaultAsync(p => p.UserName == userName);
         if (user == null)
@@ -114,8 +110,7 @@ public partial class UserService : BaseMinioS, IUserService
             return new User.FullProfileDto();
         }
 
-        var roles = await _userManager.GetRolesAsync(user);
-        return await CreateUserRespone(user, string.Join(",", roles), false);
+        return await CreateUserRespone(user, false, userFollowerId);
     }
 
     public async Task<PagedResponse<UserFollowedResponse>> GetFollowingProfilesAsync(UserNamePagingR req)
@@ -127,16 +122,15 @@ public partial class UserService : BaseMinioS, IUserService
         }
 
         PagedResponse<UserFollowedResponse> res;
-        var userIdWatchingProfile = _currentUserService.Session?.UserId;
         var userFollowingIds = new List<Guid>();
         bool isHaveUser = false;
 
-        if (userIdWatchingProfile != null)
+        if (req.UserId != null)
         {
             userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
-                                                                    .Where(p => p.UserFollowerId == userIdWatchingProfile)
-                                                                    .Select(p => p.UserFollowingId)
-                                                                    .ToListAsync();
+                .Where(p => p.UserFollowerId == req.UserId)
+                .Select(p => p.UserFollowingId)
+                .ToListAsync();
             isHaveUser = userFollowingIds.Count > 0;
         }
 
@@ -174,17 +168,16 @@ public partial class UserService : BaseMinioS, IUserService
         return res;
     }
 
-    public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(string userName)
+    public async Task<List<UserFollowedResponse>> GetSuggestedProfilesNotFollowedAsync(Guid? userId, string userName)
     {
         var currentIdProfileWatching = await _context.UserAvailable.AsNoTracking()
-                                                    .Where(p => p.UserName == userName)
-                                                    .Select(p => p.Id)
-                                                    .FirstOrDefaultAsync();
+            .Where(p => p.UserName == userName)
+            .Select(p => p.Id)
+            .FirstOrDefaultAsync();
 
-        var userIdLoggedIn = _currentUserService.Session?.UserId;
         var result = new List<UserFollowedResponse>();
 
-        if (userIdLoggedIn == null)
+        if (userId == null)
         {
             result = await _context.UserAvailable.AsNoTracking()
                  .Where(p => p.Id != currentIdProfileWatching)
@@ -201,10 +194,10 @@ public partial class UserService : BaseMinioS, IUserService
         }
         else
         {
-            var userId = await _context.UserAvailable.AsNoTracking()
-                                            .Where(p => p.Id == userIdLoggedIn)
-                                            .Select(p => p.Id)
-                                            .FirstOrDefaultAsync();
+            userId = await _context.UserAvailable.AsNoTracking()
+                                           .Where(p => p.Id == userId)
+                                           .Select(p => p.Id)
+                                           .FirstOrDefaultAsync();
 
             var qUser = _context.UserAvailable;
             var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == userId);
@@ -265,19 +258,13 @@ public partial class UserService : BaseMinioS, IUserService
             throw new BadRequestException(M000, t);
         }
 
-        var profileName = req.ProfileName?.Trim();
+        var profileName = req.NewProfileName?.Trim();
         if (string.IsNullOrWhiteSpace(profileName))
         {
             throw new BadRequestException(E127, M127);
         }
 
-        var ss = _currentUserService.Session;
-        if (ss == null)
-        {
-            throw new BadRequestException(E119, M119);
-        }
-
-        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == ss.UserId);
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == req.UserId);
         if (user == null)
         {
             throw new BadRequestException(E119, M119);
@@ -306,7 +293,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         await SyncWalletUserInfo(user);
 
-        return await CreateUserRespone(user, ss.Roles, true);
+        return await CreateUserRespone(user, true);
     }
 
     public async Task<UserProfileAvatarResponse?> GetUserAvatar(Guid userId)
@@ -422,17 +409,16 @@ public partial class UserService : BaseMinioS, IUserService
             throw new BadRequestException(E119, M119);
         }
 
-        var userIdWatchingProfile = _currentUserService.Session?.UserId;
         var userFollowingIds = new List<Guid>();
         PagedResponse<UserFollowedResponse> res;
         bool isHaveUser = false;
 
-        if (userIdWatchingProfile != null)
+        if (req.UserId != null)
         {
             userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
-                                                                    .Where(p => p.UserFollowerId == userIdWatchingProfile)
-                                                                    .Select(p => p.UserFollowingId)
-                                                                    .ToListAsync();
+                .Where(p => p.UserFollowerId == req.UserId)
+                .Select(p => p.UserFollowingId)
+                .ToListAsync();
             isHaveUser = userFollowingIds.Count > 0;
         }
 
@@ -506,18 +492,19 @@ public partial class UserService : BaseMinioS, IUserService
         };
     }
 
-    private async Task<User.FullProfileDto> CreateUserRespone(User? user, string? roles, bool decryptEmail)
+    private async Task<User.FullProfileDto> CreateUserRespone(User? user, bool decryptEmail, Guid? userFollowerId = null)
     {
-        var currentUserId = _currentUserService.Session?.UserId;
         if (user == null)
         {
             return new User.FullProfileDto();
         }
 
-        var res = user.ToFullProfileDto(roles);
+        user.Roles = await _userManager.GetRolesAsync(user);
+        var res = user.ToFullProfileDto();
+
         res.NumberOfFollowing = await GetFollowingCountAsync(user.Id);
         res.NumberOfFollowers = await GetFollowerCountAsync(user.Id);
-        res.IsFollowing = currentUserId != null && await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == currentUserId && p.UserFollowingId == user.Id);
+        res.IsFollowing = userFollowerId != null && await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userFollowerId && p.UserFollowingId == user.Id);
 
         if (decryptEmail)
         {
@@ -568,7 +555,6 @@ public partial class UserService : BaseMinioS, IUserService
 
     private readonly ApplicationUserManager _userManager;
     private readonly IRepository<User> _userRepository;
-    private readonly ICurrentUserService _currentUserService;
     private IConfiguration _configuration;
     private readonly DistributeManager _distributeManager;
 

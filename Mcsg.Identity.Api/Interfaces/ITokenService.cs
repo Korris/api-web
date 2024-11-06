@@ -5,9 +5,24 @@ using Common.Domain.Entities;
 
 public interface ITokenService
 {
-    Task<RefreshTokenDto?> AddUserRefreshTokenAsync(User user);
+    /// <summary>
+    /// IsValid async
+    /// </summary>
+    /// <param name="rt">Refresh token</param>
+    /// <returns>Returns the result</returns>
+    Task<Guid?> IsValidAsync(string rt);
 
-    Task<Guid> IsValidRefreshTokenAsync(string refreshToken);
+    /// <summary>
+    /// Add async
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <returns>Returns the result</returns>
+    Task<RefreshTokenDto?> AddAsync(User? user);
 
-    Task<bool> DeleteRefreshTokenAsync(Guid userId);
+    /// <summary>
+    /// Delete async
+    /// </summary>
+    /// <param name="userId">UserId</param>
+    /// <returns>Returns the result</returns>
+    Task<bool> DeleteAsync(Guid userId);
 }

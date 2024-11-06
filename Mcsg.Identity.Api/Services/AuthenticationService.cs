@@ -10,6 +10,7 @@ using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork;
@@ -18,7 +19,6 @@ using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
 using Lib.Common.Constants;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using Response;
@@ -40,25 +40,21 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     /// <param name="setting"></param>
     /// <param name="uniquenessChecker"></param>
     /// <param name="userManager"></param>
-    /// <param name="sessionService"></param>
     /// <param name="tokenService"></param>
     /// <param name="userService"></param>
-    /// <param name="currentUserService"></param>
     /// <param name="otpService"></param>
     /// <param name="configuration"></param>
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
     /// <param name="smartLookupRepository"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, ISessionService sessionService, ITokenService tokenService, IUserService userService, ICurrentUserService currentUserService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, ITokenService tokenService, IUserService userService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
     {
         _aes = new SecurityAes(_setting.EncryptKey);
         _uniquenessChecker = uniquenessChecker;
 
         _userManager = userManager;
-        _sessionService = sessionService;
         _tokenService = tokenService;
         _userService = userService;
-        _currentUserService = currentUserService;
         _serviceAccessor = serviceAccessor;
         _otpService = otpService;
         _smartLookupRepository = smartLookupRepository;
@@ -243,26 +239,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult)
         {
-            var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
-            response.Roles = session.Roles;
-
-            var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-            if (refreshToken != null)
-            {
-                response.RefreshToken = refreshToken.RefreshToken;
-                response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-            }
-
-            if (user.LastLoginDate != null)
-            {
-                user.LastLoginDate = DateTime.UtcNow;
-            }
-
-            user.LastLoginIp = request.RemoteIp;
-            await _context.SaveChangesAsync(default);
-
-            return response;
+            user.SessionId = request.SessionId;
+            return await CreateAccessToken(user, request.RemoteIp);
         }
         else
         {
@@ -325,24 +303,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 throw new ForbiddenAccessException(E305, M305);
             }
 
-            var session = await _sessionService.CreateSessionAsync(user, "");
-            var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
-            response.Roles = session.Roles;
-
-            var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-            if (refreshToken != null)
-            {
-                response.RefreshToken = refreshToken.RefreshToken;
-                response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-            }
-            if (user.LastLoginDate != null)
-            {
-                user.LastLoginDate = DateTime.UtcNow;
-            }
-            user.LastLoginIp = request.RemoteIp;
-            await _context.SaveChangesAsync(default);
-
-            return response;
+            user.SessionId = request.SessionId;
+            return await CreateAccessToken(user, request.RemoteIp);
         }
         else
         {
@@ -406,32 +368,17 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 };
                 await _context.UserSocials.AddAsync(ettUserSocial);
 
-                var session = await _sessionService.CreateSessionAsync(user, "");
-                var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
-                response.IsFirstTimeLoginBySocial = true;
-
-                var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-                if (refreshToken != null)
-                {
-                    response.RefreshToken = refreshToken.RefreshToken;
-                    response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-                }
-                if (user.LastLoginDate != null)
-                {
-                    user.LastLoginDate = DateTime.UtcNow;
-                }
-                user.LastLoginIp = request.RemoteIp;
-                await _context.SaveChangesAsync(default);
-
-                return response;
+                user.SessionId = request.SessionId;
+                var res = await CreateAccessToken(user, request.RemoteIp);
+                res.IsFirstTimeLoginBySocial = true;
+                return res;
             }
         }
     }
 
-    public async Task<bool> LogOut()
+    public async Task<bool> LogOut(BaseR request)
     {
-        await _sessionService.ExpireSession(_currentUserService.Session);
-        return true;
+        return await _tokenService.DeleteAsync(request.UserId ?? Guid.Empty);
     }
 
     public async Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request)
@@ -447,11 +394,10 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var type = request.Type;
         var otpToken = request.OtpToken;
 
-        //Case current user
+        // Case current user
         if (string.IsNullOrEmpty(otpToken))
         {
-            var currentUser = await _currentUserService.GetCurrentUserAsync();
-            user = await _userManager.FindByIdAsync(currentUser.UserId);
+            user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
                 throw new NotFoundException(E303, M303);
@@ -522,7 +468,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     public async Task<TokenDto> ChangePassword(AuthenticationChangePasswordR request)
     {
-        var user = await _userManager.FindByIdAsync(_currentUserService.Session.UserId);
+        var user = await _userManager.FindByIdAsync(request.UserId);
         if (user == null)
         {
             throw new NotFoundException(E303, M303);
@@ -545,57 +491,18 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
 
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-
-        TokenDto res;
         if (changePasswordResult.Succeeded)
         {
-            await LogOut();
-            await _tokenService.DeleteRefreshTokenAsync(user.Id);
+            await LogOut(request);
 
-            res = await CreateAccessToken(user);
+            user.SessionId = request.SessionId;
+            return await CreateAccessToken(user, null);
         }
         else
         {
             var createError = changePasswordResult.Errors.FirstOrDefault();
             throw new BadRequestException(createError?.Code, createError?.Description);
         }
-
-        return res;
-    }
-
-    public async Task<TokenDto> SetUserPassword(string password, string confirmPassword)
-    {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var user = await _userManager.FindByIdAsync(currentUser?.UserId);
-        if (user == null)
-        {
-            throw new NotFoundException(E303, M303);
-        }
-
-        var isHasPassword = await _userManager.HasPasswordAsync(user);
-        if (isHasPassword)
-        {
-            throw new NotFoundException(ErrorCodes.UserAlreadyHasPassword, ErrorMessage.UserAlreadyHasPassword);
-        }
-
-        if (password != confirmPassword)
-        {
-            throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
-        }
-
-        await SetPassword(user, password);
-
-        var roles = await _userManager.GetRolesAsync(user);
-        var response = user.CreateJwt(new Guid(currentUser.SessionId), _setting.Jwt, string.Join(",", roles));
-        var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-        if (refreshToken != null)
-        {
-            response.RefreshToken = refreshToken.RefreshToken;
-            response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
-            user.RefreshToken = refreshToken.RefreshToken;
-        }
-
-        return response;
     }
 
     public async Task<VerifyUserResponse> ForgotPassword(AuthenticationForgotPasswordR request)
@@ -752,8 +659,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     public async Task<RefreshTokenResponse> VerifyRefreshToken(AuthenticationRefreshTokenR request)
     {
-        var userId = await _tokenService.IsValidRefreshTokenAsync(request.RefreshToken);
-        if (userId == Guid.Empty)
+        var userId = await _tokenService.IsValidAsync(request.RefreshToken);
+        if (userId == null)
         {
             throw new UnauthorizedAccessException(E302, M302);
         }
@@ -764,16 +671,15 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new NotFoundException(E303, M303);
         }
 
-        var userRefreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-        var session = await _sessionService.CreateSessionAsync(user, "");
-        var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
+        user.SessionId = request.SessionId;
+        var res = await CreateAccessToken(user, null);
 
         return new RefreshTokenResponse
         {
-            AccessToken = response.AccessToken,
-            ExpiredDate = response.ExpiredDate,
-            RefreshToken = userRefreshToken.RefreshToken,
-            RefreshTokenExpiredDate = userRefreshToken.RefreshTokenExpiryTime,
+            AccessToken = res.AccessToken,
+            ExpiredDate = res.ExpiredDate,
+            RefreshToken = res.RefreshToken,
+            RefreshTokenExpiredDate = res.RefreshTokenExpiredDate
         };
     }
 
@@ -958,20 +864,29 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
     }
 
-    private async Task<TokenDto> CreateAccessToken(User user)
+    private async Task<TokenDto> CreateAccessToken(User user, string? remoteIp)
     {
-        var session = await _sessionService.CreateSessionAsync(user, "");
-        var response = user.CreateJwt(session.Id, _setting.Jwt, session?.Roles);
-        response.Roles = session.Roles;
+        user.Roles = await _userManager.GetRolesAsync(user);
+        var res = user.CreateJwt(_setting.Jwt);
 
-        var refreshToken = await _tokenService.AddUserRefreshTokenAsync(user);
-        if (refreshToken != null)
+        var rt = await _tokenService.AddAsync(user);
+        if (rt != null)
         {
-            response.RefreshToken = refreshToken.RefreshToken;
-            response.RefreshTokenExpiredDate = refreshToken.RefreshTokenExpiryTime;
+            res.RefreshToken = rt.RefreshToken + "";
+            res.RefreshTokenExpiredDate = rt.RefreshTokenExpiryTime;
         }
 
-        return response;
+        if (!string.IsNullOrWhiteSpace(remoteIp))
+        {
+            if (user.LastLoginDate != null)
+            {
+                user.LastLoginDate = DateTime.UtcNow;
+            }
+            user.LastLoginIp = remoteIp;
+            await _context.SaveChangesAsync(default);
+        }
+
+        return res;
     }
 
     private async Task<string?> GenerateUserName(Guid userId)
@@ -1154,9 +1069,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     private readonly ApplicationUserManager _userManager;
     private readonly ITokenService _tokenService;
-    private readonly ISessionService _sessionService;
     private readonly IUserService _userService;
-    private readonly ICurrentUserService _currentUserService;
     private readonly SSOServiceResolver _serviceAccessor;
     private readonly IOtpService _otpService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;

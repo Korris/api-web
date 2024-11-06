@@ -15,7 +15,6 @@ using Common.Domain.Entities;
 using Common.Domain.Extensions;
 using Common.SeedWork.Extensions;
 using Extensions;
-using Helpers;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Extensions;
@@ -154,7 +153,6 @@ public class Program
 
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<ISessionService, SessionService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddSSOService();
         builder.Services.AddScoped<IOtpService, OtpService>();
@@ -232,7 +230,6 @@ public class Program
         app.UseHttpsRedirection();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
-        app.UserSessionAuthorizationMiddleware();
         app.UseAuthorization();
 
         app.MapControllers();
