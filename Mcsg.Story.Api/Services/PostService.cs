@@ -1033,7 +1033,7 @@ public partial class PostService : IPostService
         return itemResponse;
     }
 
-    public async Task<bool> FollowPost(IdBaseR request)
+    public async Task<FavoritePostResponse> FollowPost(IdBaseR request)
     {
         var postId = request.Id;
         var userId = request.UserId;
@@ -1049,30 +1049,34 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var followedPost = await _context.StoryPostFavorites
-                                                        .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
-                                                        .FirstOrDefaultAsync();
-        if (followedPost == null)
+        var ett = await _context.StoryPostFavorites
+            .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
+            .FirstOrDefaultAsync();
+
+        if (ett == null)
         {
-            await _context.StoryPostFavorites.AddAsync(new StoryPostFavorite
+            ett = new StoryPostFavorite
             {
-                UserId = user.Id,
-                CreatedBy = user.Id,
                 PostId = postId,
-                CreatedOn = DateTime.UtcNow,
-                ModifiedOn = DateTime.UtcNow,
-                ModifiedBy = user.Id,
-            });
-            await _context.SaveChangesAsync(default);
-            return true;
+                UserId = user.Id,
+                CreatedBy = user.Id
+            };
+            await _context.StoryPostFavorites.AddAsync(ett);
         }
         else
         {
-            followedPost.IsDelete = !followedPost.IsDelete;
-            _context.StoryPostFavorites.Update(followedPost);
-            await _context.SaveChangesAsync(default);
-            return !followedPost.IsDelete;
+            ett.IsDelete = !ett.IsDelete;
+            _context.StoryPostFavorites.Update(ett);
         }
+
+        await _context.SaveChangesAsync(default);
+
+        return new FavoritePostResponse
+        {
+            Id = ett.Id,
+            PostId = postId,
+            IsFavorite = !ett.IsDelete
+        };
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq)

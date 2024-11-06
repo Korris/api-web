@@ -43,7 +43,7 @@ public interface IPostService
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<List<NewsFeedDto>> GetNewsFeed(UserNamePagingR input);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq);
-    Task<bool> FollowPost(IdBaseR request);
+    Task<FavoritePostResponse> FollowPost(IdBaseR request);
     Task<List<RewardDto>> CheckRewardsForSubPost(Guid currentUserId);
     Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);
     Task<List<ChapterList>> GetAllChapters(string hashId);

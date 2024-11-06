@@ -76,7 +76,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
 
         await _context.SaveChangesAsync(default);
 
-        res.SetSuccess(!ett.IsDelete);
+        res.SetSuccess(ett.ToViewDto());
 
         return res;
     }

@@ -22,7 +22,7 @@ public interface IStoryService
     Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(StoryPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetByTagName(StoryPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
-    Task<bool> FollowPost(IdBaseR request);
+    Task<FavoritePostResponse> FollowPost(IdBaseR request);
     Task<float> GetLatestOrderChapter(string hashPostId);
     Task MoveChapterOrder(string hashId, StoryChapterOrderSwapR orders);
     Task<List<ChapterList>> GetAllChapters(string hashId);

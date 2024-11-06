@@ -60,7 +60,11 @@ partial class SocialPostFavorite
     /// <returns>Return the DTO</returns>
     public ViewDto ToViewDto()
     {
-        return ToBaseDto<ViewDto>();
+        var res = ToBaseDto<ViewDto>();
+
+        res.IsFavorite = !IsDelete;
+
+        return res;
     }
 
     /// <summary>
@@ -110,6 +114,11 @@ partial class SocialPostFavorite
     /// </summary>
     public class ViewDto : BaseDto
     {
+        #region -- Properties --
+
+        public bool IsFavorite { get; set; }
+
+        #endregion
     }
 
     #endregion
