@@ -1,8 +1,9 @@
 ﻿namespace Mcsg.Realtime.Api.Requests;
 
+using Common.Core.Requests;
 using Dtos;
 
-public class ReplyCommentReq
+public class ReplyCommentReq : BaseR
 {
     public Guid ReplyToCommentId { get; set; }
     public string ReplyText { get; set; }
@@ -13,5 +14,4 @@ public class ReplyCommentReq
     public string GifId { get; set; }
     public Guid? QuoteId { get; set; }
     public string? CustomNote { get; set; }
-    public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
 }

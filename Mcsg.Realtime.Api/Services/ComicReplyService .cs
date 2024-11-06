@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Services;
 
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
@@ -14,7 +12,6 @@ using Common.SeedWork.Exceptions;
 using Constants;
 using Dtos;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using static Common.SeedWork.Constants.Error;
@@ -22,7 +19,6 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class ComicReplyService : IComicReplyService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<ComicPost> _postRepository;
     private readonly IRepository<ComicSubPost> _subPostRepository;
     private readonly IRepository<ComicPostComment> _postCommentRepository;
@@ -36,8 +32,7 @@ public partial class ComicReplyService : IComicReplyService
     private IConfiguration _configuration;
     private readonly IMcsgContext _context;
 
-    public ComicReplyService(ICurrentUserService currentUserService,
-        IRepository<ComicPost> postRepository,
+    public ComicReplyService(IRepository<ComicPost> postRepository,
         IRepository<ComicSubPost> subPostRepository,
         IRepository<ComicPostComment> postCommentRepository,
         IRepository<ComicSubPostComment> subPostCommentRepository,
@@ -52,7 +47,6 @@ public partial class ComicReplyService : IComicReplyService
         IConfiguration configuration,
         IMcsgContext context)
     {
-        _currentUserService = currentUserService;
         _postRepository = postRepository;
         _subPostRepository = subPostRepository;
         _postCommentRepository = postCommentRepository;
@@ -71,12 +65,13 @@ public partial class ComicReplyService : IComicReplyService
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
     {
-        var response = new ReplyCommentResp();
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null || string.IsNullOrWhiteSpace(user.SessionId))
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
+
+        var response = new ReplyCommentResp();
 
         if (!ValidReplyComment(req))
         {
@@ -84,16 +79,14 @@ public partial class ComicReplyService : IComicReplyService
         }
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -151,10 +144,11 @@ public partial class ComicReplyService : IComicReplyService
 
         return response;
     }
+
     public async Task<ReplyCommentResp> UpdateReplyComment(UpdateReplyCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -180,23 +174,21 @@ public partial class ComicReplyService : IComicReplyService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (ett.CreatedBy != user.UserId)
+        if (ett.CreatedBy != userId)
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
         #endregion
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
 
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -234,10 +226,11 @@ public partial class ComicReplyService : IComicReplyService
 
         return response;
     }
+
     public async Task<ReplyCommentResp> DeleteReplyComment(DeleteReplyCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -249,11 +242,11 @@ public partial class ComicReplyService : IComicReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            return await DeleteReplyToPostComment(req, user.UserId.Value);
+            return await DeleteReplyToPostComment(req);
         }
         else
         {
-            return await DeleteReplyToSubPostComment(req, user.UserId.Value);
+            return await DeleteReplyToSubPostComment(req);
         }
     }
 
@@ -419,7 +412,7 @@ public partial class ComicReplyService : IComicReplyService
     #endregion
 
     #region Delete
-    private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req, Guid userId)
+    private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req)
     {
         var comment = await _postCommentRepository.GetByIdAsync(req.ReplyCommentId);
         if (comment == null)
@@ -427,7 +420,7 @@ public partial class ComicReplyService : IComicReplyService
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -437,7 +430,7 @@ public partial class ComicReplyService : IComicReplyService
                     new
                     {
                         Id = req.ReplyCommentId,
-                        ModifiedBy = userId,
+                        ModifiedBy = req.UserId,
                         ModifiedOn = DateTime.UtcNow,
                         LocationType = (int)MentionLocationType.PostCommentReply
                     });
@@ -451,7 +444,7 @@ public partial class ComicReplyService : IComicReplyService
             ReplyToCommentId = comment.ParentId.Value
         };
     }
-    private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req, Guid userId)
+    private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req)
     {
         var comment = await _subPostCommentRepository.GetByIdAsync(req.ReplyCommentId);
         if (comment == null)
@@ -459,7 +452,7 @@ public partial class ComicReplyService : IComicReplyService
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -469,7 +462,7 @@ public partial class ComicReplyService : IComicReplyService
                         new
                         {
                             Id = req.ReplyCommentId,
-                            ModifiedBy = userId,
+                            ModifiedBy = req.UserId,
                             ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.SubPostCommentReply
                         });

@@ -2,27 +2,40 @@
 
 namespace Mcsg.Lib.Common.Web.RealTime.Hubs;
 
-using Security;
+using Mcsg.Common.Core.Requests;
 
 public class CommonHub : Hub
 {
-    private readonly ICurrentUserService _currentUserService;
-    public CommonHub(ICurrentUserService currentUserService)
-    {
-        _currentUserService = currentUserService;
-    }
+    #region -- Overrides --
+
     public override async Task OnConnectedAsync()
     {
         await Clients.All.SendAsync("CommonHub-onConnected", $"ClientID: {Context.ConnectionId}");
 
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user != null)
+        var hc = Context.GetHttpContext();
+        if (hc == null)
         {
-            await JoinGroup(user.UserId.ToString());
+            return;
+        }
+
+        var req = new BaseR(hc);
+        var userId = req.UserId;
+        if (userId != null)
+        {
+            await JoinGroup(userId.Value.ToString());
         }
     }
+
+    #endregion
+
+    #region -- Methods --
+
+    public CommonHub() { }
+
     private async Task JoinGroup(string group)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, group);
     }
+
+    #endregion
 }

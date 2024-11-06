@@ -44,7 +44,7 @@ public class BaseR : IRequest<SingleResponse>
     /// Initialize
     /// </summary>
     /// <param name="hc">HTTP context</param>
-    public BaseR(HttpContext hc)
+    public BaseR(HttpContext? hc)
     {
         _hc = hc;
 
@@ -55,7 +55,7 @@ public class BaseR : IRequest<SingleResponse>
     /// Analyze
     /// </summary>
     /// <param name="hc">HTTP context</param>
-    public void Analyze(HttpContext hc)
+    public void Analyze(HttpContext? hc)
     {
         _hc = hc;
 
@@ -443,6 +443,13 @@ public class BaseR : IRequest<SingleResponse>
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true)]
     public bool UtMode { get; set; }
+
+    /// <summary>
+    /// MicroService
+    /// </summary>
+    [JsonIgnore]
+    [SwaggerSchema(ReadOnly = true)]
+    public string MicroService { get; set; } = Enums.MicroService.Social.ToString();
 
     /// <summary>
     /// Old Client ID in cookie

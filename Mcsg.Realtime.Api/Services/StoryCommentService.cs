@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Services;
 
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
@@ -15,7 +13,6 @@ using Common.SeedWork.Extensions;
 using Constants;
 using Dtos;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using static Common.SeedWork.Constants.Error;
@@ -23,7 +20,6 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class StoryCommentService : IStoryCommentService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
@@ -39,8 +35,7 @@ public partial class StoryCommentService : IStoryCommentService
     private IConfiguration _configuration;
     private readonly IMcsgContext _context;
 
-    public StoryCommentService(ICurrentUserService currentUserService,
-        IRepository<StoryPost> postRepository,
+    public StoryCommentService(IRepository<StoryPost> postRepository,
         IRepository<StorySubPost> subPostRepository,
         IRepository<StoryPostComment> postCommentRepository,
         IRepository<StorySubPostComment> subPostCommentRepository,
@@ -56,7 +51,6 @@ public partial class StoryCommentService : IStoryCommentService
         IConfiguration configuration,
         IMcsgContext context)
     {
-        _currentUserService = currentUserService;
         _postRepository = postRepository;
         _subPostRepository = subPostRepository;
         _postCommentRepository = postCommentRepository;
@@ -76,8 +70,8 @@ public partial class StoryCommentService : IStoryCommentService
 
     public async Task<PostCommentResp> PostComment(PostCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -86,18 +80,17 @@ public partial class StoryCommentService : IStoryCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
+
         var response = new PostCommentResp();
 
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
         var receiverIds = req.CommentText.ToGuids();
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -158,7 +151,7 @@ public partial class StoryCommentService : IStoryCommentService
                 UserAvatar = userAvatar,
                 UserProfileName = profileName,
                 TargetId = response.Id,
-                UserId = user.UserId ?? Guid.Empty,
+                UserId = userId ?? Guid.Empty,
                 EntityType = req.Type == PostTypes.Post ? NotificationEntityType.ComicPostCommentMention : NotificationEntityType.ComicSubPostCommentMention
             });
         }
@@ -187,10 +180,11 @@ public partial class StoryCommentService : IStoryCommentService
 
         return response;
     }
+
     public async Task<PostCommentResp> UpdateComment(UpdateCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -216,22 +210,19 @@ public partial class StoryCommentService : IStoryCommentService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (ett.CreatedBy != user.UserId)
+        if (ett.CreatedBy != userId)
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
         #endregion
 
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
-
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -267,10 +258,11 @@ public partial class StoryCommentService : IStoryCommentService
 
         return response;
     }
+
     public async Task<PostCommentResp> DeleteComment(DeleteCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -282,11 +274,11 @@ public partial class StoryCommentService : IStoryCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            return await DeleteCommentInPost(req, user.UserId.Value);
+            return await DeleteCommentInPost(req);
         }
         else
         {
-            return await DeleteCommentInSubPost(req, user.UserId.Value);
+            return await DeleteCommentInSubPost(req);
         }
     }
 
@@ -440,7 +432,7 @@ public partial class StoryCommentService : IStoryCommentService
     #endregion
 
     #region Delete
-    private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req, Guid userId)
+    private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req)
     {
         var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
         if (comment == null)
@@ -448,7 +440,7 @@ public partial class StoryCommentService : IStoryCommentService
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -458,7 +450,7 @@ public partial class StoryCommentService : IStoryCommentService
                     new
                     {
                         Id = req.CommentId,
-                        ModifiedBy = userId,
+                        ModifiedBy = req.UserId,
                         ModifiedOn = DateTime.UtcNow,
                         LocationType = (int)MentionLocationType.PostComment
                     });
@@ -473,7 +465,7 @@ public partial class StoryCommentService : IStoryCommentService
             Id = comment.Id,
         };
     }
-    private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req, Guid userId)
+    private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req)
     {
         var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
         if (comment == null)
@@ -481,7 +473,7 @@ public partial class StoryCommentService : IStoryCommentService
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -491,7 +483,7 @@ public partial class StoryCommentService : IStoryCommentService
                         new
                         {
                             Id = req.CommentId,
-                            ModifiedBy = userId,
+                            ModifiedBy = req.UserId,
                             ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.SubPostComment
                         });

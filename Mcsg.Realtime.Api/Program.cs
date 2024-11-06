@@ -125,7 +125,7 @@ public class Program
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
-        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddEmailSender();
         builder.Services.AddCors();
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Mcsg.Realtime.Api.Services;
 
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
@@ -14,7 +12,6 @@ using Common.SeedWork.Exceptions;
 using Constants;
 using Dtos;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Requests;
 using static Common.SeedWork.Constants.Error;
@@ -22,7 +19,6 @@ using static Common.SeedWork.Constants.Message;
 
 public partial class StoryReplyService : IStoryReplyService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
@@ -36,8 +32,7 @@ public partial class StoryReplyService : IStoryReplyService
     private IConfiguration _configuration;
     private readonly IMcsgContext _context;
 
-    public StoryReplyService(ICurrentUserService currentUserService,
-        IRepository<StoryPost> postRepository,
+    public StoryReplyService(IRepository<StoryPost> postRepository,
         IRepository<StorySubPost> subPostRepository,
         IRepository<StoryPostComment> postCommentRepository,
         IRepository<StorySubPostComment> subPostCommentRepository,
@@ -52,7 +47,6 @@ public partial class StoryReplyService : IStoryReplyService
         IConfiguration configuration,
         IMcsgContext context)
     {
-        _currentUserService = currentUserService;
         _postRepository = postRepository;
         _subPostRepository = subPostRepository;
         _postCommentRepository = postCommentRepository;
@@ -71,12 +65,13 @@ public partial class StoryReplyService : IStoryReplyService
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
     {
-        var response = new ReplyCommentResp();
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null || string.IsNullOrWhiteSpace(user.SessionId))
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
+
+        var response = new ReplyCommentResp();
 
         if (!ValidReplyComment(req))
         {
@@ -84,16 +79,13 @@ public partial class StoryReplyService : IStoryReplyService
         }
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
-
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -151,10 +143,11 @@ public partial class StoryReplyService : IStoryReplyService
 
         return response;
     }
+
     public async Task<ReplyCommentResp> UpdateReplyComment(UpdateReplyCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -180,23 +173,20 @@ public partial class StoryReplyService : IStoryReplyService
         {
             throw new NotFoundException(E204, M204);
         }
-        if (ett.CreatedBy != user.UserId)
+        if (ett.CreatedBy != userId)
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
         #endregion
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
-        var payloadJson = user.Claims.FirstOrDefault(x => x.Type == Setting.Payload)?.Value ?? "";
-        var payload = JsonConvert.DeserializeObject<Common.Core.Dtos.PayloadDto>(payloadJson);
-
-        var userName = payload?.UserName;
-        var profileName = payload?.ProfileName;
-        var userFolder = payload?.UserFolder;
-        var userAvatar = payload?.UserAvatar;
+        var userName = req.UserName;
+        var profileName = req.ProfileName;
+        var userFolder = req.UserFolder;
+        var userAvatar = req.UserAvatar;
 
         var authorName = !string.IsNullOrWhiteSpace(profileName) ? profileName : userName;
-        var author = new AuthorDto() { Id = user.UserId.Value, Name = userName, Avatar = userAvatar };
+        var author = new AuthorDto() { Id = userId.Value, Name = userName, Avatar = userAvatar };
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
@@ -233,10 +223,11 @@ public partial class StoryReplyService : IStoryReplyService
         response.CustomNote = req.CustomNote;
         return response;
     }
+
     public async Task<ReplyCommentResp> DeleteReplyComment(DeleteReplyCommentReq req)
     {
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user == null)
+        var userId = req.UserId;
+        if (userId == null)
         {
             throw new NotFoundException(E303, M303);
         }
@@ -248,11 +239,11 @@ public partial class StoryReplyService : IStoryReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            return await DeleteReplyToPostComment(req, user.UserId.Value);
+            return await DeleteReplyToPostComment(req, userId.Value);
         }
         else
         {
-            return await DeleteReplyToSubPostComment(req, user.UserId.Value);
+            return await DeleteReplyToSubPostComment(req, userId.Value);
         }
     }
 

@@ -13,14 +13,12 @@ using Hubs;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models.RealTime;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
 
 public class StoryNotificationService : IStoryNotificationService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
@@ -30,11 +28,8 @@ public class StoryNotificationService : IStoryNotificationService
     private readonly IHubContext<NotificationHub> _hubcontext;
     private IUnitOfWork _unitOfWork;
 
-    public StoryNotificationService(ICurrentUserService currentUserService,
-        IUnitOfWork unitOfWork,
-        IHubContext<NotificationHub> hubcontext)
+    public StoryNotificationService(IUnitOfWork unitOfWork, IHubContext<NotificationHub> hubcontext)
     {
-        _currentUserService = currentUserService;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _notiRepository = unitOfWork.GetRepository<Notification>();

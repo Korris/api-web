@@ -2,27 +2,50 @@
 
 namespace Mcsg.Realtime.Api.Hubs;
 
-using Lib.Common.Web.Security;
+using Common.Core.Requests;
 
 public class NotificationHub : Hub
 {
-    private readonly ICurrentUserService _currentUserService;
-    public NotificationHub(ICurrentUserService currentUserService)
-    {
-        _currentUserService = currentUserService;
-    }
+    #region -- Overrides --
+
+    /// <summary>
+    /// Called when a new connection is established with the hub.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous connect.</returns>
     public override async Task OnConnectedAsync()
     {
-        await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
-
-        var user = await _currentUserService.GetCurrentUserAsync();
-        if (user != null)
+        var req = new BaseR(Context.GetHttpContext());
+        var userId = req.UserId;
+        if (userId != null)
         {
-            await JoinGroup(user.UserId.ToString());
+            await JoinGroup(userId.Value.ToString());
         }
+
+        await Clients.All.SendAsync("onConnected", $"ClientID: {Context.ConnectionId}");
     }
+
+    /// <summary>
+    /// Called when a connection with the hub is terminated.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> that represents the asynchronous disconnect.</returns>
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        return base.OnDisconnectedAsync(exception);
+    }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public NotificationHub() { }
+
     private async Task JoinGroup(string group)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, group);
     }
+
+    #endregion
 }

@@ -2,8 +2,8 @@
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Interfaces;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Response;
 
 public abstract class SSOService : ISSOService

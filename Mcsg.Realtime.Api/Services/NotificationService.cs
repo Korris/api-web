@@ -15,7 +15,6 @@ using Hubs;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models.RealTime;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
@@ -24,7 +23,6 @@ using static Common.Core.Constants.Setting;
 
 public class NotificationService : INotificationService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialSubPost> _subPostRepository;
     private readonly IRepository<ComicPost> _comicPostRepository;
@@ -43,8 +41,7 @@ public class NotificationService : INotificationService
     private IUnitOfWork _unitOfWork;
     private readonly IMcsgContext _context;
 
-    public NotificationService(ICurrentUserService currentUserService,
-        IUnitOfWork unitOfWork,
+    public NotificationService(IUnitOfWork unitOfWork,
         IHubContext<NotificationHub> hubcontext, IMcsgContext context,
         IRepository<ComicPost> comicPostRepository,
         IRepository<StoryPost> storyPostRepository,
@@ -55,7 +52,6 @@ public class NotificationService : INotificationService
         IRepository<StorySubPostComment> storySubPostCommentRepository,
         IRepository<SocialSubPost> subPostRepository)
     {
-        _currentUserService = currentUserService;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();

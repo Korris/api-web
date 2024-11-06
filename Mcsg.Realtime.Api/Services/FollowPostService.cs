@@ -5,14 +5,13 @@ namespace Mcsg.Realtime.Api.Services;
 using Common.Core.Enums;
 using Common.Domain;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Requests;
 
 public partial class FollowPostService : IFollowPostService
 {
     private readonly IMcsgContext _context;
     private readonly INotificationService _notificationService;
-    private readonly ICurrentUserService currentUserService;
+
     public FollowPostService(
 
         IMcsgContext context,

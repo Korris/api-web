@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Realtime.Api.Requests;
 
-public class FollowUserR
+using Common.Core.Requests;
+
+public class FollowUserR : BaseR
 {
     public Guid CreatedByUserId { get; set; }
     public Guid FollowedId { get; set; }

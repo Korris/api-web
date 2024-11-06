@@ -129,7 +129,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
-        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddEmailSender();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 

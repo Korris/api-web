@@ -13,14 +13,12 @@ using Hubs;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models.RealTime;
-using Lib.Common.Web.Security;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Requests;
 
 public class ComicNotificationService : IComicNotificationService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IRepository<ComicPost> _postRepository;
     private readonly IRepository<ComicSubPost> _subPostRepository;
     private readonly IRepository<ComicPostComment> _postCommentRepository;
@@ -30,11 +28,8 @@ public class ComicNotificationService : IComicNotificationService
     private readonly IHubContext<NotificationHub> _hubcontext;
     private IUnitOfWork _unitOfWork;
 
-    public ComicNotificationService(ICurrentUserService currentUserService,
-        IUnitOfWork unitOfWork,
-        IHubContext<NotificationHub> hubcontext)
+    public ComicNotificationService(IUnitOfWork unitOfWork, IHubContext<NotificationHub> hubcontext)
     {
-        _currentUserService = currentUserService;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
         _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
         _notiRepository = unitOfWork.GetRepository<Notification>();

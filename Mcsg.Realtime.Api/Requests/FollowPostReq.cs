@@ -2,7 +2,9 @@
 
 namespace Mcsg.Realtime.Api.Requests;
 
-public class FollowPostReq
+using Common.Core.Requests;
+
+public class FollowPostReq : BaseR
 {
     public string PostHashId { get; set; }
     public Guid PostId { get; set; }

@@ -3,9 +3,9 @@ using System.Security.Claims;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Common.Core.Interfaces;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Exceptions;
-using Lib.Common.Web.Security;
 using Response;
 
 public class FacebookOAuthService : SSOService

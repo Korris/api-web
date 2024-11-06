@@ -6,20 +6,17 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Interfaces;
-using Lib.Common.Web.Security;
 using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
 public partial class FollowService : IFollowService
 {
-    private readonly ICurrentUserService _currentUserService;
     private readonly IMcsgContext _context;
     private readonly INotificationService _notificationService;
 
-    public FollowService(ICurrentUserService currentUserService, IMcsgContext context, INotificationService notificationService)
+    public FollowService(IMcsgContext context, INotificationService notificationService)
     {
-        _currentUserService = currentUserService;
         _context = context;
         _notificationService = notificationService;
     }

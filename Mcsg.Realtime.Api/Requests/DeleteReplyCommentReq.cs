@@ -1,9 +1,11 @@
-﻿namespace Mcsg.Realtime.Api.Requests;
+﻿
+namespace Mcsg.Realtime.Api.Requests;
 
-public class DeleteReplyCommentReq
+using Common.Core.Requests;
+
+public class DeleteReplyCommentReq : BaseR
 {
     public Guid ReplyCommentId { get; set; }
     public Guid ReplyToCommentId { get; set; }
     public string Type { get; set; }
-    public string MicroService { get; set; } = Common.Core.Enums.MicroService.Social.ToString();
 }

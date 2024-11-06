@@ -8,7 +8,9 @@ using System.Reflection;
 namespace Mcsg.Identity.Api;
 
 using Checkers;
+using Common.Core;
 using Common.Core.Extensions;
+using Common.Core.Interfaces;
 using Common.Core.Middlewares;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -147,7 +149,8 @@ public class Program
 
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
 
-        builder.Services.AddCommonWebLibrary();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ISecurityService, SecurityService>();
         builder.Services.AddEmailSender();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
