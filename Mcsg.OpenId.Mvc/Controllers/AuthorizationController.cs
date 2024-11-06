@@ -23,12 +23,10 @@ public class AuthorizationController : Controller
     /// </summary>
     /// <param name="setting"></param>
     /// <param name="userManager"></param>
-    /// <param name="sessionService"></param>
-    public AuthorizationController(ISetting setting, ApplicationUserManager userManager, ISessionService sessionService)
+    public AuthorizationController(ISetting setting, ApplicationUserManager userManager)
     {
         _setting = setting;
         _userManager = userManager;
-        _sessionService = sessionService;
     }
 
     /// <summary>
@@ -155,11 +153,6 @@ public class AuthorizationController : Controller
     /// UserManager
     /// </summary>
     private readonly ApplicationUserManager _userManager;
-
-    /// <summary>
-    /// SessionService
-    /// </summary>
-    private readonly ISessionService _sessionService;
 
     #endregion
 }

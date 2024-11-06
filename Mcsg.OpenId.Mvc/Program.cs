@@ -14,7 +14,6 @@ using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Web.Extensions;
-using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -124,8 +123,6 @@ public class Program
         builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
 
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
-
-        builder.Services.AddScoped<ISessionService, SessionService>();
 
         var app = builder.Build();
 

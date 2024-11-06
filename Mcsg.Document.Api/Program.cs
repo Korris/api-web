@@ -279,7 +279,6 @@ public class Program
         app.UseHttpsRedirection();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
-        app.UserSessionAuthorizationMiddleware();
         app.UseAuthorization();
 
         app.MapControllers();
