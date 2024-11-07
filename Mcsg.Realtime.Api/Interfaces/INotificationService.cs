@@ -21,4 +21,5 @@ public interface INotificationService
     Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request);
     Task AddPostMentionNotification(MentionPostNotificationReq request);
     Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req);
+    Task<NotificationResponse> AddDeletion(NotificationAddDeletionR request);
 }

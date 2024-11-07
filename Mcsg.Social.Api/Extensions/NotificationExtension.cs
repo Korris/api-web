@@ -3,6 +3,7 @@
 using Common.Constants;
 using Common.Core.Enums;
 using Models;
+using Message = Common.Core.Constants.Message;
 
 public static class NotificationExtension
 {
@@ -57,6 +58,15 @@ public static class NotificationExtension
             NotificationEntityType.FollowUser,
             NotificationEntityType.FollowComicPost,
             NotificationEntityType.FollowStoryPost,
+        };
+
+        List<NotificationEntityType> deleteEntities = new List<NotificationEntityType>()
+        {
+            NotificationEntityType.DeleteSocial,
+            NotificationEntityType.DeleteComicPost,
+            NotificationEntityType.DeleteStoryPost,
+            NotificationEntityType.DeleteComicSubPost,
+            NotificationEntityType.DeleteStorySubPost
         };
 
         if (noti == null)
@@ -190,6 +200,20 @@ public static class NotificationExtension
 
         #endregion
 
+        #region -- Delete --
+        if (deleteEntities.Contains(noti.EntityType)
+                && noti.Action == NotificationAction.DeletePost)
+        {
+            return noti.EntityType == NotificationEntityType.DeleteSocial ? nameof(Message.S302) : nameof(Message.S300);
+        }
+
+        if (deleteEntities.Contains(noti.EntityType)
+                && noti.Action == NotificationAction.DeleteSubPost)
+        {
+            return nameof(Message.S301);
+        }
+        #endregion
+
         #region Mention
         if (noti.EntityType == NotificationEntityType.PostCommentMention
                 && noti.Action == NotificationAction.Mention)
@@ -211,6 +235,7 @@ public static class NotificationExtension
         return noti.EntityType switch
         {
             NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.DeleteSocial => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.PostComment => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.PostMention => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.SubPostComment => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
@@ -225,6 +250,8 @@ public static class NotificationExtension
             NotificationEntityType.PostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
             NotificationEntityType.SubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.SubFeed,
 
+            NotificationEntityType.DeleteComicPost => Common.Core.Constants.Setting.NotificationTargetType.Comic,
+            NotificationEntityType.DeleteComicSubPost => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
             NotificationEntityType.ComicPostComment => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.FollowComicPost => Common.Core.Constants.Setting.NotificationTargetType.Comic,
@@ -238,6 +265,8 @@ public static class NotificationExtension
             NotificationEntityType.ComicPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicSubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationTargetType.SubComic,
 
+            NotificationEntityType.DeleteStoryPost => Common.Core.Constants.Setting.NotificationTargetType.Story,
+            NotificationEntityType.DeleteStorySubPost => Common.Core.Constants.Setting.NotificationTargetType.SubStory,
             NotificationEntityType.StoryPostComment => Common.Core.Constants.Setting.NotificationTargetType.Story,
             NotificationEntityType.StoryPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Story,
             NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationTargetType.Story,
@@ -305,6 +334,11 @@ public static class NotificationExtension
             NotificationEntityType.FollowStoryPost => Common.Core.Constants.Setting.NotificationType.FollowPost,
             NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationType.TransferTransaction,
             NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationType.DonateTransaction,
+            NotificationEntityType.DeleteSocial => Common.Core.Constants.Setting.NotificationType.DeleteSocial,
+            NotificationEntityType.DeleteComicPost => Common.Core.Constants.Setting.NotificationType.DeletePost,
+            NotificationEntityType.DeleteStoryPost => Common.Core.Constants.Setting.NotificationType.DeletePost,
+            NotificationEntityType.DeleteComicSubPost => Common.Core.Constants.Setting.NotificationType.DeleteSubPost,
+            NotificationEntityType.DeleteStorySubPost => Common.Core.Constants.Setting.NotificationType.DeleteSubPost,
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };

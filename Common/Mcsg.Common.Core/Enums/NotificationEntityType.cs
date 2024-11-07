@@ -273,5 +273,32 @@ public enum NotificationEntityType
     /// <summary>
     /// DocumentSubPostCommentReaction
     /// </summary>
-    DocumentSubPostCommentReaction
+    DocumentSubPostCommentReaction,
+
+    #region -- Delete --
+    /// <summary>
+    /// DeleteComicPost
+    /// </summary>
+    DeleteComicPost,
+
+    /// <summary>
+    /// DeleteComicSubPost
+    /// </summary>
+    DeleteComicSubPost,
+
+    /// <summary>
+    /// DeleteSocial
+    /// </summary>
+    DeleteSocial,
+
+    /// <summary>
+    /// DeleteStoryPost
+    /// </summary>
+    DeleteStoryPost,
+
+    /// <summary>
+    /// DeleteStorySubPost
+    /// </summary>
+    DeleteStorySubPost
+    #endregion
 }

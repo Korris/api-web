@@ -16,7 +16,7 @@ namespace Mcsg.Common.SeedWork.Constants;
 /// <summary>
 /// Message
 /// </summary>
-public static class Message
+public class Message
 {
     #region -- M0xx --
 

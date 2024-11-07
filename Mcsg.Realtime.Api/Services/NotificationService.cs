@@ -11,13 +11,16 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.Models.RealTime;
+using Common.SeedWork.Extensions;
 using Constants;
 using Dtos;
 using Hubs;
 using Interfaces;
 using Requests;
 using Wallet.Domain.Enums;
+using static Common.Core.Constants.Message;
 using static Common.Core.Constants.Setting;
+using NotificationType = Common.Core.Constants.Setting.NotificationType;
 
 public class NotificationService : BaseS, INotificationService
 {
@@ -785,6 +788,127 @@ public class NotificationService : BaseS, INotificationService
                 }
             }
         }
+
+        return response;
+    }
+
+    public async Task<NotificationResponse> AddDeletion(NotificationAddDeletionR request)
+    {
+        var response = new NotificationResponse();
+
+        var q = _context.ComicPosts.AsNoTracking()
+            .Where(p => p.Id == request.EntityId)
+            .Select(p => new
+            {
+                p.ModifiedBy,
+                p.UserId
+            });
+
+        var type = request.NotificationType.ToEnum(AddDeletionType.ComicPost);
+        switch (type)
+        {
+            case AddDeletionType.ComicSubPost:
+                q = _context.ComicSubPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
+            case AddDeletionType.SocialPost:
+                q = _context.SocialPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
+            case AddDeletionType.StoryPost:
+                q = _context.StoryPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
+            case AddDeletionType.StorySubPost:
+                q = _context.StorySubPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
+            default:
+                break;
+        }
+
+        var ett = await q.FirstOrDefaultAsync();
+        if (ett == null)
+        {
+            return response;
+        }
+
+        var action = (type == AddDeletionType.ComicSubPost || type == AddDeletionType.StorySubPost) ? NotificationAction.DeleteSubPost : NotificationAction.DeletePost;
+
+        var targetType = type switch
+        {
+            AddDeletionType.StoryPost => NotificationTargetType.Story,
+            AddDeletionType.ComicPost => NotificationTargetType.Comic,
+            AddDeletionType.ComicSubPost => NotificationTargetType.SubComic,
+            AddDeletionType.StorySubPost => NotificationTargetType.SubStory,
+            _ => NotificationTargetType.Feed
+        };
+
+        var message = type switch
+        {
+            AddDeletionType.ComicPost or AddDeletionType.StoryPost => nameof(S300),
+            AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => nameof(S301),
+            _ => nameof(S302)
+        };
+
+        var notiType = type switch
+        {
+            AddDeletionType.ComicPost or AddDeletionType.StoryPost => NotificationType.DeletePost,
+            AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => NotificationType.DeleteSubPost,
+            _ => NotificationType.DeleteSocial
+        };
+
+        var entityType = type switch
+        {
+            AddDeletionType.ComicPost => NotificationEntityType.DeleteComicPost,
+            AddDeletionType.ComicSubPost => NotificationEntityType.DeleteComicSubPost,
+            AddDeletionType.StoryPost => NotificationEntityType.DeleteStoryPost,
+            AddDeletionType.StorySubPost => NotificationEntityType.DeleteStorySubPost,
+            _ => NotificationEntityType.DeleteSocial
+        };
+
+        var noti = await AddNotificationAsync(
+                                actorId: ett.ModifiedBy!.Value
+                                , receiverId: ett.UserId
+                                , action: action
+                                , entityType: entityType
+                                , entityId: request.EntityId
+                                , locationId: request.EntityId);
+
+        response.Id = noti.Id;
+        response.Status = noti.Status;
+        response.LocationId = request.EntityId;
+        response.Message = message;
+        response.TargetType = targetType;
+        response.ActorId = ett.ModifiedBy.Value;
+        response.CreatedOn = noti.CreatedOn;
+        response.NotificationType = notiType;
+
+        await _hubcontext.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }

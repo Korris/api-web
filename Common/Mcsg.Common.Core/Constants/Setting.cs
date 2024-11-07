@@ -346,6 +346,21 @@ public class Setting : SeedWork.Constants.Setting
         /// DonateTransaction
         /// </summary>
         public const string TransferTransaction = "TransferTransaction";
+
+        /// <summary>
+        /// DeleteFeed
+        /// </summary>
+        public const string DeleteSocial = "DeleteFeed";
+
+        /// <summary>
+        /// DeletePost
+        /// </summary>
+        public const string DeletePost = "DeletePost";
+
+        /// <summary>
+        /// DeleteSubPost
+        /// </summary>
+        public const string DeleteSubPost = "DeleteSubPost";
     }
 
     /// <summary>

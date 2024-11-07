@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Realtime.Api.Controllers;
 
@@ -6,6 +7,7 @@ using Common.Core.Requests;
 using Common.Models.RealTime;
 using Interfaces;
 using Requests;
+using static Common.SeedWork.Constants.Setting;
 
 [ApiController]
 [Route("[controller]")]
@@ -63,5 +65,20 @@ public class NotificationController : ControllerBase
     {
         await _notificationService.AddTransactionNotification(request);
         return Ok();
+    }
+
+    /// <summary>
+    /// AddDeletion
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("AddDeletion"), Authorize(Policy = Policy.Admin)]
+    public async Task<IActionResult> AddDeletion([FromBody] NotificationAddDeletionR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _notificationService.AddDeletion(request);
+
+        return Ok(response);
     }
 }

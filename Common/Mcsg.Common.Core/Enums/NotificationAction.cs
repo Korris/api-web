@@ -68,5 +68,15 @@ public enum NotificationAction
     /// <summary>
     /// Transaction
     /// </summary>
-    Transaction
+    Transaction,
+
+    /// <summary>
+    /// DeletePost
+    /// </summary>
+    DeletePost,
+
+    /// <summary>
+    /// DeleteSubPost
+    /// </summary>
+    DeleteSubPost
 }
