@@ -8,7 +8,9 @@ namespace Mcsg.Common.Core.Extensions;
 
 using Constants;
 using Dtos;
+using SeedWork.Exceptions;
 using SeedWork.Extensions;
+using static SeedWork.Constants.Error;
 using static SeedWork.Constants.Message;
 
 /// <summary>
@@ -158,17 +160,24 @@ public static class IFormFileExtension
             return null;
         }
 
-        var stream = file.OpenReadStream();
-        var output = stream.ResizeImage(width, height, quality);
-        if (output == null)
+        try
         {
-            return null;
-        }
+            var stream = file.OpenReadStream();
+            var output = stream.ResizeImage(width, height, quality);
+            if (output == null)
+            {
+                return null;
+            }
 
-        return new CompressImage
+            return new CompressImage
+            {
+                Image = new FormFile(output, 0, output.Length, file.Name, file.FileName)
+            };
+        }
+        catch
         {
-            Image = new FormFile(output, 0, output.Length, file.Name, file.FileName)
-        };
+            throw new BadRequestException(nameof(E210), E210);
+        }
     }
 
     /// <summary>
@@ -184,32 +193,39 @@ public static class IFormFileExtension
         {
             using (var stream = file.OpenReadStream())
             {
-                using (var magickImage = new MagickImage(stream))
+                try
                 {
-                    magickImage.Density = new Density(dpi);
-
-                    using (var ms = new MemoryStream())
+                    using (var magickImage = new MagickImage(stream))
                     {
-                        magickImage.Format = MagickFormat.Jpeg;
-                        magickImage.Quality = quality;
-                        magickImage.Write(ms);
-                        ms.Seek(0, SeekOrigin.Begin);
+                        magickImage.Density = new Density(dpi);
 
-                        using (var image = SixLabors.ImageSharp.Image.Load(ms))
+                        using (var ms = new MemoryStream())
                         {
-                            var output = new MemoryStream();
-                            image.Save(output, new JpegEncoder { Quality = (int)quality });
-                            output.Seek(0, SeekOrigin.Begin);
-                            var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName);
+                            magickImage.Format = MagickFormat.Jpeg;
+                            magickImage.Quality = quality;
+                            magickImage.Write(ms);
+                            ms.Seek(0, SeekOrigin.Begin);
 
-                            return new CompressImage
+                            using (var image = SixLabors.ImageSharp.Image.Load(ms))
                             {
-                                Image = compressedFile,
-                                Width = image.Width,
-                                Height = image.Height
-                            };
+                                var output = new MemoryStream();
+                                image.Save(output, new JpegEncoder { Quality = (int)quality });
+                                output.Seek(0, SeekOrigin.Begin);
+                                var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName);
+
+                                return new CompressImage
+                                {
+                                    Image = compressedFile,
+                                    Width = image.Width,
+                                    Height = image.Height
+                                };
+                            }
                         }
                     }
+                }
+                catch
+                {
+                    throw new BadRequestException(nameof(E210), E210);
                 }
             }
         }

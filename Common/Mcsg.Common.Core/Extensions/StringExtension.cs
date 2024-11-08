@@ -758,6 +758,24 @@ public static class StringExtension
     #endregion
 
     /// <summary>
+    /// Disable malicious text
+    /// </summary>
+    /// <param name="text">The input string that may contain HTML content.</param>
+    /// <returns>Return the result</returns>
+    public static string DisableMaliciousText(this string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return string.Empty;
+        }
+
+        var res = text.Replace("<", "&lt;").Replace(">", "&gt;")
+            .Replace("&lt;", "&amp;lt;").Replace("&gt;", "&amp;gt;");
+
+        return res;
+    }
+
+    /// <summary>
     /// Returns a default custom note if the input text is null or empty
     /// </summary>
     /// <param name="text">The input text</param>

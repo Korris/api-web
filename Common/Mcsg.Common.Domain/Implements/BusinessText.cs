@@ -4,6 +4,7 @@ using System.Web;
 
 namespace Mcsg.Common.Domain;
 
+using Core.Extensions;
 using SeedWork.Extensions;
 using static SeedWork.Constants.Validator;
 
@@ -34,6 +35,9 @@ public class BusinessText : IBusinessText
 
         // Decode body text
         var res = HttpUtility.HtmlDecode(text);
+
+        // Remove malicious text
+        res = res.DisableMaliciousText();
 
         // Wrap linebreak
         res = res.Replace("\n", "<br/>");

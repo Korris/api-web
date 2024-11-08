@@ -238,6 +238,11 @@ public static class Error
     /// </summary>
     public const string E209 = "This subpost has deleted";
 
+    /// <summary>
+    /// Invalid upload data
+    /// </summary>
+    public const string E210 = "Invalid upload data";
+
     #endregion
 
     #region -- E3xx --

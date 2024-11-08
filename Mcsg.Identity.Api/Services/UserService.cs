@@ -340,6 +340,13 @@ public partial class UserService : BaseMinioS, IUserService
         var hashFileName = file.GetHashName(hashId);
         var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{hashFileName}";
 
+        var isImage = file.OpenReadStream().IsImage();
+        if (!isImage)
+        {
+            throw new BadRequestException(E202, M202);
+
+        }
+
         try
         {
             var fs = file.OpenReadStream().ResizeImage(500, 500, 85);
@@ -386,22 +393,15 @@ public partial class UserService : BaseMinioS, IUserService
         var hashFileName = file.GetHashName(hashId);
         var objectName = $"{SettingCore.MinioFolder.User}/{user.UserFolder}{type}/{hashFileName}";
 
-        try
+        var isImage = file.OpenReadStream().IsImage();
+        if (!isImage)
         {
-            var isImage = file.OpenReadStream().IsImage();
-            if (!isImage)
-            {
-                throw new BadRequestException(E202, M202);
-            }
+            throw new BadRequestException(E202, M202);
+        }
 
-            await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
-            user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
-            await _context.SaveChangesAsync(default);
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(E500, ex.Message);
-        }
+        await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
+        user.CoverPhoto = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
+        await _context.SaveChangesAsync(default);
 
         return new UserCoverPhotoUpdateResponse { CoverPhoto = user.CoverPhoto };
     }
