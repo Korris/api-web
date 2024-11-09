@@ -3,11 +3,10 @@
 using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Dtos;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 
 public partial class SmartCountService : ISmartCountService
 {

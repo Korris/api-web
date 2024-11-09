@@ -8,8 +8,7 @@ namespace Mcsg.Common.Domain.Extensions;
 
 using Domain;
 using Domain.Entities;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
+using Interfaces;
 
 /// <summary>
 /// IServiceCollection extension for using [this IServiceCollection] only

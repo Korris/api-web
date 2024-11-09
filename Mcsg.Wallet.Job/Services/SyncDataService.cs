@@ -7,6 +7,7 @@ namespace Mcsg.Wallet.Job.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Extensions;
 using Constants;
 using Domain.Entities;
@@ -14,8 +15,6 @@ using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using static Common.Core.Constants.Setting;
 
 public partial class SyncDataService : BaseS, ISyncDataService

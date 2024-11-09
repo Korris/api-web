@@ -5,9 +5,9 @@ namespace Mcsg.Social.Api.Services;
 
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Responses;
 using Interfaces;
-using Lib.Data.Repositories;
 using Models;
 using Requests;
 

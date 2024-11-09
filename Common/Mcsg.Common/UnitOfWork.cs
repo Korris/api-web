@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
-namespace Mcsg.Lib.Data.Repositories;
+namespace Mcsg.Common;
 
-using Interface;
+using Interfaces;
 
 public class UnitOfWork : IUnitOfWork
 {

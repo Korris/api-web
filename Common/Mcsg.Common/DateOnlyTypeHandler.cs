@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using System.Data;
 
-namespace Mcsg.Lib.Data.Extensions;
+namespace Mcsg.Common;
 
 public class DateOnlyTypeHandler : SqlMapper.TypeHandler<DateOnly>
 {

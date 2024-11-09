@@ -8,12 +8,11 @@ using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 

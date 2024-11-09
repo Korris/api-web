@@ -7,14 +7,13 @@ namespace Mcsg.Realtime.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Constants;
 using Dtos;
 using Hubs;
 using Interfaces;
 using Lib.Common.Constants;
 using Lib.Common.Models.RealTime;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Requests;
 
 public class ComicNotificationService : IComicNotificationService

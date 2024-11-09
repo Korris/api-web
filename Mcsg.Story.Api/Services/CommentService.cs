@@ -9,13 +9,12 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 

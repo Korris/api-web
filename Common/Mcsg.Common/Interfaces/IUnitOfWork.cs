@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Mcsg.Lib.Data.Repositories.Interface;
+namespace Mcsg.Common.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {

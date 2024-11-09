@@ -9,12 +9,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
 
-namespace Mcsg.Lib.Data.Repositories;
+namespace Mcsg.Common;
 
-using Extensions;
-using Mcsg.Common.Core.Constants;
-using Mcsg.Common.SeedWork.Extensions;
-using Mcsg.Common.SeedWork.Responses;
+using Core.Constants;
+using Interfaces;
+using SeedWork.Extensions;
+using SeedWork.Responses;
 
 public partial class Repository<TEntity> : IRepository<TEntity>
 {

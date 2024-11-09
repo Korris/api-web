@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Linq.Expressions;
 
-namespace Mcsg.Lib.Data.Repositories;
+namespace Mcsg.Common.Interfaces;
 
 using Mcsg.Common.SeedWork.Responses;
 

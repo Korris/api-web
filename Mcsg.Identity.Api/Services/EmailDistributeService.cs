@@ -7,9 +7,8 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 public class EmailDistributeService : BaseDistributor

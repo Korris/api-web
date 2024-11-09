@@ -4,11 +4,10 @@ namespace Mcsg.Function.Job.Services;
 
 using Common.Core.Enums;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 
 public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
 {

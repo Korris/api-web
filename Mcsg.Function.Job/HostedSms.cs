@@ -8,8 +8,8 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Interfaces;
-using Lib.Data.Repositories;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>

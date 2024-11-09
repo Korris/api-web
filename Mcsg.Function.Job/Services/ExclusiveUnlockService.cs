@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Function.Job.Services;
 
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using static Common.SeedWork.Constants.Setting;
 
 public class ExclusiveUnlockService : IExclusiveUnlockService

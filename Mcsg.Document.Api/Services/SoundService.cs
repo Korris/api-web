@@ -8,12 +8,11 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Requests;
 
 public partial class SoundService : ISoundService

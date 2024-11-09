@@ -8,13 +8,12 @@ using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
 using Interfaces;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 using Requests;
 

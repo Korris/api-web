@@ -8,12 +8,11 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Lib.Common.Models;
-using Lib.Data.Repositories;
-using Lib.Data.Repositories.Interface;
 using Models;
 
 /// <summary>
