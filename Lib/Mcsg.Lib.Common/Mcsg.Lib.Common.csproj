@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj" />
+        <ProjectReference Include="..\..\Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj" />
     </ItemGroup>
 
 </Project>

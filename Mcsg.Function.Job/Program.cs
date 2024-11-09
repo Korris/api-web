@@ -9,6 +9,7 @@ namespace Mcsg.Function.Job;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Extensions;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;

@@ -14,6 +14,7 @@ using Common.Core.Extensions;
 using Common.Core.Middlewares;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Domain.Extensions;
 using Common.SeedWork.Converters;
 using Common.SeedWork.Extensions;
 using Extensions;

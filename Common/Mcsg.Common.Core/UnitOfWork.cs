@@ -5,7 +5,7 @@ namespace Mcsg.Lib.Data.Repositories;
 
 using Interface;
 
-internal class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     public IDbConnection Connection { get; }
 

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Comic.Api", "Mcsg.Comi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Common", "Lib\Mcsg.Lib.Common\Mcsg.Lib.Common.csproj", "{8E5F8620-27CF-46BF-A3AA-3E7864723146}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Lib.Data", "Lib\Mcsg.Lib.Data\Mcsg.Lib.Data.csproj", "{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.SeedWork", "Common\Mcsg.Common.SeedWork\Mcsg.Common.SeedWork.csproj", "{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcsg.Common.Core", "Common\Mcsg.Common.Core\Mcsg.Common.Core.csproj", "{3F7B1589-1029-4EAF-B486-09B801B62687}"
@@ -31,10 +29,6 @@ Global
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E5F8620-27CF-46BF-A3AA-3E7864723146}.Release|Any CPU.Build.0 = Release|Any CPU
-		{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{254C921F-F9B7-4D40-AEA5-70D5FD19E51A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B4768CD-CEFA-4948-881C-A08C1CD6B95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
