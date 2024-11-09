@@ -80,8 +80,6 @@ public interface IMcsgContext
 
     DbSet<ComicPostReaction> ComicPostReactions { get; set; }
 
-    DbSet<ComicPostReport> ComicPostReports { get; set; }
-
     DbSet<ComicPostShare> ComicPostShares { get; set; }
 
     DbSet<ComicReport> ComicReports { get; set; }
@@ -121,8 +119,6 @@ public interface IMcsgContext
     DbSet<DocumentPostLink> DocumentPostLinks { get; set; }
 
     DbSet<DocumentPostReaction> DocumentPostReactions { get; set; }
-
-    DbSet<DocumentPostReport> DocumentPostReports { get; set; }
 
     DbSet<DocumentPostShare> DocumentPostShares { get; set; }
 
@@ -166,8 +162,6 @@ public interface IMcsgContext
 
     //DbSet<RoleClaim> RoleClaims { get; set; }
 
-    DbSet<Session> Sessions { get; set; }
-
     DbSet<SmartCountAction> SmartCountActions { get; set; }
 
     DbSet<SmartLookup> SmartLookups { get; set; }
@@ -189,8 +183,6 @@ public interface IMcsgContext
     DbSet<SocialPostLink> SocialPostLinks { get; set; }
 
     DbSet<SocialPostReaction> SocialPostReactions { get; set; }
-
-    DbSet<SocialPostReport> SocialPostReports { get; set; }
 
     DbSet<SocialPostShare> SocialPostShares { get; set; }
 
@@ -225,8 +217,6 @@ public interface IMcsgContext
     DbSet<StoryPostLink> StoryPostLinks { get; set; }
 
     DbSet<StoryPostReaction> StoryPostReactions { get; set; }
-
-    DbSet<StoryPostReport> StoryPostReports { get; set; }
 
     DbSet<StoryPostShare> StoryPostShares { get; set; }
 
@@ -306,8 +296,6 @@ public interface IMcsgContext
 
     IQueryable<ComicPostReaction> ComicPostReactionAvailable { get; }
 
-    IQueryable<ComicPostReport> ComicPostReportAvailable { get; }
-
     IQueryable<ComicPostShare> ComicPostShareAvailable { get; }
 
     IQueryable<ComicReport> ComicReportAvailable { get; }
@@ -347,8 +335,6 @@ public interface IMcsgContext
     IQueryable<DocumentPostLink> DocumentPostLinkAvailable { get; }
 
     IQueryable<DocumentPostReaction> DocumentPostReactionAvailable { get; }
-
-    IQueryable<DocumentPostReport> DocumentPostReportAvailable { get; }
 
     IQueryable<DocumentPostShare> DocumentPostShareAvailable { get; }
 
@@ -392,8 +378,6 @@ public interface IMcsgContext
 
     //IQueryable<RoleClaim> RoleClaimAvailable { get; }
 
-    IQueryable<Session> SessionAvailable { get; }
-
     IQueryable<SmartCountAction> SmartCountActionAvailable { get; }
 
     IQueryable<SmartLookup> SmartLookupAvailable { get; }
@@ -415,8 +399,6 @@ public interface IMcsgContext
     IQueryable<SocialPostLink> SocialPostLinkAvailable { get; }
 
     IQueryable<SocialPostReaction> SocialPostReactionAvailable { get; }
-
-    IQueryable<SocialPostReport> SocialPostReportAvailable { get; }
 
     IQueryable<SocialPostShare> SocialPostShareAvailable { get; }
 
@@ -451,8 +433,6 @@ public interface IMcsgContext
     IQueryable<StoryPostLink> StoryPostLinkAvailable { get; }
 
     IQueryable<StoryPostReaction> StoryPostReactionAvailable { get; }
-
-    IQueryable<StoryPostReport> StoryPostReportAvailable { get; }
 
     IQueryable<StoryPostShare> StoryPostShareAvailable { get; }
 

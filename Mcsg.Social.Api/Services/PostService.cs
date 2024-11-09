@@ -53,7 +53,6 @@ public partial class PostService : IPostService
 
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _postReportRepository = unitOfWork.GetRepository<SocialPostReport>();
         _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
         _mapper = mapper;
         _smartLookupService = smartLookupService;
@@ -353,7 +352,7 @@ public partial class PostService : IPostService
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
         var query = "SELECT * FROM social.fn_get_visible_post_maybe_you_like(@Limit, @Hide)";
-        var dataQuery = await _postReportRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
+        var dataQuery = await _postRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
             Limit = input.PageSize,
             Hide = input.Hides
@@ -695,7 +694,7 @@ public partial class PostService : IPostService
                                             FROM {tableName} sp 
                                             WHERE sp.""HashId"" = @LastHashId";
 
-                    targetDate = await _postReportRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new
+                    targetDate = await _postRepository.Connection.QuerySingleOrDefaultAsync<DateTime?>(createdOnQuery, new
                     {
                         LastHashId = lastHashId
                     });
@@ -704,7 +703,7 @@ public partial class PostService : IPostService
                 query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
                 query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
 
-                var subPostIds = await _postReportRepository.Connection.QueryAsync<string>(query, new
+                var subPostIds = await _postRepository.Connection.QueryAsync<string>(query, new
                 {
                     PostRandomIds = input.PostRandomIds?.ToList(),
                     PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
@@ -733,7 +732,7 @@ public partial class PostService : IPostService
                                 LIMIT @PageSize";
             query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND ""Type"" = {(int)PostType.Feed}");
             query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT ""HashId"" = ANY(@PostRandomIds)");
-            return await _postReportRepository.Connection.QueryAsync<string>(query, new
+            return await _postRepository.Connection.QueryAsync<string>(query, new
             {
                 PostRandomIds = input.PostRandomIds?.ToList(),
                 PageSize = input.AmountItem
@@ -827,7 +826,6 @@ public partial class PostService : IPostService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SocialPostReport> _postReportRepository;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;

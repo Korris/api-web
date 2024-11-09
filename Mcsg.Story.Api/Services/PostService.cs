@@ -25,7 +25,6 @@ using Dtos;
 using Enums;
 using Extensions;
 using Interfaces;
-using Lib.Common.Interfaces;
 using Lib.Data.Repositories;
 using Lib.Data.Repositories.Interface;
 using Models;
@@ -54,9 +53,8 @@ public partial class PostService : IPostService
     /// <param name="fileService"></param>
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
-    /// <param name="postReportValidator"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<StoryPostReport> postReportValidator, IRepository<StoryPostComment> postCommentRepository)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository)
     {
         _context = context;
         _setting = setting;
@@ -66,7 +64,6 @@ public partial class PostService : IPostService
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _postReportRepository = unitOfWork.GetRepository<StoryPostReport>();
         _tagService = tagService;
         _smartLookupRepository = smartLookupRepository;
         _fileService = fileService;
@@ -2197,7 +2194,7 @@ public partial class PostService : IPostService
                                LIMIT @PageSize";
             query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND p.""Type"" = {(int)PostType.Feed}");
             query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT sp.""HashId"" = ANY(@PostRandomIds)");
-            return await _postReportRepository.Connection.QueryAsync<string>(query, new
+            return await _postRepository.Connection.QueryAsync<string>(query, new
             {
                 PostRandomIds = input.PostRandomIds?.ToList(),
                 PageSize = input.AmountItem
@@ -2222,7 +2219,7 @@ public partial class PostService : IPostService
                                 LIMIT @PageSize";
             query = query.Replace("[QueryByType]", input.IsGetAllType ? "" : $@"AND ""Type"" = {(int)PostType.Feed}");
             query = query.Replace("[IgnoreQuery]", input.PostRandomIds == null ? "" : $@"AND NOT ""HashId"" = ANY(@PostRandomIds)");
-            return await _postReportRepository.Connection.QueryAsync<string>(query, new
+            return await _postRepository.Connection.QueryAsync<string>(query, new
             {
                 PostRandomIds = input.PostRandomIds?.ToList(),
                 PageSize = input.AmountItem
@@ -2499,7 +2496,6 @@ public partial class PostService : IPostService
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<StoryPostReport> _postReportRepository;
     private readonly ITagService _tagService;
     private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IFileService _fileService;

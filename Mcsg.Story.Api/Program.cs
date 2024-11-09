@@ -206,7 +206,6 @@ public class Program
         //validator
         builder.Services.AddScoped<IValidator<TagFavorite>, TagFavoriteValidator>();
         builder.Services.AddScoped<IValidator<StoryPostFavorite>, PostFavoriteValidator>();
-        builder.Services.AddScoped<IValidator<StoryPostReport>, PostReportValidator>();
 
         builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 

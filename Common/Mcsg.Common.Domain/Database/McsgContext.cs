@@ -7,7 +7,6 @@ namespace Mcsg.Common.Domain;
 
 using Core.Constants;
 using Entities;
-using Entities.Configurations;
 using SeedWork.Extensions;
 
 /// <summary>
@@ -25,7 +24,7 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     {
         base.OnModelCreating(builder);
 
-        builder.ApplyConfigurationsFromAssembly(typeof(SessionConfiguration).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(McsgContext).Assembly);
 
         builder.Entity<User>(p =>
         {
@@ -134,8 +133,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<ComicPostReaction> ComicPostReactions { get; set; }
 
-    public virtual DbSet<ComicPostReport> ComicPostReports { get; set; }
-
     public virtual DbSet<ComicPostShare> ComicPostShares { get; set; }
 
     public virtual DbSet<ComicReport> ComicReports { get; set; }
@@ -175,8 +172,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<DocumentPostLink> DocumentPostLinks { get; set; }
 
     public virtual DbSet<DocumentPostReaction> DocumentPostReactions { get; set; }
-
-    public virtual DbSet<DocumentPostReport> DocumentPostReports { get; set; }
 
     public virtual DbSet<DocumentPostShare> DocumentPostShares { get; set; }
 
@@ -220,8 +215,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     //public virtual DbSet<RoleClaim> RoleClaims { get; set; }
 
-    public virtual DbSet<Session> Sessions { get; set; }
-
     public virtual DbSet<SmartCountAction> SmartCountActions { get; set; }
 
     public virtual DbSet<SmartLookup> SmartLookups { get; set; }
@@ -243,8 +236,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<SocialPostLink> SocialPostLinks { get; set; }
 
     public virtual DbSet<SocialPostReaction> SocialPostReactions { get; set; }
-
-    public virtual DbSet<SocialPostReport> SocialPostReports { get; set; }
 
     public virtual DbSet<SocialPostShare> SocialPostShares { get; set; }
 
@@ -279,8 +270,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<StoryPostLink> StoryPostLinks { get; set; }
 
     public virtual DbSet<StoryPostReaction> StoryPostReactions { get; set; }
-
-    public virtual DbSet<StoryPostReport> StoryPostReports { get; set; }
 
     public virtual DbSet<StoryPostShare> StoryPostShares { get; set; }
 
