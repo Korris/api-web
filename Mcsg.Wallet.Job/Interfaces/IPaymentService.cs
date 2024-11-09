@@ -1,6 +1,6 @@
 ﻿namespace Mcsg.Wallet.Job.Interfaces;
 
-using Lib.Common.Models;
+using Common.Models;
 
 public interface IPaymentService
 {

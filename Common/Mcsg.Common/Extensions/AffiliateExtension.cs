@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Lib.Common.Extensions;
+namespace Mcsg.Common.Extensions;
 
+using Core.Dtos;
 using Helpers;
-using Mcsg.Common.Core.Dtos;
 
 public static class AffiliateExtension
 {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Lib.Common.Models;
+namespace Mcsg.Common.Models;
 
 public class QueryZalopayPayResponse : BaseZaloPayResponse
 {

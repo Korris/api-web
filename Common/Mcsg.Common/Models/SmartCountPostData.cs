@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Common.Models;
 
-using Mcsg.Common.Core.Enums;
+using Core.Enums;
 
 public class SmartCountEntityData
 {

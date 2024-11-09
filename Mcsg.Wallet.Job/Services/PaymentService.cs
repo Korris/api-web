@@ -7,13 +7,13 @@ namespace Mcsg.Wallet.Job.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Extensions;
+using Common.Models;
+using Common.Models.RealTime;
 using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
 using Job.Constants;
-using Lib.Common.Extensions;
-using Lib.Common.Models;
-using Lib.Common.Models.RealTime;
 
 public class PaymentService : BaseS, IPaymentService
 {

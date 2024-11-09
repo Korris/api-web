@@ -7,6 +7,8 @@ using Serilog;
 namespace Mcsg.Wallet.Job;
 
 using Common.Core.Extensions;
+using Common.Mail;
+using Common.Models;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Domain;
@@ -14,8 +16,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Extensions;
 using Interfaces;
-using Lib.Common.Mail;
-using Lib.Common.Models;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;

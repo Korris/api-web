@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Story.Api.Mappings;
 
-using Lib.Common.Models;
+using Common.Models;
 
 public static class MappingExtensions
 {

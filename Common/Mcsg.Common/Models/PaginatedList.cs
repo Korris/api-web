@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Lib.Common.Models;
+namespace Mcsg.Common.Models;
 
-using Mcsg.Common.SeedWork.Responses;
+using SeedWork.Responses;
 
 public class PaginatedList<T> : PagedResponse<T>
 {

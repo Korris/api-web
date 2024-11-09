@@ -3,9 +3,9 @@
 namespace Mcsg.Wallet.Api.Models;
 
 using Common.Core.Enums;
+using Common.Models;
 using Common.SeedWork.Converters;
 using Domain.Enums;
-using Lib.Common.Models;
 
 public class UserWalletTransactionResp
 {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 
-namespace Mcsg.Lib.Common.Mail;
+namespace Mcsg.Common.Mail;
 
 using Models;
 

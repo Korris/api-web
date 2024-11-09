@@ -8,13 +8,13 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Common.Interfaces;
+using Common.Models;
 using Common.SeedWork.Extensions;
 using Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
-using Lib.Common.Models;
 using static Common.Core.Constants.Setting;
 
 public partial class SyncDataService : BaseS, ISyncDataService

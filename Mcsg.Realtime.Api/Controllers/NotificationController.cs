@@ -3,8 +3,8 @@
 namespace Mcsg.Realtime.Api.Controllers;
 
 using Common.Core.Requests;
+using Common.Models.RealTime;
 using Interfaces;
-using Lib.Common.Models.RealTime;
 using Requests;
 
 [ApiController]

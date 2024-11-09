@@ -5,13 +5,13 @@ namespace Mcsg.Wallet.Api.Services;
 using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
+using Common.Models;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
-using Lib.Common.Models;
 using Models;
 
 public class OtpService : BaseSettingS, IOtpService

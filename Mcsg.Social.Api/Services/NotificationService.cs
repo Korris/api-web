@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
 
+using Common.Constants;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -14,7 +15,6 @@ using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
-using Lib.Common.Constants;
 using Models;
 using Requests;
 using Wallet.Api.Protos;

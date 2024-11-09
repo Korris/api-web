@@ -11,8 +11,8 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Common.Interfaces;
+using Common.Models;
 using Interfaces;
-using Lib.Common.Models;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>

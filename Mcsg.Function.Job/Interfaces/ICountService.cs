@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Function.Job.Interfaces;
 
+using Common.Models;
 using Common.SeedWork;
-using Lib.Common.Models;
 
 public interface ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
 {

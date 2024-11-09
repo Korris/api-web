@@ -2,8 +2,8 @@
 
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.Models.RealTime;
 using Dtos;
-using Lib.Common.Models.RealTime;
 using Requests;
 
 public interface IStoryNotificationService

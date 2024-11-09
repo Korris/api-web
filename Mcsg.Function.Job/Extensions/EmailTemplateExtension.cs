@@ -2,7 +2,7 @@
 
 namespace Mcsg.Function.Job.Extensions;
 
-using Lib.Common.Models;
+using Common.Models;
 
 internal static class EmailTemplateExtension
 {

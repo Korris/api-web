@@ -4,8 +4,8 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.Interfaces;
+using Common.Models;
 using Interfaces;
-using Lib.Common.Models;
 using Models;
 
 public class SmartCountService : ISmartCountService

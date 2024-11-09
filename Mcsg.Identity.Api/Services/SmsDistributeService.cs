@@ -5,9 +5,9 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
+using Common.Extensions;
 using Common.Interfaces;
 using Interfaces;
-using Lib.Common.Extensions;
 using Models;
 
 public class SmsDistributeService : BaseDistributor

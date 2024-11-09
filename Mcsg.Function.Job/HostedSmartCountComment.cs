@@ -8,8 +8,8 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Extensions;
 using Common.Domain.Entities;
+using Common.Models;
 using Interfaces;
-using Lib.Common.Models;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>

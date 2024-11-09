@@ -2,7 +2,7 @@
 
 namespace Mcsg.Wallet.Api.Models._3rdClass.ZaloPay.Response;
 
-using Lib.Common.Models;
+using Common.Models;
 
 public class CreateZalopayPayResponse : BaseZaloPayResponse
 {

@@ -4,7 +4,6 @@ using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Constants;
-using Lib.Common.Interfaces;
 
 public class TagFavoriteValidator : IValidator<TagFavorite>
 {

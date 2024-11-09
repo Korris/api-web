@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Common.Interfaces;
+﻿namespace Mcsg.Common.Interfaces;
 
 public interface IValidator<T>
 {

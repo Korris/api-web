@@ -3,13 +3,13 @@
 namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Constants;
+using Common.Models;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Domain.Enums;
 using Domain.Interfaces;
 using Extensions;
 using Interfaces;
-using Lib.Common.Models;
 using Models;
 using Requests;
 

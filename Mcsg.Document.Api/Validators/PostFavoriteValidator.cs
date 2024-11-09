@@ -3,7 +3,6 @@
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
-using Lib.Common.Interfaces;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Mcsg.Lib.Common.Helpers;
+namespace Mcsg.Common.Helpers;
 
 public static class CryptoHelper
 {

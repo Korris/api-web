@@ -3,9 +3,9 @@
 namespace Mcsg.Function.Job.Services;
 
 using Common.Domain.Entities;
+using Common.Models;
 using Common.SeedWork;
 using Interfaces;
-using Lib.Common.Models;
 
 public class SmsService : ISmsService
 {

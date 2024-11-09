@@ -4,10 +4,10 @@ namespace Mcsg.Wallet.Api.Services;
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
+using Common.Models;
 using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
-using Lib.Common.Models;
 using Models;
 
 public class SystemService : BaseS, ISystemService

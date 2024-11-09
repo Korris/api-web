@@ -2,8 +2,8 @@
 
 using Api.Models._3rdClass.ZaloPay.Response;
 using Common.Core.Requests;
+using Common.Models;
 using Domain.Enums;
-using Lib.Common.Models;
 using Models;
 using Requests;
 

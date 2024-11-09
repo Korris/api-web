@@ -2,7 +2,7 @@
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
-using Lib.Common.Models;
+using Common.Models;
 
 public class EmailJobDistributeItem : DistributedItem
 {

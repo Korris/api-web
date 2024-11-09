@@ -7,8 +7,8 @@ namespace Mcsg.Wallet.Job;
 
 using Common.Core.Dtos;
 using Common.Core.Extensions;
+using Common.Models;
 using Interfaces;
-using Lib.Common.Models;
 using static Common.SeedWork.Constants.Information;
 
 /// <summary>

@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Wallet.Api.Interfaces;
 
 using Common.Core.Enums;
-using Lib.Common.Models;
+using Common.Models;
 using Models._3rdClass.ZaloPay.Response;
 
 public interface IZaloPayService

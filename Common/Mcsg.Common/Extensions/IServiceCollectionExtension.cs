@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Mcsg.Lib.Common.Extensions;
+namespace Mcsg.Common.Extensions;
 
 using Mail;
 

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Mcsg.Lib.Common.Extensions;
+namespace Mcsg.Common.Extensions;
 
 public static class JsonExtensions
 {

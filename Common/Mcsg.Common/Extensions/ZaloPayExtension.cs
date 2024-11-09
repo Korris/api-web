@@ -1,4 +1,4 @@
-﻿namespace Mcsg.Lib.Common.Extensions;
+﻿namespace Mcsg.Common.Extensions;
 
 public static class ZaloPayExtension
 {

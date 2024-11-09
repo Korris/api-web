@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Story.Api.Models;
 
 using Common.Core.Distributor;
-using Lib.Common.Models;
+using Common.Models;
 
 public class SmartCountDistributeItem : DistributedItem
 {

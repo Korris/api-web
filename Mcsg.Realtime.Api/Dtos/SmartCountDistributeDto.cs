@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Realtime.Api.Dtos;
 
 using Common.Core.Distributor;
-using Lib.Common.Models;
+using Common.Models;
 
 public class SmartCountDistributeDto : DistributedItem
 {

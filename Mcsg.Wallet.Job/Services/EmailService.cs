@@ -6,6 +6,7 @@ namespace Mcsg.Wallet.Job.Services;
 
 using Common.Core.Enums;
 using Common.Core.Interfaces;
+using Common.Models;
 using Common.SeedWork;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
@@ -13,7 +14,6 @@ using Constants;
 using Domain.Entities;
 using Extensions;
 using Interfaces;
-using Lib.Common.Models;
 
 public class EmailService : IEmailService
 {

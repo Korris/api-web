@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Story.Api.Extensions;
 
+using Common.Constants;
 using Common.Core.Enums;
-using Lib.Common.Constants;
 using Models;
 
 public static class NotificationExtension

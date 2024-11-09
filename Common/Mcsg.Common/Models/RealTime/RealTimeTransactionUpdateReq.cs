@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Models.RealTime;
+﻿namespace Mcsg.Common.Models.RealTime;
 
-using Mcsg.Common.Core.Enums;
+using Core.Enums;
 
 public class RealTimeTransactionUpdateReq
 {

@@ -1,6 +1,6 @@
-﻿namespace Mcsg.Lib.Common.Models;
+﻿namespace Mcsg.Common.Models;
 
-using Mcsg.Common.Core.Enums;
+using Core.Enums;
 
 public class PaymentTransData
 {
@@ -9,6 +9,7 @@ public class PaymentTransData
     public Guid UserId { get; set; }
     public TransactionStatus Status { get; set; }
 }
+
 public enum PaymentTransType
 {
     BANK,

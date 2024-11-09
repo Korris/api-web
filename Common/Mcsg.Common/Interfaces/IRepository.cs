@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Mcsg.Common.Interfaces;
 
-using Mcsg.Common.SeedWork.Responses;
+using SeedWork.Responses;
 
 public interface IRepository<TEntity>
 {
