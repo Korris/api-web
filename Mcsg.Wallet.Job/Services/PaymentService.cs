@@ -7,10 +7,10 @@ namespace Mcsg.Wallet.Job.Services;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Domain.Enums;
 using Domain.Interfaces;
 using Interfaces;
 using Job.Constants;
-using Lib.Common.Enums;
 using Lib.Common.Extensions;
 using Lib.Common.Models;
 using Lib.Common.Models.RealTime;

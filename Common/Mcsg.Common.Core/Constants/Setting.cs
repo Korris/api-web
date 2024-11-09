@@ -472,7 +472,7 @@ public class Setting : SeedWork.Constants.Setting
     /// <summary>
     /// Minio folder
     /// </summary>
-    public static class MinioFolder
+    public class MinioFolder
     {
         /// <summary>
         /// Comic
@@ -503,5 +503,26 @@ public class Setting : SeedWork.Constants.Setting
         /// User
         /// </summary>
         public const string User = "users";
+    }
+
+    /// <summary>
+    /// Role name
+    /// </summary>
+    public class RoleName
+    {
+        /// <summary>
+        /// User
+        /// </summary>
+        public const string User = "Mcsg.User";
+
+        /// <summary>
+        /// Admin
+        /// </summary>
+        public const string Admin = "Mcsg.Admin";
+
+        /// <summary>
+        /// SysAdmin
+        /// </summary>
+        public const string SysAdmin = "Mcsg.SysAdmin";
     }
 }

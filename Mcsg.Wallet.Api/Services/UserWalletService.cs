@@ -20,7 +20,6 @@ using Domain.Enums;
 using Domain.Interfaces;
 using Identity.Api.Protos;
 using Interfaces;
-using Lib.Common.Enums;
 using Lib.Common.Helpers;
 using Lib.Common.Models;
 using Models;

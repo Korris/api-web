@@ -19,7 +19,6 @@ using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Constants;
 using Interfaces;
-using Lib.Common.Constants;
 using Requests;
 using Response;
 using Validators;
@@ -165,7 +164,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 Keyword = user.ProfileName,
                 KeywordType = LookupKeywordType.People
             });
-            await _userManager.AddToRoleAsync(user, RoleNames.User);
+            await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
 
             _ = Task.Run(async () => await InitUserWallet(user));
             _ = Task.Run(async () => await SyncCreateToAna(user));
@@ -350,7 +349,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                     KeywordType = LookupKeywordType.People
                 });
 
-                await _userManager.AddToRoleAsync(user, RoleNames.User);
+                await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
 
                 _ = Task.Run(async () => await InitUserWallet(user));
                 _ = Task.Run(async () => await SyncCreateToAna(user));
