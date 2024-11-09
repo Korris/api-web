@@ -9,6 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.70" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Mcsg.Common.Core\Mcsg.Common.Core.csproj" />
     </ItemGroup>
 

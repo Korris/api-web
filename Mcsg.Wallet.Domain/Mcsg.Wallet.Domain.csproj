@@ -9,6 +9,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="HD.ZaloPay" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Common\Mcsg.Common.Core\Mcsg.Common.Core.csproj" />
     </ItemGroup>
 

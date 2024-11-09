@@ -4,7 +4,7 @@ using Common.Core.Distributor;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain.Entities;
+using Domain.Entities;
 using Interfaces;
 using Lib.Common.Extensions;
 using Models;
