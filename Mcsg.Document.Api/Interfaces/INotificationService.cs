@@ -11,5 +11,4 @@ public interface INotificationService
     Task<PagedResponse<NotificationModel>> GetNotificationByReceiverAsync(NotificationR request);
     Task<PagedResponse<NotificationModel>> GetUnReadNotificationByReceiverAsync(NotificationR request);
     Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req);
-    Task AddTrackingFollowAsync(TrackingFollowReq req);
 }

@@ -159,7 +159,8 @@ public class Program
             p.RegisterServicesFromAssembly(me.Assembly);
 
             p.AddDiPost();
-            p.AddDiPostReport();
+            p.AddDiReport();
+            p.AddDiSubPost();
         });
         #endregion
 

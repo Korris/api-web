@@ -1,0 +1,61 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package document;
+
+service DocumentProto {
+    rpc Create (DocumentCreateReq) returns (DocumentCreateRsp);
+    rpc Update (DocumentUpdateReq) returns (DocumentUpdateRsp);
+    rpc Delete (DocumentDeleteReq) returns (DocumentDeleteRsp);
+}
+
+message DocumentCreateReq {
+    repeated DocumentProtoDto items = 1;
+}
+
+message DocumentUpdateReq {
+    string postId = 1;
+    string title = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
+}
+
+message DocumentDeleteReq {
+    string postId = 1;
+}
+
+message DocumentCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated DocumentOutputDto items = 3;
+}
+
+message DocumentUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string title = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
+}
+
+message DocumentOutputDto {
+    int64 id = 1;
+}

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Dapper;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Web;
 
 namespace Mcsg.Document.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core;
 using Common.Core.Constants;
 using Common.Core.Enums;
@@ -55,9 +57,7 @@ public partial class PostService : IPostService
     /// <param name="smartLookupService"></param>
     /// <param name="postReportValidator"></param>
     /// <param name="postCommentRepository"></param>
-    /// <param name="notificationService"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<DocumentPostReport> postReportValidator, IRepository<DocumentPostComment> postCommentRepository,
-        INotificationService notificationService)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IValidator<DocumentPostReport> postReportValidator, IRepository<DocumentPostComment> postCommentRepository)
     {
         _context = context;
         _setting = setting;
@@ -74,7 +74,6 @@ public partial class PostService : IPostService
         _mapper = mapper;
         _smartLookupService = smartLookupService;
         _postCommentRepository = postCommentRepository;
-        _notificationService = notificationService;
     }
 
     public async Task<bool> Delete(IdBaseR request)
@@ -97,6 +96,9 @@ public partial class PostService : IPostService
             await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = userId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
+
+            _ = Task.Run(async () => await SyncDeleteToAna(postId));
+
             return true;
         }
     }
@@ -196,6 +198,8 @@ public partial class PostService : IPostService
         };
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
+
+        _ = Task.Run(async () => await SyncCreateToAna(post));
 
         return result;
     }
@@ -969,6 +973,8 @@ public partial class PostService : IPostService
                 currentEntity.Keyword = request.Title;
                 await _smartLookupRepository.UpdateAsync(currentEntity);
             }
+
+            _ = Task.Run(async () => await SyncUpdateToAna(post));
         }
 
         result.Tags = (await _tagService.UpdateTagsToPost(post.Id, request.Tags, userId)).ToArray();
@@ -1028,7 +1034,7 @@ public partial class PostService : IPostService
         return itemResponse;
     }
 
-    public async Task<bool> FollowPost(IdBaseR request)
+    public async Task<FavoritePostResponse> FollowPost(IdBaseR request)
     {
         var postId = request.Id;
         var userId = request.UserId;
@@ -1044,41 +1050,34 @@ public partial class PostService : IPostService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var followedPost = await _context.DocumentPostFavorites
-                                                        .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
-                                                        .FirstOrDefaultAsync();
-        if (followedPost == null)
+        var ett = await _context.DocumentPostFavorites
+              .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
+              .FirstOrDefaultAsync();
+
+        if (ett == null)
         {
-            var followPostResult = await _context.DocumentPostFavorites.AddAsync(new DocumentPostFavorite
+            ett = new DocumentPostFavorite
             {
-                UserId = user.Id,
-                CreatedBy = user.Id,
                 PostId = postId,
-                CreatedOn = DateTime.UtcNow,
-                ModifiedOn = DateTime.UtcNow,
-                ModifiedBy = user.Id,
-            });
-            await _context.SaveChangesAsync(default);
-            followedPost = followPostResult.Entity;
+                UserId = user.Id,
+                CreatedBy = user.Id
+            };
+            await _context.DocumentPostFavorites.AddAsync(ett);
         }
         else
         {
-            followedPost.IsDelete = !followedPost.IsDelete;
-            _context.DocumentPostFavorites.Update(followedPost);
-            await _context.SaveChangesAsync(default);
+            ett.IsDelete = !ett.IsDelete;
+            _context.DocumentPostFavorites.Update(ett);
         }
 
-        _ = Task.Run(async () =>
-        {
-            await _notificationService.AddTrackingFollowAsync(new TrackingFollowReq
-            {
-                FollowId = followedPost.Id,
-                PostId = postId,
-                SessionId = request.SessionId
-            });
-        });
+        await _context.SaveChangesAsync(default);
 
-        return !followedPost.IsDelete;
+        return new FavoritePostResponse
+        {
+            Id = ett.Id,
+            PostId = postId,
+            IsFavorite = !ett.IsDelete
+        };
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR loadReq)
@@ -1411,7 +1410,7 @@ public partial class PostService : IPostService
                     ProfileName = res.ProfileName,
                     UserId = res.UserId,
                     UserName = res.UserName,
-                    IsNewChapter = res.LatestCreatedOn.IsNewChapter(),
+                    LatestCreatedOn = res.LatestCreatedOn,
                     Hide = res.Hide,
                     Status = res.Status,
                     IsExternalSource = res.IsExternalSource,
@@ -1911,6 +1910,8 @@ public partial class PostService : IPostService
         _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
         #endregion
 
+        _ = Task.Run(async () => await SyncCreateSubToAna(subPost));
+
         return result;
     }
 
@@ -2015,6 +2016,9 @@ public partial class PostService : IPostService
             await _postRepository.Connection.QueryAsync(ExecSoftDeleteSubPost, new { SubPostId = subPost.Id, Date = DateTime.UtcNow, UserId = userId });
 
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(subPost.PostId, profileName);
+
+            _ = Task.Run(async () => await SyncDeleteSubToAna(subPost.Id));
+
             return true;
         }
     }
@@ -2317,6 +2321,174 @@ public partial class PostService : IPostService
 
         return res;
     }
+
+    #region -- Post --
+    private async Task<DocumentCreateRsp> SyncCreateToAna(DocumentPost ett)
+    {
+        var res = new DocumentCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            var client = new DocumentProto.DocumentProtoClient(channel);
+
+            var request = new DocumentCreateReq
+            {
+                Items =
+                {
+                    new DocumentProtoDto
+                    {
+                        PostId = ett.Id.ToString(),
+                        HashId = ett.HashId,
+                        UserId = ett.UserId.ToString(),
+                        Title = ett.Title,
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+                    }
+                }
+            };
+            var rsp = await client.CreateAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<DocumentUpdateRsp> SyncUpdateToAna(DocumentPost ett)
+    {
+        var res = new DocumentUpdateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            var client = new DocumentProto.DocumentProtoClient(channel);
+
+            var request = new DocumentUpdateReq
+            {
+                PostId = ett.Id.ToString(),
+                Title = ett.Title,
+                ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+            };
+            var rsp = await client.UpdateAsync(request);
+
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<DocumentDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new DocumentDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            var client = new DocumentProto.DocumentProtoClient(channel);
+
+            var request = new DocumentDeleteReq
+            {
+                PostId = id.ToString()
+            };
+            var rsp = await client.DeleteAsync(request);
+
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+    #endregion
+
+    #region -- SubPost --
+    private async Task<DocumentSubCreateRsp> SyncCreateSubToAna(DocumentSubPost ett)
+    {
+        var res = new DocumentSubCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            var client = new DocumentSubProto.DocumentSubProtoClient(channel);
+
+            var request = new DocumentSubCreateReq
+            {
+                Items =
+                {
+                    new DocumentSubProtoDto
+                    {
+                        PostId = ett.PostId.ToString(),
+                        SubPostId = ett.Id.ToString(),
+                        UserId = ett.UserId.ToString(),
+                        CreatedOn = ett.CreatedOn.ToString(),
+                        CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
+                        ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+                    }
+                }
+            };
+            var rsp = await client.CreateAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<DocumentSubDeleteRsp> SyncDeleteSubToAna(Guid id)
+    {
+        var res = new DocumentSubDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            var client = new DocumentSubProto.DocumentSubProtoClient(channel);
+
+            var request = new DocumentSubDeleteReq
+            {
+                SubPostId = id.ToString()
+            };
+            var rsp = await client.DeleteAsync(request);
+
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+    #endregion
+
     #endregion
 
     #region -- Fields --
@@ -2351,7 +2523,6 @@ public partial class PostService : IPostService
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
-    private readonly INotificationService _notificationService;
 
     #endregion
 }

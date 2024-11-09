@@ -3,6 +3,7 @@
 namespace Mcsg.Document.Api.Models;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.SeedWork.Converters;
 using Dtos;
 
@@ -10,8 +11,11 @@ public class PostBoxResponse : PostBox
 {
     public List<SubPostDto>? Chapters { get; set; }
     public List<string>? Tags { get; set; }
-    public bool IsNewChapter { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
     public bool IsExternalSource { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime LatestCreatedOn { get; set; }
 }
 public class PostBoxQueryResponse : PostBox
 {

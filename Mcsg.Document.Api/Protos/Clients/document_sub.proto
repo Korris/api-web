@@ -1,0 +1,46 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package document_sub;
+
+service DocumentSubProto {
+    rpc Create (DocumentSubCreateReq) returns (DocumentSubCreateRsp);
+    rpc Delete (DocumentSubDeleteReq) returns (DocumentSubDeleteRsp);
+}
+
+message DocumentSubCreateReq {
+    repeated DocumentSubProtoDto items = 1;
+}
+
+message DocumentSubDeleteReq {
+    string subPostId = 1;
+}
+
+message DocumentSubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated DocumentSubOutputDto items = 3;
+}
+
+message DocumentSubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentSubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    string createdOn = 4;
+    google.protobuf.StringValue createdBy = 5;
+    google.protobuf.StringValue modifiedOn = 6;
+    google.protobuf.StringValue modifiedBy = 7;
+}
+
+message DocumentSubOutputDto {
+    int64 id = 1;
+}

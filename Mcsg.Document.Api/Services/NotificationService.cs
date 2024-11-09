@@ -160,17 +160,6 @@ public partial class NotificationService : INotificationService
         }
     }
 
-    public async Task AddTrackingFollowAsync(TrackingFollowReq req)
-    {
-        var baseUrl = _setting.Api.Web.Realtime;
-        var urlBuilder = new System.Text.StringBuilder();
-        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/v1/Tracking/TrackingFollowCreate");
-
-        var url = urlBuilder.ToString();
-
-        var response = await url.MakePostRequest(req);
-    }
-
     #region -- Fields --
 
     /// <summary>

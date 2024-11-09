@@ -9,21 +9,25 @@ using static Common.SeedWork.Constants.Validator;
 /// <summary>
 /// Validator
 /// </summary>
-public class PostReportCreateV : AbstractValidator<PostReportCreateR>
+public class ReportCreateV : AbstractValidator<ReportCreateR>
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public PostReportCreateV()
+    public ReportCreateV()
     {
-        RuleFor(p => p.ReasonType).NotEmpty().WithMessage($"ReasonType {NotEmpty}");
-        RuleFor(p => p.PostId).NotEmpty().WithMessage($"PostId {NotEmpty}");
+        var t = "EntityId";
+        RuleFor(p => p.EntityId).NotEmpty().WithMessage($"{t} {NotEmpty}");
+
+        t = "EntityType";
+        RuleFor(p => p.EntityType).NotEmpty().WithMessage($"{t} {NotEmpty}");
 
         When(p => p.ReasonType == ReasonType.Other.ToString(), () =>
         {
-            RuleFor(p => p.ReasonText).NotEmpty().WithMessage($"ReasonText {NotEmpty}");
+            t = "Reason";
+            RuleFor(p => p.ReasonText).NotEmpty().WithMessage($"{t} {NotEmpty}");
         });
     }
 

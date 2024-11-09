@@ -22,7 +22,7 @@ public interface IDocumentService
     Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(DocumentPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetByTagName(DocumentPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
-    Task<bool> FollowPost(IdBaseR request);
+    Task<FavoritePostResponse> FollowPost(IdBaseR request);
     Task<float> GetLatestOrderChapter(string hashPostId);
     Task<List<PostSeriesTopResponse>> GetRecommended(DocumentRecommendedR req);
     Task MoveChapterOrder(string hashId, DocumentChapterOrderSwapR orders);

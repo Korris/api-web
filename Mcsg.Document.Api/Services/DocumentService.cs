@@ -111,7 +111,7 @@ public partial class DocumentService : IDocumentService
         return await _postService.GetFollowedPost(input);
     }
 
-    public async Task<bool> FollowPost(IdBaseR request)
+    public async Task<FavoritePostResponse> FollowPost(IdBaseR request)
     {
         return await _postService.FollowPost(request);
     }
