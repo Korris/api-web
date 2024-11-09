@@ -18,8 +18,6 @@ using Domain.Interfaces;
 using Extensions;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Common.Web.Extensions;
-using Lib.Common.Web.RealTime.Services;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -132,9 +130,6 @@ public class Program
         builder.Services.AddEmailSender();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());
 
-        builder.Services.AddScoped<ISignalRService, SignalRService>();
-        builder.Services.AddSignalR();
-
         //add services
         builder.Services.AddScoped<IUserWalletService, UserWalletService>();
         builder.Services.AddScoped<IOtpService, OtpService>();
@@ -220,7 +215,6 @@ public class Program
         app.MapHealthChecks("/health");
         app.UseResponseCaching();
 
-        app.UseCommonHub();
         app.MapGrpcService<Protos.Services.UserWalletService>();
 
         app.Run();

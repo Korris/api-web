@@ -15,7 +15,6 @@ using Extensions;
 using Hubs;
 using Interfaces;
 using Lib.Common.Extensions;
-using Lib.Common.Web.RealTime.Services;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -128,7 +127,6 @@ public class Program
         builder.Services.AddCors();
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-        builder.Services.AddScoped<ISignalRService, SignalRService>();
         builder.Services.AddSignalR();
 
         // Comic
