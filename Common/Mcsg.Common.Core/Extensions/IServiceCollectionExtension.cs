@@ -157,5 +157,33 @@ public static class IServiceCollectionExtension
         });
     }
 
+    /// <summary>
+    /// AddSwaggerDocumentation
+    /// </summary>
+    /// <param name="services">The IServiceCollection to configure</param>
+    /// <param name="scheme">Scheme</param>
+    /// <returns>Returns the result</returns>
+    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, string scheme = "Bearer")
+    {
+        services.AddSwaggerGen(options =>
+        {
+            switch (scheme)
+            {
+                case "Bearer":
+                    options.AddJwtSecurity();
+                    break;
+
+                case "ApiKey":
+                    options.AddApiKeySecurity();
+                    break;
+
+                default:
+                    break;
+            }
+        });
+
+        return services;
+    }
+
     #endregion
 }

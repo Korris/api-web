@@ -14,9 +14,7 @@ using Common.SeedWork.Extensions;
 using Extensions;
 using Hubs;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Extensions;
-using Lib.Common.Web.Extensions;
 using Lib.Common.Web.RealTime.Services;
 using Services;
 using static Common.Core.Constants.Setting;
@@ -120,7 +118,7 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
+        builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddIdentity();
         builder.Services.AddDistributionLibrary(Assembly.GetExecutingAssembly());

@@ -18,10 +18,8 @@ using Common.SeedWork.Converters;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Interfaces;
-using Lib.Common.Web.Extensions;
 using Models;
 using Services;
 using Validators;
@@ -184,7 +182,7 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
+        builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddEmailSender();

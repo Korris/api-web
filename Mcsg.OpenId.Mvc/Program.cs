@@ -12,8 +12,6 @@ using Common.Domain.Entities;
 using Common.Domain.Extensions;
 using Common.SeedWork.Extensions;
 using Interfaces;
-using Lib.Common.Constants;
-using Lib.Common.Web.Extensions;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
@@ -120,7 +118,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
+        builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddIdentity<LocalizeIdentityErrorDescriber>();
 

@@ -17,7 +17,6 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Extensions;
 using Interfaces;
-using Lib.Common.Constants;
 using Lib.Common.Extensions;
 using Lib.Common.Web.Extensions;
 using Lib.Common.Web.RealTime.Services;
@@ -127,7 +126,7 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerDocumentation(AuthenticationSchemes.JwtScheme);
+        builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddEmailSender();
