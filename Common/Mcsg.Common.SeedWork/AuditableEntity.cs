@@ -7,18 +7,6 @@ namespace Mcsg.Common.SeedWork;
 /// </summary>
 public class AuditableEntity : TrackingEntity
 {
-    #region -- Methods --
-
-    /// <summary>
-    /// Initialize
-    /// </summary>
-    public AuditableEntity()
-    {
-        ModifiedOn = DateTime.UtcNow;
-    }
-
-    #endregion
-
     #region -- Properties --
 
     /// <summary>

@@ -34,7 +34,7 @@ partial class StoryPost
         var res = new StoryPost
         {
             Title = title,
-            Type = (int)PostType.Feed,
+            Type = PostType.Story,
             Status = PostStatus.Public,
             HashId = hashId,
             Body = body,

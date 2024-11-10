@@ -19,7 +19,7 @@ using SeedWork.Dtos;
 /// <summary>
 /// Paging request for POST or PATCH method (support paging on server)
 /// </summary>
-public class PagingR : BaseR
+public class PagingR : IdBaseR
 {
     #region -- Methods --
 

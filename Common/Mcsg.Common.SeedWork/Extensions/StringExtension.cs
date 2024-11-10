@@ -751,5 +751,19 @@ public static class StringExtension
         return default;
     }
 
+    /// <summary>
+    /// Replaces occurrences of a specified substring within the input string and formats it as a SQL function call.
+    /// </summary>
+    /// <param name="value">The initial string value to modify and format.</param>
+    /// <param name="oldValue">The substring to replace in the initial value.</param>
+    /// <param name="newValue">The substring that will replace <paramref name="oldValue"/> in the initial value.</param>
+    /// <param name="params">A string representing the parameters to pass to the SQL function call.</param>
+    /// <returns>A formatted SQL function call string, with replacements applied to the initial value.</returns>
+    public static string ToFn(this string value, string oldValue, string newValue, string @params)
+    {
+        value = (value ?? string.Empty).Replace(oldValue, newValue);
+        return $"SELECT * FROM {value}({@params})";
+    }
+
     #endregion
 }

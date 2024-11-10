@@ -40,7 +40,7 @@ public class Setting : SeedWork.Constants.Setting
                 { "Syn", MicroService.Sync.ToString() },
                 { "Wal", MicroService.Wallet.ToString() },
                 { "Clo", MicroService.CloneSite.ToString() },
-                { "Fun", MicroService.Function.ToString() },
+                { "Fnc", MicroService.Function.ToString() },
                 { "Ope", MicroService.OpenId.ToString() },
                 { "Wjo", MicroService.WalletJob.ToString() },
                 { "Doc", MicroService.Document.ToString() }

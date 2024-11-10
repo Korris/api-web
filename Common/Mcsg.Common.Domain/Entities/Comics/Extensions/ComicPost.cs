@@ -34,7 +34,7 @@ partial class ComicPost
         var res = new ComicPost
         {
             Title = title,
-            Type = (int)PostType.Feed,
+            Type = PostType.Comic,
             Status = PostStatus.Public,
             HashId = hashId,
             Body = body,

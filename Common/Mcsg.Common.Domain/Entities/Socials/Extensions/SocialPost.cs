@@ -34,7 +34,7 @@ partial class SocialPost
         var res = new SocialPost
         {
             Title = title,
-            Type = (int)PostType.Feed,
+            Type = PostType.Feed,
             Status = PostStatus.Public,
             HashId = hashId,
             Body = body,

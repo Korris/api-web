@@ -40,6 +40,13 @@ public interface IMcsgContext
     int SaveChanges();
 
     /// <summary>
+    /// Get UserId
+    /// </summary>
+    /// <param name="userName">UserName</param>
+    /// <returns>Return the UserId</returns>
+    Task<Guid?> GetUserId(string? userName);
+
+    /// <summary>
     /// Make serial number
     /// </summary>
     /// <param name="q">Queryable</param>

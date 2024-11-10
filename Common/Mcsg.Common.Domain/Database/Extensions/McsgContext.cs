@@ -11,6 +11,7 @@
  */
 #endregion
 
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Mcsg.Common.Domain;
@@ -25,6 +26,16 @@ using SeedWork.Extensions;
 partial class McsgContext
 {
     #region -- Implements --
+
+    /// <summary>
+    /// Get UserId
+    /// </summary>
+    /// <param name="userName">UserName</param>
+    /// <returns>Return the UserId</returns>
+    public async Task<Guid?> GetUserId(string? userName)
+    {
+        return await UserAvailable.Where(p => p.UserName == userName).Select(p => (Guid?)p.Id).FirstOrDefaultAsync();
+    }
 
     /// <summary>
     /// Make serial number

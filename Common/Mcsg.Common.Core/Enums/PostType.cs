@@ -6,7 +6,7 @@
 public enum PostType
 {
     /// <summary>
-    /// Feed
+    /// Feed (Social)
     /// </summary>
     Feed,
 

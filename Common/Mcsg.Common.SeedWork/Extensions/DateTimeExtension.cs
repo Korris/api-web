@@ -54,5 +54,49 @@ public static class DateTimeExtension
         return d.Date.AddDays(1).AddSeconds(-1).AddMinutes(timezoneOffset);
     }
 
+    /// <summary>
+    /// Start of day (UTC)
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
+    /// <returns>Return first day at 00:00:00</returns>
+    public static DateTime StartOfDayUtc(this DateTime d, int timezoneOffset = 0)
+    {
+        return d.StartOfDay(timezoneOffset).ToUniversalTime();
+    }
+
+    /// <summary>
+    /// End of day (UTC)
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
+    /// <returns>Return end day at 23:59:59</returns>
+    public static DateTime EndOfDayUtc(this DateTime d, int timezoneOffset = 0)
+    {
+        return d.EndOfDay(timezoneOffset).ToUniversalTime();
+    }
+
+    /// <summary>
+    /// Start of day (UTC)
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
+    /// <returns>Return first day at 00:00:00</returns>
+    public static DateTime? StartOfDayUtc(this DateTime? d, int timezoneOffset = 0)
+    {
+        return d?.StartOfDay(timezoneOffset).ToUniversalTime();
+    }
+
+    /// <summary>
+    /// End of day (UTC)
+    /// </summary>
+    /// <param name="d">Date and time</param>
+    /// <param name="timezoneOffset">Timezone offset (minute)</param>
+    /// <returns>Return end day at 23:59:59</returns>
+    public static DateTime? EndOfDayUtc(this DateTime? d, int timezoneOffset = 0)
+    {
+        return d?.EndOfDay(timezoneOffset).ToUniversalTime();
+    }
+
     #endregion
 }

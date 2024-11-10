@@ -34,7 +34,7 @@ partial class DocumentPost
         var res = new DocumentPost
         {
             Title = title,
-            Type = (int)PostType.Feed,
+            Type = PostType.Document,
             Status = PostStatus.Public,
             HashId = hashId,
             Body = body,
