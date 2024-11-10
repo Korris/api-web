@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core.Enums;
 using SeedWork;
 
-public class UserBlock : AuditableEntity
+public partial class UserBlock : AuditableEntity
 {
     #region -- Properties --
 

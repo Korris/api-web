@@ -6,7 +6,7 @@ using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
 
-public class CrawComic : AuditableEntity
+public partial class CrawComic : AuditableEntity
 {
     [StringLength(Validator.Name.Max)]
     public string? Name { get; set; }

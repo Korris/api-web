@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class StoryPostLink : BasePostLink
+public partial class StoryPostLink : BasePostLink
 {
 }

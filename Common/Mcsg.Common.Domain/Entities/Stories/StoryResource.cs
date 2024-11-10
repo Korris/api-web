@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class StoryResource : BaseResource
+public partial class StoryResource : BaseResource
 {
 }

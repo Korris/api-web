@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class DocumentResource : BaseResource
+public partial class DocumentResource : BaseResource
 {
 }

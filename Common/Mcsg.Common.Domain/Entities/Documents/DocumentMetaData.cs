@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class DocumentMetaData : BaseMetaData
+public partial class DocumentMetaData : BaseMetaData
 {
 }

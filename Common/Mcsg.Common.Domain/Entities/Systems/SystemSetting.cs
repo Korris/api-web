@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using SeedWork;
 using SeedWork.Constants;
 
-public class SystemSetting : AuditableEntity
+public partial class SystemSetting : AuditableEntity
 {
     [StringLength(Validator.Description.Max)]
     public string? Description { get; set; }

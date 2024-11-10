@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class ComicTagPost : BaseTagPost
+public partial class ComicTagPost : BaseTagPost
 {
 }

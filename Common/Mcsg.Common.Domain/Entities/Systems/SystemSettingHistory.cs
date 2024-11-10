@@ -2,7 +2,7 @@
 
 using SeedWork;
 
-public class SystemSettingHistory : AuditableEntity
+public partial class SystemSettingHistory : AuditableEntity
 {
     public Guid SystemSettingId { get; set; }
     public Guid UserId { get; set; }

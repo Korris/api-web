@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core.Enums;
 using SeedWork;
 
-public class ViewHistory : EntityId
+public partial class ViewHistory : EntityId
 {
     public EntityType EntityType { get; set; }
     public EntitySubType? SubType { get; set; }

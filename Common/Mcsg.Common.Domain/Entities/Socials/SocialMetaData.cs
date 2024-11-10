@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class SocialMetaData : BaseMetaData
+public partial class SocialMetaData : BaseMetaData
 {
 }

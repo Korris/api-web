@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class ComicSubPostCommentReaction : BaseReaction
+public partial class ComicSubPostCommentReaction : BaseReaction
 {
 }

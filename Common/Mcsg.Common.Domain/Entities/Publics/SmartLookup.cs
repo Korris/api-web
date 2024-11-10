@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class SmartLookup : EntityId
+public partial class SmartLookup : EntityId
 {
     public Guid EntityId { get; set; }
     public EntityType EntityType { get; set; }

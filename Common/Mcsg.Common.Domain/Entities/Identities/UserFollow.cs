@@ -2,7 +2,7 @@
 
 using SeedWork;
 
-public class UserFollow : AuditableEntity
+public partial class UserFollow : AuditableEntity
 {
     public Guid UserFollowerId { get; set; }
     public Guid UserFollowingId { get; set; }

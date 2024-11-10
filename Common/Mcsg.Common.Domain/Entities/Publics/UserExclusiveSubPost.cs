@@ -2,7 +2,7 @@
 
 using SeedWork;
 
-public class UserExclusiveSubPost : AuditableEntity
+public partial class UserExclusiveSubPost : AuditableEntity
 {
     public Guid UserId { get; set; }
     public Guid SubPostId { get; set; }

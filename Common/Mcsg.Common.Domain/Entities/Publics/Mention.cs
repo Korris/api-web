@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class Mention : AuditableEntity
+public partial class Mention : AuditableEntity
 {
     public Guid EntityId { get; set; }
     public EntityType EntityType { get; set; }

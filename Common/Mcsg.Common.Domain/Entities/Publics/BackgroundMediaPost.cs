@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class BackgroundMediaPost : AuditableEntity
+public partial class BackgroundMediaPost : AuditableEntity
 {
     public Guid BackgroundMediaId { get; set; }
     public Guid PostId { get; set; }

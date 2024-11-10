@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class Notification : AuditableEntity
+public partial class Notification : AuditableEntity
 {
     public Guid NotificationObjectId { get; set; }
     public Guid? ReceiverId { get; set; }

@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class DocumentPostReaction : BaseReaction
+public partial class DocumentPostReaction : BaseReaction
 {
 }

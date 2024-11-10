@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using SeedWork;
 using SeedWork.Constants;
 
-public class Tag : AuditableEntity
+public partial class Tag : AuditableEntity
 {
     [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }

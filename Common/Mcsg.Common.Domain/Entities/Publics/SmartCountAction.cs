@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core.Enums;
 using SeedWork;
 
-public class SmartCountAction : EntityId
+public partial class SmartCountAction : EntityId
 {
     public Guid EntityId { get; set; }
     public EntityType EntityType { get; set; }

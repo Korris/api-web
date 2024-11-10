@@ -5,7 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core.Enums;
 using SeedWork;
 
-public class UserOtp : AuditableEntity
+public partial class UserOtp : AuditableEntity
 {
     public Guid UserId { get; set; }
     public UserOtpType OtpType { get; set; }

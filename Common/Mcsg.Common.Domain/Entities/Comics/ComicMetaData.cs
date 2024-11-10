@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class ComicMetaData : BaseMetaData
+public partial class ComicMetaData : BaseMetaData
 {
 }

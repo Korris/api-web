@@ -2,7 +2,7 @@
 
 namespace Mcsg.Common.Domain.Entities;
 
-public class Role : IdentityRole<Guid>
+public partial class Role : IdentityRole<Guid>
 {
     public string? DisplayName { get; set; }
 }

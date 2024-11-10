@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class Job : AuditableEntity
+public partial class Job : AuditableEntity
 {
     public JobType JobType { get; set; }
     public JobCategory JobCategory { get; set; }

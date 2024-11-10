@@ -2,7 +2,7 @@
 
 using SeedWork;
 
-public class UserSocial : AuditableEntity
+public partial class UserSocial : AuditableEntity
 {
     public Guid UserId { get; set; }
     public string? SocialId { get; set; }

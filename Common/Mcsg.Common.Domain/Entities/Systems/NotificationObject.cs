@@ -3,7 +3,7 @@
 using Core.Enums;
 using SeedWork;
 
-public class NotificationObject : AuditableEntity
+public partial class NotificationObject : AuditableEntity
 {
     public NotificationEntityType EntityType { get; set; }
     public NotificationAction Action { get; set; }

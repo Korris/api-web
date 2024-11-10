@@ -1,5 +1,5 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
-public class SocialTagPost : BaseTagPost
+public partial class SocialTagPost : BaseTagPost
 {
 }
