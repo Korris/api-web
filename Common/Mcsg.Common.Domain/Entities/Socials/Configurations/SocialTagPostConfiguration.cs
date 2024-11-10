@@ -11,7 +11,5 @@ public class SocialTagPostConfiguration : BaseConfiguration<SocialTagPost>
     {
         builder.ToTable("SocialTagPosts", DbSchema.Social);
         builder.HasIndex(x => new { x.TagId, x.PostId });
-        builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

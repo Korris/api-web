@@ -11,7 +11,5 @@ public class SocialPostReactionConfiguration : BaseConfiguration<SocialPostReact
     {
         builder.ToTable("SocialPostReactions", DbSchema.Social);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("TargetId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

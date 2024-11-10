@@ -11,8 +11,5 @@ public class ComicPostCommentConfiguration : BaseConfiguration<ComicPostComment>
     {
         builder.ToTable("ComicPostComments", DbSchema.Comic);
         builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
-        builder.HasOne(typeof(ComicResource)).WithMany().HasForeignKey("ResourceId");
     }
 }

@@ -10,7 +10,5 @@ public class SocialPostHideConfiguration : BaseConfiguration<SocialPostHide>
     public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostHide> builder)
     {
         builder.ToTable("SocialPostHides", DbSchema.Social);
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

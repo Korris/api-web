@@ -12,6 +12,5 @@ public class ComicPostConfiguration : BaseConfiguration<ComicPost>
         builder.ToTable("ComicPosts", DbSchema.Comic);
         builder.Property(x => x.HashId).IsRequired();
         builder.HasIndex(x => new { x.HashId, x.UserId, x.Type, x.Id }).IsUnique();
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

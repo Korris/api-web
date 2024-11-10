@@ -15,4 +15,8 @@ public partial class ViewHistory : EntityId
 
     [Column(TypeName = "timestamp")]
     public DateTime? CreatedOn { get; set; }
+
+    [ForeignKey("UserId")]
+    [InverseProperty("ViewHistories")]
+    public virtual User? User { get; set; }
 }

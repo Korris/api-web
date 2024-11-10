@@ -11,7 +11,5 @@ public class StorySubPostConfiguration : BaseConfiguration<StorySubPost>
     {
         builder.ToTable("StorySubPosts", DbSchema.Story);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

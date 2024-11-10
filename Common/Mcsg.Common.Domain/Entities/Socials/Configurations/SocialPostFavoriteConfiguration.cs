@@ -10,7 +10,5 @@ public class SocialPostFavoriteConfiguration : BaseConfiguration<SocialPostFavor
     public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostFavorite> builder)
     {
         builder.ToTable("SocialPostFavorites", DbSchema.Social);
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

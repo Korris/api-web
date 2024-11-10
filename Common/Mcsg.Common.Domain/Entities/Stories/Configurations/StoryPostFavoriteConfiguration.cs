@@ -10,7 +10,5 @@ public class StoryPostFavoriteConfiguration : BaseConfiguration<StoryPostFavorit
     public override void CreateEntityConfiguration(EntityTypeBuilder<StoryPostFavorite> builder)
     {
         builder.ToTable("StoryPostFavorites", DbSchema.Story);
-        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

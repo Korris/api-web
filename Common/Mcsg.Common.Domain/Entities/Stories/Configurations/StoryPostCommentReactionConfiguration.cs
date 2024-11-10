@@ -11,7 +11,5 @@ public class StoryPostCommentReactionConfiguration : BaseConfiguration<StoryPost
     {
         builder.ToTable("StoryPostCommentReactions", DbSchema.Story);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(StoryPostComment)).WithMany().HasForeignKey("TargetId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

@@ -7,8 +7,6 @@ using SeedWork;
 
 public partial class UserBlock : AuditableEntity
 {
-    #region -- Properties --
-
     /// <summary>
     /// UserId1
     /// </summary>
@@ -41,5 +39,11 @@ public partial class UserBlock : AuditableEntity
     [Column(TypeName = "timestamp")]
     public DateTime? EndDate { get; set; }
 
-    #endregion
+    [ForeignKey("UserId1")]
+    [InverseProperty("UserBlockUserId1Navigations")]
+    public virtual User UserId1Navigation { get; set; } = null!;
+
+    [ForeignKey("UserId2")]
+    [InverseProperty("UserBlockUserId2Navigations")]
+    public virtual User UserId2Navigation { get; set; } = null!;
 }

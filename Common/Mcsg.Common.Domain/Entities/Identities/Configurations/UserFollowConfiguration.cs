@@ -10,7 +10,5 @@ public class UserFollowConfiguration : BaseConfiguration<UserFollow>
     public override void CreateEntityConfiguration(EntityTypeBuilder<UserFollow> builder)
     {
         builder.ToTable("UserFollows", DbSchema.Identity);
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserFollowerId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserFollowingId");
     }
 }

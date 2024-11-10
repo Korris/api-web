@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -14,7 +15,13 @@ public partial class BackgroundMedia : AuditableEntity
     public string? Url { get; set; }
 
     public string? Thumbnail { get; set; }
+
     public string? ArtistName { get; set; }
+
     public int DurationSeconds { get; set; }
+
     public int Order { get; set; }
+
+    [InverseProperty("BackgroundMedia")]
+    public virtual ICollection<BackgroundMediaPost> BackgroundMediaPosts { get; set; } = new List<BackgroundMediaPost>();
 }

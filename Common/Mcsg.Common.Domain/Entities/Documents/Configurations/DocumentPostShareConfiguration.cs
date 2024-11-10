@@ -10,7 +10,5 @@ public class DocumentPostShareConfiguration : BaseConfiguration<DocumentPostShar
     public override void CreateEntityConfiguration(EntityTypeBuilder<DocumentPostShare> builder)
     {
         builder.ToTable("DocumentPostShares", DbSchema.Document);
-        builder.HasOne(typeof(DocumentPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

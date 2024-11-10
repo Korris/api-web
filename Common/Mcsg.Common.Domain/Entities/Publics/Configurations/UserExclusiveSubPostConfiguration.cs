@@ -8,7 +8,5 @@ public class UserExclusiveSubPostConfiguration : BaseConfiguration<UserExclusive
     public override void CreateEntityConfiguration(EntityTypeBuilder<UserExclusiveSubPost> builder)
     {
         builder.ToTable("UserExclusiveSubPosts");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        builder.HasOne(typeof(SocialSubPost)).WithMany().HasForeignKey("SubPostId");
     }
 }

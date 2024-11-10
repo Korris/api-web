@@ -11,7 +11,5 @@ public class ComicSubPostConfiguration : BaseConfiguration<ComicSubPost>
     {
         builder.ToTable("ComicSubPosts", DbSchema.Comic);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

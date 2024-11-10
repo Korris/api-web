@@ -11,7 +11,5 @@ public class DocumentSubPostConfiguration : BaseConfiguration<DocumentSubPost>
     {
         builder.ToTable("DocumentSubPosts", DbSchema.Document);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-        builder.HasOne(typeof(DocumentPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

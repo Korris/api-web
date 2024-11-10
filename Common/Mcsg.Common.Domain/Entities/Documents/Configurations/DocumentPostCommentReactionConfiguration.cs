@@ -11,7 +11,5 @@ public class DocumentPostCommentReactionConfiguration : BaseConfiguration<Docume
     {
         builder.ToTable("DocumentPostCommentReactions", DbSchema.Document);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(DocumentPostComment)).WithMany().HasForeignKey("TargetId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

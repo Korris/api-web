@@ -14,7 +14,5 @@ public class DocumentResourceConfiguration : BaseConfiguration<DocumentResource>
         builder.HasIndex(x => x.HashId).IsUnique();
         builder.Property(x => x.Name).IsRequired();
         builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasOne(typeof(DocumentSubPost)).WithMany().HasForeignKey("SubPostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

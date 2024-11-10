@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -17,4 +18,8 @@ public partial class Rating : AuditableEntity
 
     [StringLength(Validator.Description.Max)]
     public string Comment { get; set; } = default!;
+
+    [ForeignKey("UserId")]
+    [InverseProperty("Ratings")]
+    public virtual User? User { get; set; }
 }

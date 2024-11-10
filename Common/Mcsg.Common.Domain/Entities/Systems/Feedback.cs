@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -17,4 +18,11 @@ public partial class Feedback : AuditableEntity
 
     [StringLength(Validator.Description.Max)]
     public string Comment { get; set; } = default!;
+
+    [InverseProperty("Feedback")]
+    public virtual ICollection<SystemResource> SystemResources { get; set; } = new List<SystemResource>();
+
+    [ForeignKey("UserId")]
+    [InverseProperty("Feedbacks")]
+    public virtual User? User { get; set; }
 }

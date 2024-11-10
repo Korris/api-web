@@ -10,7 +10,5 @@ public class UserRelationConfiguration : BaseConfiguration<UserRelation>
     public override void CreateEntityConfiguration(EntityTypeBuilder<UserRelation> builder)
     {
         builder.ToTable("UserRelations", DbSchema.Identity);
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId1");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId2");
     }
 }

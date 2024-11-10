@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -52,4 +53,8 @@ public partial class SystemResource : AuditableEntity
     public int Width { get; set; }
     public int Height { get; set; }
     public ResourceType Type { get; set; }
+
+    [ForeignKey("FeedbackId")]
+    [InverseProperty("SystemResources")]
+    public virtual Feedback? Feedback { get; set; }
 }

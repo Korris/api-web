@@ -10,6 +10,5 @@ public class TagConfiguration : BaseConfiguration<Tag>
         builder.ToTable("Tags");
         builder.Property(x => x.Name).IsRequired();
         builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

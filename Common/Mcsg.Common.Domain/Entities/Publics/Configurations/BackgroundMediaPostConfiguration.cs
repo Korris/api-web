@@ -8,7 +8,5 @@ public class BackgroundMediaPostConfiguration : BaseConfiguration<BackgroundMedi
     public override void CreateEntityConfiguration(EntityTypeBuilder<BackgroundMediaPost> builder)
     {
         builder.ToTable("BackgroundMediaPosts");
-        builder.HasOne(typeof(BackgroundMedia)).WithMany().HasForeignKey("BackgroundMediaId");
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

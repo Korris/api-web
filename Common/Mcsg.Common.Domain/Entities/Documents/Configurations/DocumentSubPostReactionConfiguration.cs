@@ -11,7 +11,5 @@ public class DocumentSubPostReactionConfiguration : BaseConfiguration<DocumentSu
     {
         builder.ToTable("DocumentSubPostReactions", DbSchema.Document);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(DocumentSubPost)).WithMany().HasForeignKey("TargetId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

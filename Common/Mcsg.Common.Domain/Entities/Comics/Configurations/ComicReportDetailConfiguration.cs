@@ -10,7 +10,5 @@ public class ComicReportDetailConfiguration : BaseConfiguration<ComicReportDetai
     public override void CreateEntityConfiguration(EntityTypeBuilder<ComicReportDetail> builder)
     {
         builder.ToTable("ComicReportDetails", DbSchema.Comic);
-        builder.HasOne(typeof(ComicReport)).WithMany().HasForeignKey("ReportId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

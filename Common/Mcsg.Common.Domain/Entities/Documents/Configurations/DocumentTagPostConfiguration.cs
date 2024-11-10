@@ -11,7 +11,5 @@ public class DocumentTagPostConfiguration : BaseConfiguration<DocumentTagPost>
     {
         builder.ToTable("DocumentTagPosts", DbSchema.Document);
         builder.HasIndex(x => new { x.TagId, x.PostId });
-        builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
-        builder.HasOne(typeof(DocumentPost)).WithMany().HasForeignKey("PostId");
     }
 }

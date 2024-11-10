@@ -10,6 +10,5 @@ public class ComicPostLinkConfiguration : BaseConfiguration<ComicPostLink>
     public override void CreateEntityConfiguration(EntityTypeBuilder<ComicPostLink> builder)
     {
         builder.ToTable("ComicPostLinks", DbSchema.Comic);
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
     }
 }

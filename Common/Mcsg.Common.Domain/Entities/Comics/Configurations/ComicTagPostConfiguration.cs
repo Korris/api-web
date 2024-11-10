@@ -11,7 +11,5 @@ public class ComicTagPostConfiguration : BaseConfiguration<ComicTagPost>
     {
         builder.ToTable("ComicTagPosts", DbSchema.Comic);
         builder.HasIndex(x => new { x.TagId, x.PostId });
-        builder.HasOne(typeof(Tag)).WithMany().HasForeignKey("TagId");
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
     }
 }

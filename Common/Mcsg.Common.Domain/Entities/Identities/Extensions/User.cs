@@ -124,14 +124,6 @@ partial class User
 
     #region -- Properties --
 
-    [InverseProperty("UserReferee")]
-    [NotMapped]
-    public virtual ICollection<UserReferral> UserReferralUserReferees { get; set; } = [];
-
-    [InverseProperty("UserReferrer")]
-    [NotMapped]
-    public virtual ICollection<UserReferral> UserReferralUserReferrers { get; set; } = [];
-
     /// <summary>
     /// Host
     /// </summary>

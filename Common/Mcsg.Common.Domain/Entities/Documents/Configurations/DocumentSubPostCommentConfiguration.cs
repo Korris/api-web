@@ -11,8 +11,5 @@ public class DocumentSubPostCommentConfiguration : BaseConfiguration<DocumentSub
     {
         builder.ToTable("DocumentSubPostComments", DbSchema.Document);
         builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(DocumentSubPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
-        builder.HasOne(typeof(DocumentResource)).WithMany().HasForeignKey("ResourceId");
     }
 }

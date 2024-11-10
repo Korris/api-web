@@ -10,6 +10,5 @@ public class StoryPostLinkConfiguration : BaseConfiguration<StoryPostLink>
     public override void CreateEntityConfiguration(EntityTypeBuilder<StoryPostLink> builder)
     {
         builder.ToTable("StoryPostLinks", DbSchema.Story);
-        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
     }
 }

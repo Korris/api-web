@@ -12,6 +12,5 @@ public class StoryPostConfiguration : BaseConfiguration<StoryPost>
         builder.ToTable("StoryPosts", DbSchema.Story);
         builder.Property(x => x.HashId).IsRequired();
         builder.HasIndex(x => new { x.HashId, x.UserId, x.Type, x.Id }).IsUnique();
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

@@ -11,7 +11,5 @@ public class NotificationConfiguration : BaseConfiguration<Notification>
     {
         builder.ToTable("Notifications", DbSchema.System);
         builder.Property(x => x.NotificationObjectId).IsRequired();
-        builder.HasOne(typeof(NotificationObject)).WithMany().HasForeignKey("NotificationObjectId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("ReceiverId");
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using SeedWork.Dtos;
 
@@ -61,18 +59,6 @@ partial class UserReferral
             CreatedOn = CreatedOn
         };
     }
-
-    #endregion
-
-    #region -- Properties --
-
-    [ForeignKey("UserRefereeId")]
-    [InverseProperty("UserReferralUserReferees")]
-    public virtual User UserReferee { get; set; } = null!;
-
-    [ForeignKey("UserReferrerId")]
-    [InverseProperty("UserReferralUserReferrers")]
-    public virtual User UserReferrer { get; set; } = null!;
 
     #endregion
 

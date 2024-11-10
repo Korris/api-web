@@ -11,7 +11,5 @@ public class ComicPostReactionConfiguration : BaseConfiguration<ComicPostReactio
     {
         builder.ToTable("ComicPostReactions", DbSchema.Comic);
         builder.HasIndex(x => new { x.TargetId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("TargetId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
     }
 }

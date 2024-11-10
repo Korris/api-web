@@ -11,8 +11,5 @@ public class SocialPostCommentConfiguration : BaseConfiguration<SocialPostCommen
     {
         builder.ToTable("SocialPostComments", DbSchema.Social);
         builder.HasIndex(x => new { x.PostId, x.ParentId, x.AuthorId });
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("AuthorId");
-        builder.HasOne(typeof(SocialResource)).WithMany().HasForeignKey("ResourceId");
     }
 }

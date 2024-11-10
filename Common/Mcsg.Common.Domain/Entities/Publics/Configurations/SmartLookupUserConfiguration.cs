@@ -9,6 +9,5 @@ public class SmartLookupUserConfiguration : BaseConfiguration<SmartLookupUser>
     {
         builder.ToTable("SmartLookupUsers");
         builder.Property(x => x.Keyword).IsRequired();
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

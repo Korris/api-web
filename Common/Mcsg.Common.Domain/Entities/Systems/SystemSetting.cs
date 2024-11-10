@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -25,6 +26,9 @@ public partial class SystemSetting : AuditableEntity
 
     [StringLength(32)]
     public string? MicroService { get; set; }
+
+    [InverseProperty("SystemSetting")]
+    public virtual ICollection<SystemSettingHistory> SystemSettingHistories { get; set; } = new List<SystemSettingHistory>();
 
     public SystemSetting()
     {

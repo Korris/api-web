@@ -10,7 +10,5 @@ public class ComicPostFavoriteConfiguration : BaseConfiguration<ComicPostFavorit
     public override void CreateEntityConfiguration(EntityTypeBuilder<ComicPostFavorite> builder)
     {
         builder.ToTable("ComicPostFavorites", DbSchema.Comic);
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

@@ -10,6 +10,5 @@ public class RatingConfiguration : BaseConfiguration<Rating>
     public override void CreateEntityConfiguration(EntityTypeBuilder<Rating> builder)
     {
         builder.ToTable("Ratings", DbSchema.System);
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

@@ -10,6 +10,5 @@ public class FeedbackConfiguration : BaseConfiguration<Feedback>
     public override void CreateEntityConfiguration(EntityTypeBuilder<Feedback> builder)
     {
         builder.ToTable("Feedbacks", DbSchema.System);
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

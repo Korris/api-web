@@ -2,6 +2,7 @@
 
 using Core.Constants;
 using Core.Enums;
+using SeedWork.Dtos;
 using SeedWork.Extensions;
 
 partial class StoryPost
@@ -67,6 +68,19 @@ partial class StoryPost
     }
 
     /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="hide">Hide option</param>
+    /// <param name="modifiedBy">Modified by</param>
+    public void Update(HideOption hide, Guid modifiedBy)
+    {
+        Hide = hide;
+
+        ModifiedBy = modifiedBy;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Delete
     /// </summary>
     /// <param name="modifiedBy">Modified by</param>
@@ -104,7 +118,7 @@ partial class StoryPost
     {
         return new T
         {
-            //TODO
+            Id = Id
         };
     }
 
@@ -115,7 +129,7 @@ partial class StoryPost
     /// <summary>
     /// Base
     /// </summary>
-    public class BaseDto
+    public class BaseDto : IdDto
     {
     }
 

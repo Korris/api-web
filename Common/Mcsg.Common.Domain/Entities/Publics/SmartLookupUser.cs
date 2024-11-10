@@ -8,11 +8,19 @@ using SeedWork;
 public partial class SmartLookupUser : EntityId
 {
     public Guid EntityId { get; set; }
+
     public EntityType EntityType { get; set; }
+
     public Guid UserId { get; set; }
+
     public string? Keyword { get; set; }
+
     public LookupKeywordType KeywordType { get; set; }
 
     [Column(TypeName = "timestamp")]
     public DateTime CreatedOn { get; set; }
+
+    [ForeignKey("UserId")]
+    [InverseProperty("SmartLookupUsers")]
+    public virtual User User { get; set; } = null!;
 }

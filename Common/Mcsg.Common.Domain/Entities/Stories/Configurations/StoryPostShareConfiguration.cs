@@ -10,7 +10,5 @@ public class StoryPostShareConfiguration : BaseConfiguration<StoryPostShare>
     public override void CreateEntityConfiguration(EntityTypeBuilder<StoryPostShare> builder)
     {
         builder.ToTable("StoryPostShares", DbSchema.Story);
-        builder.HasOne(typeof(StoryPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

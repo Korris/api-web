@@ -10,6 +10,5 @@ public class DocumentPostLinkConfiguration : BaseConfiguration<DocumentPostLink>
     public override void CreateEntityConfiguration(EntityTypeBuilder<DocumentPostLink> builder)
     {
         builder.ToTable("DocumentPostLinks", DbSchema.Document);
-        builder.HasOne(typeof(DocumentPost)).WithMany().HasForeignKey("PostId");
     }
 }

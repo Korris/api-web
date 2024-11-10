@@ -10,6 +10,5 @@ public class SocialPostLinkConfiguration : BaseConfiguration<SocialPostLink>
     public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostLink> builder)
     {
         builder.ToTable("SocialPostLinks", DbSchema.Social);
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
     }
 }

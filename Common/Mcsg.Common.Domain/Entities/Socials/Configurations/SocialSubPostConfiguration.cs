@@ -11,7 +11,5 @@ public class SocialSubPostConfiguration : BaseConfiguration<SocialSubPost>
     {
         builder.ToTable("SocialSubPosts", DbSchema.Social);
         builder.HasIndex(x => new { x.PostId, x.HashId, x.AuthorId }).IsUnique();
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

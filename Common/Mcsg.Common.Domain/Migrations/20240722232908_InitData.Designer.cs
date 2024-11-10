@@ -1279,6 +1279,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Hide")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsAllowDownload")
+                        .HasColumnType("boolean");
+
                     b.Property<bool?>("IsCompleted")
                         .HasColumnType("boolean");
 
@@ -5418,921 +5421,1175 @@ namespace Mcsg.Common.Domain.Migrations
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.BackgroundMediaPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.BackgroundMedia", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.BackgroundMedia", "BackgroundMedia")
+                        .WithMany("BackgroundMediaPosts")
                         .HasForeignKey("BackgroundMediaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("BackgroundMediaPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BackgroundMedia");
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicResource", "Resource")
+                        .WithMany("ComicPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPostComment", "Target")
+                        .WithMany("ComicPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostFavorite", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicPostFavorites")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicPostFavorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostHide", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicPostHides")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicPostHides")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostLink", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicPostLinks")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Target")
+                        .WithMany("ComicPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostShare", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicPostShares")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicPostShares")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicReportDetail", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicReport", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicReport", "Report")
+                        .WithMany("ComicReportDetails")
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicReportDetails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Report");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicResource", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicResources")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", "SubPost")
+                        .WithMany("ComicResources")
                         .HasForeignKey("SubPostId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("SubPost");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicSubPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ComicSubPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicSubPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", "Post")
+                        .WithMany("ComicSubPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicResource", "Resource")
+                        .WithMany("ComicSubPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicSubPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPostComment", "Target")
+                        .WithMany("ComicSubPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("ComicSubPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicSubPost", "Target")
+                        .WithMany("ComicSubPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.ComicPost", "Post")
+                        .WithMany("ComicTagPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("ComicTagPosts")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentResource", "Resource")
+                        .WithMany("DocumentPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPostComment", "Target")
+                        .WithMany("DocumentPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostFavorite", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentPostFavorites")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentPostFavorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostHide", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentPostHides")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentPostHides")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostLink", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentPostLinks")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Target")
+                        .WithMany("DocumentPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostShare", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentPostShares")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentPostShares")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentReportDetail", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentReport", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentReport", "Report")
+                        .WithMany("DocumentReportDetails")
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentReportDetails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Report");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentResource", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentResources")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", "SubPost")
+                        .WithMany("DocumentResources")
                         .HasForeignKey("SubPostId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("SubPost");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentSubPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("DocumentSubPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentSubPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", "Post")
+                        .WithMany("DocumentSubPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentResource", "Resource")
+                        .WithMany("DocumentSubPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentSubPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPostComment", "Target")
+                        .WithMany("DocumentSubPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("DocumentSubPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentSubPost", "Target")
+                        .WithMany("DocumentSubPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.DocumentPost", "Post")
+                        .WithMany("DocumentTagPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("DocumentTagPosts")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Feedback", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("Feedbacks")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Notification", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.NotificationObject", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.NotificationObject", "NotificationObject")
+                        .WithMany("Notifications")
                         .HasForeignKey("NotificationObjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Receiver")
+                        .WithMany("Notifications")
                         .HasForeignKey("ReceiverId");
+
+                    b.Navigation("NotificationObject");
+
+                    b.Navigation("Receiver");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Rating", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("Ratings")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SmartLookupUser", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SmartLookupUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialResource", "Resource")
+                        .WithMany("SocialPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPostComment", "Target")
+                        .WithMany("SocialPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostFavorite", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialPostFavorites")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialPostFavorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostHide", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialPostHides")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialPostHides")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostLink", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialPostLinks")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Target")
+                        .WithMany("SocialPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostShare", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialPostShares")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialPostShares")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialReportDetail", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialReport", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialReport", "Report")
+                        .WithMany("SocialReportDetails")
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialReportDetails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Report");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialResource", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialResources")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", "SubPost")
+                        .WithMany("SocialResources")
                         .HasForeignKey("SubPostId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("SubPost");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialSubPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SocialSubPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialSubPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", "Post")
+                        .WithMany("SocialSubPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialResource", "Resource")
+                        .WithMany("SocialSubPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialSubPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPostComment", "Target")
+                        .WithMany("SocialSubPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("SocialSubPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", "Target")
+                        .WithMany("SocialSubPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialPost", "Post")
+                        .WithMany("SocialTagPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("SocialTagPosts")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StoryPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StoryPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryResource", "Resource")
+                        .WithMany("StoryPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StoryPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPostComment", "Target")
+                        .WithMany("StoryPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostFavorite", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryPostFavorites")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StoryPostFavorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostHide", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryPostHides")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StoryPostHides")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostLink", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryPostLinks")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StoryPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Target")
+                        .WithMany("StoryPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostShare", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryPostShares")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StoryPostShares")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryReportDetail", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryReport", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryReport", "Report")
+                        .WithMany("StoryReportDetails")
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StoryReportDetails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Report");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryResource", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StoryResources")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", "SubPost")
+                        .WithMany("StoryResources")
                         .HasForeignKey("SubPostId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("SubPost");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StorySubPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("StorySubPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPostComment", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StorySubPostComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", "Post")
+                        .WithMany("StorySubPostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryResource", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryResource", "Resource")
+                        .WithMany("StorySubPostComments")
                         .HasForeignKey("ResourceId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Resource");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPostCommentReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StorySubPostCommentReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPostComment", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPostComment", "Target")
+                        .WithMany("StorySubPostCommentReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPostReaction", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("StorySubPostReactions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StorySubPost", "Target")
+                        .WithMany("StorySubPostReactions")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryTagPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.StoryPost", "Post")
+                        .WithMany("StoryTagPosts")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("StoryTagPosts")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemResource", b =>
@@ -6346,84 +6603,106 @@ namespace Mcsg.Common.Domain.Migrations
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSettingHistory", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SystemSetting", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SystemSetting", "SystemSetting")
+                        .WithMany("SystemSettingHistories")
                         .HasForeignKey("SystemSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("SystemSettingHistories")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("SystemSetting");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Tag", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("Tags")
                         .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.TagFavorite", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("TagFavorites")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("TagFavorites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserBlock", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId1Navigation")
+                        .WithMany("UserBlockUserId1Navigations")
                         .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId2Navigation")
+                        .WithMany("UserBlockUserId2Navigations")
                         .HasForeignKey("UserId2")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserId1Navigation");
+
+                    b.Navigation("UserId2Navigation");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserExclusiveSubPost", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.SocialSubPost", "SubPost")
+                        .WithMany("UserExclusiveSubPosts")
                         .HasForeignKey("SubPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("UserExclusiveSubPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("SubPost");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserFollow", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserFollower")
+                        .WithMany("UserFollowUserFollowers")
                         .HasForeignKey("UserFollowerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserFollowing")
+                        .WithMany("UserFollowUserFollowings")
                         .HasForeignKey("UserFollowingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserFollower");
+
+                    b.Navigation("UserFollowing");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserReferral", b =>
@@ -6447,24 +6726,30 @@ namespace Mcsg.Common.Domain.Migrations
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserRelation", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId1Navigation")
+                        .WithMany("UserRelationUserId1Navigations")
                         .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId2Navigation")
+                        .WithMany("UserRelationUserId2Navigations")
                         .HasForeignKey("UserId2")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("UserId1Navigation");
+
+                    b.Navigation("UserId2Navigation");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.ViewHistory", b =>
                 {
-                    b.HasOne("Mcsg.Common.Domain.Entities.User", null)
-                        .WithMany()
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("ViewHistories")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -6542,16 +6827,382 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("Authorization");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.BackgroundMedia", b =>
+                {
+                    b.Navigation("BackgroundMediaPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPost", b =>
+                {
+                    b.Navigation("ComicPostComments");
+
+                    b.Navigation("ComicPostFavorites");
+
+                    b.Navigation("ComicPostHides");
+
+                    b.Navigation("ComicPostLinks");
+
+                    b.Navigation("ComicPostReactions");
+
+                    b.Navigation("ComicPostShares");
+
+                    b.Navigation("ComicSubPosts");
+
+                    b.Navigation("ComicTagPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicPostComment", b =>
+                {
+                    b.Navigation("ComicPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicReport", b =>
+                {
+                    b.Navigation("ComicReportDetails");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicResource", b =>
+                {
+                    b.Navigation("ComicPostComments");
+
+                    b.Navigation("ComicSubPostComments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPost", b =>
+                {
+                    b.Navigation("ComicResources");
+
+                    b.Navigation("ComicSubPostComments");
+
+                    b.Navigation("ComicSubPostReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.ComicSubPostComment", b =>
+                {
+                    b.Navigation("ComicSubPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPost", b =>
+                {
+                    b.Navigation("DocumentPostComments");
+
+                    b.Navigation("DocumentPostFavorites");
+
+                    b.Navigation("DocumentPostHides");
+
+                    b.Navigation("DocumentPostLinks");
+
+                    b.Navigation("DocumentPostReactions");
+
+                    b.Navigation("DocumentPostShares");
+
+                    b.Navigation("DocumentSubPosts");
+
+                    b.Navigation("DocumentTagPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentPostComment", b =>
+                {
+                    b.Navigation("DocumentPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentReport", b =>
+                {
+                    b.Navigation("DocumentReportDetails");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentResource", b =>
+                {
+                    b.Navigation("DocumentPostComments");
+
+                    b.Navigation("DocumentSubPostComments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPost", b =>
+                {
+                    b.Navigation("DocumentResources");
+
+                    b.Navigation("DocumentSubPostComments");
+
+                    b.Navigation("DocumentSubPostReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.DocumentSubPostComment", b =>
+                {
+                    b.Navigation("DocumentSubPostCommentReactions");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Feedback", b =>
                 {
                     b.Navigation("SystemResources");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.NotificationObject", b =>
+                {
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPost", b =>
+                {
+                    b.Navigation("BackgroundMediaPosts");
+
+                    b.Navigation("SocialPostComments");
+
+                    b.Navigation("SocialPostFavorites");
+
+                    b.Navigation("SocialPostHides");
+
+                    b.Navigation("SocialPostLinks");
+
+                    b.Navigation("SocialPostReactions");
+
+                    b.Navigation("SocialPostShares");
+
+                    b.Navigation("SocialSubPosts");
+
+                    b.Navigation("SocialTagPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialPostComment", b =>
+                {
+                    b.Navigation("SocialPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialReport", b =>
+                {
+                    b.Navigation("SocialReportDetails");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialResource", b =>
+                {
+                    b.Navigation("SocialPostComments");
+
+                    b.Navigation("SocialSubPostComments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPost", b =>
+                {
+                    b.Navigation("SocialResources");
+
+                    b.Navigation("SocialSubPostComments");
+
+                    b.Navigation("SocialSubPostReactions");
+
+                    b.Navigation("UserExclusiveSubPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SocialSubPostComment", b =>
+                {
+                    b.Navigation("SocialSubPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPost", b =>
+                {
+                    b.Navigation("StoryPostComments");
+
+                    b.Navigation("StoryPostFavorites");
+
+                    b.Navigation("StoryPostHides");
+
+                    b.Navigation("StoryPostLinks");
+
+                    b.Navigation("StoryPostReactions");
+
+                    b.Navigation("StoryPostShares");
+
+                    b.Navigation("StorySubPosts");
+
+                    b.Navigation("StoryTagPosts");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryPostComment", b =>
+                {
+                    b.Navigation("StoryPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryReport", b =>
+                {
+                    b.Navigation("StoryReportDetails");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StoryResource", b =>
+                {
+                    b.Navigation("StoryPostComments");
+
+                    b.Navigation("StorySubPostComments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPost", b =>
+                {
+                    b.Navigation("StoryResources");
+
+                    b.Navigation("StorySubPostComments");
+
+                    b.Navigation("StorySubPostReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.StorySubPostComment", b =>
+                {
+                    b.Navigation("StorySubPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.SystemSetting", b =>
+                {
+                    b.Navigation("SystemSettingHistories");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.Tag", b =>
+                {
+                    b.Navigation("ComicTagPosts");
+
+                    b.Navigation("DocumentTagPosts");
+
+                    b.Navigation("SocialTagPosts");
+
+                    b.Navigation("StoryTagPosts");
+
+                    b.Navigation("TagFavorites");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
                 {
+                    b.Navigation("ComicPostCommentReactions");
+
+                    b.Navigation("ComicPostComments");
+
+                    b.Navigation("ComicPostFavorites");
+
+                    b.Navigation("ComicPostHides");
+
+                    b.Navigation("ComicPostReactions");
+
+                    b.Navigation("ComicPostShares");
+
+                    b.Navigation("ComicPosts");
+
+                    b.Navigation("ComicReportDetails");
+
+                    b.Navigation("ComicResources");
+
+                    b.Navigation("ComicSubPostCommentReactions");
+
+                    b.Navigation("ComicSubPostComments");
+
+                    b.Navigation("ComicSubPostReactions");
+
+                    b.Navigation("ComicSubPosts");
+
+                    b.Navigation("DocumentPostCommentReactions");
+
+                    b.Navigation("DocumentPostComments");
+
+                    b.Navigation("DocumentPostFavorites");
+
+                    b.Navigation("DocumentPostHides");
+
+                    b.Navigation("DocumentPostReactions");
+
+                    b.Navigation("DocumentPostShares");
+
+                    b.Navigation("DocumentPosts");
+
+                    b.Navigation("DocumentReportDetails");
+
+                    b.Navigation("DocumentResources");
+
+                    b.Navigation("DocumentSubPostCommentReactions");
+
+                    b.Navigation("DocumentSubPostComments");
+
+                    b.Navigation("DocumentSubPostReactions");
+
+                    b.Navigation("DocumentSubPosts");
+
+                    b.Navigation("Feedbacks");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Ratings");
+
+                    b.Navigation("SmartLookupUsers");
+
+                    b.Navigation("SocialPostCommentReactions");
+
+                    b.Navigation("SocialPostComments");
+
+                    b.Navigation("SocialPostFavorites");
+
+                    b.Navigation("SocialPostHides");
+
+                    b.Navigation("SocialPostReactions");
+
+                    b.Navigation("SocialPostShares");
+
+                    b.Navigation("SocialPosts");
+
+                    b.Navigation("SocialReportDetails");
+
+                    b.Navigation("SocialResources");
+
+                    b.Navigation("SocialSubPostCommentReactions");
+
+                    b.Navigation("SocialSubPostComments");
+
+                    b.Navigation("SocialSubPostReactions");
+
+                    b.Navigation("SocialSubPosts");
+
+                    b.Navigation("StoryPostCommentReactions");
+
+                    b.Navigation("StoryPostComments");
+
+                    b.Navigation("StoryPostFavorites");
+
+                    b.Navigation("StoryPostHides");
+
+                    b.Navigation("StoryPostReactions");
+
+                    b.Navigation("StoryPostShares");
+
+                    b.Navigation("StoryPosts");
+
+                    b.Navigation("StoryReportDetails");
+
+                    b.Navigation("StoryResources");
+
+                    b.Navigation("StorySubPostCommentReactions");
+
+                    b.Navigation("StorySubPostComments");
+
+                    b.Navigation("StorySubPostReactions");
+
+                    b.Navigation("StorySubPosts");
+
+                    b.Navigation("SystemSettingHistories");
+
+                    b.Navigation("TagFavorites");
+
+                    b.Navigation("Tags");
+
+                    b.Navigation("UserBlockUserId1Navigations");
+
+                    b.Navigation("UserBlockUserId2Navigations");
+
+                    b.Navigation("UserExclusiveSubPosts");
+
+                    b.Navigation("UserFollowUserFollowers");
+
+                    b.Navigation("UserFollowUserFollowings");
+
                     b.Navigation("UserReferralUserReferees");
 
                     b.Navigation("UserReferralUserReferrers");
+
+                    b.Navigation("UserRelationUserId1Navigations");
+
+                    b.Navigation("UserRelationUserId2Navigations");
+
+                    b.Navigation("ViewHistories");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>

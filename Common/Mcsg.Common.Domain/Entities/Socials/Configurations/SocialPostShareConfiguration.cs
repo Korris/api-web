@@ -10,7 +10,5 @@ public class SocialPostShareConfiguration : BaseConfiguration<SocialPostShare>
     public override void CreateEntityConfiguration(EntityTypeBuilder<SocialPostShare> builder)
     {
         builder.ToTable("SocialPostShares", DbSchema.Social);
-        builder.HasOne(typeof(SocialPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

@@ -10,7 +10,5 @@ public class ComicPostShareConfiguration : BaseConfiguration<ComicPostShare>
     public override void CreateEntityConfiguration(EntityTypeBuilder<ComicPostShare> builder)
     {
         builder.ToTable("ComicPostShares", DbSchema.Comic);
-        builder.HasOne(typeof(ComicPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

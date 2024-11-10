@@ -10,7 +10,5 @@ public class SystemSettingHistoryConfiguration : BaseConfiguration<SystemSetting
     public override void CreateEntityConfiguration(EntityTypeBuilder<SystemSettingHistory> builder)
     {
         builder.ToTable("SystemSettingHistories", DbSchema.System);
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
-        builder.HasOne(typeof(SystemSetting)).WithMany().HasForeignKey("SystemSettingId");
     }
 }

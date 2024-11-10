@@ -10,7 +10,5 @@ public class SocialReportDetailConfiguration : BaseConfiguration<SocialReportDet
     public override void CreateEntityConfiguration(EntityTypeBuilder<SocialReportDetail> builder)
     {
         builder.ToTable("SocialReportDetails", DbSchema.Social);
-        builder.HasOne(typeof(SocialReport)).WithMany().HasForeignKey("ReportId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

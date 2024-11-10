@@ -10,7 +10,5 @@ public class DocumentPostFavoriteConfiguration : BaseConfiguration<DocumentPostF
     public override void CreateEntityConfiguration(EntityTypeBuilder<DocumentPostFavorite> builder)
     {
         builder.ToTable("DocumentPostFavorites", DbSchema.Document);
-        builder.HasOne(typeof(DocumentPost)).WithMany().HasForeignKey("PostId");
-        builder.HasOne(typeof(User)).WithMany().HasForeignKey("UserId");
     }
 }

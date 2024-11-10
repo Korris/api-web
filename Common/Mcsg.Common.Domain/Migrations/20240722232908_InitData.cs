@@ -767,6 +767,7 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    IsAllowDownload = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),

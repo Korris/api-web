@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Mcsg.Common.Domain.Entities;
+﻿namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork.Constants;
@@ -70,14 +68,6 @@ partial class SystemResource
             Id = Id,
         };
     }
-
-    #endregion
-
-    #region -- Properties --
-
-    [ForeignKey("FeedbackId")]
-    [InverseProperty("SystemResources")]
-    public virtual Feedback? Feedback { get; set; }
 
     #endregion
 
