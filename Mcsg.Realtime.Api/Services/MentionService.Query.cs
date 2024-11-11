@@ -1,17 +1,16 @@
-﻿namespace Mcsg.Realtime.Api.Services
+﻿namespace Mcsg.Realtime.Api.Services;
+
+public partial class MentionService
 {
-    public partial class MentionService
+    private string DeleteMentionCommentCommand
     {
-        private string DeleteMentionCommentCommand
+        get
         {
-            get
-            {
-                return @$"UPDATE {_mentionRepository.TableName}
-                                SET ""IsDelete"" = true,
-                                    ""ModifiedBy"" = @ModifiedBy,
-                                    ""ModifiedOn"" = @ModifiedOn
-                                WHERE ""LocationId"" = @LocationId  ";
-            }
+            return @$"UPDATE {_mentionRepository.TableName}
+                        SET ""IsDelete"" = true,
+                            ""ModifiedBy"" = @ModifiedBy,
+                            ""ModifiedOn"" = @ModifiedOn
+                        WHERE ""LocationId"" = @LocationId";
         }
     }
 }

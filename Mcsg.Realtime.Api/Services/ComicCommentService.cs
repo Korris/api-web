@@ -18,41 +18,24 @@ using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class ComicCommentService : IComicCommentService
+public partial class ComicCommentService : BaseS, IComicCommentService
 {
-    private readonly IRepository<ComicPost> _postRepository;
-    private readonly IRepository<ComicSubPost> _subPostRepository;
-    private readonly IRepository<ComicPostComment> _postCommentRepository;
-    private readonly IRepository<ComicSubPostComment> _subPostCommentRepository;
-    private readonly IRepository<ComicResource> _resourceRepository;
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly IResourceCommentService _resourceCommentService;
-    private readonly INotificationService _notificationService;
-    private readonly IMentionService _mentionService;
-    private readonly ISmartCountService _smartCountService;
-    private readonly IBusinessText businessBodyText;
-    private readonly IMapper _mapper;
-    private IConfiguration _configuration;
-    private readonly IMcsgContext _context;
-
-    public ComicCommentService(IRepository<ComicPost> postRepository,
-        IRepository<ComicSubPost> subPostRepository,
-        IRepository<ComicPostComment> postCommentRepository,
-        IRepository<ComicSubPostComment> subPostCommentRepository,
-        IRepository<ComicResource> resourceRepository,
-        IRepository<Mention> mentionRepository,
-        IResourceCommentService resourceCommentService,
-        INotificationService notificationService,
-        IMentionService mentionService,
-        ISmartCountService smartCountService,
-        IBusinessText businessBodyText,
-        IMapper mapper,
-        ISetting setting,
-        IConfiguration configuration,
-        IMcsgContext context)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="businessText"></param>
+    /// <param name="postCommentRepository"></param>
+    /// <param name="subPostCommentRepository"></param>
+    /// <param name="resourceRepository"></param>
+    /// <param name="mentionRepository"></param>
+    /// <param name="resourceCommentService"></param>
+    /// <param name="notificationService"></param>
+    /// <param name="mentionService"></param>
+    /// <param name="smartCountService"></param>
+    /// <param name="mapper"></param>
+    public ComicCommentService(IMcsgContext context, IBusinessText businessText, IRepository<ComicPostComment> postCommentRepository, IRepository<ComicSubPostComment> subPostCommentRepository, IRepository<ComicResource> resourceRepository, IRepository<Mention> mentionRepository, IResourceCommentService resourceCommentService, INotificationService notificationService, IMentionService mentionService, ISmartCountService smartCountService, IMapper mapper) : base(context)
     {
-        _postRepository = postRepository;
-        _subPostRepository = subPostRepository;
         _postCommentRepository = postCommentRepository;
         _subPostCommentRepository = subPostCommentRepository;
         _mentionRepository = mentionRepository;
@@ -61,11 +44,8 @@ public partial class ComicCommentService : IComicCommentService
         _notificationService = notificationService;
         _mentionService = mentionService;
         _smartCountService = smartCountService;
-        _businessText = businessBodyText;
+        _businessText = businessText;
         _mapper = mapper;
-        _setting = setting;
-        _configuration = configuration;
-        _context = context;
     }
 
     public async Task<PostCommentResp> PostComment(PostCommentReq req)
@@ -99,7 +79,7 @@ public partial class ComicCommentService : IComicCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -111,7 +91,7 @@ public partial class ComicCommentService : IComicCommentService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 order = subPost.Order;
@@ -138,7 +118,7 @@ public partial class ComicCommentService : IComicCommentService
             if (commentNotiRequest.Type == "subpost")
             {
                 commentNotiRequest.Order = order;
-                var post = await _postRepository.GetByIdAsync(response.PostIdOfPost);
+                var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
                 commentNotiRequest.PostHashId = post.HashId;
             }
             await _notificationService.AddCommentNotification(commentNotiRequest);
@@ -232,7 +212,7 @@ public partial class ComicCommentService : IComicCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -243,7 +223,7 @@ public partial class ComicCommentService : IComicCommentService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -300,9 +280,9 @@ public partial class ComicCommentService : IComicCommentService
             GifId = req.GifId,
             CustomNote = req.CustomNote
         };
+        await _context.ComicPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
 
-        await _postCommentRepository.InsertAsync(comment);
-        //PING COUNT
         await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.Post);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
@@ -336,8 +316,9 @@ public partial class ComicCommentService : IComicCommentService
             GifId = req.GifId,
             CustomNote = req.CustomNote
         };
-        await _subPostCommentRepository.InsertAsync(comment);
-        //PING COUNT
+        await _context.ComicSubPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
+
         await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.SubPost);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
@@ -361,7 +342,7 @@ public partial class ComicCommentService : IComicCommentService
     #region Update
     private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -378,7 +359,7 @@ public partial class ComicCommentService : IComicCommentService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _postCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
 
@@ -398,7 +379,7 @@ public partial class ComicCommentService : IComicCommentService
     }
     private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -415,7 +396,7 @@ public partial class ComicCommentService : IComicCommentService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _subPostCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
 
@@ -438,7 +419,7 @@ public partial class ComicCommentService : IComicCommentService
     #region Delete
     private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -472,7 +453,7 @@ public partial class ComicCommentService : IComicCommentService
 
     private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -482,7 +463,7 @@ public partial class ComicCommentService : IComicCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
-        var post = await _subPostRepository.GetByIdAsync(comment.PostId);
+        var post = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == comment.PostId);
 
         var command = string.Format(DeleteCommentCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,
@@ -523,14 +504,19 @@ public partial class ComicCommentService : IComicCommentService
     #region -- Fields --
 
     /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    private readonly IRepository<ComicPostComment> _postCommentRepository;
+    private readonly IRepository<ComicSubPostComment> _subPostCommentRepository;
+    private readonly IRepository<ComicResource> _resourceRepository;
+    private readonly IRepository<Mention> _mentionRepository;
+    private readonly IResourceCommentService _resourceCommentService;
+    private readonly INotificationService _notificationService;
+    private readonly IMentionService _mentionService;
+    private readonly ISmartCountService _smartCountService;
+    private readonly IMapper _mapper;
 
     #endregion
 }

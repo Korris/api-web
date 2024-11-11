@@ -3,6 +3,7 @@
 namespace Mcsg.Realtime.Api.Services;
 
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Dtos;
@@ -10,11 +11,15 @@ using Interfaces;
 using Requests;
 using Responses;
 
-public partial class MentionService : IMentionService
+public partial class MentionService : BaseS, IMentionService
 {
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly INotificationService _notificationService;
-    public MentionService(IUnitOfWork unitOfWork, INotificationService notificationService)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="notificationService"></param>
+    public MentionService(IMcsgContext context, IUnitOfWork unitOfWork, INotificationService notificationService) : base(context)
     {
         _mentionRepository = unitOfWork.GetRepository<Mention>();
         _notificationService = notificationService;
@@ -22,7 +27,7 @@ public partial class MentionService : IMentionService
 
     public async Task<MentionResp> AddMention(Guid locationId, MentionLocationType locationType, Guid entityId, EntityType entityType, int length, int offset, string text)
     {
-        var mention = new Mention()
+        var mention = new Mention
         {
             LocationId = locationId,
             LocationType = locationType,
@@ -32,7 +37,8 @@ public partial class MentionService : IMentionService
             Offset = offset,
             Text = text
         };
-        await _mentionRepository.InsertAsync(mention);
+        await _context.Mentions.AddAsync(mention);
+        await _context.SaveChangesAsync(default);
 
         return new MentionResp();
     }
@@ -51,7 +57,7 @@ public partial class MentionService : IMentionService
         var mentionInsert = new List<Mention>();
         foreach (var item in mentions)
         {
-            var mention = new Mention()
+            var mention = new Mention
             {
                 LocationId = commentId,
                 LocationType = locationType,
@@ -68,12 +74,13 @@ public partial class MentionService : IMentionService
         // Insert List
         if (mentionInsert.Count > 0)
         {
-            var result = await _mentionRepository.InsertAsync(mentionInsert);
+            await _context.Mentions.AddRangeAsync(mentionInsert);
+            var result = await _context.SaveChangesAsync(default);
             if (result > 0)
             {
                 foreach (var mention in mentionInsert)
                 {
-                    var mentionNoti = new MentionNotificationReq()
+                    var mentionNoti = new MentionNotificationReq
                     {
                         LocationId = commentId,
                         LocationType = locationType,
@@ -92,4 +99,11 @@ public partial class MentionService : IMentionService
 
         return false;
     }
+
+    #region -- Fields --
+
+    private readonly IRepository<Mention> _mentionRepository;
+    private readonly INotificationService _notificationService;
+
+    #endregion
 }

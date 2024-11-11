@@ -1,8 +1,8 @@
 ﻿namespace Mcsg.Realtime.Api.Services;
 
-public partial class ComicCommentService
+public partial class ComicReplyService
 {
-    private string DeleteCommentCommand
+    private string DeleteReplyCommand
     {
         get
         {
@@ -11,12 +11,6 @@ public partial class ComicCommentService
                             ""ModifiedBy"" = @ModifiedBy,
                             ""ModifiedOn"" = @ModifiedOn
                         WHERE ""Id"" = @Id ;
-
-                    UPDATE {{0}}
-                        SET ""IsDelete"" = true,
-                            ""ModifiedBy"" = @ModifiedBy,
-                            ""ModifiedOn"" = @ModifiedOn
-                        WHERE ""ParentId"" = @Id ;
                             
                     UPDATE {{1}}
                         SET ""IsDelete"" = true,
@@ -24,17 +18,11 @@ public partial class ComicCommentService
                             ""ModifiedOn"" = @ModifiedOn
                         WHERE ""Id"" = (SELECT ""ResourceId"" FROM {{0}} WHERE ""Id"" = @Id) ;
 
-                    UPDATE {{1}}
-                        SET ""IsDelete"" = true,
-                            ""ModifiedBy"" = @ModifiedBy,
-                            ""ModifiedOn"" = @ModifiedOn
-                        WHERE ""Id"" IN (SELECT ""ResourceId"" FROM {{0}} WHERE ""ParentId"" = @Id) ;
-
                     UPDATE {{2}}
                         SET ""IsDelete"" = true,
                             ""ModifiedBy"" = @ModifiedBy,
                             ""ModifiedOn"" = @ModifiedOn
-                        WHERE ""LocationId"" = @Id AND ""LocationType"" = @LocationType;";
+                        WHERE ""LocationId"" = @Id AND ""LocationType"" = @LocationType; ";
         }
     }
 }

@@ -18,41 +18,24 @@ using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class SocialCommentService : ISocialCommentService
+public partial class SocialCommentService : BaseS, ISocialCommentService
 {
-    private readonly IRepository<SocialPost> _postRepository;
-    private readonly IRepository<SocialSubPost> _subPostRepository;
-    private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
-    private readonly IRepository<SocialResource> _resourceRepository;
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly IResourceCommentService _resourceCommentService;
-    private readonly INotificationService _notificationService;
-    private readonly IMentionService _mentionService;
-    private readonly ISmartCountService _smartCountService;
-    private readonly IBusinessText businessBodyText;
-    private readonly IMapper _mapper;
-    private IConfiguration _configuration;
-    private readonly IMcsgContext _context;
-
-    public SocialCommentService(IRepository<SocialPost> postRepository,
-        IRepository<SocialSubPost> subPostRepository,
-        IRepository<SocialPostComment> postCommentRepository,
-        IRepository<SocialSubPostComment> subPostCommentRepository,
-        IRepository<SocialResource> resourceRepository,
-        IRepository<Mention> mentionRepository,
-        IResourceCommentService resourceCommentService,
-        INotificationService notificationService,
-        IMentionService mentionService,
-        ISmartCountService smartCountService,
-        IBusinessText businessBodyText,
-        IMapper mapper,
-        ISetting setting,
-        IConfiguration configuration,
-        IMcsgContext context)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="businessText"></param>
+    /// <param name="postCommentRepository"></param>
+    /// <param name="subPostCommentRepository"></param>
+    /// <param name="resourceRepository"></param>
+    /// <param name="mentionRepository"></param>
+    /// <param name="resourceCommentService"></param>
+    /// <param name="notificationService"></param>
+    /// <param name="mentionService"></param>
+    /// <param name="smartCountService"></param>
+    /// <param name="mapper"></param>
+    public SocialCommentService(IMcsgContext context, IBusinessText businessText, IRepository<SocialPostComment> postCommentRepository, IRepository<SocialSubPostComment> subPostCommentRepository, IRepository<SocialResource> resourceRepository, IRepository<Mention> mentionRepository, IResourceCommentService resourceCommentService, INotificationService notificationService, IMentionService mentionService, ISmartCountService smartCountService, IMapper mapper) : base(context)
     {
-        _postRepository = postRepository;
-        _subPostRepository = subPostRepository;
         _postCommentRepository = postCommentRepository;
         _subPostCommentRepository = subPostCommentRepository;
         _mentionRepository = mentionRepository;
@@ -61,11 +44,8 @@ public partial class SocialCommentService : ISocialCommentService
         _notificationService = notificationService;
         _mentionService = mentionService;
         _smartCountService = smartCountService;
-        _businessText = businessBodyText;
+        _businessText = businessText;
         _mapper = mapper;
-        _setting = setting;
-        _configuration = configuration;
-        _context = context;
     }
 
     public async Task<PostCommentResp> PostComment(PostCommentReq req)
@@ -80,9 +60,9 @@ public partial class SocialCommentService : ISocialCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.InvalidRequest, RealtimeErrorCode.InvalidRequest);
         }
+
         var response = new PostCommentResp();
 
-        req.CommentText = req.CommentText.RemoveMaliciousText();
         var receiverIds = req.CommentText.ToGuids();
         var userName = req.UserName;
         var profileName = req.ProfileName;
@@ -94,10 +74,12 @@ public partial class SocialCommentService : ISocialCommentService
         var rcDto = new ResourceCommentDto(userFolder, req.PostId, req.ResourceHashId, req.MicroService);
         var resource = await _resourceCommentService.AddResourceToComment(rcDto);
         var pDto = new PostDto();
+        var order = 0.0f;
+        req.CommentText = req.CommentText.RemoveMaliciousText();
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -109,16 +91,20 @@ public partial class SocialCommentService : ISocialCommentService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
+                order = subPost.Order;
                 pDto.Id = subPost.Id;
                 pDto.HashId = subPost.HashId;
                 pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
 
                 response = await CommentToSubPost(req, author, resource, pDto);
+                response.Order = subPost.Order;
+                response.PostIdOfPost = subPost.PostId;
             };
         }
+        response.PostType = PostType.Feed;
         /// Check createdby in mention will not send this notification to notice that someone comment on their post
         if (!string.IsNullOrEmpty(pDto.HashId) && !receiverIds.Contains(pDto.CreateBy))
         {
@@ -129,6 +115,12 @@ public partial class SocialCommentService : ISocialCommentService
 
             // Send notification
             var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
+            if (commentNotiRequest.Type == "subpost")
+            {
+                commentNotiRequest.Order = order;
+                var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
+                commentNotiRequest.PostHashId = post.HashId;
+            }
             await _notificationService.AddCommentNotification(commentNotiRequest);
         }
 
@@ -140,7 +132,7 @@ public partial class SocialCommentService : ISocialCommentService
                 UserAvatar = userAvatar,
                 UserProfileName = profileName,
                 TargetId = response.Id,
-                UserId = userId ?? Guid.Empty,
+                UserId = userId.Value,
                 EntityType = req.Type == PostTypes.Post ? NotificationEntityType.PostCommentMention : NotificationEntityType.SubPostCommentMention
             });
         }
@@ -169,6 +161,7 @@ public partial class SocialCommentService : ISocialCommentService
 
         return response;
     }
+
     public async Task<PostCommentResp> UpdateComment(UpdateCommentReq req)
     {
         var userId = req.UserId;
@@ -219,7 +212,7 @@ public partial class SocialCommentService : ISocialCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -230,7 +223,7 @@ public partial class SocialCommentService : ISocialCommentService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -247,6 +240,7 @@ public partial class SocialCommentService : ISocialCommentService
 
         return response;
     }
+
     public async Task<PostCommentResp> DeleteComment(DeleteCommentReq req)
     {
         var userId = req.UserId;
@@ -262,21 +256,22 @@ public partial class SocialCommentService : ISocialCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            return await DeleteCommentInPost(req, userId.Value);
+            return await DeleteCommentInPost(req);
         }
         else
         {
-            return await DeleteCommentInSubPost(req, userId.Value);
+            return await DeleteCommentInSubPost(req);
         }
     }
 
     #region Add New Comment
     private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
+        req.CommentText = req.CommentText.RemoveMaliciousText();
         var comment = new SocialPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText.RemoveMaliciousText(),
+            Body = req.CommentText,
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
@@ -285,9 +280,9 @@ public partial class SocialCommentService : ISocialCommentService
             GifId = req.GifId,
             CustomNote = req.CustomNote
         };
+        await _context.SocialPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
 
-        await _postCommentRepository.InsertAsync(comment);
-        //PING COUNT
         await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.Post);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
@@ -306,6 +301,7 @@ public partial class SocialCommentService : ISocialCommentService
             Mentions = req.Mentions
         };
     }
+
     private async Task<PostCommentResp> CommentToSubPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
         var comment = new SocialSubPostComment
@@ -320,8 +316,9 @@ public partial class SocialCommentService : ISocialCommentService
             GifId = req.GifId,
             CustomNote = req.CustomNote
         };
-        await _subPostCommentRepository.InsertAsync(comment);
-        //PING COUNT
+        await _context.SocialSubPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
+
         await _smartCountService.QueueAddCommentCount(req.PostId, EntityType.SubPost);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
@@ -345,7 +342,7 @@ public partial class SocialCommentService : ISocialCommentService
     #region Update
     private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -362,7 +359,7 @@ public partial class SocialCommentService : ISocialCommentService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _postCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
 
@@ -382,7 +379,7 @@ public partial class SocialCommentService : ISocialCommentService
     }
     private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -399,7 +396,7 @@ public partial class SocialCommentService : ISocialCommentService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _subPostCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);
 
@@ -420,15 +417,15 @@ public partial class SocialCommentService : ISocialCommentService
     #endregion
 
     #region Delete
-    private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req, Guid userId)
+    private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -438,7 +435,7 @@ public partial class SocialCommentService : ISocialCommentService
                     new
                     {
                         Id = req.CommentId,
-                        ModifiedBy = userId,
+                        ModifiedBy = req.UserId,
                         ModifiedOn = DateTime.UtcNow,
                         LocationType = (int)MentionLocationType.PostComment
                     });
@@ -453,25 +450,27 @@ public partial class SocialCommentService : ISocialCommentService
             Id = comment.Id,
         };
     }
-    private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req, Guid userId)
+
+    private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.CommentId);
+        var comment = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
+        var post = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == comment.PostId);
 
         var command = string.Format(DeleteCommentCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,
                         new
                         {
                             Id = req.CommentId,
-                            ModifiedBy = userId,
+                            ModifiedBy = req.UserId,
                             ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.SubPostComment
                         });
@@ -480,6 +479,7 @@ public partial class SocialCommentService : ISocialCommentService
         await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.SubPost);
         return new PostCommentResp
         {
+            PostIdOfPost = post.PostId,
             PostId = comment.PostId,
             CommentDate = comment.ModifiedOn.Value,
             Type = PostTypes.SubPost,
@@ -487,6 +487,7 @@ public partial class SocialCommentService : ISocialCommentService
         };
     }
     #endregion
+
     private bool ValidComment(PostCommentReq req)
     {
         if (req.PostId == Guid.Empty)
@@ -503,14 +504,19 @@ public partial class SocialCommentService : ISocialCommentService
     #region -- Fields --
 
     /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    private readonly IRepository<SocialPostComment> _postCommentRepository;
+    private readonly IRepository<SocialSubPostComment> _subPostCommentRepository;
+    private readonly IRepository<SocialResource> _resourceRepository;
+    private readonly IRepository<Mention> _mentionRepository;
+    private readonly IResourceCommentService _resourceCommentService;
+    private readonly INotificationService _notificationService;
+    private readonly IMentionService _mentionService;
+    private readonly ISmartCountService _smartCountService;
+    private readonly IMapper _mapper;
 
     #endregion
 }

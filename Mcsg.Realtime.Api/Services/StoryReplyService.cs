@@ -17,38 +17,25 @@ using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class StoryReplyService : IStoryReplyService
+public partial class StoryReplyService : BaseS, IStoryReplyService
 {
-    private readonly IRepository<StoryPost> _postRepository;
-    private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<StoryPostComment> _postCommentRepository;
-    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
-    private readonly IResourceCommentService _resourceCommentService;
-    private readonly IRepository<StoryResource> _resourceRepository;
-    private readonly IRepository<Mention> _mentionRepository;
-    private readonly IStoryNotificationService _notificationService;
-    private readonly IMentionService _mentionService;
-    private readonly IMapper _mapper;
-    private IConfiguration _configuration;
-    private readonly IMcsgContext _context;
-
-    public StoryReplyService(IRepository<StoryPost> postRepository,
-        IRepository<StorySubPost> subPostRepository,
-        IRepository<StoryPostComment> postCommentRepository,
-        IRepository<StorySubPostComment> subPostCommentRepository,
-        IResourceCommentService resourceCommentService,
-        IRepository<StoryResource> resourceRepository,
-        IRepository<Mention> mentionRepository,
-        IStoryNotificationService notificationService,
-        IBusinessText businessText,
-        IMentionService mentionService,
-        IMapper mapper,
-        ISetting setting,
-        IConfiguration configuration,
-        IMcsgContext context)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="businessText"></param>
+    /// <param name="postCommentRepository"></param>
+    /// <param name="subPostCommentRepository"></param>
+    /// <param name="resourceCommentService"></param>
+    /// <param name="resourceRepository"></param>
+    /// <param name="mentionRepository"></param>
+    /// <param name="notificationService"></param>
+    /// <param name="mentionService"></param>
+    /// <param name="mapper"></param>
+    public StoryReplyService(IMcsgContext context, IBusinessText businessText, IRepository<StoryPostComment> postCommentRepository, IRepository<StorySubPostComment> subPostCommentRepository, IResourceCommentService resourceCommentService, IRepository<StoryResource> resourceRepository, IRepository<Mention> mentionRepository, IStoryNotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
     {
-        _postRepository = postRepository;
-        _subPostRepository = subPostRepository;
+        _businessText = businessText;
+
         _postCommentRepository = postCommentRepository;
         _subPostCommentRepository = subPostCommentRepository;
         _resourceCommentService = resourceCommentService;
@@ -57,10 +44,6 @@ public partial class StoryReplyService : IStoryReplyService
         _notificationService = notificationService;
         _mentionService = mentionService;
         _mapper = mapper;
-        _setting = setting;
-        _configuration = configuration;
-        _businessText = businessText;
-        _context = context;
     }
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
@@ -79,6 +62,7 @@ public partial class StoryReplyService : IStoryReplyService
         }
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
+
         var userName = req.UserName;
         var profileName = req.ProfileName;
         var userFolder = req.UserFolder;
@@ -93,7 +77,7 @@ public partial class StoryReplyService : IStoryReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -105,7 +89,7 @@ public partial class StoryReplyService : IStoryReplyService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.StorySubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 order = subPost.Order;
@@ -130,7 +114,7 @@ public partial class StoryReplyService : IStoryReplyService
             if (commentNotiRequest.Type == PostTypes.SubPost)
             {
                 response.Order = commentNotiRequest.Order = order;
-                var post = await _postRepository.GetByIdAsync(response.PostIdOfPost);
+                var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
                 commentNotiRequest.PostHashId = post.HashId;
             }
             commentNotiRequest.CommentId = req.ReplyToCommentId;
@@ -180,6 +164,7 @@ public partial class StoryReplyService : IStoryReplyService
         #endregion
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
+
         var userName = req.UserName;
         var profileName = req.ProfileName;
         var userFolder = req.UserFolder;
@@ -194,7 +179,7 @@ public partial class StoryReplyService : IStoryReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _postRepository.GetByIdAsync(req.PostId);
+            var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -205,7 +190,7 @@ public partial class StoryReplyService : IStoryReplyService
         }
         else
         {
-            var subPost = await _subPostRepository.GetByIdAsync(req.PostId);
+            var subPost = await _context.StorySubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -217,10 +202,11 @@ public partial class StoryReplyService : IStoryReplyService
         }
 
         response.AuthorName = authorName;
-        response.UserName = userName;
         response.UserAvatar = userAvatar;
+        response.UserName = userName;
         response.ReplyText = await _businessText.Process(req.ReplyText);
         response.CustomNote = req.CustomNote;
+
         return response;
     }
 
@@ -239,11 +225,11 @@ public partial class StoryReplyService : IStoryReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            return await DeleteReplyToPostComment(req, userId.Value);
+            return await DeleteReplyToPostComment(req);
         }
         else
         {
-            return await DeleteReplyToSubPostComment(req, userId.Value);
+            return await DeleteReplyToSubPostComment(req);
         }
     }
 
@@ -264,8 +250,8 @@ public partial class StoryReplyService : IStoryReplyService
             QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
             CustomNote = req.CustomNote
         };
-
-        await _postCommentRepository.InsertAsync(comment);
+        await _context.StoryPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostCommentReply, author, req.Mentions, post);
 
@@ -300,10 +286,10 @@ public partial class StoryReplyService : IStoryReplyService
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
             CustomNote = req.CustomNote,
-            QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId
+            QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
         };
-
-        await _subPostCommentRepository.InsertAsync(comment);
+        await _context.StorySubPostComments.AddAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostCommentReply, author, req.Mentions, post);
 
@@ -328,7 +314,7 @@ public partial class StoryReplyService : IStoryReplyService
     #region Update
     private async Task<ReplyCommentResp> UpdateReplyToPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.ReplyCommentId);
+        var comment = await _context.StoryPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -346,7 +332,7 @@ public partial class StoryReplyService : IStoryReplyService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _postCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostCommentReply, author, req.Mentions, post);
 
@@ -368,7 +354,7 @@ public partial class StoryReplyService : IStoryReplyService
     }
     private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.ReplyCommentId);
+        var comment = await _context.StorySubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -386,7 +372,7 @@ public partial class StoryReplyService : IStoryReplyService
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
         comment.CustomNote = req.CustomNote;
-        await _subPostCommentRepository.UpdateAsync(comment);
+        await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostCommentReply, author, req.Mentions, post);
 
@@ -409,15 +395,15 @@ public partial class StoryReplyService : IStoryReplyService
     #endregion
 
     #region Delete
-    private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req, Guid userId)
+    private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _postCommentRepository.GetByIdAsync(req.ReplyCommentId);
+        var comment = await _context.StoryPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -427,7 +413,7 @@ public partial class StoryReplyService : IStoryReplyService
                     new
                     {
                         Id = req.ReplyCommentId,
-                        ModifiedBy = userId,
+                        ModifiedBy = req.UserId,
                         ModifiedOn = DateTime.UtcNow,
                         LocationType = (int)MentionLocationType.PostCommentReply
                     });
@@ -441,15 +427,15 @@ public partial class StoryReplyService : IStoryReplyService
             ReplyToCommentId = comment.ParentId.Value
         };
     }
-    private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req, Guid userId)
+    private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _subPostCommentRepository.GetByIdAsync(req.ReplyCommentId);
+        var comment = await _context.StorySubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
         }
 
-        if (comment.AuthorId != userId)
+        if (comment.AuthorId != req.UserId)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
@@ -459,7 +445,7 @@ public partial class StoryReplyService : IStoryReplyService
                         new
                         {
                             Id = req.ReplyCommentId,
-                            ModifiedBy = userId,
+                            ModifiedBy = req.UserId,
                             ModifiedOn = DateTime.UtcNow,
                             LocationType = (int)MentionLocationType.SubPostCommentReply
                         });
@@ -495,14 +481,18 @@ public partial class StoryReplyService : IStoryReplyService
     #region -- Fields --
 
     /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    private readonly IRepository<StoryPostComment> _postCommentRepository;
+    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
+    private readonly IResourceCommentService _resourceCommentService;
+    private readonly IRepository<StoryResource> _resourceRepository;
+    private readonly IRepository<Mention> _mentionRepository;
+    private readonly IStoryNotificationService _notificationService;
+    private readonly IMentionService _mentionService;
+    private readonly IMapper _mapper;
 
     #endregion
 }

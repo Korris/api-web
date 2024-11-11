@@ -1,41 +1,30 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using Npgsql;
 
 namespace Mcsg.Realtime.Api.Services;
 
 using Common.Constants;
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Common.Models.RealTime;
 using Constants;
 using Dtos;
 using Hubs;
 using Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Requests;
 
-public class StoryNotificationService : IStoryNotificationService
+public class StoryNotificationService : BaseS, IStoryNotificationService
 {
-    private readonly IRepository<StoryPost> _postRepository;
-    private readonly IRepository<StorySubPost> _subPostRepository;
-    private readonly IRepository<StoryPostComment> _postCommentRepository;
-    private readonly IRepository<StorySubPostComment> _subPostCommentRepository;
-    private readonly IRepository<Notification> _notiRepository;
-    private readonly IRepository<NotificationObject> _notiObjectRepository;
-    private readonly IHubContext<NotificationHub> _hubcontext;
-    private IUnitOfWork _unitOfWork;
-
-    public StoryNotificationService(IUnitOfWork unitOfWork, IHubContext<NotificationHub> hubcontext)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="hubcontext"></param>
+    public StoryNotificationService(IMcsgContext context, IHubContext<NotificationHub> hubcontext) : base(context)
     {
-        _postRepository = unitOfWork.GetRepository<StoryPost>();
-        _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _notiRepository = unitOfWork.GetRepository<Notification>();
-        _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();
-        _postCommentRepository = unitOfWork.GetRepository<StoryPostComment>();
-        _subPostCommentRepository = unitOfWork.GetRepository<StorySubPostComment>();
-        _unitOfWork = unitOfWork;
         _hubcontext = hubcontext;
     }
 
@@ -43,7 +32,6 @@ public class StoryNotificationService : IStoryNotificationService
     {
         var response = new NotificationResponse();
 
-        //var post = await _postRepository.GetByIdAsync(comment.PostId);
         if (!string.IsNullOrWhiteSpace(comment.PostHashId))
         {
             var receiverId = comment.PostCreatedBy;
@@ -85,30 +73,32 @@ public class StoryNotificationService : IStoryNotificationService
     {
         var response = new NotificationResponse();
         var receiverId = Guid.Empty;
+        var id = comment.QuoteId ?? comment.ReplyToCommentId;
 
         if (comment.Type == PostTypes.Post)
         {
-            var parentComment = await _postCommentRepository.GetByIdAsync(comment.QuoteId ?? comment.ReplyToCommentId.Value);
+            var parentComment = await _context.StoryPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
             receiverId = parentComment.AuthorId;
         }
         else
         {
-            var parentComment = await _subPostCommentRepository.GetByIdAsync(comment.QuoteId ?? comment.ReplyToCommentId.Value);
+            var parentComment = await _context.StorySubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
             receiverId = parentComment.AuthorId;
         }
 
         // Dont notify when comment on their feed
         if (receiverId != Guid.Empty && receiverId != comment.AuthorId)
         {
-            var postHashId = "";
+            IQueryable<string?> qHashId;
             if (comment.Type == PostTypes.Post)
             {
-                postHashId = (await _postRepository.GetByIdAsync(comment.PostId)).HashId;
+                qHashId = _context.StoryPostAvailable.Where(p => p.Id == comment.PostId).Select(p => p.HashId);
             }
             else
             {
-                postHashId = (await _subPostRepository.GetByIdAsync(comment.PostId)).HashId;
+                qHashId = _context.StorySubPostAvailable.Where(p => p.Id == comment.PostId).Select(p => p.HashId);
             }
+            var hashId = await qHashId.FirstOrDefaultAsync();
 
             var noti = await AddNotificationAsync(
                                         actorId: comment.AuthorId
@@ -117,12 +107,12 @@ public class StoryNotificationService : IStoryNotificationService
                                         , entityType: comment.EntityType
                                         , entityId: comment.Id
                                         , locationId: comment.PostId
-                                        , locationHashId: postHashId);
+                                        , locationHashId: hashId);
 
             response.Id = noti.Id;
             response.Status = noti.Status;
             response.LocationId = comment.PostId;
-            response.LocationHashId = comment.PostHashId ?? postHashId;
+            response.LocationHashId = comment.PostHashId ?? hashId;
             response.EntityId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
             response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Story : Common.Core.Constants.Setting.NotificationTargetType.SubStory;
@@ -185,7 +175,7 @@ public class StoryNotificationService : IStoryNotificationService
         // React to post
         if (reaction.EntityType == NotificationEntityType.PostReaction)
         {
-            var post = await _postRepository.GetByIdAsync(reaction.TargetId);
+            var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == reaction.TargetId);
             if (post != null)
             {
                 receiverId = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;
@@ -280,104 +270,111 @@ public class StoryNotificationService : IStoryNotificationService
         return response;
     }
 
-    public async Task<NotificationDto> AddNotificationAsync(Guid actorId, Guid receiverId, NotificationAction action
-        , NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead
-        , Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "")
+    /// <summary>
+    /// AddNotificationAsync
+    /// </summary>
+    /// <param name="actorId"></param>
+    /// <param name="receiverId"></param>
+    /// <param name="action"></param>
+    /// <param name="entityType"></param>
+    /// <param name="status"></param>
+    /// <param name="entityId"></param>
+    /// <param name="locationId"></param>
+    /// <param name="locationHashId"></param>
+    /// <param name="entityhashId"></param>
+    /// <returns></returns>
+    public async Task<NotificationDto> AddNotificationAsync(Guid actorId, Guid receiverId, NotificationAction action, NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead, Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "")
     {
-        try
+        var notiObj = new NotificationObject
         {
-            var notiObj = new NotificationObject()
-            {
-                EntityType = entityType,
-                Action = action,
-                EntityId = entityId,
-                EntityHashId = entityhashId,
-                ActorId = actorId,
-                LocationId = locationId,
-                LocationHashId = locationHashId,
-                CreatedBy = actorId,
-            };
+            EntityType = entityType,
+            Action = action,
+            EntityId = entityId,
+            EntityHashId = entityhashId,
+            ActorId = actorId,
+            LocationId = locationId,
+            LocationHashId = locationHashId,
+            CreatedBy = actorId,
+        };
+        await _context.NotificationObjects.AddAsync(notiObj);
 
-            await _notiObjectRepository.InsertAsync(notiObj);
+        var noti = new Notification
+        {
+            NotificationObjectId = notiObj.Id,
+            ReceiverId = receiverId,
+            Status = status
+        };
+        await _context.Notifications.AddAsync(noti);
+        await _context.SaveChangesAsync(default);
 
-            var dto = new NotificationDto();
+        var res = new NotificationDto
+        {
+            Id = noti.Id,
+            Status = noti.Status.ToString(),
+            NotificationObjectId = notiObj.Id,
+            ReceiverId = receiverId,
+            ActorId = actorId,
+            CreatedOn = noti.CreatedOn
+        };
 
-            var noti = new Notification()
+        return res;
+    }
+
+    /// <summary>
+    /// AddNotificationsAsync
+    /// </summary>
+    /// <param name="actorId"></param>
+    /// <param name="receiverIds"></param>
+    /// <param name="action"></param>
+    /// <param name="entityType"></param>
+    /// <param name="status"></param>
+    /// <param name="entityId"></param>
+    /// <param name="locationId"></param>
+    /// <param name="locationHashId"></param>
+    /// <param name="entityhashId"></param>
+    /// <returns></returns>
+    public async Task<List<NotificationDto>> AddNotificationsAsync(Guid actorId, List<Guid> receiverIds, NotificationAction action, NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead, Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "")
+    {
+        var res = new List<NotificationDto>();
+
+        var notiObj = new NotificationObject()
+        {
+            EntityType = entityType,
+            Action = action,
+            EntityId = entityId,
+            EntityHashId = entityhashId,
+            ActorId = actorId,
+            LocationId = locationId,
+            LocationHashId = locationHashId,
+            CreatedBy = actorId,
+        };
+        await _context.NotificationObjects.AddAsync(notiObj);
+
+        foreach (var receiverId in receiverIds)
+        {
+            var noti = new Notification
             {
                 NotificationObjectId = notiObj.Id,
                 ReceiverId = receiverId,
                 Status = status
             };
-            await _notiRepository.InsertAsync(noti);
+            await _context.Notifications.AddAsync(noti);
 
-            dto.Id = noti.Id;
-            dto.Status = ((NotificationStatus)noti.Status).ToString();
-            dto.NotificationObjectId = notiObj.Id;
-            dto.ReceiverId = receiverId;
-            dto.ActorId = actorId;
-            dto.CreatedOn = noti.CreatedOn;
-
-            return dto;
-
-        }
-        catch (PostgresException ex)
-        {
-            _unitOfWork.RollbackTransaction();
-            throw ex;
-        }
-    }
-    public async Task<List<NotificationDto>> AddNotificationsAsync(Guid actorId, List<Guid> receiverIds, NotificationAction action
-        , NotificationEntityType entityType, NotificationStatus status = NotificationStatus.UnRead
-        , Guid? entityId = null, Guid? locationId = null, string locationHashId = "", string entityhashId = "")
-    {
-        try
-        {
-            var response = new List<NotificationDto>();
-
-            var notiObj = new NotificationObject()
+            var dto = new NotificationDto
             {
-                EntityType = entityType,
-                Action = action,
-                EntityId = entityId,
-                EntityHashId = entityhashId,
+                Id = noti.Id,
+                Status = noti.Status.ToString(),
+                NotificationObjectId = notiObj.Id,
+                ReceiverId = receiverId,
                 ActorId = actorId,
-                LocationId = locationId,
-                LocationHashId = locationHashId,
-                CreatedBy = actorId,
+                CreatedOn = noti.CreatedOn
             };
-
-            await _notiObjectRepository.InsertAsync(notiObj);
-
-            foreach (var receiverId in receiverIds)
-            {
-                var dto = new NotificationDto();
-
-                var noti = new Notification()
-                {
-                    NotificationObjectId = notiObj.Id,
-                    ReceiverId = receiverId,
-                    Status = status
-                };
-                await _notiRepository.InsertAsync(noti);
-
-                dto.Id = noti.Id;
-                dto.Status = ((NotificationStatus)noti.Status).ToString();
-                dto.NotificationObjectId = notiObj.Id;
-                dto.ReceiverId = receiverId;
-                dto.ActorId = actorId;
-                dto.CreatedOn = noti.CreatedOn;
-
-                response.Add(dto);
-            }
-
-            return response;
-
+            res.Add(dto);
         }
-        catch (PostgresException ex)
-        {
-            _unitOfWork.RollbackTransaction();
-            throw ex;
-        }
+
+        await _context.SaveChangesAsync(default);
+
+        return res;
     }
 
     public async Task AddTransactionUpdate(RealTimeTransactionUpdateReq req)
@@ -387,6 +384,7 @@ public class StoryNotificationService : IStoryNotificationService
             await _hubcontext.Clients.Group(req.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveTransactionUpdate, JsonConvert.SerializeObject(req));
         }
     }
+
     public async Task AddCommonNotification(CommonNotificationReq req)
     {
         if (req != null && !string.IsNullOrEmpty(req.TopicName) && !string.IsNullOrEmpty(req.Message))
@@ -399,7 +397,6 @@ public class StoryNotificationService : IStoryNotificationService
             {
                 await _hubcontext.Clients.All.SendAsync(req.TopicName, req.Message);
             }
-
         }
     }
 
@@ -413,4 +410,10 @@ public class StoryNotificationService : IStoryNotificationService
             _ => throw new NotSupportedException($"Unsupported video action: {action}"),
         };
     }
+
+    #region -- Fields --
+
+    private readonly IHubContext<NotificationHub> _hubcontext;
+
+    #endregion
 }

@@ -2,22 +2,24 @@
 
 using Common.Core.Distributor;
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Common.Models;
 using Dtos;
 using Interfaces;
 
-public partial class SmartCountService : ISmartCountService
+public partial class SmartCountService : BaseS, ISmartCountService
 {
-    private readonly IRepository<SmartCountAction> _smartCountActionRepository;
-    private readonly DistributeManager _distributeManager;
-
-    public SmartCountService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider, DistributeManager distributeManager)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="distributeManager"></param>
+    public SmartCountService(IMcsgContext context, DistributeManager distributeManager) : base(context)
     {
-        _smartCountActionRepository = unitOfWork.GetRepository<SmartCountAction>();
         _distributeManager = distributeManager;
     }
+
     public async Task InsertSmartCount(Guid entityId, EntityType type, ActionType actionType)
     {
         var smartCountPostAction = new SmartCountAction
@@ -27,8 +29,10 @@ public partial class SmartCountService : ISmartCountService
             EntityType = type,
             EntityId = entityId
         };
-        await _smartCountActionRepository.InsertAsync(smartCountPostAction);
+        await _context.SmartCountActions.AddAsync(smartCountPostAction);
+        await _context.SaveChangesAsync(default);
     }
+
     public async Task QueueAddCommentCount(Guid entityId, EntityType type)
     {
         await _distributeManager.Deliver(new SmartCountDistributeDto
@@ -42,6 +46,7 @@ public partial class SmartCountService : ISmartCountService
             }
         });
     }
+
     public async Task QueueRemoveCommentCount(Guid entityId, EntityType type)
     {
         await _distributeManager.Deliver(new SmartCountDistributeDto
@@ -56,4 +61,9 @@ public partial class SmartCountService : ISmartCountService
         });
     }
 
+    #region -- Fields --
+
+    private readonly DistributeManager _distributeManager;
+
+    #endregion
 }
