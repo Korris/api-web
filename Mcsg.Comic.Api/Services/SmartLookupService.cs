@@ -15,7 +15,7 @@ using Interfaces;
 using Models;
 using Requests;
 
-public partial class SmartLookupService : ISmartLookupService
+public partial class SmartLookupService : BaseSettingS, ISmartLookupService
 {
     /// <summary>
     /// Initialize
@@ -26,10 +26,8 @@ public partial class SmartLookupService : ISmartLookupService
     /// <param name="tagRepository"></param>
     /// <param name="smartLookupUserRepository"></param>
     /// <param name="smartLookupRepository"></param>
-    public SmartLookupService(IMcsgContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<ComicTagPost> tagPostRepository, IRepository<User> userRepository)
+    public SmartLookupService(IMcsgContext context, ISetting setting, DistributeManager distributeManager, IRepository<Tag> tagRepository, IRepository<SmartLookupUser> smartLookupUserRepository, IRepository<SmartLookup> smartLookupRepository, IRepository<ComicTagPost> tagPostRepository, IRepository<User> userRepository) : base(context, setting)
     {
-        _context = context;
-        _setting = setting;
         _distributeManager = distributeManager;
 
         _tagRepository = tagRepository;
@@ -133,14 +131,13 @@ public partial class SmartLookupService : ISmartLookupService
 
     public async Task<bool> DeleteRecentSearchAsync(Guid id)
     {
-        return await _smartLookupUserRepository.DeleteAsync(id);
+        return await _context.SmartLookupUsers.Where(p => p.Id == id).ExecuteDeleteAsync() > 0;
     }
 
     public async Task<bool> AddRecentSearchAsync(SmartLookupAddRecentSearchR res, Guid userId)
     {
-        var smartLookupObj = new SmartLookupUser()
+        var smartLookupObj = new SmartLookupUser
         {
-            Id = Guid.NewGuid(),
             Keyword = res.Keyword,
             UserId = userId,
             CreatedOn = DateTime.UtcNow
@@ -165,25 +162,14 @@ public partial class SmartLookupService : ISmartLookupService
 
         if (existKeyword != null)
         {
-            await _smartLookupUserRepository.DeleteAsync(existKeyword.Id);
+            return await _context.SmartLookupUsers.Where(p => p.Id == existKeyword.Id).ExecuteDeleteAsync() > 0;
         }
 
-        await _smartLookupUserRepository.InsertAsync(smartLookupObj);
-
-        return true;
+        await _context.SmartLookupUsers.AddAsync(smartLookupObj);
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     #region -- Fields --
-
-    /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     /// <summary>
     /// Distribute manager

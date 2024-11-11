@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Mcsg.Comic.Api.Services;
@@ -7,6 +8,7 @@ namespace Mcsg.Comic.Api.Services;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
@@ -18,12 +20,10 @@ using Requests;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class NotificationService : INotificationService
+public partial class NotificationService : BaseSettingS, INotificationService
 {
-    public NotificationService(ISetting setting, IUnitOfWork unitOfWork, IMapper mapper)
+    public NotificationService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork, IMapper mapper) : base(context, setting)
     {
-        _setting = setting;
-
         _notiRepository = unitOfWork.GetRepository<Notification>();
         _mapper = mapper;
     }
@@ -123,7 +123,7 @@ public partial class NotificationService : INotificationService
             throw new NotFoundException(E303, M303);
         }
 
-        var notification = await _notiRepository.GetByIdAsync(request.NotificationId);
+        var notification = await _context.NotificationAvailable.FirstOrDefaultAsync(p => p.Id == request.NotificationId);
         if (notification == null)
         {
             throw new NotFoundException(ErrorCodes.QueryEmpty, ErrorCodes.QueryEmpty);
@@ -133,7 +133,7 @@ public partial class NotificationService : INotificationService
         notification.ModifiedOn = DateTime.UtcNow;
         notification.ModifiedBy = userId;
 
-        return await _notiRepository.UpdateAsync(notification);
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     public async Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req)
@@ -160,11 +160,6 @@ public partial class NotificationService : INotificationService
     }
 
     #region -- Fields --
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
 
     private readonly IRepository<Notification> _notiRepository;
     private readonly IMapper _mapper;

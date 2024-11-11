@@ -5,6 +5,7 @@ namespace Mcsg.Story.Api.Services;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
@@ -14,7 +15,7 @@ using Interfaces;
 using Models;
 using Requests;
 
-public partial class FavoriteService : IFavoriteService
+public partial class FavoriteService : BaseS, IFavoriteService
 {
     private readonly IRepository<TagFavorite> _tagFavoriteRepository;
     private readonly IRepository<StoryPostFavorite> _postFavoriteRepository;
@@ -32,7 +33,7 @@ public partial class FavoriteService : IFavoriteService
 
     private readonly IFeedService _feedService;
 
-    public FavoriteService(
+    public FavoriteService(IMcsgContext context,
         IUnitOfWork unitOfWork,
         IValidator<TagFavorite> tagFavoriteValidator,
         IValidator<StoryPostFavorite> postFavoriteValidator,
@@ -46,7 +47,7 @@ public partial class FavoriteService : IFavoriteService
         IRepository<StoryMetaData> metaDataRepository,
         IRepository<StoryPostLink> postLinkRepository,
         IRepository<StoryTagPost> tagPostRepository,
-        IFeedService feedService)
+        IFeedService feedService) : base(context)
     {
         _tagFavoriteRepository = tagFavoriteRepository;
         _tagFavoriteValidator = tagFavoriteValidator;
@@ -75,12 +76,13 @@ public partial class FavoriteService : IFavoriteService
         await _tagFavoriteValidator.OnValidate(tagFavorite);
 
         var hasExisted = (await _tagFavoriteRepository.GetByCustomQuery(GetTagFavoriteByTagIdAndUserId, new { tagId = tagFavorite.TagId, userId = tagFavorite.UserId })).Any();
-
         if (hasExisted)
+        {
             return true;
+        }
 
-        var iResult = await _tagFavoriteRepository.InsertAsync(tagFavorite);
-        return iResult > 0;
+        await _context.TagFavorites.AddAsync(tagFavorite);
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     public async Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req)
@@ -121,12 +123,13 @@ public partial class FavoriteService : IFavoriteService
         await _postFavoriteValidator.OnValidate(postFavorite);
 
         var hasExisted = (await _postFavoriteRepository.GetByCustomQuery(GetPostFavoriteByPostIdAndUserId, new { postId = postFavorite.PostId, userId = postFavorite.UserId })).Any();
-
         if (hasExisted)
+        {
             return true;
+        }
 
-        var iResult = await _postFavoriteRepository.InsertAsync(postFavorite);
-        return iResult > 0;
+        await _context.StoryPostFavorites.AddAsync(postFavorite);
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     public async Task<bool> RemovePostToFavoriteAsync(IdBaseR request)

@@ -15,6 +15,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Dtos;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Enums;
@@ -35,7 +36,7 @@ using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class PostService : IPostService
+public partial class PostService : BaseMinioS, IPostService
 {
     #region -- Methods --
 
@@ -51,20 +52,15 @@ public partial class PostService : IPostService
     /// <param name="smartLookupRepository"></param>
     /// <param name="fileService"></param>
     /// <param name="mapper"></param>
-    /// <param name="smartLookupService"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IRepository<SmartLookup> smartLookupRepository, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
     {
-        _context = context;
-        _setting = setting;
-        _sc = sc;
         _googleSheet = googleSheet;
 
         _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _tagService = tagService;
-        _smartLookupRepository = smartLookupRepository;
         _fileService = fileService;
         _mapper = mapper;
         _smartLookupService = smartLookupService;
@@ -164,14 +160,16 @@ public partial class PostService : IPostService
         };
 
         await _context.StoryPosts.AddAsync(post);
-        await _context.SaveChangesAsync(default);
 
-        await _smartLookupRepository.InsertAsync(new SmartLookup
+        var smartLookup = new SmartLookup
         {
             CountCriteria = 0,
             Keyword = request.Title,
             KeywordType = LookupKeywordType.Story
-        });
+        };
+        await _context.SmartLookups.AddAsync(smartLookup);
+
+        await _context.SaveChangesAsync(default);
 
         if (request.Tags != null && request.Tags.Count > 0)
         {
@@ -956,7 +954,7 @@ public partial class PostService : IPostService
             if (currentEntity != null)
             {
                 currentEntity.Keyword = request.Title;
-                await _smartLookupRepository.UpdateAsync(currentEntity);
+                await _context.SaveChangesAsync(default);
             }
 
             _ = Task.Run(async () => await SyncUpdateToAna(post));
@@ -1036,8 +1034,8 @@ public partial class PostService : IPostService
         }
 
         var ett = await _context.StoryPostFavorites
-            .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
-            .FirstOrDefaultAsync();
+              .Where(p => p.CreatedBy == user.Id && p.PostId == postId)
+              .FirstOrDefaultAsync();
 
         if (ett == null)
         {
@@ -2459,21 +2457,6 @@ public partial class PostService : IPostService
     #region -- Fields --
 
     /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
-    /// Storage client
-    /// </summary>
-    private readonly IStorageClient _sc;
-
-    /// <summary>
     /// Google sheet
     /// </summary>
     private readonly GoogleSheet _googleSheet;
@@ -2483,7 +2466,6 @@ public partial class PostService : IPostService
     private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly ITagService _tagService;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;

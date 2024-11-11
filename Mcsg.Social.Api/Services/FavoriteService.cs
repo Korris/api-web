@@ -17,7 +17,7 @@ using Interfaces;
 using Models;
 using Requests;
 
-public partial class FavoriteService : IFavoriteService
+public partial class FavoriteService : BaseS, IFavoriteService
 {
     private readonly IRepository<TagFavorite> _tagFavoriteRepository;
     private readonly IRepository<SocialPostFavorite> _postFavoriteRepository;
@@ -35,7 +35,7 @@ public partial class FavoriteService : IFavoriteService
 
     private readonly IFeedService _feedService;
 
-    public FavoriteService(
+    public FavoriteService(IMcsgContext context,
         IUnitOfWork unitOfWork,
         IValidator<TagFavorite> tagFavoriteValidator,
         IValidator<SocialPostFavorite> postFavoriteValidator,
@@ -49,7 +49,7 @@ public partial class FavoriteService : IFavoriteService
         IRepository<SocialMetaData> metaDataRepository,
         IRepository<SocialPostLink> postLinkRepository,
         IRepository<SocialTagPost> tagPostRepository,
-        IFeedService feedService)
+        IFeedService feedService) : base(context)
     {
         _tagFavoriteRepository = tagFavoriteRepository;
         _tagFavoriteValidator = tagFavoriteValidator;
@@ -78,12 +78,13 @@ public partial class FavoriteService : IFavoriteService
         await _tagFavoriteValidator.OnValidate(tagFavorite);
 
         var hasExisted = (await _tagFavoriteRepository.GetByCustomQuery(GetTagFavoriteByTagIdAndUserId, new { tagId = tagFavorite.TagId, userId = tagFavorite.UserId })).Any();
-
         if (hasExisted)
+        {
             return true;
+        }
 
-        var iResult = await _tagFavoriteRepository.InsertAsync(tagFavorite);
-        return iResult > 0;
+        await _context.TagFavorites.AddAsync(tagFavorite);
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     public async Task<PagedResponse<FavoriteTagResponse>> GetTagFavoriteAsync(FavoriteTagR req)
@@ -193,14 +194,5 @@ public partial class FavoriteService : IFavoriteService
             MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
         };
     }
-    #endregion
-
-    #region -- Fields --
-
-    /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
     #endregion
 }

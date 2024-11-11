@@ -30,7 +30,7 @@ using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
-public partial class PostService : IPostService
+public partial class PostService : BaseMinioS, IPostService
 {
     #region -- Methods --
 
@@ -43,11 +43,8 @@ public partial class PostService : IPostService
     /// <param name="unitOfWork"></param>
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ISmartLookupService smartLookupService, IBusinessText businessText)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IUnitOfWork unitOfWork, IMapper mapper, ISmartLookupService smartLookupService, IBusinessText businessText) : base(context, setting, sc)
     {
-        _context = context;
-        _setting = setting;
-        _sc = sc;
         _businessText = businessText;
 
         _unitOfWork = unitOfWork;
@@ -801,21 +798,6 @@ public partial class PostService : IPostService
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
-
-    /// <summary>
-    /// Setting
-    /// </summary>
-    private readonly ISetting _setting;
-
-    /// <summary>
-    /// Storage client
-    /// </summary>
-    private readonly IStorageClient _sc;
 
     /// <summary>
     /// Business Text
