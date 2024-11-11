@@ -57,7 +57,8 @@ public partial class OtpService : BaseSettingS, IOtpService
 
         try
         {
-            await _userOtpRepository.InsertAsync(userOtp);
+            await _context.UserOtps.AddAsync(userOtp);
+            await _context.SaveChangesAsync(default);
         }
         catch (Exception ex)
         {

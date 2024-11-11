@@ -6,8 +6,8 @@ using Common.Core.Distributor;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Interfaces;
 using Models;
 
@@ -15,7 +15,7 @@ public class EmailDistributeService : BaseDistributor
 {
     public EmailDistributeService(IServiceProvider serviceProvider)
     {
-        _jobRepository = serviceProvider.GetRequiredService<IUnitOfWork>().GetRepository<Job>();
+        _context = serviceProvider.GetRequiredService<IMcsgContext>();
         _setting = serviceProvider.GetRequiredService<ISetting>();
     }
 
@@ -35,7 +35,8 @@ public class EmailDistributeService : BaseDistributor
             Data = JsonConvert.SerializeObject(emailItem.Email),
             Status = JobStatus.Queued
         };
-        await _jobRepository.InsertAsync(job);
+        await _context.Jobs.AddAsync(job);
+        await _context.SaveChangesAsync(default);
 
         var msg = new QueueMessageDto
         {
@@ -47,9 +48,9 @@ public class EmailDistributeService : BaseDistributor
     #region -- Fields --
 
     /// <summary>
-    /// Job repository
+    /// DB context
     /// </summary>
-    private readonly IRepository<Job> _jobRepository;
+    private readonly IMcsgContext _context;
 
     /// <summary>
     /// Setting

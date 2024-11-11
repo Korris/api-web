@@ -13,7 +13,6 @@ using Common.Core.Extensions;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Common.SeedWork;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
@@ -45,8 +44,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     /// <param name="configuration"></param>
     /// <param name="logger"></param>
     /// <param name="serviceAccessor"></param>
-    /// <param name="smartLookupRepository"></param>
-    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, ITokenService tokenService, IUserService userService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor, IRepository<SmartLookup> smartLookupRepository) : base(context, setting)
+    public AuthenticationService(IMcsgContext context, ISetting setting, IUserNameUniquenessChecker uniquenessChecker, ApplicationUserManager userManager, ITokenService tokenService, IUserService userService, IOtpService otpService, IConfiguration configuration, ILogger<AuthenticationService> logger, SSOServiceResolver serviceAccessor) : base(context, setting)
     {
         _aes = new SecurityAes(_setting.EncryptKey);
         _uniquenessChecker = uniquenessChecker;
@@ -56,7 +54,6 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         _userService = userService;
         _serviceAccessor = serviceAccessor;
         _otpService = otpService;
-        _smartLookupRepository = smartLookupRepository;
     }
 
     public async Task CheckRegisterUser(AuthenticationRegisterUserR request)
@@ -154,16 +151,18 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 var ettUserReferral = UserReferral.Create(userReferrerId, user.Id);
                 await _context.UserReferrals.AddAsync(ettUserReferral);
-                await _context.SaveChangesAsync(default);
             }
 
-            //Init smart lookup for user
-            await _smartLookupRepository.InsertAsync(new SmartLookup
+            // Init smart lookup for user
+            var smartLookup = new SmartLookup
             {
                 CountCriteria = 0,
                 Keyword = user.ProfileName,
                 KeywordType = LookupKeywordType.People
-            });
+            };
+            await _context.SmartLookups.AddAsync(smartLookup);
+            await _context.SaveChangesAsync(default);
+
             await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
 
             _ = Task.Run(async () => await InitUserWallet(user));
@@ -341,13 +340,15 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                     throw new BadRequestException(createError?.Code, createError?.Description);
                 }
 
-                //Init smart lookup for user
-                await _smartLookupRepository.InsertAsync(new SmartLookup
+                // Init smart lookup for user
+                var smartLookup = new SmartLookup
                 {
                     CountCriteria = 0,
                     Keyword = user.ProfileName,
                     KeywordType = LookupKeywordType.People
-                });
+                };
+                await _context.SmartLookups.AddAsync(smartLookup);
+                await _context.SaveChangesAsync(default);
 
                 await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
 
@@ -1071,7 +1072,6 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     private readonly IUserService _userService;
     private readonly SSOServiceResolver _serviceAccessor;
     private readonly IOtpService _otpService;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
 
     #endregion
 }
