@@ -27,7 +27,6 @@ public partial class SyncDataService : BaseS, ISyncDataService
         _userRepository = unitOfWork.GetRepository<User>();
         _postRepository = unitOfWork.GetRepository<SocialPost>();
         _subPostRepository = unitOfWork.GetRepository<SocialSubPost>();
-        _userExclusiveSubPostRepository = unitOfWork.GetRepository<UserExclusiveSubPost>();
     }
 
     public async Task SyncWalletUserInfoAsync(SyncData data)
@@ -237,7 +236,7 @@ public partial class SyncDataService : BaseS, ISyncDataService
                         SubPostId = chapter.Id,
                         UserId = userId
                     };
-                    await _userExclusiveSubPostRepository.InsertAsync(userExclusiveSubPost);
+                    //TODO await _userExclusiveSubPostRepository.InsertAsync(userExclusiveSubPost);
                     //Remove point
                     if (userWallet.RewardPoint >= transaction.Amount)
                     {
@@ -361,7 +360,7 @@ public partial class SyncDataService : BaseS, ISyncDataService
                             SubPostId = chapter.Id,
                             UserId = userId
                         };
-                        await _userExclusiveSubPostRepository.InsertAsync(userExclusiveSubPost);
+                        //TODO await _userExclusiveSubPostRepository.InsertAsync(userExclusiveSubPost);
                     }
 
                     //Remove point
@@ -433,7 +432,6 @@ public partial class SyncDataService : BaseS, ISyncDataService
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialSubPost> _subPostRepository;
-    private readonly IRepository<UserExclusiveSubPost> _userExclusiveSubPostRepository;
 
     #endregion
 }

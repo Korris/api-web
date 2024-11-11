@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -7,8 +8,7 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Domain.Entities;
-using Common.Interfaces;
+using Common.Domain;
 using Interfaces;
 using static Common.SeedWork.Constants.Information;
 
@@ -108,31 +108,28 @@ public class HostedEmail : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var jobRepository = scope.ServiceProvider.GetRequiredService<IRepository<Job>>();
-            var jobId = new Guid(msg.DevName); // TODO
+            var context = scope.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var id = new Guid(msg.DevName); // TODO
 
-            var jobDb = await jobRepository.GetByIdAsync(jobId);
-            if (jobDb != null && jobDb.Status != JobStatus.Success)
+            var ett = await context.JobAvailable.FirstOrDefaultAsync(p => p.Id == id);
+            if (ett != null && ett.Status != JobStatus.Success)
             {
-                jobDb.Status = JobStatus.Processing;
-                await jobRepository.UpdateAsync(jobDb);
+                ett.Status = JobStatus.Processing;
 
                 try
                 {
                     var service = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                    await service.SendEmailAsync(jobDb);
+                    await service.SendEmailAsync(ett);
 
-                    jobDb.Status = JobStatus.Success;
-                    await jobRepository.UpdateAsync(jobDb);
+                    ett.Status = JobStatus.Success;
                 }
                 catch (Exception ex)
                 {
-                    jobDb.Status = JobStatus.Failed;
-                    jobDb.Error = $"{ex.Message} {ex.StackTrace}";
-                    await jobRepository.UpdateAsync(jobDb);
-
-                    throw;
+                    ett.Status = JobStatus.Failed;
+                    ett.Error = $"{ex.Message} {ex.StackTrace}";
                 }
+
+                await context.SaveChangesAsync(default);
             }
         }
     }

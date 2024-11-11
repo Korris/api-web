@@ -1,24 +1,25 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Function.Job.Services;
 
 using Common.Core.Enums;
+using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.Models;
 using Common.SeedWork;
 using Interfaces;
 
-public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
+public class CountService<TP, TS> : BaseS, ICountService<TP, TS> where TP : EntityId where TS : EntityId, new()
 {
-    public CountService(IUnitOfWork unitOfWork)
+    public CountService(IMcsgContext context, IUnitOfWork unitOfWork) : base(context)
     {
-        _unitOfWork = unitOfWork;
-        _smartCountActionRepository = _unitOfWork.GetRepository<SmartCountAction>();
-        _postCommentReactRepository = _unitOfWork.GetRepository<TP>();
-        _subPostCommentReactRepository = _unitOfWork.GetRepository<TS>();
-
+        _smartCountActionRepository = unitOfWork.GetRepository<SmartCountAction>();
+        _postCommentReactRepository = unitOfWork.GetRepository<TP>();
+        _subPostCommentReactRepository = unitOfWork.GetRepository<TS>();
     }
+
     public async Task RunQueue(SmartCountEntityData smartLookupData)
     {
         var smartTable = _smartCountActionRepository.TableName;
@@ -86,20 +87,16 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
             }
 
             postId = post.Id;
-            var smartCountActions = await _smartCountActionRepository.GetByPredicateAsync(x => x.EntityId == postId);
-            if (smartCountActions.Any())
+            var smartCountAction = await _context.SmartCountActionAvailable.FirstOrDefaultAsync(x => x.EntityId == postId);
+            if (smartCountAction != null)
             {
-                var smartCountAction = smartCountActions.FirstOrDefault();
-                if (smartCountAction != null)
-                {
-                    smartCountAction.Count++;
-                    await _smartCountActionRepository.UpdateAsync(smartCountAction);
-                }
+                smartCountAction.Count++;
             }
             else
             {
                 countOfPost = await GetCountFromPost(postId, todayDate);
-                await _smartCountActionRepository.InsertAsync(new SmartCountAction
+
+                var ett = new SmartCountAction
                 {
                     ActionType = smartLookupData.ActionType,
                     EntityId = postId,
@@ -108,10 +105,12 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
                     EntityType = EntityType.Post,
                     SubType = (EntitySubType)post.Type,
                     Date = todayDate
-                });
+                };
+                await _context.SmartCountActions.AddAsync(ett);
             }
-            //Insert subpost type
-            await _smartCountActionRepository.InsertAsync(new SmartCountAction
+
+            // Insert subpost type
+            var ettSubPost = new SmartCountAction
             {
                 ActionType = smartLookupData.ActionType,
                 EntityId = smartLookupData.EntityId,
@@ -119,9 +118,11 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
                 ModifiedOn = todayDateTime,
                 EntityType = EntityType.SubPost,
                 Date = todayDate
-            });
-
+            };
+            await _context.SmartCountActions.AddAsync(ettSubPost);
+            await _context.SaveChangesAsync(default);
         }
+
         if (smartLookupData.EntityType == EntityType.Post)
         {
             var post = await _smartCountActionRepository.Connection.QueryFirstOrDefaultAsync<SocialPost>(GetPostBasicByPostId,
@@ -136,7 +137,7 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
             }
 
             countOfPost = await GetCountFromPost(smartLookupData.EntityId, todayDate);
-            await _smartCountActionRepository.InsertAsync(new SmartCountAction
+            var ett = new SmartCountAction
             {
                 ActionType = smartLookupData.ActionType,
                 EntityId = postId,
@@ -145,7 +146,9 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
                 EntityType = smartLookupData.EntityType,
                 SubType = (EntitySubType)post.Type,
                 Date = todayDate
-            });
+            };
+            await _context.SmartCountActions.AddAsync(ett);
+            await _context.SaveChangesAsync(default);
         }
     }
 
@@ -190,7 +193,6 @@ public class CountService<TP, TS> : ICountService<TP, TS> where TP : EntityId wh
 
             throw;
         }
-
     }
 
     private async Task<int> GetCountFromSubPost(Guid subPostId, DateOnly date)
@@ -391,7 +393,6 @@ INNER JOIN social.""SocialPosts"" p ON sp.""PostId"" = p.""Id""
 
     #region -- Fields --
 
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<SmartCountAction> _smartCountActionRepository;
     private readonly IRepository<TP> _postCommentReactRepository;
     private readonly IRepository<TS> _subPostCommentReactRepository;

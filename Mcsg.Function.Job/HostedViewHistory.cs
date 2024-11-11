@@ -1,4 +1,4 @@
-using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -9,8 +9,8 @@ namespace Mcsg.Function.Job;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
+using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Common.Models;
 using Interfaces;
 using static Common.SeedWork.Constants.Information;
@@ -111,33 +111,27 @@ public class HostedViewHistory : BackgroundService
 
         using (var scope = _ss.CreateScope())
         {
-            var service = scope.ServiceProvider.GetRequiredService<IRepository<ViewHistory>>();
+            var context = scope.ServiceProvider.GetRequiredService<IMcsgContext>();
             var payload = JsonConvert.DeserializeObject<ViewHistoryData>(msg.Payload);
 
-            //Check user
-            try
+            if (payload == null)
             {
-                var check = await service.Connection.QueryFirstOrDefaultAsync<Guid?>(GetLastViewFromUser, new
-                {
-                    payload.EntityId,
-                    userid = payload.UserId,
-                    payload.EntityType,
-                    IpAddress = payload.IdAddress
-                });
-
-                if (check != null)
-                {
-                    //Out
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                throw;
+                return;
             }
 
-            //Do save view history
-            ViewHistory history = new ViewHistory
+            var check = await context.ViewHistoryAvailable
+                .Where(p => p.EntityId == payload.EntityId
+                    && p.UsedId == payload.UserId
+                    && p.EntityType == payload.EntityType
+                    && p.IpAddress == payload.IdAddress)
+                .Select(p => p.Id)
+                .FirstOrDefaultAsync();
+            if (check != Guid.Empty)
+            {
+                return;
+            }
+
+            var history = new ViewHistory
             {
                 EntityType = payload.EntityType,
                 EntityId = payload.EntityId,
@@ -146,7 +140,8 @@ public class HostedViewHistory : BackgroundService
                 SubType = payload.SubType,
                 UsedId = payload.UserId
             };
-            await service.InsertAsync(history);
+            await context.ViewHistories.AddAsync(history);
+            await context.SaveChangesAsync(default);
 
             var smartLookupData = new SmartCountEntityData
             {
@@ -229,21 +224,6 @@ public class HostedViewHistory : BackgroundService
     private void OnConsumerCancelled(object? sender, ConsumerEventArgs e)
     {
         $"Consumer cancelled {e.ConsumerTags}".LogInfor();
-    }
-
-    #endregion
-
-    #region -- Properties --
-
-    private string GetLastViewFromUser
-    {
-        get
-        {
-            return @"SELECT ""Id""
-                FROM ""ViewHistories""
-                WHERE ""EntityId"" = @EntityId AND ""UsedId"" = @userid 
-                AND ""EntityType"" = @EntityType AND ""IpAddress"" = @IpAddress ;";
-        }
     }
 
     #endregion
