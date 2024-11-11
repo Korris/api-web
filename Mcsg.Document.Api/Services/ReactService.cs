@@ -58,8 +58,8 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
 
             if (isChange)
             {
-                //Update when revert delete or update new type
-                var updateResult = await _reactRepository.UpdateAsync(reactionDb);
+                // Update when revert delete or update new type
+                var updateResult = await _context.SaveChangesAsync(default) > 0;
 
                 // Send Notification
                 await SendReactNotificationAsync(reactionDb.Id, request, targetId, type, isReply);
@@ -73,10 +73,10 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         }
         else
         {
-            var insertResult = await AddNewReaction(targetId, type, userId);
-            if (insertResult != null)
+            var ett = await AddNewReaction(targetId, type, userId);
+            if (ett != null)
             {
-                await SendReactNotificationAsync(insertResult.Id, request, targetId, type, isReply);
+                await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
                 await AddCountQueue(targetId);
                 return true;
             }
@@ -165,8 +165,9 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         res.IsDelete = true;
         await RemoveCountQueue(request.TargetId);
 
-        return await _reactRepository.UpdateAsync(res);
+        return await _context.SaveChangesAsync(default) > 0;
     }
+
     public async Task<T?> GetReactionByUser(ReactionReactR request)
     {
         var query = string.Format(GetReactByUsersQuery, _reactRepository.TableName);
@@ -181,19 +182,22 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         return res;
     }
 
-    private async Task<T> AddNewReaction(Guid targetId, ReactionType type, Guid userId)
+    private async Task<T?> AddNewReaction(Guid targetId, ReactionType type, Guid userId)
     {
-        var checkDb = new T
+        var ett = new T
         {
             TargetId = targetId,
             AuthorId = userId,
             Type = type
         };
 
-        var result = await _reactRepository.InsertAsync(checkDb);
-        if (result > 0)
+        var set = _context.Set<T>();
+        await set.AddAsync(ett);
+
+        var result = await _context.SaveChangesAsync(default) > 0;
+        if (result)
         {
-            return checkDb;
+            return ett;
         }
         else
         {

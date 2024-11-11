@@ -60,18 +60,7 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     #endregion
 
-    #region -- Methods --
-
-    /// <summary>
-    /// Initialize
-    /// </summary>
-    public McsgContext() { }
-
-    /// <summary>
-    /// Initialize
-    /// </summary>
-    /// <param name="options">Options</param>
-    public McsgContext(DbContextOptions<McsgContext> options) : base(options) { }
+    #region -- Implements --
 
     /// <summary>
     /// Make serial number
@@ -108,6 +97,31 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
         var seq = Convert.ToUInt32(num) + 1;
         return string.Format(prefix, seq);
     }
+
+    /// <summary>
+    /// Set
+    /// </summary>
+    /// <typeparam name="T">Entity type</typeparam>
+    /// <returns>Return the result</returns>
+    public new DbSet<T> Set<T>() where T : class
+    {
+        return base.Set<T>();
+    }
+
+    #endregion
+
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    public McsgContext() { }
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="options">Options</param>
+    public McsgContext(DbContextOptions<McsgContext> options) : base(options) { }
 
     #endregion
 

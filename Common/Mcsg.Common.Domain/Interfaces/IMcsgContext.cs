@@ -57,6 +57,13 @@ public interface IMcsgContext
     /// <returns>Return the result</returns>
     string MakeNo<T>(IQueryable<T> q, Func<T, ulong> sOrderBy, Func<T, string> sSelect, string prefix, bool useDateTime = false);
 
+    /// <summary>
+    /// Set
+    /// </summary>
+    /// <typeparam name="T">Entity type</typeparam>
+    /// <returns>Return the result</returns>
+    DbSet<T> Set<T>() where T : class;
+
     #endregion
 
     #region -- Properties --
