@@ -63,7 +63,6 @@ public partial class FeedService : IFeedService
             PagedResponse<FeedDto> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
             var date = DateTime.UtcNow.Date;
-            var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
             if (feedLoadReq.OrderBy == null)
             {
@@ -106,7 +105,7 @@ public partial class FeedService : IFeedService
                         feedLoadReq.PageSize,
                         Offet = offset,
                         Date = date,
-                        PostStatus = statusList,
+                        PostStatus = StatusUtils.PostStatusInt,
                         DateOnly = DateOnly.FromDateTime(date),
                         Hide = feedLoadReq.Hides,
                         MySelf = isMySelf,
@@ -178,7 +177,6 @@ public partial class FeedService : IFeedService
     {
         PagedResponse<FeedDto> results;
         var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var queryCondition = "";
 
@@ -215,7 +213,7 @@ public partial class FeedService : IFeedService
                        PageSize = feedLoadReq.PageSize,
                        Offet = offset,
                        ProfileName = feedLoadReq.Keyword,
-                       PostStatus = statusList,
+                       PostStatus = StatusUtils.PostStatusInt,
                        Hide = feedLoadReq.Hides
                    });
         var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
@@ -447,7 +445,6 @@ public partial class FeedService : IFeedService
         var hashId = req.HashId;
         var userId = req.UserId;
         var query = string.Format(GetFeedQuery, _postRepository.TableName);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         FeedQueryDbDto? dbFeed = null;
         await _postRepository
@@ -487,7 +484,7 @@ public partial class FeedService : IFeedService
                 HashId = hashId,
                 IsAccessPrivate = false,
                 Hide = req.Hides,
-                PostStatus = statusList,
+                PostStatus = StatusUtils.PostStatusInt,
             }, splitOn: "Id, Id, Id, Id, Id");
 
         //Add view
@@ -616,13 +613,12 @@ public partial class FeedService : IFeedService
     {
         var hashIds = req.HashIds;
         var userId = req.UserId;
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var param = new
         {
             HashIds = hashIds.Split(',').ToList(),
             Hide = req.Hides,
-            PostStatus = statusList
+            PostStatus = StatusUtils.PostStatusInt
         };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
 

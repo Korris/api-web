@@ -343,7 +343,6 @@ public partial class TagService : ITagService
         }
         var keywords = input.Name.ToLower().Split(' ');
         var query = SearchTagWithPostCount;
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         bool first = true;
         var queryCondition = "";
@@ -365,7 +364,7 @@ public partial class TagService : ITagService
         {
             Offset = offset,
             PageSize = input.PageSize,
-            PostStatus = statusList
+            PostStatus = StatusUtils.PostStatusInt
         });
         var items = await multi.ReadAsync<TagSearchResponse>().ConfigureAwait(false);
         var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);

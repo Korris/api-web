@@ -75,7 +75,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         IEnumerable<PostSeriesTopQueryDbResponse> dataSocial = [];
         IEnumerable<PostSeriesTopQueryDbResponse> dataStory = [];
 
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
         using (var connection = _context.Database.GetDbConnection())
         {
             if (request.Tag == "all" || request.Tag == "comic")
@@ -84,7 +83,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Comic,
-                    StatusList = statusList,
+                    StatusList = StatusUtils.PostStatusInt,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
@@ -96,7 +95,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Comic
-                          && statusList.Contains((int)qpost.Status)
+                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
                           && qpost.Permission != PostPermission.Private
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
@@ -112,7 +111,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides,
-                    StatusList = statusList,
+                    StatusList = StatusUtils.PostStatusInt,
                 });
 
                 recordSocial = (
@@ -121,7 +120,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.TagAvailable on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Feed
-                          && statusList.Contains((int)qpost.Status)
+                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id
                 ).Distinct().Count();
@@ -138,7 +137,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Story,
-                    StatusList = statusList,
+                    StatusList = StatusUtils.PostStatusInt,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
@@ -150,7 +149,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
                     where qtag.Name == keyword
                           && qpost.Type == PostType.Story
-                          && statusList.Contains((int)qpost.Status)
+                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
                           && qpost.Permission != PostPermission.Private
                           && !request.Hides.Contains((int)qpost.Hide)
                     select qpost.Id

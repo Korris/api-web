@@ -209,9 +209,8 @@ public partial class PostService : IPostService
         query = query.Replace("[Not-load-chapter]", subNotLoadChapter);
 
         var userId = req.UserId;
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
-        //TODO Premium            
+        //TODO Premium
         query = AddWithPermission(query, userId);
         //
         PostSeriesQueryDbResponse dbPost = null;
@@ -247,7 +246,7 @@ public partial class PostService : IPostService
                 CurrentDate = DateTime.UtcNow,
                 UserId = userId,
                 Hide = req.Hides,
-                PostStatus = statusList,
+                PostStatus = StatusUtils.PostStatusInt,
                 req.UserName
             }, splitOn: "Id, Id");
         //Add view
@@ -306,7 +305,6 @@ public partial class PostService : IPostService
         var order = req.Order;
 
         var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         ChapterResponse subpost = null;
         await _subPostRepository
@@ -346,7 +344,7 @@ public partial class PostService : IPostService
                 SubPostOrder = order,
                 UserId = userId,
                 Hide = req.Hides,
-                PostStatus = statusList,
+                PostStatus = StatusUtils.PostStatusInt,
             }, splitOn: "Id, Id");
 
         if (subpost != null)
@@ -391,7 +389,6 @@ public partial class PostService : IPostService
     public async Task<PostSeriesAllTopResponse> GetTopSeries(PostType type)
     {
         var result = new PostSeriesAllTopResponse();
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         string allSubQuery = $@"({GetTopPostHitQuery})
                         UNION ALL
@@ -413,7 +410,7 @@ public partial class PostService : IPostService
                 PageSize = 10,
                 Offet = 0,
                 LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                PostStatus = statusList
+                PostStatus = StatusUtils.PostStatusInt
             });
         result = new PostSeriesAllTopResponse();// MappingTopSeries(dbFeed);
         var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.HIT).ToList();
@@ -431,7 +428,6 @@ public partial class PostService : IPostService
         var userId = request.UserId;
         var isFavorite = userId == null ? false : request.IsFavorite;
         var offset = request.PageSize * (request.PageNumber - 1);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         string allSubQuery = $@"
                         ({GetTopLatestPostByTagQuery})";
@@ -462,7 +458,7 @@ public partial class PostService : IPostService
                     PageSize = request.PageSize,
                     Offet = offset,
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     PostPermission = (int)PostPermission.Public,
                     TagName = request.HashTag,
                     UserId = userId,
@@ -516,7 +512,6 @@ public partial class PostService : IPostService
             }
 
             var offset = request.PageSize * (request.PageNumber - 1);
-            var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
             string whereClause = " WHERE qpost1.\"Type\" = @PostType " +
                 "AND qpost1.\"Permission\" = @PostPermission " +
@@ -553,7 +548,7 @@ public partial class PostService : IPostService
                         request.PageSize,
                         Offet = offset,
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                        PostStatus = statusList,
+                        PostStatus = StatusUtils.PostStatusInt,
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
                         request.HashId,
@@ -627,7 +622,6 @@ public partial class PostService : IPostService
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -636,7 +630,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = loadReq.PageSize,
                     Offet = offset,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     TagName = tagName
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -662,7 +656,6 @@ public partial class PostService : IPostService
         var offset = GetOffsetSetup(ref loadReq);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_USER, profileName);
         var isMySelf = profileName == loadReq.UserName;
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -671,7 +664,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     loadReq.PageSize,
                     Offet = offset,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     ProfileName = profileName,
                     Hide = loadReq.Hides,
                     MySelf = isMySelf
@@ -717,7 +710,6 @@ public partial class PostService : IPostService
         PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
         var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -726,7 +718,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = input.PageSize,
                     Offet = offset,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     TagName = input.TagName,
                     Hide = input.Hides
                 });
@@ -751,7 +743,6 @@ public partial class PostService : IPostService
         ValidateTotalItem(input.PageSize);
         PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var queryCondition = "";
         if (input.SearchBy == "ProfileName")
@@ -826,7 +817,7 @@ public partial class PostService : IPostService
                     IsAccessPrivate = false,
                     PageSize = input.PageSize,
                     Offset = offset,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     Permission = (int)PostPermission.Public,
                     ProfileName = input.Keyword,
                     Hide = input.Hides,
@@ -875,7 +866,6 @@ public partial class PostService : IPostService
         var number = req.Number;
         ValidateTotalItem(number);
         var query = GetQuerySelectPage(PostSeriesSelectedType.RECOMMEND);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var items = await _postRepository
                 .Connection.QueryAsync<PostSeriesTopQueryDbResponse>(query, new
@@ -883,7 +873,7 @@ public partial class PostService : IPostService
                     PostType = (int)type,
                     IsAccessPrivate = false,
                     PageSize = number,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     Hide = req.Hides
                 });
 
@@ -1082,7 +1072,6 @@ public partial class PostService : IPostService
         var userId = loadReq.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         if (loadReq.OrderBy == null)
         {
@@ -1106,7 +1095,7 @@ public partial class PostService : IPostService
                     PageSize = loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
-                    PostStatus = statusList
+                    PostStatus = StatusUtils.PostStatusInt
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -1145,7 +1134,6 @@ public partial class PostService : IPostService
         var userId = loadReq.UserId;
         PagedResponse<PostSeriesTopResponse> results;
         var offset = loadReq.PageSize * (loadReq.PageNumber - 1);
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         if (loadReq.OrderBy == null)
         {
@@ -1170,7 +1158,7 @@ public partial class PostService : IPostService
                     loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
-                    PostStatus = statusList,
+                    PostStatus = StatusUtils.PostStatusInt,
                     ProfileName = loadReq.UserName,
                     MySelf = true,
                 });
@@ -1357,13 +1345,12 @@ public partial class PostService : IPostService
     {
         var userId = req.UserId;
         var hashIds = req.HashIds;
-        var statusList = new List<int> { (int)PostStatus.Inactive, (int)PostStatus.Public };
 
         var param = new
         {
             HashIds = hashIds.Split(',').ToList(),
             Hide = req.Hides,
-            PostStatus = statusList,
+            PostStatus = StatusUtils.PostStatusInt,
             CurrentDate = DateTime.UtcNow
         };
 
