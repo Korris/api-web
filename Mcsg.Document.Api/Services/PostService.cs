@@ -136,6 +136,7 @@ public partial class PostService : BaseMinioS, IPostService
             Status = PostStatus.Public,
             CreatedBy = userId,
             Hide = HideOption.None,
+            IsAllowDownload = request.IsAllowDownload,
             ViewCount = 0
         };
 
@@ -925,6 +926,7 @@ public partial class PostService : BaseMinioS, IPostService
         post.Permission = request.Permission;
         post.Status = request.IsSaveAndPublish ? post.Status : PostStatus.Draft;
         post.IsCompleted = request.IsCompleted;
+        post.IsAllowDownload = request.IsAllowDownload;
 
         var result = new PostSeriesResponse
         {
@@ -943,7 +945,8 @@ public partial class PostService : BaseMinioS, IPostService
             ProfileId = profileId,
             AuthorName = post.AuthorName,
             IsCurrentUserAuthor = request.IsCurrentUserAuthor,
-            IsCompleted = request.IsCompleted
+            IsCompleted = request.IsCompleted,
+            IsAllowDownload = request.IsAllowDownload
         };
 
         await _context.SaveChangesAsync(default);
@@ -1852,7 +1855,8 @@ public partial class PostService : BaseMinioS, IPostService
             IsPremium = request.IsPremium,
             PostHashId = post.HashId,
             Sort = !await _context.DocumentSubPostAvailable.AnyAsync(p => p.PostId == post.Id) ? 1 :
-                    await _context.DocumentSubPostAvailable.Where(p => p.PostId == post.Id).MaxAsync(p => p.Sort) + 1
+                    await _context.DocumentSubPostAvailable.Where(p => p.PostId == post.Id).MaxAsync(p => p.Sort) + 1,
+            IsAllowDownload = request.IsAllowDownload
         };
 
         post.ModifiedOn = DateTime.UtcNow;
@@ -1960,6 +1964,7 @@ public partial class PostService : BaseMinioS, IPostService
         subPost.Sort = subPost.Sort;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
+        post.IsAllowDownload = request.IsAllowDownload;
 
         await _context.SaveChangesAsync(default);
 
@@ -2036,6 +2041,7 @@ public partial class PostService : BaseMinioS, IPostService
         result.CreatedBy = newChapter.CreatedBy;
         result.IsEnableComment = newChapter.IsEnableComment;
         result.IsExclusive = newChapter.IsExclusive;
+        result.IsAllowDownload = newChapter.IsAllowDownload;
         //When new, return 0
         result.CommentCount = 0;
         return result;

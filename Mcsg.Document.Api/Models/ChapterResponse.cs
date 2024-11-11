@@ -20,6 +20,7 @@ public class ChapterResponse : ChapterBasicResponse
     public string Body { get; set; }
     public string ProfileName { get; set; }
     public List<RewardDto> Rewards { get; set; }
+    public bool IsAllowDownload { get; set; }
 }
 public class ChapterTOCResponse
 {

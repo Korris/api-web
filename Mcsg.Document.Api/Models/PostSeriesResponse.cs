@@ -31,6 +31,7 @@ public class PostSeriesResponse : PostDto
     public ReactionsResponse Reaction { get; set; }
     public DateTime LatestCreatedOn { get; set; }
     public int FollowCount { get; set; }
+    public bool IsAllowDownload { get; set; }
 
     [JsonIgnore]
     public ExternalResource ExternalResource { get; set; }

@@ -30,6 +30,7 @@ public class DocumentSubPostFormBaseR : IdBaseR
     public bool IsPremium { get; set; }
     public bool IsAutoGenerateOrder { get; set; }
     public float? Order { get; set; }
+    public bool IsAllowDownload { get; set; }
 
     #endregion
 }

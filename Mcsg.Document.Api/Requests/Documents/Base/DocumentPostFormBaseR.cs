@@ -18,4 +18,5 @@ public class DocumentPostFormBaseR : IdBaseR
     public PostPermission Permission { get; set; }
     public List<string>? Tags { get; set; }
     public bool IsSaveAndPublish { get; set; }
+    public bool IsAllowDownload { get; set; }
 }
