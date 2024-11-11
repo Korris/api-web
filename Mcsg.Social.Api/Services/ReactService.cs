@@ -16,17 +16,20 @@ using Interfaces;
 using Models;
 using Requests;
 
-public partial class ReactService<T> : IReactService<T> where T : BaseReaction, new()
+public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseReaction, new()
 {
-    public ReactService(IUnitOfWork unitOfWork,
-        INotificationService notificationService,
-        ISmartCountService smartCountService,
-        IMcsgContext context)
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="notificationService"></param>
+    /// <param name="smartCountService"></param>
+    public ReactService(IMcsgContext context, IUnitOfWork unitOfWork, INotificationService notificationService, ISmartCountService smartCountService) : base(context)
     {
         _reactRepository = unitOfWork.GetRepository<T>();
         _notificationService = notificationService;
         _smartCountService = smartCountService;
-        _context = context;
     }
 
     public async Task<bool> AddReaction(ReactionReactR request)
@@ -245,6 +248,7 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
 
         }
     }
+
     private async Task RemoveCountQueue(Guid targetId)
     {
         switch (typeof(T))
@@ -264,11 +268,6 @@ public partial class ReactService<T> : IReactService<T> where T : BaseReaction, 
     }
 
     #region -- Fields --
-
-    /// <summary>
-    /// DB context
-    /// </summary>
-    private readonly IMcsgContext _context;
 
     private readonly IRepository<T> _reactRepository;
     private readonly INotificationService _notificationService;
