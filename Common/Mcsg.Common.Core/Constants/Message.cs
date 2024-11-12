@@ -35,5 +35,20 @@ public class Message : SeedWork.Constants.Message
     /// </summary>
     public const string S302 = "Notification social";
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S303 = "Notification lock comic and story";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S304 = "Notification lock sub comic and story";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S305 = "Notification lock social";
+
     #endregion
 }

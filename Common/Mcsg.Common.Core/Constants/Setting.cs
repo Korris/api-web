@@ -361,6 +361,21 @@ public class Setting : SeedWork.Constants.Setting
         /// DeleteSubPost
         /// </summary>
         public const string DeleteSubPost = "DeleteSubPost";
+
+        /// <summary>
+        /// LockSocial
+        /// </summary>
+        public const string LockSocial = "LockSocial";
+
+        /// <summary>
+        /// LockPost
+        /// </summary>
+        public const string LockPost = "LockPost";
+
+        /// <summary>
+        /// LockSubPost
+        /// </summary>
+        public const string LockSubPost = "LockSubPost";
     }
 
     /// <summary>

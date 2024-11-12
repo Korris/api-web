@@ -299,6 +299,33 @@ public enum NotificationEntityType
     /// <summary>
     /// DeleteStorySubPost
     /// </summary>
-    DeleteStorySubPost
+    DeleteStorySubPost,
+    #endregion
+
+    #region -- Lock --
+    /// <summary>
+    /// LockComicPost
+    /// </summary>
+    LockComicPost,
+
+    /// <summary>
+    /// LockComicSubPost
+    /// </summary>
+    LockComicSubPost,
+
+    /// <summary>
+    /// LockSocial
+    /// </summary>
+    LockSocial,
+
+    /// <summary>
+    /// LockStoryPost
+    /// </summary>
+    LockStoryPost,
+
+    /// <summary>
+    /// LockStorySubPost
+    /// </summary>
+    LockStorySubPost
     #endregion
 }

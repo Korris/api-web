@@ -81,4 +81,19 @@ public class NotificationController : ControllerBase
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// AddLock
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("AddLock"), Authorize(Policy = Policy.Admin)]
+    public async Task<IActionResult> AddLock([FromBody] NotificationAddLockR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _notificationService.AddLock(request);
+
+        return Ok(response);
+    }
 }

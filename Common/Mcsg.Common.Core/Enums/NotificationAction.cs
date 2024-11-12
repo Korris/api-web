@@ -78,5 +78,15 @@ public enum NotificationAction
     /// <summary>
     /// DeleteSubPost
     /// </summary>
-    DeleteSubPost
+    DeleteSubPost,
+
+    /// <summary>
+    /// LockPost
+    /// </summary>
+    LockPost,
+
+    /// <summary>
+    /// LockSubPost
+    /// </summary>
+    LockSubPost
 }

@@ -941,6 +941,142 @@ public class NotificationService : BaseS, INotificationService
         return response;
     }
 
+    public async Task<NotificationResponse> AddLock(NotificationAddLockR request)
+    {
+        var response = new NotificationResponse();
+
+        var q = from report in _context.ComicReportAvailable.AsNoTracking()
+                join post in _context.ComicPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                where report.Id == request.EntityId
+                select new
+                {
+                    report.Id,
+                    report.EntityId,
+                    report.ModifiedBy,
+                    post.UserId
+                };
+
+        var action = NotificationAction.LockPost;
+        var targetType = NotificationTargetType.Comic;
+        var message = nameof(S303);
+        var notiType = NotificationType.LockPost;
+        var entityType = NotificationEntityType.LockComicPost;
+
+        var type = request.NotificationType.ToEnum(AddLockType.ComicPost);
+        switch (type)
+        {
+            case AddLockType.ComicSubPost:
+                q = from report in _context.ComicReportAvailable.AsNoTracking()
+                    join post in _context.ComicSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockSubPost;
+                targetType = NotificationTargetType.SubComic;
+                message = nameof(S304);
+                notiType = NotificationType.LockSubPost;
+                entityType = NotificationEntityType.LockComicSubPost;
+
+                break;
+
+            case AddLockType.SocialPost:
+                q = from report in _context.SocialReportAvailable.AsNoTracking()
+                    join post in _context.SocialPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockPost;
+                targetType = NotificationTargetType.Feed;
+                message = nameof(S305);
+                notiType = NotificationType.LockSocial;
+                entityType = NotificationEntityType.LockSocial;
+
+                break;
+
+            case AddLockType.StoryPost:
+                q = from report in _context.StoryReportAvailable.AsNoTracking()
+                    join post in _context.StoryPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockPost;
+                targetType = NotificationTargetType.Story;
+                message = nameof(S303);
+                notiType = NotificationType.LockPost;
+                entityType = NotificationEntityType.LockStoryPost;
+
+                break;
+
+            case AddLockType.StorySubPost:
+                q = from report in _context.StoryReportAvailable.AsNoTracking()
+                    join post in _context.StorySubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockSubPost;
+                targetType = NotificationTargetType.SubStory;
+                message = nameof(S304);
+                notiType = NotificationType.LockSubPost;
+                entityType = NotificationEntityType.LockStorySubPost;
+
+                break;
+
+            default:
+                break;
+        }
+
+        var ett = await q.FirstOrDefaultAsync();
+        if (ett == null)
+        {
+            return response;
+        }
+
+        var noti = await AddNotificationAsync(
+                                actorId: ett.ModifiedBy!.Value
+                                , receiverId: ett.UserId
+                                , action: action
+                                , entityType: entityType
+                                , entityId: ett.Id
+                                , locationId: ett.EntityId);
+
+        response.Id = noti.Id;
+        response.Status = noti.Status;
+        response.LocationId = ett.EntityId;
+        response.Message = message;
+        response.TargetType = targetType;
+        response.ActorId = ett.ModifiedBy.Value;
+        response.CreatedOn = noti.CreatedOn;
+        response.NotificationType = notiType;
+
+        await _hubcontext.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+
+        return response;
+    }
+
     #region -- Fields --
 
     private readonly IRepository<SocialPost> _postRepository;
