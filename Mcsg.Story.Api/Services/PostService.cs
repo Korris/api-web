@@ -3,6 +3,7 @@ using Dapper;
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Web;
 
 namespace Mcsg.Story.Api.Services;
@@ -1855,6 +1856,17 @@ public partial class PostService : BaseMinioS, IPostService
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
 
+        // Check if text is empty
+        if (subPost.Body != null)
+        {
+            var jsonBody = JObject.Parse(subPost.Body);
+            var textNode = jsonBody.SelectToken("root.children[0].children[0].text");
+            if (textNode == null || string.IsNullOrWhiteSpace(textNode.ToString()))
+            {
+                throw new BadRequestException(nameof(E001), E001);
+            }
+        }
+
         await _context.StorySubPosts.AddAsync(subPost);
         await _context.SaveChangesAsync(default);
 
@@ -1949,6 +1961,17 @@ public partial class PostService : BaseMinioS, IPostService
         subPost.Sort = subPost.Sort;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
+
+        // Check if text is empty
+        if (subPost.Body != null)
+        {
+            var jsonBody = JObject.Parse(subPost.Body);
+            var textNode = jsonBody.SelectToken("root.children[0].children[0].text");
+            if (textNode == null || string.IsNullOrWhiteSpace(textNode.ToString()))
+            {
+                throw new BadRequestException(nameof(E001), E001);
+            }
+        }
 
         await _context.SaveChangesAsync(default);
 
