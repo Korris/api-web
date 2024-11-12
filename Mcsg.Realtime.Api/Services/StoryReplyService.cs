@@ -259,7 +259,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         {
             PostId = comment.PostId,
             ReplyText = comment.Body,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,
@@ -297,7 +297,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         {
             PostId = comment.PostId,
             ReplyText = comment.Body,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,
@@ -340,7 +340,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         {
             PostId = comment.PostId,
             ReplyText = comment.Body,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,
@@ -380,7 +380,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         {
             PostId = comment.PostId,
             ReplyText = comment.Body,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,
@@ -421,7 +421,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         return new ReplyCommentResp
         {
             PostId = comment.PostId,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value
@@ -453,7 +453,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         return new ReplyCommentResp
         {
             PostId = comment.PostId,
-            ReplyDate = comment.ModifiedOn.Value,
+            ReplyDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,

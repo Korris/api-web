@@ -291,7 +291,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             PostId = comment.PostId,
             CommentText = comment.Body,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
             ResourceHashId = resource?.HashId ?? null,
@@ -327,7 +327,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             PostId = comment.PostId,
             CommentText = comment.Body,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ResourceHashId = resource?.HashId ?? null,
@@ -367,7 +367,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             PostId = comment.PostId,
             CommentText = comment.Body,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
             ResourceHashId = resource?.HashId ?? null,
@@ -404,7 +404,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             PostId = comment.PostId,
             CommentText = comment.Body,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ResourceHashId = resource?.HashId ?? null,
@@ -445,7 +445,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         return new PostCommentResp
         {
             PostId = comment.PostId,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.Post,
             Id = comment.Id,
         };
@@ -481,7 +481,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             PostIdOfPost = post.PostId,
             PostId = comment.PostId,
-            CommentDate = comment.ModifiedOn.Value,
+            CommentDate = comment.CreatedOn,
             Type = PostTypes.SubPost,
             Id = comment.Id,
         };
