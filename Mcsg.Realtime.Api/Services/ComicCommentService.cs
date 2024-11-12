@@ -76,6 +76,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         var pDto = new PostDto();
         var order = 0.0f;
         req.CommentText = req.CommentText.RemoveMaliciousText();
+        req.CustomNote = req.CustomNote.RemoveMaliciousText();
 
         if (req.Type == PostTypes.Post)
         {
@@ -201,6 +202,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         #endregion
 
         req.CommentText = req.CommentText.RemoveMaliciousText();
+        req.CustomNote = req.CustomNote.RemoveMaliciousText();
         var userName = req.UserName;
         var profileName = req.ProfileName;
         var userFolder = req.UserFolder;
@@ -270,18 +272,17 @@ public partial class ComicCommentService : BaseS, IComicCommentService
     #region Add New Comment
     private async Task<PostCommentResp> CommentToPost(PostCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        req.CommentText = req.CommentText.RemoveMaliciousText();
         var comment = new ComicPostComment
         {
             AuthorId = author.Id,
-            Body = req.CommentText,
+            Body = req.CommentText.RemoveMaliciousText(),
             CreatedBy = author.Id,
             ModifiedBy = author.Id,
             PostId = req.PostId,
             Status = CommentStatus.Public,
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
-            CustomNote = req.CustomNote
+            CustomNote = req.CustomNote.RemoveMaliciousText()
         };
         await _context.ComicPostComments.AddAsync(comment);
         await _context.SaveChangesAsync(default);
@@ -317,7 +318,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
             Status = CommentStatus.Public,
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
-            CustomNote = req.CustomNote
+            CustomNote = req.CustomNote.RemoveMaliciousText()
         };
         await _context.ComicSubPostComments.AddAsync(comment);
         await _context.SaveChangesAsync(default);
@@ -361,7 +362,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
-        comment.CustomNote = req.CustomNote;
+        comment.CustomNote = req.CustomNote.RemoveMaliciousText();
         await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostComment, author, req.Mentions, post);
@@ -398,7 +399,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
-        comment.CustomNote = req.CustomNote;
+        comment.CustomNote = req.CustomNote.RemoveMaliciousText();
         await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostComment, author, req.Mentions, post);

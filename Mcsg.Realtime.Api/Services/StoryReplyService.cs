@@ -62,6 +62,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         }
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
+        req.CustomNote = req.CustomNote.RemoveMaliciousText();
 
         var userName = req.UserName;
         var profileName = req.ProfileName;
@@ -166,6 +167,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         #endregion
 
         req.ReplyText = req.ReplyText.RemoveMaliciousText();
+        req.CustomNote = req.CustomNote.RemoveMaliciousText();
 
         var userName = req.UserName;
         var profileName = req.ProfileName;
@@ -250,7 +252,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
             QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
-            CustomNote = req.CustomNote
+            CustomNote = req.CustomNote.RemoveMaliciousText()
         };
         await _context.StoryPostComments.AddAsync(comment);
         await _context.SaveChangesAsync(default);
@@ -287,7 +289,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
             Status = CommentStatus.Public,
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
-            CustomNote = req.CustomNote,
+            CustomNote = req.CustomNote.RemoveMaliciousText(),
             QuoteId = req?.QuoteId == Guid.Empty ? null : req.QuoteId,
         };
         await _context.StorySubPostComments.AddAsync(comment);
@@ -333,7 +335,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
-        comment.CustomNote = req.CustomNote;
+        comment.CustomNote = req.CustomNote.RemoveMaliciousText();
         await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.PostCommentReply, author, req.Mentions, post);
@@ -373,7 +375,7 @@ public partial class StoryReplyService : BaseS, IStoryReplyService
         comment.ModifiedOn = DateTime.UtcNow;
         comment.ResourceId = resource?.Id ?? null;
         comment.GifId = req.GifId;
-        comment.CustomNote = req.CustomNote;
+        comment.CustomNote = req.CustomNote.RemoveMaliciousText();
         await _context.SaveChangesAsync(default);
 
         await _mentionService.AddUserMentionOnComment(comment.Id, MentionLocationType.SubPostCommentReply, author, req.Mentions, post);
