@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Web;
 
-namespace Mcsg.Social.Api.Commands;
+namespace Mcsg.Social.Api.Queries;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -160,7 +160,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostReactions"""), new
                 {
                     TargetIds = dataSocial.Select(p => p.Id).ToList(),
-                    UserId = request?.UserId
+                    request?.UserId
                 });
 
                 foreach (var item in dataSocial)
@@ -187,7 +187,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
                 {
                     TargetIds = dataComic.Select(p => p.Id).ToList(),
-                    UserId = request?.UserId
+                    request?.UserId
                 });
 
                 foreach (var item in dataComic)
@@ -215,7 +215,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                 var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostReactions"""), new
                 {
                     TargetIds = dataStory.Select(p => p.Id).ToList(),
-                    UserId = request?.UserId
+                    request?.UserId
                 });
 
                 foreach (var item in dataStory)
@@ -254,7 +254,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
             {
                 res.SetSuccess(tagDataMap[request.Tag]);
             }
-
         }
 
         await _context.Database.CloseConnectionAsync();

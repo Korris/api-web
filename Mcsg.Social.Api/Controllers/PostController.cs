@@ -107,12 +107,11 @@ public class PostController : ControllerBase
     /// </summary>
     /// <param name="request">Request</param>
     /// <returns>Returns the result</returns>
-    [HttpPatch("/v1/SearchHashTag")]
+    [HttpPatch("/SearchHashTag")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> SearchHashTag([FromBody] PostSearchHashTagR request)
     {
         request.Analyze(HttpContext);
-
         var response = await _mediator.Send(request);
         return Ok(response);
     }
