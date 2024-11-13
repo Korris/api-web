@@ -301,6 +301,19 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 throw new ForbiddenAccessException(E305, M305);
             }
 
+            if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
+            {
+                if (user.Status == UserStatus.Suspended)
+                {
+                    var lockoutEndFormat = user.LockoutEnd == null ? "không thời hạn" : user.LockoutEnd?.ToString();
+                    throw new ForbiddenAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
+                }
+                else if (user.Status == UserStatus.Banned)
+                {
+                    throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
+                }
+            }
+
             user.SessionId = request.SessionId;
             return await CreateAccessToken(user, request.RemoteIp);
         }
