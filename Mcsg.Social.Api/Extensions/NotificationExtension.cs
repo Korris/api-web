@@ -33,6 +33,12 @@ public static class NotificationExtension
             NotificationEntityType.Story,
         };
 
+        List<NotificationEntityType> rejectReportEntities = new List<NotificationEntityType>()
+        {
+            NotificationEntityType.RejectPostReport,
+            NotificationEntityType.RejectCommentReport
+        };
+
         List<NotificationEntityType> reactionEntities = new List<NotificationEntityType>()
         {
             NotificationEntityType.PostReaction,
@@ -106,6 +112,13 @@ public static class NotificationExtension
                 var message = noti.EntityType == NotificationEntityType.PostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
                 return noti.ActorName + message;
             }
+        }
+        #endregion
+
+        #region Report
+        if (rejectReportEntities.Contains(noti.EntityType))
+        {
+            return noti.EntityType == NotificationEntityType.RejectCommentReport ? nameof(Message.S303) : nameof(Message.S304);
         }
         #endregion
 
@@ -313,6 +326,9 @@ public static class NotificationExtension
             NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationTargetType.Transaction,
             NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationTargetType.Transaction,
 
+            NotificationEntityType.RejectPostReport => Common.Core.Constants.Setting.NotificationTargetType.RejectPostReport,
+            NotificationEntityType.RejectCommentReport => Common.Core.Constants.Setting.NotificationTargetType.RejectCommentReport,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
@@ -372,6 +388,8 @@ public static class NotificationExtension
             NotificationEntityType.LockStoryPost => Common.Core.Constants.Setting.NotificationType.LockPost,
             NotificationEntityType.LockComicSubPost => Common.Core.Constants.Setting.NotificationType.LockSubPost,
             NotificationEntityType.LockStorySubPost => Common.Core.Constants.Setting.NotificationType.LockSubPost,
+            NotificationEntityType.RejectCommentReport => Common.Core.Constants.Setting.NotificationType.RejectReport,
+            NotificationEntityType.RejectPostReport => Common.Core.Constants.Setting.NotificationType.RejectReport,
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };

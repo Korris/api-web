@@ -50,5 +50,15 @@ public class Message : SeedWork.Constants.Message
     /// </summary>
     public const string S305 = "Notification lock social";
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S306 = "Notification reject reported comment";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S307 = "Notification reject reported post";
+
     #endregion
 }

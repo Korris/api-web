@@ -328,6 +328,18 @@ public enum NotificationEntityType
     /// <summary>
     /// LockStorySubPost
     /// </summary>
-    LockStorySubPost
+    LockStorySubPost,
+    #endregion
+
+    #region -- Reject --
+    /// <summary>
+    /// RejectCommentReport
+    /// </summary>
+    RejectCommentReport,
+
+    /// <summary>
+    /// RejectPostReport
+    /// </summary>
+    RejectPostReport
     #endregion
 }

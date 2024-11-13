@@ -19,6 +19,7 @@ public interface INotificationService
     Task AddCommonNotification(CommonNotificationReq req);
     Task<NotificationResponse> FollowNotification(UserFollowResp followResp);
     Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request);
+    Task<NotificationResponse> AddRejecton(NotificationAddRejectionR request);
     Task AddPostMentionNotification(MentionPostNotificationReq request);
     Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req);
     Task<NotificationResponse> AddDeletion(NotificationAddDeletionR request);

@@ -778,6 +778,76 @@ public class NotificationService : BaseS, INotificationService
         return response;
     }
 
+    public async Task<NotificationResponse> AddRejecton(NotificationAddRejectionR request)
+    {
+        var response = new NotificationResponse();
+
+        var report = await _context.SocialReports
+            .Where(p => p.Id == request.EntityId && p.ModifiedBy != null)
+            .Select(p => new
+            {
+                p.EntityType,
+                p.EntityId,
+                ModifiedBy = p.ModifiedBy!.Value
+            })
+            .FirstOrDefaultAsync();
+
+        if (report == null)
+        {
+            return response;
+        }
+
+        var details = await _context.SocialReportDetailAvailable
+            .Where(p => p.ReportId == request.EntityId && p.ModifiedBy == null)
+            .Select(p => new
+            {
+                p.UserId,
+                p.Id
+            })
+            .ToListAsync();
+
+        var type = request.EntityType.ToEnum(EntityType.CommentPost);
+
+        var notiEntityType = (type == EntityType.CommentPost || type == EntityType.CommentSubPost)
+            ? NotificationEntityType.RejectCommentReport
+            : NotificationEntityType.RejectPostReport;
+
+        var notiAction = (type == EntityType.CommentPost || type == EntityType.CommentSubPost)
+            ? NotificationAction.RejectCommentReport
+            : NotificationAction.RejectPostReport;
+
+        var notiTargetType = (type == EntityType.CommentPost || type == EntityType.CommentSubPost)
+            ? NotificationTargetType.RejectCommentReport
+            : NotificationTargetType.RejectPostReport;
+
+        var message = (type == EntityType.CommentPost || type == EntityType.CommentSubPost)
+            ? nameof(S306)
+            : nameof(S307);
+
+        foreach (var i in details)
+        {
+            var noti = await AddNotificationAsync(
+                        actorId: report.ModifiedBy
+                        , receiverId: i.UserId
+                        , action: notiAction
+                        , entityType: notiEntityType
+                        , entityId: i.Id
+                        , locationId: report.EntityId);
+
+            response.Id = noti.Id;
+            response.Status = noti.Status;
+            response.EntityId = request.EntityId;
+            response.Message = message;
+            response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+            response.TargetType = notiTargetType;
+            response.NotificationType = NotificationType.RejectReport;
+
+            await _hubcontext.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        }
+
+        return response;
+    }
+
     public async Task<NotificationResponse> FollowNotification(UserFollowResp followResp)
     {
         var response = new NotificationResponse();
@@ -953,6 +1023,7 @@ public class NotificationService : BaseS, INotificationService
                                 , locationId: request.EntityId);
 
         response.Id = noti.Id;
+        response.EntityId = request.EntityId;
         response.Status = noti.Status;
         response.LocationId = request.EntityId;
         response.Message = message;
@@ -1089,6 +1160,7 @@ public class NotificationService : BaseS, INotificationService
                                 , locationId: ett.EntityId);
 
         response.Id = noti.Id;
+        response.EntityId = request.EntityId;
         response.Status = noti.Status;
         response.LocationId = ett.EntityId;
         response.Message = message;

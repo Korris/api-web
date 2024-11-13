@@ -376,6 +376,11 @@ public class Setting : SeedWork.Constants.Setting
         /// LockSubPost
         /// </summary>
         public const string LockSubPost = "LockSubPost";
+
+        /// <summary>
+        /// RejectReport
+        /// </summary>
+        public const string RejectReport = "RejectReport";
     }
 
     /// <summary>
@@ -497,6 +502,16 @@ public class Setting : SeedWork.Constants.Setting
         /// Transaction
         /// </summary>
         public const string Transaction = "Transaction";
+
+        /// <summary>
+        /// RejectCommentReport
+        /// </summary>
+        public const string RejectCommentReport = "RejectCommentReport";
+
+        /// <summary>
+        /// RejectPostReport
+        /// </summary>
+        public const string RejectPostReport = "RejectPostReport";
     }
 
     /// <summary>

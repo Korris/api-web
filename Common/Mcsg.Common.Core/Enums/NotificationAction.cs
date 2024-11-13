@@ -88,5 +88,15 @@ public enum NotificationAction
     /// <summary>
     /// LockSubPost
     /// </summary>
-    LockSubPost
+    LockSubPost,
+
+    /// <summary>
+    /// RejectPostReport
+    /// </summary>
+    RejectPostReport,
+
+    /// <summary>
+    /// RejectCommentReport
+    /// </summary>
+    RejectCommentReport
 }

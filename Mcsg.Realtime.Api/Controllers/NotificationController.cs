@@ -96,4 +96,19 @@ public class NotificationController : ControllerBase
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// AddRejection
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("AddRejection"), Authorize(Policy = Policy.Admin)]
+    public async Task<IActionResult> AddRejection([FromBody] NotificationAddRejectionR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _notificationService.AddRejecton(request);
+
+        return Ok(response);
+    }
 }
