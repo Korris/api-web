@@ -36,13 +36,13 @@ public class NotificationService : BaseS, INotificationService
         IRepository<SocialSubPost> subPostRepository) : base(context)
     {
         _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _notiRepository = unitOfWork.GetRepository<Notification>();
-        _notiObjectRepository = unitOfWork.GetRepository<NotificationObject>();
+
+
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
         _subPostCommentRepository = unitOfWork.GetRepository<SocialSubPostComment>();
         _comicSubPostRepository = unitOfWork.GetRepository<ComicSubPost>();
         _storySubPostRepository = unitOfWork.GetRepository<StorySubPost>();
-        _unitOfWork = unitOfWork;
+
         _hubcontext = hubcontext;
 
         _comicPostRepository = comicPostRepository;
@@ -142,7 +142,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ActorId = comment.AuthorId;
                 response.ActorName = comment.AuthorName;
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Comment;
+                response.NotificationType = NotificationType.Comment;
                 response.UserAvatar = comment.UserAvatar;
                 response.Order = comment.Order ?? 0;
                 // Then notification the comment to post owner
@@ -158,11 +158,11 @@ public class NotificationService : BaseS, INotificationService
         switch (comment.PostType)
         {
             case PostType.Comic:
-                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Comic : Common.Core.Constants.Setting.NotificationTargetType.SubComic;
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Comic : NotificationTargetType.SubComic;
             case PostType.Story:
-                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Story : Common.Core.Constants.Setting.NotificationTargetType.SubStory;
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Story : NotificationTargetType.SubStory;
             default:
-                return comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Feed : Common.Core.Constants.Setting.NotificationTargetType.SubFeed;
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Feed : NotificationTargetType.SubFeed;
         }
     }
 
@@ -179,8 +179,8 @@ public class NotificationService : BaseS, INotificationService
     {
         return notificationEntityType switch
         {
-            NotificationEntityType.TransferTransaction => Common.Core.Constants.Setting.NotificationType.TransferTransaction,
-            NotificationEntityType.DonateTransaction => Common.Core.Constants.Setting.NotificationType.DonateTransaction
+            NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
+            NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction
         };
     }
 
@@ -217,55 +217,80 @@ public class NotificationService : BaseS, INotificationService
     public async Task<NotificationResponse> AddReplyNotification(CommentNotificationReq comment)
     {
         var response = new NotificationResponse();
-        var receiverId = Guid.Empty;
-        var id = comment.QuoteId ?? comment.ReplyToCommentId;
 
-        if (comment.Type == PostTypes.Post)
+        var id = comment.QuoteId ?? comment.ReplyToCommentId;
+        var postId = comment.PostId;
+        IQueryable<Guid> qAuthorId = default!;
+        IQueryable<string?> qHashId = default!;
+
+        var targetType = GetTargetType(comment);
+        switch (targetType)
         {
-            var parentComment = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
-            receiverId = parentComment.AuthorId;
+            case NotificationTargetType.Comic:
+                qAuthorId = _context.ComicPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.ComicPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.SubComic:
+                qAuthorId = _context.ComicSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.ComicSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.Feed:
+                qAuthorId = _context.SocialPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.SocialPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.SubFeed:
+                qAuthorId = _context.SocialSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.SocialSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.Story:
+                qAuthorId = _context.StoryPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.StoryPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.SubStory:
+                qAuthorId = _context.StorySubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.StorySubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
         }
-        else
-        {
-            var parentComment = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
-            receiverId = parentComment.AuthorId;
-        }
+
+        var authorId = await qAuthorId.FirstOrDefaultAsync();
 
         // Dont notify when comment on their feed
-        if (receiverId != Guid.Empty && receiverId != comment.AuthorId)
+        if (authorId != Guid.Empty && authorId != comment.AuthorId)
         {
-
-            dynamic post = comment.Type switch
-            {
-                PostTypes.Post => await _postRepository.GetByIdAsync(comment.PostId),
-                PostTypes.SubPost => await _subPostRepository.GetByIdAsync(comment.PostId),
-            };
+            var hashId = await qHashId.FirstOrDefaultAsync();
 
             var noti = await AddNotificationAsync(
                                         actorId: comment.AuthorId
-                                        , receiverId: receiverId
+                                        , receiverId: authorId
                                         , action: comment.IsReply ? NotificationAction.Reply : NotificationAction.Comment
                                         , entityType: comment.EntityType
                                         , entityId: comment.Id
                                         , locationId: comment.PostId
-                                        , locationHashId: post.HashId);
+                                        , locationHashId: hashId + "");
 
             response.Id = noti.Id;
             response.Status = noti.Status;
             response.LocationId = comment.PostId;
-            response.LocationHashId = post.HashId;
+            response.LocationHashId = hashId + "";
             response.EntityId = comment.Id;
             response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
-            response.TargetType = comment.Type == PostTypes.Post ? Common.Core.Constants.Setting.NotificationTargetType.Feed : Common.Core.Constants.Setting.NotificationTargetType.SubFeed;
+            response.TargetType = targetType;
             response.ActorId = comment.AuthorId;
             response.ActorName = comment.AuthorName;
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-            response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reply;
+            response.NotificationType = NotificationType.Reply;
             response.UserAvatar = comment.UserAvatar;
+            response.Order = comment.Order ?? 0;
             response.ReplyCommentId = comment.Id;
             response.CommentId = comment.ReplyToCommentId;
+
             // Then notification the comment to post owner
-            await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hubcontext.Clients.Group(authorId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         return response;
@@ -291,12 +316,12 @@ public class NotificationService : BaseS, INotificationService
         response.LocationHashId = video.PostHashId;
         response.EntityHashId = video.HashId;
         response.Message = GetVideoMessage(video.Action);
-        response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : Common.Core.Constants.Setting.NotificationTargetType.None;
+        response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : NotificationTargetType.None;
         response.ActorId = video.AuthorId;
         response.ActorName = video.AuthorName;
         response.UserAvatar = video.UserAvatar;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-        response.NotificationType = Common.Core.Constants.Setting.NotificationType.Video + video.Action.ToString();
+        response.NotificationType = NotificationType.Video + video.Action.ToString();
 
         // Then notification the comment to post owner
         await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -410,7 +435,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
                 response.CreatedOn = DateTime.UtcNow;
-                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reaction;
+                response.NotificationType = NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
                 // Then notification the comment to post owner
@@ -435,7 +460,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Reaction;
+                response.NotificationType = NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
                 // Then notification the comment to post owner
@@ -542,7 +567,7 @@ public class NotificationService : BaseS, INotificationService
                 response.UserAvatar = request.UserAvatar;
                 response.ActorName = request.UserProfileName;
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-                response.NotificationType = Common.Core.Constants.Setting.NotificationType.Mention;
+                response.NotificationType = NotificationType.Mention;
                 response.Message = request.UserProfileName + (isMentionComment ? NotificationContent.MentionOnComment : NotificationContent.MentionOnPost);
                 // Then notification the comment to post owner
                 await _hubcontext.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -560,11 +585,11 @@ public class NotificationService : BaseS, INotificationService
         if (receiverId != mention.AuthorId)
         {
             var entityType = NotificationEntityType.PostCommentMention;
-            var targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed;
+            var targetType = NotificationTargetType.CommentOnFeed;
             if (mention.LocationType == MentionLocationType.SubPostComment || mention.LocationType == MentionLocationType.SubPostCommentReply)
             {
                 entityType = NotificationEntityType.SubPostCommentMention;
-                targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
+                targetType = NotificationTargetType.CommentOnSubFeed;
             }
 
             var noti = await AddNotificationAsync(
@@ -586,7 +611,7 @@ public class NotificationService : BaseS, INotificationService
             response.ActorId = mention.AuthorId;
             response.ActorName = mention.AuthorName;
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-            response.NotificationType = Common.Core.Constants.Setting.NotificationType.Mention;
+            response.NotificationType = NotificationType.Mention;
             response.UserAvatar = mention.UserAvatar;
 
             // Then notification the comment to post owner
@@ -747,7 +772,7 @@ public class NotificationService : BaseS, INotificationService
         response.ActorId = request.ActorId;
         response.ActorName = request.ActorName;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-        response.NotificationType = Common.Core.Constants.Setting.NotificationType.FollowPost;
+        response.NotificationType = NotificationType.FollowPost;
         response.UserAvatar = request.UserAvatar;
         await _hubcontext.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         return response;
@@ -804,11 +829,11 @@ public class NotificationService : BaseS, INotificationService
                     response.LocationHashId = followResp.CreatedByUserName;
                     response.EntityId = null;
                     response.Message = followResp.CreatedByUserName + NotificationContent.FollowUser;
-                    response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.FollowUser;
+                    response.TargetType = NotificationTargetType.FollowUser;
                     response.ActorId = followResp.CreatedByUserId;
                     response.ActorName = followResp.CreatedByUserName;
                     response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-                    response.NotificationType = Common.Core.Constants.Setting.NotificationType.FollowUser;
+                    response.NotificationType = NotificationType.FollowUser;
                     response.UserAvatar = followResp.CreatedByUserAvata;
 
                     await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -1091,10 +1116,8 @@ public class NotificationService : BaseS, INotificationService
     private readonly IRepository<StorySubPostComment> _storySubPostCommentRepository;
     private readonly IRepository<ComicSubPost> _comicSubPostRepository;
     private readonly IRepository<StorySubPost> _storySubPostRepository;
-    private readonly IRepository<Notification> _notiRepository;
-    private readonly IRepository<NotificationObject> _notiObjectRepository;
+
     private readonly IHubContext<NotificationHub> _hubcontext;
-    private IUnitOfWork _unitOfWork;
 
     #endregion
 }

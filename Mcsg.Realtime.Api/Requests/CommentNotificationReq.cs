@@ -16,6 +16,7 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
     public string? PostHashId { get; set; }
     public string LocationHashId { get; set; }
     public string MicroServiceType { get; set; } = MicroService.Social.ToString();
+
     public void Mapping(Profile profile)
     {
         profile.CreateMap<PostCommentResp, CommentNotificationReq>()
@@ -40,6 +41,7 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
             .ForMember(d => d.EntityType, opt => opt.MapFrom(s => MapEntityType(s.Type, true, s.PostType)))
         ;
     }
+
     private NotificationEntityType MapEntityType(string type, bool isReply, PostType postType)
     {
         switch (postType)
@@ -74,6 +76,5 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
                     return !isReply ? NotificationEntityType.SubPostComment : NotificationEntityType.SubPostCommentReply;
                 }
         }
-
     }
 }

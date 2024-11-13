@@ -245,6 +245,7 @@ public enum NotificationEntityType
     /// </summary>
     DonateTransaction,
 
+    #region -- Document --
     /// <summary>
     /// Document
     /// </summary>
@@ -274,6 +275,7 @@ public enum NotificationEntityType
     /// DocumentSubPostCommentReaction
     /// </summary>
     DocumentSubPostCommentReaction,
+    #endregion
 
     #region -- Delete --
     /// <summary>
