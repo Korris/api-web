@@ -146,6 +146,11 @@ public class FileService : IFileService
                 imgWidth = ratio.Width;
             }
 
+            if (!file.IsDocument())
+            {
+                throw new BadRequestException(nameof(E210), E210);
+            }
+
             using (var stream = file.OpenReadStream())
             {
                 await _sc.GetStrategy(minioInstance).PutObject(stream, objectName, bucketName);

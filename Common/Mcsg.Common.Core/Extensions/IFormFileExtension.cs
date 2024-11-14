@@ -1,8 +1,10 @@
 ﻿using ImageMagick;
 using Microsoft.AspNetCore.Http;
+using OpenMcdf;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO.Compression;
 
 namespace Mcsg.Common.Core.Extensions;
 
@@ -289,5 +291,65 @@ public static class IFormFileExtension
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// IsDocument
+    /// </summary>
+    /// <param name="file">File</param>
+    /// <returns>Return the result</returns>
+    public static bool IsDocument(this IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return false;
+        }
+
+        var ext = Path.GetExtension(file.FileName).ToUpper();
+        using var fs = file.OpenReadStream();
+        if (!fs.IsDocument(ext))
+        {
+            return false;
+        }
+
+        if (ext == ".DOC" || ext == ".PPT")
+        {
+            using var compoundFile = new CompoundFile(fs);
+
+            // DOC
+            if (compoundFile.RootStorage.TryGetStream("WordDocument", out _))
+            {
+                return ext == ".DOC";
+            }
+
+            // PPT
+            if (compoundFile.RootStorage.TryGetStream("PowerPoint Document", out _))
+            {
+                return ext == ".PPT";
+            }
+        }
+
+        if (ext == ".DOCX" || ext == ".PPTX")
+        {
+            try
+            {
+                using var archive = new ZipArchive(fs, ZipArchiveMode.Read, true);
+
+                // DOCX
+                if (ext == ".DOCX")
+                {
+                    return archive.GetEntry("word/document.xml") != null;
+                }
+
+                // PPTX
+                if (ext == ".PPTX")
+                {
+                    return archive.GetEntry("ppt/presentation.xml") != null;
+                }
+            }
+            catch { }
+        }
+
+        return true;
     }
 }

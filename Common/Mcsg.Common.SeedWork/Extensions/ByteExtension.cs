@@ -134,5 +134,36 @@ public static class ByteExtension
         return false;
     }
 
+    /// <summary>
+    /// Is document
+    /// </summary>
+    /// <param name="buffer">Buffer</param>
+    /// <param name="extension">Extension</param>
+    /// <returns>Return the result</returns>
+    public static bool IsDocument(this byte[] buffer, string? extension)
+    {
+        var ext = (extension + "").ToUpper();
+
+        // PDF
+        if (ext == ".PDF" && buffer[0] == 0x25 && buffer[1] == 0x50 && buffer[2] == 0x44 && buffer[3] == 0x46)
+        {
+            return true;
+        }
+
+        // PPT & DOC
+        if ((ext == ".PPT" || ext == ".DOC") && buffer[0] == 0xD0 && buffer[1] == 0xCF && buffer[2] == 0x11 && buffer[3] == 0xE0)
+        {
+            return true;
+        }
+
+        // PPTX & DOCX
+        if ((ext == ".PPTX" || ext == ".DOCX") && buffer[0] == 0x50 && buffer[1] == 0x4B && buffer[2] == 0x03 && buffer[3] == 0x04)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     #endregion
 }

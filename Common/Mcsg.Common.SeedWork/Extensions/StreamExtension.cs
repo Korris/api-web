@@ -89,6 +89,25 @@ public static class StreamExtension
     }
 
     /// <summary>
+    /// Checks if the given stream is a video by inspecting its file signature (header).
+    /// </summary>
+    /// <param name="fs">The input stream to check.</param>
+    /// <param name="extension">Extension</param>
+    /// <returns>Returns true if the stream represents a video in a supported format; otherwise, false.</returns>
+    public static bool IsDocument(this Stream? fs, string? extension)
+    {
+        if (fs == null)
+        {
+            return false;
+        }
+
+        var buffer = new byte[12];
+        fs.Read(buffer, 0, buffer.Length);
+
+        return buffer.IsDocument(extension);
+    }
+
+    /// <summary>
     /// Convert stream to string
     /// </summary>
     /// <param name="fs">Stream</param>
