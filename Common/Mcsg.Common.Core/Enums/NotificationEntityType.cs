@@ -5,6 +5,7 @@
 /// </summary>
 public enum NotificationEntityType
 {
+    #region -- PostComment --
     /// <summary>
     /// SocialPostComment
     /// </summary>
@@ -19,11 +20,13 @@ public enum NotificationEntityType
     /// StoryPostComment
     /// </summary>
     StoryPostComment,
+    #endregion
 
+    #region -- SubPostComment --
     /// <summary>
     /// SocialSubPostComment
     /// </summary>
-    SocialSubPostComment,
+    SocialSubPostComment = 7,
 
     /// <summary>
     /// ComicSubPostComment
@@ -34,11 +37,13 @@ public enum NotificationEntityType
     /// StorySubPostComment
     /// </summary>
     StorySubPostComment,
+    #endregion
 
+    #region -- PostCommentReply --
     /// <summary>
     /// SocialPostCommentReply
     /// </summary>
-    SocialPostCommentReply,
+    SocialPostCommentReply = 10,
 
     /// <summary>
     /// ComicPostCommentReply
@@ -49,11 +54,13 @@ public enum NotificationEntityType
     /// StoryPostCommentReply
     /// </summary>
     StoryPostCommentReply,
+    #endregion
 
+    #region -- SubPostCommentReply --
     /// <summary>
     /// SocialSubPostCommentReply
     /// </summary>
-    SocialSubPostCommentReply,
+    SocialSubPostCommentReply = 13,
 
     /// <summary>
     /// ComicSubPostCommentReply
@@ -64,11 +71,13 @@ public enum NotificationEntityType
     /// StorySubPostCommentReply
     /// </summary>
     StorySubPostCommentReply,
+    #endregion
 
+    #region -- Social * Reaction --
     /// <summary>
     /// SocialPostCommentReaction
     /// </summary>
-    SocialPostCommentReaction,
+    SocialPostCommentReaction = 16,
 
     /// <summary>
     /// SocialSubPostCommentReaction
@@ -84,26 +93,30 @@ public enum NotificationEntityType
     /// SocialSubPostReaction
     /// </summary>
     SocialSubPostReaction,
+    #endregion
 
     /// <summary>
     /// Video
     /// </summary>
-    Video,
+    Video = 20,
 
+    #region -- Social * Mention --
     /// <summary>
     /// SocialPostCommentMention
     /// </summary>
-    SocialPostCommentMention,
+    SocialPostCommentMention = 21,
 
     /// <summary>
     /// SocialSubPostCommentMention
     /// </summary>
     SocialSubPostCommentMention,
+    #endregion
 
+    #region -- Follow --
     /// <summary>
     /// FollowUser
     /// </summary>
-    FollowUser,
+    FollowUser = 23,
 
     /// <summary>
     /// FollowComicPost
@@ -114,11 +127,13 @@ public enum NotificationEntityType
     /// FollowStoryPost
     /// </summary>
     FollowStoryPost,
+    #endregion
 
+    #region -- Comic * Reaction --
     /// <summary>
     /// ComicPostReaction
     /// </summary>
-    ComicPostReaction,
+    ComicPostReaction = 26,
 
     /// <summary>
     /// ComicSubPostReaction
@@ -134,11 +149,13 @@ public enum NotificationEntityType
     /// ComicSubPostCommentReaction
     /// </summary>
     ComicSubPostCommentReaction,
+    #endregion
 
+    #region -- Story * Reaction --
     /// <summary>
     /// StoryPostReaction
     /// </summary>
-    StoryPostReaction,
+    StoryPostReaction = 30,
 
     /// <summary>
     /// StorySubPostReaction
@@ -154,21 +171,25 @@ public enum NotificationEntityType
     /// StorySubPostCommentReaction
     /// </summary>
     StorySubPostCommentReaction,
+    #endregion
 
+    #region -- Social * Mention --
     /// <summary>
     /// SocialPostMention
     /// </summary>
-    SocialPostMention,
+    SocialPostMention = 34,
 
     /// <summary>
     /// SocialSubPostMention
     /// </summary>
     SocialSubPostMention,
+    #endregion
 
+    #region -- Comic Story Mention --
     /// <summary>
     /// ComicCommentPostMention
     /// </summary>
-    ComicPostCommentMention,
+    ComicPostCommentMention = 36,
 
     /// <summary>
     /// StoryCommentPostMention
@@ -184,7 +205,9 @@ public enum NotificationEntityType
     /// StorySubPostCommentPostMention
     /// </summary>
     StorySubPostCommentMention,
+    #endregion
 
+    #region -- Reaction --
     /// <summary>
     /// SocialPostCommentReplyReaction
     /// </summary>
@@ -214,6 +237,7 @@ public enum NotificationEntityType
     /// StorySubPostCommentReplyReaction
     /// </summary>
     StorySubPostCommentReplyReaction,
+    #endregion
 
     /// <summary>
     /// TransferTransaction
