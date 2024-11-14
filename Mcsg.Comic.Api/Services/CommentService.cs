@@ -12,7 +12,6 @@ using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
-using Enums;
 using Extensions;
 using Interfaces;
 using Models;

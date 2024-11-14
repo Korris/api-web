@@ -20,7 +20,6 @@ using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
-using Enums;
 using Extensions;
 using Interfaces;
 using Models;

@@ -194,6 +194,11 @@ public static class Error
     /// </summary>
     public const string E130 = "Unable to report yourself";
 
+    /// <summary>
+    /// Report not found
+    /// </summary>
+    public const string E131 = "Report not found";
+
     #endregion
 
     #region -- E2xx --

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Document.Api.Controllers;
 
+using Common.Core.Enums;
 using Common.Core.Requests;
-using Enums;
 using Interfaces;
 using Requests;
 
@@ -43,7 +43,7 @@ public class FeedController : ControllerBase
     public async Task<IActionResult> GetFeeds([FromQuery] FeedLoadReq request)
     {
         request.Analyze(HttpContext);
-        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.ALL);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.All);
         return Ok(result);
     }
 
@@ -58,7 +58,7 @@ public class FeedController : ControllerBase
     public async Task<IActionResult> GetTredingFeeds([FromQuery] FeedLoadReq request)
     {
         request.Analyze(HttpContext);
-        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.TRENDING);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.Trending);
         return Ok(result);
     }
 
@@ -66,7 +66,7 @@ public class FeedController : ControllerBase
     public async Task<IActionResult> GetHotFeeds([FromQuery] FeedLoadReq request)
     {
         request.Analyze(HttpContext);
-        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.HOT);
+        var result = await _feedService.GetFeedsAsync(request, LoadFeedType.Hot);
         return Ok(result);
     }
 

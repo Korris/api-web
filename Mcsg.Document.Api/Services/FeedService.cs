@@ -17,7 +17,6 @@ using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
-using Enums;
 using Extensions;
 using Interfaces;
 using Models;
@@ -67,10 +66,10 @@ public partial class FeedService : IFeedService
                 feedLoadReq.OrderBy = nameof(DocumentPost.CreatedOn);
             }
             var query = "";
-            if (loadFeedType == LoadFeedType.TRENDING || loadFeedType == LoadFeedType.HOT)
+            if (loadFeedType == LoadFeedType.Trending || loadFeedType == LoadFeedType.Hot)
             {
                 query = string.Format(GetAllFeedsWithTopCommentQuery, _postRepository.TableName, feedLoadReq.OrderBy);
-                if (loadFeedType == LoadFeedType.HOT)
+                if (loadFeedType == LoadFeedType.Hot)
                 {
                     int offsetDate = date.DayOfWeek - DayOfWeek.Monday;
                     DateTime lastMonday = date.AddDays(-offsetDate);

@@ -8,7 +8,6 @@ using Common.Core.Requests;
 using Common.Domain;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
-using Enums;
 using Interfaces;
 using Models;
 using Requests;

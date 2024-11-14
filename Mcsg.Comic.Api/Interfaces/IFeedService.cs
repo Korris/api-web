@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Comic.Api.Interfaces;
 
+using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Dtos;
-using Enums;
 using Models;
 using Requests;
 

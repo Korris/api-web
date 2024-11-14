@@ -6,7 +6,6 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.SeedWork.Converters;
 using Dtos;
-using Enums;
 
 public class PostSeriesResponse : PostDto
 {
