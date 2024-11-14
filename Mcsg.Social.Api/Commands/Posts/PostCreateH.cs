@@ -117,7 +117,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             await _notificationService.AddMentionNotificationAsync(new MentionPostNotificationReq
             {
                 ReceiversId = receiverIds,
-                EntityType = NotificationEntityType.PostMention,
+                EntityType = NotificationEntityType.SocialPostMention,
                 UserAvatar = userAvatar,
                 UserId = userId,
                 UserProfileName = profileName,

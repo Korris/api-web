@@ -223,11 +223,11 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         Type entityType = typeof(T);
         notiReq.EntityType = entityType.Name switch
         {
-            nameof(SocialPostReaction) => NotificationEntityType.PostReaction,
-            nameof(SocialPostCommentReaction) => isReply ? NotificationEntityType.PostCommentReplyReaction : NotificationEntityType.PostCommentReaction,
-            nameof(SocialSubPostCommentReaction) => isReply ? NotificationEntityType.SubPostCommentReplyReaction : NotificationEntityType.SubPostCommentReaction,
-            nameof(SocialSubPostReaction) => NotificationEntityType.SubPostReaction,
-            _ => NotificationEntityType.PostReaction
+            nameof(SocialPostReaction) => NotificationEntityType.SocialPostReaction,
+            nameof(SocialPostCommentReaction) => isReply ? NotificationEntityType.SocialPostCommentReplyReaction : NotificationEntityType.SocialPostCommentReaction,
+            nameof(SocialSubPostCommentReaction) => isReply ? NotificationEntityType.SocialSubPostCommentReplyReaction : NotificationEntityType.SocialSubPostCommentReaction,
+            nameof(SocialSubPostReaction) => NotificationEntityType.SocialSubPostReaction,
+            _ => NotificationEntityType.SocialPostReaction
         };
 
         await _notificationService.AddReactionNotificationAsync(notiReq);

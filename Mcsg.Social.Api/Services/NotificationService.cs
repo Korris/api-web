@@ -108,8 +108,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
     }
     private async Task CheckDataReplyCommentReaction(List<NotificationModel> resDto)
     {
-        var resReplyCommentReaction = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.PostCommentReplyReaction ||
-                                                       p.NotificationEntityType == NotificationEntityType.SubPostCommentReplyReaction ||
+        var resReplyCommentReaction = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.SocialPostCommentReplyReaction ||
+                                                       p.NotificationEntityType == NotificationEntityType.SocialSubPostCommentReplyReaction ||
                                                        p.NotificationEntityType == NotificationEntityType.ComicPostCommentReplyReaction ||
                                                        p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReplyReaction ||
                                                        p.NotificationEntityType == NotificationEntityType.StoryPostCommentReplyReaction ||
@@ -128,8 +128,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 {
                     NotificationEntityType.StoryPostCommentReplyReaction => $@"story.""StoryPostComments""",
                     NotificationEntityType.ComicPostCommentReplyReaction => $@"Comic.""ComicPostComments""",
-                    NotificationEntityType.PostCommentReplyReaction => $@"Social.""SocialPostComments""",
-                    NotificationEntityType.SubPostCommentReplyReaction => $@"Social.""SocialSubPostComments""",
+                    NotificationEntityType.SocialPostCommentReplyReaction => $@"Social.""SocialPostComments""",
+                    NotificationEntityType.SocialSubPostCommentReplyReaction => $@"Social.""SocialSubPostComments""",
                     NotificationEntityType.ComicSubPostCommentReplyReaction => $@"comic.""ComicSubPostComments""",
                     NotificationEntityType.StorySubPostCommentReplyReaction => $@"story.""StorySubPostComments""",
                     _ => ""
@@ -178,8 +178,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     private async Task CheckDataCommentReaction(List<NotificationModel> resDto)
     {
-        var postCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.PostCommentReaction
-                                                     || p.NotificationEntityType == NotificationEntityType.PostCommentMention).Select(p => p.LocationId).ToList();
+        var postCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.SocialPostCommentReaction
+                                                     || p.NotificationEntityType == NotificationEntityType.SocialPostCommentMention).Select(p => p.LocationId).ToList();
         if (postCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -296,7 +296,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
             }
         }
 
-        var subPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.SubPostCommentReaction).Select(p => p.LocationId).ToList();
+        var subPostCommentReactionIds = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.SocialSubPostCommentReaction).Select(p => p.LocationId).ToList();
         if (subPostCommentReactionIds.Count > 0)
         {
             var postDataByPostComment = await _notiRepository.Connection.QueryAsync<PostDataByPostComment>($@"
@@ -310,7 +310,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 foreach (var item in postDataByPostComment)
                 {
                     var response = resDto.FirstOrDefault(p => p.LocationId == item.CommentId &&
-                                                         p.NotificationEntityType == NotificationEntityType.SubPostCommentReaction);
+                                                         p.NotificationEntityType == NotificationEntityType.SocialSubPostCommentReaction);
                     if (response != null)
                     {
                         response.LocationHashId = item.HashPostId;
@@ -369,8 +369,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
                                     p.NotificationEntityType == NotificationEntityType.StorySubPostCommentReply ||
                                     p.NotificationEntityType == NotificationEntityType.ComicPostCommentReply ||
                                     p.NotificationEntityType == NotificationEntityType.ComicSubPostCommentReply ||
-                                    p.NotificationEntityType == NotificationEntityType.PostCommentReply ||
-                                    p.NotificationEntityType == NotificationEntityType.SubPostCommentReply
+                                    p.NotificationEntityType == NotificationEntityType.SocialPostCommentReply ||
+                                    p.NotificationEntityType == NotificationEntityType.SocialSubPostCommentReply
         ).ToList();
 
         var groupRes = res.GroupBy(p => p.NotificationEntityType).ToList();
@@ -386,8 +386,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
                     NotificationEntityType.StorySubPostCommentReply => $@"story.""StorySubPostComments""",
                     NotificationEntityType.ComicPostCommentReply => $@"Comic.""ComicPostComments""",
                     NotificationEntityType.ComicSubPostCommentReply => $@"Comic.""ComicSubPostComments""",
-                    NotificationEntityType.PostCommentReply => $@"Social.""SocialPostComments""",
-                    NotificationEntityType.SubPostCommentReply => $@"Social.""SocialSubPostComments""",
+                    NotificationEntityType.SocialPostCommentReply => $@"Social.""SocialPostComments""",
+                    NotificationEntityType.SocialSubPostCommentReply => $@"Social.""SocialSubPostComments""",
                     _ => ""
                 };
                 var replyCommentData = await _notiRepository.Connection.QueryAsync<ReplyCommentData>($@"

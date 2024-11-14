@@ -18,10 +18,10 @@
                             FROM {_notiRepository.TableName} noti
                             LEFT JOIN system.""NotificationObjects"" obj ON noti.""NotificationObjectId"" = obj.""Id""
                             LEFT JOIN identity.""Users"" us ON obj.""ActorId"" = us.""Id""
-                            LEFT JOIN story.""StoryPostReactions"" pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostReaction}
-                            LEFT JOIN story.""StorySubPostReactions"" spr ON obj.""EntityId"" = spr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostReaction}
-                            LEFT JOIN story.""StoryPostComments"" pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction}
-                            LEFT JOIN story.""StorySubPostComments"" spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction}
+                            LEFT JOIN story.""StoryPostReactions"" pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialPostReaction}
+                            LEFT JOIN story.""StorySubPostReactions"" spr ON obj.""EntityId"" = spr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialSubPostReaction}
+                            LEFT JOIN story.""StoryPostComments"" pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialPostCommentReaction}
+                            LEFT JOIN story.""StorySubPostComments"" spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialSubPostCommentReaction}
                             WHERE noti.""ReceiverId"" = @ReceiverId 
                             ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize
@@ -45,10 +45,10 @@
                             FROM {_notiRepository.TableName} noti
                             LEFT JOIN system.""NotificationObjects"" obj ON noti.""NotificationObjectId"" = obj.""Id""
                             LEFT JOIN identity.""Users"" us ON obj.""ActorId"" = us.""Id""
-                            LEFT JOIN story.""StoryPostReactions"" pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostReaction}
-                            LEFT JOIN story.""StorySubPostReactions"" spr ON obj.""EntityId"" = spr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostReaction}
-                            LEFT JOIN story.""StoryPostComments"" pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.PostCommentReaction}
-                            LEFT JOIN story.""StorySubPostComments"" spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SubPostCommentReaction}
+                            LEFT JOIN story.""StoryPostReactions"" pr ON obj.""EntityId"" = pr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialPostReaction}
+                            LEFT JOIN story.""StorySubPostReactions"" spr ON obj.""EntityId"" = spr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialSubPostReaction}
+                            LEFT JOIN story.""StoryPostComments"" pcr ON obj.""EntityId"" = pcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialPostCommentReaction}
+                            LEFT JOIN story.""StorySubPostComments"" spcr ON obj.""EntityId"" = spcr.""Id"" AND obj.""EntityType"" = {(int)NotificationEntityType.SocialSubPostCommentReaction}
                             WHERE noti.""ReceiverId"" = @ReceiverId AND noti.""Status"" = 0 
                             ORDER BY noti.""CreatedOn"" DESC
                             LIMIT @PageSize

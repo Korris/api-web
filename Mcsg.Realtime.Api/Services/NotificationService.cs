@@ -312,10 +312,10 @@ public class NotificationService : BaseS, INotificationService
         var postHashId = "";
         string locationHashId = "";
         var targetId = reaction.TargetId;
-        bool isCommentReaction = reaction.EntityType != NotificationEntityType.PostReaction
+        bool isCommentReaction = reaction.EntityType != NotificationEntityType.SocialPostReaction
             && reaction.EntityType != NotificationEntityType.StoryPostReaction
             && reaction.EntityType != NotificationEntityType.ComicPostReaction
-            && reaction.EntityType != NotificationEntityType.SubPostReaction;
+            && reaction.EntityType != NotificationEntityType.SocialSubPostReaction;
 
         // Reaction for comment => Find Id of Post
         if (isCommentReaction)
@@ -332,7 +332,7 @@ public class NotificationService : BaseS, INotificationService
             var entityType = reaction.EntityType;
             switch (entityType)
             {
-                case NotificationEntityType.PostCommentReaction or NotificationEntityType.PostCommentReplyReaction:
+                case NotificationEntityType.SocialPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
                     qComment = _context.SocialPostCommentAvailable.Where(p => p.Id == targetId)
                         .Select(p => new
                         {
@@ -365,7 +365,7 @@ public class NotificationService : BaseS, INotificationService
                     });
                     break;
 
-                case NotificationEntityType.SubPostCommentReaction or NotificationEntityType.SubPostCommentReplyReaction:
+                case NotificationEntityType.SocialSubPostCommentReaction or NotificationEntityType.SocialSubPostCommentReplyReaction:
                     qComment = _context.SocialSubPostCommentAvailable.Where(p => p.Id == targetId)
                     .Select(p => new
                     {
@@ -376,7 +376,7 @@ public class NotificationService : BaseS, INotificationService
                     });
                     break;
 
-                case NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.PostCommentReplyReaction:
+                case NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
                     qComment = _context.ComicSubPostCommentAvailable.Where(p => p.Id == targetId)
                     .Select(p => new
                     {
@@ -422,9 +422,9 @@ public class NotificationService : BaseS, INotificationService
         var q = _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0, PostId = Guid.Empty });
         switch (reaction.EntityType)
         {
-            case NotificationEntityType.PostReaction:
-            case NotificationEntityType.PostCommentReaction:
-            case NotificationEntityType.PostCommentReplyReaction:
+            case NotificationEntityType.SocialPostReaction:
+            case NotificationEntityType.SocialPostCommentReaction:
+            case NotificationEntityType.SocialPostCommentReplyReaction:
                 break;
 
             case NotificationEntityType.ComicPostReaction:
@@ -439,9 +439,9 @@ public class NotificationService : BaseS, INotificationService
                 q = _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0, PostId = Guid.Empty });
                 break;
 
-            case NotificationEntityType.SubPostReaction:
-            case NotificationEntityType.SubPostCommentReaction:
-            case NotificationEntityType.SubPostCommentReplyReaction:
+            case NotificationEntityType.SocialSubPostReaction:
+            case NotificationEntityType.SocialSubPostCommentReaction:
+            case NotificationEntityType.SocialSubPostCommentReplyReaction:
                 q = _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
@@ -505,16 +505,16 @@ public class NotificationService : BaseS, INotificationService
                 receiverId = ett.UserId != null ? ett.UserId : Guid.Empty;
                 locationId = ett.Id;
                 locationHashId = ett.HashId;
-                var message = reaction.EntityType == NotificationEntityType.PostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
+                var message = reaction.EntityType == NotificationEntityType.SocialPostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
                 response.Message = reaction.AuthorName + message;
             }
 
             response.TargetType = reaction.EntityType switch
             {
-                NotificationEntityType.PostReaction or NotificationEntityType.PostCommentReaction or NotificationEntityType.PostCommentReplyReaction => NotificationTargetType.Feed,
+                NotificationEntityType.SocialPostReaction or NotificationEntityType.SocialPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction => NotificationTargetType.Feed,
                 NotificationEntityType.StoryPostReaction or NotificationEntityType.StoryPostCommentReaction or NotificationEntityType.StoryPostCommentReplyReaction => NotificationTargetType.Story,
                 NotificationEntityType.ComicPostReaction or NotificationEntityType.ComicPostCommentReaction or NotificationEntityType.ComicPostCommentReplyReaction => NotificationTargetType.Comic,
-                NotificationEntityType.SubPostReaction or NotificationEntityType.SubPostCommentReaction or NotificationEntityType.SubPostCommentReplyReaction => NotificationTargetType.SubFeed,
+                NotificationEntityType.SocialSubPostReaction or NotificationEntityType.SocialSubPostCommentReaction or NotificationEntityType.SocialSubPostCommentReplyReaction => NotificationTargetType.SubFeed,
                 NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.ComicSubPostCommentReplyReaction => NotificationTargetType.SubComic,
                 NotificationEntityType.StorySubPostCommentReaction or NotificationEntityType.StorySubPostCommentReplyReaction => NotificationTargetType.SubStory,
             };
@@ -583,17 +583,17 @@ public class NotificationService : BaseS, INotificationService
         string postHashId = "";
         string locationHashId = "";
         var targetId = request.TargetId;
-        bool isMentionComment = request.EntityType != NotificationEntityType.PostMention;
+        bool isMentionComment = request.EntityType != NotificationEntityType.SocialPostMention;
         // Reaction for comment => Find Id of Post
 
         if (isMentionComment)
         {
             dynamic postComment = request.EntityType switch
             {
-                NotificationEntityType.PostCommentMention => await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
+                NotificationEntityType.SocialPostCommentMention => await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
                 NotificationEntityType.ComicPostCommentMention => await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
                 NotificationEntityType.StoryPostCommentMention => await _context.StoryPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.SubPostCommentMention => await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
+                NotificationEntityType.SocialSubPostCommentMention => await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
                 NotificationEntityType.ComicSubPostCommentMention => await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
                 NotificationEntityType.StorySubPostCommentMention => await _context.StorySubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
                 _ => await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId)
@@ -606,10 +606,10 @@ public class NotificationService : BaseS, INotificationService
 
         dynamic post = request.EntityType switch
         {
-            NotificationEntityType.PostMention => await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
+            NotificationEntityType.SocialPostMention => await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
             NotificationEntityType.ComicPostCommentMention => await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
             NotificationEntityType.StoryPostCommentMention => await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.SubPostCommentMention => await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
+            NotificationEntityType.SocialSubPostCommentMention => await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
             NotificationEntityType.ComicSubPostCommentMention => await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
             NotificationEntityType.StorySubPostCommentMention => await _context.StorySubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
             _ => await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
@@ -633,10 +633,10 @@ public class NotificationService : BaseS, INotificationService
             }
             response.TargetType = request.EntityType switch
             {
-                NotificationEntityType.PostMention or NotificationEntityType.PostCommentMention => NotificationTargetType.Feed,
+                NotificationEntityType.SocialPostMention or NotificationEntityType.SocialPostCommentMention => NotificationTargetType.Feed,
                 NotificationEntityType.StoryPostCommentMention => NotificationTargetType.Story,
                 NotificationEntityType.ComicPostCommentMention => NotificationTargetType.Comic,
-                NotificationEntityType.SubPostMention or NotificationEntityType.SubPostCommentReaction => NotificationTargetType.SubFeed,
+                NotificationEntityType.SocialSubPostMention or NotificationEntityType.SocialSubPostCommentReaction => NotificationTargetType.SubFeed,
                 NotificationEntityType.ComicSubPostCommentMention => NotificationTargetType.SubComic,
                 NotificationEntityType.StorySubPostCommentMention => NotificationTargetType.SubStory,
             };
@@ -679,11 +679,11 @@ public class NotificationService : BaseS, INotificationService
         // Dont notify when comment on their feed
         if (receiverId != mention.AuthorId)
         {
-            var entityType = NotificationEntityType.PostCommentMention;
+            var entityType = NotificationEntityType.SocialPostCommentMention;
             var targetType = NotificationTargetType.CommentOnFeed;
             if (mention.LocationType == MentionLocationType.SubPostComment || mention.LocationType == MentionLocationType.SubPostCommentReply)
             {
-                entityType = NotificationEntityType.SubPostCommentMention;
+                entityType = NotificationEntityType.SocialSubPostCommentMention;
                 targetType = NotificationTargetType.CommentOnSubFeed;
             }
 

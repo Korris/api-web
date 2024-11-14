@@ -12,7 +12,7 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
     public bool IsReply { get; set; }
     public Guid? ReplyToCommentId { get; set; }
     public Guid? QuoteId { get; set; }
-    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostComment;
+    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.SocialPostComment;
     public string? PostHashId { get; set; }
     public string LocationHashId { get; set; }
     public string MicroServiceType { get; set; } = MicroService.Social.ToString();
@@ -69,11 +69,11 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
             default:
                 if (type == PostTypes.Post)
                 {
-                    return !isReply ? NotificationEntityType.PostComment : NotificationEntityType.PostCommentReply;
+                    return !isReply ? NotificationEntityType.SocialPostComment : NotificationEntityType.SocialPostCommentReply;
                 }
                 else
                 {
-                    return !isReply ? NotificationEntityType.SubPostComment : NotificationEntityType.SubPostCommentReply;
+                    return !isReply ? NotificationEntityType.SocialSubPostComment : NotificationEntityType.SocialSubPostCommentReply;
                 }
         }
     }

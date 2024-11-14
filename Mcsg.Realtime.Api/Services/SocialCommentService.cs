@@ -137,7 +137,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
                 UserProfileName = profileName,
                 TargetId = response.Id,
                 UserId = userId.Value,
-                EntityType = req.Type == PostTypes.Post ? NotificationEntityType.PostCommentMention : NotificationEntityType.SubPostCommentMention
+                EntityType = req.Type == PostTypes.Post ? NotificationEntityType.SocialPostCommentMention : NotificationEntityType.SocialSubPostCommentMention
             });
         }
 

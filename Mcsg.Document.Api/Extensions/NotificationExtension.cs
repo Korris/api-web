@@ -10,19 +10,19 @@ public static class NotificationExtension
     {
         List<NotificationEntityType> commentEntities = new List<NotificationEntityType>()
         {
-            NotificationEntityType.PostComment,
-            NotificationEntityType.SubPostComment,
-            NotificationEntityType.PostCommentReply,
-            NotificationEntityType.SubPostCommentReply,
-            NotificationEntityType.PostCommentReaction,
-            NotificationEntityType.SubPostCommentReaction,
+            NotificationEntityType.SocialPostComment,
+            NotificationEntityType.SocialSubPostComment,
+            NotificationEntityType.SocialPostCommentReply,
+            NotificationEntityType.SocialSubPostCommentReply,
+            NotificationEntityType.SocialPostCommentReaction,
+            NotificationEntityType.SocialSubPostCommentReaction,
         };
 
         List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
         {
             NotificationEntityType.Document,
-            NotificationEntityType.PostReaction,
-            NotificationEntityType.SubPostReaction
+            NotificationEntityType.SocialPostReaction,
+            NotificationEntityType.SocialSubPostReaction
         };
 
         if (noti == null)
@@ -96,12 +96,12 @@ public static class NotificationExtension
         #endregion
 
         #region Mention
-        if (noti.EntityType == NotificationEntityType.PostCommentMention
+        if (noti.EntityType == NotificationEntityType.SocialPostCommentMention
                 && noti.Action == NotificationAction.Mention)
         {
             return noti.ActorName + NotificationContent.MentionOnComment;
         }
-        if (noti.EntityType == NotificationEntityType.SubPostCommentMention
+        if (noti.EntityType == NotificationEntityType.SocialSubPostCommentMention
                 && noti.Action == NotificationAction.Mention)
         {
             return noti.ActorName + NotificationContent.MentionOnReply;
@@ -116,13 +116,13 @@ public static class NotificationExtension
         return noti.EntityType switch
         {
             NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationTargetType.Feed,
-            NotificationEntityType.PostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
-            NotificationEntityType.SubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
-            NotificationEntityType.PostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed,
-            NotificationEntityType.SubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed,
-            NotificationEntityType.PostReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
-            NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
-            NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
+            NotificationEntityType.SocialPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
+            NotificationEntityType.SocialSubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
+            NotificationEntityType.SocialPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed,
+            NotificationEntityType.SocialSubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed,
+            NotificationEntityType.SocialPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.SocialPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
+            NotificationEntityType.SocialSubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
@@ -131,16 +131,16 @@ public static class NotificationExtension
         return noti.EntityType switch
         {
             NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationType.Video + noti.Action.ToString(),
-            NotificationEntityType.PostComment => Common.Core.Constants.Setting.NotificationType.Comment,
-            NotificationEntityType.SubPostComment => Common.Core.Constants.Setting.NotificationType.Comment,
-            NotificationEntityType.PostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
-            NotificationEntityType.SubPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
-            NotificationEntityType.PostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.SubPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.SubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
-            NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
+            NotificationEntityType.SocialPostComment => Common.Core.Constants.Setting.NotificationType.Comment,
+            NotificationEntityType.SocialSubPostComment => Common.Core.Constants.Setting.NotificationType.Comment,
+            NotificationEntityType.SocialPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
+            NotificationEntityType.SocialSubPostCommentReply => Common.Core.Constants.Setting.NotificationType.Reply,
+            NotificationEntityType.SocialPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.SocialSubPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.SocialPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.SocialSubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
+            NotificationEntityType.SocialPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
+            NotificationEntityType.SocialSubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }

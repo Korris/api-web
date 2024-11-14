@@ -5,7 +5,7 @@ using Common.Core.Enums;
 public class MentionPostNotificationReq
 {
     public Guid TargetId { get; set; }
-    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.PostMention;
+    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.SocialPostMention;
     public Guid UserId { get; set; }
     public string UserAvatar { get; set; }
     public string UserProfileName { get; set; }

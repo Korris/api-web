@@ -173,7 +173,7 @@ public class StoryNotificationService : BaseS, IStoryNotificationService
         string postHashId = "";
 
         // React to post
-        if (reaction.EntityType == NotificationEntityType.PostReaction)
+        if (reaction.EntityType == NotificationEntityType.SocialPostReaction)
         {
             var post = await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == reaction.TargetId);
             if (post != null)
@@ -233,11 +233,11 @@ public class StoryNotificationService : BaseS, IStoryNotificationService
         // Dont notify when comment on their feed
         if (receiverId != mention.AuthorId)
         {
-            var entityType = NotificationEntityType.PostCommentMention;
+            var entityType = NotificationEntityType.SocialPostCommentMention;
             var targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed;
             if (mention.LocationType == MentionLocationType.SubPostComment || mention.LocationType == MentionLocationType.SubPostCommentReply)
             {
-                entityType = NotificationEntityType.SubPostCommentMention;
+                entityType = NotificationEntityType.SocialSubPostCommentMention;
                 targetType = Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed;
             }
 

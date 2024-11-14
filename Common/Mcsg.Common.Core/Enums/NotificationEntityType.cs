@@ -6,9 +6,9 @@
 public enum NotificationEntityType
 {
     /// <summary>
-    /// PostComment
+    /// SocialPostComment
     /// </summary>
-    PostComment = 4,
+    SocialPostComment = 4,
 
     /// <summary>
     /// ComicPostComment
@@ -21,9 +21,9 @@ public enum NotificationEntityType
     StoryPostComment,
 
     /// <summary>
-    /// SubPostComment
+    /// SocialSubPostComment
     /// </summary>
-    SubPostComment,
+    SocialSubPostComment,
 
     /// <summary>
     /// ComicSubPostComment
@@ -36,9 +36,9 @@ public enum NotificationEntityType
     StorySubPostComment,
 
     /// <summary>
-    /// PostCommentReply
+    /// SocialPostCommentReply
     /// </summary>
-    PostCommentReply,
+    SocialPostCommentReply,
 
     /// <summary>
     /// ComicPostCommentReply
@@ -51,9 +51,9 @@ public enum NotificationEntityType
     StoryPostCommentReply,
 
     /// <summary>
-    /// SubPostCommentReply
+    /// SocialSubPostCommentReply
     /// </summary>
-    SubPostCommentReply,
+    SocialSubPostCommentReply,
 
     /// <summary>
     /// ComicSubPostCommentReply
@@ -66,24 +66,24 @@ public enum NotificationEntityType
     StorySubPostCommentReply,
 
     /// <summary>
-    /// PostCommentReaction
+    /// SocialPostCommentReaction
     /// </summary>
-    PostCommentReaction,
+    SocialPostCommentReaction,
 
     /// <summary>
-    /// SubPostCommentReaction
+    /// SocialSubPostCommentReaction
     /// </summary>
-    SubPostCommentReaction,
+    SocialSubPostCommentReaction,
 
     /// <summary>
-    /// PostReaction
+    /// SocialPostReaction
     /// </summary>
-    PostReaction,
+    SocialPostReaction,
 
     /// <summary>
-    /// SubPostReaction
+    /// SocialSubPostReaction
     /// </summary>
-    SubPostReaction,
+    SocialSubPostReaction,
 
     /// <summary>
     /// Video
@@ -91,14 +91,14 @@ public enum NotificationEntityType
     Video,
 
     /// <summary>
-    /// PostCommentMention
+    /// SocialPostCommentMention
     /// </summary>
-    PostCommentMention,
+    SocialPostCommentMention,
 
     /// <summary>
-    /// SubPostCommentMention
+    /// SocialSubPostCommentMention
     /// </summary>
-    SubPostCommentMention,
+    SocialSubPostCommentMention,
 
     /// <summary>
     /// FollowUser
@@ -156,14 +156,14 @@ public enum NotificationEntityType
     StorySubPostCommentReaction,
 
     /// <summary>
-    /// PostMention
+    /// SocialPostMention
     /// </summary>
-    PostMention,
+    SocialPostMention,
 
     /// <summary>
-    /// SubPostMention
+    /// SocialSubPostMention
     /// </summary>
-    SubPostMention,
+    SocialSubPostMention,
 
     /// <summary>
     /// ComicCommentPostMention
@@ -186,14 +186,14 @@ public enum NotificationEntityType
     StorySubPostCommentMention,
 
     /// <summary>
-    /// PostCommentReplyReaction
+    /// SocialPostCommentReplyReaction
     /// </summary>
-    PostCommentReplyReaction,
+    SocialPostCommentReplyReaction,
 
     /// <summary>
-    /// SubPostCommentReplyReaction
+    /// SocialSubPostCommentReplyReaction
     /// </summary>
-    SubPostCommentReplyReaction,
+    SocialSubPostCommentReplyReaction,
 
     /// <summary>
     /// ComicPostCommentReplyReaction
