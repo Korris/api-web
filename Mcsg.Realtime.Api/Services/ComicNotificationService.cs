@@ -183,7 +183,7 @@ public class ComicNotificationService : BaseS, IComicNotificationService
                 postHashId = post.HashId;
 
                 response.Message = reaction.AuthorName + NotificationContent.ReactOnFeed;
-                response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed;
+                response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social;
             }
         }
 

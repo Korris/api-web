@@ -394,9 +394,9 @@ public class Setting : SeedWork.Constants.Setting
         public const string None = "None";
 
         /// <summary>
-        /// Feed
+        /// Social
         /// </summary>
-        public const string Feed = "Feed";
+        public const string Social = "Feed";
 
         /// <summary>
         /// Comic
@@ -409,9 +409,9 @@ public class Setting : SeedWork.Constants.Setting
         public const string Story = "Story";
 
         /// <summary>
-        /// SubFeed
+        /// SubSocial
         /// </summary>
-        public const string SubFeed = "SubFeed";
+        public const string SubSocial = "SubFeed";
 
         /// <summary>
         /// SubComic

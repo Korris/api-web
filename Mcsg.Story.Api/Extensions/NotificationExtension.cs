@@ -114,12 +114,12 @@ public static class NotificationExtension
     {
         return noti.EntityType switch
         {
-            NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.Video => Common.Core.Constants.Setting.NotificationTargetType.Social,
             NotificationEntityType.SocialPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
             NotificationEntityType.SocialSubPostComment => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
             NotificationEntityType.SocialPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnFeed,
             NotificationEntityType.SocialSubPostCommentReply => Common.Core.Constants.Setting.NotificationTargetType.ReplyOnSubFeed,
-            NotificationEntityType.SocialPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Feed,
+            NotificationEntityType.SocialPostReaction => Common.Core.Constants.Setting.NotificationTargetType.Social,
             NotificationEntityType.SocialPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnFeed,
             NotificationEntityType.SocialSubPostCommentMention => Common.Core.Constants.Setting.NotificationTargetType.CommentOnSubFeed,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),

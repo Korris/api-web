@@ -183,7 +183,7 @@ public class StoryNotificationService : BaseS, IStoryNotificationService
                 postHashId = post.HashId;
 
                 response.Message = reaction.AuthorName + NotificationContent.ReactOnFeed;
-                response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed;
+                response.TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social;
             }
         }
 

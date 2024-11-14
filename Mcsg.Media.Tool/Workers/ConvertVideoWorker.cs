@@ -102,7 +102,7 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                         HashId = resourceInfo.HashId,
                         PostId = video.PostId,
                         PostHashId = video.PostHashId,
-                        TargetType = Common.Core.Constants.Setting.NotificationTargetType.Feed
+                        TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social
                     };
 
                     await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Web.Realtime);
