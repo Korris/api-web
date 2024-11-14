@@ -31,7 +31,7 @@ public class NotificationModel : IMapFrom<NotificationQueryResult>
     {
         profile.CreateMap<NotificationQueryResult, NotificationModel>()
             .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToDisplay()))
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
             .ForMember(d => d.LocationId, opt => opt.MapFrom(s => s.LocationId))
             .ForMember(d => d.LocationHashId, opt => opt.MapFrom(s => s.LocationHashId))
             .ForMember(d => d.EntityId, opt => opt.MapFrom(s => s.EntityId))

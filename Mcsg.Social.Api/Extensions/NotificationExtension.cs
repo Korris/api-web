@@ -9,8 +9,8 @@ public static class NotificationExtension
 {
     public static string ToMessage(this NotificationQueryResult noti)
     {
-        List<NotificationEntityType> commentEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> commentEntities =
+        [
             NotificationEntityType.SocialPostComment,
             NotificationEntityType.ComicPostComment,
             NotificationEntityType.StoryPostComment,
@@ -23,16 +23,16 @@ public static class NotificationExtension
             NotificationEntityType.SocialSubPostCommentReply,
             NotificationEntityType.ComicSubPostCommentReply,
             NotificationEntityType.StorySubPostCommentReply
-        };
+        ];
 
-        List<NotificationEntityType> rejectReportEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> rejectReportEntities =
+        [
             NotificationEntityType.RejectPostReport,
             NotificationEntityType.RejectCommentReport
-        };
+        ];
 
-        List<NotificationEntityType> reactionEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> reactionEntities =
+        [
             NotificationEntityType.SocialPostReaction,
             NotificationEntityType.StoryPostReaction,
             NotificationEntityType.ComicPostReaction,
@@ -49,32 +49,32 @@ public static class NotificationExtension
             NotificationEntityType.ComicSubPostCommentReplyReaction,
             NotificationEntityType.StoryPostCommentReplyReaction,
             NotificationEntityType.StorySubPostCommentReplyReaction,
-        };
+        ];
 
-        List<NotificationEntityType> followEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> followEntities =
+        [
             NotificationEntityType.FollowUser,
             NotificationEntityType.ComicPostFollow,
             NotificationEntityType.StoryPostFollow,
-        };
+        ];
 
-        List<NotificationEntityType> deleteEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> deleteEntities =
+        [
             NotificationEntityType.SocialPostDelete,
             NotificationEntityType.ComicPostDelete,
             NotificationEntityType.StoryPostDelete,
             NotificationEntityType.ComicSubPostDelete,
             NotificationEntityType.StorySubPostDelete
-        };
+        ];
 
-        List<NotificationEntityType> lockEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> lockEntities =
+        [
             NotificationEntityType.SocialPostLock,
             NotificationEntityType.ComicPostLock,
             NotificationEntityType.StoryPostLock,
             NotificationEntityType.ComicSubPostLock,
             NotificationEntityType.StorySubPostLock
-        };
+        ];
 
         if (noti == null)
         {
@@ -362,11 +362,5 @@ public static class NotificationExtension
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
-    }
-
-    public static string ToDisplay(this NotificationStatus value)
-    {
-        var enumDisplayStatus = (NotificationStatus)value;
-        return enumDisplayStatus.ToString();
     }
 }

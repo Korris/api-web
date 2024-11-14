@@ -8,21 +8,21 @@ public static class NotificationExtension
 {
     public static string ToMessage(this NotificationQueryResult noti)
     {
-        List<NotificationEntityType> commentEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> commentEntities =
+        [
             NotificationEntityType.SocialPostComment,
             NotificationEntityType.SocialSubPostComment,
             NotificationEntityType.SocialPostCommentReply,
             NotificationEntityType.SocialSubPostCommentReply,
             NotificationEntityType.SocialPostCommentReaction,
             NotificationEntityType.SocialSubPostCommentReaction,
-        };
+        ];
 
-        List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
-        {
+        List<NotificationEntityType> postEntities =
+        [
             NotificationEntityType.SocialPostReaction,
             NotificationEntityType.SocialSubPostReaction
-        };
+        ];
 
         if (noti == null)
         {
@@ -125,6 +125,7 @@ public static class NotificationExtension
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
     }
+
     public static string ToNotiType(this NotificationQueryResult noti)
     {
         return noti.EntityType switch
@@ -142,11 +143,5 @@ public static class NotificationExtension
             NotificationEntityType.SocialSubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),
         };
-    }
-
-    public static string ToDisplay(this NotificationStatus value)
-    {
-        var enumDisplayStatus = (NotificationStatus)value;
-        return enumDisplayStatus.ToString();
     }
 }
