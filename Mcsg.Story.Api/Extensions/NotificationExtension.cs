@@ -20,9 +20,6 @@ public static class NotificationExtension
 
         List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
         {
-            NotificationEntityType.Feed,
-            NotificationEntityType.Comic,
-            NotificationEntityType.Story,
             NotificationEntityType.PostReaction,
             NotificationEntityType.SubPostReaction
         };
@@ -141,7 +138,6 @@ public static class NotificationExtension
             NotificationEntityType.SubPostReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.PostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.SubPostCommentReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.Feed => Common.Core.Constants.Setting.NotificationType.Feed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}"),

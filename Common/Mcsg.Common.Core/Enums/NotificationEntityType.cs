@@ -6,29 +6,9 @@
 public enum NotificationEntityType
 {
     /// <summary>
-    /// User
-    /// </summary>
-    User,
-
-    /// <summary>
-    /// Feed
-    /// </summary>
-    Feed,
-
-    /// <summary>
-    /// Comic
-    /// </summary>
-    Comic,
-
-    /// <summary>
-    /// Story
-    /// </summary>
-    Story,
-
-    /// <summary>
     /// PostComment
     /// </summary>
-    PostComment,
+    PostComment = 4,
 
     /// <summary>
     /// ComicPostComment

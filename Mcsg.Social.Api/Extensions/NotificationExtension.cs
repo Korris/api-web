@@ -22,15 +22,7 @@ public static class NotificationExtension
             NotificationEntityType.StoryPostCommentReply,
             NotificationEntityType.SubPostCommentReply,
             NotificationEntityType.ComicSubPostCommentReply,
-            NotificationEntityType.StorySubPostCommentReply,
-
-        };
-
-        List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
-        {
-            NotificationEntityType.Feed,
-            NotificationEntityType.Comic,
-            NotificationEntityType.Story,
+            NotificationEntityType.StorySubPostCommentReply
         };
 
         List<NotificationEntityType> rejectReportEntities = new List<NotificationEntityType>()
@@ -200,28 +192,6 @@ public static class NotificationExtension
 
         #endregion
 
-        #region Post 
-
-        if (postEntities.Contains(noti.EntityType)
-                && noti.Action == NotificationAction.Comment)
-        {
-            return noti.ActorName + NotificationContent.CommentOnFeed;
-        }
-
-        if (postEntities.Contains(noti.EntityType)
-              && noti.Action == NotificationAction.Comment)
-        {
-            return noti.ActorName + NotificationContent.CommentOnFeed;
-        }
-
-        if (postEntities.Contains(noti.EntityType)
-                && noti.Action == NotificationAction.Reaction)
-        {
-            return noti.ActorName + NotificationContent.ReactOnFeed;
-        }
-
-        #endregion
-
         #region -- Delete --
         if (deleteEntities.Contains(noti.EntityType)
                 && noti.Action == NotificationAction.DeletePost)
@@ -365,7 +335,6 @@ public static class NotificationExtension
             NotificationEntityType.ComicSubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.StoryPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
             NotificationEntityType.StorySubPostCommentReplyReaction => Common.Core.Constants.Setting.NotificationType.Reaction,
-            NotificationEntityType.Feed => Common.Core.Constants.Setting.NotificationType.Feed,
             NotificationEntityType.PostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.SubPostCommentMention => Common.Core.Constants.Setting.NotificationType.Mention,
             NotificationEntityType.PostMention => Common.Core.Constants.Setting.NotificationType.Mention,
