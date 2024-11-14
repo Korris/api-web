@@ -14,12 +14,12 @@ public enum NotificationEntityType
     /// <summary>
     /// ComicPostComment
     /// </summary>
-    ComicPostComment,
+    ComicPostComment = 5,
 
     /// <summary>
     /// StoryPostComment
     /// </summary>
-    StoryPostComment,
+    StoryPostComment = 6,
     #endregion
 
     #region -- SubPostComment --
@@ -31,12 +31,12 @@ public enum NotificationEntityType
     /// <summary>
     /// ComicSubPostComment
     /// </summary>
-    ComicSubPostComment,
+    ComicSubPostComment = 8,
 
     /// <summary>
     /// StorySubPostComment
     /// </summary>
-    StorySubPostComment,
+    StorySubPostComment = 9,
     #endregion
 
     #region -- PostCommentReply --
@@ -48,12 +48,12 @@ public enum NotificationEntityType
     /// <summary>
     /// ComicPostCommentReply
     /// </summary>
-    ComicPostCommentReply,
+    ComicPostCommentReply = 11,
 
     /// <summary>
     /// StoryPostCommentReply
     /// </summary>
-    StoryPostCommentReply,
+    StoryPostCommentReply = 12,
     #endregion
 
     #region -- SubPostCommentReply --
@@ -65,12 +65,12 @@ public enum NotificationEntityType
     /// <summary>
     /// ComicSubPostCommentReply
     /// </summary>
-    ComicSubPostCommentReply,
+    ComicSubPostCommentReply = 14,
 
     /// <summary>
     /// StorySubPostCommentReply
     /// </summary>
-    StorySubPostCommentReply,
+    StorySubPostCommentReply = 15,
     #endregion
 
     #region -- Social * Reaction --
@@ -82,17 +82,17 @@ public enum NotificationEntityType
     /// <summary>
     /// SocialSubPostCommentReaction
     /// </summary>
-    SocialSubPostCommentReaction,
+    SocialSubPostCommentReaction = 17,
 
     /// <summary>
     /// SocialPostReaction
     /// </summary>
-    SocialPostReaction,
+    SocialPostReaction = 18,
 
     /// <summary>
     /// SocialSubPostReaction
     /// </summary>
-    SocialSubPostReaction,
+    SocialSubPostReaction = 19,
     #endregion
 
     /// <summary>
@@ -109,7 +109,7 @@ public enum NotificationEntityType
     /// <summary>
     /// SocialSubPostCommentMention
     /// </summary>
-    SocialSubPostCommentMention,
+    SocialSubPostCommentMention = 22,
     #endregion
 
     #region -- Follow --
@@ -121,12 +121,12 @@ public enum NotificationEntityType
     /// <summary>
     /// FollowComicPost
     /// </summary>
-    FollowComicPost,
+    FollowComicPost = 24,
 
     /// <summary>
     /// FollowStoryPost
     /// </summary>
-    FollowStoryPost,
+    FollowStoryPost = 25,
     #endregion
 
     #region -- Comic * Reaction --
@@ -138,17 +138,17 @@ public enum NotificationEntityType
     /// <summary>
     /// ComicSubPostReaction
     /// </summary>
-    ComicSubPostReaction,
+    ComicSubPostReaction = 27,
 
     /// <summary>
     /// ComicPostCommentReaction
     /// </summary>
-    ComicPostCommentReaction,
+    ComicPostCommentReaction = 28,
 
     /// <summary>
     /// ComicSubPostCommentReaction
     /// </summary>
-    ComicSubPostCommentReaction,
+    ComicSubPostCommentReaction = 29,
     #endregion
 
     #region -- Story * Reaction --
@@ -160,17 +160,17 @@ public enum NotificationEntityType
     /// <summary>
     /// StorySubPostReaction
     /// </summary>
-    StorySubPostReaction,
+    StorySubPostReaction = 31,
 
     /// <summary>
     /// StoryPostCommentReaction
     /// </summary>
-    StoryPostCommentReaction,
+    StoryPostCommentReaction = 32,
 
     /// <summary>
     /// StorySubPostCommentReaction
     /// </summary>
-    StorySubPostCommentReaction,
+    StorySubPostCommentReaction = 33,
     #endregion
 
     #region -- Social * Mention --
@@ -182,7 +182,7 @@ public enum NotificationEntityType
     /// <summary>
     /// SocialSubPostMention
     /// </summary>
-    SocialSubPostMention,
+    SocialSubPostMention = 35,
     #endregion
 
     #region -- Comic Story Mention --
@@ -194,156 +194,156 @@ public enum NotificationEntityType
     /// <summary>
     /// StoryCommentPostMention
     /// </summary>
-    StoryPostCommentMention,
+    StoryPostCommentMention = 37,
 
     /// <summary>
     /// ComicSubPostCommentPostMention
     /// </summary>
-    ComicSubPostCommentMention,
+    ComicSubPostCommentMention = 38,
 
     /// <summary>
     /// StorySubPostCommentPostMention
     /// </summary>
-    StorySubPostCommentMention,
+    StorySubPostCommentMention = 39,
     #endregion
 
     #region -- Reaction --
     /// <summary>
     /// SocialPostCommentReplyReaction
     /// </summary>
-    SocialPostCommentReplyReaction,
+    SocialPostCommentReplyReaction = 40,
 
     /// <summary>
     /// SocialSubPostCommentReplyReaction
     /// </summary>
-    SocialSubPostCommentReplyReaction,
+    SocialSubPostCommentReplyReaction = 41,
 
     /// <summary>
     /// ComicPostCommentReplyReaction
     /// </summary>
-    ComicPostCommentReplyReaction,
+    ComicPostCommentReplyReaction = 42,
 
     /// <summary>
     /// ComicSubPostCommentReplyReaction
     /// </summary>
-    ComicSubPostCommentReplyReaction,
+    ComicSubPostCommentReplyReaction = 43,
 
     /// <summary>
     /// StoryPostCommentReplyReaction
     /// </summary>
-    StoryPostCommentReplyReaction,
+    StoryPostCommentReplyReaction = 44,
 
     /// <summary>
     /// StorySubPostCommentReplyReaction
     /// </summary>
-    StorySubPostCommentReplyReaction,
+    StorySubPostCommentReplyReaction = 45,
     #endregion
 
     /// <summary>
     /// TransferTransaction
     /// </summary>
-    TransferTransaction,
+    TransferTransaction = 46,
 
     /// <summary>
     /// DonateTransaction
     /// </summary>
-    DonateTransaction,
+    DonateTransaction = 47,
 
     #region -- Document --
     /// <summary>
     /// Document
     /// </summary>
-    Document,
+    Document = 48,
 
     /// <summary>
     /// DocumentPostReaction
     /// </summary>
-    DocumentPostReaction,
+    DocumentPostReaction = 49,
 
     /// <summary>
     /// DocumentPostCommentReplyReaction
     /// </summary>
-    DocumentPostCommentReplyReaction,
+    DocumentPostCommentReplyReaction = 50,
 
     /// <summary>
     /// DocumentPostCommentReaction
     /// </summary>
-    DocumentPostCommentReaction,
+    DocumentPostCommentReaction = 51,
 
     /// <summary>
     /// DocumentSubPostCommentReplyReaction
     /// </summary>
-    DocumentSubPostCommentReplyReaction,
+    DocumentSubPostCommentReplyReaction = 52,
 
     /// <summary>
     /// DocumentSubPostCommentReaction
     /// </summary>
-    DocumentSubPostCommentReaction,
+    DocumentSubPostCommentReaction = 53,
     #endregion
 
     #region -- Delete --
     /// <summary>
     /// DeleteComicPost
     /// </summary>
-    DeleteComicPost,
+    DeleteComicPost = 54,
 
     /// <summary>
     /// DeleteComicSubPost
     /// </summary>
-    DeleteComicSubPost,
+    DeleteComicSubPost = 55,
 
     /// <summary>
     /// DeleteSocial
     /// </summary>
-    DeleteSocial,
+    DeleteSocial = 56,
 
     /// <summary>
     /// DeleteStoryPost
     /// </summary>
-    DeleteStoryPost,
+    DeleteStoryPost = 57,
 
     /// <summary>
     /// DeleteStorySubPost
     /// </summary>
-    DeleteStorySubPost,
+    DeleteStorySubPost = 58,
     #endregion
 
     #region -- Lock --
     /// <summary>
     /// LockComicPost
     /// </summary>
-    LockComicPost,
+    LockComicPost = 59,
 
     /// <summary>
     /// LockComicSubPost
     /// </summary>
-    LockComicSubPost,
+    LockComicSubPost = 60,
 
     /// <summary>
     /// LockSocial
     /// </summary>
-    LockSocial,
+    LockSocial = 61,
 
     /// <summary>
     /// LockStoryPost
     /// </summary>
-    LockStoryPost,
+    LockStoryPost = 62,
 
     /// <summary>
     /// LockStorySubPost
     /// </summary>
-    LockStorySubPost,
+    LockStorySubPost = 63,
     #endregion
 
     #region -- Reject --
     /// <summary>
     /// RejectCommentReport
     /// </summary>
-    RejectCommentReport,
+    RejectCommentReport = 64,
 
     /// <summary>
     /// RejectPostReport
     /// </summary>
-    RejectPostReport
+    RejectPostReport = 65
     #endregion
 }
