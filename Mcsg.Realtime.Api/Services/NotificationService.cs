@@ -863,7 +863,7 @@ public class NotificationService : BaseS, INotificationService
         response.LocationId = request.PostId;
         response.LocationHashId = request.PostHashId;
         response.Message = string.Format(NotificationContent.FollowPost, request.ActorName, request.PostName);
-        response.TargetType = request.NotificationEntityType == NotificationEntityType.FollowComicPost ? NotificationTargetType.Comic : NotificationTargetType.Story;
+        response.TargetType = request.NotificationEntityType == NotificationEntityType.ComicPostFollow ? NotificationTargetType.Comic : NotificationTargetType.Story;
         response.ActorId = request.ActorId;
         response.ActorName = request.ActorName;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
@@ -1102,11 +1102,11 @@ public class NotificationService : BaseS, INotificationService
 
         var entityType = type switch
         {
-            AddDeletionType.ComicPost => NotificationEntityType.DeleteComicPost,
-            AddDeletionType.ComicSubPost => NotificationEntityType.DeleteComicSubPost,
-            AddDeletionType.StoryPost => NotificationEntityType.DeleteStoryPost,
-            AddDeletionType.StorySubPost => NotificationEntityType.DeleteStorySubPost,
-            _ => NotificationEntityType.DeleteSocial
+            AddDeletionType.ComicPost => NotificationEntityType.ComicPostDelete,
+            AddDeletionType.ComicSubPost => NotificationEntityType.ComicSubPostDelete,
+            AddDeletionType.StoryPost => NotificationEntityType.StoryPostDelete,
+            AddDeletionType.StorySubPost => NotificationEntityType.StorySubPostDelete,
+            _ => NotificationEntityType.SocialPostDelete
         };
 
         var noti = await AddNotificationAsync(
@@ -1151,7 +1151,7 @@ public class NotificationService : BaseS, INotificationService
         var targetType = NotificationTargetType.Comic;
         var message = nameof(S303);
         var notiType = NotificationType.LockPost;
-        var entityType = NotificationEntityType.LockComicPost;
+        var entityType = NotificationEntityType.ComicPostLock;
 
         var type = request.NotificationType.ToEnum(AddLockType.ComicPost);
         switch (type)
@@ -1172,7 +1172,7 @@ public class NotificationService : BaseS, INotificationService
                 targetType = NotificationTargetType.SubComic;
                 message = nameof(S304);
                 notiType = NotificationType.LockSubPost;
-                entityType = NotificationEntityType.LockComicSubPost;
+                entityType = NotificationEntityType.ComicSubPostLock;
 
                 break;
 
@@ -1192,7 +1192,7 @@ public class NotificationService : BaseS, INotificationService
                 targetType = NotificationTargetType.Feed;
                 message = nameof(S305);
                 notiType = NotificationType.LockSocial;
-                entityType = NotificationEntityType.LockSocial;
+                entityType = NotificationEntityType.SocialPostLock;
 
                 break;
 
@@ -1212,7 +1212,7 @@ public class NotificationService : BaseS, INotificationService
                 targetType = NotificationTargetType.Story;
                 message = nameof(S303);
                 notiType = NotificationType.LockPost;
-                entityType = NotificationEntityType.LockStoryPost;
+                entityType = NotificationEntityType.StoryPostLock;
 
                 break;
 
@@ -1232,7 +1232,7 @@ public class NotificationService : BaseS, INotificationService
                 targetType = NotificationTargetType.SubStory;
                 message = nameof(S304);
                 notiType = NotificationType.LockSubPost;
-                entityType = NotificationEntityType.LockStorySubPost;
+                entityType = NotificationEntityType.StorySubPostLock;
 
                 break;
 

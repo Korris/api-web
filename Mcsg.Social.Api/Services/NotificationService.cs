@@ -323,7 +323,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     private async Task CheckDataFollowPost(List<NotificationModel> resDto)
     {
-        var resDtoFollowComic = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowComicPost).ToList();
+        var resDtoFollowComic = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.ComicPostFollow).ToList();
         var followComicPostIds = resDtoFollowComic.Select(p => p.LocationId).ToList();
         if (followComicPostIds.Count > 0)
         {
@@ -342,7 +342,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 }
             }
         }
-        var resDtoFollowStory = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.FollowStoryPost).ToList();
+        var resDtoFollowStory = resDto.Where(p => p.NotificationEntityType == NotificationEntityType.StoryPostFollow).ToList();
         var followStoryPostIds = resDtoFollowStory.Select(p => p.LocationId).ToList();
         if (followStoryPostIds.Count > 0)
         {

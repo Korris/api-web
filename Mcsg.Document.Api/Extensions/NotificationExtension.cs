@@ -20,7 +20,6 @@ public static class NotificationExtension
 
         List<NotificationEntityType> postEntities = new List<NotificationEntityType>()
         {
-            NotificationEntityType.Document,
             NotificationEntityType.SocialPostReaction,
             NotificationEntityType.SocialSubPostReaction
         };

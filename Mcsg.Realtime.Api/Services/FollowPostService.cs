@@ -41,7 +41,7 @@ public partial class FollowPostService : IFollowPostService
                 PostHashId = req.PostHashId,
                 UserAvatar = actor.UserAvatar,
                 PostName = postName,
-                NotificationEntityType = req.MicroService == nameof(MicroService.Comic) ? NotificationEntityType.FollowComicPost : NotificationEntityType.FollowStoryPost,
+                NotificationEntityType = req.MicroService == nameof(MicroService.Comic) ? NotificationEntityType.ComicPostFollow : NotificationEntityType.StoryPostFollow,
 
             };
             await _notificationService.AddFollowPostNotification(request);
