@@ -88,7 +88,7 @@ public partial class PostService : BaseMinioS, IPostService
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.ByTag);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -489,37 +489,37 @@ public partial class PostService : BaseMinioS, IPostService
         string countTopQuery = PaginationCountResult;
         switch (selectedType)
         {
-            case PostSeriesSelectedType.HIT:
+            case PostSeriesSelectedType.Hit:
                 {
                     topSelectPostIdQuery = GetTopPostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopPostHitToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.LATEST:
+            case PostSeriesSelectedType.Latest:
                 {
                     topSelectPostIdQuery = GetTopLatestPostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.COMPLETED:
+            case PostSeriesSelectedType.Completed:
                 {
                     topSelectPostIdQuery = GetTopLatestCompletePostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestCompletePostToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.BY_TAG:
+            case PostSeriesSelectedType.ByTag:
                 {
                     topSelectPostIdQuery = GetLatestPostByTagHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetLatestPostByTagToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.RECOMMEND:
+            case PostSeriesSelectedType.Recommend:
                 {
                     topSelectPostIdQuery = GetTopRecommendedPostHitQuery;
                     countTopQuery = "";
                     break;
                 }
-            case PostSeriesSelectedType.BY_USER:
+            case PostSeriesSelectedType.ByUser:
                 {
                     topSelectPostIdQuery = GetLatestPostByUserHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetLatestPostByUserToCountQuery);

@@ -46,17 +46,17 @@ public partial class StoryService : IStoryService
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(StoryTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Hit, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(StoryTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Latest, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(StoryTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Completed, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetMy(StoryPostListSeriesR loadReq)

@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Extensions;
 
+using Common.Core.Enums;
 using Constants;
-using Enums;
 using Models;
 
 public static class PostExtension
@@ -10,12 +10,13 @@ public static class PostExtension
     {
         return type switch
         {
-            PostSeriesSelectedType.HIT => PostConst.PostSeriesStatus.Hit,
-            PostSeriesSelectedType.LATEST => PostConst.PostSeriesStatus.Latest,
-            PostSeriesSelectedType.COMPLETED => PostConst.PostSeriesStatus.Completed,
+            PostSeriesSelectedType.Hit => PostConst.PostSeriesStatus.Hit,
+            PostSeriesSelectedType.Latest => PostConst.PostSeriesStatus.Latest,
+            PostSeriesSelectedType.Completed => PostConst.PostSeriesStatus.Completed,
             _ => throw new NotSupportedException($"Unsupported entity type: {type}"),
         };
     }
+
     public static string ToSeriesStatus(this PostSeriesResponse model)
     {
         return model.IsCompleted switch

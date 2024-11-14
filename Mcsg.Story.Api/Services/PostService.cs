@@ -410,9 +410,9 @@ public partial class PostService : BaseMinioS, IPostService
                 PostStatus = StatusUtils.PostStatusInt
             });
         result = new PostSeriesAllTopResponse();// MappingTopSeries(dbFeed);
-        var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.HIT).ToList();
-        var listLatest = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.LATEST).ToList();
-        var listLatestCompleted = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.COMPLETED).ToList();
+        var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.Hit).ToList();
+        var listLatest = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.Latest).ToList();
+        var listLatestCompleted = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.Completed).ToList();
         result.TopHits = MappingTopSeries(listHit);
         result.TopLatest = MappingTopSeries(listLatest);
         result.TopCompleted = MappingTopSeries(listLatestCompleted);
@@ -618,7 +618,7 @@ public partial class PostService : BaseMinioS, IPostService
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.ByTag);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -651,7 +651,7 @@ public partial class PostService : BaseMinioS, IPostService
         ValidateTotalItem(loadReq.PageSize);
         PagedResponse<PostSeriesTopResponse> results;
         var offset = GetOffsetSetup(ref loadReq);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_USER, profileName);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.ByUser, profileName);
         var isMySelf = profileName == loadReq.UserName;
 
         var multi = await _postRepository
@@ -706,7 +706,7 @@ public partial class PostService : BaseMinioS, IPostService
         ValidateTotalItem(input.PageSize);
         PagedResponse<PostBoxResposne> results;
         var offset = input.PageSize * (input.PageNumber - 1);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_TAG);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.ByTag);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -862,7 +862,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var number = req.Number;
         ValidateTotalItem(number);
-        var query = GetQuerySelectPage(PostSeriesSelectedType.RECOMMEND);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.Recommend);
 
         var items = await _postRepository
                 .Connection.QueryAsync<PostSeriesTopQueryDbResponse>(query, new
@@ -1082,7 +1082,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         var result = new PostSeriesAllTopResponse();
 
-        var query = GetQuerySelectPage(PostSeriesSelectedType.FOLLOWED_POST);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.FollowedPost);
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
@@ -1143,7 +1143,7 @@ public partial class PostService : BaseMinioS, IPostService
         countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
 
         var result = new PostSeriesAllTopResponse();
-        var query = GetQuerySelectPage(PostSeriesSelectedType.BY_MYSELF, loadReq.UserName);
+        var query = GetQuerySelectPage(PostSeriesSelectedType.ByMyself, loadReq.UserName);
 
 
         var multi = await _postRepository
@@ -1583,50 +1583,50 @@ public partial class PostService : BaseMinioS, IPostService
         var permission = $@"AND p.""Permission"" != 1";
         switch (selectedType)
         {
-            case PostSeriesSelectedType.HIT:
+            case PostSeriesSelectedType.Hit:
                 {
                     topSelectPostIdQuery = GetTopPostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopPostHitToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.LATEST:
+            case PostSeriesSelectedType.Latest:
                 {
                     topSelectPostIdQuery = GetTopLatestPostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.COMPLETED:
+            case PostSeriesSelectedType.Completed:
                 {
                     topSelectPostIdQuery = GetTopLatestCompletePostHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestCompletePostToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.BY_TAG:
+            case PostSeriesSelectedType.ByTag:
                 {
                     topSelectPostIdQuery = GetLatestPostByTagHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetLatestPostByTagToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.RECOMMEND:
+            case PostSeriesSelectedType.Recommend:
                 {
                     topSelectPostIdQuery = GetTopRecommendedPostHitQuery;
                     countTopQuery = "";
                     break;
                 }
-            case PostSeriesSelectedType.BY_USER:
+            case PostSeriesSelectedType.ByUser:
                 {
                     topSelectPostIdQuery = GetLatestPostByUserHitQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetLatestPostByUserToCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.BY_MYSELF:
+            case PostSeriesSelectedType.ByMyself:
                 {
                     permission = "";
                     topSelectPostIdQuery = GetMyPostIdsQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
                     break;
                 }
-            case PostSeriesSelectedType.FOLLOWED_POST:
+            case PostSeriesSelectedType.FollowedPost:
                 {
                     topSelectPostIdQuery = GetMyPostFollowedIdsQuery; ;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostFollowedCountQuery);

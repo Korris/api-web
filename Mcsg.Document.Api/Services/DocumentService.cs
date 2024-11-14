@@ -48,17 +48,17 @@ public partial class DocumentService : IDocumentService
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(DocumentTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.HIT, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Hit, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(DocumentTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.LATEST, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Latest, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(DocumentTopPostR req)
     {
-        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.COMPLETED, req);
+        return await _postService.GetTopSeriesByPage(_type, PostSeriesSelectedType.Completed, req);
     }
 
     public async Task<PagedResponse<PostSeriesTopResponse>> GetMy(DocumentPostListSeriesR loadReq)
