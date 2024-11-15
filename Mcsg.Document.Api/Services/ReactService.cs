@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Mcsg.Document.Api.Services;
 
@@ -12,11 +13,12 @@ using Common.Extensions;
 using Common.Interfaces;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
+using Dtos;
 using Interfaces;
 using Models;
 using Requests;
 
-public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseReaction, new()
+public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : BaseReaction, new()
 {
     /// <summary>
     /// Initialize
@@ -25,10 +27,9 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
     /// <param name="unitOfWork"></param>
     /// <param name="notificationService"></param>
     /// <param name="smartCountService"></param>
-    public ReactService(IMcsgContext context, IUnitOfWork unitOfWork, INotificationService notificationService, ISmartCountService smartCountService) : base(context)
+    public ReactService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork, ISmartCountService smartCountService) : base(context, setting)
     {
         _reactRepository = unitOfWork.GetRepository<T>();
-        _notificationService = notificationService;
         _smartCountService = smartCountService;
     }
 
@@ -222,7 +223,30 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
             _ => NotificationEntityType.DocumentPostReaction
         };
 
-        await _notificationService.AddReactionNotificationAsync(notiReq);
+        await AddReactionNotificationAsync(notiReq);
+    }
+
+    public async Task<bool> AddReactionNotificationAsync(ReactionNotificationReq req)
+    {
+        var baseUrl = _setting.Api.Web.Realtime;
+        var urlBuilder = new System.Text.StringBuilder();
+        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/reaction");
+
+        var url = urlBuilder.ToString();
+
+        var response = await url.MakePostRequest(req);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private async Task AddCountQueue(Guid targetId)
@@ -266,7 +290,6 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
     #region -- Fields --
 
     private readonly IRepository<T> _reactRepository;
-    private readonly INotificationService _notificationService;
     private readonly ISmartCountService _smartCountService;
 
     #endregion

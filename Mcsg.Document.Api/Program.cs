@@ -200,7 +200,6 @@ public class Program
         builder.Services.AddScoped(typeof(IReactService<>), typeof(ReactService<>));
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
-        builder.Services.AddScoped<INotificationService, NotificationService>();
 
         //validator
         builder.Services.AddScoped<IValidator<TagFavorite>, TagFavoriteValidator>();
