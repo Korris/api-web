@@ -39,20 +39,20 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var reactionDb = await GetReactionByUser(request);
-        if (reactionDb != null)
+        var ett = await GetReactionByUser(request);
+        if (ett != null)
         {
             bool isChange = false;
-            if (reactionDb.IsDelete)
+            if (ett.IsDelete)
             {
-                reactionDb.IsDelete = false;
+                ett.IsDelete = false;
                 await AddCountQueue(targetId);
                 isChange = true;
             }
 
-            if (reactionDb.Type != type)
+            if (ett.Type != type)
             {
-                reactionDb.Type = type;
+                ett.Type = type;
                 isChange = true;
             }
 
@@ -62,7 +62,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
                 var updateResult = await _context.SaveChangesAsync(default) > 0;
 
                 // Send Notification
-                await SendReactNotificationAsync(reactionDb.Id, request, targetId, type, isReply);
+                await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
 
                 return updateResult;
             }
@@ -73,7 +73,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         }
         else
         {
-            var ett = await AddNewReaction(targetId, type, userId);
+            ett = await AddNewReaction(targetId, type, userId);
             if (ett != null)
             {
                 await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
@@ -156,13 +156,13 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
 
     public async Task<bool> RemoveReaction(ReactionReactR request)
     {
-        var res = await GetReactionByUser(request);
-        if (res == null)
+        var ett = await GetReactionByUser(request);
+        if (ett == null)
         {
             return false;
         }
 
-        res.IsDelete = true;
+        ett.IsDelete = true;
         await RemoveCountQueue(request.TargetId);
 
         return await _context.SaveChangesAsync(default) > 0;
@@ -170,16 +170,8 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
 
     public async Task<T?> GetReactionByUser(ReactionReactR request)
     {
-        var query = string.Format(GetReactByUsersQuery, _reactRepository.TableName);
-
-        var res = await _reactRepository
-                .Connection.QueryFirstOrDefaultAsync<T>(query, new
-                {
-                    request.TargetId,
-                    AuthorId = request.UserId
-                });
-
-        return res;
+        var set = _context.Set<T>();
+        return await set.FirstOrDefaultAsync(p => !p.IsDelete && p.TargetId == request.TargetId && p.AuthorId == request.UserId);
     }
 
     private async Task<T?> AddNewReaction(Guid targetId, ReactionType type, Guid userId)
@@ -226,6 +218,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
             nameof(StoryPostReaction) => NotificationEntityType.StoryPostReaction,
             nameof(StoryPostCommentReaction) => isReply ? NotificationEntityType.StoryPostCommentReplyReaction : NotificationEntityType.StoryPostCommentReaction,
             nameof(StorySubPostCommentReaction) => isReply ? NotificationEntityType.StorySubPostCommentReplyReaction : NotificationEntityType.StorySubPostCommentReaction,
+            nameof(StorySubPostReaction) => NotificationEntityType.StorySubPostReaction,
             _ => NotificationEntityType.StoryPostReaction
         };
 

@@ -2,19 +2,6 @@
 
 public partial class ReactService<T>
 {
-    private string GetReactByUsersQuery
-    {
-        get
-        {
-            return @"SELECT ""Id"", ""ParentId"", 
-                ""TargetId"", ""AuthorId"", ""Type"",
-                ""CreatedOn"", ""CreatedBy"",
-                ""ModifiedOn"", ""ModifiedBy"", ""IsDelete""
-                    FROM {0}
-                    WHERE ""TargetId"" = @TargetId
-                    AND ""AuthorId"" = @AuthorId";
-        }
-    }
     private string GetReactByTargetQuery
     {
         get
@@ -33,6 +20,7 @@ public partial class ReactService<T>
                     ORDER BY ""Count"" DESC";
         }
     }
+
     private string GetReactionByTargetQuery
     {
         get
