@@ -62,6 +62,11 @@ partial class Notification
             NotificationEntityType.ComicPostCommentReply,
             NotificationEntityType.ComicSubPostCommentReply,
 
+            NotificationEntityType.DocumentPostComment,
+            NotificationEntityType.DocumentSubPostComment,
+            NotificationEntityType.DocumentPostCommentReply,
+            NotificationEntityType.DocumentSubPostCommentReply,
+
             NotificationEntityType.SocialPostComment,
             NotificationEntityType.SocialSubPostComment,
             NotificationEntityType.SocialPostCommentReply,
@@ -88,6 +93,13 @@ partial class Notification
             NotificationEntityType.ComicPostCommentReplyReaction,
             NotificationEntityType.ComicSubPostCommentReplyReaction,
 
+            NotificationEntityType.DocumentPostReaction,
+            NotificationEntityType.DocumentSubPostReaction,
+            NotificationEntityType.DocumentPostCommentReaction,
+            NotificationEntityType.DocumentSubPostCommentReaction,
+            NotificationEntityType.DocumentPostCommentReplyReaction,
+            NotificationEntityType.DocumentSubPostCommentReplyReaction,
+
             NotificationEntityType.SocialPostReaction,
             NotificationEntityType.SocialSubPostReaction,
             NotificationEntityType.SocialPostCommentReaction,
@@ -107,6 +119,7 @@ partial class Notification
         [
             NotificationEntityType.FollowUser,
             NotificationEntityType.ComicPostFollow,
+            NotificationEntityType.DocumentPostFollow,
             NotificationEntityType.StoryPostFollow,
         ];
 
@@ -114,6 +127,9 @@ partial class Notification
         [
             NotificationEntityType.ComicPostDelete,
             NotificationEntityType.ComicSubPostDelete,
+
+            NotificationEntityType.DocumentPostDelete,
+            NotificationEntityType.DocumentSubPostDelete,
 
             NotificationEntityType.SocialPostDelete,
 
@@ -125,6 +141,9 @@ partial class Notification
         [
             NotificationEntityType.ComicPostLock,
             NotificationEntityType.ComicSubPostLock,
+
+            NotificationEntityType.DocumentPostLock,
+            NotificationEntityType.DocumentSubPostLock,
 
             NotificationEntityType.SocialPostLock,
 
@@ -174,6 +193,7 @@ partial class Notification
                     return noti.ActorName + NotificationContent.FollowUser;
 
                 case NotificationEntityType.ComicPostFollow:
+                case NotificationEntityType.DocumentPostFollow:
                 case NotificationEntityType.StoryPostFollow:
                     return NotificationContent.FollowPost;
             }
@@ -220,6 +240,10 @@ partial class Notification
                 case NotificationEntityType.ComicPostComment:
                 case NotificationEntityType.ComicSubPostComment:
                     return noti.ActorName + NotificationContent.CommentOnComic;
+
+                case NotificationEntityType.DocumentPostComment:
+                case NotificationEntityType.DocumentSubPostComment:
+                    return noti.ActorName + NotificationContent.CommentOnDocument;
 
                 case NotificationEntityType.StoryPostComment:
                 case NotificationEntityType.StorySubPostComment:
@@ -308,6 +332,24 @@ partial class Notification
             NotificationEntityType.ComicPostLock => Setting.NotificationTargetType.Comic,
             NotificationEntityType.ComicSubPostLock => Setting.NotificationTargetType.SubComic,
 
+            NotificationEntityType.DocumentPostComment => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostComment => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostCommentReply => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostCommentReply => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostFollow => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentPostReaction => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostReaction => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostCommentReaction => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostCommentReaction => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostCommentMention => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostCommentMention => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostCommentReplyReaction => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostCommentReplyReaction => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostDelete => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostDelete => Setting.NotificationTargetType.SubDocument,
+            NotificationEntityType.DocumentPostLock => Setting.NotificationTargetType.Document,
+            NotificationEntityType.DocumentSubPostLock => Setting.NotificationTargetType.SubDocument,
+
             NotificationEntityType.SocialPostComment => Setting.NotificationTargetType.Social,
             NotificationEntityType.SocialSubPostComment => Setting.NotificationTargetType.SubSocial,
             NotificationEntityType.SocialPostCommentReply => Setting.NotificationTargetType.Social,
@@ -377,6 +419,24 @@ partial class Notification
             NotificationEntityType.ComicSubPostDelete => Setting.NotificationType.DeleteSubPost,
             NotificationEntityType.ComicPostLock => Setting.NotificationType.LockPost,
             NotificationEntityType.ComicSubPostLock => Setting.NotificationType.LockSubPost,
+
+            NotificationEntityType.DocumentPostComment => Setting.NotificationType.Comment,
+            NotificationEntityType.DocumentSubPostComment => Setting.NotificationType.Comment,
+            NotificationEntityType.DocumentPostCommentReply => Setting.NotificationType.Reply,
+            NotificationEntityType.DocumentSubPostCommentReply => Setting.NotificationType.Reply,
+            NotificationEntityType.DocumentPostFollow => Setting.NotificationType.FollowPost,
+            NotificationEntityType.DocumentPostReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentSubPostReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentPostCommentReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentSubPostCommentReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentPostCommentMention => Setting.NotificationType.Mention,
+            NotificationEntityType.DocumentSubPostCommentMention => Setting.NotificationType.Mention,
+            NotificationEntityType.DocumentPostCommentReplyReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentSubPostCommentReplyReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.DocumentPostDelete => Setting.NotificationType.DeletePost,
+            NotificationEntityType.DocumentSubPostDelete => Setting.NotificationType.DeleteSubPost,
+            NotificationEntityType.DocumentPostLock => Setting.NotificationType.LockPost,
+            NotificationEntityType.DocumentSubPostLock => Setting.NotificationType.LockSubPost,
 
             NotificationEntityType.SocialPostComment => Setting.NotificationType.Comment,
             NotificationEntityType.SocialSubPostComment => Setting.NotificationType.Comment,

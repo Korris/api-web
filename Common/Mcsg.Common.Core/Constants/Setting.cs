@@ -404,6 +404,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string Comic = "Comic";
 
         /// <summary>
+        /// Document
+        /// </summary>
+        public const string Document = "Document";
+
+        /// <summary>
         /// Story
         /// </summary>
         public const string Story = "Story";
@@ -417,6 +422,11 @@ public class Setting : SeedWork.Constants.Setting
         /// SubComic
         /// </summary>
         public const string SubComic = "SubComic";
+
+        /// <summary>
+        /// SubDocument
+        /// </summary>
+        public const string SubDocument = "SubDocument";
 
         /// <summary>
         /// SubStory

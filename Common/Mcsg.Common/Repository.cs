@@ -38,6 +38,11 @@ public partial class Repository<TEntity> : IRepository<TEntity>
         {
             dbSchema = $"{DbSchema.Comic}.";
         }
+        tables = DbSchema.DocumentTables.Split(';');
+        if (tables.Contains(table))
+        {
+            dbSchema = $"{DbSchema.Document}.";
+        }
         tables = DbSchema.IdentityTables.Split(';');
         if (tables.Contains(table))
         {

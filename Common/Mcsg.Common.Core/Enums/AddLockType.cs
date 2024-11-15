@@ -28,5 +28,15 @@ public enum AddLockType
     /// <summary>
     /// StorySubPost
     /// </summary>
-    StorySubPost
+    StorySubPost,
+
+    /// <summary>
+    /// StoryPost
+    /// </summary>
+    DocumentPost,
+
+    /// <summary>
+    /// StorySubPost
+    /// </summary>
+    DocumentSubPost
 }

@@ -43,14 +43,19 @@ public class CommentHub : Hub
     /// </summary>
     /// <param name="comicCommentService"></param>
     /// <param name="comicReplyService"></param>
+    /// <param name="documentCommentService"></param>
+    /// <param name="documentReplyService"></param>
     /// <param name="socialCommentService"></param>
     /// <param name="socialReplyService"></param>
     /// <param name="storyCommentService"></param>
     /// <param name="storyReplyService"></param>
-    public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
+    public CommentHub(IComicCommentService comicCommentService, IComicReplyService comicReplyService, IDocumentCommentService documentCommentService, IDocumentReplyService documentReplyService, ISocialCommentService socialCommentService, ISocialReplyService socialReplyService, IStoryCommentService storyCommentService, IStoryReplyService storyReplyService)
     {
         _comicCommentService = comicCommentService;
         _comicReplyService = comicReplyService;
+
+        _documentCommentService = documentCommentService;
+        _documentReplyService = documentReplyService;
 
         _socialCommentService = socialCommentService;
         _socialReplyService = socialReplyService;
@@ -160,6 +165,7 @@ public class CommentHub : Hub
         return microService switch
         {
             nameof(MicroService.Comic) => _comicCommentService,
+            nameof(MicroService.Document) => _documentCommentService,
             nameof(MicroService.Story) => _storyCommentService,
             _ => _socialCommentService
         };
@@ -170,6 +176,7 @@ public class CommentHub : Hub
         return microService switch
         {
             nameof(MicroService.Comic) => _comicReplyService,
+            nameof(MicroService.Document) => _documentReplyService,
             nameof(MicroService.Story) => _storyReplyService,
             _ => _socialReplyService
         };
@@ -181,6 +188,9 @@ public class CommentHub : Hub
 
     private readonly IComicCommentService _comicCommentService;
     private readonly IComicReplyService _comicReplyService;
+
+    private readonly IDocumentCommentService _documentCommentService;
+    private readonly IDocumentReplyService _documentReplyService;
 
     private readonly ISocialCommentService _socialCommentService;
     private readonly ISocialReplyService _socialReplyService;

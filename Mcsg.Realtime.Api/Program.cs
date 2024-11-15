@@ -133,6 +133,10 @@ public class Program
         builder.Services.AddScoped<IComicCommentService, ComicCommentService>();
         builder.Services.AddScoped<IComicReplyService, ComicReplyService>();
 
+        // Document
+        builder.Services.AddScoped<IDocumentCommentService, DocumentCommentService>();
+        builder.Services.AddScoped<IDocumentReplyService, DocumentReplyService>();
+
         // Social
         builder.Services.AddScoped<ISocialCommentService, SocialCommentService>();
         builder.Services.AddScoped<ISocialReplyService, SocialReplyService>();

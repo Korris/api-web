@@ -54,6 +54,7 @@ public class NotificationService : BaseS, INotificationService
                 UserAvatar = p.Avatar
             })
             .FirstOrDefaultAsync();
+
         var amount = req.Amount.ToString("N0");
         response.Id = noti.Id;
         response.Amount = amount;
@@ -66,7 +67,9 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = GetTransactionType(notificationEntityType);
         response.UserAvatar = userInfo.UserAvatar;
+
         await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+
         return response;
     }
 
@@ -118,7 +121,7 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Comment;
                 response.UserAvatar = comment.UserAvatar;
                 response.Order = comment.Order ?? 0;
-                // Then notification the comment to post owner
+
                 await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
@@ -132,8 +135,13 @@ public class NotificationService : BaseS, INotificationService
         {
             case PostType.Comic:
                 return comment.Type == PostTypes.Post ? NotificationTargetType.Comic : NotificationTargetType.SubComic;
+
+            case PostType.Document:
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Document : NotificationTargetType.SubDocument;
+
             case PostType.Story:
                 return comment.Type == PostTypes.Post ? NotificationTargetType.Story : NotificationTargetType.SubStory;
+
             default:
                 return comment.Type == PostTypes.Post ? NotificationTargetType.Social : NotificationTargetType.SubSocial;
         }
@@ -163,6 +171,9 @@ public class NotificationService : BaseS, INotificationService
         {
             case PostType.Comic:
                 return comment.AuthorName + NotificationContent.CommentOnComic;
+
+            case PostType.Document:
+                return comment.AuthorName + NotificationContent.CommentOnDocument;
 
             case PostType.Story:
                 return comment.AuthorName + NotificationContent.CommentOnStory;
@@ -206,6 +217,16 @@ public class NotificationService : BaseS, INotificationService
             case NotificationTargetType.SubComic:
                 qAuthorId = _context.ComicSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
                 qHashId = _context.ComicSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.Document:
+                qAuthorId = _context.DocumentPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
+
+            case NotificationTargetType.SubDocument:
+                qAuthorId = _context.DocumentSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.DocumentSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Social:
@@ -261,7 +282,6 @@ public class NotificationService : BaseS, INotificationService
             response.ReplyCommentId = comment.Id;
             response.CommentId = comment.ReplyToCommentId;
 
-            // Then notification the comment to post owner
             await _hubcontext.Clients.Group(authorId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
@@ -295,7 +315,6 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = NotificationType.Video + video.Action.ToString();
 
-        // Then notification the comment to post owner
         await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
@@ -310,11 +329,12 @@ public class NotificationService : BaseS, INotificationService
         var postId = Guid.Empty;
         var locationId = Guid.Empty;
         var postHashId = "";
-        string locationHashId = "";
+        var locationHashId = "";
         var targetId = reaction.TargetId;
         bool isCommentReaction = reaction.EntityType != NotificationEntityType.SocialPostReaction
             && reaction.EntityType != NotificationEntityType.StoryPostReaction
             && reaction.EntityType != NotificationEntityType.ComicPostReaction
+            && reaction.EntityType != NotificationEntityType.DocumentPostReaction
             && reaction.EntityType != NotificationEntityType.SocialSubPostReaction;
 
         // Reaction for comment => Find Id of Post
@@ -345,6 +365,17 @@ public class NotificationService : BaseS, INotificationService
 
                 case NotificationEntityType.ComicPostCommentReaction or NotificationEntityType.ComicPostCommentReplyReaction:
                     qComment = _context.ComicPostCommentAvailable.Where(p => p.Id == targetId)
+                    .Select(p => new
+                    {
+                        p.Id,
+                        p.PostId,
+                        p.AuthorId,
+                        p.ParentId,
+                    });
+                    break;
+
+                case NotificationEntityType.DocumentPostCommentReaction or NotificationEntityType.DocumentPostCommentReplyReaction:
+                    qComment = _context.DocumentPostCommentAvailable.Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -387,6 +418,17 @@ public class NotificationService : BaseS, INotificationService
                     });
                     break;
 
+                case NotificationEntityType.DocumentSubPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
+                    qComment = _context.DocumentSubPostCommentAvailable.Where(p => p.Id == targetId)
+                    .Select(p => new
+                    {
+                        p.Id,
+                        p.PostId,
+                        p.AuthorId,
+                        p.ParentId,
+                    });
+                    break;
+
                 case NotificationEntityType.StorySubPostCommentReaction or NotificationEntityType.StorySubPostCommentReplyReaction:
                     qComment = _context.StorySubPostCommentAvailable.Where(p => p.Id == targetId)
                     .Select(p => new
@@ -412,14 +454,16 @@ public class NotificationService : BaseS, INotificationService
             receiverId = comment.AuthorId;
             locationId = reaction.TargetId;
             response.CommentId = reaction.IsReplyReaction ? comment.ParentId : reaction.TargetId;
+
             if (reaction.IsReplyReaction)
             {
                 response.ReplyCommentId = reaction.TargetId;
             }
+
             response.Message = reaction.AuthorName + NotificationContent.ReactOnComment;
         }
 
-        var q = _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0, PostId = Guid.Empty });
+        var q = _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = Guid.Empty });
         switch (reaction.EntityType)
         {
             case NotificationEntityType.SocialPostReaction:
@@ -430,29 +474,40 @@ public class NotificationService : BaseS, INotificationService
             case NotificationEntityType.ComicPostReaction:
             case NotificationEntityType.ComicPostCommentReaction:
             case NotificationEntityType.ComicPostCommentReplyReaction:
-                q = _context.ComicPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0, PostId = Guid.Empty });
+                q = _context.ComicPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = Guid.Empty });
+                break;
+
+            case NotificationEntityType.DocumentPostReaction:
+            case NotificationEntityType.DocumentPostCommentReaction:
+            case NotificationEntityType.DocumentPostCommentReplyReaction:
+                q = _context.DocumentPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = Guid.Empty });
                 break;
 
             case NotificationEntityType.StoryPostReaction:
             case NotificationEntityType.StoryPostCommentReaction:
             case NotificationEntityType.StoryPostCommentReplyReaction:
-                q = _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0, PostId = Guid.Empty });
+                q = _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = Guid.Empty });
                 break;
 
             case NotificationEntityType.SocialSubPostReaction:
             case NotificationEntityType.SocialSubPostCommentReaction:
             case NotificationEntityType.SocialSubPostCommentReplyReaction:
-                q = _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
+                q = _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = (float)p.Order, p.PostId });
                 break;
 
             case NotificationEntityType.ComicSubPostCommentReaction:
             case NotificationEntityType.ComicSubPostCommentReplyReaction:
-                q = _context.ComicSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = (int)p.Order, p.PostId });
+                q = _context.ComicSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
+                break;
+
+            case NotificationEntityType.DocumentSubPostCommentReaction:
+            case NotificationEntityType.DocumentSubPostCommentReplyReaction:
+                q = _context.DocumentSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
             case NotificationEntityType.StorySubPostCommentReaction:
             case NotificationEntityType.StorySubPostCommentReplyReaction:
-                q = _context.StorySubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = (int)p.Order, p.PostId });
+                q = _context.StorySubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
             default:
@@ -460,15 +515,14 @@ public class NotificationService : BaseS, INotificationService
         }
 
         var ett = await q.FirstOrDefaultAsync();
-
         if (ett != null)
         {
             postId = ett.Id;
             postHashId = ett.HashId;
 
-            // Only reaction by subpost comment need order to go to subpost Comic/Story
-            if (reaction.EntityType == NotificationEntityType.ComicSubPostCommentReaction || reaction.EntityType == NotificationEntityType.StorySubPostCommentReaction ||
-                reaction.EntityType == NotificationEntityType.ComicSubPostCommentReplyReaction || reaction.EntityType == NotificationEntityType.StorySubPostCommentReplyReaction)
+            // Only reaction by subpost comment need order to go to subpost Comic/Document/Story
+            if (reaction.EntityType == NotificationEntityType.ComicSubPostCommentReaction || reaction.EntityType == NotificationEntityType.DocumentSubPostCommentReaction || reaction.EntityType == NotificationEntityType.StorySubPostCommentReaction ||
+                reaction.EntityType == NotificationEntityType.ComicSubPostCommentReplyReaction || reaction.EntityType == NotificationEntityType.DocumentSubPostCommentReplyReaction || reaction.EntityType == NotificationEntityType.StorySubPostCommentReplyReaction)
             {
                 response.Order = ett.Order;
                 Guid postIdOfSubPost = ett.PostId;
@@ -480,6 +534,10 @@ public class NotificationService : BaseS, INotificationService
                         qHashId = _context.ComicPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
+                    case NotificationEntityType.DocumentSubPostCommentReaction:
+                        qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        break;
+
                     case NotificationEntityType.StorySubPostCommentReaction:
                         qHashId = _context.StoryPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
@@ -488,8 +546,12 @@ public class NotificationService : BaseS, INotificationService
                         qHashId = _context.ComicPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
+                    case NotificationEntityType.DocumentSubPostCommentReplyReaction:
+                        qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        break;
+
                     case NotificationEntityType.StorySubPostCommentReplyReaction:
-                        qHashId = _context.ComicPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.StoryPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     default:
@@ -497,15 +559,14 @@ public class NotificationService : BaseS, INotificationService
                 }
 
                 postHashId = await qHashId.FirstOrDefaultAsync();
-
             }
 
             if (!isCommentReaction)
             {
-                receiverId = ett.UserId != null ? ett.UserId : Guid.Empty;
+                receiverId = ett.UserId;
                 locationId = ett.Id;
                 locationHashId = ett.HashId;
-                var message = reaction.EntityType == NotificationEntityType.SocialPostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
+                var message = reaction.EntityType == NotificationEntityType.SocialPostReaction ? NotificationContent.ReactOnFeed : (reaction.EntityType == NotificationEntityType.ComicPostReaction ? NotificationContent.ReactOnComic : NotificationContent.ReactOnDocument);
                 response.Message = reaction.AuthorName + message;
             }
 
@@ -514,8 +575,10 @@ public class NotificationService : BaseS, INotificationService
                 NotificationEntityType.SocialPostReaction or NotificationEntityType.SocialPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction => NotificationTargetType.Social,
                 NotificationEntityType.StoryPostReaction or NotificationEntityType.StoryPostCommentReaction or NotificationEntityType.StoryPostCommentReplyReaction => NotificationTargetType.Story,
                 NotificationEntityType.ComicPostReaction or NotificationEntityType.ComicPostCommentReaction or NotificationEntityType.ComicPostCommentReplyReaction => NotificationTargetType.Comic,
+                NotificationEntityType.DocumentPostReaction or NotificationEntityType.DocumentPostCommentReaction or NotificationEntityType.DocumentPostCommentReplyReaction => NotificationTargetType.Document,
                 NotificationEntityType.SocialSubPostReaction or NotificationEntityType.SocialSubPostCommentReaction or NotificationEntityType.SocialSubPostCommentReplyReaction => NotificationTargetType.SubSocial,
                 NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.ComicSubPostCommentReplyReaction => NotificationTargetType.SubComic,
+                NotificationEntityType.DocumentSubPostCommentReaction or NotificationEntityType.DocumentSubPostCommentReplyReaction => NotificationTargetType.SubDocument,
                 NotificationEntityType.StorySubPostCommentReaction or NotificationEntityType.StorySubPostCommentReplyReaction => NotificationTargetType.SubStory,
             };
 
@@ -526,9 +589,13 @@ public class NotificationService : BaseS, INotificationService
             {
                 notificationObject.CreatedOn = DateTime.UtcNow;
                 var notification = await _context.Notifications.FirstOrDefaultAsync(p => p.NotificationObjectId == notificationObject.Id);
-                await _context.Notifications.Where(p => p.NotificationObjectId == notificationObject.Id).ExecuteUpdateAsync(p => p
-                .SetProperty(x => x.Status, NotificationStatus.UnRead)
-                .SetProperty(x => x.CreatedOn, DateTime.UtcNow));
+
+                await _context.Notifications
+                    .Where(p => p.NotificationObjectId == notificationObject.Id)
+                    .ExecuteUpdateAsync(x => x
+                        .SetProperty(p => p.Status, NotificationStatus.UnRead)
+                        .SetProperty(p => p.CreatedOn, DateTime.UtcNow));
+
                 response.Id = notification.Id;
                 response.Status = NotificationStatus.UnRead.ToString();
                 response.LocationId = postId;
@@ -540,7 +607,7 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
-                // Then notification the comment to post owner
+
                 await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
             else if (receiverId != Guid.Empty && receiverId != reaction.AuthorId)
@@ -566,7 +633,6 @@ public class NotificationService : BaseS, INotificationService
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
 
-                // Then notification the comment to post owner
                 await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
@@ -580,65 +646,82 @@ public class NotificationService : BaseS, INotificationService
         var receiverId = Guid.Empty;
         var postId = Guid.Empty;
         var locationId = Guid.Empty;
-        string postHashId = "";
-        string locationHashId = "";
+        var postHashId = "";
+        var locationHashId = "";
         var targetId = request.TargetId;
         bool isMentionComment = request.EntityType != NotificationEntityType.SocialPostMention;
-        // Reaction for comment => Find Id of Post
 
+        // Reaction for comment => Find Id of Post
         if (isMentionComment)
         {
-            dynamic postComment = request.EntityType switch
+            var qPostId = request.EntityType switch
             {
-                NotificationEntityType.SocialPostCommentMention => await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.ComicPostCommentMention => await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.StoryPostCommentMention => await _context.StoryPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.SocialSubPostCommentMention => await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.ComicSubPostCommentMention => await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                NotificationEntityType.StorySubPostCommentMention => await _context.StorySubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId),
-                _ => await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == request.TargetId)
+                NotificationEntityType.ComicPostCommentMention => _context.ComicPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.DocumentPostCommentMention => _context.DocumentPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.SocialPostCommentMention => _context.SocialPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.StoryPostCommentMention => _context.StoryPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+
+                NotificationEntityType.ComicSubPostCommentMention => _context.ComicSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.DocumentSubPostCommentMention => _context.DocumentSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.SocialSubPostCommentMention => _context.SocialSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.StorySubPostCommentMention => _context.StorySubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+
+                _ => _context.SocialPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId)
             };
 
-            targetId = postComment.PostId;
+            targetId = await qPostId.FirstOrDefaultAsync();
             locationId = request.TargetId;
             response.CommentId = request.TargetId;
         }
 
-        dynamic post = request.EntityType switch
+        var qPost = request.EntityType switch
         {
-            NotificationEntityType.SocialPostMention => await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.ComicPostCommentMention => await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.StoryPostCommentMention => await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.SocialSubPostCommentMention => await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.ComicSubPostCommentMention => await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            NotificationEntityType.StorySubPostCommentMention => await _context.StorySubPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
-            _ => await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == targetId),
+            NotificationEntityType.ComicPostCommentMention => _context.ComicPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = Guid.Empty }),
+            NotificationEntityType.DocumentPostCommentMention => _context.DocumentPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = Guid.Empty }),
+            NotificationEntityType.SocialPostMention => _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = Guid.Empty }),
+            NotificationEntityType.StoryPostCommentMention => _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = Guid.Empty }),
+
+            NotificationEntityType.ComicSubPostCommentMention => _context.ComicSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+            NotificationEntityType.DocumentSubPostCommentMention => _context.DocumentSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+            NotificationEntityType.SocialSubPostCommentMention => _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = (float)p.Order, p.PostId }),
+            NotificationEntityType.StorySubPostCommentMention => _context.StorySubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+
+            _ => _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = Guid.Empty }),
         };
 
+        var post = await qPost.FirstOrDefaultAsync();
         if (post != null)
         {
             postId = post.Id;
             postHashId = post.HashId;
-            /// only reaction by subpost comment need order to go to subpost Comic/Story
-            if (request.EntityType == NotificationEntityType.ComicSubPostCommentMention || request.EntityType == NotificationEntityType.StorySubPostCommentMention)
+
+            // Only reaction by subpost comment need order to go to subpost Comic/Document/Story
+            if (request.EntityType == NotificationEntityType.ComicSubPostCommentMention || request.EntityType == NotificationEntityType.DocumentSubPostCommentMention || request.EntityType == NotificationEntityType.StorySubPostCommentMention)
             {
                 response.Order = post.Order;
                 Guid postIdOfSubPost = post.PostId;
-                postHashId = request.EntityType == NotificationEntityType.ComicSubPostCommentMention ? (await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId : (await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId;
+                postHashId = request.EntityType == NotificationEntityType.DocumentSubPostCommentMention ? (await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId : (await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId;
             }
+
             if (!isMentionComment)
             {
                 locationId = post.Id;
                 locationHashId = post.HashId;
             }
+
             response.TargetType = request.EntityType switch
             {
+                NotificationEntityType.ComicPostCommentMention => NotificationTargetType.Comic,
+                NotificationEntityType.DocumentPostCommentMention => NotificationTargetType.Document,
                 NotificationEntityType.SocialPostMention or NotificationEntityType.SocialPostCommentMention => NotificationTargetType.Social,
                 NotificationEntityType.StoryPostCommentMention => NotificationTargetType.Story,
-                NotificationEntityType.ComicPostCommentMention => NotificationTargetType.Comic,
-                NotificationEntityType.SocialSubPostMention or NotificationEntityType.SocialSubPostCommentReaction => NotificationTargetType.SubSocial,
+
                 NotificationEntityType.ComicSubPostCommentMention => NotificationTargetType.SubComic,
+                NotificationEntityType.DocumentSubPostCommentMention => NotificationTargetType.SubDocument,
+                NotificationEntityType.SocialSubPostMention or NotificationEntityType.SocialSubPostCommentReaction => NotificationTargetType.SubSocial,
                 NotificationEntityType.StorySubPostCommentMention => NotificationTargetType.SubStory,
+
+                _ => NotificationTargetType.Social
             };
 
             foreach (var item in request.ReceiversId)
@@ -849,6 +932,7 @@ public class NotificationService : BaseS, INotificationService
     public async Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request)
     {
         var response = new NotificationResponse();
+
         var noti = await AddNotificationAsync(
                                 actorId: request.ActorId
                                 , receiverId: request.ReceiverId
@@ -863,13 +947,15 @@ public class NotificationService : BaseS, INotificationService
         response.LocationId = request.PostId;
         response.LocationHashId = request.PostHashId;
         response.Message = string.Format(NotificationContent.FollowPost, request.ActorName, request.PostName);
-        response.TargetType = request.NotificationEntityType == NotificationEntityType.ComicPostFollow ? NotificationTargetType.Comic : NotificationTargetType.Story;
+        response.TargetType = request.NotificationEntityType == NotificationEntityType.ComicPostFollow ? NotificationTargetType.Comic : (request.NotificationEntityType == NotificationEntityType.DocumentPostFollow ? NotificationTargetType.Document : NotificationTargetType.Story);
         response.ActorId = request.ActorId;
         response.ActorName = request.ActorName;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = NotificationType.FollowPost;
         response.UserAvatar = request.UserAvatar;
+
         await _hubcontext.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+
         return response;
     }
 
@@ -968,13 +1054,13 @@ public class NotificationService : BaseS, INotificationService
                 {
                     await _context.NotificationAvailable
                         .Where(p => p.NotificationObjectId == notiObj.Id)
-                        .ExecuteUpdateAsync(setters => setters
+                        .ExecuteUpdateAsync(x => x
                             .SetProperty(p => p.Status, p => NotificationStatus.UnRead)
                             .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
                             .SetProperty(p => p.ModifiedOn, p => DateTime.UtcNow));
                     await _context.NotificationObjectAvailable
                         .Where(p => p.Id == notiObj.Id)
-                        .ExecuteUpdateAsync(setters => setters
+                        .ExecuteUpdateAsync(x => x
                             .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
                             .SetProperty(p => p.ModifiedOn, p => DateTime.UtcNow));
                 }
@@ -1035,6 +1121,26 @@ public class NotificationService : BaseS, INotificationService
                    });
                 break;
 
+            case AddDeletionType.DocumentPost:
+                q = _context.DocumentPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
+            case AddDeletionType.DocumentSubPost:
+                q = _context.DocumentSubPosts.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       p.ModifiedBy,
+                       p.UserId
+                   });
+                break;
+
             case AddDeletionType.SocialPost:
                 q = _context.SocialPosts.AsNoTracking()
                    .Where(p => p.Id == request.EntityId)
@@ -1075,13 +1181,15 @@ public class NotificationService : BaseS, INotificationService
             return response;
         }
 
-        var action = (type == AddDeletionType.ComicSubPost || type == AddDeletionType.StorySubPost) ? NotificationAction.DeleteSubPost : NotificationAction.DeletePost;
+        var action = (type == AddDeletionType.ComicSubPost || type == AddDeletionType.DocumentSubPost || type == AddDeletionType.StorySubPost) ? NotificationAction.DeleteSubPost : NotificationAction.DeletePost;
 
         var targetType = type switch
         {
             AddDeletionType.StoryPost => NotificationTargetType.Story,
             AddDeletionType.ComicPost => NotificationTargetType.Comic,
             AddDeletionType.ComicSubPost => NotificationTargetType.SubComic,
+            AddDeletionType.DocumentPost => NotificationTargetType.Document,
+            AddDeletionType.DocumentSubPost => NotificationTargetType.SubDocument,
             AddDeletionType.StorySubPost => NotificationTargetType.SubStory,
             _ => NotificationTargetType.Social
         };
@@ -1090,6 +1198,8 @@ public class NotificationService : BaseS, INotificationService
         {
             AddDeletionType.ComicPost or AddDeletionType.StoryPost => nameof(S300),
             AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => nameof(S301),
+            AddDeletionType.DocumentPost or AddDeletionType.StoryPost => nameof(S300),
+            AddDeletionType.DocumentSubPost or AddDeletionType.StorySubPost => nameof(S301),
             _ => nameof(S302)
         };
 
@@ -1097,6 +1207,8 @@ public class NotificationService : BaseS, INotificationService
         {
             AddDeletionType.ComicPost or AddDeletionType.StoryPost => NotificationType.DeletePost,
             AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => NotificationType.DeleteSubPost,
+            AddDeletionType.DocumentPost or AddDeletionType.StoryPost => NotificationType.DeletePost,
+            AddDeletionType.DocumentSubPost or AddDeletionType.StorySubPost => NotificationType.DeleteSubPost,
             _ => NotificationType.DeleteSocial
         };
 
@@ -1104,6 +1216,8 @@ public class NotificationService : BaseS, INotificationService
         {
             AddDeletionType.ComicPost => NotificationEntityType.ComicPostDelete,
             AddDeletionType.ComicSubPost => NotificationEntityType.ComicSubPostDelete,
+            AddDeletionType.DocumentPost => NotificationEntityType.DocumentPostDelete,
+            AddDeletionType.DocumentSubPost => NotificationEntityType.DocumentSubPostDelete,
             AddDeletionType.StoryPost => NotificationEntityType.StoryPostDelete,
             AddDeletionType.StorySubPost => NotificationEntityType.StorySubPostDelete,
             _ => NotificationEntityType.SocialPostDelete
@@ -1173,7 +1287,44 @@ public class NotificationService : BaseS, INotificationService
                 message = nameof(S304);
                 notiType = NotificationType.LockSubPost;
                 entityType = NotificationEntityType.ComicSubPostLock;
+                break;
 
+            case AddLockType.DocumentPost:
+                q = from report in _context.DocumentReportAvailable.AsNoTracking()
+                    join post in _context.DocumentPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockPost;
+                targetType = NotificationTargetType.Document;
+                message = nameof(S304);
+                notiType = NotificationType.LockSubPost;
+                entityType = NotificationEntityType.DocumentPostLock;
+                break;
+
+            case AddLockType.DocumentSubPost:
+                q = from report in _context.DocumentReportAvailable.AsNoTracking()
+                    join post in _context.DocumentSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                    where report.Id == request.EntityId
+                    select new
+                    {
+                        report.Id,
+                        report.EntityId,
+                        report.ModifiedBy,
+                        post.UserId
+                    };
+
+                action = NotificationAction.LockSubPost;
+                targetType = NotificationTargetType.SubDocument;
+                message = nameof(S304);
+                notiType = NotificationType.LockSubPost;
+                entityType = NotificationEntityType.DocumentSubPostLock;
                 break;
 
             case AddLockType.SocialPost:
@@ -1193,7 +1344,6 @@ public class NotificationService : BaseS, INotificationService
                 message = nameof(S305);
                 notiType = NotificationType.LockSocial;
                 entityType = NotificationEntityType.SocialPostLock;
-
                 break;
 
             case AddLockType.StoryPost:
@@ -1213,7 +1363,6 @@ public class NotificationService : BaseS, INotificationService
                 message = nameof(S303);
                 notiType = NotificationType.LockPost;
                 entityType = NotificationEntityType.StoryPostLock;
-
                 break;
 
             case AddLockType.StorySubPost:
@@ -1233,7 +1382,6 @@ public class NotificationService : BaseS, INotificationService
                 message = nameof(S304);
                 notiType = NotificationType.LockSubPost;
                 entityType = NotificationEntityType.StorySubPostLock;
-
                 break;
 
             default:

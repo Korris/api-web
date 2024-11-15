@@ -28,5 +28,15 @@ public enum AddDeletionType
     /// <summary>
     /// StorySubPost
     /// </summary>
-    StorySubPost
+    StorySubPost,
+
+    /// <summary>
+    /// DocumentPost
+    /// </summary>
+    DocumentPost,
+
+    /// <summary>
+    /// DocumentSubPost
+    /// </summary>
+    DocumentSubPost
 }
