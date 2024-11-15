@@ -36,6 +36,7 @@
                         p.""IsCompleted"",
                         p.""Hide"",
                         p.""ExternalResource"",
+                        p.""IsAllowDownload"",
                         postview.""ViewCount"",
                         u.""ProfileName"", 
                         u.""UserName"",
@@ -93,7 +94,7 @@ LIMIT 1
                             AND p.""Status"" = ANY (@PostStatus)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
                         GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
-                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"",
+                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"", p.""IsAllowDownload"",
                         p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
                         sp.""Permission"", sp.""UserId"",subpostview.""ViewCount"",
@@ -747,7 +748,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             get
             {
                 return @"SELECT sp.""Id"",sp.""HashId"",sp.""Name"", sp.""Title"", sp.""PostId"", sp.""Order"", sp.""Body"", sp.""IsPremium"", sp.""IsExclusive"", ux.""Id"" as ""UserExclusiveId"",
-                    sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
+                    sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", sp.""IsAllowDownload"",
                     sp.""ModifiedBy"", sp.""IsDelete"", count.""ViewCount"", sp.""AuthorId"", u.""ProfileName"",
                     sp.""UserId"", sp.""PublishDate"", sp.""Permission"",sp.""CreatorNote"",
                     sp.""IsEnableComment"", spcmc.""CommentCount"",

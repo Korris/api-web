@@ -1012,7 +1012,8 @@ public partial class PostService : BaseMinioS, IPostService
             TotalComment = item.TotalComment,
             IsFollowing = item.IsFollowing,
             ExternalResource = item.ExternalResource,
-            Hide = item.Hide
+            Hide = item.Hide,
+            IsAllowDownload = item.IsAllowDownload
         };
 
         return itemResponse;
@@ -1962,7 +1963,7 @@ public partial class PostService : BaseMinioS, IPostService
         subPost.Sort = subPost.Sort;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
-        post.IsAllowDownload = request.IsAllowDownload;
+        subPost.IsAllowDownload = request.IsAllowDownload;
 
         await _context.SaveChangesAsync(default);
 
