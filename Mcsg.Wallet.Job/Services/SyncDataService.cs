@@ -55,15 +55,12 @@ public partial class SyncDataService : BaseS, ISyncDataService
 
             var transaction = new WalletTransaction
             {
-                CreatedOn = DateTime.UtcNow,
                 CreatedBy = userWallet.UserId,
-                Id = Guid.NewGuid(),
                 Amount = reward.Point,
                 IsFromSystem = true,
                 Content = RewardContent(reward.Type),
                 SystemMessage = RewardContent(reward.Type),
                 ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-                ModifiedOn = DateTime.UtcNow,
                 DestinationUserWalletId = userWallet.Id,
                 Status = TransactionStatus.Success,
                 Type = TransactionType.Reward,

@@ -12,8 +12,6 @@ partial class StoryReportDetail
     /// </summary>
     public StoryReportDetail()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

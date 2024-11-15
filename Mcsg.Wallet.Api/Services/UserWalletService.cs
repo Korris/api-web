@@ -1073,7 +1073,6 @@ public class UserWalletService : BaseRedisS, IUserWalletService
         {
             CreatedOn = DateTime.UtcNow,
             CreatedBy = userId,
-            Id = Guid.NewGuid(),
             Amount = amount,
             IsFromSystem = false,
             Content = content,

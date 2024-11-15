@@ -13,8 +13,6 @@ partial class Feedback
     /// </summary>
     public Feedback()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

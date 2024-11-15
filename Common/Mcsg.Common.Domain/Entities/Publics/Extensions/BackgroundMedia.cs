@@ -12,7 +12,6 @@ partial class BackgroundMedia
     /// </summary>
     public BackgroundMedia()
     {
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

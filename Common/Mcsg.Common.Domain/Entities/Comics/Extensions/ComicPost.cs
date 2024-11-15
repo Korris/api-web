@@ -14,7 +14,6 @@ partial class ComicPost
     /// </summary>
     public ComicPost()
     {
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

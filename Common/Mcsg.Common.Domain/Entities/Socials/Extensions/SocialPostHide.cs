@@ -11,8 +11,6 @@ partial class SocialPostHide
     /// </summary>
     public SocialPostHide()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

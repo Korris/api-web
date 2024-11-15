@@ -14,7 +14,6 @@ partial class StoryPost
     /// </summary>
     public StoryPost()
     {
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

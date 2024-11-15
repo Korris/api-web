@@ -11,8 +11,6 @@ partial class SocialSubPost
     /// </summary>
     public SocialSubPost()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

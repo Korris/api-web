@@ -14,8 +14,6 @@ partial class ComicReport
     /// </summary>
     public ComicReport()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

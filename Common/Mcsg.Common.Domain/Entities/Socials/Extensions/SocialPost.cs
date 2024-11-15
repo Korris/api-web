@@ -14,7 +14,6 @@ partial class SocialPost
     /// </summary>
     public SocialPost()
     {
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

@@ -12,8 +12,6 @@ partial class DocumentReportDetail
     /// </summary>
     public DocumentReportDetail()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

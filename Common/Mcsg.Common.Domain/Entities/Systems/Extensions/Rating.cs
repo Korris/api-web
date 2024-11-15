@@ -13,8 +13,6 @@ partial class Rating
     /// </summary>
     public Rating()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

@@ -13,8 +13,6 @@ partial class SystemResource
     /// </summary>
     public SystemResource()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

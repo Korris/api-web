@@ -11,8 +11,6 @@ partial class SocialPostFavorite
     /// </summary>
     public SocialPostFavorite()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

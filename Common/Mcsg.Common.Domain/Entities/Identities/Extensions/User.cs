@@ -18,6 +18,7 @@ partial class User
     {
         Id = Guid.NewGuid();
         CreatedOn = DateTime.UtcNow;
+        Roles = [];
     }
 
     /// <summary>

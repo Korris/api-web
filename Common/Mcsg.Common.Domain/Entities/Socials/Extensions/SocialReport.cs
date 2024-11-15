@@ -14,8 +14,6 @@ partial class SocialReport
     /// </summary>
     public SocialReport()
     {
-        Id = Guid.NewGuid();
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

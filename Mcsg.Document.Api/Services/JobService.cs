@@ -52,7 +52,6 @@ public class JobService : IJobService
             var convertJob = new Job
             {
                 JobCategory = JobCategory.Media,
-                Id = Guid.NewGuid(),
                 Status = JobStatus.Queued,
                 JobType = JobType.ConvertVideo,
                 Data = JsonConvert.SerializeObject(resource)
@@ -94,7 +93,6 @@ public class JobService : IJobService
             var convertJob = new Job
             {
                 JobCategory = JobCategory.Media,
-                Id = Guid.NewGuid(),
                 Status = JobStatus.Queued,
                 JobType = JobType.ConvertAudio,
                 Data = JsonConvert.SerializeObject(resource),

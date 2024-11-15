@@ -14,7 +14,6 @@ partial class DocumentPost
     /// </summary>
     public DocumentPost()
     {
-        CreatedOn = DateTime.UtcNow;
     }
 
     /// <summary>

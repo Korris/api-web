@@ -96,15 +96,12 @@ public class PremiumService : BaseSettingS, IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedOn = now,
             CreatedBy = userId,
-            Id = Guid.NewGuid(),
             Amount = package.FirstTimePrice,
             IsFromSystem = false,
             Content = "BUY PACKAGE: " + package.Name,
             SystemMessage = "BUY PACKAGE: " + package.No,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedOn = now,
             SourceUserWalletId = userWallet.Id,
             Status = TransactionStatus.Pending,
             Type = TransactionType.BuyPremium
@@ -252,15 +249,12 @@ public class PremiumService : BaseSettingS, IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedOn = DateTime.UtcNow,
             CreatedBy = userId,
-            Id = Guid.NewGuid(),
             Amount = Default.ChapterPrice,
             IsFromSystem = false,
             Content = "BUY CHAPTER ID: " + req.ChapterId,
             SystemMessage = "BUY CHAPTER ID: " + req.ChapterId,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.ChapterId,
             Status = TransactionStatus.Pending,
@@ -349,14 +343,11 @@ public class PremiumService : BaseSettingS, IPremiumService
 
         var transaction = new WalletTransaction
         {
-            CreatedOn = DateTime.UtcNow,
             CreatedBy = userId,
-            Id = Guid.NewGuid(),
             IsFromSystem = false,
             Content = "BUY SERIES ID: " + req.SerieId,
             SystemMessage = "BUY SERIES ID: " + req.SerieId,
             ReferenceNumber = Default.ReferenceNumberLength.GetRandomString().ToLower(),
-            ModifiedOn = DateTime.UtcNow,
             SourceUserWalletId = userWallet.Id,
             RelatedId = req.SerieId,
             Status = TransactionStatus.Pending,
