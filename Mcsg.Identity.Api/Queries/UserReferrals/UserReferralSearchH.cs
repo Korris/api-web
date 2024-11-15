@@ -113,8 +113,7 @@ public class UserReferralSearchH : BaseH, IRequestHandler<UserReferralSearchR, S
             }).ToSearchDto())
             .ToListAsync(cancellationToken);
 
-        res.SetSuccess(data);
-        return res;
+        return res.SetSuccess(data);
     }
 
     #endregion

@@ -55,14 +55,11 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            res.SetError(E000, M000, t);
-            return res;
+            return res.SetError(E000, M000, t);
         }
 
         var rsp = await SyncCreateToAna();
-        res.SetSuccess(rsp);
-
-        return res;
+        return res.SetSuccess(rsp);
     }
 
     private async Task<DocumentCreateRsp> SyncCreateToAna()

@@ -39,8 +39,7 @@ public class VerificationFacebook : VerificationStrategy
         var res = await GetAsync(uri);
         if (!res.Succeeded)
         {
-            res.SetError(res.Message + "");
-            return res;
+            return res.SetError(res.Message + "");
         }
 
         var at = GetProperty(res, "access_token").GetString();
@@ -48,16 +47,14 @@ public class VerificationFacebook : VerificationStrategy
         res = await GetAsync(uri);
         if (!res.Succeeded)
         {
-            res.SetError(res.Message + "");
-            return res;
+            return res.SetError(res.Message + "");
         }
 
         var data = GetProperty(res, "data");
         var ok = data.GetProperty("is_valid").GetBoolean();
         if (!ok)
         {
-            res.SetError("Invalid token");
-            return res;
+            return res.SetError("Invalid token");
         }
 
         var userId = data.GetProperty("user_id").GetString();
@@ -92,9 +89,7 @@ public class VerificationFacebook : VerificationStrategy
             FirstName = firstName,
             LastName = lastName
         };
-        res.SetSuccess(o);
-
-        return res;
+        return res.SetSuccess(o);
     }
 
     #endregion

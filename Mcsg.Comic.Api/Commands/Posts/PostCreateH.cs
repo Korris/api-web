@@ -186,8 +186,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
 
-        res.SetSuccess(result);
-        return res;
+        return res.SetSuccess(result);
     }
 
     #endregion

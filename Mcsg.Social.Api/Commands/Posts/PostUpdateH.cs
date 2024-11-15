@@ -226,8 +226,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
         _ = Task.Run(async () => await SyncUpdateToAna(ett));
 
-        res.SetSuccess(result);
-        return res;
+        return res.SetSuccess(result);
     }
 
     private async Task<SocialUpdateRsp> SyncUpdateToAna(SocialPost ett)

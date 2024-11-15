@@ -98,9 +98,7 @@ public class FeedbackSearchH : BaseMinioH, IRequestHandler<FeedbackSearchR, Sing
             })
         }).ToListAsync(cancellationToken);
 
-        res.SetSuccess(data);
-
-        return res;
+        return res.SetSuccess(data);
     }
 
     #endregion

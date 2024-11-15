@@ -104,9 +104,7 @@ public class FeedbackCreateH : BaseMinioH, IRequestHandler<FeedbackCreateR, Sing
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        res.SetSuccess(ett.ToViewDto());
-
-        return res;
+        return res.SetSuccess(ett.ToViewDto());
     }
 
     #endregion

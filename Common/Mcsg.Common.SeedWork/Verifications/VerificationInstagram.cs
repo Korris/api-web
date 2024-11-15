@@ -45,8 +45,7 @@ public class VerificationInstagram : VerificationStrategy
         var res = await PostFormAsync(_secret.ApiUrl, dic);
         if (!res.Succeeded)
         {
-            res.SetError(res.Message + "");
-            return res;
+            return res.SetError(res.Message + "");
         }
 
         var userId = GetProperty(res, "user_id").GetInt64();
@@ -85,9 +84,7 @@ public class VerificationInstagram : VerificationStrategy
             FirstName = firstName,
             LastName = lastName
         };
-        res.SetSuccess(o);
-
-        return res;
+        return res.SetSuccess(o);
     }
 
     #endregion

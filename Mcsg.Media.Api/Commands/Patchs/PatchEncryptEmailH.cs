@@ -62,9 +62,8 @@ public class PatchEncryptEmailH : BaseH, IRequestHandler<PatchEncryptEmailR, Sin
         await _context.SaveChangesAsync(default);
 
         var data = $"Update: Users {users.Count} record(s) | UserSocials {userSocials.Count} record(s)";
-        res.SetSuccess(data);
 
-        return res;
+        return res.SetSuccess(data);
     }
 
     #endregion

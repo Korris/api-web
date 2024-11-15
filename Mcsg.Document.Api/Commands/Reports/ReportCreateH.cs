@@ -65,8 +65,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 if (post == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
-                    res.SetError(E002, M002, t);
-                    return res;
+                    return res.SetError(E002, M002, t);
                 }
 
                 isAuthor = post.CreatedBy == userId;
@@ -77,8 +76,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 if (subPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
-                    res.SetError(E002, M002, t);
-                    return res;
+                    return res.SetError(E002, M002, t);
                 }
 
                 isAuthor = subPost.CreatedBy == userId;
@@ -89,8 +87,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 if (commentPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
-                    res.SetError(E002, M002, t);
-                    return res;
+                    return res.SetError(E002, M002, t);
                 }
 
                 isAuthor = commentPost.CreatedBy == userId;
@@ -101,8 +98,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 if (commentSubPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
-                    res.SetError(E002, M002, t);
-                    return res;
+                    return res.SetError(E002, M002, t);
                 }
 
                 isAuthor = commentSubPost.CreatedBy == userId;
@@ -115,8 +111,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         // Check author
         if (isAuthor)
         {
-            res.SetError(nameof(E130), E130);
-            return res;
+            return res.SetError(nameof(E130), E130);
         }
 
         // Check data is existed to avoid people spam
@@ -126,14 +121,12 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
             var hasDetail = await _context.DocumentReportDetailAvailable.AnyAsync(p => p.ReportId == ett.Id && p.UserId == userId, cancellationToken);
             if (hasDetail && ett.Status == ReportStatus.Reviewing)
             {
-                res.SetError(E115, M115);
-                return res;
+                return res.SetError(E115, M115);
             }
 
             if (ett.Status == ReportStatus.Approved)
             {
-                res.SetError(nameof(E129), E129);
-                return res;
+                return res.SetError(nameof(E129), E129);
             }
         }
         #endregion
@@ -155,9 +148,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         // Update Status
         await _context.DocumentReports.Where(p => p.Id == ett.Id).ExecuteUpdateAsync(p => p.SetProperty(q => q.Status, ReportStatus.Reviewing), cancellationToken);
 
-        res.SetSuccess(ett.ToViewDto(ettDetail.ReasonType, ettDetail.ReasonText));
-
-        return res;
+        return res.SetSuccess(ett.ToViewDto(ettDetail.ReasonType, ettDetail.ReasonText));
     }
 
     #endregion

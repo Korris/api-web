@@ -37,15 +37,13 @@ public class VerificationGoogle : VerificationStrategy
         var res = await GetAsync(uri);
         if (!res.Succeeded)
         {
-            res.SetError(res.Message + "");
-            return res;
+            return res.SetError(res.Message + "");
         }
 
         var aud = GetProperty(res, "aud").GetString();
         if (aud != _secret.AppId)
         {
-            res.SetError("Invalid AppId");
-            return res;
+            return res.SetError("Invalid AppId");
         }
 
         var userId = GetProperty(res, "sub").GetString();
@@ -61,9 +59,7 @@ public class VerificationGoogle : VerificationStrategy
             FirstName = firstName,
             LastName = lastName
         };
-        res.SetSuccess(o);
-
-        return res;
+        return res.SetSuccess(o);
     }
 
     #endregion

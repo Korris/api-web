@@ -48,21 +48,18 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            res.SetError(E000, M000, t);
-            return res;
+            return res.SetError(E000, M000, t);
         }
 
         var newUserName = request.NewUserName.Triz();
         if (request.UserName == newUserName)
         {
-            res.SetError(E125, M125);
-            return res;
+            return res.SetError(E125, M125);
         }
 
         if (!request.IsAdministrator && CheckUsernameIsReserved(newUserName))
         {
-            res.SetError(E107, M107);
-            return res;
+            return res.SetError(E107, M107);
         }
 
         #region -- Validate on server --
@@ -70,16 +67,14 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         if (user == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.UserId).ToCamelCase(), Value = request.UserId + "" } };
-            res.SetError(E002, M002, t);
-            return res;
+            return res.SetError(E002, M002, t);
         }
 
         // UserNameHistory
         var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
-            res.SetError(E107, M107);
-            return res;
+            return res.SetError(E107, M107);
         }
 
         var dto = await Validate(user.Id, cancellationToken);
@@ -88,8 +83,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         {
             if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
             {
-                res.SetError(E128, M128 + dto.TimeWaiting);
-                return res;
+                return res.SetError(E128, M128 + dto.TimeWaiting);
             }
         }
         #endregion
@@ -138,8 +132,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
 
         _ = Task.Run(async () => await SyncUpdateToAna(user));
 
-        res.SetSuccess(data);
-        return res;
+        return res.SetSuccess(data);
     }
 
     /// <summary>
@@ -172,7 +165,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         var updatedUserName = (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= userNameChangedInRemaining;
         var timeRemaining = remainingTime.ToString(@"hh\:mm\:ss");
 
-        var result = new ChangeUserNameValidatorDto
+        return new ChangeUserNameValidatorDto
         {
             CanUpdateUserName = canUpdateUserName,
             UpdatedUserName = updatedUserName,
@@ -183,7 +176,6 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             UserNameChangedInRemaining = userNameChangedInRemaining,
             TimePassed = timePassed
         };
-        return result;
     }
 
     /// <summary>

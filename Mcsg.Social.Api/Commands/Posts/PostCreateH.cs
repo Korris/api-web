@@ -211,7 +211,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
-        res.SetSuccess(result);
 
         #region -- WriteDataToSheet --
         var dto = new PostSheetDto
@@ -231,7 +230,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
         _ = Task.Run(async () => await SyncCreateToAna(ett));
 
-        return res;
+        return res.SetSuccess(result);
     }
 
     private async Task<SocialCreateRsp> SyncCreateToAna(SocialPost ett)

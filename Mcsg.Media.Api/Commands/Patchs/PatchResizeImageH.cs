@@ -91,9 +91,8 @@ public class PatchResizeImageH : BaseMinioH, IRequestHandler<PatchResizeImageR, 
         }
 
         var data = $"Update {count} file(s)";
-        res.SetSuccess(data);
 
-        return res;
+        return res.SetSuccess(data);
     }
 
     #endregion

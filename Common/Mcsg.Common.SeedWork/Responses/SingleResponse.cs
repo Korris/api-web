@@ -51,10 +51,12 @@ public class SingleResponse
     /// Set error
     /// </summary>
     /// <param name="message">Error message</param>
-    public void SetError(string? message)
+    public SingleResponse SetError(string? message)
     {
         Succeeded = false;
         Message = message;
+
+        return this;
     }
 
     /// <summary>
@@ -63,10 +65,12 @@ public class SingleResponse
     /// <param name="errors">Errors</param>
     /// <param name="code">Error code</param>
     /// <param name="message">Error message</param>
-    public void SetError(string code, string? message, object? errors)
+    public SingleResponse SetError(string code, string? message, object? errors)
     {
         Errors = errors;
         SetError(code, message);
+
+        return this;
     }
 
     /// <summary>
@@ -74,20 +78,24 @@ public class SingleResponse
     /// </summary>
     /// <param name="code">Error code</param>
     /// <param name="message">Error message</param>
-    public void SetError(string code, string? message)
+    public SingleResponse SetError(string code, string? message)
     {
         Code = code;
         SetError(message);
+
+        return this;
     }
 
     /// <summary>
     /// Set success
     /// </summary>
     /// <param name="data">Data</param>
-    public void SetSuccess(object? data)
+    public SingleResponse SetSuccess(object? data)
     {
         Succeeded = true;
         Data = data;
+
+        return this;
     }
 
     /// <summary>
@@ -95,11 +103,13 @@ public class SingleResponse
     /// </summary>
     /// <param name="data">Data</param>
     /// <param name="message">Success message</param>
-    public void SetSuccess(object? data, string? message)
+    public SingleResponse SetSuccess(object? data, string? message)
     {
         Succeeded = true;
         Data = data;
         Message = message;
+
+        return this;
     }
 
     #endregion

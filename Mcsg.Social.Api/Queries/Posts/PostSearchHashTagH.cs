@@ -252,7 +252,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (tagDataMap.ContainsKey(request.Tag))
             {
-                res.SetSuccess(tagDataMap[request.Tag]);
+                return res.SetSuccess(tagDataMap[request.Tag]);
             }
         }
 

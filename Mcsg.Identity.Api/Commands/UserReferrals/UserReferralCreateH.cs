@@ -73,11 +73,10 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
         #endregion
 
         var ett = UserReferral.Create(userReferrerId, request.UserId.Value);
-        await _context.UserReferrals.AddAsync(ett);
+        await _context.UserReferrals.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(default);
 
-        //res.SetSuccess();
-        return res;
+        return res.SetSuccess(ett.ToViewDto());
     }
 
     #endregion

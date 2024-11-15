@@ -56,8 +56,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
         if (!hasPost)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.PostId).ToCamelCase(), Value = request.PostId } };
-            res.SetError(E002, M002, t);
-            return res;
+            return res.SetError(E002, M002, t);
         }
         #endregion
 
@@ -76,9 +75,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
 
         await _context.SaveChangesAsync(default);
 
-        res.SetSuccess(ett.ToViewDto());
-
-        return res;
+        return res.SetSuccess(ett.ToViewDto());
     }
 
     #endregion

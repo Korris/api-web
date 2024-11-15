@@ -56,8 +56,7 @@ public class UserHistoryGetLatestH : BaseH, IRequestHandler<UserHistoryGetLatest
             UserId = userId
         };
 
-        res.SetSuccess(data);
-        return res;
+        return res.SetSuccess(data);
     }
 
     #endregion

@@ -49,9 +49,7 @@ public class RatingCreateH : BaseH, IRequestHandler<RatingCreateR, SingleRespons
         await _context.Ratings.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(default);
 
-        res.SetSuccess(ett.ToViewDto());
-
-        return res;
+        return res.SetSuccess(ett.ToViewDto());
     }
 
     #endregion
