@@ -89,6 +89,7 @@ public class PostController : ControllerBase
     [HttpGet("get-news-feed")]
     public async Task<IActionResult> GetNewsFeed([FromQuery] UserNamePagingR input)
     {
+        input.Analyze(HttpContext);
         var result = await _postService.GetNewsFeed(input);
         return Ok(result);
     }

@@ -31,6 +31,7 @@ public class PostController : ControllerBase
         {
             return NotFound();
         }
+        loadReq.Analyze(HttpContext);
         var result = await _postService.GetSeriesByTagByPage(postType, tagName, loadReq);
         return Ok(result);
     }
@@ -60,6 +61,7 @@ public class PostController : ControllerBase
     [HttpGet("get-news-feed")]
     public async Task<IActionResult> GetNewsFeed([FromQuery] UserNamePagingR input)
     {
+        input.Analyze(HttpContext);
         var result = await _postService.GetNewsFeed(input);
         return Ok(result);
     }

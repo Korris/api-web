@@ -118,6 +118,7 @@ public class ComicController : ControllerBase
     [HttpGet("top-hit")]
     public async Task<IActionResult> GetTopHitList([FromQuery] ComicTopPostR request)
     {
+        request.Analyze(HttpContext);
         var result = await _comicService.GetTopHitList(request);
         return Ok(result);
     }
@@ -125,6 +126,7 @@ public class ComicController : ControllerBase
     [HttpGet("top-latest")]
     public async Task<IActionResult> GetTopLatestList([FromQuery] ComicTopPostR request)
     {
+        request.Analyze(HttpContext);
         var result = await _comicService.GetTopLatestList(request);
         return Ok(result);
     }
@@ -132,6 +134,7 @@ public class ComicController : ControllerBase
     [HttpGet("top-completed")]
     public async Task<IActionResult> GetTopCompletedList([FromQuery] ComicTopPostR request)
     {
+        request.Analyze(HttpContext);
         var result = await _comicService.GetTopCompletedList(request);
         return Ok(result);
     }
@@ -230,6 +233,7 @@ public class ComicController : ControllerBase
     [HttpGet("get-followed-post")]
     public async Task<IActionResult> GetFollowedPost([FromQuery] PaginatedR input)
     {
+        input.Analyze(HttpContext);
         var result = await _comicService.GetFollowedPost(input);
         return Ok(result);
     }
@@ -261,6 +265,7 @@ public class ComicController : ControllerBase
     [HttpGet("{id}/reactions")]
     public async Task<IActionResult> GetReactionsByTargetAsync(Guid id, [FromQuery] FeedReactionByTargetR request)
     {
+        request.Analyze(HttpContext);
         var result = await _postReactService.GetReactionsByTargetAsync(id, request);
         return Ok(result);
     }

@@ -110,6 +110,7 @@ public class ReactionController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddCommentSubPostReact(ReactionReactR request)
     {
+        request.Analyze(HttpContext);
         var result = await _subPostCommentReactService.AddReaction(request);
         return Ok(result);
     }
