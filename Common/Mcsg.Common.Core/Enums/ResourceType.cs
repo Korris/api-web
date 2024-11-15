@@ -43,5 +43,10 @@ public enum ResourceType
     /// <summary>
     /// Document
     /// </summary>
-    Document
+    Document,
+
+    /// <summary>
+    /// Link
+    /// </summary>
+    Link
 }

@@ -1,0 +1,29 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package favorite_view;
+
+service FavoriteViewProto {
+    rpc Search (FavoriteViewSearchReq) returns (FavoriteViewSearchRsp);
+}
+
+message FavoriteViewSearchReq {
+    string postType = 1;
+    string userId = 2;
+    string keyword = 3;
+    int32 pageNum = 4;
+    int32 pageSize = 5;
+    bool isAscending = 6;
+}
+
+message FavoriteViewSearchRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated FavoriteViewOutputDto items = 4;
+}
+
+message FavoriteViewOutputDto {
+    string id = 1;
+}

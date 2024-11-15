@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
+using Queries;
 using Requests;
 
 /// <summary>
@@ -41,6 +42,8 @@ public static class DiPostFavoriteExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddPostFavoriteQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<FavoriteViewR, SingleResponse>, FavoriteViewH>(life);
+        p.AddBehavior<IRequestHandler<FavoriteSearchR, SingleResponse>, FavoriteSearchH>(life);
     }
 
     #endregion

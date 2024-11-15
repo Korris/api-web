@@ -70,6 +70,34 @@ public class FavoriteController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// View
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPatch("View")]
+    public async Task<IActionResult> View([FromBody] FavoriteViewR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
+    }
+
+    /// <summary>
+    /// Search
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPatch("Search")]
+    public async Task<IActionResult> Search([FromBody] FavoriteSearchR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --
