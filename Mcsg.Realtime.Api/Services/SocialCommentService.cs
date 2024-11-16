@@ -16,7 +16,6 @@ using Dtos;
 using Interfaces;
 using Requests;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class SocialCommentService : BaseS, ISocialCommentService
 {
@@ -53,7 +52,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         var userId = req.UserId;
         if (userId == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         if (!ValidComment(req))
@@ -171,7 +170,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         var userId = req.UserId;
         if (userId == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         if (!ValidComment(req))
@@ -193,7 +192,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
 
         if (ett == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         if (ett.CreatedBy != userId)
         {
@@ -251,7 +250,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         var userId = req.UserId;
         if (userId == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         if (req.CommentId == Guid.Empty)

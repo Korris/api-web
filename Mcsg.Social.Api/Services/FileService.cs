@@ -18,7 +18,6 @@ using Interfaces;
 using Requests;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// File service
@@ -50,11 +49,11 @@ public class FileService : IFileService
     {
         if (request.File == null || request.File.Length == 0)
         {
-            throw new NotFoundException(E201, M201);
+            throw new NotFoundException(nameof(E201), E201);
         }
         if (!request.File.IsImageType())
         {
-            throw new NotFoundException(E202, M202);
+            throw new NotFoundException(nameof(E202), E202);
         }
 
         return await UploadFileAsync(request);
@@ -71,13 +70,13 @@ public class FileService : IFileService
         var file = request.File;
         if (file == null || file.Length == 0)
         {
-            throw new NotFoundException(E201, M201);
+            throw new NotFoundException(nameof(E201), E201);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         // Upload to temp folder
@@ -301,7 +300,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(dto.UserFolder))
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var resourcesDb = await QueryResourceByPostId(dto.PostId).ToArrayAsync();
@@ -402,7 +401,7 @@ public class FileService : IFileService
     {
         if (string.IsNullOrWhiteSpace(userFolder))
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var resourcesDb = await QueryResourceByPostId(postId).ToArrayAsync();
@@ -449,7 +448,7 @@ public class FileService : IFileService
 
         if (string.IsNullOrWhiteSpace(dto.UserFolder))
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var hashIds = dto.ResourcePosts.Select(x => x.HashId).ToList();

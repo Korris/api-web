@@ -11,7 +11,6 @@ using Common.SeedWork.Responses;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// Handler
@@ -41,19 +40,19 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         #region -- Validate on server --
 
         if (await _context.UserReferralAvailable.AnyAsync(p => p.UserRefereeId == request.UserId))
         {
-            throw new BadRequestException(E118, M118);
+            throw new BadRequestException(nameof(E118), E118);
         }
         var userReferrerId = await _context.UserAvailable.AsNoTracking()
             .Where(p => p.ReferralCode == request.ReferralCode)
@@ -62,13 +61,13 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
 
         if (userReferrerId == Guid.Empty)
         {
-            throw new BadRequestException(E116, M116);
+            throw new BadRequestException(nameof(E116), E116);
         }
 
         var hasUserSocial = await _context.UserSocialAvailable.AnyAsync(p => p.UserId == request.UserId, cancellationToken);
         if (!hasUserSocial)
         {
-            throw new BadRequestException(E117, M117);
+            throw new BadRequestException(nameof(E117), E117);
         }
         #endregion
 

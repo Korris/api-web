@@ -14,7 +14,6 @@ using Interfaces;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// Handler
@@ -43,13 +42,13 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            res.SetError(E000, M000, t);
+            res.SetError(nameof(E000), E000, t);
             return res;
         }
 
         if (request.UserId == null)
         {
-            res.SetError(E109, M109);
+            res.SetError(nameof(E109), E109);
             return res;
         }
 
@@ -61,14 +60,14 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
         if (ett == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.Id).ToCamelCase(), Value = request.Id } };
-            res.SetError(E002, M002, t);
+            res.SetError(nameof(E002), E002, t);
             return res;
         }
         #endregion
 
         if (ett.IsDelete)
         {
-            res.SetError(E003, M003);
+            res.SetError(nameof(E003), E003);
             return res;
         }
 

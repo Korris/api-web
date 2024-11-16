@@ -27,7 +27,6 @@ using Models.Earning;
 using Requests;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : BaseMinioS, IPostService
 {
@@ -63,7 +62,7 @@ public partial class PostService : BaseMinioS, IPostService
         var feedDb = await _postRepository.GetByIdAsync(postId);
         if (feedDb == null)
         {
-            throw new BadRequestException(E204, M204);
+            throw new BadRequestException(nameof(E204), E204);
         }
         else if (feedDb.UserId != userId)
         {

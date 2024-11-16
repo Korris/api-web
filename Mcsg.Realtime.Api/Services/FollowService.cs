@@ -8,7 +8,6 @@ using Common.SeedWork.Exceptions;
 using Interfaces;
 using Requests;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class FollowService : IFollowService
 {
@@ -25,17 +24,17 @@ public partial class FollowService : IFollowService
     {
         if (request.FollowedId == Guid.Empty)
         {
-            throw new BadRequestException(E119, M119);
+            throw new BadRequestException(nameof(E119), E119);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.CreatedByUserId);
         if (user == null)
         {
-            throw new BadRequestException(E119, M119);
+            throw new BadRequestException(nameof(E119), E119);
         }
         if (request.CreatedByUserId == request.FollowedId)
         {
-            throw new BadRequestException(E120, M120);
+            throw new BadRequestException(nameof(E120), E120);
         }
 
         var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == request.CreatedByUserId && p.UserFollowingId == request.FollowedId);

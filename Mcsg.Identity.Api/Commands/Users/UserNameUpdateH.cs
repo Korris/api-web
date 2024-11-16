@@ -48,18 +48,18 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            return res.SetError(E000, M000, t);
+            return res.SetError(nameof(E000), E000, t);
         }
 
         var newUserName = request.NewUserName.Triz();
         if (request.UserName == newUserName)
         {
-            return res.SetError(E125, M125);
+            return res.SetError(nameof(E125), E125);
         }
 
         if (!request.IsAdministrator && CheckUsernameIsReserved(newUserName))
         {
-            return res.SetError(E107, M107);
+            return res.SetError(nameof(E107), E107);
         }
 
         #region -- Validate on server --
@@ -67,14 +67,14 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         if (user == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.UserId).ToCamelCase(), Value = request.UserId + "" } };
-            return res.SetError(E002, M002, t);
+            return res.SetError(nameof(E002), E002, t);
         }
 
         // UserNameHistory
         var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
-            return res.SetError(E107, M107);
+            return res.SetError(nameof(E107), E107);
         }
 
         var dto = await Validate(user.Id, cancellationToken);
@@ -83,7 +83,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         {
             if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
             {
-                return res.SetError(E128, M128 + dto.TimeWaiting);
+                return res.SetError(nameof(E128), E128 + dto.TimeWaiting);
             }
         }
         #endregion

@@ -23,166 +23,181 @@ public static class Error
     /// <summary>
     /// Request error
     /// </summary>
-    public const string E000 = "E000";
+    public const string E000 = "Request error";
 
     /// <summary>
     /// Create error
     /// </summary>
-    public const string E001 = "E001";
+    public const string E001 = "Create error";
 
     /// <summary>
     /// Not found
     /// </summary>
-    public const string E002 = "E002";
+    public const string E002 = "Not found";
 
     /// <summary>
-    /// Data deleted
+    /// Data has been deleted
     /// </summary>
-    public const string E003 = "E003";
+    public const string E003 = "Data has been deleted";
 
     /// <summary>
     /// Update error
     /// </summary>
-    public const string E004 = "E004";
+    public const string E004 = "Update error";
 
     /// <summary>
     /// Delete error
     /// </summary>
-    public const string E005 = "E005";
+    public const string E005 = "Delete error";
 
     #endregion
 
     #region -- E1xx --
 
     /// <summary>
-    /// Password not set
+    /// Please use the 'Forgot Password' function to set a new password.
     /// </summary>
-    public const string E100 = "E100";
+    public const string E100 = "Please use the 'Forgot Password' function to set a new password.";
 
     /// <summary>
     /// Incorrect password
     /// </summary>
-    public const string E101 = "E101";
+    public const string E101 = "Incorrect password";
 
     /// <summary>
     /// Verification failed
     /// </summary>
-    public const string E102 = "E102";
+    public const string E102 = "Verification failed";
 
     /// <summary>
-    /// No data response
+    /// There is no data response
     /// </summary>
-    public const string E103 = "E103";
+    public const string E103 = "There is no data response";
 
     /// <summary>
     /// Add login error
     /// </summary>
-    public const string E104 = "E104";
+    public const string E104 = "Add login error";
 
     /// <summary>
-    /// Email confirmed
+    /// The user has no email
     /// </summary>
-    public const string E106 = "E106";
+    public const string E105 = "The user has no email";
+
+    /// <summary>
+    /// The user's email has been confirmed
+    /// </summary>
+    public const string E106 = "The user's email has been confirmed";
 
     /// <summary>
     /// This data already exists
     /// </summary>
-    public const string E107 = "E107";
+    public const string E107 = "This data already exists";
+
+    /// <summary>
+    /// The argument must not be null
+    /// </summary>
+    public const string E108 = "The argument must not be null";
 
     /// <summary>
     /// Token is expired
     /// </summary>
-    public const string E109 = "E109";
+    public const string E109 = "Token is expired";
+
+    /// <summary>
+    /// This is an administrator. Please log in on the web.
+    /// </summary>
+    public const string E110 = "This is an administrator. Please log in on the web.";
 
     /// <summary>
     /// Confirm email error
     /// </summary>
-    public const string E111 = "E111";
+    public const string E111 = "Confirm email error";
 
     /// <summary>
     /// Invalid file
     /// </summary>
-    public const string E112 = "E112";
+    public const string E112 = "Invalid file";
 
     /// <summary>
     /// Invalid parent folder
     /// </summary>
-    public const string E113 = "E113";
+    public const string E113 = "Invalid parent folder";
 
     /// <summary>
     /// User can not follow yourself
     /// </summary>
-    public const string E114 = "E114";
+    public const string E114 = "User can not follow yourself";
 
     /// <summary>
     /// User spam report
     /// </summary>
-    public const string E115 = "E115";
+    public const string E115 = "User spam report";
 
     /// <summary>
-    /// Referral code is not existed
+    /// Referral code is not found
     /// </summary>
-    public const string E116 = "E116";
+    public const string E116 = "Referral code is not found";
 
     /// <summary>
-    /// Referral only for social register account
+    /// Referral code only for social register
     /// </summary>
-    public const string E117 = "E117";
+    public const string E117 = "Referral code only for social register";
 
     /// <summary>
-    /// User already is Referee
+    /// You have entered the referral code.
     /// </summary>
-    public const string E118 = "E118";
+    public const string E118 = "You have entered the referral code.";
 
     /// <summary>
     /// User not found
     /// </summary>
-    public const string E119 = "E119";
+    public const string E119 = "User not found";
 
     /// <summary>
     /// User can not follow themselves
     /// </summary>
-    public const string E120 = "E120";
+    public const string E120 = "User can not follow themselves";
 
     /// <summary>
     /// You are already following this user.
     /// </summary>
-    public const string E121 = "E121";
+    public const string E121 = "You are already following this user.";
 
     /// <summary>
     /// Avatar image is not null
     /// </summary>
-    public const string E122 = "E122";
+    public const string E122 = "Avatar image is not null";
 
     /// <summary>
-    ///    File should be image
+    /// File should be image
     /// </summary>
-    public const string E123 = "E123";
+    public const string E123 = "File should be image";
 
     /// <summary>
-    ///  Need Premium Account To Edit
+    /// You need to upgrade to a premium account to edit username
     /// </summary>
-    public const string E124 = "E124";
+    public const string E124 = "You need to upgrade to a premium account to edit username";
 
     /// <summary>
-    ///  User name matches current username
+    /// User name matches current username
     /// </summary>
-    public const string E125 = "E125";
+    public const string E125 = "User name matches current username";
 
     /// <summary>
-    ///  Cover photo image is not null
+    /// Cover photo image is not null
     /// </summary>
-    public const string E126 = "E126";
+    public const string E126 = "Cover photo image is not null";
 
     /// <summary>
-    ///  Profile name is empty
+    /// Profile name is empty
     /// </summary>
-    public const string E127 = "E127";
+    public const string E127 = "Profile name is empty";
 
     /// <summary>
-    ///  Wait time for edit username
+    /// Wait time for edit username:
     /// </summary>
-    public const string E128 = "E128";
+    public const string E128 = "Wait time for edit username: ";
 
     /// <summary>
     /// Has been blocked
@@ -204,34 +219,34 @@ public static class Error
     #region -- E2xx --
 
     /// <summary>
-    /// Not file upload
+    /// No file uploaded
     /// </summary>
-    public const string E201 = "E201";
+    public const string E201 = "No file uploaded";
 
     /// <summary>
-    /// Only image file
+    /// Only image files are allowed
     /// </summary>
-    public const string E202 = "E202";
+    public const string E202 = "Only image files are allowed";
 
     /// <summary>
     /// Post does not exist
     /// </summary>
-    public const string E204 = "E204";
+    public const string E204 = "Post does not exist";
 
     /// <summary>
     /// This post has deleted
     /// </summary>
-    public const string E205 = "E205";
+    public const string E205 = "This post has deleted";
 
     /// <summary>
-    /// Thumbnail not found
+    /// This thumbnail not found
     /// </summary>
-    public const string E206 = "E206";
+    public const string E206 = "This thumbnail not found";
 
     /// <summary>
-    /// Cover not found
+    /// This cover not found
     /// </summary>
-    public const string E207 = "E207";
+    public const string E207 = "This cover not found";
 
     /// <summary>
     /// Subpost does not exist
@@ -255,47 +270,47 @@ public static class Error
     /// <summary>
     /// Invalid access token
     /// </summary>
-    public const string E300 = "E300";
+    public const string E300 = "Invalid access token";
 
     /// <summary>
     /// Token or OTP is incorrect
     /// </summary>
-    public const string E301 = "E301";
+    public const string E301 = "Token or OTP is incorrect";
 
     /// <summary>
     /// Invalid refresh token
     /// </summary>
-    public const string E302 = "E302";
+    public const string E302 = "Invalid refresh token";
 
     /// <summary>
     /// Account does not exist
     /// </summary>
-    public const string E303 = "E303";
+    public const string E303 = "Account does not exist";
 
     /// <summary>
     /// Incorrect password
     /// </summary>
-    public const string E304 = "E304";
+    public const string E304 = "Incorrect password";
 
     /// <summary>
     /// Account has been deleted
     /// </summary>
-    public const string E305 = "E305";
+    public const string E305 = "Account has been deleted";
 
     /// <summary>
     /// Account has been logged into the social network
     /// </summary>
-    public const string E306 = "E306";
+    public const string E306 = "Account has been logged into the social network";
 
     /// <summary>
     /// Email not confirmed
     /// </summary>
-    public const string E307 = "E307";
+    public const string E307 = "Email not confirmed";
 
     /// <summary>
     /// Mobile not confirmed
     /// </summary>
-    public const string E308 = "E308";
+    public const string E308 = "Mobile not confirmed";
 
     /// <summary>
     /// This user not permission to do this action

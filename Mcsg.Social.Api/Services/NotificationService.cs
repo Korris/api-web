@@ -20,7 +20,6 @@ using Models;
 using Requests;
 using Wallet.Api.Protos;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class NotificationService : BaseSettingS, INotificationService
 {
@@ -39,7 +38,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     public async Task<bool> ReadNotificationAsync(NotificationUpdateR request)
     {
-        var userId = request.UserId ?? throw new NotFoundException(E303, M303);
+        var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
         var ett = await _context.NotificationAvailable.FirstOrDefaultAsync(p => p.Id == request.NotificationId);
         if (ett == null)
@@ -58,7 +57,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
     {
         if (userId == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         // Update Status
@@ -71,7 +70,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     public async Task<PagedResponse<Notification.SearchDto>> GetNotificationByReceiverAsync(NotificationR request)
     {
-        var userId = request.UserId ?? throw new NotFoundException(E303, M303);
+        var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
         var query = GetNotificationByUserQuery;
         query = query.Replace("[UnreadCondition]", "");
@@ -114,7 +113,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     public async Task<PagedResponse<Notification.SearchDto>> GetUnReadNotificationByReceiverAsync(NotificationR request)
     {
-        var userId = request.UserId ?? throw new NotFoundException(E303, M303);
+        var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
         var query = GetNotificationByUserQuery;
         query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");

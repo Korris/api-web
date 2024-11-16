@@ -13,7 +13,6 @@ using Dtos;
 using SeedWork.Exceptions;
 using SeedWork.Extensions;
 using static SeedWork.Constants.Error;
-using static SeedWork.Constants.Message;
 
 /// <summary>
 /// IFormFile extension for using [this IFormFile] only
@@ -31,7 +30,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         hashId = !string.IsNullOrWhiteSpace(hashId) ? hashId : Setting.ResourceConfig.HashLength.GetRandomString();
@@ -49,7 +48,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         string fileExtension = Path.GetExtension(file.FileName);
@@ -67,7 +66,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         // Check if the content type is in the allowed list
@@ -84,7 +83,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         string fileExtension = Path.GetExtension(file.FileName);
@@ -103,7 +102,7 @@ public static class IFormFileExtension
         var imgArr = Setting.FileExt.Images.Where(x => x != ".gif").Select(x => x).ToArray();
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         string fileExtension = Path.GetExtension(file.FileName);
@@ -121,7 +120,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         string fileExtension = Path.GetExtension(file.FileName);
@@ -139,7 +138,7 @@ public static class IFormFileExtension
     {
         if (file == null || file.Length == 0)
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         string fileExtension = Path.GetExtension(file.FileName);

@@ -11,7 +11,7 @@ using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Requests;
 using Validators;
-using static Common.SeedWork.Constants.Message;
+using static Common.SeedWork.Constants.Error;
 
 /// <summary>
 /// Handler
@@ -40,7 +40,7 @@ public class RatingCreateH : BaseH, IRequestHandler<RatingCreateR, SingleRespons
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         // Create

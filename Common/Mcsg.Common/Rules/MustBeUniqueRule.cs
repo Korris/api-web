@@ -15,7 +15,7 @@ namespace Mcsg.Common.Rules;
 
 using Interfaces;
 using SeedWork.Interfaces;
-using static SeedWork.Constants.Message;
+using static SeedWork.Constants.Error;
 
 /// <summary>
 /// Must be unique rule
@@ -57,7 +57,7 @@ public class MustBeUniqueRule : IBusinessRule
     /// <summary>
     /// The message that describes the error
     /// </summary>
-    public string Message => M107;
+    public string Message => E107;
 
     #endregion
 

@@ -32,7 +32,6 @@ using Interfaces;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// Handler
@@ -82,12 +81,12 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         var userId = request.UserId.Value;
@@ -97,11 +96,11 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var ett = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId && p.Type == PostType.Feed, cancellationToken);
         if (ett == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         if (ett.IsDelete)
         {
-            throw new BadRequestException(E205, M205);
+            throw new BadRequestException(nameof(E205), E205);
         }
         if (ett.CreatedBy != userId)
         {

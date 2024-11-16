@@ -28,7 +28,7 @@ using Dtos;
 using Interfaces;
 using Requests;
 using Validators;
-using static Common.SeedWork.Constants.Message;
+using static Common.SeedWork.Constants.Error;
 
 /// <summary>
 /// Handler
@@ -75,12 +75,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         var userName = request.UserName;

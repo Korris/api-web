@@ -23,7 +23,6 @@ using Response;
 using Validators;
 using Wallet.Api.Protos;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 using static Constants.SocialMediaConstants;
 using static SSORegister;
 
@@ -62,13 +61,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         var user = await GetUserByEmailOrPhone(request.Email, request.Phone, true);
         if (!string.IsNullOrEmpty(request.Email) && user != null && user.EmailConfirmed == false)
         {
-            throw new ForbiddenAccessException(E307, M307);
+            throw new ForbiddenAccessException(nameof(E307), E307);
         }
 
         VerifyUserResponse response = new();
@@ -86,7 +85,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             if (userReferrerId == Guid.Empty)
             {
                 var t = vr.Errors.ToValue();
-                throw new BadRequestException(E116, M116);
+                throw new BadRequestException(nameof(E116), t);
             }
         }
     }
@@ -97,7 +96,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (IsAccountExisted(request.Email, request.Phone, out string code, out string message))
@@ -115,7 +114,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             if (userReferrerId == Guid.Empty)
             {
                 var t = vr.Errors.ToValue();
-                throw new BadRequestException(E116, M116);
+                throw new BadRequestException(nameof(E116), t);
             }
         }
 
@@ -186,34 +185,34 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         var user = await GetUserByEmailOrPhone(request.Email, request.Phone, false);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         // Account has been deleted
         if (user.IsDelete)
         {
-            throw new ForbiddenAccessException(E305, M305);
+            throw new ForbiddenAccessException(nameof(E305), E305);
         }
 
         if (!string.IsNullOrEmpty(request.Email) && user.EmailConfirmed == false)
         {
-            throw new ForbiddenAccessException(E307, M307);
+            throw new ForbiddenAccessException(nameof(E307), E307);
         }
         if (!string.IsNullOrEmpty(request.Phone) && user.PhoneNumberConfirmed == false)
         {
-            throw new ForbiddenAccessException(E308, M308);
+            throw new ForbiddenAccessException(nameof(E308), E308);
         }
 
         // Account has been logged into the social network
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
-            throw new ForbiddenAccessException(E306, M306);
+            throw new ForbiddenAccessException(nameof(E306), E306);
         }
 
         if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
@@ -242,7 +241,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
         else
         {
-            throw new ForbiddenAccessException(E304, M304);
+            throw new ForbiddenAccessException(nameof(E304), E304);
         }
     }
 
@@ -292,13 +291,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             var user = await _userManager.FindByIdAsync(existUserId);
             if (user == null)
             {
-                throw new NotFoundException(E303, M303);
+                throw new NotFoundException(nameof(E303), E303);
             }
 
             // Account has been deleted
             if (user.IsDelete)
             {
-                throw new ForbiddenAccessException(E305, M305);
+                throw new ForbiddenAccessException(nameof(E305), E305);
             }
 
             if (user.LockoutEnabled && (user.LockoutEnd == null || user.LockoutEnd >= DateTime.UtcNow))
@@ -413,7 +412,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
-                throw new NotFoundException(E303, M303);
+                throw new NotFoundException(nameof(E303), E303);
             }
 
             if (type == UserOtpType.VerifyEmail)
@@ -430,7 +429,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (!user.EmailConfirmed)
                 {
-                    throw new BadRequestException(E307, M307);
+                    throw new BadRequestException(nameof(E307), E307);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.Email, type);
                 res.Token = userOtp.Token;
@@ -450,7 +449,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (!user.PhoneNumberConfirmed)
                 {
-                    throw new BadRequestException(E308, M308);
+                    throw new BadRequestException(nameof(E308), E308);
                 }
                 var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, type);
                 res.Token = userOtp.Token;
@@ -472,7 +471,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
             else
             {
-                throw new NotFoundException(E301, M301);
+                throw new NotFoundException(nameof(E301), E301);
             }
         }
 
@@ -484,7 +483,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var user = await _userManager.FindByIdAsync(request.UserId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var isCurrentPassword = await _userManager.CheckPasswordAsync(user, request.OldPassword);
@@ -536,7 +535,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user = await qUser.FirstOrDefaultAsync(p => p.Email == encryptedEmail || p.Email == email);
             if (user == null)
             {
-                throw new NotFoundException(E303, M303);
+                throw new NotFoundException(nameof(E303), E303);
             }
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.Email, UserOtpType.ResetByEmail);
@@ -550,7 +549,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user = await qUser.FirstOrDefaultAsync(p => p.PhoneNumber == encryptedPhone || p.PhoneNumber == phone);
             if (user == null)
             {
-                throw new NotFoundException(E303, M303);
+                throw new NotFoundException(nameof(E303), E303);
             }
 
             var userOtp = await _otpService.CreateAsync(user.Id, user.PhoneNumber, UserOtpType.ResetByPhone);
@@ -573,13 +572,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var user = await GetUserByEmailOrPhone(request.Type, request.Email, request.Phone);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var valid = await _otpService.VerifyAsync(request.OtpToken, request.OtpCode, request.Type);
         if (!valid)
         {
-            throw new BadRequestException(E301, M301);
+            throw new BadRequestException(nameof(E301), E301);
         }
 
         if (request.Password != request.RetypePassword)
@@ -632,13 +631,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var valid = await _otpService.VerifyAsync(request.OtpToken, request.Otp, otpType);
         if (!valid)
         {
-            throw new BadRequestException(E301, M301);
+            throw new BadRequestException(nameof(E301), E301);
         }
 
         var user = await GetUserByEmailOrPhone(otpType, request.Email, request.Phone);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var isHasPassword = await _userManager.HasPasswordAsync(user);
@@ -675,13 +674,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var userId = await _tokenService.IsValidAsync(request.RefreshToken);
         if (userId == null)
         {
-            throw new UnauthorizedAccessException(E302, M302);
+            throw new UnauthorizedAccessException(nameof(E302), E302);
         }
 
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         user.SessionId = request.SessionId;
@@ -702,25 +701,25 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(E000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         var user = await _userManager.FindByIdAsync(request.UserId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         // Account has been logged into the social network
         if (string.IsNullOrEmpty(user.PasswordHash))
         {
-            throw new ForbiddenAccessException(E306, M306);
+            throw new ForbiddenAccessException(nameof(E306), E306);
         }
 
         var ok = await _userManager.CheckPasswordAsync(user, request.Password + "");
         if (!ok)
         {
-            throw new ForbiddenAccessException(E304, M304);
+            throw new ForbiddenAccessException(nameof(E304), E304);
         }
 
         await DeleteRestoreUserAsync(user.Id, true);
@@ -824,8 +823,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             if (user.IsDelete)
             {
-                code = E305;
-                message = M305;
+                code = nameof(E305);
+                message = E305;
             }
         }
 

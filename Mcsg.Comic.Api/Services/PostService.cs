@@ -33,7 +33,6 @@ using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class PostService : BaseMinioS, IPostService
 {
@@ -75,7 +74,7 @@ public partial class PostService : BaseMinioS, IPostService
         var feedDb = await _postRepository.GetByIdAsync(postId);
         if (feedDb == null)
         {
-            throw new BadRequestException(E204, M204);
+            throw new BadRequestException(nameof(E204), E204);
         }
         else if (feedDb.UserId != userId)
         {
@@ -100,12 +99,12 @@ public partial class PostService : BaseMinioS, IPostService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         var userId = request.UserId.Value;
@@ -248,11 +247,11 @@ public partial class PostService : BaseMinioS, IPostService
         //Add view
         if (dbPost == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         if (dbPost.Status == PostStatus.Draft && dbPost.UserId != userId)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         dbPost.IsFollowing = userId == null ? false : await _context.ComicPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
@@ -349,12 +348,12 @@ public partial class PostService : BaseMinioS, IPostService
             {
                 if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
                 {
-                    throw new BadRequestException(E204, M204);
+                    throw new BadRequestException(nameof(E204), E204);
                 }
                 //Check permission
                 if (subpost.Permission == PostPermission.Private)
                 {
-                    throw new BadRequestException(E204, M204);
+                    throw new BadRequestException(nameof(E204), E204);
                 }
                 //Check IsExclusive
                 if (subpost.IsExclusive && subpost.UserExclusiveId == null)
@@ -504,7 +503,7 @@ public partial class PostService : BaseMinioS, IPostService
             var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId);
             if (post == null)
             {
-                throw new NotFoundException(E204, M204);
+                throw new NotFoundException(nameof(E204), E204);
             }
 
             var offset = request.PageSize * (request.PageNumber - 1);
@@ -882,12 +881,12 @@ public partial class PostService : BaseMinioS, IPostService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         var userId = request.UserId.Value;
@@ -897,7 +896,7 @@ public partial class PostService : BaseMinioS, IPostService
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId);
         if (post == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         if (post.CreatedBy != userId)
         {
@@ -1707,7 +1706,7 @@ public partial class PostService : BaseMinioS, IPostService
         var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         if (postId == Guid.Empty)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
         return await _context.ComicSubPostAvailable.Where(p => p.PostId == postId)
             .OrderBy(p => p.Sort)
@@ -1786,12 +1785,12 @@ public partial class PostService : BaseMinioS, IPostService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         if (!request.IsPublicNow && request.PublishDate == null)
@@ -1802,7 +1801,7 @@ public partial class PostService : BaseMinioS, IPostService
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
 
         if (post.IsCompleted == true)
@@ -1900,12 +1899,12 @@ public partial class PostService : BaseMinioS, IPostService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         if (!request.IsPublicNow && request.PublishDate == null)
@@ -1916,7 +1915,7 @@ public partial class PostService : BaseMinioS, IPostService
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
 
         if (post.UserId != request.UserId)

@@ -22,7 +22,6 @@ using Requests;
 using Response;
 using Validators;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 using SettingCore = Common.Core.Constants.Setting;
 
 public partial class UserService : BaseMinioS, IUserService
@@ -118,7 +117,7 @@ public partial class UserService : BaseMinioS, IUserService
         var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
-            throw new BadRequestException(E119, M119);
+            throw new BadRequestException(nameof(E119), E119);
         }
 
         PagedResponse<UserFollowedResponse> res;
@@ -255,19 +254,19 @@ public partial class UserService : BaseMinioS, IUserService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         var profileName = req.NewProfileName?.Trim();
         if (string.IsNullOrWhiteSpace(profileName))
         {
-            throw new BadRequestException(E127, M127);
+            throw new BadRequestException(nameof(E127), E127);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == req.UserId);
         if (user == null)
         {
-            throw new BadRequestException(E119, M119);
+            throw new BadRequestException(nameof(E119), E119);
         }
 
         if (user.ProfileName != profileName)
@@ -319,19 +318,19 @@ public partial class UserService : BaseMinioS, IUserService
         var file = request?.Avatar;
         if (request == null || file == null)
         {
-            throw new BadRequestException(E122, M122);
+            throw new BadRequestException(nameof(E122), E122);
         }
 
         var fileExtension = Path.GetExtension(file.FileName);
         if (!SettingCore.FileExt.Images.Any(p => p == fileExtension.ToLower()))
         {
-            throw new BadRequestException(E123, M123);
+            throw new BadRequestException(nameof(E123), E123);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
@@ -343,8 +342,7 @@ public partial class UserService : BaseMinioS, IUserService
         var isImage = file.OpenReadStream().IsImage();
         if (!isImage)
         {
-            throw new BadRequestException(E202, M202);
-
+            throw new BadRequestException(nameof(E202), E202);
         }
 
         try
@@ -372,19 +370,19 @@ public partial class UserService : BaseMinioS, IUserService
         var file = request?.CoverPhoto;
         if (request == null || file == null)
         {
-            throw new BadRequestException(E122, M122);
+            throw new BadRequestException(nameof(E122), E122);
         }
 
         var fileExtension = Path.GetExtension(file.FileName);
         if (!SettingCore.FileExt.Images.Any(p => p == fileExtension.ToLower()))
         {
-            throw new BadRequestException(E123, M123);
+            throw new BadRequestException(nameof(E123), E123);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
         if (user == null)
         {
-            throw new NotFoundException(E303, M303);
+            throw new NotFoundException(nameof(E303), E303);
         }
 
         var bucketName = _sc.GetStrategy(request.MinioInstance).BucketNamePublic;
@@ -396,7 +394,7 @@ public partial class UserService : BaseMinioS, IUserService
         var isImage = file.OpenReadStream().IsImage();
         if (!isImage)
         {
-            throw new BadRequestException(E202, M202);
+            throw new BadRequestException(nameof(E202), E202);
         }
 
         await _sc.GetStrategy(request.MinioInstance).PutObject(file.OpenReadStream(), objectName, bucketName);
@@ -412,7 +410,7 @@ public partial class UserService : BaseMinioS, IUserService
         var user = await _context.UserAvailable.AsNoTracking().Where(p => p.UserName == req.UserName).FirstOrDefaultAsync();
         if (user == null)
         {
-            throw new BadRequestException(E119, M119);
+            throw new BadRequestException(nameof(E119), E119);
         }
 
         var userFollowingIds = new List<Guid>();
@@ -528,7 +526,7 @@ public partial class UserService : BaseMinioS, IUserService
     {
         if (userId == Guid.Empty)
         {
-            throw new BadRequestException(E120, M120);
+            throw new BadRequestException(nameof(E120), E120);
         }
 
         return await (from a in _context.UserFollowAvailable
@@ -541,7 +539,7 @@ public partial class UserService : BaseMinioS, IUserService
     {
         if (userId == Guid.Empty)
         {
-            throw new BadRequestException(E120, M120);
+            throw new BadRequestException(nameof(E120), E120);
         }
 
         return await (from a in _context.UserFollowAvailable

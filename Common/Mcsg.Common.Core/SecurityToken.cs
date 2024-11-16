@@ -25,6 +25,7 @@ using Core.Constants;
 using Core.Dtos;
 using SeedWork.Dtos;
 using SeedWork.Exceptions;
+using static Common.SeedWork.Constants.Error;
 
 /// <summary>
 /// Security token
@@ -114,7 +115,7 @@ public class SecurityToken
         var res = handler.ValidateToken(token, param, out Microsoft.IdentityModel.Tokens.SecurityToken jwt);
         if (jwt is not JwtSecurityToken security || !security.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new ForbiddenAccessException(SeedWork.Constants.Error.E300);
+            throw new ForbiddenAccessException(nameof(E300));
         }
 
         return res;

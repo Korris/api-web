@@ -29,7 +29,6 @@ using SeedWork.Enums;
 using SeedWork.Extensions;
 using static Constants.Setting;
 using static SeedWork.Constants.Error;
-using static SeedWork.Constants.Message;
 
 /// <summary>
 /// String extension for using [this string] only
@@ -476,7 +475,7 @@ public static class StringExtension
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            throw new FormatException(M112);
+            throw new FormatException(nameof(E112));
         }
 
         var fileExtension = Path.GetExtension(fileName);
@@ -508,7 +507,7 @@ public static class StringExtension
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            throw new FormatException(E112);
+            throw new FormatException(nameof(E112));
         }
 
         var fileExtension = Path.GetExtension(fileName);
@@ -541,11 +540,11 @@ public static class StringExtension
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            throw new FormatException(E112);
+            throw new FormatException(nameof(E112));
         }
         if (string.IsNullOrWhiteSpace(parentFolder))
         {
-            throw new FormatException(E113);
+            throw new FormatException(nameof(E113));
         }
 
         return string.Format("{0}/{1}/{2}", parentFolder, FileLocation.Temp, fileName);
@@ -562,11 +561,11 @@ public static class StringExtension
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            throw new FormatException(E112);
+            throw new FormatException(nameof(E112));
         }
         if (string.IsNullOrWhiteSpace(parentFolder))
         {
-            throw new FormatException(E113);
+            throw new FormatException(nameof(E113));
         }
 
         var folder = fileName.GetFileLocation();
@@ -627,7 +626,7 @@ public static class StringExtension
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new FormatException(E112);
+            throw new FormatException(nameof(E112));
         }
 
         var mediaPath = "";

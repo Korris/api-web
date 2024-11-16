@@ -27,7 +27,7 @@ using Models._3rdClass.ZaloPay.Response;
 using Requests;
 using Validators;
 using static Common.Core.Constants.Setting;
-using static Common.SeedWork.Constants.Message;
+using static Common.SeedWork.Constants.Error;
 
 public class UserWalletService : BaseRedisS, IUserWalletService
 {
@@ -128,12 +128,12 @@ public class UserWalletService : BaseRedisS, IUserWalletService
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToValue();
-            throw new BadRequestException(M000, t);
+            throw new BadRequestException(nameof(E000), t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(M109);
+            throw new BadRequestException(nameof(E109));
         }
 
         var userId = request.UserId;

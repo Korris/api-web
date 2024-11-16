@@ -4,7 +4,6 @@ namespace Mcsg.Common.Domain;
 
 using Common.Core.Constants;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public class LocalizeIdentityErrorDescriber : IdentityErrorDescriber
 {
@@ -19,7 +18,7 @@ public class LocalizeIdentityErrorDescriber : IdentityErrorDescriber
     public override IdentityError DefaultError() { return new IdentityError { Code = ErrorCodes.DefaultError, Description = ErrorMessage.DefaultError }; }
     public override IdentityError ConcurrencyFailure() { return new IdentityError { Code = ErrorCodes.ConcurrencyFailure, Description = ErrorMessage.ConcurrencyFailure }; }
     public override IdentityError PasswordMismatch() { return new IdentityError { Code = ErrorCodes.PasswordMismatch, Description = ErrorMessage.PasswordMismatch }; }
-    public override IdentityError InvalidToken() { return new IdentityError { Code = E301, Description = M301 }; }
+    public override IdentityError InvalidToken() { return new IdentityError { Code = nameof(E301), Description = E301 }; }
     public override IdentityError LoginAlreadyAssociated() { return new IdentityError { Code = ErrorCodes.LoginAlreadyAssociated, Description = ErrorMessage.LoginAlreadyAssociated }; }
     public override IdentityError InvalidUserName(string userName) { return new IdentityError { Code = ErrorCodes.InvalidUserName, Description = string.Format(ErrorMessage.InvalidUserName, userName) }; }
     public override IdentityError InvalidEmail(string email) { return new IdentityError { Code = ErrorCodes.InvalidEmail, Description = string.Format(ErrorMessage.InvalidEmail, email) }; }

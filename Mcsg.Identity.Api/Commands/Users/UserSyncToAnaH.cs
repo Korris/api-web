@@ -25,7 +25,6 @@ using Interfaces;
 using Requests;
 using Validators;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 /// <summary>
 /// Handler
@@ -55,7 +54,7 @@ public class UserSyncToAnaH : BaseSettingH, IRequestHandler<UserSyncToAnaR, Sing
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            return res.SetError(E000, M000, t);
+            return res.SetError(nameof(E000), E000, t);
         }
 
         var rsp = await SyncCreateToAna();

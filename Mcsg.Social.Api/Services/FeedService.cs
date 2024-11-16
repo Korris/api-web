@@ -23,7 +23,6 @@ using Interfaces;
 using Models;
 using Requests;
 using static Common.SeedWork.Constants.Error;
-using static Common.SeedWork.Constants.Message;
 
 public partial class FeedService : IFeedService
 {
@@ -489,7 +488,7 @@ public partial class FeedService : IFeedService
         //Add view
         if (dbFeed == null)
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
 
         // Will map later
@@ -497,7 +496,7 @@ public partial class FeedService : IFeedService
 
         if ((dbFeed.Status == PostStatus.Draft && dbFeed.UserId != userId))
         {
-            throw new NotFoundException(E204, M204);
+            throw new NotFoundException(nameof(E204), E204);
         }
 
         dbFeed.IsFollowing = await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userId && p.UserFollowingId == dbFeed.UserId);
