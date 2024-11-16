@@ -3,9 +3,9 @@ Set as Startup Project: Mcsg.Wallet.Domain
 Tools -> Nuget Package Manager -> Package Manager Console
 Default project: Mcsg.Wallet.Domain
 Run command below:
-Install-Package Microsoft.EntityFrameworkCore
-Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
-Install-Package Microsoft.EntityFrameworkCore.Tools
+Install-Package Microsoft.EntityFrameworkCore -Version 8.0.11
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.10
+Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.11
 Add-Migration InitData -Args "host=localhost;port=5433;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
 Note:
 Revert Mcsg.Wallet.Domain.csproj file
@@ -24,9 +24,9 @@ DROP DATABASE local_bumcheo_wallet;
 -- Recreate the database with a specific owner
 CREATE DATABASE local_bumcheo_wallet OWNER local;
 ```
-Install-Package Microsoft.EntityFrameworkCore
-Install-Package Npgsql.EntityFrameworkCore.PostgreSQL
-Install-Package Microsoft.EntityFrameworkCore.Tools
+Install-Package Microsoft.EntityFrameworkCore -Version 8.0.11
+Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.10
+Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.11
 Update-Database InitData -Args "host=ntada.win;Port=65433;database=local_bumcheo_wallet;username=local;password=Local+54321z@"
 Note:
 Revert Mcsg.Wallet.Domain.csproj file
