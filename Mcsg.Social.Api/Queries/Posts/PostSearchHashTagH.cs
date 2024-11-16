@@ -63,8 +63,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         }
         #endregion
 
-        var qPost = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType,@PageSize, @OffSetPara, @HideList, @StatusList)";
         var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
+        var qSocial = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
         var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
 
         var recordComic = 0;
@@ -79,7 +79,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         {
             if (request.Tag == "all" || request.Tag == "comic")
             {
-                dataComic = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qComic, new
+                var param = new
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Comic,
@@ -87,7 +87,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
-                });
+                };
+                dataComic = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qComic, param);
 
                 recordComic = (
                     from qpost in _context.ComicPostAvailable
@@ -104,15 +105,16 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (request.Tag == "all" || request.Tag == "feed")
             {
-                dataSocial = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qPost, new
+                var param = new
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Feed,
+                    StatusList = StatusUtils.PostStatusInt,
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
-                    HideList = request.Hides,
-                    StatusList = StatusUtils.PostStatusInt,
-                });
+                    HideList = request.Hides
+                };
+                dataSocial = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qSocial, param);
 
                 recordSocial = (
                     from qpost in _context.SocialPostAvailable
@@ -133,7 +135,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (request.Tag == "all" || request.Tag == "story")
             {
-                dataStory = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qStory, new
+                var param = new
                 {
                     TagName = keyword,
                     PostType = (int)PostType.Story,
@@ -141,7 +143,8 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
                     PageSize = (int)request.PageSize,
                     OffSetPara = (int)request.Offset,
                     HideList = request.Hides
-                });
+                };
+                dataStory = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qStory, param);
 
                 recordStory = (
                     from qpost in _context.StoryPostAvailable

@@ -346,7 +346,7 @@ public partial class PostService : BaseMinioS, IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var query = "SELECT * FROM social.fn_get_visible_post_maybe_you_like(@Limit, @Hide)";
+        var query = "SELECT * FROM social.fn_visible_post_maybe_you_like(@Limit, @Hide)";
         var dataQuery = await _postRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
             Limit = input.PageSize,
