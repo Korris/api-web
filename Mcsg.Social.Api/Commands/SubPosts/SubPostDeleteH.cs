@@ -42,14 +42,12 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
-            res.SetError(nameof(E000), E000, t);
-            return res;
+            return res.SetError(nameof(E000), E000, t);
         }
 
         if (request.UserId == null)
         {
-            res.SetError(nameof(E109), E109);
-            return res;
+            return res.SetError(nameof(E109), E109);
         }
 
         var userId = request.UserId.Value;
@@ -67,8 +65,7 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
 
         if (ett.IsDelete)
         {
-            res.SetError(nameof(E003), E003);
-            return res;
+            return res.SetError(nameof(E003), E003);
         }
 
         // Delete

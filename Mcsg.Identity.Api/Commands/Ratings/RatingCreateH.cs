@@ -6,7 +6,6 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
-using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Requests;
@@ -39,8 +38,8 @@ public class RatingCreateH : BaseH, IRequestHandler<RatingCreateR, SingleRespons
         var vr = new RatingCreateV().Validate(request);
         if (!vr.IsValid)
         {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(nameof(E000), t);
+            var t = vr.Errors.ToDic();
+            return res.SetError(nameof(E000), E000, t);
         }
 
         // Create

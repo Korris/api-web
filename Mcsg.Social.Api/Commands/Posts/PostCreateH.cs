@@ -25,7 +25,6 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
-using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -87,13 +86,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var vr = new PostCreateV().Validate(request);
         if (!vr.IsValid)
         {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(nameof(E000), t);
+            var t = vr.Errors.ToDic();
+            return res.SetError(nameof(E000), E000, t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(nameof(E109));
+            return res.SetError(nameof(E109), E109);
         }
 
         var userId = request.UserId.Value;

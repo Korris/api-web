@@ -8,7 +8,6 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Dtos;
-using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Requests;
@@ -41,13 +40,13 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         var vr = new ReportCreateV().Validate(request);
         if (!vr.IsValid)
         {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(nameof(E000), t);
+            var t = vr.Errors.ToDic();
+            return res.SetError(nameof(E000), E000, t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(nameof(E109));
+            return res.SetError(nameof(E109), E109);
         }
 
         var userId = request.UserId.Value;

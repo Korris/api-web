@@ -80,13 +80,13 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var vr = new PostUpdateV().Validate(request);
         if (!vr.IsValid)
         {
-            var t = vr.Errors.ToValue();
-            throw new BadRequestException(nameof(E000), t);
+            var t = vr.Errors.ToDic();
+            return res.SetError(nameof(E000), E000, t);
         }
 
         if (request.UserId == null)
         {
-            throw new BadRequestException(nameof(E109));
+            return res.SetError(nameof(E109), E109);
         }
 
         var userId = request.UserId.Value;
