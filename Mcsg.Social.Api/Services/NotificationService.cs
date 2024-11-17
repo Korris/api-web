@@ -196,29 +196,6 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
 
-    private async Task CheckDataTransaction(IEnumerable<Notification.SearchDto> resDto)
-    {
-        var listData = resDto.Where(p => p.EntityType == NotificationEntityType.TransferTransaction ||
-                                         p.EntityType == NotificationEntityType.DonateTransaction)
-            .ToList();
-
-        if (listData.Any())
-        {
-            var data = await GetTransactionFromProto(listData.Select(p => p.EntityId).Distinct().ToList());
-            if (data.Any())
-            {
-                foreach (var item in listData)
-                {
-                    var transactionData = data.GetValueOrDefault(item.EntityId.ToString());
-                    var amount = transactionData.Amount.ToString("N0");
-                    item.Amount = amount;
-                    item.ReferenceNumber = transactionData.ReferenceNumber;
-                }
-
-            }
-        }
-    }
-
     private async Task CheckDataReplyCommentReaction(IEnumerable<Notification.SearchDto> resDto)
     {
         var resReplyCommentReaction = resDto.Where(p => p.EntityType == NotificationEntityType.SocialPostCommentReplyReaction ||
@@ -597,6 +574,37 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
 
+    private async Task CheckDataTransaction(IEnumerable<Notification.SearchDto> dtos)
+    {
+        var l = dtos
+            .Where(p => p.EntityType == NotificationEntityType.TransferTransaction
+                || p.EntityType == NotificationEntityType.DonateTransaction)
+            .ToList();
+        if (l.Count == 0)
+        {
+            return;
+        }
+
+        var ids = l.Select(p => p.EntityId).Distinct().ToList();
+        var data = await GetTransactionFromProto(ids);
+        if (data.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var i in l)
+        {
+            var transactionData = data!.GetValueOrDefault(i.EntityId.ToString());
+            if (transactionData == null)
+            {
+                continue;
+            }
+
+            i.Amount = transactionData.Amount.ToString("N0");
+            i.ReferenceNumber = transactionData.ReferenceNumber;
+        }
+    }
+
     private async Task<Dictionary<string, TransactionProtoDto>> GetTransactionFromProto(List<Guid?> transactionIds)
     {
         var res = new Dictionary<string, TransactionProtoDto>();
@@ -604,13 +612,14 @@ public partial class NotificationService : BaseSettingS, INotificationService
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Wallet!);
-
             var client = new UserWalletProto.UserWalletProtoClient(channel);
+
             var request = new TransactionGetReq
             {
                 TransactionId = string.Join(';', transactionIds.Where(id => id != null).Select(id => id.ToString()))
             };
             var rsp = await client.GetTransactionInfoAsync(request);
+
             return rsp.Transactions.ToDictionary(p => p.TransactionId, p => p);
         }
         catch (Exception ex)
