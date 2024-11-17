@@ -196,75 +196,136 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
 
-    private async Task CheckDataReplyCommentReaction(IEnumerable<Notification.SearchDto> resDto)
+    #region -- CheckDataReplyComment --
+    private async Task CheckDataReplyComment(IEnumerable<Notification.SearchDto> dtos)
     {
-        var resReplyCommentReaction = resDto.Where(p => p.EntityType == NotificationEntityType.SocialPostCommentReplyReaction ||
-                                                       p.EntityType == NotificationEntityType.SocialSubPostCommentReplyReaction ||
-                                                       p.EntityType == NotificationEntityType.ComicPostCommentReplyReaction ||
-                                                       p.EntityType == NotificationEntityType.ComicSubPostCommentReplyReaction ||
-                                                       p.EntityType == NotificationEntityType.StoryPostCommentReplyReaction ||
-                                                       p.EntityType == NotificationEntityType.StorySubPostCommentReplyReaction
-                                                       )
-                                            .ToList();
+        var list = dtos
+            .Where(p => p.EntityType == NotificationEntityType.StoryPostCommentReply
+                || p.EntityType == NotificationEntityType.StorySubPostCommentReply
+                || p.EntityType == NotificationEntityType.ComicPostCommentReply
+                || p.EntityType == NotificationEntityType.ComicSubPostCommentReply
+                || p.EntityType == NotificationEntityType.SocialPostCommentReply
+                || p.EntityType == NotificationEntityType.SocialSubPostCommentReply)
+            .ToList();
 
-        var groupRes = resReplyCommentReaction.GroupBy(p => p.EntityType).ToList();
-
-        foreach (var item in groupRes)
+        var group = list.GroupBy(p => p.EntityType).ToList();
+        foreach (var i in group)
         {
-            var replyCommentIds = item.Select(p => p.LocationId).ToList();
-            if (replyCommentIds.Count > 0)
+            var replyCommentIds = i.Select(p => p.EntityId).ToList();
+            if (replyCommentIds.Count == 0)
             {
-                var tableName = item.Key switch
-                {
-                    NotificationEntityType.StoryPostCommentReplyReaction => $@"story.""StoryPostComments""",
-                    NotificationEntityType.ComicPostCommentReplyReaction => $@"Comic.""ComicPostComments""",
-                    NotificationEntityType.SocialPostCommentReplyReaction => $@"Social.""SocialPostComments""",
-                    NotificationEntityType.SocialSubPostCommentReplyReaction => $@"Social.""SocialSubPostComments""",
-                    NotificationEntityType.ComicSubPostCommentReplyReaction => $@"comic.""ComicSubPostComments""",
-                    NotificationEntityType.StorySubPostCommentReplyReaction => $@"story.""StorySubPostComments""",
-                    _ => ""
-                };
+                continue;
+            }
 
-                var query = $@"SELECT pc.""Id"" as ReplyCommentId, pc.""ParentId"" as CommentId , p.""HashId"" as LocationHashId 
+            var tableName = i.Key switch
+            {
+                NotificationEntityType.ComicPostCommentReply => $@"comic.""ComicPostComments""",
+                NotificationEntityType.ComicSubPostCommentReply => $@"comic.""ComicSubPostComments""",
+                NotificationEntityType.SocialPostCommentReply => $@"social.""SocialPostComments""",
+                NotificationEntityType.SocialSubPostCommentReply => $@"social.""SocialSubPostComments""",
+                NotificationEntityType.StoryPostCommentReply => $@"story.""StoryPostComments""",
+                NotificationEntityType.StorySubPostCommentReply => $@"story.""StorySubPostComments""",
+                _ => ""
+            };
+
+            var replyCommentData = await _notiRepository.Connection.QueryAsync<ReplyCommentData>($@"
+                                        SELECT ""Id"" as ReplyCommentId, ""ParentId"" as CommentId
+                                        FROM {tableName} 
+                                        WHERE ""Id"" = ANY(@ids)", new { ids = replyCommentIds });
+            if (!replyCommentData.Any())
+            {
+                continue;
+            }
+
+            var needToMap = list.Where(p => p.EntityType == i.Key);
+            foreach (var reply in replyCommentData)
+            {
+                var data = needToMap.FirstOrDefault(p => p.EntityId == reply.ReplyCommentId);
+                if (data == null)
+                {
+                    continue;
+                }
+
+                data.ReplyCommentId = reply.ReplyCommentId;
+                data.EntityId = reply.CommentId;
+            }
+        }
+    }
+
+    private async Task CheckDataReplyCommentReaction(IEnumerable<Notification.SearchDto> dtos)
+    {
+        var list = dtos
+            .Where(p => p.EntityType == NotificationEntityType.SocialPostCommentReplyReaction
+                || p.EntityType == NotificationEntityType.SocialSubPostCommentReplyReaction
+                || p.EntityType == NotificationEntityType.ComicPostCommentReplyReaction
+                || p.EntityType == NotificationEntityType.ComicSubPostCommentReplyReaction
+                || p.EntityType == NotificationEntityType.StoryPostCommentReplyReaction
+                || p.EntityType == NotificationEntityType.StorySubPostCommentReplyReaction)
+            .ToList();
+
+        var group = list.GroupBy(p => p.EntityType).ToList();
+        foreach (var i in group)
+        {
+            var replyCommentIds = i.Select(p => p.LocationId).ToList();
+            if (replyCommentIds.Count == 0)
+            {
+                continue;
+            }
+
+            var tableName = i.Key switch
+            {
+                NotificationEntityType.ComicPostCommentReplyReaction => $@"comic.""ComicPostComments""",
+                NotificationEntityType.ComicSubPostCommentReplyReaction => $@"comic.""ComicSubPostComments""",
+                NotificationEntityType.SocialPostCommentReplyReaction => $@"social.""SocialPostComments""",
+                NotificationEntityType.SocialSubPostCommentReplyReaction => $@"social.""SocialSubPostComments""",
+                NotificationEntityType.StoryPostCommentReplyReaction => $@"story.""StoryPostComments""",
+                NotificationEntityType.StorySubPostCommentReplyReaction => $@"story.""StorySubPostComments""",
+                _ => ""
+            };
+
+            var query = $@"SELECT pc.""Id"" as ReplyCommentId, pc.""ParentId"" as CommentId , p.""HashId"" as LocationHashId 
                                FROM {tableName} pc
                                LEFT JOIN {tableName.Replace("Comments", "s")} p on pc.""PostId"" = p.""Id""
                                WHERE pc.""Id"" = ANY(@ids)";
 
-                if (item.Key == NotificationEntityType.ComicSubPostCommentReplyReaction || item.Key == NotificationEntityType.StorySubPostCommentReplyReaction)
+            if (i.Key == NotificationEntityType.ComicSubPostCommentReplyReaction || i.Key == NotificationEntityType.StorySubPostCommentReplyReaction)
+            {
+                var postTable = i.Key switch
                 {
-                    var postTable = item.Key switch
-                    {
-                        NotificationEntityType.ComicSubPostCommentReplyReaction => $@"comic.""ComicPosts""",
-                        _ => $@"story.""StoryPosts"""
-                    };
+                    NotificationEntityType.ComicSubPostCommentReplyReaction => $@"comic.""ComicPosts""",
+                    _ => $@"story.""StoryPosts"""
+                };
 
-                    query = $@"SELECT pc.""Id"" as ReplyCommentId, pc.""ParentId"" as CommentId , p.""HashId"" as LocationHashId , sp.""Order"" 
+                query = $@"SELECT pc.""Id"" as ReplyCommentId, pc.""ParentId"" as CommentId , p.""HashId"" as LocationHashId , sp.""Order"" 
                                FROM {tableName} pc
                                LEFT JOIN {tableName.Replace("Comments", "s")} sp on pc.""PostId"" = sp.""Id""
                                LEFT JOIN {postTable} as p on p.""Id"" = sp.""PostId""
                                WHERE pc.""Id"" = ANY(@ids)";
-                }
+            }
 
-                var replyCommentData = await _notiRepository.Connection.QueryAsync<ReplyCommentReactionData>(query, new { ids = replyCommentIds });
+            var replyCommentData = await _notiRepository.Connection.QueryAsync<ReplyCommentReactionData>(query, new { ids = replyCommentIds });
+            if (!replyCommentData.Any())
+            {
+                continue;
+            }
 
-                if (replyCommentData.Any())
+            var needToMap = list.Where(p => p.EntityType == i.Key);
+            foreach (var j in needToMap)
+            {
+                var data = replyCommentData.FirstOrDefault(p => p.ReplyCommentId == j.LocationId);
+                if (data == null)
                 {
-                    var resNeedToMap = resReplyCommentReaction.Where(p => p.EntityType == item.Key);
-                    foreach (var reply in resNeedToMap)
-                    {
-                        var data = replyCommentData.FirstOrDefault(p => p.ReplyCommentId == reply.LocationId);
-                        if (data != null)
-                        {
-                            reply.ReplyCommentId = data.ReplyCommentId;
-                            reply.EntityId = data.CommentId;
-                            reply.LocationHashId = data.LocationHashId;
-                            reply.Order = data.Order;
-                        }
-                    }
+                    continue;
                 }
+
+                j.ReplyCommentId = data.ReplyCommentId;
+                j.EntityId = data.CommentId;
+                j.LocationHashId = data.LocationHashId;
+                j.Order = data.Order;
             }
         }
     }
+    #endregion
 
     #region -- CheckDataCommentReaction --
     private async Task CheckDataCommentReaction(IEnumerable<Notification.SearchDto> dtos)
@@ -442,55 +503,6 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
     #endregion
-
-    private async Task CheckDataReplyComment(IEnumerable<Notification.SearchDto> resDto)
-    {
-        var res = resDto.Where(p => p.EntityType == NotificationEntityType.StoryPostCommentReply ||
-                                    p.EntityType == NotificationEntityType.StorySubPostCommentReply ||
-                                    p.EntityType == NotificationEntityType.ComicPostCommentReply ||
-                                    p.EntityType == NotificationEntityType.ComicSubPostCommentReply ||
-                                    p.EntityType == NotificationEntityType.SocialPostCommentReply ||
-                                    p.EntityType == NotificationEntityType.SocialSubPostCommentReply
-        ).ToList();
-
-        var groupRes = res.GroupBy(p => p.EntityType).ToList();
-
-        foreach (var item in groupRes)
-        {
-            var replyCommentIds = item.Select(p => p.EntityId).ToList();
-            if (replyCommentIds.Count > 0)
-            {
-                var tableName = item.Key switch
-                {
-                    NotificationEntityType.StoryPostCommentReply => $@"story.""StoryPostComments""",
-                    NotificationEntityType.StorySubPostCommentReply => $@"story.""StorySubPostComments""",
-                    NotificationEntityType.ComicPostCommentReply => $@"Comic.""ComicPostComments""",
-                    NotificationEntityType.ComicSubPostCommentReply => $@"Comic.""ComicSubPostComments""",
-                    NotificationEntityType.SocialPostCommentReply => $@"Social.""SocialPostComments""",
-                    NotificationEntityType.SocialSubPostCommentReply => $@"Social.""SocialSubPostComments""",
-                    _ => ""
-                };
-                var replyCommentData = await _notiRepository.Connection.QueryAsync<ReplyCommentData>($@"
-                                        SELECT ""Id"" as ReplyCommentId, ""ParentId"" as CommentId
-                                        FROM {tableName} 
-                                        WHERE ""Id"" = ANY(@ids)", new { ids = replyCommentIds });
-
-                if (replyCommentData.Any())
-                {
-                    var resNeedToMap = res.Where(p => p.EntityType == item.Key);
-                    foreach (var reply in replyCommentData)
-                    {
-                        var data = resNeedToMap.FirstOrDefault(p => p.EntityId == reply.ReplyCommentId);
-                        if (data != null)
-                        {
-                            data.ReplyCommentId = reply.ReplyCommentId;
-                            data.EntityId = reply.CommentId;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private async Task CheckDataCommentOnSubPost(IEnumerable<Notification.SearchDto> resDto)
     {
