@@ -171,8 +171,15 @@ partial class Notification
             }
             else
             {
-                var message = noti.EntityType == NotificationEntityType.SocialPostReaction ? NotificationContent.ReactOnFeed : NotificationContent.ReactOnComic;
-                return noti.ActorName + message;
+                var notiContent = noti.EntityType switch
+                {
+                    NotificationEntityType.ComicPostReaction => NotificationContent.ReactOnComic,
+                    NotificationEntityType.DocumentPostReaction => NotificationContent.ReactOnDocument,
+                    NotificationEntityType.StoryPostReaction => NotificationContent.ReactOnStory,
+                    _ => NotificationContent.ReactOnFeed,
+                };
+
+                return noti.ActorName + notiContent;
             }
         }
         #endregion
@@ -195,7 +202,7 @@ partial class Notification
                 case NotificationEntityType.ComicPostFollow:
                 case NotificationEntityType.DocumentPostFollow:
                 case NotificationEntityType.StoryPostFollow:
-                    return NotificationContent.FollowPost;
+                    return noti.FollowPostMessage;
             }
         }
         #endregion
@@ -305,7 +312,7 @@ partial class Notification
         }
         #endregion
 
-        return noti.FollowPostMessage + "";
+        return "";
     }
 
     public static string ToTargetType(SearchDto noti)
@@ -522,7 +529,7 @@ partial class Notification
 
         public string? ReferenceNumber { get; set; }
         public string? Amount { get; set; }
-        public string? FollowPostMessage { get; set; }
+        public string FollowPostMessage { get; set; } = default!;
         public string Message => ToMessage(this);
         public float Order { get; set; }
         public Guid? ReplyCommentId { get; set; }

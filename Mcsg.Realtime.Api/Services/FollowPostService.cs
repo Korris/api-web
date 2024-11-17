@@ -3,7 +3,9 @@
 namespace Mcsg.Realtime.Api.Services;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Domain;
+using Common.SeedWork.Extensions;
 using Interfaces;
 using Requests;
 
@@ -23,33 +25,47 @@ public partial class FollowPostService : IFollowPostService
 
     public async Task SendPostFollowNotification(FollowPostReq req)
     {
-        var actor = await _context.UserAvailable.Where(p => p.Id == req.ActorId).Select(p => new { ProfileName = p.ProfileName, UserAvatar = p.Avatar }).FirstOrDefaultAsync();
+        var actor = await _context.UserAvailable.Where(p => p.Id == req.ActorId).Select(p => new { p.ProfileName, UserAvatar = p.Avatar }).FirstOrDefaultAsync();
+        if (actor == null)
+        {
+            return;
+        }
+
         try
         {
-            var postName = req.MicroService switch
+            var microService = req.MicroService.ToEnum(MicroService.Social);
+            var qTitle = microService switch
             {
-                nameof(MicroService.Comic) => await _context.ComicPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title).FirstOrDefaultAsync(),
-                nameof(MicroService.Story) => await _context.StoryPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title).FirstOrDefaultAsync(),
+                MicroService.Comic => _context.ComicPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
+                MicroService.Document => _context.DocumentPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
+                _ => _context.StoryPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
+            };
+            var title = await qTitle.FirstOrDefaultAsync();
+
+            var notiEntityType = microService switch
+            {
+                MicroService.Comic => NotificationEntityType.ComicPostFollow,
+                MicroService.Document => NotificationEntityType.DocumentPostFollow,
+                _ => NotificationEntityType.StoryPostFollow,
             };
 
-            var request = new FollowPostNotificationReq()
+            var request = new FollowPostNotificationReq
             {
                 PostId = req.PostId,
                 ActorId = req.ActorId,
                 ReceiverId = req.AuthorId,
-                ActorName = actor.ProfileName,
+                ActorName = actor.ProfileName + "",
                 PostHashId = req.PostHashId,
-                UserAvatar = actor.UserAvatar,
-                PostName = postName,
-                NotificationEntityType = req.MicroService == nameof(MicroService.Comic) ? NotificationEntityType.ComicPostFollow : NotificationEntityType.StoryPostFollow,
-
+                UserAvatar = actor.UserAvatar + "",
+                PostName = title + "",
+                NotificationEntityType = notiEntityType
             };
+
             await _notificationService.AddFollowPostNotification(request);
         }
         catch (Exception ex)
         {
-
+            ex.Message.LogError();
         }
     }
-
 }

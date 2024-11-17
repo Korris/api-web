@@ -563,11 +563,18 @@ public class NotificationService : BaseS, INotificationService
 
             if (!isCommentReaction)
             {
+                var notiContent = reaction.EntityType switch
+                {
+                    NotificationEntityType.ComicPostReaction => NotificationContent.ReactOnComic,
+                    NotificationEntityType.DocumentPostReaction => NotificationContent.ReactOnDocument,
+                    NotificationEntityType.StoryPostReaction => NotificationContent.ReactOnStory,
+                    _ => NotificationContent.ReactOnFeed,
+                };
+
                 receiverId = ett.UserId;
                 locationId = ett.Id;
                 locationHashId = ett.HashId;
-                var message = reaction.EntityType == NotificationEntityType.SocialPostReaction ? NotificationContent.ReactOnFeed : (reaction.EntityType == NotificationEntityType.ComicPostReaction ? NotificationContent.ReactOnComic : NotificationContent.ReactOnDocument);
-                response.Message = reaction.AuthorName + message;
+                response.Message = reaction.AuthorName + notiContent;
             }
 
             response.TargetType = reaction.EntityType switch
@@ -942,12 +949,26 @@ public class NotificationService : BaseS, INotificationService
                                 , locationId: request.PostId
                                 , locationHashId: request.PostHashId);
 
+        var notiTargetType = request.NotificationEntityType switch
+        {
+            NotificationEntityType.ComicPostFollow => NotificationTargetType.Comic,
+            NotificationEntityType.DocumentPostFollow => NotificationTargetType.Document,
+            _ => NotificationTargetType.Story,
+        };
+
+        var notiContent = request.NotificationEntityType switch
+        {
+            NotificationEntityType.ComicPostFollow => NotificationContent.FollowComic,
+            NotificationEntityType.DocumentPostFollow => NotificationContent.FollowDocument,
+            _ => NotificationContent.FollowStory,
+        };
+
         response.Id = noti.Id;
         response.Status = noti.Status;
         response.LocationId = request.PostId;
         response.LocationHashId = request.PostHashId;
-        response.Message = string.Format(NotificationContent.FollowPost, request.ActorName, request.PostName);
-        response.TargetType = request.NotificationEntityType == NotificationEntityType.ComicPostFollow ? NotificationTargetType.Comic : (request.NotificationEntityType == NotificationEntityType.DocumentPostFollow ? NotificationTargetType.Document : NotificationTargetType.Story);
+        response.Message = string.Format(notiContent, request.ActorName, request.PostName);
+        response.TargetType = notiTargetType;
         response.ActorId = request.ActorId;
         response.ActorName = request.ActorName;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;

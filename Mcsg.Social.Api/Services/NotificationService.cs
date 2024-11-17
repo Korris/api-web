@@ -434,47 +434,43 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
 
-    private async Task CheckDataFollowPost(IEnumerable<Notification.SearchDto> resDto)
+    #region -- CheckDataFollowPost --
+    private async Task CheckDataFollowPost(IEnumerable<Notification.SearchDto> dtos)
     {
-        var resDtoFollowComic = resDto.Where(p => p.EntityType == NotificationEntityType.ComicPostFollow).ToList();
-        var followComicPostIds = resDtoFollowComic.Select(p => p.LocationId).ToList();
-        if (followComicPostIds.Count > 0)
+        var list = dtos.Where(p => p.EntityType == NotificationEntityType.ComicPostFollow).ToList();
+        await CheckDataFollowPost<ComicPost>(dtos, NotificationContent.FollowComic);
+
+        list = dtos.Where(p => p.EntityType == NotificationEntityType.DocumentPostFollow).ToList();
+        await CheckDataFollowPost<DocumentPost>(dtos, NotificationContent.FollowDocument);
+
+        list = dtos.Where(p => p.EntityType == NotificationEntityType.StoryPostFollow).ToList();
+        await CheckDataFollowPost<StoryPost>(dtos, NotificationContent.FollowStory);
+    }
+
+    private async Task CheckDataFollowPost<P>(IEnumerable<Notification.SearchDto> dtos, string content) where P : BasePost
+    {
+        var locationIds = dtos.Select(p => p.LocationId).Distinct().ToList();
+        if (locationIds.Count == 0)
         {
-            var comics = await _notiRepository.Connection.QueryAsync<PostData>($@"
-                                        SELECT cp.""Title"",cp.""HashId""  from comic.""ComicPosts"" cp
-                                        WHERE cp.""Id"" = ANY(@ids)", new { ids = followComicPostIds });
-            if (comics.Count() > 0)
-            {
-                foreach (var item in resDtoFollowComic)
-                {
-                    var comic = comics.FirstOrDefault(p => p.HashId == item.LocationHashId);
-                    if (comic != null)
-                    {
-                        item.FollowPostMessage = string.Format(NotificationContent.FollowPost, item.ActorName, comic.Title);
-                    }
-                }
-            }
+            return;
         }
-        var resDtoFollowStory = resDto.Where(p => p.EntityType == NotificationEntityType.StoryPostFollow).ToList();
-        var followStoryPostIds = resDtoFollowStory.Select(p => p.LocationId).ToList();
-        if (followStoryPostIds.Count > 0)
+
+        var qPost = _context.Set<P>().Where(p => !p.IsDelete);
+
+        var posts = await qPost.Where(p => locationIds.Contains(p.Id)).Select(p => new { p.Title, p.HashId }).ToListAsync();
+        var dic = posts.ToDictionary(p => p.HashId + "", p => p.Title);
+        foreach (var i in dtos)
         {
-            var stories = await _notiRepository.Connection.QueryAsync<PostData>($@"
-                                        SELECT sp.""Title"",sp.""HashId""  from story.""StoryPosts"" sp
-                                        WHERE sp.""Id"" = ANY(@ids)", new { ids = followStoryPostIds });
-            if (stories.Count() > 0)
+            var title = dic.GetValueOrDefault(i.LocationHashId);
+            if (title == null)
             {
-                foreach (var item in resDtoFollowStory)
-                {
-                    var story = stories.FirstOrDefault(p => p.HashId == item.LocationHashId);
-                    if (story != null)
-                    {
-                        item.FollowPostMessage = string.Format(NotificationContent.FollowPost, item.ActorName, story.Title);
-                    }
-                }
+                continue;
             }
+
+            i.FollowPostMessage = string.Format(content, i.ActorName, title);
         }
     }
+    #endregion
 
     private async Task CheckDataReplyComment(IEnumerable<Notification.SearchDto> resDto)
     {
