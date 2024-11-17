@@ -504,50 +504,71 @@ public partial class NotificationService : BaseSettingS, INotificationService
     }
     #endregion
 
-    private async Task CheckDataCommentOnSubPost(IEnumerable<Notification.SearchDto> resDto)
+    #region -- CheckDataCommentOnSubPost --
+    private async Task CheckDataCommentOnSubPost(IEnumerable<Notification.SearchDto> dtos)
     {
-        var subComicIds = resDto.Where(p => p.EntityType == NotificationEntityType.ComicSubPostComment || p.EntityType == NotificationEntityType.ComicSubPostCommentReply).Select(p => p.LocationId).ToList();
-        if (subComicIds.Count > 0)
-        {
-            var subComics = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
-                                        SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from comic.""ComicSubPosts"" csp
-                                        JOIN comic.""ComicPosts"" cp on csp.""PostId"" = cp.""Id""
-                                        WHERE csp.""Id"" = ANY(@ids)", new { ids = subComicIds });
-            if (subComics.Count() > 0)
-            {
-                foreach (var item in subComics)
-                {
-                    var comicResponse = resDto.FirstOrDefault(p => p.LocationId == item.Id);
-                    if (comicResponse != null)
-                    {
-                        comicResponse.Order = item.Order;
-                        comicResponse.LocationHashId = item.HashId;
-                    }
-                }
-            }
-        }
+        // Comic
+        var locationIds = dtos
+            .Where(p => p.EntityType == NotificationEntityType.ComicSubPostComment
+                || p.EntityType == NotificationEntityType.ComicSubPostCommentReply)
+            .Select(p => p.LocationId);
+        await CheckDataCommentOnSubPost<ComicPost, ComicSubPost>(dtos, locationIds);
 
-        var subStoryIds = resDto.Where(p => p.EntityType == NotificationEntityType.StorySubPostComment || p.EntityType == NotificationEntityType.StorySubPostCommentReply).Select(p => p.LocationId).ToList();
-        if (subStoryIds.Count > 0)
+        // Document
+        locationIds = dtos
+            .Where(p => p.EntityType == NotificationEntityType.DocumentSubPostComment
+                || p.EntityType == NotificationEntityType.DocumentSubPostCommentReply)
+            .Select(p => p.LocationId);
+        await CheckDataCommentOnSubPost<DocumentPost, DocumentSubPost>(dtos, locationIds);
+
+        // Social
+        locationIds = dtos
+            .Where(p => p.EntityType == NotificationEntityType.SocialSubPostComment
+                || p.EntityType == NotificationEntityType.SocialSubPostCommentReply)
+            .Select(p => p.LocationId);
+        await CheckDataCommentOnSubPost<SocialPost, SocialSubPost>(dtos, locationIds);
+
+        // Story
+        locationIds = dtos
+           .Where(p => p.EntityType == NotificationEntityType.StorySubPostComment
+               || p.EntityType == NotificationEntityType.StorySubPostCommentReply)
+           .Select(p => p.LocationId);
+        await CheckDataCommentOnSubPost<StoryPost, StorySubPost>(dtos, locationIds);
+    }
+
+    private async Task CheckDataCommentOnSubPost<P, SP>(IEnumerable<Notification.SearchDto> dtos, IEnumerable<Guid?> locationIds) where P : BasePost where SP : BaseSubPost
+    {
+        if (!locationIds.Any())
         {
-            var subStories = await _notiRepository.Connection.QueryAsync<SubPostData>($@"
-                                        SELECT csp.""Id"",csp.""Order"",cp.""HashId""  from story.""StorySubPosts"" csp
-                                        JOIN story.""StoryPosts"" cp on csp.""PostId"" = cp.""Id""
-                                        WHERE csp.""Id"" = ANY(@SubPostIds)", new { SubPostIds = subStoryIds });
-            if (subStories.Count() > 0)
+            return;
+        }
+        var ids = locationIds.Distinct().ToList();
+
+        var qPost = _context.Set<P>().Where(p => !p.IsDelete);
+        var qSubPost = _context.Set<SP>().Where(p => !p.IsDelete);
+
+        var list = await (from csp in qSubPost
+                          join cp in qPost on csp.PostId equals cp.Id
+                          where ids.Contains(csp.Id)
+                          select new
+                          {
+                              csp.Id,
+                              csp.Order,
+                              cp.HashId
+                          }).ToListAsync();
+        foreach (var i in list)
+        {
+            var dto = dtos.FirstOrDefault(p => p.LocationId == i.Id);
+            if (dto == null)
             {
-                foreach (var item in subStories)
-                {
-                    var storyResponse = resDto.FirstOrDefault(p => p.LocationId == item.Id);
-                    if (storyResponse != null)
-                    {
-                        storyResponse.Order = item.Order;
-                        storyResponse.LocationHashId = item.HashId;
-                    }
-                }
+                continue;
             }
+
+            dto.Order = i.Order;
+            dto.LocationHashId = i.HashId;
         }
     }
+    #endregion
 
     private async Task CheckDataFollowUser(IEnumerable<Notification.SearchDto> resDto)
     {
