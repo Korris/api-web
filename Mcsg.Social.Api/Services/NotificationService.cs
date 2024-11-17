@@ -570,34 +570,38 @@ public partial class NotificationService : BaseSettingS, INotificationService
     }
     #endregion
 
-    private async Task CheckDataFollowUser(IEnumerable<Notification.SearchDto> resDto)
+    private async Task CheckDataFollowUser(IEnumerable<Notification.SearchDto> dtos)
     {
-        var userFollowIds = resDto
+        var userFollowIds = dtos
             .Where(p => p.EntityType == NotificationEntityType.FollowUser)
             .Select(p => p.EntityId)
-            .ToList();
+            .Distinct().ToList();
 
         if (userFollowIds.Count > 0)
         {
-            var userData = await _notiRepository.Connection.QueryAsync<UserFollowedResponse>($@"
-                SELECT u.""Id"" as UserId,  
-                       u.""ProfileName"", 
-                       u.""UserName"", 
-                       u.""Avatar""
-                FROM identity.""Users"" u
-                WHERE u.""Id"" = ANY(@ids)", new { ids = userFollowIds });
+            return;
+        }
 
-            if (userData.Count() > 0)
+        var list = await _context.UserAvailable
+            .Where(u => userFollowIds.Contains(u.Id))
+            .Select(u => new
             {
-                foreach (var item in userData)
-                {
-                    var response = resDto.FirstOrDefault(p => p.EntityId == item.UserId);
-                    if (response != null)
-                    {
-                        response.LocationHashId = item.UserName + "";
-                    }
-                }
+                UserId = u.Id,
+                u.ProfileName,
+                u.UserName,
+                u.Avatar
+            })
+            .ToListAsync();
+
+        foreach (var i in list)
+        {
+            var dto = dtos.FirstOrDefault(p => p.EntityId == i.UserId);
+            if (dto == null)
+            {
+                continue;
             }
+
+            dto.LocationHashId = i.UserName + "";
         }
     }
 
