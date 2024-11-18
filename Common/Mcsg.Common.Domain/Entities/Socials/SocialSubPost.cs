@@ -4,8 +4,6 @@ namespace Mcsg.Common.Domain.Entities;
 
 public partial class SocialSubPost : BaseSubPost
 {
-    public int Order { get; set; }
-
     [InverseProperty("SubPost")]
     public virtual ICollection<SocialResource> SocialResources { get; set; } = new List<SocialResource>();
 

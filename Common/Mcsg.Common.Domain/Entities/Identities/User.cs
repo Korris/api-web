@@ -116,6 +116,24 @@ public partial class User : IdentityUser<Guid>
     /// </summary>
     public int StorageLimit { get; set; }
 
+    /// <summary>
+    /// Synced on
+    /// </summary>
+    [Column(TypeName = "timestamp")]
+    public DateTime? SyncedOn { get; set; }
+
+    /// <summary>
+    /// Sync error
+    /// </summary>
+    [StringLength(Validator.Description.Max)]
+    public string? SyncError { get; set; }
+
+    /// <summary>
+    /// Example: ;video;link;11;1;
+    /// </summary>
+    [StringLength(Validator.TagData.Max)]
+    public string? TagData { get; set; }
+
     [InverseProperty("Author")]
     public virtual ICollection<ComicPostCommentReaction> ComicPostCommentReactions { get; set; } = new List<ComicPostCommentReaction>();
 

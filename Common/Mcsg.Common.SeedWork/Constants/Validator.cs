@@ -242,6 +242,17 @@ public class Validator
     }
 
     /// <summary>
+    /// TagData
+    /// </summary>
+    public class TagData
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 64;
+    }
+
+    /// <summary>
     /// Content
     /// </summary>
     public class Content

@@ -53,6 +53,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Thumbnail")
                         .HasColumnType("text");
 
@@ -99,6 +110,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -219,6 +241,17 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("ThumbnailUrl")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -298,6 +331,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -336,6 +380,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -377,6 +432,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -413,6 +479,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -459,6 +536,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -501,6 +589,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -540,6 +639,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -584,8 +694,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReasonType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -622,6 +749,20 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -704,6 +845,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("SubPostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -806,6 +958,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -878,6 +1041,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -916,6 +1090,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -960,6 +1145,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -999,6 +1195,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -1075,6 +1282,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("text");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("TotalChapter")
                         .HasColumnType("integer");
 
@@ -1131,6 +1349,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -1171,6 +1400,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -1304,6 +1544,17 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("ThumbnailUrl")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -1383,6 +1634,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -1421,6 +1683,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -1462,6 +1735,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -1498,6 +1782,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -1544,6 +1839,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -1586,6 +1892,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -1625,6 +1942,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -1669,8 +1997,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReasonType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -1707,6 +2052,20 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -1789,6 +2148,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("SubPostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -1894,6 +2264,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -1966,6 +2347,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -2004,6 +2396,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -2048,6 +2451,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -2087,6 +2501,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -2131,6 +2556,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -2182,6 +2618,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Jobs", "system");
@@ -2227,6 +2674,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Offset")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Text")
                         .HasColumnType("text");
 
@@ -2265,6 +2723,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -2318,6 +2787,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.ToTable("NotificationObjects", "system");
@@ -2357,6 +2837,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<int>("Satisfaction")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
@@ -2605,6 +3096,17 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("ThumbnailUrl")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -2684,6 +3186,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -2722,6 +3235,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -2763,6 +3287,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -2799,6 +3334,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -2845,6 +3391,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -2887,6 +3444,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -2926,6 +3494,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -2970,8 +3549,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReasonType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -3008,6 +3604,20 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3091,6 +3701,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("SubPostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -3171,8 +3792,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
+                    b.Property<float>("Order")
+                        .HasColumnType("real");
 
                     b.Property<int>("Permission")
                         .HasColumnType("integer");
@@ -3185,6 +3806,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -3258,6 +3890,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -3296,6 +3939,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -3340,6 +3994,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -3379,6 +4044,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -3502,6 +4178,17 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("ThumbnailUrl")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -3581,6 +4268,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -3619,6 +4317,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -3660,6 +4369,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -3696,6 +4416,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3742,6 +4473,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -3784,6 +4526,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -3823,6 +4576,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3867,8 +4631,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("ReasonText")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReasonType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -3905,6 +4686,20 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -3987,6 +4782,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("SubPostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -4089,6 +4895,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -4161,6 +4978,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -4199,6 +5027,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
@@ -4243,6 +5082,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid");
 
@@ -4282,6 +5132,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid>("PostId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -4351,6 +5212,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<double>("Size")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(255)
@@ -4428,6 +5300,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
@@ -4467,8 +5350,19 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<string>("OldValue")
                         .HasColumnType("text");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
                     b.Property<Guid>("SystemSettingId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -4512,6 +5406,17 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -4547,6 +5452,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TagId")
                         .HasColumnType("uuid");
@@ -4707,6 +5623,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("StorageLimit")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
@@ -4762,6 +5689,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -4805,6 +5743,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid>("SubPostId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -4838,6 +5787,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserFollowerId")
                         .HasColumnType("uuid");
@@ -4875,6 +5835,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -4921,6 +5892,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<int>("OtpType")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Token")
                         .HasColumnType("text");
 
@@ -4953,6 +5935,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserRefereeId")
                         .HasColumnType("uuid");
@@ -4998,6 +5991,17 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -5030,6 +6034,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserId1")
                         .HasColumnType("uuid");
@@ -5088,6 +6103,17 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("SocialId")
                         .HasColumnType("text");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Type")
                         .HasColumnType("text");

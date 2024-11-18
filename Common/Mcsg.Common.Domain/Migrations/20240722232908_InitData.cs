@@ -48,7 +48,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,10 +89,15 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReasonType = table.Column<int>(type: "integer", nullable: true),
+                    ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -115,7 +123,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -147,7 +158,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -168,7 +182,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -206,10 +223,15 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReasonType = table.Column<int>(type: "integer", nullable: true),
+                    ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -231,7 +253,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -254,7 +279,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -278,7 +306,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -413,10 +444,15 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReasonType = table.Column<int>(type: "integer", nullable: true),
+                    ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -454,10 +490,15 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     EntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     EntityType = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    ExpiredBlock = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReasonType = table.Column<int>(type: "integer", nullable: true),
+                    ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -482,7 +523,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -501,7 +545,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -524,7 +571,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -544,7 +594,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -588,6 +641,9 @@ namespace Mcsg.Common.Domain.Migrations
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
                     MinioInstance = table.Column<int>(type: "integer", nullable: false),
                     StorageLimit = table.Column<int>(type: "integer", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -627,7 +683,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -694,6 +753,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -737,8 +799,12 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ReportId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     ReasonType = table.Column<int>(type: "integer", nullable: false),
                     ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
@@ -773,6 +839,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -816,8 +885,12 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ReportId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     ReasonType = table.Column<int>(type: "integer", nullable: false),
                     ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
@@ -854,7 +927,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -880,7 +956,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -914,7 +993,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -962,6 +1044,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -1005,8 +1090,12 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ReportId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     ReasonType = table.Column<int>(type: "integer", nullable: false),
                     ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
@@ -1040,6 +1129,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -1083,8 +1175,12 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ReportId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     ReasonType = table.Column<int>(type: "integer", nullable: false),
                     ReasonText = table.Column<string>(type: "text", nullable: true)
                 },
@@ -1121,7 +1217,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1154,7 +1253,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1183,7 +1285,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1239,7 +1344,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1294,7 +1402,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1328,7 +1439,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1469,6 +1583,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1502,6 +1619,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1535,6 +1655,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
@@ -1564,6 +1687,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1599,6 +1725,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1627,7 +1756,6 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Order = table.Column<float>(type: "real", nullable: false),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -1635,6 +1763,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
@@ -1650,7 +1781,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
                     IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1682,6 +1814,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1715,6 +1850,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1748,6 +1886,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
@@ -1777,6 +1918,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1812,6 +1956,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1840,7 +1987,6 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Order = table.Column<float>(type: "real", nullable: false),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     IsAllowDownload = table.Column<bool>(type: "boolean", nullable: false),
@@ -1849,6 +1995,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
@@ -1864,7 +2013,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
                     IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1909,7 +2059,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1934,7 +2087,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1965,6 +2121,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -1998,6 +2157,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2031,6 +2193,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
@@ -2060,6 +2225,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2095,6 +2263,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2123,12 +2294,14 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Order = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
@@ -2144,7 +2317,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
                     IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2176,6 +2350,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2209,6 +2386,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2242,6 +2422,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: true),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
@@ -2271,6 +2454,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2306,6 +2492,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2334,7 +2523,6 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    Order = table.Column<float>(type: "real", nullable: false),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -2342,6 +2530,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Permission = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
@@ -2357,7 +2548,8 @@ namespace Mcsg.Common.Domain.Migrations
                     IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
                     ExternalCode = table.Column<string>(type: "text", nullable: true),
                     IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
-                    ExternalResource = table.Column<int>(type: "integer", nullable: false)
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2389,6 +2581,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     TagId = table.Column<Guid>(type: "uuid", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2421,6 +2616,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     TagId = table.Column<Guid>(type: "uuid", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2453,6 +2651,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     TagId = table.Column<Guid>(type: "uuid", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2485,6 +2686,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     TagId = table.Column<Guid>(type: "uuid", nullable: false),
                     PostId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -2517,7 +2721,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2548,6 +2755,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -2595,6 +2805,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2630,6 +2843,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -2677,6 +2893,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2712,6 +2931,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -2759,6 +2981,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2794,7 +3019,10 @@ namespace Mcsg.Common.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2826,6 +3054,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
@@ -2873,6 +3104,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -2908,6 +3142,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -2955,6 +3192,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3002,6 +3242,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3049,6 +3292,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3096,6 +3342,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3143,6 +3392,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3190,6 +3442,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3237,6 +3492,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Body = table.Column<string>(type: "text", nullable: true),
                     CustomNote = table.Column<string>(type: "text", nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -3284,6 +3542,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3319,6 +3580,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3354,6 +3618,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3389,6 +3656,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3424,6 +3694,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3459,6 +3732,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3494,6 +3770,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -3529,6 +3808,9 @@ namespace Mcsg.Common.Domain.Migrations
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     ParentId = table.Column<Guid>(type: "uuid", nullable: true),
                     TargetId = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),

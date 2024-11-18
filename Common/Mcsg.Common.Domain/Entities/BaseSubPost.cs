@@ -33,6 +33,7 @@ public class BaseSubPost : AuditableHasPrivateEntity
     public string? ExternalCode { get; set; }
     public bool IsExclusive { get; set; }
     public ExternalResource ExternalResource { get; set; }
+    public float Order { get; set; }
 
     /// <summary>
     /// PostHashId
