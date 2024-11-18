@@ -24,4 +24,5 @@ public class PostCommentResp
     public float? Order { get; set; }
     public Guid PostIdOfPost { get; set; }
     public PostType PostType { get; set; }
+    public bool IsDeleted { get; set; }
 }

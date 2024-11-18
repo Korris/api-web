@@ -11,12 +11,14 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Extensions;
 using Common.Interfaces;
+using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Interfaces;
 using Models;
 using Requests;
+using static Common.SeedWork.Constants.Error;
 
 public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : BaseReaction, new()
 {
@@ -33,16 +35,29 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
         _smartCountService = smartCountService;
     }
 
-    public async Task<bool> AddReaction(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> AddReaction(ReactionReactR request)
     {
         var targetId = request.TargetId;
         var userId = request.UserId ?? Guid.Empty;
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
+        var postId = await _context.ComicSubPostAvailable
+                                   .Where(p => p.Id == targetId)
+                                   .Select(p => p.PostId)
+                                   .FirstOrDefaultAsync();
+
+        var response = new ReactionUpdateResponse
+        {
+            MicroService = MicroService.Comic.ToString(),
+            TargetId = postId != Guid.Empty ? postId : targetId,
+            SubPostId = postId != Guid.Empty ? targetId : null
+        };
+
         var ett = await GetReactionByUser(request);
         if (ett != null)
         {
+            response.ReactionId = ett.Id;
             bool isChange = false;
             if (ett.IsDelete)
             {
@@ -60,16 +75,13 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
             if (isChange)
             {
                 // Update when revert delete or update new type
-                var updateResult = await _context.SaveChangesAsync(default) > 0;
+                await _context.SaveChangesAsync(default);
 
                 // Send Notification
                 await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
 
-                return updateResult;
-            }
-            else
-            {
-                return false;
+                response.ReactionId = ett.Id;
+                response.IsDeleted = ett.IsDelete;
             }
         }
         else
@@ -79,11 +91,13 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
             {
                 await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
                 await AddCountQueue(targetId);
-                return true;
-            }
 
-            return false;
+                response.ReactionId = ett.Id;
+                response.IsDeleted = ett.IsDelete;
+            }
         }
+
+        return response;
     }
 
     public async Task<ReactionsResponse> GetReactions(ReactionReactR request)
@@ -155,18 +169,33 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
         }
     }
 
-    public async Task<bool> RemoveReaction(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> RemoveReaction(ReactionReactR request)
     {
+        var targetId = request.TargetId;
+
+        var postId = await _context.ComicSubPostAvailable
+                                   .Where(p => p.Id == targetId)
+                                   .Select(p => p.PostId)
+                                   .FirstOrDefaultAsync();
+
         var ett = await GetReactionByUser(request);
         if (ett == null)
         {
-            return false;
+            throw new NotFoundException(nameof(E002), E002);
         }
 
         ett.IsDelete = true;
         await RemoveCountQueue(request.TargetId);
+        await _context.SaveChangesAsync(default);
 
-        return await _context.SaveChangesAsync(default) > 0;
+        return new ReactionUpdateResponse
+        {
+            ReactionId = ett.Id,
+            MicroService = MicroService.Comic.ToString(),
+            TargetId = postId != Guid.Empty ? postId : targetId,
+            SubPostId = postId != Guid.Empty ? targetId : null,
+            IsDeleted = ett.IsDelete
+        };
     }
 
     public async Task<T?> GetReactionByUser(ReactionReactR request)

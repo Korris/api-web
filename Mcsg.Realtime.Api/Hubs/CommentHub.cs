@@ -76,6 +76,8 @@ public class CommentHub : Hub
         var service = GetCommentService(req.MicroService);
         var resp = await service.PostComment(req);
 
+        await SendToAuthor(req.MicroService, req.Type, resp.Id, resp.PostId, resp.PostIdOfPost, false);
+
         // Then broadcast the comment to all connected clients
         await Clients.All.SendAsync(RealTimeTopic.ReceiveComment, JsonConvert.SerializeObject(resp));
     }
@@ -108,6 +110,8 @@ public class CommentHub : Hub
         var service = GetCommentService(req.MicroService);
         var resp = await service.DeleteComment(req);
 
+        await SendToAuthor(req.MicroService, req.Type, resp.Id, resp.PostId, resp.PostIdOfPost, true);
+
         // Then broadcast the comment to all connected clients
         await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteComment, JsonConvert.SerializeObject(resp));
     }
@@ -123,6 +127,8 @@ public class CommentHub : Hub
         req.Analyze(Context.GetHttpContext());
         var service = GetReplyService(req.MicroService);
         var resp = await service.ReplyComment(req);
+
+        await SendToAuthor(req.MicroService, req.Type, resp.Id, resp.PostId, resp.PostIdOfPost, false);
 
         // Then broadcast the reply to the clients of the comment
         await Clients.All.SendAsync(RealTimeTopic.ReceiveReply, JsonConvert.SerializeObject(resp));
@@ -156,6 +162,8 @@ public class CommentHub : Hub
         var service = GetReplyService(req.MicroService);
         var resp = await service.DeleteReplyComment(req);
 
+        await SendToAuthor(req.MicroService, req.Type, resp.Id, resp.PostId, resp.PostIdOfPost, true);
+
         // Then broadcast the reply to the clients of the comment
         await Clients.All.SendAsync(RealTimeTopic.ReceiveDeleteReply, JsonConvert.SerializeObject(resp));
     }
@@ -180,6 +188,32 @@ public class CommentHub : Hub
             nameof(MicroService.Story) => _storyReplyService,
             _ => _socialReplyService
         };
+    }
+
+    /// <summary>
+    /// Send to author to call API tracking
+    /// </summary>
+    /// <param name="microService"></param>
+    /// <param name="type"></param>
+    /// <param name="commentId"></param>
+    /// <param name="postId"></param>
+    /// <param name="postIdOfPost"></param>
+    /// <param name="isDeleted"></param>
+    /// <returns></returns>
+    private async Task SendToAuthor(string microService, string type, Guid commentId, Guid postId, Guid postIdOfPost, bool isDeleted)
+    {
+        var isPost = type == "post";
+        var response = new NotificationSuccessResponse
+        {
+            CommentId = commentId,
+            MicroService = microService,
+            PostId = isPost ? postId : postIdOfPost,
+            SubPostId = isPost ? null : postId,
+            IsDeleted = isDeleted
+        };
+
+        var data = JsonConvert.SerializeObject(response);
+        await Clients.Client(Context.ConnectionId).SendAsync(RealTimeTopic.ReceiveSendSuccessComment, data);
     }
 
     #endregion

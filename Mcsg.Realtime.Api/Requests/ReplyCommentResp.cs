@@ -28,4 +28,5 @@ public class ReplyCommentResp
     public Guid PostIdOfPost { get; set; }
     public Guid ReplyCommentId { get; set; }
     public Guid CommentId { get; set; }
+    public bool IsDeleted { get; set; }
 }

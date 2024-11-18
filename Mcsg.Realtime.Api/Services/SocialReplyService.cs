@@ -102,8 +102,6 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
             };
         }
 
-        await _notificationService.SendSuccessReplyNotification(response, req.MicroService);
-
         if (!string.IsNullOrWhiteSpace(pDto.HashId))
         {
             response.AuthorName = authorName;
@@ -435,6 +433,11 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
 
+        var postIdOfPost = await _context.SocialSubPosts
+            .Where(p => p.Id == comment.PostId)
+            .Select(p => p.PostId)
+            .FirstOrDefaultAsync();
+
         var command = string.Format(DeleteReplyCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,
                         new
@@ -452,6 +455,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
             Type = PostTypes.SubPost,
             Id = comment.Id,
             ReplyToCommentId = comment.ParentId.Value,
+            PostIdOfPost = postIdOfPost
         };
     }
     #endregion

@@ -6,4 +6,5 @@ public class NotificationSuccessResponse
     public string MicroService { get; set; }
     public Guid PostId { get; set; }
     public Guid? SubPostId { get; set; }
+    public bool IsDeleted { get; set; }
 }

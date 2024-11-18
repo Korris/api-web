@@ -6,8 +6,8 @@ using Requests;
 
 public interface ISubPostReactService
 {
-    Task<bool> AddReactionToSubPost(ReactionReactR request);
-    Task<bool> RemoveReactionToSubPost(ReactionReactR request);
+    Task<ReactionUpdateResponse> AddReactionToSubPost(ReactionReactR request);
+    Task<ReactionUpdateResponse> RemoveReactionToSubPost(ReactionReactR request);
     Task<ReactionsResponse> GetReactions(ReactionReactR request);
     Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request);
 }

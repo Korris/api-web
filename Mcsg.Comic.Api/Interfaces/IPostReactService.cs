@@ -6,8 +6,8 @@ using Requests;
 
 public interface IPostReactService
 {
-    Task<bool> AddReactionToPost(ReactionReactR request);
-    Task<bool> RemoveReactionToPost(ReactionReactR request);
+    Task<ReactionUpdateResponse> AddReactionToPost(ReactionReactR request);
+    Task<ReactionUpdateResponse> RemoveReactionToPost(ReactionReactR request);
     Task<ReactionsResponse> GetReactions(ReactionReactR request);
     Task<PagedResponse<ReactionsUserModel>> GetReactionsByTargetAsync(Guid targetId, FeedReactionByTargetR request);
 }

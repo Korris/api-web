@@ -15,7 +15,7 @@ public partial class PostReactService : IPostReactService
         _reactService = reactService;
     }
 
-    public async Task<bool> AddReactionToPost(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> AddReactionToPost(ReactionReactR request)
     {
         return await _reactService.AddReaction(request);
     }
@@ -30,7 +30,7 @@ public partial class PostReactService : IPostReactService
         return await _reactService.GetReactionsByTargetAsync(targetId, request);
     }
 
-    public async Task<bool> RemoveReactionToPost(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> RemoveReactionToPost(ReactionReactR request)
     {
         return await _reactService.RemoveReaction(request);
     }

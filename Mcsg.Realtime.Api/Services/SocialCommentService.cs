@@ -105,8 +105,6 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
             };
         }
 
-        await _notificationService.SendSuccessCommentNotification(response, req.MicroService);
-
         response.PostType = PostType.Feed;
         /// Check createdby in mention will not send this notification to notice that someone comment on their post
         if (!string.IsNullOrEmpty(pDto.HashId) && !receiverIds.Contains(pDto.CreateBy))
