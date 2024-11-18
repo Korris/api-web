@@ -13,6 +13,7 @@ public class ChapterBasicResponse : SubPostBasic
     public Guid? UserExclusiveId { get; set; }
     public bool IsPremium { get; set; }
     public float Sort { get; set; }
+    public DateTime? ModifiedOn { get; set; }
 }
 public class ChapterResponse : ChapterBasicResponse
 {

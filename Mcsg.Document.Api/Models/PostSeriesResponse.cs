@@ -43,10 +43,7 @@ public class PostSeriesResponse : PostDto
     public bool HideAndroid => (Hide & HideOption.Android) == HideOption.Android;
     public bool HideWeb => (Hide & HideOption.Web) == HideOption.Web;
     public bool HideAll => (Hide & HideOption.All) == HideOption.All;
-}
-public class PostSeriesQueryDbResponse : PostSeriesResponse
-{
-    public Guid? AuthorId { get; set; }
+    public DateTime? ModifiedOn { get; set; }
 }
 
 public class PostSeriesAllTopResponse

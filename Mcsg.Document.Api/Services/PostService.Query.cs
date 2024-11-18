@@ -4,139 +4,6 @@
 
     public partial class PostService
     {
-        private string GetTotalCommentQuery => $@"SELECT 
-                                                        (SELECT COUNT(*)
-                                                         FROM ""document"".""DocumentPostComments"" pc
-                                                         JOIN ""document"".""DocumentPosts"" p ON pc.""PostId""= p.""Id"" 
-                                                         WHERE p.""HashId"" = @HashId
-                                                         And pc.""IsDelete"" = false) 
-                                                        +
-                                                        (SELECT COUNT(*)
-                                                         FROM ""document"".""DocumentSubPostComments"" spc
-                                                         JOIN ""document"".""DocumentSubPosts"" sp ON spc.""PostId""= sp.""Id""
-                                                         JOIN ""document"".""DocumentPosts"" p ON sp.""PostId""= p.""Id"" 
-                                                         WHERE p.""HashId"" = @HashId
-                                                         AND spc.""IsDelete"" = false) AS total_comment_count";
-        private string GetSeriesQuery
-        {
-            get
-            {
-                return @"SELECT 
-                        p.""Id"", 
-                        p.""Title"", 
-                        p.""Body"",
-                        p.""HashId"", 
-                        p.""AuthorId"",
-                        p.""AuthorName"",
-                        p.""UserId"",
-                        p.""ThumbnailUrl"",
-                        p.""CoverUrl"",
-                        p.""Permission"",
-                        p.""IsMature"",
-                        p.""IsCompleted"",
-                        p.""Hide"",
-                        p.""ExternalResource"",
-                        p.""IsAllowDownload"",
-                        postview.""ViewCount"",
-                        u.""ProfileName"", 
-                        u.""UserName"",
-                        u.""ProfileId"",
-                        u.""Avatar"" as ""UserAvatar"",
-                        p.""Status"", p.""Type"", 
-                        array_agg(tag.""Name"") as Tags,
-                        p.""CreatedOn"",
-                        sp.""Id"", 
-                        sp.""HashId"",sp.""IsExclusive"",
-                        sp.""Title"",
-                        sp.""Order"",
-                        sp.""Status"",
-                        sp.""IsPremium"",
-                        sp.""Permission"",
-                        sp.""Sort"",
-                        sp.""UserId"",
-                        COUNT(DISTINCT spcm.""Id"") as ""CommentCount"",
-                        subpostview.""ViewCount"",
-                        sp.""CreatedOn"",
-                        sp.""PublishDate"",
-                        ux.""Id"" as ""UserExclusiveId"" ,
-                        sp.""CreatorNote"",
-                        sp.""IsEnableComment""
-                        FROM ""document"".""DocumentPosts"" p
-                        LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id""
-                        LEFT JOIN ""document"".""DocumentTagPosts"" tp ON tp.""PostId"" = p.""Id"" AND tp.""IsDelete"" = false
-                        LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id""
-                        LEFT JOIN ""document"".""DocumentSubPosts"" sp ON sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
-                        AND sp.""Status"" = ANY (@PostStatus) AND sp.""PublishDate"" <= @CurrentDate
-                        [WithPermission]  [Not-load-chapter]
-                        LEFT JOIN ""UserExclusiveSubPosts"" ux ON ux.""SubPostId"" = sp.""Id"" AND ux.""UserId"" = @UserId
-                        LEFT JOIN ""document"".""DocumentSubPostComments"" spcm ON spcm.""PostId"" = sp.""Id"" AND spcm.""IsDelete"" = false
-                        --post view count
-                        LEFT JOIN LATERAL (
-                                SELECT 
-                                ""EntityId"", 
-                                ""Count"" as ""ViewCount""
-                                    FROM ""SmartCountActions"" 
-                                WHERE ""EntityId"" = p.""Id"" AND ""EntityType"" = 0 AND ""ActionType"" = 2
-LIMIT 1
-                                ) postview ON postview.""EntityId"" = p.""Id""
---subpost view count
-LEFT JOIN LATERAL (
-                                SELECT 
-                                ""EntityId"", 
-                                ""Count"" as ""ViewCount""
-                                    FROM ""SmartCountActions"" 
-                                WHERE ""EntityId"" = sp.""Id"" AND ""EntityType"" = 1 AND ""ActionType"" = 2
-LIMIT 1
-                                ) subpostview ON subpostview.""EntityId"" = sp.""Id""
-                        WHERE 
-                        p.""HashId"" = @HashId AND p.""IsDelete"" = false 
-                            AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL))
-                            AND p.""Status"" = ANY (@PostStatus)
-                        -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
-                        GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""Permission"",p.""UserId"",
-                        p.""IsMature"",p.""IsCompleted"",postview.""ViewCount"", p. ""Hide"", p.""ExternalResource"", p.""IsAllowDownload"",
-                        p.""AuthorId"",p.""AuthorName"",u.""ProfileName"", u.""UserName"" ,u.""ProfileId"",u.""Avatar"", p.""CreatedOn"",
-                        p.""Status"", p.""Type"", p.""CreatedOn"",sp.""Id"",sp.""HashId"",sp.""Title"",sp.""Order"", sp.""Status"", sp.""IsPremium"" ,ux.""Id"",
-                        sp.""Permission"", sp.""UserId"",subpostview.""ViewCount"",
-                        sp.""PublishDate""
-                        ORDER BY sp.""Sort""
-                        ";
-            }
-        }
-
-        private string GetRelatedBoxPostQuery => @"
-                                select p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"", 
-                                COALESCE(pr.reaction_count, 0) AS TotalReacts,
-                                COALESCE(pc.comment_count, 0) + COALESCE(spc.sub_comment_count, 0) AS TotalComment,
-                                CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE NULL END AS ReactionStr,
-                                CASE WHEN COUNT(t.""Id"") > 0 THEN array_agg(DISTINCT t.""Name"") ELSE NULL END as Tags
-                                from ""document"".""DocumentPosts"" p
-                                LEFT JOIN ""document"".""DocumentTagPosts"" tp ON tp.""PostId"" = p.""Id""
-                                LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id"" 
-                                LEFT JOIN 
-                                    (SELECT ""TargetId"", COUNT(*) AS reaction_count 
-                                     FROM ""document"".""DocumentPostReactions"" 
-                                         WHERE ""IsDelete"" = false
-                                     GROUP BY ""TargetId"") pr ON p.""Id""= pr.""TargetId""
-                                LEFT JOIN 
-                                    (SELECT ""PostId"", COUNT(*) AS comment_count 
-                                     FROM ""document"".""DocumentPostComments"" 
-                                                  WHERE ""IsDelete"" = false
-                                     GROUP BY ""PostId"") pc ON p.""Id"" = pc.""PostId""
-                                LEFT JOIN 
-                                    (SELECT sp.""PostId"", COUNT(spc.""Id"") AS sub_comment_count 
-                                     FROM ""document"".""DocumentSubPostComments"" spc
-                                     JOIN ""document"".""DocumentSubPosts"" sp ON spc.""PostId""= sp.""Id""
-                                     WHERE spc.""IsDelete""= false
-                                     GROUP BY sp.""PostId"") spc ON p.""Id"" = spc.""PostId""
-                                LEFT JOIN 
-                                    ""document"".""DocumentPostReactions"" r ON p.""Id"" = r.""TargetId"" AND r.""IsDelete"" = false
-                                WHERE p.""Type"" != 0
-                                And p.""IsDelete"" = false
-                                [QueryCondition]
-                                GROUP BY p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"",pr.reaction_count,pc.comment_count,spc.sub_comment_count
-                                ORDER BY RANDOM()
-                                LIMIT @Limit";
         private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
                         post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
                         post.""ChapterCount"",
@@ -210,7 +77,6 @@ LIMIT 1
                         ORDER BY ""[OrderBy]"" desc;
 
                         [CountResults] ";
-
 
         private string GetTopAllPostAllTypeByTagQuery
         {
@@ -499,6 +365,7 @@ LIMIT 1
             }
         }
         #endregion
+
         #region Top latestByTag - Favorite
 
         private string GetTopLatestPostByFavoriteQuery
@@ -874,63 +741,6 @@ LIMIT 1
             }
         }
         #endregion
-        private string PaginationGetAllPostTopByTagQuery
-        {
-            get
-            {
-                return @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-                        post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
-                        post.""ChapterCount"",
-                        post.""Status"", post.""Type"",post.""ViewCount"",
-                        post.""CreatedOn"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
-                        post.""SubPostStr"", 
-                        array_agg(tag.""Name"") as Tags from
-                            (SELECT  p.""Id"",
-                            p.""Title"", p.""Body"",  
-                            p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
-                            u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
-                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-                             postid.""SelectType"",
-                            p.""Status"", p.""Type"", p.""ViewCount"",
-                            p.""CreatedOn"",--sp.""Id"" as ""SPID"",
-                            --sp.""ChapterCount"" AS ""ChapterCount"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
-                             
-                            FROM ""document"".""DocumentPosts"" p
-                              INNER JOIN-- Select Id
-                             (
-                                [SelectPostIdsQuery] 
-                            ) postid 
-                             ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
-                            LEFT JOIN LATERAL 
-                            (
-                                SELECT ""Id"",""PostId"",""CreatedOn"",""Title"",""Order"", count(*) OVER() AS ""Total"" 
-                                FROM ""document"".""DocumentSubPosts"" sp 
-                                WHERE ""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
-                                GROUP BY ""Id"", ""PostId"", ""Title"",""Order""
-                                ORDER BY ""Order"" DESC
-                                LIMIT 2
-                            ) sp ON sp.""PostId"" = p.""Id"" 
-                            
-                            GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-                            sp.""Total"",
-                            u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
-                            p.""Status"", p.""Type"",p.""ViewCount"",
-                            p.""CreatedOn""
-                            ) 
-                        AS post
-                        LEFT JOIN ""document"".""DocumentTagPosts"" tp ON tp.""PostId"" = post.""Id""
-                        LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-                        GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
-                        post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
-                        post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", post.""ChapterCount"",
-                        post.""Status"", post.""Type"", post.""ViewCount"",
-                        post.""CreatedOn"",
-                        post.""SubPostStr"";";
-            }
-        }
 
         private string PaginationCountResult
         {
@@ -994,24 +804,8 @@ LIMIT 1
             }
         }
 
-
         #region Delete Subpost
-        private string GetSubPostsWithHashIdAndOrders
 
-        {
-            get
-            {
-                return @"SELECT sp.""Id"", sp.""Title"", sp.""PostId"", sp.""Sort"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
-                sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
-                sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
-                sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
-sp.""IsEnableComment"" 
-            FROM ""document"".""DocumentSubPosts"" sp
-            INNER JOIN ""document"".""DocumentPosts"" p ON sp.""PostId"" = p.""Id""
-            WHERE p.""HashId"" = @HashId AND (sp.""Sort"" = @Order1 OR sp.""Sort"" = @Order2 )
-            AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
-            }
-        }
         private string ExecSoftDeleteSubPost
         {
             get
@@ -1038,46 +832,6 @@ sp.""IsEnableComment""
             }
         }
         #endregion
-
-        private string GetCountPostByTypeQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""document"".""DocumentPosts"" 
-                                                   WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" = {(int)PostStatus.Public}";
-
-        private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""document"".""DocumentPosts"" p
-                                                   LEFT JOIN ""document"".""DocumentTagPosts"" tp on p.""Id"" = tp.""PostId""
-                                                   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
-                                                   WHERE p.""IsDelete"" = false 
-                                                   AND p.""Status"" = {(int)PostStatus.Public}
-                                                   AND t.""Name"" ILIKE @ExactKeyword";
-        private string PremiumWhereQuery
-        {
-            get
-            {
-                return @" AND (0). ";
-            }
-        }
-
-        private string GetPostRandomIdsQuery
-        {
-            get
-            {
-                return @"
-                        WITH newtable 
-                        AS
-                        (
-                        SELECT * FROM ""document"".""DocumentPosts"" p
-                            WHERE p.""IsDelete"" = false
-                            ORDER BY RANDOM()
-                            LIMIT @numOfItemNeedFilter
-                        )
-                        SELECT ""Id"" FROM newtable nt
-                        WHERE NOT nt.""Id"" = ANY(@postRandomIds)
-                        LIMIT @numOfItem
-                 ";
-            }
-        }
         private string GetPostDetailsQuery
         {
             get

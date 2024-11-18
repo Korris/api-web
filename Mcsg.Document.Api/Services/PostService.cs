@@ -198,86 +198,82 @@ public partial class PostService : BaseMinioS, IPostService
 
     public async Task<PostSeriesResponse> GetSeries(DocumentHashIdR req)
     {
-        var isLoadChapters = req.IsLoadChapters;
-        var hashId = req.HashId;
-        var query = string.Format(GetSeriesQuery, _postRepository.TableName);
-        string subNotLoadChapter = (isLoadChapters ? "" : @" AND sp.""Id"" IS NULL ");
-        query = query.Replace("[Not-load-chapter]", subNotLoadChapter);
+        PostSeriesResponse res;
 
+        var hashId = req.HashId;
         var userId = req.UserId;
 
-        //TODO Premium
-        query = AddWithPermission(query, userId);
-        //
-        PostSeriesQueryDbResponse dbPost = null;
-        await _postRepository
-            .Connection.QueryAsync<PostSeriesQueryDbResponse, ChapterBasicResponse, PostSeriesQueryDbResponse>(query,
-            (feed, subpost) =>
-            {
-                if (dbPost == null)
-                {
-                    dbPost = feed;
-                    if (dbPost.Tags != null && dbPost.Tags.Length > 1)
-                        dbPost.Tags = dbPost.Tags.Distinct().ToArray();
-                }
-                if (subpost != null)
-                {
-                    if (dbPost.Chapters == null)
-                        dbPost.Chapters = new List<ChapterBasicResponse>();
+        var pPost = new
+        {
+            HashId = hashId,
+            req.Hides,
+            PostStatuses = StatusUtils.PostStatusInt
+        };
+        var qPost = @"SELECT * FROM document.fn_document_post(@HashId, @Hides, @PostStatuses)";
 
-                    if (subpost != null && subpost.Id != Guid.Empty)
-                    {
-                        subpost.ViewCount = subpost.ViewCount ?? 0;
-                        subpost.IsCensored = !req.IsAdministrator && subpost.Status == PostStatus.Inactive && req.UserId != subpost.UserId;
-                        dbPost.Chapters.Add(subpost);
-                    }
-
-                }
-                return feed;
-            },
-            param: new
+        using (var connection = _context.Database.GetDbConnection())
+        {
+            res = (await connection.QueryAsync<PostSeriesResponse>(qPost, pPost)).FirstOrDefault() ?? new PostSeriesResponse();
+            if (res == null || (res.Status == PostStatus.Draft && res.UserId != userId))
             {
-                HashId = hashId,
-                IsAccessPrivate = false,
-                CurrentDate = DateTime.UtcNow,
+                throw new NotFoundException(nameof(E204), E204);
+            }
+
+            #region -- Reaction --
+            var qReaction = @"SELECT * FROM document.fn_document_reaction_counts(@TargetIds, @UserId)";
+            var pReaction = new { TargetIds = new List<Guid> { res.Id }, UserId = userId };
+            var reactions = await connection.QueryAsync<CommentReactionResponseQuery>(qReaction, pReaction);
+            #endregion
+
+            #region -- Subposts --
+            var pSubPost = new
+            {
+                PostId = res.Id,
                 UserId = userId,
-                Hide = req.Hides,
-                PostStatus = StatusUtils.PostStatusInt,
-                req.UserName
-            }, splitOn: "Id, Id");
-        //Add view
-        if (dbPost == null)
-        {
-            throw new NotFoundException(nameof(E204), E204);
+                PostStatuses = StatusUtils.PostStatusInt,
+                req.IsLoadChapters
+            };
+            var qSubPost = @"SELECT * FROM document.fn_document_subposts(@PostId, @UserId, @PostStatuses, @IsLoadChapters)";
+            var subposts = await connection.QueryAsync<ChapterBasicResponse>(qSubPost, pSubPost);
+            #endregion
+
+            var latestModifiedOn = res.ModifiedOn;
+            res.Chapters = subposts.Where(p => p?.Id != Guid.Empty)
+                .Select(p =>
+                {
+                    p.IsCensored = !req.IsAdministrator && p.Status == PostStatus.Inactive && req.UserId != p.UserId;
+                    latestModifiedOn = p.ModifiedOn > latestModifiedOn ? p.ModifiedOn : latestModifiedOn;
+                    return p;
+                })
+                .ToList();
+
+            res.TotalComment = await _context.DocumentPostAvailable.Where(p => p.HashId == hashId)
+                .Select(p => new
+                {
+                    PostComments = p.DocumentPostComments.Count(q => !q.IsDelete),
+                    SubPostComments = p.DocumentSubPosts.Sum(q => q.DocumentSubPostComments.Count(x => !x.IsDelete))
+                })
+                .Select(p => p.PostComments + p.SubPostComments)
+                .SumAsync();
+            res.IsFollowing = userId != null && await _context.DocumentPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == userId && p.PostId == res.Id);
+
+            MappingFeedRespone(res);
+
+            res.ModifiedOn = latestModifiedOn;
+            res.CoverHashId = Path.GetFileNameWithoutExtension(res.CoverUrl);
+            res.ThumbnailHashId = Path.GetFileNameWithoutExtension(res.ThumbnailUrl.RemoveNameSuffix());
+
+            if (reactions.Any())
+            {
+                MapReactionPostSeriesResponse(res, reactions.ToList());
+            }
+
+            res.FollowCount = await _context.DocumentPostFavoriteAvailable.CountAsync(p => p.PostId == res.Id);
+            res.IsCensored = !req.IsAdministrator && res.Status == PostStatus.Inactive && req.UserName != res.UserName;
+            res.IsBlur = res.Status == PostStatus.Inactive || res.IsMature;
         }
-        if (dbPost.Status == PostStatus.Draft && dbPost.UserId != userId)
-        {
-            throw new NotFoundException(nameof(E204), E204);
-        }
-        dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
-        dbPost.IsFollowing = userId == null ? false : await _context.DocumentPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
-        var result = MappingFeedRespone(dbPost, req.UserId);
 
-        result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
-        result.ThumbnailHashId = Path.GetFileNameWithoutExtension(result.ThumbnailUrl.RemoveNameSuffix());
-
-        var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
-        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Document.""DocumentPostReactions"""), new
-        {
-            TargetIds = new List<Guid>() { dbPost.Id },
-            UserId = userId
-        });
-
-        if (postReactionResponse.Count() > 0)
-        {
-            MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
-        }
-
-        result.FollowCount = await _context.DocumentPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
-        result.IsCensored = !req.IsAdministrator && result.Status == PostStatus.Inactive && req.UserName != result.UserName;
-        result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
-
-        return result;
+        return res;
     }
 
     private void MapReactionPostSeriesResponse(PostSeriesResponse item, List<CommentReactionResponseQuery> reactions)
@@ -966,57 +962,22 @@ public partial class PostService : BaseMinioS, IPostService
         return result;
     }
 
-    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item, Guid? userId)
+    private void MappingFeedRespone(PostSeriesResponse item)
     {
-        if (item == null)
-        {
-            return new PostSeriesResponse();
-        }
-
         var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
         var freeChapters = item.Chapters.Where(x => x.Permission == PostPermission.Public).Count();
         var exclusiveChapters = item.Chapters.Where(x => x.UserExclusiveId.HasValue).Count();
         var totalChapters = item.Chapters.Count;
         var estimateBuyChapters = totalChapters - freeChapters - exclusiveChapters;
 
-        var itemResponse = new PostSeriesResponse()
-        {
-            Id = item.Id,
-            Title = item.Title,
-            HashId = item.HashId,
-            UserId = item.UserId,
-            AuthorName = item.AuthorName,
-            IsCurrentUserAuthor = userId == item.UserId,
-            ThumbnailUrl = item.ThumbnailUrl.AppendNameSuffix(),
-            CoverUrl = item.CoverUrl,
-            CreatedOn = item.CreatedOn,
-            ProfileId = item.ProfileId,
-            UserName = item.UserName,
-            ProfileName = item.ProfileName,
-            UserAvatar = item.UserAvatar,
-            Type = item.Type,
-            IsMature = item.IsMature,
-            IsCompleted = item.IsCompleted,
-            Permission = item.Permission,
-            Status = item.Status,
-            Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0],
-            Body = item.Body,
-            Chapters = item.Chapters,
-            ChapterCount = totalChapters,
-            ViewCount = item.ViewCount + totalChapterView,
-            TotalChapters = new ChaptersExclusiveData() { Count = totalChapters, Amount = totalChapters * Default.ChapterPrice },
-            FreeChapters = new ChaptersExclusiveData() { Count = freeChapters, Amount = freeChapters * Default.ChapterPrice },
-            ExclusiveChapters = new ChaptersExclusiveData() { Count = exclusiveChapters, Amount = exclusiveChapters * Default.ChapterPrice },
-            EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice },
-            SeriesStatus = item.ToSeriesStatus(),
-            TotalComment = item.TotalComment,
-            IsFollowing = item.IsFollowing,
-            ExternalResource = item.ExternalResource,
-            Hide = item.Hide,
-            IsAllowDownload = item.IsAllowDownload
-        };
-
-        return itemResponse;
+        item.ThumbnailUrl = item.ThumbnailUrl.AppendNameSuffix();
+        item.Tags = (item.Tags != null && item.Tags[0] != null) ? item.Tags : new string[0];
+        item.ChapterCount = totalChapters;
+        item.ViewCount = item.ViewCount + totalChapterView;
+        item.TotalChapters = new ChaptersExclusiveData() { Count = totalChapters, Amount = totalChapters * Default.ChapterPrice };
+        item.FreeChapters = new ChaptersExclusiveData() { Count = freeChapters, Amount = freeChapters * Default.ChapterPrice };
+        item.ExclusiveChapters = new ChaptersExclusiveData() { Count = exclusiveChapters, Amount = exclusiveChapters * Default.ChapterPrice };
+        item.EstimateBuyChapters = new ChaptersExclusiveData() { Count = estimateBuyChapters, Amount = estimateBuyChapters * Default.ChapterPrice };
     }
 
     public async Task<FavoritePostResponse> FollowPost(IdBaseR request)
