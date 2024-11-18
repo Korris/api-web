@@ -190,7 +190,7 @@ public partial class FeedService : IFeedService
         }
         else
         {
-            queryCondition = $@" WHERE qpost.""Body"" ILIKE '%{feedLoadReq.Keyword}%'
+            queryCondition = $@" WHERE unaccent(qpost.""Body"") ILIKE unaccent('%{feedLoadReq.Keyword}%')
                                      AND qpost.""Type""=@PostType
                                      AND qpost.""Status"" = ANY (@PostStatus)
                                      AND qpost.""IsDelete""=false";
