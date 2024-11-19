@@ -55,8 +55,7 @@ public class TagController : ControllerBase
     }
 
     [HttpGet("search-tags")]
-    //[Authorize]
-    /// Todo Open Authorize after test
+    [Authorize]
     public async Task<IActionResult> SearchTags([FromQuery] TagSearchKeywordR searchTagsReq)
     {
         var result = await _tagService.SearchTagsByName(searchTagsReq);

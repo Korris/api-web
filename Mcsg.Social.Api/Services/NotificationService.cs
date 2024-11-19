@@ -481,7 +481,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     private async Task CheckDataFollowPost<P>(IEnumerable<Notification.SearchDto> dtos, string content) where P : BasePost
     {
-        var locationIds = dtos.Select(p => p.LocationId).Distinct().ToList();
+        var locationIds = dtos.Where(p => p.LocationId != null).Select(p => p.LocationId).Distinct().ToList();
         if (locationIds.Count == 0)
         {
             return;
@@ -491,7 +491,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
         var posts = await qPost.Where(p => locationIds.Contains(p.Id)).Select(p => new { p.Title, p.HashId }).ToListAsync();
         var dic = posts.ToDictionary(p => p.HashId + "", p => p.Title);
-        foreach (var i in dtos)
+        var newDtos = dtos.Where(p => !string.IsNullOrWhiteSpace(p.LocationHashId));
+        foreach (var i in newDtos)
         {
             var title = dic.GetValueOrDefault(i.LocationHashId);
             if (title == null)
@@ -538,11 +539,11 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     private async Task CheckDataCommentOnSubPost<P, SP>(IEnumerable<Notification.SearchDto> dtos, IEnumerable<Guid?> locationIds) where P : BasePost where SP : BaseSubPost
     {
-        if (!locationIds.Any())
+        var ids = locationIds.Where(p => p != null).Distinct().ToList();
+        if (ids.Count == 0)
         {
             return;
         }
-        var ids = locationIds.Distinct().ToList();
 
         var qPost = _context.Set<P>().Where(p => !p.IsDelete);
         var qSubPost = _context.Set<SP>().Where(p => !p.IsDelete);

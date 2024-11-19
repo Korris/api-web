@@ -19,7 +19,7 @@ public class NotificationController : ControllerBase
     }
 
     [HttpGet("list")]
-    //[Authorize]
+    [Authorize]
     public async Task<IActionResult> GetNotificationByReceiver([FromQuery] NotificationR request)
     {
         request.Analyze(HttpContext);
