@@ -921,6 +921,7 @@ public partial class PostService : BaseMinioS, IPostService
         post.Status = request.IsSaveAndPublish ? post.Status : PostStatus.Draft;
         post.IsCompleted = request.IsCompleted;
         post.IsAllowDownload = request.IsAllowDownload;
+        post.ModifiedOn = DateTime.UtcNow;
 
         var result = new PostSeriesResponse
         {
@@ -940,7 +941,8 @@ public partial class PostService : BaseMinioS, IPostService
             AuthorName = post.AuthorName,
             IsCurrentUserAuthor = request.IsCurrentUserAuthor,
             IsCompleted = request.IsCompleted,
-            IsAllowDownload = request.IsAllowDownload
+            IsAllowDownload = request.IsAllowDownload,
+            ModifiedOn = post.ModifiedOn
         };
 
         await _context.SaveChangesAsync(default);
