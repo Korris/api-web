@@ -41,6 +41,7 @@ public static class DiReportExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddReportQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<ReportViewR, SingleResponse>, ReportViewH>(life);
     }
 
     #endregion

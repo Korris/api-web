@@ -3,6 +3,7 @@
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
+using SeedWork.Converters;
 using SeedWork.Dtos;
 
 partial class SocialReport
@@ -112,6 +113,63 @@ partial class SocialReport
         /// ReasonText
         /// </summary>
         public string? ReasonText { get; set; }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// ViewDetail
+    /// </summary>
+    public class ViewDetailDto : BaseDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// CreatedOn
+        /// </summary>
+        [JsonConverter(typeof(IsoDateTimeConverter))]
+        public DateTime CreatedOn { get; set; }
+
+        /// <summary>
+        /// SubPostOrder
+        /// </summary>
+        public float SubPostOrder { get; set; }
+
+        /// <summary>
+        /// PostTitle
+        /// </summary>
+        public string? PostTitle { get; set; }
+
+        /// <summary>
+        /// AuthorId
+        /// </summary>
+        [JsonIgnore]
+        public Guid AuthorId { get; set; }
+
+        /// <summary>
+        /// ExpiredBlock
+        /// </summary>
+        public DateTime? ExpiredBlock { get; set; }
+
+        /// <summary>
+        /// ReasonType
+        /// </summary>
+        public ReasonType? ReasonType { get; set; }
+
+        /// <summary>
+        /// ReasonType
+        /// </summary>
+        public string ReasonTypeName => ReasonType.ToString() ?? "";
+
+        /// <summary>
+        /// ReasonText
+        /// </summary>
+        public string? ReasonText { get; set; }
+
+        /// <summary>
+        /// ThumbnailUrl
+        /// </summary>
+        public string? ThumbnailUrl { get; set; }
 
         #endregion
     }

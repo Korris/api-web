@@ -214,6 +214,11 @@ public static class Error
     /// </summary>
     public const string E131 = "Report not found";
 
+    /// <summary>
+    /// Post not belong to you
+    /// </summary>
+    public const string E132 = "Post not belong to you";
+
     #endregion
 
     #region -- E2xx --

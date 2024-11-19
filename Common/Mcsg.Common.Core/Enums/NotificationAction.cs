@@ -81,6 +81,11 @@ public enum NotificationAction
     DeleteSubPost,
 
     /// <summary>
+    /// DeleteComment
+    /// </summary>
+    DeleteComment,
+
+    /// <summary>
     /// LockPost
     /// </summary>
     LockPost,

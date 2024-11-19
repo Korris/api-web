@@ -348,9 +348,9 @@ public class Setting : SeedWork.Constants.Setting
         public const string TransferTransaction = "TransferTransaction";
 
         /// <summary>
-        /// DeleteFeed
+        /// DeleteSocial
         /// </summary>
-        public const string DeleteSocial = "DeleteFeed";
+        public const string DeleteSocial = "DeleteSocial";
 
         /// <summary>
         /// DeletePost
@@ -381,6 +381,11 @@ public class Setting : SeedWork.Constants.Setting
         /// RejectReport
         /// </summary>
         public const string RejectReport = "RejectReport";
+
+        /// <summary>
+        /// DeleteComment
+        /// </summary>
+        public const string DeleteComment = "DeleteComment";
     }
 
     /// <summary>
@@ -444,6 +449,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string CommentOnComic = "CommentOnComic";
 
         /// <summary>
+        /// CommentOnDocument
+        /// </summary>
+        public const string CommentOnDocument = "CommentOnDocument";
+
+        /// <summary>
         /// CommentOnStory
         /// </summary>
         public const string CommentOnStory = "CommentOnStory";
@@ -454,9 +464,14 @@ public class Setting : SeedWork.Constants.Setting
         public const string CommentOnSubFeed = "CommentOnSubFeed";
 
         /// <summary>
-        /// CommentOnSubStory
+        /// CommentOnSubComic
         /// </summary>
         public const string CommentOnSubComic = "CommentOnSubComic";
+
+        /// <summary>
+        /// CommentOnSubDocument
+        /// </summary>
+        public const string CommentOnSubDocument = "CommentOnSubDocument";
 
         /// <summary>
         /// CommentOnSubStory
@@ -579,5 +594,16 @@ public class Setting : SeedWork.Constants.Setting
         /// SysAdmin
         /// </summary>
         public const string SysAdmin = "Mcsg.SysAdmin";
+    }
+
+    /// <summary>
+    /// TagData
+    /// </summary>
+    public class TagData
+    {
+        /// <summary>
+        /// Admin
+        /// </summary>
+        public const string Admin = ";admin;";
     }
 }

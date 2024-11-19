@@ -16,9 +16,29 @@ public enum AddDeletionType
     ComicSubPost,
 
     /// <summary>
+    /// ComicPostComment
+    /// </summary>
+    ComicPostComment,
+
+    /// <summary>
+    /// ComicSubPostComment
+    /// </summary>
+    ComicSubPostComment,
+
+    /// <summary>
     /// SocialPost
     /// </summary>
     SocialPost,
+
+    /// <summary>
+    /// SocialPostComment
+    /// </summary>
+    SocialPostComment,
+
+    /// <summary>
+    /// SocialSubPostComment
+    /// </summary>
+    SocialSubPostComment,
 
     /// <summary>
     /// StoryPost
@@ -31,6 +51,16 @@ public enum AddDeletionType
     StorySubPost,
 
     /// <summary>
+    /// StoryPostComment
+    /// </summary>
+    StoryPostComment,
+
+    /// <summary>
+    /// StorySubPostComment
+    /// </summary>
+    StorySubPostComment,
+
+    /// <summary>
     /// DocumentPost
     /// </summary>
     DocumentPost,
@@ -38,5 +68,15 @@ public enum AddDeletionType
     /// <summary>
     /// DocumentSubPost
     /// </summary>
-    DocumentSubPost
+    DocumentSubPost,
+
+    /// <summary>
+    /// DocumentPostComment
+    /// </summary>
+    DocumentPostComment,
+
+    /// <summary>
+    /// DocumentSubPostComment
+    /// </summary>
+    DocumentSubPostComment
 }

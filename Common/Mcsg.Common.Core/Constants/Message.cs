@@ -60,5 +60,10 @@ public class Message : SeedWork.Constants.Message
     /// </summary>
     public const string S307 = "Notification reject reported post";
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public const string S308 = "Notification delete comment";
+
     #endregion
 }

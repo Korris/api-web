@@ -972,7 +972,7 @@ public class NotificationService : BaseS, INotificationService
         }
 
         var details = await _context.SocialReportDetailAvailable
-            .Where(p => p.ReportId == request.EntityId && p.ModifiedBy == null)
+            .Where(p => p.ReportId == request.EntityId && p.Status != ReportDetailStatus.SentNotification)
             .Select(p => new
             {
                 p.UserId,
@@ -1018,6 +1018,10 @@ public class NotificationService : BaseS, INotificationService
 
             await _hubcontext.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
+
+        await _context.SocialReportDetails
+            .Where(p => p.ReportId == request.EntityId && p.Status != ReportDetailStatus.SentNotification)
+            .ExecuteUpdateAsync(p => p.SetProperty(q => q.Status, ReportDetailStatus.SentNotification));
 
         return response;
     }
@@ -1097,8 +1101,8 @@ public class NotificationService : BaseS, INotificationService
             .Where(p => p.Id == request.EntityId)
             .Select(p => new
             {
-                p.ModifiedBy,
-                p.UserId
+                ModifiedBy = p.ModifiedBy,
+                CreatedBy = p.UserId
             });
 
         var type = request.NotificationType.ToEnum(AddDeletionType.ComicPost);
@@ -1109,8 +1113,28 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
+                   });
+                break;
+
+            case AddDeletionType.ComicPostComment:
+                q = _context.ComicPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
+                   });
+                break;
+
+            case AddDeletionType.ComicSubPostComment:
+                q = _context.ComicSubPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
                    });
                 break;
 
@@ -1119,8 +1143,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
                    });
                 break;
 
@@ -1129,8 +1153,28 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
+                   });
+                break;
+
+            case AddDeletionType.DocumentPostComment:
+                q = _context.DocumentPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
+                   });
+                break;
+
+            case AddDeletionType.DocumentSubPostComment:
+                q = _context.DocumentSubPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
                    });
                 break;
 
@@ -1139,8 +1183,28 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
+                   });
+                break;
+
+            case AddDeletionType.SocialPostComment:
+                q = _context.SocialPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
+                   });
+                break;
+
+            case AddDeletionType.SocialSubPostComment:
+                q = _context.SocialSubPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
                    });
                 break;
 
@@ -1149,8 +1213,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
                    });
                 break;
 
@@ -1159,11 +1223,30 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       p.ModifiedBy,
-                       p.UserId
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.UserId
                    });
                 break;
 
+            case AddDeletionType.StoryPostComment:
+                q = _context.StoryPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
+                   });
+                break;
+
+            case AddDeletionType.StorySubPostComment:
+                q = _context.StorySubPostComments.AsNoTracking()
+                   .Where(p => p.Id == request.EntityId)
+                   .Select(p => new
+                   {
+                       ModifiedBy = p.ModifiedBy,
+                       CreatedBy = p.CreatedBy.Value!
+                   });
+                break;
             default:
                 break;
         }
@@ -1174,16 +1257,34 @@ public class NotificationService : BaseS, INotificationService
             return response;
         }
 
-        var action = (type == AddDeletionType.ComicSubPost || type == AddDeletionType.DocumentSubPost || type == AddDeletionType.StorySubPost) ? NotificationAction.DeleteSubPost : NotificationAction.DeletePost;
+        var action = type switch
+        {
+            AddDeletionType.ComicSubPost or AddDeletionType.DocumentSubPost or AddDeletionType.StorySubPost => NotificationAction.DeleteSubPost,
+            AddDeletionType.ComicPost or AddDeletionType.DocumentPost or AddDeletionType.StoryPost or AddDeletionType.SocialPost => NotificationAction.DeletePost,
+            _ => NotificationAction.DeleteComment
+        };
 
         var targetType = type switch
         {
-            AddDeletionType.StoryPost => NotificationTargetType.Story,
             AddDeletionType.ComicPost => NotificationTargetType.Comic,
             AddDeletionType.ComicSubPost => NotificationTargetType.SubComic,
+            AddDeletionType.ComicPostComment => NotificationTargetType.CommentOnComic,
+            AddDeletionType.ComicSubPostComment => NotificationTargetType.CommentOnSubComic,
+
+            AddDeletionType.StoryPost => NotificationTargetType.Story,
+            AddDeletionType.StorySubPost => NotificationTargetType.SubStory,
+            AddDeletionType.StoryPostComment => NotificationTargetType.CommentOnStory,
+            AddDeletionType.StorySubPostComment => NotificationTargetType.CommentOnSubStory,
+
             AddDeletionType.DocumentPost => NotificationTargetType.Document,
             AddDeletionType.DocumentSubPost => NotificationTargetType.SubDocument,
-            AddDeletionType.StorySubPost => NotificationTargetType.SubStory,
+            AddDeletionType.DocumentPostComment => NotificationTargetType.CommentOnDocument,
+            AddDeletionType.DocumentSubPostComment => NotificationTargetType.CommentOnSubDocument,
+
+            AddDeletionType.SocialPost => NotificationTargetType.Social,
+            AddDeletionType.SocialPostComment => NotificationTargetType.CommentOnFeed,
+            AddDeletionType.SocialSubPostComment => NotificationTargetType.CommentOnSubFeed,
+
             _ => NotificationTargetType.Social
         };
 
@@ -1193,7 +1294,8 @@ public class NotificationService : BaseS, INotificationService
             AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => nameof(S301),
             AddDeletionType.DocumentPost or AddDeletionType.StoryPost => nameof(S300),
             AddDeletionType.DocumentSubPost or AddDeletionType.StorySubPost => nameof(S301),
-            _ => nameof(S302)
+            AddDeletionType.SocialPost => nameof(S302),
+            _ => nameof(S308)
         };
 
         var notiType = type switch
@@ -1202,23 +1304,36 @@ public class NotificationService : BaseS, INotificationService
             AddDeletionType.ComicSubPost or AddDeletionType.StorySubPost => NotificationType.DeleteSubPost,
             AddDeletionType.DocumentPost or AddDeletionType.StoryPost => NotificationType.DeletePost,
             AddDeletionType.DocumentSubPost or AddDeletionType.StorySubPost => NotificationType.DeleteSubPost,
-            _ => NotificationType.DeleteSocial
+            AddDeletionType.SocialPost => NotificationType.DeleteSocial,
+            _ => NotificationType.DeleteComment
         };
 
         var entityType = type switch
         {
             AddDeletionType.ComicPost => NotificationEntityType.ComicPostDelete,
+            AddDeletionType.ComicPostComment => NotificationEntityType.ComicPostCommentDelete,
             AddDeletionType.ComicSubPost => NotificationEntityType.ComicSubPostDelete,
+            AddDeletionType.ComicSubPostComment => NotificationEntityType.ComicSubPostCommentDelete,
+
             AddDeletionType.DocumentPost => NotificationEntityType.DocumentPostDelete,
+            AddDeletionType.DocumentPostComment => NotificationEntityType.DocumentPostCommentDelete,
             AddDeletionType.DocumentSubPost => NotificationEntityType.DocumentSubPostDelete,
+            AddDeletionType.DocumentSubPostComment => NotificationEntityType.DocumentSubPostCommentDelete,
+
+            AddDeletionType.SocialPostComment => NotificationEntityType.SocialPostCommentDelete,
+            AddDeletionType.SocialSubPostComment => NotificationEntityType.SocialSubPostCommentDelete,
+
             AddDeletionType.StoryPost => NotificationEntityType.StoryPostDelete,
+            AddDeletionType.StoryPostComment => NotificationEntityType.StoryPostCommentDelete,
             AddDeletionType.StorySubPost => NotificationEntityType.StorySubPostDelete,
+            AddDeletionType.StorySubPostComment => NotificationEntityType.StorySubPostCommentDelete,
+
             _ => NotificationEntityType.SocialPostDelete
         };
 
         var noti = await AddNotificationAsync(
                                 actorId: ett.ModifiedBy!.Value
-                                , receiverId: ett.UserId
+                                , receiverId: ett.CreatedBy
                                 , action: action
                                 , entityType: entityType
                                 , entityId: request.EntityId
@@ -1234,7 +1349,7 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti.CreatedOn;
         response.NotificationType = notiType;
 
-        await _hubcontext.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hubcontext.Clients.Group(ett.CreatedBy.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -1244,13 +1359,15 @@ public class NotificationService : BaseS, INotificationService
         var response = new NotificationResponse();
 
         var q = from report in _context.ComicReportAvailable.AsNoTracking()
+                join reportDetail in _context.ComicReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                 join post in _context.ComicPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                where report.Id == request.EntityId
+                where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                orderby reportDetail.CreatedOn descending
                 select new
                 {
                     report.Id,
                     report.EntityId,
-                    report.ModifiedBy,
+                    ReportUserId = reportDetail.UserId,
                     post.UserId
                 };
 
@@ -1265,13 +1382,15 @@ public class NotificationService : BaseS, INotificationService
         {
             case AddLockType.ComicSubPost:
                 q = from report in _context.ComicReportAvailable.AsNoTracking()
+                    join reportDetail in _context.ComicReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.ComicSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1284,13 +1403,15 @@ public class NotificationService : BaseS, INotificationService
 
             case AddLockType.DocumentPost:
                 q = from report in _context.DocumentReportAvailable.AsNoTracking()
+                    join reportDetail in _context.DocumentReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.DocumentPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1303,13 +1424,15 @@ public class NotificationService : BaseS, INotificationService
 
             case AddLockType.DocumentSubPost:
                 q = from report in _context.DocumentReportAvailable.AsNoTracking()
+                    join reportDetail in _context.DocumentReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.DocumentSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1322,13 +1445,15 @@ public class NotificationService : BaseS, INotificationService
 
             case AddLockType.SocialPost:
                 q = from report in _context.SocialReportAvailable.AsNoTracking()
+                    join reportDetail in _context.SocialReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.SocialPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1341,13 +1466,15 @@ public class NotificationService : BaseS, INotificationService
 
             case AddLockType.StoryPost:
                 q = from report in _context.StoryReportAvailable.AsNoTracking()
+                    join reportDetail in _context.StoryReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.StoryPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1360,13 +1487,15 @@ public class NotificationService : BaseS, INotificationService
 
             case AddLockType.StorySubPost:
                 q = from report in _context.StoryReportAvailable.AsNoTracking()
+                    join reportDetail in _context.StoryReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
                     join post in _context.StorySubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
-                    where report.Id == request.EntityId
+                    where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
+                    orderby reportDetail.CreatedOn descending
                     select new
                     {
                         report.Id,
                         report.EntityId,
-                        report.ModifiedBy,
+                        ReportUserId = reportDetail.UserId,
                         post.UserId
                     };
 
@@ -1388,7 +1517,7 @@ public class NotificationService : BaseS, INotificationService
         }
 
         var noti = await AddNotificationAsync(
-                                actorId: ett.ModifiedBy!.Value
+                                actorId: ett.ReportUserId
                                 , receiverId: ett.UserId
                                 , action: action
                                 , entityType: entityType
@@ -1401,7 +1530,7 @@ public class NotificationService : BaseS, INotificationService
         response.LocationId = ett.EntityId;
         response.Message = message;
         response.TargetType = targetType;
-        response.ActorId = ett.ModifiedBy.Value;
+        response.ActorId = ett.ReportUserId;
         response.CreatedOn = noti.CreatedOn;
         response.NotificationType = notiType;
 

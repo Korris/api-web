@@ -127,14 +127,22 @@ partial class Notification
         [
             NotificationEntityType.ComicPostDelete,
             NotificationEntityType.ComicSubPostDelete,
+            NotificationEntityType.ComicPostCommentDelete,
+            NotificationEntityType.ComicSubPostCommentDelete,
 
             NotificationEntityType.DocumentPostDelete,
             NotificationEntityType.DocumentSubPostDelete,
+            NotificationEntityType.DocumentPostCommentDelete,
+            NotificationEntityType.DocumentSubPostCommentDelete,
 
             NotificationEntityType.SocialPostDelete,
+            NotificationEntityType.SocialPostCommentDelete,
+            NotificationEntityType.SocialSubPostCommentDelete,
 
             NotificationEntityType.StoryPostDelete,
-            NotificationEntityType.StorySubPostDelete
+            NotificationEntityType.StorySubPostDelete,
+            NotificationEntityType.StoryPostCommentDelete,
+            NotificationEntityType.StorySubPostCommentDelete,
         ];
 
         List<NotificationEntityType> lockEntities =
@@ -187,7 +195,7 @@ partial class Notification
         #region -- Report --
         if (rejectReportEntities.Contains(noti.EntityType))
         {
-            return noti.EntityType == NotificationEntityType.RejectCommentReport ? nameof(Message.S303) : nameof(Message.S304);
+            return noti.EntityType == NotificationEntityType.RejectCommentReport ? nameof(Message.S306) : nameof(Message.S307);
         }
         #endregion
 
@@ -274,6 +282,11 @@ partial class Notification
         if (deleteEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.DeleteSubPost)
         {
             return nameof(Message.S301);
+        }
+
+        if (deleteEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.DeleteComment)
+        {
+            return nameof(Message.S308);
         }
         #endregion
 
@@ -399,6 +412,16 @@ partial class Notification
             NotificationEntityType.RejectPostReport => Setting.NotificationTargetType.RejectPostReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationTargetType.RejectCommentReport,
 
+            NotificationEntityType.ComicPostCommentDelete
+         or NotificationEntityType.ComicSubPostCommentDelete
+         or NotificationEntityType.StoryPostCommentDelete
+         or NotificationEntityType.StorySubPostCommentDelete
+         or NotificationEntityType.SocialPostCommentDelete
+         or NotificationEntityType.SocialSubPostCommentDelete
+         or NotificationEntityType.DocumentPostCommentDelete
+         or NotificationEntityType.DocumentSubPostCommentDelete
+         => Setting.NotificationType.DeleteComment,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}")
         };
     }
@@ -487,6 +510,16 @@ partial class Notification
             NotificationEntityType.RejectPostReport => Setting.NotificationType.RejectReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationType.RejectReport,
 
+            NotificationEntityType.ComicPostCommentDelete
+         or NotificationEntityType.ComicSubPostCommentDelete
+         or NotificationEntityType.StoryPostCommentDelete
+         or NotificationEntityType.StorySubPostCommentDelete
+         or NotificationEntityType.SocialPostCommentDelete
+         or NotificationEntityType.SocialSubPostCommentDelete
+         or NotificationEntityType.DocumentPostCommentDelete
+         or NotificationEntityType.DocumentSubPostCommentDelete
+         => Setting.NotificationType.DeleteComment,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}")
         };
     }
@@ -514,6 +547,7 @@ partial class Notification
         public Guid? LocationId { get; set; }
         public string LocationHashId { get; set; } = default!;
         public NotificationEntityType EntityType { get; set; }
+        public string? EntityTypeString => EntityType.ToString();
         public Guid? EntityId { get; set; }
         public string EntityHashId { get; set; } = default!;
         public NotificationAction Action { get; set; }

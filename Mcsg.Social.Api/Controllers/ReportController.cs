@@ -57,6 +57,22 @@ public class ReportController : BaseController
         return Ok(response);
     }
 
+    /// <summary>
+    /// View
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPost("View"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> View([FromBody] ReportViewR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = AbsoluteUri;
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

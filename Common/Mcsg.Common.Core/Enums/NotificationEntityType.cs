@@ -82,6 +82,16 @@ public enum NotificationEntityType
     ComicSubPostDelete = 55,
 
     /// <summary>
+    /// ComicPostCommentDelete
+    /// </summary>
+    ComicPostCommentDelete = 116,
+
+    /// <summary>
+    /// ComicSubPostCommentDelete
+    /// </summary>
+    ComicSubPostCommentDelete = 117,
+
+    /// <summary>
     /// ComicPostLock
     /// </summary>
     ComicPostLock = 59,
@@ -167,6 +177,16 @@ public enum NotificationEntityType
     /// DocumentSubPostDelete
     /// </summary>
     DocumentSubPostDelete,
+
+    /// <summary>
+    /// DocumentPostCommentDelete
+    /// </summary>
+    DocumentPostCommentDelete = 216,
+
+    /// <summary>
+    /// DocumentSubPostCommentDelete
+    /// </summary>
+    DocumentSubPostCommentDelete = 217,
 
     /// <summary>
     /// DocumentPostLock
@@ -256,6 +276,16 @@ public enum NotificationEntityType
     SocialPostDelete = 56,
 
     /// <summary>
+    /// SocialPostCommentDelete
+    /// </summary>
+    SocialPostCommentDelete = 316,
+
+    /// <summary>
+    /// SocialSubPostCommentDelete
+    /// </summary>
+    SocialSubPostCommentDelete = 317,
+
+    /// <summary>
     /// SocialPostLock
     /// </summary>
     SocialPostLock = 61,
@@ -336,6 +366,16 @@ public enum NotificationEntityType
     /// StorySubPostDelete
     /// </summary>
     StorySubPostDelete = 58,
+
+    /// <summary>
+    /// StoryPostCommentDelete
+    /// </summary>
+    StoryPostCommentDelete = 416,
+
+    /// <summary>
+    /// StorySubPostCommentDelete
+    /// </summary>
+    StorySubPostCommentDelete = 417,
 
     /// <summary>
     /// StoryPostLock
