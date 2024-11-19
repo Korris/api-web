@@ -13,6 +13,7 @@
                                                 pc.""CreatedOn"",
                                                 pc.""ParentId"",
                                                 pc.""PostId"",
+                                                pc.""GifId"",
                                                 u.""Avatar"" as UserAvatar,
                                                 u.""ProfileName"" as AuthorName,
                                                 u.""ProfileId"",
