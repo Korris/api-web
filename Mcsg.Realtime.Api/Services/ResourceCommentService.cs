@@ -38,6 +38,11 @@ public partial class ResourceCommentService : IResourceCommentService
             return await AddComicResourceToComment(dto);
         }
 
+        if (dto.MicroService == MicroService.Document.ToString())
+        {
+            return await AddDocumentResourceToComment(dto);
+        }
+
         if (dto.MicroService == MicroService.Story.ToString())
         {
             return await AddStoryResourceToComment(dto);
@@ -74,6 +79,45 @@ public partial class ResourceCommentService : IResourceCommentService
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
             //resource.SubPostId = Guid.Empty;
+            await _context.SaveChangesAsync(default);
+        }
+        #endregion
+
+        return new ResourceCommentResp
+        {
+            HashId = resource.HashId,
+            Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type),
+            Id = resource.Id
+        };
+    }
+
+    private async Task<ResourceCommentResp?> AddDocumentResourceToComment(ResourceCommentDto dto)
+    {
+        var resource = await _context.DocumentResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        if (resource == null)
+        {
+            return null;
+        }
+
+        #region -- Copy file from temp target --
+        var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
+        var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
+
+        var tempObjectName = $"{Setting.MinioFolder.Document}/{tempBlobName}";
+        var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempObjectName, null);
+
+        var targetObjectName = $"{Setting.MinioFolder.Document}/{targetBlobName}";
+        var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
+
+        if (isExistTempFile != null && isExistTargetFile == null)
+        {
+            await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
+
+            resource.Size = isExistTempFile!.Size;
+            await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempObjectName, null);
+
+            resource.Type = resource.Name.GetResourceType();
+            resource.Url = targetObjectName;
             await _context.SaveChangesAsync(default);
         }
         #endregion
