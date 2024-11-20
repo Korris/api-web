@@ -1,4 +1,8 @@
-﻿namespace Mcsg.Social.Api.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Social.Api.Models;
+
+using Common.SeedWork.Converters;
 
 public class ReplyResponse
 {
@@ -14,7 +18,17 @@ public class ReplyData
     public string UserName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public DateTime? ModifiedOn { get; set; }
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime CreatedOn { get; set; }
+
+    /// <summary>
+    /// Due to changing the logic flow but not updating the UI code so ModifiedOn = CreatedOn
+    /// </summary>
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    [Obsolete]
+    public DateTime? ModifiedOn => CreatedOn;
+
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
     public string GifId { get; set; } = string.Empty;

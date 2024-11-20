@@ -10,7 +10,7 @@ public class CommentQueryResult
     public string AuthorName { get; set; } = string.Empty;
     public string UserAvatar { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
-    public DateTime? ModifiedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
     public string ResourceHashId { get; set; } = string.Empty;
     public string ResourceName { get; set; } = string.Empty;
     public string ResourceUrl { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ public class CommentQueryResult
     public string ReplyAuthorName { get; set; } = string.Empty;
     public string ReplyUserAvatar { get; set; } = string.Empty;
     public string ReplyBody { get; set; } = string.Empty;
-    public DateTime? ReplyLastModifiedDate { get; set; }
+    public DateTime ReplyLastCreatedDate { get; set; }
     public string ReplyResourceHashId { get; set; } = string.Empty;
     public string ReplyResourceName { get; set; } = string.Empty;
     public string ReplyResourceUrl { get; set; } = string.Empty;

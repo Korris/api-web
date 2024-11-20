@@ -8,6 +8,6 @@ public class CommentLoadR : PaginatedR
 {
     public Guid PostId { get; set; }
 
-    [DefaultValue("ModifiedOn")]
-    public new string? OrderBy { get; set; } = "ModifiedOn";
+    [DefaultValue("CreatedOn")]
+    public new string? OrderBy { get; set; } = "CreatedOn";
 }

@@ -27,6 +27,13 @@ public class BasicCommentResponse
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
 
+    /// <summary>
+    /// Due to changing the logic flow but not updating the UI code so ModifiedOn = CreatedOn
+    /// </summary>
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    [Obsolete]
+    public DateTime? ModifiedOn => CreatedOn;
+
     public string ResourceName { get; set; }
     public string ResourceUrl { get; set; }
     public MinioInstanceType? MinioInstance { get; set; }
@@ -38,7 +45,6 @@ public class BasicCommentResponse
     public string? CustomNote { get; set; }
     public ReplyResponse Replies { get; set; } = new ReplyResponse();
     public Guid? QuoteId { get; set; }
-    public DateTime? ModifiedOn { get; set; }
     public Guid? ParentId { get; set; }
     public ReactionsResponse Reaction { get; set; } = new ReactionsResponse();
 }

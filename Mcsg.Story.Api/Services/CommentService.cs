@@ -59,7 +59,7 @@ public partial class CommentService : ICommentService
                 UserAvatar = result.UserAvatar,
                 Body = result.Body,
                 PostId = result.PostId,
-                ModifiedOn = result.ModifiedOn,
+                CreatedOn = result.CreatedOn,
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
@@ -82,8 +82,7 @@ public partial class CommentService : ICommentService
                     AuthorName = result.ReplyAuthorName,
                     UserAvatar = result.ReplyUserAvatar,
                     Body = result.ReplyBody,
-                    ModifiedOn = result.ReplyLastModifiedDate,
-                    ResourceHashId = result.ReplyResourceHashId,
+                    CreatedOn = result.ReplyLastCreatedDate,
                     ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
                     GifId = result.ReplyGifId,
@@ -131,7 +130,7 @@ public partial class CommentService : ICommentService
                 UserAvatar = result.UserAvatar,
                 Body = result.Body,
                 PostId = result.PostId,
-                ModifiedOn = result.ModifiedOn,
+                CreatedOn = result.CreatedOn,
                 ResourceHashId = result.ResourceHashId,
                 ResourceUrl = await _sc.GetPublicUrl(result.ResourceUrl, result.BucketName, result.MinioInstance),
                 GifId = result.GifId
@@ -154,7 +153,7 @@ public partial class CommentService : ICommentService
                     AuthorName = result.ReplyAuthorName,
                     UserAvatar = result.ReplyUserAvatar,
                     Body = result.ReplyBody,
-                    ModifiedOn = result.ReplyLastModifiedDate,
+                    CreatedOn = result.ReplyLastCreatedDate,
                     ResourceHashId = result.ReplyResourceHashId,
                     ResourceUrl = await _sc.GetPublicUrl(result.ReplyResourceUrl, result.BucketName, result.MinioInstance),
                     ParentId = commentData.Id,
@@ -384,7 +383,7 @@ public partial class CommentService : ICommentService
             UserName = queryModel.UserName,
             UserAvatar = queryModel.UserAvatar,
             Body = await _businessText.Process(queryModel.Body),
-            ModifiedOn = queryModel.ModifiedOn,
+            CreatedOn = queryModel.CreatedOn,
             ResourceHashId = queryModel.ResourceHashId,
             ResourceUrl = await _sc.GetPublicUrl(queryModel.ResourceUrl, queryModel.BucketName, queryModel.MinioInstance),
             GifId = queryModel.GifId,
@@ -404,7 +403,7 @@ public partial class CommentService : ICommentService
             ParentId = queryModel.ParentId,
             UserAvatar = queryModel.UserAvatar,
             Body = await _businessText.Process(queryModel.Body),
-            ModifiedOn = queryModel.ModifiedOn,
+            CreatedOn = queryModel.CreatedOn,
             ResourceHashId = queryModel.ResourceHashId,
             ResourceUrl = await _sc.GetPublicUrl(queryModel.ResourceUrl, queryModel.BucketName, queryModel.MinioInstance),
             GifId = queryModel.GifId,
@@ -499,7 +498,7 @@ public partial class CommentService : ICommentService
     {
         if (string.IsNullOrWhiteSpace(request.OrderBy))
         {
-            request.OrderBy = "ModifiedOn";
+            request.OrderBy = "CreatedOn";
         }
         var offset = request.PageSize * (request.PageNumber - 1);
 
@@ -528,7 +527,7 @@ public partial class CommentService : ICommentService
                     UserName = comModel.UserName,
                     UserAvatar = comModel.UserAvatar,
                     Body = comModel.Body,
-                    ModifiedOn = comModel.ModifiedOn,
+                    CreatedOn = comModel.CreatedOn,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
@@ -554,7 +553,7 @@ public partial class CommentService : ICommentService
                         UserName = repModel.UserName,
                         UserAvatar = repModel.UserAvatar,
                         Body = repModel.Body,
-                        ModifiedOn = repModel.ModifiedOn,
+                        CreatedOn = repModel.CreatedOn,
                         ResourceHashId = repModel.ResourceHashId,
                         ResourceUrl = await _sc.GetPublicUrl(repModel.ResourceUrl, repModel.BucketName, repModel.MinioInstance),
                         ParentId = comment.Id,
@@ -597,7 +596,7 @@ public partial class CommentService : ICommentService
 
             if (string.IsNullOrWhiteSpace(request.OrderBy))
             {
-                request.OrderBy = "ModifiedOn";
+                request.OrderBy = "CreatedOn";
             }
 
             if (totalSubPost != null && totalSubPost.Count < 2)
@@ -633,7 +632,7 @@ public partial class CommentService : ICommentService
                     AuthorName = comModel.AuthorName,
                     UserAvatar = comModel.UserAvatar,
                     Body = comModel.Body,
-                    ModifiedOn = comModel.ModifiedOn,
+                    CreatedOn = comModel.CreatedOn,
                     ResourceHashId = comModel.ResourceHashId,
                     ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
                     GifId = comModel.GifId,
