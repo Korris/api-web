@@ -893,6 +893,7 @@ public partial class PostService : BaseMinioS, IPostService
         var profileId = request.ProfileId;
         var profileName = request.ProfileName;
 
+        #region -- Validate on server --
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId);
         if (post == null)
         {
@@ -902,6 +903,7 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
+        #endregion
 
         var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
         var coverUrl = await GetPublicUrl(request.CoverHashId);
@@ -1798,6 +1800,7 @@ public partial class PostService : BaseMinioS, IPostService
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
 
+        #region -- Validate on server --
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
@@ -1814,11 +1817,19 @@ public partial class PostService : BaseMinioS, IPostService
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
 
+        var hashIds = request?.Files.Select(x => x.HashId).ToList();
+        var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        if (resourceList.Count == 0)
+        {
+            throw new BadRequestException(nameof(E201), E201);
+        }
+
         var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
         if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
+        #endregion
 
         var newOrder = await DetermineOrder(post.Id, request.Order, request.IsAutoGenerateOrder);
 
@@ -1911,7 +1922,7 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
-
+        #region -- Validate on server --
         var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
@@ -1934,6 +1945,14 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
+
+        var hashIds = request?.Files.Select(x => x.HashId).ToList();
+        var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        if (resourceList.Count == 0)
+        {
+            throw new BadRequestException(nameof(E201), E201);
+        }
+        #endregion
 
         subPost.PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc;
         subPost.Title = request.Title;
