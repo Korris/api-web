@@ -108,7 +108,7 @@ public class FeedController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteFeed(Guid postId)
     {
-        var req = new IdBaseR { Id = postId };
+        var req = new IdBaseR(HttpContext) { Id = postId };
         var result = await _feedService.DeleteFeedAsync(req);
         return Ok(result);
     }
