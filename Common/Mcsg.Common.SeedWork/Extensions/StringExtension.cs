@@ -259,7 +259,7 @@ public static class StringExtension
             s = string.Empty;
         }
 
-        var arr = s.Split(new char[] { c }, StringSplitOptions.RemoveEmptyEntries);
+        var arr = s.Split([c], StringSplitOptions.RemoveEmptyEntries);
         var t = arr.Where(p => !string.IsNullOrWhiteSpace(p));
 
         if (d)
@@ -273,6 +273,66 @@ public static class StringExtension
 
         return res;
     }
+
+    #region -- Conheo --
+    /// <summary>
+    /// Add one space AbCd to Ab Cd
+    /// </summary>
+    /// <param name="s">Input string</param>
+    /// <returns>Return string with space</returns>
+    public static string ToAddSpace(this string? s)
+    {
+        return s.Conheo(true);
+    }
+
+    /// <summary>
+    /// Get prefix of string AbCd to Ab
+    /// </summary>
+    /// <param name="s">Input string</param>
+    /// <returns>Return prefix of string</returns>
+    public static string ToPrefix(this string? s)
+    {
+        return s.Conheo(false);
+    }
+
+    /// <summary>
+    /// Use for ToAddSpace and ToPrefix
+    /// </summary>
+    /// <param name="s">Input string</param>
+    /// <param name="x">is ToAddSpace</param>
+    /// <returns>Return the result</returns>
+    private static string Conheo(this string? s, bool x)
+    {
+        var res = string.Empty;
+
+        s = (s + string.Empty).Trim();
+        for (var i = 0; i < s.Length; i++)
+        {
+            if (i == 0)
+            {
+                res = s[i].ToString();
+                continue;
+            }
+
+            var t = s[i];
+            if ('A' <= t && t <= 'Z')
+            {
+                if (x)
+                {
+                    res += " ";
+                }
+                else
+                {
+                    break;
+                }
+            }
+            res += s[i];
+        }
+        res = res.Trim();
+
+        return res;
+    }
+    #endregion
 
     /// <summary>
     /// Convert a string value to enum value
@@ -311,7 +371,7 @@ public static class StringExtension
             }
             else
             {
-                if (i.Name == value)
+                if (i.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
                     res = (T?)i.GetValue(null);
                     break;
