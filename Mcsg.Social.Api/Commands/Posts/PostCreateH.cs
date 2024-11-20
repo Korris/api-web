@@ -80,8 +80,10 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     public async Task<SingleResponse> Handle(PostCreateR request, CancellationToken cancellationToken)
     {
         var res = new SingleResponse();
+
         request.Tags = request.Content?.ExtractHashtags();
         request.Content = request.Content.RemoveMaliciousText();
+        request.CustomNote = request.CustomNote.RemoveMaliciousText();
 
         var vr = new PostCreateV().Validate(request);
         if (!vr.IsValid)
@@ -132,7 +134,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             ThumbnailUrl = ett.ThumbnailUrl,
             CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
-            Body = request.Content,
+            Body = HttpUtility.HtmlDecode(request.Content),
             FullName = profileName,
             AuthorName = profileName,
             IsCurrentUserAuthor = true,

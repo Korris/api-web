@@ -797,7 +797,6 @@ public static class StringExtension
         }
 
         var sanitizer = new HtmlSanitizer();
-        sanitizer.AllowedTags.Clear(); // ensures that no HTML tags are allowed, making the input text safe.
         var sanitizedText = sanitizer.Sanitize(text);
 
         return sanitizedText;

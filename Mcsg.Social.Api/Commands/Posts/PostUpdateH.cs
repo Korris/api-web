@@ -14,6 +14,7 @@
 using Grpc.Net.Client;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
 
@@ -134,7 +135,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             ThumbnailUrl = ett.ThumbnailUrl,
             CreatedOn = DateTime.UtcNow,
             Status = PostStatus.Public,
-            Body = content,
+            Body = HttpUtility.HtmlDecode(content),
             FullName = profileName,
             AuthorName = profileName,
             IsCurrentUserAuthor = true,
