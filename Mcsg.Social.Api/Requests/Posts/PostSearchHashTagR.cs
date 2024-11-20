@@ -1,6 +1,8 @@
 ﻿namespace Mcsg.Social.Api.Requests;
 
+using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.SeedWork.Extensions;
 
 /// <summary>
 /// Request
@@ -13,6 +15,11 @@ public class PostSearchHashTagR : PagingR
     /// Tag
     /// </summary>
     public string Tag { get; set; } = default!;
+
+    /// <summary>
+    /// Type
+    /// </summary>
+    public PostType Type => Tag.ToEnum(PostType.All);
 
     #endregion
 }

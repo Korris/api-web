@@ -21,9 +21,10 @@
                 return @$"SELECT sm.""Keyword"",
                              CASE 
                                WHEN sm.""KeywordType"" = {LookupKeywordType.Tag.GetHashCode()} THEN '{nameof(LookupKeywordType.Tag)}'
-                               WHEN sm.""KeywordType"" = {LookupKeywordType.People.GetHashCode()} THEN '{nameof(LookupKeywordType.People)}'                               
-                               WHEN sm.""KeywordType"" = {LookupKeywordType.Comic.GetHashCode()} THEN '{nameof(LookupKeywordType.Comic)}'                               
+                               WHEN sm.""KeywordType"" = {LookupKeywordType.People.GetHashCode()} THEN '{nameof(LookupKeywordType.People)}'
+                               WHEN sm.""KeywordType"" = {LookupKeywordType.Comic.GetHashCode()} THEN '{nameof(LookupKeywordType.Comic)}'
                                WHEN sm.""KeywordType"" = {LookupKeywordType.Story.GetHashCode()} THEN '{nameof(LookupKeywordType.Story)}'
+                               WHEN sm.""KeywordType"" = {LookupKeywordType.Document.GetHashCode()} THEN '{nameof(LookupKeywordType.Document)}'
                                WHEN sm.""KeywordType"" = {LookupKeywordType.None.GetHashCode()} THEN '{nameof(LookupKeywordType.None)}'
                              END AS ""KeywordType""
                             , us.""Avatar""

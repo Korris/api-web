@@ -130,7 +130,7 @@
             get
             {
                 return @"SELECT t.""Name"",
-                                COALESCE(tp.post_count, 0) + COALESCE(tc.comic_count, 0) + COALESCE(stp.story_count, 0) AS Count
+                                COALESCE(tp.post_count, 0) + COALESCE(tc.comic_count, 0) + COALESCE(stp.story_count, 0) + COALESCE(dcp.document_count, 0) AS Count
                         FROM ""Tags"" t
                         LEFT JOIN (
                             SELECT  tp.""TagId"", COUNT(*) AS post_count
@@ -156,6 +156,14 @@
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
+                        LEFT JOIN (
+                        SELECT dcp.""TagId"", COUNT(*) AS document_count
+                        FROM Document.""DocumentTagPosts"" dcp
+                        JOIN Document.""DocumentPosts"" sp ON dcp.""PostId"" = sp.""Id""
+                        AND sp.""Status"" = ANY (@PostStatus)
+                        WHERE dcp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
+                        GROUP BY dcp.""TagId""
+                        ) dcp ON t.""Id"" = dcp.""TagId""
                         [QueryCondition]
                         OFFSET @Offset
                         LIMIT @PageSize;
@@ -186,6 +194,14 @@
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
+                        LEFT JOIN (
+                        SELECT dcp.""TagId""
+                        FROM document.""DocumentTagPosts"" dcp
+                        JOIN document.""DocumentPosts"" sp ON dcp.""PostId"" = sp.""Id""
+                        AND sp.""Status"" = ANY (@PostStatus)
+                        WHERE dcp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
+                        GROUP BY dcp.""TagId""
+                        ) dcp ON t.""Id"" = dcp.""TagId""
                         [QueryCondition]
                         ";
             }

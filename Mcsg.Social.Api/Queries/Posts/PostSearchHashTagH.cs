@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Data.Common;
 using System.Web;
 
 namespace Mcsg.Social.Api.Queries;
@@ -10,7 +11,8 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
-using Common.Interfaces;
+using Common.Domain.Entities;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
@@ -33,10 +35,9 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="businessText">Business Text</param>
-    public PostSearchHashTagH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessText, IRepository<Reaction> reactionRepository) : base(context, setting, sc)
+    public PostSearchHashTagH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessText) : base(context, setting, sc)
     {
         _businessText = businessText;
-        _reactionRepository = reactionRepository;
     }
 
     /// <summary>
@@ -63,194 +64,68 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         }
         #endregion
 
-        var qComic = "SELECT * FROM comic.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
-        var qSocial = "SELECT * FROM social.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
-        var qStory = "SELECT * FROM story.fn_search_hashtag(@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList)";
+        var type = request.Type;
+        var userId = request.UserId;
 
         var recordComic = 0;
         var recordSocial = 0;
         var recordStory = 0;
+        var recordDocument = 0;
 
         IEnumerable<PostSeriesTopQueryDbResponse> dataComic = [];
         IEnumerable<PostSeriesTopQueryDbResponse> dataSocial = [];
         IEnumerable<PostSeriesTopQueryDbResponse> dataStory = [];
+        IEnumerable<PostSeriesTopQueryDbResponse> dataDocument = [];
 
         using (var connection = _context.Database.GetDbConnection())
         {
-            if (request.Tag == "all" || request.Tag == "comic")
+            if (type == PostType.All || type == PostType.Comic)
             {
-                var param = new
-                {
-                    TagName = keyword,
-                    PostType = (int)PostType.Comic,
-                    StatusList = StatusUtils.PostStatusInt,
-                    PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset,
-                    HideList = request.Hides
-                };
-                dataComic = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qComic, param);
-
-                recordComic = (
-                    from qpost in _context.ComicPostAvailable
-                    join qtp in _context.ComicTagPosts on qpost.Id equals qtp.PostId
-                    join qtag in _context.Tags on qtp.TagId equals qtag.Id
-                    where qtag.Name == keyword
-                          && qpost.Type == PostType.Comic
-                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
-                          && qpost.Permission != PostPermission.Private
-                          && !request.Hides.Contains((int)qpost.Hide)
-                    select qpost.Id
-                ).Distinct().Count();
+                var postSeries = await GetPostSeriesTop<ComicPost, ComicTagPost>(keyword, request, connection);
+                dataComic = postSeries.Item1;
+                recordComic = postSeries.Item2;
+                await MapReactionPostSeriesTop<ComicPostReaction>(dataComic, userId, request);
             }
 
-            if (request.Tag == "all" || request.Tag == "feed")
+            if (type == PostType.All || type == PostType.Document)
             {
-                var param = new
-                {
-                    TagName = keyword,
-                    PostType = (int)PostType.Feed,
-                    StatusList = StatusUtils.PostStatusInt,
-                    PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset,
-                    HideList = request.Hides
-                };
-                dataSocial = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qSocial, param);
+                var postSeries = await GetPostSeriesTop<DocumentPost, DocumentTagPost>(keyword, request, connection);
+                dataDocument = postSeries.Item1;
+                recordDocument = postSeries.Item2;
+                await MapReactionPostSeriesTop<DocumentPostReaction>(dataDocument, userId, request);
+            }
 
-                recordSocial = (
-                    from qpost in _context.SocialPostAvailable
-                    join qtp in _context.SocialTagPostAvailable on qpost.Id equals qtp.PostId
-                    join qtag in _context.TagAvailable on qtp.TagId equals qtag.Id
-                    where qtag.Name == keyword
-                          && qpost.Type == PostType.Feed
-                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
-                          && !request.Hides.Contains((int)qpost.Hide)
-                    select qpost.Id
-                ).Distinct().Count();
-
+            if (type == PostType.All || type == PostType.Feed)
+            {
+                var postSeries = await GetPostSeriesTop<SocialPost, SocialTagPost>(keyword, request, connection);
+                dataSocial = postSeries.Item1;
+                recordSocial = postSeries.Item2;
                 foreach (var item in dataSocial)
                 {
                     await MappingFeedInListResponse(item);
                 }
+
+                await MapReactionPostSeriesTop<SocialPostReaction>(dataSocial, userId, request);
             }
 
-            if (request.Tag == "all" || request.Tag == "story")
+            if (type == PostType.All || type == PostType.Story)
             {
-                var param = new
-                {
-                    TagName = keyword,
-                    PostType = (int)PostType.Story,
-                    StatusList = StatusUtils.PostStatusInt,
-                    PageSize = (int)request.PageSize,
-                    OffSetPara = (int)request.Offset,
-                    HideList = request.Hides
-                };
-                dataStory = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(qStory, param);
-
-                recordStory = (
-                    from qpost in _context.StoryPostAvailable
-                    join qtp in _context.StoryTagPosts on qpost.Id equals qtp.PostId
-                    join qtag in _context.Tags on qtp.TagId equals qtag.Id
-                    where qtag.Name == keyword
-                          && qpost.Type == PostType.Story
-                          && StatusUtils.PostStatusInt.Contains((int)qpost.Status)
-                          && qpost.Permission != PostPermission.Private
-                          && !request.Hides.Contains((int)qpost.Hide)
-                    select qpost.Id
-                ).Distinct().Count();
-            }
-            if (dataSocial.Any())
-            {
-                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostReactions"""), new
-                {
-                    TargetIds = dataSocial.Select(p => p.Id).ToList(),
-                    request?.UserId
-                });
-
-                foreach (var item in dataSocial)
-                {
-                    item.IsCensored = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
-                    item.IsBlur = item.Status == PostStatus.Inactive;
-                }
-
-                if (postReactionResponse.Count() > 0)
-                {
-                    foreach (var item in dataSocial)
-                    {
-                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
-                        if (postReaction.Count > 0)
-                        {
-                            MapReactionPostSeiresTopResponse(item, postReaction);
-                        }
-                    }
-                }
-
-            }
-            if (dataComic.Any())
-            {
-                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"comic.""ComicPostReactions"""), new
-                {
-                    TargetIds = dataComic.Select(p => p.Id).ToList(),
-                    request?.UserId
-                });
-
-                foreach (var item in dataComic)
-                {
-                    item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
-                    item.IsBlur = item.Status == PostStatus.Inactive;
-                    item.Chapters = MappingTopChapter(item.SubPostStr);
-                }
-
-                if (postReactionResponse.Count() > 0)
-                {
-                    foreach (var item in dataComic)
-                    {
-                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
-                        if (postReaction.Count > 0)
-                        {
-                            MapReactionPostSeiresTopResponse(item, postReaction);
-                        }
-                    }
-                }
+                var postSeries = await GetPostSeriesTop<StoryPost, StoryTagPost>(keyword, request, connection);
+                dataStory = postSeries.Item1;
+                recordStory = postSeries.Item2;
+                await MapReactionPostSeriesTop<StoryPostReaction>(dataStory, userId, request);
             }
 
-            if (dataStory.Any())
-            {
-                var postReactionResponse = await _reactionRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostReactions"""), new
-                {
-                    TargetIds = dataStory.Select(p => p.Id).ToList(),
-                    request?.UserId
-                });
-
-                foreach (var item in dataStory)
-                {
-                    item.IsCensored = !request.IsAdministrator && request.UserId != item.UserId && item.Status == PostStatus.Inactive;
-                    item.IsBlur = item.Status == PostStatus.Inactive;
-                    item.Chapters = MappingTopChapter(item.SubPostStr);
-                }
-
-                if (postReactionResponse.Count() > 0)
-                {
-                    foreach (var item in dataStory)
-                    {
-                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
-                        if (postReaction.Count > 0)
-                        {
-                            MapReactionPostSeiresTopResponse(item, postReaction);
-                        }
-                    }
-                }
-            }
-
-            var combinedItems = dataComic.Concat(dataSocial).Concat(dataStory).ToList();
-
-            res.TotalRecords = recordStory + recordSocial + recordComic;
+            var combinedItems = dataComic.Concat(dataSocial).Concat(dataStory).Concat(dataDocument).ToList();
+            res.TotalRecords = recordStory + recordSocial + recordComic + recordDocument;
 
             var tagDataMap = new Dictionary<string, IEnumerable<PostSeriesTopQueryDbResponse>>
             {
                 { "all", combinedItems },
                 { "feed", dataSocial },
                 { "comic", dataComic },
-                { "story", dataStory }
+                { "story", dataStory },
+                { "document", dataDocument }
             };
 
             if (tagDataMap.ContainsKey(request.Tag))
@@ -264,7 +139,12 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         return res;
     }
 
-    private void MapReactionPostSeiresTopResponse(PostSeriesTopQueryDbResponse item, List<CommentReactionResponseQuery> reactions)
+    /// <summary>
+    /// MapReactionPostSeriesTopResponse
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="reactions"></param>
+    private void MapReactionPostSeriesTopResponse(PostSeriesTopQueryDbResponse item, List<CommentReactionResponseQuery> reactions)
     {
         var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
         item.Reaction = new ReactionsResponse
@@ -341,6 +221,125 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         return listChapter;
     }
 
+    /// <summary>
+    /// GetPostSeriesTop
+    /// </summary>
+    /// <typeparam name="P"></typeparam>
+    /// <typeparam name="TP"></typeparam>
+    /// <param name="keyword"></param>
+    /// <param name="request"></param>
+    /// <param name="postType"></param>
+    /// <param name="connection"></param>
+    /// <returns></returns>
+    private async Task<Tuple<IEnumerable<PostSeriesTopQueryDbResponse>, int>> GetPostSeriesTop<P, TP>(string? keyword, PostSearchHashTagR request, DbConnection connection) where P : BasePost where TP : BaseTagPost
+    {
+        var fn = "comic.fn_search_hashtag";
+        var @params = "@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList";
+        var schema = typeof(P).Name.ToPrefix().ToLower();
+        var type = schema.ToEnum(PostType.Feed);
+
+        var paramValues = new
+        {
+            TagName = keyword,
+            PostType = (int)type,
+            StatusList = StatusUtils.PostStatusInt,
+            PageSize = (int)request.PageSize,
+            OffSetPara = (int)request.Offset,
+            HideList = request.Hides
+        };
+
+        var qPost = _context.Set<P>().Where(p => !p.IsDelete);
+        var qTagPost = _context.Set<TP>().Where(p => !p.IsDelete);
+
+        var count = (from qpost in qPost
+                     join qtp in qTagPost on qpost.Id equals qtp.PostId
+                     join qtag in _context.Tags on qtp.TagId equals qtag.Id
+                     where qtag.Name == keyword
+                           && qpost.Type == type
+                           && StatusUtils.PostStatuses.Contains(qpost.Status)
+                           && qpost.Permission != PostPermission.Private
+                           && !request.Hides.Contains((int)qpost.Hide)
+                     select qpost.Id
+                     )
+                     .Distinct().Count();
+
+        var postSeries = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(fn.ToFn("comic", schema, @params), paramValues);
+
+        return new Tuple<IEnumerable<PostSeriesTopQueryDbResponse>, int>(postSeries, count);
+    }
+
+    /// <summary>
+    /// MapReactionPostSeriesTop
+    /// </summary>
+    /// <typeparam name="PR"></typeparam>
+    /// <param name="dtos"></param>
+    /// <param name="userId"></param>
+    /// <param name="request"></param>
+    /// <param name="postType"></param>
+    /// <returns></returns>
+    private async Task MapReactionPostSeriesTop<PR>(IEnumerable<PostSeriesTopQueryDbResponse> dtos, Guid? userId, PostSearchHashTagR request) where PR : BaseReaction
+    {
+        if (!dtos.Any())
+        {
+            return;
+        }
+
+        var schema = typeof(PR).Name.ToPrefix().ToLower();
+        var type = schema.ToEnum(PostType.Feed);
+
+        var qPostReaction = _context.Set<PR>().Where(p => !p.IsDelete);
+        var targetIds = dtos.Select(p => p.Id).ToList();
+        var q = await (from r in qPostReaction
+                       join u in _context.Users on r.AuthorId equals u.Id
+                       where targetIds.Contains(r.TargetId) && !u.IsDelete
+                       select new
+                       {
+                           r.Type,
+                           r.TargetId,
+                           r.AuthorId
+                       }).ToListAsync();
+
+        var reactions = q
+            .GroupBy(p => new { p.Type, p.TargetId })
+            .Select(grouped => new CommentReactionResponseQuery
+            {
+                Type = grouped.Key.Type,
+                TargetId = grouped.Key.TargetId,
+                Count = grouped.Count(),
+                ReactByCurrent = grouped.Count(p => p.AuthorId == userId)
+            })
+            .OrderByDescending(p => p.Count)
+            .ToList();
+
+        var isNoSocial = type != PostType.Feed;
+        foreach (var i in dtos)
+        {
+            i.IsCensored = !request.IsAdministrator && request.UserId != i.UserId && i.Status == PostStatus.Inactive;
+            i.IsBlur = i.Status == PostStatus.Inactive;
+
+            if (isNoSocial)
+            {
+                i.Chapters = MappingTopChapter(i.SubPostStr);
+            }
+        }
+
+        if (reactions.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var i in dtos)
+        {
+            var postReaction = reactions.Where(p => p.TargetId == i.Id).ToList();
+            if (postReaction.Count == 0)
+            {
+                continue;
+            }
+
+            MapReactionPostSeriesTopResponse(i, postReaction);
+        }
+    }
+
     #endregion
 
     #region -- Fields --
@@ -349,11 +348,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// Business Text
     /// </summary>
     private readonly IBusinessText _businessText;
-
-    /// <summary>
-    /// ReactionRepostiroy
-    /// </summary>
-    private readonly IRepository<Reaction> _reactionRepository;
 
     #endregion
 }

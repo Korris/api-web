@@ -4,7 +4,7 @@ using Dtos;
 
 public class ChapterBasicResponse : SubPostBasic
 {
-    public int Order { get; set; }
+    public float Order { get; set; }
     public int? ViewCount { get; set; }
     public int CommentCount { get; set; }
     public Guid? PostId { get; set; }
