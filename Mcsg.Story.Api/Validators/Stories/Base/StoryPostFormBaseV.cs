@@ -23,6 +23,16 @@ public class StoryPostFormBaseV : AbstractValidator<StoryPostFormBaseR>
         RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}")
             .MaximumLength(Title.Max).WithMessage($"{t} {MaximumLength} {Title.Max}");
 
+        t = "Summary";
+        RuleFor(p => p.Summary).NotEmpty().WithMessage($"{t} {NotEmpty}")
+            .MaximumLength(Summary.Max).WithMessage($"{t} {MaximumLength} {Summary.Max}");
+
+        t = "Permission";
+        RuleFor(p => p.Permission).NotNull().WithMessage($"{t} {NotEmpty}");
+
+        t = "ThumbnailHashId";
+        RuleFor(p => p.ThumbnailHashId).NotEmpty().WithMessage($"{t} {NotEmpty}");
+
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
         RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
