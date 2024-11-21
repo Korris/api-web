@@ -52,6 +52,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -100,6 +111,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<Guid>("PeriodId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<float>("TotalAmount")
                         .HasColumnType("real");
 
@@ -146,6 +168,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -191,6 +224,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -249,6 +293,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<string>("SwiftCode")
                         .HasColumnType("text");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -417,6 +472,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
@@ -454,6 +520,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<Guid>("PaymentMethodId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("UserWalletId")
                         .HasColumnType("uuid");
@@ -496,6 +573,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid?>("UserWalletId")
                         .HasColumnType("uuid");
@@ -541,6 +629,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<string>("Paymethod")
                         .HasColumnType("text");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Thumbnail")
                         .HasColumnType("text");
@@ -605,8 +704,19 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
                     b.Property<string>("SystemMessage")
                         .HasColumnType("text");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -660,6 +770,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("character varying(5)");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.ToTable("WalletSettings");
@@ -703,6 +824,17 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -781,11 +913,22 @@ namespace Mcsg.Wallet.Domain.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
                     b.Property<string>("SystemMessage")
                         .HasColumnType("text");
 
                     b.Property<int?>("SystemMethod")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<float>("TransactionFee")
                         .HasColumnType("real");
@@ -842,6 +985,17 @@ namespace Mcsg.Wallet.Domain.Migrations
 
                     b.Property<int>("OtpType")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid>("TransactionId")
                         .HasColumnType("uuid");

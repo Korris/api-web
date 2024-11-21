@@ -31,7 +31,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,7 +56,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -99,7 +105,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -119,7 +128,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -138,7 +150,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -159,7 +174,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -191,7 +209,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,7 +238,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,7 +275,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -276,7 +303,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -306,7 +336,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -349,7 +382,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -387,7 +423,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -414,7 +453,10 @@ namespace Mcsg.Wallet.Domain.Migrations
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
-                    IsDelete = table.Column<bool>(type: "boolean", nullable: false)
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -441,13 +483,13 @@ namespace Mcsg.Wallet.Domain.Migrations
 
             migrationBuilder.InsertData(
                 table: "WalletSettingDetails",
-                columns: new[] { "Id", "CreatedBy", "CreatedOn", "Description", "IsDelete", "ModifiedBy", "ModifiedOn", "Name", "Type", "Value" },
-                values: new object[] { new Guid("5f65fed1-bddc-4c7c-ba57-cb33a54542c8"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "With draw notify list email", false, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "WithDrawNotify", 0, "info@bumcheo.vn" });
+                columns: new[] { "Id", "CreatedBy", "CreatedOn", "Description", "IsDelete", "ModifiedBy", "ModifiedOn", "Name", "SyncError", "SyncedOn", "TagData", "Type", "Value" },
+                values: new object[] { new Guid("5f65fed1-bddc-4c7c-ba57-cb33a54542c8"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "With draw notify list email", false, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "WithDrawNotify", null, null, null, 0, "info@bumcheo.vn" });
 
             migrationBuilder.InsertData(
                 table: "WalletSettings",
-                columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDelete", "Logo", "ModifiedBy", "ModifiedOn", "Name", "Symbol" },
-                values: new object[] { new Guid("a2f9d301-b081-4cd8-850f-27bc996702e7"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "BC", "BC" });
+                columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDelete", "Logo", "ModifiedBy", "ModifiedOn", "Name", "Symbol", "SyncError", "SyncedOn", "TagData" },
+                values: new object[] { new Guid("a2f9d301-b081-4cd8-850f-27bc996702e7"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), "BC", "BC", null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_EarningPeriods_Year_Order_FromDate_ToDate",
