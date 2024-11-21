@@ -119,7 +119,7 @@
                             ) spr ON spr.""SubPostId"" = sp.""Id""
                             WHERE 
                                 pf.""UserId"" = @UserId
-                                AND p.""IsDelete"" = false AND p.""Type"" = @Type AND p.""Status"" = {(int)PostStatus.Public}
+                                AND p.""IsDelete"" = false AND pf.""IsDelete"" = FALSE AND p.""Type"" = @Type AND p.""Status"" = {(int)PostStatus.Public}
                             GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             u.""Avatar"",u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"",
@@ -159,7 +159,7 @@
                         SELECT count(postFavorites.*) AS TotalItems 
                         FROM {_postRepository.TableName} post 
                         INNER JOIN {_postFavoriteRepository.TableName} postFavorites ON post.""Id"" = postFavorites.""PostId"" 
-                        WHERE postFavorites.""UserId"" = @UserId AND post.""IsDelete"" = false ;
+                        WHERE postFavorites.""UserId"" = @UserId AND post.""IsDelete"" = false AND post.""Type"" = @Type AND post.""Status"" = {(int)PostStatus.Public};
                         ";
             }
         }
