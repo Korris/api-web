@@ -33,7 +33,6 @@ public class PostFormBaseV : AbstractValidator<PostFormBase>
     public PostFormBaseV()
     {
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
-        RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
     }
 
     /// <summary>
@@ -48,26 +47,6 @@ public class PostFormBaseV : AbstractValidator<PostFormBase>
                tag.Length < Hashtag.Max &&
                !tag.Contains(' ') &&
                Regex.IsMatch(tag, Regular.Tag);
-    }
-
-    /// <summary>
-    /// No duplicate
-    /// </summary>
-    /// <param name="tags">Tags</param>
-    /// <returns>Return the result</returns>
-    private bool NoDuplicate(List<string>? tags)
-    {
-        if (tags == null)
-        {
-            tags = [];
-        }
-
-        if (tags.Count == 0)
-        {
-            return true;
-        }
-
-        return tags.Distinct().Count() == tags.Count;
     }
 
     #endregion
