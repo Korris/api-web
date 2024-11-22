@@ -27,9 +27,3 @@ setx Bumcheo_Soc_Db_Port "65432"
 
 setx Bumcheo_Sto_Db_Host "ntada.win"
 setx Bumcheo_Sto_Db_Port "65432"
-
-setx Bumcheo_Wal_Db_Host "ntada.win"
-setx Bumcheo_Wal_Db_Port "65432"
-
-setx Bumcheo_Wjo_Db_Host "ntada.win"
-setx Bumcheo_Wjo_Db_Port "65432"

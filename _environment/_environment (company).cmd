@@ -27,9 +27,3 @@ setx Bumcheo_Soc_Db_Port "5432"
 
 setx Bumcheo_Sto_Db_Host "ntada.postgres"
 setx Bumcheo_Sto_Db_Port "5432"
-
-setx Bumcheo_Wal_Db_Host "ntada.postgres"
-setx Bumcheo_Wal_Db_Port "5432"
-
-setx Bumcheo_Wjo_Db_Host "ntada.postgres"
-setx Bumcheo_Wjo_Db_Port "5432"

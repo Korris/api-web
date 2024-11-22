@@ -1,7 +1,7 @@
-﻿namespace Mcsg.Wallet.Domain.Enums;
+﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// TransactionType
+/// Transaction type
 /// </summary>
 public enum TransactionType
 {

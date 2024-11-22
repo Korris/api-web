@@ -16,7 +16,6 @@ using Dtos;
 using Hubs;
 using Interfaces;
 using Requests;
-using Wallet.Domain.Enums;
 using static Common.Core.Constants.Message;
 using static Common.Core.Constants.Setting;
 using NotificationType = Common.Core.Constants.Setting.NotificationType;
