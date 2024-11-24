@@ -1,0 +1,43 @@
+[
+  {
+    "Name": "All",
+    "Projects": [
+      {
+        "Path": "Mcsg.Comic.Api\\Mcsg.Comic.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Document.Api\\Mcsg.Document.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Identity.Api\\Mcsg.Identity.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Social.Api\\Mcsg.Social.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Story.Api\\Mcsg.Story.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Function.Job\\Mcsg.Function.Job.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Media.Tool\\Mcsg.Media.Tool.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.OpenId.Mvc\\Mcsg.OpenId.Mvc.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Mcsg.Realtime.Api\\Mcsg.Realtime.Api.csproj",
+        "Action": "StartWithoutDebugging"
+      }
+    ]
+  }
+]
