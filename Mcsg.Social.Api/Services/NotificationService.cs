@@ -643,7 +643,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Wallet!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Wallet.Wallet!);
             var client = new UserWalletProto.UserWalletProtoClient(channel);
 
             var request = new TransactionGetReq

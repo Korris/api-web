@@ -34,9 +34,10 @@ public class VerificationFacebook : VerificationStrategy
     public override async Task<SingleResponse> Verify(string? token)
     {
         ArgumentNullException.ThrowIfNull(_secret, nameof(_secret));
+        ArgumentNullException.ThrowIfNull(_client, nameof(_client));
 
         var uri = $"{_secret.ApiUrl}/oauth/access_token?client_id={_secret.AppId}&client_secret={_secret.Secret}&grant_type=client_credentials";
-        var res = await GetAsync(uri);
+        var res = await _client.GetAsync(uri);
         if (!res.Succeeded)
         {
             return res.SetError(res.Message + "");
@@ -44,7 +45,7 @@ public class VerificationFacebook : VerificationStrategy
 
         var at = GetProperty(res, "access_token").GetString();
         uri = $"{_secret.ApiUrl}/debug_token?input_token={token}&access_token={at}";
-        res = await GetAsync(uri);
+        res = await _client.GetAsync(uri);
         if (!res.Succeeded)
         {
             return res.SetError(res.Message + "");

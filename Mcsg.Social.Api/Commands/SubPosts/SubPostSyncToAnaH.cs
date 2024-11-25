@@ -68,7 +68,7 @@ public class SubPostSyncToAnaH : BaseSettingH, IRequestHandler<SubPostSyncToAnaR
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new SocialSubProto.SocialSubProtoClient(channel);
 
             var etts = await _context.SocialSubPosts.Select(p => new SocialSubProtoDto

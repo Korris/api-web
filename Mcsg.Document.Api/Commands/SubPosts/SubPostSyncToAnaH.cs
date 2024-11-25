@@ -67,7 +67,7 @@ public class SubPostSyncToAnaH : BaseSettingH, IRequestHandler<SubPostSyncToAnaR
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new DocumentSubProto.DocumentSubProtoClient(channel);
 
             var etts = await _context.DocumentSubPosts.Select(p => new DocumentSubProtoDto

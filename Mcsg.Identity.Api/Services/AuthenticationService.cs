@@ -976,7 +976,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Web.Wallet!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Wallet.Wallet!);
 
             var client = new UserWalletProto.UserWalletProtoClient(channel);
             var request = new UserWalletCreateReq
@@ -1004,7 +1004,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new UserProto.UserProtoClient(channel);
 
             var request = new UserCreateReq
@@ -1044,7 +1044,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new UserProto.UserProtoClient(channel);
 
             var request = new UserDeleteReq

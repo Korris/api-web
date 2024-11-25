@@ -67,7 +67,7 @@ public class SubPostSyncToAnaH : BaseSettingH, IRequestHandler<SubPostSyncToAnaR
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicSubProto.ComicSubProtoClient(channel);
 
             var etts = await _context.ComicSubPosts.Select(p => new ComicSubProtoDto

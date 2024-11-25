@@ -2312,7 +2312,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StoryProto.StoryProtoClient(channel);
 
             var request = new StoryCreateReq
@@ -2352,7 +2352,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StoryProto.StoryProtoClient(channel);
 
             var request = new StoryUpdateReq
@@ -2382,7 +2382,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StoryProto.StoryProtoClient(channel);
 
             var request = new StoryDeleteReq
@@ -2411,7 +2411,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StorySubProto.StorySubProtoClient(channel);
 
             var request = new StorySubCreateReq
@@ -2450,7 +2450,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StorySubProto.StorySubProtoClient(channel);
 
             var request = new StorySubDeleteReq

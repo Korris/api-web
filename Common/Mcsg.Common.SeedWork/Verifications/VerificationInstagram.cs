@@ -32,6 +32,7 @@ public class VerificationInstagram : VerificationStrategy
     public override async Task<SingleResponse> Verify(string? token)
     {
         ArgumentNullException.ThrowIfNull(_secret, nameof(_secret));
+        ArgumentNullException.ThrowIfNull(_client, nameof(_client));
 
         var dic = new Dictionary<string, string>
         {
@@ -42,7 +43,7 @@ public class VerificationInstagram : VerificationStrategy
             { "code", token + "" }
         };
 
-        var res = await PostFormAsync(_secret.ApiUrl, dic);
+        var res = await _client.PostFormAsync(_secret.ApiUrl, dic);
         if (!res.Succeeded)
         {
             return res.SetError(res.Message + "");

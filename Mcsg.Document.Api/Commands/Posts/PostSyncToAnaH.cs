@@ -67,7 +67,7 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new DocumentProto.DocumentProtoClient(channel);
 
             var etts = await _context.DocumentPosts.Select(p => new DocumentProtoDto

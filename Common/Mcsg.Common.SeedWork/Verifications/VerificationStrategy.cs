@@ -11,7 +11,6 @@
  */
 #endregion
 
-using System.Text;
 using System.Text.Json;
 
 namespace Mcsg.Common.SeedWork.Verifications;
@@ -43,117 +42,12 @@ public class VerificationStrategy : IVerificationStrategy
     /// <param name="client">HTTP client</param>
     public void SetHttpClient(HttpClient client)
     {
-        _client = client;
+        _client = new RestApi(client);
     }
 
     #endregion
 
     #region -- Methods --
-
-    /// <summary>
-    /// Get async
-    /// </summary>
-    /// <param name="uri">URI</param>
-    /// <returns>Return the result</returns>
-    protected async Task<SingleResponse> GetAsync(string uri)
-    {
-        var res = new SingleResponse();
-
-        ArgumentNullException.ThrowIfNull(_client, nameof(_client));
-
-        try
-        {
-            var rsp = await _client.GetAsync(uri);
-            if (rsp.IsSuccessStatusCode)
-            {
-                var data = await rsp.Content.ReadAsStringAsync();
-                res.SetSuccess(data);
-            }
-            else
-            {
-                res.SetError(rsp.ReasonPhrase + "");
-            }
-        }
-        catch (Exception ex)
-        {
-            res.SetError(ex.Message);
-        }
-
-        return res;
-    }
-
-    /// <summary>
-    /// Post async
-    /// </summary>
-    /// <param name="uri">URI</param>
-    /// <param name="content">HTTP content</param>
-    /// <returns>Return the result</returns>
-    protected async Task<SingleResponse> PostAsync(string uri, HttpContent? content)
-    {
-        var res = new SingleResponse();
-
-        ArgumentNullException.ThrowIfNull(_client, nameof(_client));
-
-        try
-        {
-            var rsp = await _client.PostAsync(uri, content);
-            if (rsp.IsSuccessStatusCode)
-            {
-                var data = await rsp.Content.ReadAsStringAsync();
-                res.SetSuccess(data);
-            }
-            else
-            {
-                res.SetError(rsp.ReasonPhrase + "");
-            }
-        }
-        catch (Exception ex)
-        {
-            res.SetError(ex.Message);
-        }
-
-        return res;
-    }
-
-    /// <summary>
-    /// Post JSON async
-    /// </summary>
-    /// <param name="uri">URI</param>
-    /// <param name="data">JSON data</param>
-    /// <returns>Return the result</returns>
-    protected async Task<SingleResponse> PostJsonAsync(string uri, string? data)
-    {
-        if (data == null)
-        {
-            return await PostAsync(uri, null);
-        }
-
-        var content = new StringContent(data, Encoding.UTF8, ContentType);
-
-        return await PostAsync(uri, content);
-    }
-
-    /// <summary>
-    /// Post form async
-    /// </summary>
-    /// <param name="uri">URI</param>
-    /// <param name="data">Form input data</param>
-    /// <returns>Return the result</returns>
-    protected async Task<SingleResponse> PostFormAsync(string uri, Dictionary<string, string>? data)
-    {
-        if (data == null)
-        {
-            return await PostAsync(uri, null);
-        }
-
-        var content = new MultipartFormDataContent();
-        foreach (var i in data)
-        {
-            content.Add(new StringContent(i.Value), i.Key);
-        }
-
-        return await PostAsync(uri, content);
-    }
 
     /// <summary>
     /// GetProperty
@@ -179,16 +73,7 @@ public class VerificationStrategy : IVerificationStrategy
     /// <summary>
     /// HTTP client
     /// </summary>
-    private HttpClient? _client;
-
-    #endregion
-
-    #region -- Constants --
-
-    /// <summary>
-    /// Content type
-    /// </summary>
-    private const string ContentType = "application/json";
+    protected IRestApi? _client;
 
     #endregion
 }

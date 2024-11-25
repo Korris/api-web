@@ -203,7 +203,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new FavoriteViewProto.FavoriteViewProtoClient(channel);
 
             var request = new FavoriteViewSearchReq

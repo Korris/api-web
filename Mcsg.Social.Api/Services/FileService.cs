@@ -587,7 +587,7 @@ public class FileService : IFileService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
 
             var client = new SocialSubProto.SocialSubProtoClient(channel);
             var request = new SocialSubCreateReq
@@ -618,7 +618,7 @@ public class FileService : IFileService
     private async Task<SocialSubDeleteRsp> SyncDeleteSubToAna(List<Guid> Ids)
     {
 
-        using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+        using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
 
         var client = new SocialSubProto.SocialSubProtoClient(channel);
 

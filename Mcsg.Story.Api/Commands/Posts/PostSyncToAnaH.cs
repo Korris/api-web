@@ -68,7 +68,7 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new StoryProto.StoryProtoClient(channel);
 
             var etts = await _context.StoryPosts.Select(p => new StoryProtoDto

@@ -67,7 +67,7 @@ public class UserSyncToAnaH : BaseSettingH, IRequestHandler<UserSyncToAnaR, Sing
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new UserProto.UserProtoClient(channel);
 
             var etts = await _context.Users.Select(p => new UserProtoDto

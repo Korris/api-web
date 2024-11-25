@@ -83,7 +83,7 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
 
             var client = new SocialSubProto.SocialSubProtoClient(channel);
             var request = new SocialSubDeleteReq

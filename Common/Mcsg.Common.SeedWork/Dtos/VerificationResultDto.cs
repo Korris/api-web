@@ -58,5 +58,15 @@ public class VerificationResultDto
     /// </summary>
     public string? LastName { get; set; }
 
+    /// <summary>
+    /// Access token
+    /// </summary>
+    public string? AccessToken { get; set; }
+
+    /// <summary>
+    /// Expires in
+    /// </summary>
+    public int ExpiresIn { get; set; }
+
     #endregion
 }

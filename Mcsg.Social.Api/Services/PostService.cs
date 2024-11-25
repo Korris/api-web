@@ -784,7 +784,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new SocialProto.SocialProtoClient(channel);
 
             var request = new SocialDeleteReq

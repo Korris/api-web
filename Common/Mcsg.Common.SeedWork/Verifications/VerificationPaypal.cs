@@ -11,6 +11,8 @@
  */
 #endregion
 
+using System.Text;
+
 namespace Mcsg.Common.SeedWork.Verifications;
 
 using Dtos;
@@ -18,9 +20,9 @@ using Responses;
 using static Common.SeedWork.Constants.Provider;
 
 /// <summary>
-/// Verification Google
+/// Verification Paypal
 /// </summary>
-public class VerificationGoogle : VerificationStrategy
+public class VerificationPaypal : VerificationStrategy
 {
     #region -- Overrides --
 
@@ -34,31 +36,24 @@ public class VerificationGoogle : VerificationStrategy
         ArgumentNullException.ThrowIfNull(_secret, nameof(_secret));
         ArgumentNullException.ThrowIfNull(_client, nameof(_client));
 
-        var uri = $"{_secret.ApiUrl}/tokeninfo?id_token={token}";
-        var res = await _client.GetAsync(uri);
+        var content = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
+        _client.SetBasicAuthorization(_secret.AppId, _secret.Secret);
+        var res = await _client.PostAsync(_secret.ApiUrl, content);
         if (!res.Succeeded)
         {
             return res.SetError(res.Message + "");
         }
 
-        var aud = GetProperty(res, "aud").GetString();
-        if (aud != _secret.AppId)
-        {
-            return res.SetError("Invalid AppId");
-        }
-
-        var userId = GetProperty(res, "sub").GetString();
-        var email = GetProperty(res, "email").GetString();
-        var firstName = GetProperty(res, "given_name").GetString();
-        var lastName = GetProperty(res, "family_name").GetString();
+        var appId = GetProperty(res, "app_id").GetString();
+        var accessToken = GetProperty(res, "access_token").GetString();
+        var expiresIn = GetProperty(res, "expires_in").GetInt32();
 
         var o = new VerificationResultDto
         {
-            LoginProvider = Google,
-            ProviderKey = userId + "",
-            Email = email,
-            FirstName = firstName,
-            LastName = lastName
+            LoginProvider = Paypal,
+            ProviderKey = appId + "",
+            AccessToken = accessToken,
+            ExpiresIn = expiresIn
         };
         return res.SetSuccess(o);
     }
@@ -71,7 +66,7 @@ public class VerificationGoogle : VerificationStrategy
     /// Initialize
     /// </summary>
     /// <param name="secret">Secret</param>
-    public VerificationGoogle(VerificationSecretDto secret)
+    public VerificationPaypal(VerificationSecretDto secret)
     {
         _secret = secret;
     }

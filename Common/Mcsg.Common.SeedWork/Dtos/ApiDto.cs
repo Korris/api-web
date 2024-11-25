@@ -26,7 +26,9 @@ public class ApiDto
     public ApiDto()
     {
         Admin = new AdminDto();
+        Analytic = new AnalyticDto();
         Mobile = new MobileDto();
+        Wallet = new WalletDto();
         Web = new WebDto();
     }
 
@@ -40,9 +42,19 @@ public class ApiDto
     public AdminDto Admin { get; }
 
     /// <summary>
+    /// Analytic
+    /// </summary>
+    public AnalyticDto Analytic { get; }
+
+    /// <summary>
     /// Mobile
     /// </summary>
     public MobileDto Mobile { get; }
+
+    /// <summary>
+    /// Wallet
+    /// </summary>
+    public WalletDto Wallet { get; }
 
     /// <summary>
     /// Web
@@ -58,20 +70,17 @@ public class ApiDto
     /// </summary>
     public class AdminDto : MobileDto
     {
+    }
+
+    /// <summary>
+    /// Analytic
+    /// </summary>
+    public class AnalyticDto : MobileDto
+    {
         /// <summary>
         /// Analytic
         /// </summary>
         public string? Analytic { get; set; }
-
-        /// <summary>
-        /// Sync
-        /// </summary>
-        public string? Sync { get; set; }
-
-        /// <summary>
-        /// CloneSite
-        /// </summary>
-        public string? CloneSite { get; set; }
     }
 
     /// <summary>
@@ -83,6 +92,11 @@ public class ApiDto
         /// Comic
         /// </summary>
         public string? Comic { get; set; }
+
+        /// <summary>
+        /// Document
+        /// </summary>
+        public string? Document { get; set; }
 
         /// <summary>
         /// Identity
@@ -101,6 +115,17 @@ public class ApiDto
     }
 
     /// <summary>
+    /// Wallet
+    /// </summary>
+    public class WalletDto : MobileDto
+    {
+        /// <summary>
+        /// Wallet
+        /// </summary>
+        public string? Wallet { get; set; }
+    }
+
+    /// <summary>
     /// Web
     /// </summary>
     public class WebDto : MobileDto
@@ -108,17 +133,13 @@ public class ApiDto
         /// <summary>
         /// Media
         /// </summary>
+        [Obsolete]
         public string? Media { get; set; }
 
         /// <summary>
         /// Realtime
         /// </summary>
         public string? Realtime { get; set; }
-
-        /// <summary>
-        /// Wallet
-        /// </summary>
-        public string? Wallet { get; set; }
     }
 
     #endregion

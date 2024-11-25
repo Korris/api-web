@@ -35,5 +35,10 @@ public static class Provider
     /// </summary>
     public const string Google = "Google";
 
+    /// <summary>
+    /// Paypal
+    /// </summary>
+    public const string Paypal = "Paypal";
+
     #endregion
 }

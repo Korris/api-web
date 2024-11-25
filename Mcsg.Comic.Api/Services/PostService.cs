@@ -2326,7 +2326,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicProto.ComicProtoClient(channel);
 
             var request = new ComicCreateReq
@@ -2366,7 +2366,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicProto.ComicProtoClient(channel);
 
             var request = new ComicUpdateReq
@@ -2396,7 +2396,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicProto.ComicProtoClient(channel);
 
             var request = new ComicDeleteReq
@@ -2425,7 +2425,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicSubProto.ComicSubProtoClient(channel);
 
             var request = new ComicSubCreateReq
@@ -2464,7 +2464,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         try
         {
-            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Admin.Analytic!);
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
             var client = new ComicSubProto.ComicSubProtoClient(channel);
 
             var request = new ComicSubDeleteReq
