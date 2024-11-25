@@ -16,8 +16,6 @@ public static class ErrorMessage
     public const string OtpGenerateFail = "Không thể tạo mã OTP";
     public const string SocialEmailNotPublic = "Email mạng xã hội của bạn không được công khai";
     public const string SocialPlatformNotSupport = "Hệ thống chưa hỗ trợ mạng xã hội này";
-    public const string UserBanned = "Tài khoản của bạn đã bị khóa vĩnh viễn";
-    public const string UserSuspended = "Tài khoản của bạn bị khóa đến {0}";
 
     // Override Identity Error
     public const string DefaultError = "Có lỗi xảy ra, vui lòng thử lại.";

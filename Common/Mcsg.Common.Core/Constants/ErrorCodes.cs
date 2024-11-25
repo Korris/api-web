@@ -48,8 +48,6 @@ public class ErrorCodes
     public const string CurrentPasswordNotMatch = "ERR_AUTH_00049";
 
     public const string DuplicateUserPhone = "ERR_AUTH_00050";
-    public const string UserBanned = "ERR_AUTH_00051";
-    public const string UserSuspended = "ERR_AUTH_00052";
 
 
     //Query Result Error

@@ -317,6 +317,16 @@ public static class Error
     /// </summary>
     public const string E309 = "This user not permission to do this action";
 
+    /// <summary>
+    /// This user has been suspeded
+    /// </summary>
+    public const string E310 = "This user has been suspended";
+
+    /// <summary>
+    /// This user has been banned
+    /// </summary>
+    public const string E311 = "This user has been banned";
+
     #endregion
 
     #region -- E4xx --

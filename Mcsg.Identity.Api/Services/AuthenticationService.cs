@@ -220,11 +220,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             if (user.Status == UserStatus.Suspended)
             {
                 var lockoutEndFormat = user.LockoutEnd == null ? "không thời hạn" : user.LockoutEnd?.ToString();
-                throw new ForbiddenAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
+                throw new ForbiddenAccessException(nameof(E310), lockoutEndFormat + " - " + user.StatusReason);
             }
             else if (user.Status == UserStatus.Banned)
             {
-                throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
+                throw new ForbiddenAccessException(nameof(E311), E311 + " - " + user.StatusReason);
             }
         }
 
@@ -305,11 +305,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 if (user.Status == UserStatus.Suspended)
                 {
                     var lockoutEndFormat = user.LockoutEnd == null ? "không thời hạn" : user.LockoutEnd?.ToString();
-                    throw new ForbiddenAccessException(ErrorCodes.UserSuspended, string.Format(ErrorMessage.UserSuspended, lockoutEndFormat) + " - " + user.StatusReason);
+                    throw new ForbiddenAccessException(nameof(E310), lockoutEndFormat + " - " + user.StatusReason);
                 }
                 else if (user.Status == UserStatus.Banned)
                 {
-                    throw new ForbiddenAccessException(ErrorCodes.UserBanned, ErrorMessage.UserBanned + " - " + user.StatusReason);
+                    throw new ForbiddenAccessException(nameof(E311), E311 + " - " + user.StatusReason);
                 }
             }
 
