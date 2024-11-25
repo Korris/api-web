@@ -14,7 +14,7 @@ public partial class SubPostReactService : ISubPostReactService
         _reactService = reactService;
     }
 
-    public async Task<bool> AddReactionToSubPost(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> AddReactionToSubPost(ReactionReactR request)
     {
         return await _reactService.AddReaction(request);
     }
@@ -24,7 +24,7 @@ public partial class SubPostReactService : ISubPostReactService
         return await _reactService.GetReactions(request);
     }
 
-    public async Task<bool> RemoveReactionToSubPost(ReactionReactR request)
+    public async Task<ReactionUpdateResponse> RemoveReactionToSubPost(ReactionReactR request)
     {
         return await _reactService.RemoveReaction(request);
     }
