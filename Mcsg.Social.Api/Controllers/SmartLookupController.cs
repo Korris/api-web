@@ -54,6 +54,7 @@ public class SmartLookupController : ControllerBase
     [HttpGet("user-list")]
     public async Task<IActionResult> SearchUserByKeyWord([FromQuery] SmartLookupSearchUserR input)
     {
+        input.Analyze(HttpContext);
         var result = await _userService.SearchUserbyKeyword(input);
         return Ok(result);
     }
