@@ -428,6 +428,28 @@ public class Validator
     }
 
     /// <summary>
+    /// Token
+    /// </summary>
+    public class Token
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 128;
+    }
+
+    /// <summary>
+    /// Code
+    /// </summary>
+    public class Code
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 8;
+    }
+
+    /// <summary>
     /// URL
     /// </summary>
     public class Url

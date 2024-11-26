@@ -18,9 +18,13 @@ public partial class User : IdentityUser<Guid>
     /// <summary>
     /// Store the first username
     /// </summary>
+    [StringLength(Validator.ProfileName.Max)]
     public string? ProfileId { get; set; }
 
+    [StringLength(Validator.Name.Max)]
     public string? FirstName { get; set; }
+
+    [StringLength(Validator.Name.Max)]
     public string? LastName { get; set; }
 
     [Column(TypeName = "timestamp")]
@@ -32,8 +36,12 @@ public partial class User : IdentityUser<Guid>
     [Column(TypeName = "timestamp")]
     public DateTime? RefreshTokenExpiryTime { get; set; }
 
+    [StringLength(Validator.TagData.Max)]
     public string? ReferralCode { get; set; }
+
+    [StringLength(Validator.Url.Max)]
     public string? Avatar { get; set; }
+
     public UserStatus Status { get; set; } = UserStatus.Active;
 
     [Column(TypeName = "timestamp")]
@@ -45,8 +53,12 @@ public partial class User : IdentityUser<Guid>
     [StringLength(Validator.Description.Max)]
     public string? StatusReason { get; set; }
 
+    [StringLength(Validator.Url.Max)]
     public string? CoverPhoto { get; set; }
+
+    [StringLength(Validator.Location.Max)]
     public string? Location { get; set; }
+
     public DateOnly? PremiumDate { get; set; }
     public bool IsActiveEarning { get; set; }
     public bool IsWalletShowing { get; set; }

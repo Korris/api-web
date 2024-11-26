@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
 using Core.Enums;
 using SeedWork;
+using SeedWork.Constants;
 
 public partial class UserBlock : AuditableEntity
 {
@@ -25,6 +27,7 @@ public partial class UserBlock : AuditableEntity
     /// <summary>
     /// Reason
     /// </summary>
+    [StringLength(Validator.Description.Max)]
     public string? Reason { get; set; }
 
     /// <summary>

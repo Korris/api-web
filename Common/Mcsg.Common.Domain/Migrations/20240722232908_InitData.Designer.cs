@@ -2874,7 +2874,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -5504,7 +5505,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CoverPhoto")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -5560,7 +5562,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("Location")
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -5598,14 +5601,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("ProfileId")
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("ProfileName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("ReferralCode")
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("text");
@@ -5687,7 +5692,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp");
@@ -5854,7 +5860,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("text");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.HasKey("Id");
 
@@ -5869,7 +5876,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<string>("Code")
-                        .HasColumnType("text");
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uuid");
@@ -5878,7 +5886,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Destination")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ExpiryTime")
                         .HasColumnType("timestamp");
@@ -5907,7 +5916,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("character varying(64)");
 
                     b.Property<string>("Token")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -5989,7 +5999,8 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp");
@@ -6078,10 +6089,12 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
@@ -6090,7 +6103,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
@@ -6099,13 +6113,16 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("timestamp");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("RegisterBySocialPlatform")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("SocialId")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("SyncError")
                         .HasMaxLength(1024)
@@ -6119,7 +6136,8 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("character varying(64)");
 
                     b.Property<string>("Type")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
