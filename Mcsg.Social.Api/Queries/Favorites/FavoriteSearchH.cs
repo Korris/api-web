@@ -155,7 +155,9 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         // Keyword
         if (!string.IsNullOrWhiteSpace(keyword) && type != PostType.Feed)
         {
-            q = q.Where(p => p.Title.Contains(keyword));
+            q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || EF.Functions.ILike(
+                EF.Functions.Unaccent((p.Title + "").ToLower()),
+                EF.Functions.Unaccent($"%{keyword.ToLower()}%")));
         }
 
         // Paging
