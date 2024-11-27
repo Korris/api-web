@@ -20,7 +20,6 @@ using Interfaces;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
-using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Program
@@ -96,7 +95,7 @@ public class Program
         builder.Services.AddSingleton<ISetting>(st!);
 
         // RedisStore
-        builder.Services.AddSingleton<IRedisStore>(p => new RedisStore(new RedisDto { Host = "ntada.redis", Port = 6379 }));
+        builder.Services.AddSingleton<IRedisStore>(p => new RedisStore(st.Redis));
 
         // Business
         builder.Services.AddScoped<IBusinessText, BusinessText>();

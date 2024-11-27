@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Realtime.Api.Interfaces;
 
 using Common.SeedWork.Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 
 /// <summary>
 /// Interface setting
@@ -28,6 +29,11 @@ public interface ISetting : ISettingBase
     /// Allow sending email
     /// </summary>
     bool AllowSendingEmail { get; set; }
+
+    /// <summary>
+    /// Redis
+    /// </summary>
+    RedisDto Redis { get; }
 
     #endregion
 }

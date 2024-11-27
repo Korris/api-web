@@ -4,6 +4,7 @@ namespace Mcsg.Realtime.Api;
 
 using Common.SeedWork;
 using Interfaces;
+using static Common.SeedWork.Dtos.ConnectionDto;
 using static Common.SeedWork.Dtos.StorageDto;
 
 /// <summary>
@@ -33,6 +34,11 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// Redis
+    /// </summary>
+    public RedisDto Redis { get; }
+
     #endregion
 
     #region -- Methods --
@@ -45,6 +51,7 @@ public class Setting : SettingBase, ISetting
         NotificationExchange = string.Empty;
         NotificationQueuePostComment = string.Empty;
         NotificationRoutingKey = string.Empty;
+        Redis = new RedisDto();
     }
 
     /// <summary>
