@@ -262,7 +262,7 @@ public class Setting : SeedWork.Constants.Setting
         /// <summary>
         /// Images
         /// </summary>
-        public static string[] Images = { "image/jpeg", "image/png", "image/gif", "image/heic" };
+        public static string[] Images = { "image/jpeg", "image/png", "image/gif", "image/heic", "image/jpg", "image/bmp", "image/wepb" };
     }
 
     /// <summary>

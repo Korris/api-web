@@ -144,6 +144,10 @@ public class FileService : IFileService
                 imgHeight = ratio.Height;
                 imgWidth = ratio.Width;
             }
+            else
+            {
+                throw new BadRequestException(nameof(E210), E210);
+            }
 
             using (var stream = file.OpenReadStream())
             {

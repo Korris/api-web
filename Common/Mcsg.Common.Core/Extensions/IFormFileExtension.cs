@@ -141,9 +141,7 @@ public static class IFormFileExtension
             throw new FormatException(nameof(E112));
         }
 
-        string fileExtension = Path.GetExtension(file.FileName);
-
-        return Setting.FileExt.Videos.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
+        return file.OpenReadStream().IsVideo();
     }
 
     /// <summary>
