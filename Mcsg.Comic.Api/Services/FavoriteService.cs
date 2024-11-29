@@ -125,6 +125,7 @@ public partial class FavoriteService : BaseS, IFavoriteService
         var hasExisted = (await _postFavoriteRepository.GetByCustomQuery(GetPostFavoriteByPostIdAndUserId, new { postId = postFavorite.PostId, userId = postFavorite.UserId })).Any();
         if (hasExisted)
         {
+            await _tagFavoriteRepository.Connection.ExecuteAsync(DeletePostFavoriteByUserIdAndPostIdQuery, new { postId = request.Id, userId = request.UserId });
             return true;
         }
 
