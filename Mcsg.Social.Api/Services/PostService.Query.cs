@@ -438,6 +438,7 @@ LIMIT 1
                                 LEFT JOIN social.""SocialTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL) 
                                 AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }

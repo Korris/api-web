@@ -161,6 +161,7 @@ public class Program
             p.AddDiPostFavorite();
             p.AddDiReport();
             p.AddDiSubPost();
+            p.AddDiTag();
         });
         #endregion
 

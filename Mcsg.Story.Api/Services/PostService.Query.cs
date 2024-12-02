@@ -465,7 +465,8 @@ LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
                                 LEFT JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType 
+                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
+                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL) 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""Permission"" = @PostPermission
                                 AND qpost1.""IsDelete"" = false                                 

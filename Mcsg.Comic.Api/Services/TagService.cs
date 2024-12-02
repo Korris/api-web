@@ -178,7 +178,10 @@ public partial class TagService : ITagService
                             {
                                 PageSize = popularTagReq.PageSize,
                                 Offet = offset,
-                                PostType = popularTagReq.PostType
+                                PostType = popularTagReq.PostType,
+                                PostStatus = StatusUtils.PostStatusInt,
+                                Hide = popularTagReq.Hides,
+                                Permission = PostPermission.Public
                             });
 
         var resDto = await multipleQuery.ReadAsync<PopularTagResponse>().ConfigureAwait(false);

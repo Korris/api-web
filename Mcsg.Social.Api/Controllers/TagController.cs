@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
@@ -12,8 +13,9 @@ public class TagController : ControllerBase
 {
     #region -- Methods --
 
-    public TagController(ITagService tagService)
+    public TagController(IMediator mediator, ITagService tagService)
     {
+        _mediator = mediator;
         _tagService = tagService;
     }
 
@@ -62,9 +64,29 @@ public class TagController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// PopularTagForPosts
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPatch("PopularTagForPosts")]
+    public async Task<IActionResult> PopularTagForPosts([FromBody] TagPopularForPostsR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+
+        return Ok(response.Data);
+    }
+
     #endregion
 
     #region -- Fields --
+
+    /// <summary>
+    /// Mediator
+    /// </summary>
+    private readonly IMediator _mediator;
 
     private readonly ITagService _tagService;
 

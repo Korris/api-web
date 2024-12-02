@@ -25,24 +25,35 @@
         {
             get
             {
-                return @$"SELECT tag.""Id"", tag.""Name"", COUNT(post.""Id"") AS count
-                                FROM {_postRepository.TableName} post
-                                INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
-                                INNER JOIN {_tagRepository.TableName} tag ON tagpost.""TagId"" = tag.""Id"" 
-                                WHERE [AddPostType] post.""IsDelete"" = false AND tagpost.""IsDelete"" = false 
-                                GROUP BY  tag.""Id"", tag.""Name"" 
-                                ORDER BY ""count"" DESC
-                                LIMIT @PageSize
-                                OFFSET @Offet;
+                return @$"SELECT tag.""Id"", tag.""Name"", COUNT(DISTINCT post.""Id"") AS count,  MAX(post.""CreatedOn"") AS latest_created_on
+                          FROM {_postRepository.TableName} post
+                          INNER JOIN document.""DocumentSubPosts"" subpost ON post.""Id"" = subpost.""PostId""
+                          INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
+                          INNER JOIN {_tagRepository.TableName} tag ON tagpost.""TagId"" = tag.""Id"" 
+                          WHERE [AddPostType] post.""IsDelete"" = false 
+                          AND NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" = ANY (@Hide) IS NOT NULL) 
+                          AND subpost.""IsDelete"" = false 
+                          AND tagpost.""IsDelete"" = false 
+                          AND post.""Permission"" = (@Permission)
+                          AND post.""Status"" = ANY (@PostStatus)
+                          GROUP BY  tag.""Id"", tag.""Name""
+                          ORDER BY ""count"" DESC, latest_created_on DESC
+                          LIMIT @PageSize
+                          OFFSET @Offet;
 
-                        SELECT COUNT(*) AS TotalItems
-                            FROM (
-                            select distinct  tag.""Id""
-                                    FROM {_postRepository.TableName} post
-                                    INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
-                                    INNER JOIN {_tagRepository.TableName} tag ON tagpost.""TagId"" = tag.""Id"" 
-                                    WHERE [AddPostType] post.""IsDelete"" = false AND tagpost.""IsDelete"" = false
-                            ) q";
+                  SELECT COUNT(*) AS TotalItems
+                      FROM (
+                      select distinct  tag.""Id""
+                              FROM {_postRepository.TableName} post
+                              INNER JOIN document.""DocumentSubPosts"" subpost ON post.""Id"" = subpost.""PostId""
+                              INNER JOIN {_tagPostRepository.TableName} tagpost ON post.""Id"" = tagpost.""PostId"" 
+                              INNER JOIN {_tagRepository.TableName} tag ON tagpost.""TagId"" = tag.""Id"" 
+                              WHERE [AddPostType] post.""IsDelete"" = false 
+                              AND NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" = ANY (@Hide) IS NOT NULL) 
+                              AND post.""Status"" = ANY (@PostStatus)                              
+                              AND subpost.""IsDelete"" = false 
+                              AND tagpost.""IsDelete"" = false 
+                      ) q";
             }
         }
 
