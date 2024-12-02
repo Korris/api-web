@@ -38,6 +38,25 @@ public class RestApi : IRestApi
     }
 
     /// <summary>
+    /// SetBearerToken
+    /// </summary>
+    /// <param name="token">Token</param>
+    public void SetBearerToken(string token)
+    {
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
+    /// <summary>
+    /// SetRequestHeader
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <param name="value">Value</param>
+    public void SetRequestHeader(string key, string value)
+    {
+        _client.DefaultRequestHeaders.Add(key, value);
+    }
+
+    /// <summary>
     /// Get async
     /// </summary>
     /// <param name="uri">URI</param>

@@ -38,7 +38,7 @@ public class VerificationPaypal : VerificationStrategy
 
         var content = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
         _client.SetBasicAuthorization(_secret.AppId, _secret.Secret);
-        var res = await _client.PostAsync(_secret.ApiUrl, content);
+        var res = await _client.PostAsync($"{_secret.ApiUrl}/v1/oauth2/token", content);
         if (!res.Succeeded)
         {
             return res.SetError(res.Message + "");

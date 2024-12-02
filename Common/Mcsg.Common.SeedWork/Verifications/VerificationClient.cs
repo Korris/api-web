@@ -47,6 +47,11 @@ public class VerificationClient : IVerificationClient
         return _strategy.Verify(token);
     }
 
+    /// <summary>
+    /// Client
+    /// </summary>
+    public HttpClient? Client => _client;
+
     #endregion
 
     #region -- Methods --

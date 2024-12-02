@@ -606,4 +606,20 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string Admin = ";admin;";
     }
+
+    /// <summary>
+    /// UserOnline
+    /// </summary>
+    public class UserOnline
+    {
+        /// <summary>
+        /// Registered
+        /// </summary>
+        public const string Registered = "user_online_registered";
+
+        /// <summary>
+        /// Anonymous
+        /// </summary>
+        public const string Anonymous = "user_online_anonymous";
+    }
 }

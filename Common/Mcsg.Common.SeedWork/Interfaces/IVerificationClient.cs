@@ -36,4 +36,13 @@ public interface IVerificationClient
     Task<SingleResponse> Handle(string? token);
 
     #endregion
+
+    #region -- Properties --
+
+    /// <summary>
+    /// Client
+    /// </summary>
+    HttpClient? Client { get; }
+
+    #endregion
 }

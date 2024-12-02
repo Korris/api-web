@@ -30,6 +30,19 @@ public interface IRestApi
     void SetBasicAuthorization(string clientId, string clientSecret);
 
     /// <summary>
+    /// SetBearerToken
+    /// </summary>
+    /// <param name="token">Token</param>
+    void SetBearerToken(string token);
+
+    /// <summary>
+    /// SetRequestHeader
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <param name="value">Value</param>
+    void SetRequestHeader(string key, string value);
+
+    /// <summary>
     /// Get async
     /// </summary>
     /// <param name="uri">URI</param>
