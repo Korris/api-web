@@ -557,7 +557,7 @@ partial class Notification
 
         public Guid ActorId { get; set; }
         public string ActorName { get; set; } = default!;
-        public string Avatar { get; set; } = default!;
+        public string UserAvatar { get; set; } = default!;
         public int? ReactionType { get; set; }
         public string UserName { get; set; } = default!;
 

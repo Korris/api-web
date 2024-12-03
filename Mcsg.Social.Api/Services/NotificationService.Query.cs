@@ -14,7 +14,7 @@ public partial class NotificationService
                         , obj.""ActorId""
                         , us.""UserName""
                         , (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName"" ELSE us.""ProfileName"" END) AS ActorName
-                        , us.""Avatar""
+                        , us.""Avatar"" as UserAvatar
                         , COALESCE(subpr.""Type""
                         , COALESCE(pr.""Type""
                         , COALESCE(cpr.""Type""
