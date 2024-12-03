@@ -14,6 +14,7 @@
                                                 pc.""ParentId"",
                                                 pc.""PostId"",
                                                 pc.""GifId"",
+                                                pc.""QuoteId"",
                                                 u.""Avatar"" as UserAvatar,
                                                 u.""ProfileName"" as AuthorName,
                                                 u.""ProfileId"",
