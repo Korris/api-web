@@ -106,6 +106,14 @@ public class Program
 
         // DbContext
         builder.Services.AddDataLibrary(csDb);
+
+        // MediatR
+        builder.Services.AddMediatR(p =>
+        {
+            p.RegisterServicesFromAssembly(me.Assembly);
+
+            p.AddDiAuthentication();
+        });
         #endregion
 
         #region -- Setup token --
@@ -236,6 +244,7 @@ public class Program
         app.MapHub<CommentHub>("/commentHub");
         app.MapHub<NotificationHub>("/notificationHub");
         app.MapHub<FollowHub>("/followHub");
+        app.MapHub<FollowHub>("/identityHub");
 
         app.Run();
     }
