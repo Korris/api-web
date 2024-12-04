@@ -32,7 +32,11 @@ public class PostFormBaseV : AbstractValidator<PostFormBase>
     /// </summary>
     public PostFormBaseV()
     {
+        var t = "";
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
+
+        t = "Content";
+        RuleFor(p => p.Content).MaximumLength(Content.Max).WithMessage($"{t} {MaximumLength} {Content.Max}");
     }
 
     /// <summary>

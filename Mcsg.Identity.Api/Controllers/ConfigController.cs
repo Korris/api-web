@@ -7,6 +7,7 @@ namespace Mcsg.Identity.Api.Controllers;
 using Common.Core.Interfaces;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.SeedWork.Constants;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -86,6 +87,10 @@ public class ConfigController : ControllerBase
             {
                 Location.Max,
                 Location.Regex
+            },
+            Content = new
+            {
+                Validator.Content.Max
             },
             Summary = new
             {
