@@ -33,7 +33,7 @@ public class NotificationService : BaseS, INotificationService
 
         var noti = new NotificationDto();
 
-        NotificationEntityType notificationEntityType = req.TransactionType switch
+        var notificationEntityType = req.TransactionType switch
         {
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
             TransactionType.Donate => NotificationEntityType.DonateTransaction,
@@ -46,13 +46,14 @@ public class NotificationService : BaseS, INotificationService
                           , action: NotificationAction.Transaction
                           , entityType: notificationEntityType
                           , entityId: req.Id);
-        var userInfo = await _context.UserAvailable.Where(p => p.Id == req.AuthorId)
+        var user = await _context.UserAvailable.Where(p => p.Id == req.AuthorId)
             .Select(p => new
             {
-                ProfileName = p.ProfileName + "",
-                UserAvatar = p.Avatar
+                p.ProfileName,
+                p.Avatar
             })
             .FirstOrDefaultAsync();
+        var profileName = user?.ProfileName + "";
 
         var amount = req.Amount.ToString("N0");
         response.Id = noti.Id;
@@ -61,17 +62,16 @@ public class NotificationService : BaseS, INotificationService
         response.EntityId = req.Id;
         response.ReferenceNumber = req.ReferenceNumber;
         response.ActorId = req.AuthorId;
-        response.ActorName = userInfo.ProfileName;
-        response.Message = GetMessageTransaction(amount, userInfo.ProfileName, notificationEntityType);
+        response.ActorName = profileName;
+        response.Message = GetMessageTransaction(amount, profileName, notificationEntityType);
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = GetTransactionType(notificationEntityType);
-        response.UserAvatar = userInfo.UserAvatar;
+        response.UserAvatar = user?.Avatar;
 
         await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
-
 
     public async Task<NotificationResponse> AddCommentNotification(CommentNotificationReq comment)
     {
@@ -139,6 +139,7 @@ public class NotificationService : BaseS, INotificationService
         {
             NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
             NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
+            _ => string.Empty
         };
     }
 
@@ -147,7 +148,8 @@ public class NotificationService : BaseS, INotificationService
         return notificationEntityType switch
         {
             NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
-            NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction
+            NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
+            _ => string.Empty
         };
     }
 
@@ -265,6 +267,7 @@ public class NotificationService : BaseS, INotificationService
         var response = new NotificationResponse();
 
         var receiverId = video.AuthorId;
+        var postHashId = video.PostHashId + "";
         var noti = await AddNotificationAsync(
                                     actorId: video.AuthorId
                                     , receiverId: receiverId
@@ -272,17 +275,17 @@ public class NotificationService : BaseS, INotificationService
                                     , entityType: NotificationEntityType.Video
                                     , entityId: video.Id
                                     , locationId: video.PostId
-                                    , locationHashId: video.PostHashId);
+                                    , locationHashId: postHashId);
 
         response.Id = noti.Id;
         response.Status = noti.Status;
         response.LocationId = video.PostId;
-        response.LocationHashId = video.PostHashId;
-        response.EntityHashId = video.HashId;
+        response.LocationHashId = postHashId;
+        response.EntityHashId = video.HashId + "";
         response.Message = GetVideoMessage(video.Action);
         response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : NotificationTargetType.None;
         response.ActorId = video.AuthorId;
-        response.ActorName = video.AuthorName;
+        response.ActorName = video.AuthorName + "";
         response.UserAvatar = video.UserAvatar;
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = NotificationType.Video + video.Action.ToString();
@@ -530,7 +533,7 @@ public class NotificationService : BaseS, INotificationService
                         break;
                 }
 
-                postHashId = await qHashId.FirstOrDefaultAsync();
+                postHashId = await qHashId.FirstOrDefaultAsync() + "";
             }
 
             if (!isCommentReaction)
@@ -559,6 +562,7 @@ public class NotificationService : BaseS, INotificationService
                 NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.ComicSubPostCommentReplyReaction => NotificationTargetType.SubComic,
                 NotificationEntityType.DocumentSubPostCommentReaction or NotificationEntityType.DocumentSubPostCommentReplyReaction => NotificationTargetType.SubDocument,
                 NotificationEntityType.StorySubPostCommentReaction or NotificationEntityType.StorySubPostCommentReplyReaction => NotificationTargetType.SubStory,
+                _ => string.Empty
             };
 
             var notificationObject = await _context.NotificationObjects.Where(p => p.EntityType == reaction.EntityType
@@ -575,10 +579,10 @@ public class NotificationService : BaseS, INotificationService
                         .SetProperty(p => p.Status, NotificationStatus.UnRead)
                         .SetProperty(p => p.CreatedOn, DateTime.UtcNow));
 
-                response.Id = notification.Id;
+                response.Id = notification == null ? _uidEmpty : notification.Id;
                 response.Status = NotificationStatus.UnRead.ToString();
                 response.LocationId = postId;
-                response.LocationHashId = postHashId;
+                response.LocationHashId = postHashId + "";
                 response.EntityId = reaction.Id;
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
@@ -586,8 +590,6 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
-
-                await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
             else if (receiverId != Guid.Empty && receiverId != reaction.AuthorId)
             {
@@ -598,12 +600,12 @@ public class NotificationService : BaseS, INotificationService
                                   , entityType: reaction.EntityType
                                   , entityId: reaction.Id
                                   , locationId: locationId
-                                  , locationHashId: locationHashId);
+                                  , locationHashId: locationHashId + "");
 
                 response.Id = noti.Id;
                 response.Status = noti.Status;
                 response.LocationId = postId;
-                response.LocationHashId = postHashId;
+                response.LocationHashId = postHashId + "";
                 response.EntityId = reaction.Id;
                 response.ActorId = reaction.AuthorId;
                 response.ActorName = reaction.AuthorName;
@@ -611,9 +613,9 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Reaction;
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
-
-                await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
+
+            await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         return response;
@@ -678,8 +680,9 @@ public class NotificationService : BaseS, INotificationService
             if (request.EntityType == NotificationEntityType.ComicSubPostCommentMention || request.EntityType == NotificationEntityType.DocumentSubPostCommentMention || request.EntityType == NotificationEntityType.StorySubPostCommentMention)
             {
                 response.Order = post.Order;
-                Guid postIdOfSubPost = post.PostId;
-                postHashId = request.EntityType == NotificationEntityType.DocumentSubPostCommentMention ? (await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId : (await _context.StoryPostAvailable.FirstOrDefaultAsync(p => p.Id == postIdOfSubPost)).HashId;
+                postHashId = request.EntityType == NotificationEntityType.DocumentSubPostCommentMention
+                    ? await _context.DocumentPostAvailable.Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync()
+                    : await _context.StoryPostAvailable.Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync();
             }
 
             if (!isMentionComment)
@@ -713,12 +716,12 @@ public class NotificationService : BaseS, INotificationService
                                   , entityType: request.EntityType
                                   , entityId: item
                                   , locationId: locationId
-                                  , locationHashId: locationHashId);
+                                  , locationHashId: locationHashId + "");
 
                 response.Id = noti.Id;
                 response.Status = noti.Status;
                 response.LocationId = postId;
-                response.LocationHashId = postHashId;
+                response.LocationHashId = postHashId + "";
                 response.EntityId = item;
                 response.ActorId = request.UserId;
                 response.UserAvatar = request.UserAvatar;
@@ -726,11 +729,12 @@ public class NotificationService : BaseS, INotificationService
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = NotificationType.Mention;
                 response.Message = request.UserProfileName + (isMentionComment ? NotificationContent.MentionOnComment : NotificationContent.MentionOnPost);
-                // Then notification the comment to post owner
+
                 await _hubcontext.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
     }
+
     public async Task<NotificationResponse> AddMentionNotification(MentionNotificationReq mention)
     {
         // TODO
@@ -771,7 +775,6 @@ public class NotificationService : BaseS, INotificationService
             response.NotificationType = NotificationType.Mention;
             response.UserAvatar = mention.UserAvatar;
 
-            // Then notification the comment to post owner
             await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
@@ -893,7 +896,6 @@ public class NotificationService : BaseS, INotificationService
             {
                 await _hubcontext.Clients.All.SendAsync(req.TopicName, req.Message);
             }
-
         }
     }
 
@@ -1085,6 +1087,7 @@ public class NotificationService : BaseS, INotificationService
                     response.UserAvatar = followResp.CreatedByUserAvata;
 
                     await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+
                     return response;
                 }
             }
@@ -1101,7 +1104,7 @@ public class NotificationService : BaseS, INotificationService
             .Where(p => p.Id == request.EntityId)
             .Select(p => new
             {
-                ModifiedBy = p.ModifiedBy,
+                p.ModifiedBy,
                 CreatedBy = p.UserId
             });
 
@@ -1113,7 +1116,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1123,8 +1126,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1133,8 +1136,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1143,7 +1146,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1153,7 +1156,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1163,8 +1166,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1173,8 +1176,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1183,7 +1186,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1193,8 +1196,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1203,8 +1206,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1213,7 +1216,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1223,7 +1226,7 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
+                       p.ModifiedBy,
                        CreatedBy = p.UserId
                    });
                 break;
@@ -1233,8 +1236,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
 
@@ -1243,8 +1246,8 @@ public class NotificationService : BaseS, INotificationService
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
-                       ModifiedBy = p.ModifiedBy,
-                       CreatedBy = p.CreatedBy.Value!
+                       p.ModifiedBy,
+                       CreatedBy = p.CreatedBy!.Value
                    });
                 break;
             default:
