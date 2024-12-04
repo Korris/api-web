@@ -107,7 +107,10 @@ partial class User
             IsWalletShowing = IsWalletShowing,
             SessionId = SessionId,
             MinioInstance = MinioInstance,
-            StorageLimit = StorageLimit
+            StorageLimit = StorageLimit,
+            IsActive2Fa = IsActive2Fa,
+            IsLogin2Fa = IsLogin2Fa,
+            IsTransaction2Fa = IsTransaction2Fa
         };
 
         var st = new SecurityToken(jwt, payload);
@@ -148,6 +151,24 @@ partial class User
     /// </summary>
     [NotMapped]
     public IList<string> Roles { get; set; }
+
+    /// <summary>
+    /// IsActive2Fa
+    /// </summary>
+    [NotMapped]
+    public bool IsActive2Fa { get; set; }
+
+    /// <summary>
+    /// IsLogin2Fa
+    /// </summary>
+    [NotMapped]
+    public bool IsLogin2Fa { get; set; }
+
+    /// <summary>
+    /// IsTransaction2Fa
+    /// </summary>
+    [NotMapped]
+    public bool IsTransaction2Fa { get; set; }
 
     #endregion
 

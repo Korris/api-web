@@ -102,5 +102,20 @@ public class PayloadDto
     [JsonIgnore]
     public Guid SessionId { get; set; }
 
+    /// <summary>
+    /// IsActive2Fa
+    /// </summary>
+    public bool IsActive2Fa { get; set; }
+
+    /// <summary>
+    /// IsLogin2Fa
+    /// </summary>
+    public bool IsLogin2Fa { get; set; }
+
+    /// <summary>
+    /// IsTransaction2Fa
+    /// </summary>
+    public bool IsTransaction2Fa { get; set; }
+
     #endregion
 }

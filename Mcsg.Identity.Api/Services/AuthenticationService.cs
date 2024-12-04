@@ -879,6 +879,19 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
     private async Task<TokenDto> CreateAccessToken(User user, string? remoteIp)
     {
         user.Roles = await _userManager.GetRolesAsync(user);
+        var authenticator = await _context.UserAuthenticators.Where(p => p.UserId == user.Id).Select(p => new
+        {
+            p.IsActive,
+            p.IsLogin,
+            p.IsTransaction,
+        }).FirstOrDefaultAsync();
+        if (authenticator != null)
+        {
+            user.IsActive2Fa = authenticator.IsActive;
+            user.IsLogin2Fa = authenticator.IsLogin;
+            user.IsTransaction2Fa = authenticator.IsTransaction;
+        }
+
         var res = user.CreateJwt(_setting.Jwt);
 
         var rt = await _tokenService.AddAsync(user);
