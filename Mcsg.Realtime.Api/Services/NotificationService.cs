@@ -914,15 +914,6 @@ public class NotificationService : BaseS, INotificationService
     {
         var response = new NotificationResponse();
 
-        var noti = await AddNotificationAsync(
-                                actorId: request.ActorId
-                                , receiverId: request.ReceiverId
-                                , action: NotificationAction.FollowPost
-                                , entityType: request.NotificationEntityType
-                                , entityId: request.ReceiverId
-                                , locationId: request.PostId
-                                , locationHashId: request.PostHashId);
-
         var notiTargetType = request.NotificationEntityType switch
         {
             NotificationEntityType.ComicPostFollow => NotificationTargetType.Comic,
@@ -937,17 +928,59 @@ public class NotificationService : BaseS, INotificationService
             _ => NotificationContent.FollowStory,
         };
 
-        response.Id = noti.Id;
-        response.Status = noti.Status;
-        response.LocationId = request.PostId;
-        response.LocationHashId = request.PostHashId;
-        response.Message = string.Format(notiContent, request.ActorName, request.PostName);
-        response.TargetType = notiTargetType;
-        response.ActorId = request.ActorId;
-        response.ActorName = request.ActorName;
-        response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-        response.NotificationType = NotificationType.FollowPost;
-        response.UserAvatar = request.UserAvatar;
+        var notificationObject = await _context.NotificationObjects
+            .Where(p => p.EntityType == request.NotificationEntityType &&
+                        p.ActorId == request.ActorId &&
+                        p.LocationId == request.PostId)
+            .FirstOrDefaultAsync();
+
+        if (notificationObject != null)
+        {
+            notificationObject.CreatedOn = DateTime.UtcNow;
+            var notification = await _context.Notifications.FirstOrDefaultAsync(p => p.NotificationObjectId == notificationObject.Id);
+
+            await _context.Notifications
+                .Where(p => p.NotificationObjectId == notificationObject.Id)
+                .ExecuteUpdateAsync(x => x
+                    .SetProperty(p => p.Status, NotificationStatus.UnRead)
+                    .SetProperty(p => p.CreatedOn, DateTime.UtcNow));
+
+
+            response.Id = notification!.Id;
+            response.Status = NotificationStatus.UnRead.ToString();
+            response.LocationId = request.PostId;
+            response.LocationHashId = request.PostHashId;
+            response.Message = string.Format(notiContent, request.ActorName, request.PostName);
+            response.TargetType = notiTargetType;
+            response.ActorId = request.ActorId;
+            response.ActorName = request.ActorName;
+            response.CreatedOn = notificationObject?.CreatedOn ?? DateTime.UtcNow;
+            response.NotificationType = NotificationType.FollowPost;
+            response.UserAvatar = request.UserAvatar;
+        }
+        else
+        {
+            var noti = await AddNotificationAsync(
+                                    actorId: request.ActorId
+                                    , receiverId: request.ReceiverId
+                                    , action: NotificationAction.FollowPost
+                                    , entityType: request.NotificationEntityType
+                                    , entityId: request.ReceiverId
+                                    , locationId: request.PostId
+                                    , locationHashId: request.PostHashId);
+
+            response.Id = noti.Id;
+            response.Status = noti.Status;
+            response.LocationId = request.PostId;
+            response.LocationHashId = request.PostHashId;
+            response.Message = string.Format(notiContent, request.ActorName, request.PostName);
+            response.TargetType = notiTargetType;
+            response.ActorId = request.ActorId;
+            response.ActorName = request.ActorName;
+            response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+            response.NotificationType = NotificationType.FollowPost;
+            response.UserAvatar = request.UserAvatar;
+        }
 
         await _hubcontext.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
