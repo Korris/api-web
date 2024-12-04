@@ -32,6 +32,7 @@ public static class DiAuthenticationExtension
     public static void AddAuthenticationCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<AuthenticationForceLogoutR, SingleResponse>, AuthenticationForceLogoutH>(life);
+        p.AddBehavior<IRequestHandler<AuthenticationResetPasswordR, SingleResponse>, AuthenticationResetPasswordH>(life);
     }
 
     /// <summary>

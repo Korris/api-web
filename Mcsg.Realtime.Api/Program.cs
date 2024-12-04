@@ -244,7 +244,6 @@ public class Program
         app.MapHub<CommentHub>("/commentHub");
         app.MapHub<NotificationHub>("/notificationHub");
         app.MapHub<FollowHub>("/followHub");
-        app.MapHub<FollowHub>("/identityHub");
 
         app.Run();
     }

@@ -43,6 +43,22 @@ public class AuthenticationController : BaseController
         return Ok(response);
     }
 
+    /// <summary>
+    /// ResetPassword
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPost("ResetPassword")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> ResetPassword([FromBody] AuthenticationResetPasswordR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = AbsoluteUri;
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --
