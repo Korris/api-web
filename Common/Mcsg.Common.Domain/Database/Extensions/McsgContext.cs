@@ -270,6 +270,8 @@ partial class McsgContext
 
     public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
 
+    public IQueryable<UserAuthenticator> UserAuthenticatorAvailable => UserAuthenticators.Where(p => !p.IsDelete);
+
     public IQueryable<UserBlock> UserBlockAvailable => UserBlocks.Where(p => !p.IsDelete);
 
     //public IQueryable<UserClaim> UserClaimAvailable => UserClaims;

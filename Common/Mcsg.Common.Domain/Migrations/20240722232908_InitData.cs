@@ -534,6 +534,32 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAuthenticators",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Secretkey = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsLogin = table.Column<bool>(type: "boolean", nullable: false),
+                    IsTransaction = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAuthenticators", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserNameHistories",
                 schema: "identity",
                 columns: table => new
@@ -5124,6 +5150,10 @@ namespace Mcsg.Common.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "TagFavorites");
+
+            migrationBuilder.DropTable(
+                name: "UserAuthenticators",
+                schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserBlocks",

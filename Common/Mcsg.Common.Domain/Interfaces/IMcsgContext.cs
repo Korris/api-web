@@ -262,6 +262,8 @@ public interface IMcsgContext
 
     DbSet<User> Users { get; set; }
 
+    DbSet<UserAuthenticator> UserAuthenticators { get; set; }
+
     DbSet<UserBlock> UserBlocks { get; set; }
 
     //DbSet<UserClaim> UserClaims { get; set; }

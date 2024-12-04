@@ -315,6 +315,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     //public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserAuthenticator> UserAuthenticators { get; set; }
+
     public virtual DbSet<UserBlock> UserBlocks { get; set; }
 
     //public virtual DbSet<UserClaim> UserClaims { get; set; }
