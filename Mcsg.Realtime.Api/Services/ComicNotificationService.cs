@@ -310,7 +310,7 @@ public class ComicNotificationService : BaseS, IComicNotificationService
         var res = new NotificationDto
         {
             Id = noti.Id,
-            Status = noti.Status.ToString(),
+            Status = noti.Status,
             NotificationObjectId = notiObj.Id,
             ReceiverId = receiverId,
             ActorId = actorId,
@@ -363,7 +363,7 @@ public class ComicNotificationService : BaseS, IComicNotificationService
             var dto = new NotificationDto
             {
                 Id = noti.Id,
-                Status = noti.Status.ToString(),
+                Status = noti.Status,
                 NotificationObjectId = notiObj.Id,
                 ReceiverId = receiverId,
                 ActorId = actorId,

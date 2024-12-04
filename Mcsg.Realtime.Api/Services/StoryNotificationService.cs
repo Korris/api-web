@@ -310,7 +310,7 @@ public class StoryNotificationService : BaseS, IStoryNotificationService
         var res = new NotificationDto
         {
             Id = noti.Id,
-            Status = noti.Status.ToString(),
+            Status = noti.Status,
             NotificationObjectId = notiObj.Id,
             ReceiverId = receiverId,
             ActorId = actorId,
@@ -363,7 +363,7 @@ public class StoryNotificationService : BaseS, IStoryNotificationService
             var dto = new NotificationDto
             {
                 Id = noti.Id,
-                Status = noti.Status.ToString(),
+                Status = noti.Status,
                 NotificationObjectId = notiObj.Id,
                 ReceiverId = receiverId,
                 ActorId = actorId,

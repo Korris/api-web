@@ -5,7 +5,7 @@ using Common.Core.Enums;
 public class NotificationResponse
 {
     public Guid Id { get; set; }
-    public string Status { get; set; }
+    public NotificationStatus Status { get; set; }
     public string TargetType { get; set; }
     public Guid? LocationId { get; set; }
     public string LocationHashId { get; set; }

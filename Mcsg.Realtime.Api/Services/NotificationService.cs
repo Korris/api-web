@@ -580,7 +580,7 @@ public class NotificationService : BaseS, INotificationService
                         .SetProperty(p => p.CreatedOn, DateTime.UtcNow));
 
                 response.Id = notification == null ? _uidEmpty : notification.Id;
-                response.Status = NotificationStatus.UnRead.ToString();
+                response.Status = NotificationStatus.UnRead;
                 response.LocationId = postId;
                 response.LocationHashId = postHashId + "";
                 response.EntityId = reaction.Id;
@@ -821,7 +821,7 @@ public class NotificationService : BaseS, INotificationService
         var res = new NotificationDto
         {
             Id = noti.Id,
-            Status = noti.Status.ToString(),
+            Status = noti.Status,
             NotificationObjectId = notiObj.Id,
             ReceiverId = receiverId,
             ActorId = actorId,
@@ -861,7 +861,7 @@ public class NotificationService : BaseS, INotificationService
             var dto = new NotificationDto
             {
                 Id = noti.Id,
-                Status = noti.Status.ToString(),
+                Status = noti.Status,
                 NotificationObjectId = notiObj.Id,
                 ReceiverId = receiverId,
                 ActorId = actorId,
@@ -947,7 +947,7 @@ public class NotificationService : BaseS, INotificationService
 
 
             response.Id = notification!.Id;
-            response.Status = NotificationStatus.UnRead.ToString();
+            response.Status = NotificationStatus.UnRead;
             response.LocationId = request.PostId;
             response.LocationHashId = request.PostHashId;
             response.Message = string.Format(notiContent, request.ActorName, request.PostName);
