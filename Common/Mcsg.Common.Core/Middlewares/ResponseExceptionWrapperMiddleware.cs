@@ -9,6 +9,7 @@ namespace Mcsg.Common.Core.Middlewares;
 using Dtos;
 using SeedWork;
 using SeedWork.Exceptions;
+using static Constants.Setting;
 
 /// <summary>
 /// Response and Exception wrapper middleware
@@ -220,7 +221,7 @@ public class ResponseExceptionWrapperMiddleware
     {
         var r = context.Request;
         var skipPath = r.Path == "/config" || r.Path == "/health";
-        r.Headers.TryGetValue("x-api-key", out var xApiKey);
+        r.Headers.TryGetValue(HeaderKey.XApiKey, out var xApiKey);
         var ok = SecurityAes.Validate(xApiKey, SettingBase.XApiKey);
         return ok || SettingBase.DevelopmentMode || skipPath;
     }

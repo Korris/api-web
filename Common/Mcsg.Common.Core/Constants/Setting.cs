@@ -608,6 +608,17 @@ public class Setting : SeedWork.Constants.Setting
     }
 
     /// <summary>
+    /// HeaderKey
+    /// </summary>
+    public class HeaderKey
+    {
+        /// <summary>
+        /// XApiKey
+        /// </summary>
+        public const string XApiKey = "x-api-key";
+    }
+
+    /// <summary>
     /// UserOnline
     /// </summary>
     public class UserOnline

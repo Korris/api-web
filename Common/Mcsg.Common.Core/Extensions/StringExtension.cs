@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 namespace Mcsg.Common.Core.Extensions;
 
 using Enums;
+using SeedWork;
 using SeedWork.Enums;
 using SeedWork.Extensions;
 using static Constants.Setting;
@@ -453,9 +454,12 @@ public static class StringExtension
         ArgumentNullException.ThrowIfNull(apiUrl, nameof(apiUrl));
 
         var json = JsonConvert.SerializeObject(data);
+        var plainText = $"{SettingBase.XApiKey};{Math.Floor((double)DateTimeOffset.UtcNow.ToUnixTimeSeconds())}";
+        var key = SecurityAes.Encrypt(plainText);
 
         using (var client = new HttpClient())
         {
+            client.DefaultRequestHeaders.Add(HeaderKey.XApiKey, key);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             return await client.PostAsync(apiUrl, content);
         }
