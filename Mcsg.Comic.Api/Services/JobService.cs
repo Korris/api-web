@@ -54,7 +54,7 @@ public class JobService : IJobService
                 JobCategory = JobCategory.Media,
                 Status = JobStatus.Queued,
                 JobType = JobType.ConvertVideo,
-                Data = JsonConvert.SerializeObject(resource)
+                Data = JsonConvert.SerializeObject(resource.ToViewDto())
             };
             await _context.Jobs.AddAsync(convertJob);
             await _context.SaveChangesAsync(default);
@@ -95,7 +95,7 @@ public class JobService : IJobService
                 JobCategory = JobCategory.Media,
                 Status = JobStatus.Queued,
                 JobType = JobType.ConvertAudio,
-                Data = JsonConvert.SerializeObject(resource),
+                Data = JsonConvert.SerializeObject(resource.ToViewDto())
             };
             await _context.Jobs.AddAsync(convertJob);
             await _context.SaveChangesAsync(default);

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Mcsg.Media.Tool.Workers;
+﻿namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -19,19 +17,25 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
     public void Execute(Job jobInfo)
     {
         if (jobInfo.JobType != JobType.ConvertAudio)
+        {
             return;
+        }
 
         AddToPools(jobInfo.Id, Task.Factory.StartNew(async () =>
         {
             try
             {
-                // load resource
-                var resourceInfo = JsonConvert.DeserializeObject<BaseResource>(jobInfo.Data);
-                var url = resourceInfo.Url;
-                var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
-                var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
+                var resource = jobInfo.Data.ToInstNull<BaseResource.ViewDto>();
+                if (resource == null)
+                {
+                    return;
+                }
 
-                var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
+                var objectName = resource.ObjectName;
+                var orgfile = await DownloadBlobAsync(resource);
+                var microService = resource.MicroService.ToEnum(MicroService.Social);
+
+                var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(objectName) + TARGET);
                 if (File.Exists(targetFile))
                 {
                     File.Delete(targetFile);
@@ -46,13 +50,13 @@ internal class ConvertAudioWorker : BaseWorker, IWorker
                     orgfile.RunFfmpeg(targetFile, command);
 
                     //upload
-                    var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
-                    var length = await UploadBlobAsync(targetFile, newUrl);
+                    var newUrl = objectName.Replace(Path.GetExtension(targetFile), TARGET);
+                    var length = await UploadBlobAsync(targetFile, newUrl, resource.MinioInstance);
 
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, length);
+                    await DbService.UpdateResourceStatus(resource.Id, ResourceStatus.Done, newUrl, resource.BucketName, microService, length);
                 }
 
                 //clean up resource

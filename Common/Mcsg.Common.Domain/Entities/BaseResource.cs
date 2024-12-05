@@ -6,10 +6,55 @@ namespace Mcsg.Common.Domain.Entities;
 using Core.Enums;
 using SeedWork;
 using SeedWork.Constants;
+using SeedWork.Dtos;
 using SeedWork.Enums;
 
 public class BaseResource : AuditableEntity
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Convert to data transfer object
+    /// </summary>
+    /// <returns>Return the DTO</returns>
+    public SearchDto ToSearchDto()
+    {
+        return ToBaseDto<SearchDto>();
+    }
+
+    /// <summary>
+    /// Convert to data transfer object
+    /// </summary>
+    /// <returns>Return the DTO</returns>
+    public ViewDto ToViewDto()
+    {
+        var res = ToBaseDto<ViewDto>();
+
+        res.HashId = HashId;
+        res.ObjectName = Url;
+        res.BucketName = BucketName;
+        res.MinioInstance = MinioInstance;
+        res.MicroService = MicroService;
+
+        return res;
+    }
+
+    /// <summary>
+    /// Convert to data transfer object
+    /// </summary>
+    /// <returns>Return the DTO</returns>
+    public T ToBaseDto<T>() where T : BaseDto, new()
+    {
+        return new T
+        {
+            Id = Id
+        };
+    }
+
+    #endregion
+
+    #region -- Properties --
+
     [StringLength(Validator.Title.Max)]
     public string? Title { get; set; }
 
@@ -65,4 +110,59 @@ public class BaseResource : AuditableEntity
     /// </summary>
     [NotMapped]
     public string MicroService { get; set; } = Core.Enums.MicroService.Social.ToString();
+
+    #endregion
+
+    #region -- Classes --
+
+    /// <summary>
+    /// Base
+    /// </summary>
+    public class BaseDto : IdDto
+    {
+    }
+
+    /// <summary>
+    /// Search
+    /// </summary>
+    public class SearchDto : BaseDto
+    {
+    }
+
+    /// <summary>
+    /// View
+    /// </summary>
+    public class ViewDto : BaseDto
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// Hash ID
+        /// </summary>
+        public string? HashId { get; set; }
+
+        /// <summary>
+        /// This object name
+        /// </summary>
+        public string? ObjectName { get; set; }
+
+        /// <summary>
+        /// Bucket name
+        /// </summary>
+        public string? BucketName { get; set; }
+
+        /// <summary>
+        /// Minio instance
+        /// </summary>
+        public MinioInstanceType? MinioInstance { get; set; }
+
+        /// <summary>
+        /// Micro service
+        /// </summary>
+        public string? MicroService { get; set; }
+
+        #endregion
+    }
+
+    #endregion
 }

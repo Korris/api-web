@@ -2,6 +2,7 @@
 
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Interfaces;
@@ -26,11 +27,13 @@ internal abstract class BaseWorker
         Pools.Add(new WorkerPoolItem { Id = id, Task = task });
     }
 
-    public async Task<string> DownloadBlobAsync(string path, Guid resourceId)
+    public async Task<string> DownloadBlobAsync(BaseResource.ViewDto dto)
     {
+        var objectName = dto.ObjectName + "";
         var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "temp");
-        var newName = Path.GetFileNameWithoutExtension(path) + resourceId.ToString() + Path.GetExtension(path);
-        filePath = Path.Combine(filePath, Path.GetDirectoryName(path), newName);
+        var newName = Path.GetFileNameWithoutExtension(objectName) + dto.Id.ToString() + Path.GetExtension(objectName);
+
+        filePath = Path.Combine(filePath, Path.GetDirectoryName(objectName), newName);
         if (!Directory.Exists(Path.GetDirectoryName(filePath)))
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
@@ -41,17 +44,17 @@ internal abstract class BaseWorker
             File.Delete(filePath);
         }
 
-        var fs = await _sc.GetStrategy(MinioInstanceType.Default).GetObject(path, null);
+        var fs = await _sc.GetStrategy(dto.MinioInstance).GetObject(objectName, null);
         fs.ToFile(filePath);
 
         return filePath;
     }
 
-    public async Task<long> UploadBlobAsync(string localFile, string remoteUri)
+    public async Task<long> UploadBlobAsync(string localFile, string remoteUri, MinioInstanceType? minioInstance)
     {
         var fs = File.OpenRead(localFile);
         var res = fs.Length;
-        await _sc.GetStrategy(MinioInstanceType.Default).PutObject(fs, remoteUri, null);
+        await _sc.GetStrategy(minioInstance).PutObject(fs, remoteUri, null);
         fs.Close();
         return res;
     }

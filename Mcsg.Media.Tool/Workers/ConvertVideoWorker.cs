@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Mcsg.Media.Tool.Workers;
+﻿namespace Mcsg.Media.Tool.Workers;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -20,19 +18,25 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
     public void Execute(Job jobInfo)
     {
         if (jobInfo.JobType != JobType.ConvertVideo)
+        {
             return;
+        }
 
         AddToPools(jobInfo.Id, Task.Factory.StartNew(async () =>
         {
             try
             {
-                // load resource
-                var resourceInfo = JsonConvert.DeserializeObject<BaseResource>(jobInfo.Data);
-                var url = resourceInfo.Url;
-                var orgfile = await DownloadBlobAsync(url, resourceInfo.Id);
-                var microService = resourceInfo.MicroService.ToEnum(MicroService.Social);
+                var resource = jobInfo.Data.ToInstNull<BaseResource.ViewDto>();
+                if (resource == null)
+                {
+                    return;
+                }
 
-                var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(url) + TARGET);
+                var objectName = resource.ObjectName + "";
+                var orgfile = await DownloadBlobAsync(resource);
+                var microService = resource.MicroService.ToEnum(MicroService.Social);
+
+                var targetFile = Path.Combine(Path.GetDirectoryName(orgfile), Path.GetFileNameWithoutExtension(objectName) + TARGET);
                 if (File.Exists(targetFile))
                 {
                     File.Delete(targetFile);
@@ -67,13 +71,13 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                     orgfile.RunFfmpeg(targetFile, command);
 
                     //upload
-                    var newUrl = url.Replace(Path.GetExtension(targetFile), TARGET);
-                    var length = await UploadBlobAsync(targetFile, newUrl);
+                    var newUrl = objectName.Replace(Path.GetExtension(targetFile), TARGET);
+                    var length = await UploadBlobAsync(targetFile, newUrl, resource.MinioInstance);
 
                     //update job status
                     await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Success, string.Empty);
 
-                    await DbService.UpdateResourceStatus(resourceInfo.Id, ResourceStatus.Done, newUrl, resourceInfo.BucketName, microService, length);
+                    await DbService.UpdateResourceStatus(resource.Id, ResourceStatus.Done, newUrl, resource.BucketName, microService, length);
                 }
 
                 //clean up resource
@@ -87,9 +91,9 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                 }
 
                 //Send notification when video process completed
-                var video = await DbService.LoadResource(resourceInfo.HashId, microService);
+                var video = await DbService.LoadResource(resource.HashId, microService);
 
-                Console.WriteLine("ConvertVideo Job Id: {0} - Video HashId : {1} - Video Id {2}", jobInfo.Id, resourceInfo.HashId, video.Id);
+                Console.WriteLine("ConvertVideo Job Id: {0} - Video HashId : {1} - Video Id {2}", jobInfo.Id, resource.HashId, video.Id);
 
                 if (video != null && !string.IsNullOrWhiteSpace(video.HashId))
                 {
@@ -99,7 +103,7 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                         AuthorId = video.AuthorId,
                         AuthorName = video.AuthorName,
                         Action = NotificationAction.Completed,
-                        HashId = resourceInfo.HashId,
+                        HashId = resource.HashId,
                         PostId = video.PostId,
                         PostHashId = video.PostHashId,
                         TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social

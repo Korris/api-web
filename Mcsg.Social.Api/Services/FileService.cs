@@ -490,7 +490,6 @@ public class FileService : IFileService
             }
             #endregion
 
-            var subPostId = resource.SubPostId ?? dto.PostId;
             if (addSubPost)
             {
                 var subPost = new SocialSubPost
@@ -509,15 +508,15 @@ public class FileService : IFileService
                 };
 
                 await _context.SocialSubPosts.AddAsync(subPost);
-                subPosts.Add(subPost);
-                subPostId = subPost.Id;
 
-                subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPostId });
+                resource.SubPost = subPost;
+
+                subPosts.Add(subPost);
+                subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPost.Id });
             }
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
-            resource.SubPostId = subPostId;
             resource.Order = resourceReq.Order;
             await _context.SaveChangesAsync(default);
 
