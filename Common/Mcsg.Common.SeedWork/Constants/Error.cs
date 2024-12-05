@@ -332,6 +332,11 @@ public static class Error
     /// </summary>
     public const string E311 = "This user has been banned";
 
+    /// <summary>
+    /// New password should different current
+    /// </summary>
+    public const string E312 = "New password should different current";
+
     #endregion
 
     #region -- E4xx --

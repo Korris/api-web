@@ -547,7 +547,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         if (request.OldPassword == request.NewPassword)
         {
-            throw new BadRequestException(ErrorCodes.NewPasswordShouldDifferentCurrent, ErrorMessage.NewPasswordShouldDifferentCurrent);
+            throw new BadRequestException(nameof(E312), E312);
         }
 
         if (request.NewPassword != request.ConfirmPassword)
@@ -642,7 +642,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var isOldPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (isOldPassword)
         {
-            throw new BadRequestException(ErrorCodes.NewPasswordShouldDifferentCurrent, ErrorMessage.NewPasswordShouldDifferentCurrent);
+            throw new BadRequestException(nameof(E312), E312);
         }
 
         var code = await _userManager.GeneratePasswordResetTokenAsync(user);

@@ -18,7 +18,6 @@ public class ErrorCodes
     public const string UserIsNotAllowed = "ERR_AUTH_00020";
     public const string UserIsLockedOut = "ERR_AUTH_00021";
     public const string EmailConfirmed = "ERR_AUTH_00022";
-    public const string NewPasswordShouldDifferentCurrent = "ERR_AUTH_00023";
     public const string OtpGenerateFail = "ERR_AUTH_00024";
     public const string SendEmailOtpFail = "ERR_AUTH_00025";
     public const string SendPhoneOtpFail = "ERR_AUTH_00026";
