@@ -41,4 +41,5 @@ message UserProtoDto {
     string profileName = 3;
     string userAvatar = 4;
     string email = 5;
+    string phoneNumber = 6;
 }

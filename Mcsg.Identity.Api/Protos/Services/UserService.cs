@@ -67,6 +67,7 @@ public class UserService : UserProto.UserProtoBase
                     ProfileName = p.ProfileName,
                     UserAvatar = p.Avatar + "",
                     Email = p.Email + "",
+                    PhoneNumber = p.PhoneNumber + ""
                 }).ToListAsync();
             res.Items.AddRange(listUsers);
         }

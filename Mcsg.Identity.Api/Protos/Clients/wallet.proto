@@ -20,9 +20,7 @@ message BaseRsp {
 
 message UserWalletCreateReq {
     string id = 1;
-    google.protobuf.StringValue email = 2;
-    google.protobuf.StringValue phoneNumber = 3;
-    google.protobuf.StringValue profileName = 4;
+    google.protobuf.StringValue profileName = 2;
 }
 
 message TransactionGetReq {
