@@ -633,4 +633,40 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string Anonymous = "user_online_anonymous";
     }
+
+    /// <summary>
+    /// CurrencyUnit
+    /// </summary>
+    public class CurrencyUnit
+    {
+        /// <summary>
+        /// FFR
+        /// </summary>
+        public const string Ffr = "FFR";
+
+        /// <summary>
+        /// FFC
+        /// </summary>
+        public const string Ffc = "FFC";
+
+        /// <summary>
+        /// Dollar
+        /// </summary>
+        public const string Dollar = "$";
+    }
+
+    /// <summary>
+    /// CurrencyUnits
+    /// </summary>
+    public static Dictionary<string, string> CurrencyUnits
+    {
+        get
+        {
+            return new Dictionary<string, string>
+            {
+                { "FFR", "Lúa" },
+                { "FFC", "FocFoc Coin" }
+            };
+        }
+    }
 }

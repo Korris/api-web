@@ -210,6 +210,18 @@ public class BaseR : IRequest<SingleResponse>
     public bool IsPremium => Payload?.RootElement.GetProperty("isPremium").GetBoolean() == true || IsAdministrator;
 
     /// <summary>
+    /// IsLogin2Fa
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsLogin2Fa => Payload?.RootElement.GetProperty("isLogin2Fa").GetBoolean() ?? false;
+
+    /// <summary>
+    /// IsTransaction2Fa
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsTransaction2Fa => Payload?.RootElement.GetProperty("isTransaction2Fa").GetBoolean() ?? false;
+
+    /// <summary>
     /// User MinioInstance
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]

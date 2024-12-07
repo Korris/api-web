@@ -27,6 +27,11 @@ public class SearchResponse(ushort pageNum, ushort pageSize, bool paging) : Sing
     #region -- Properties --
 
     /// <summary>
+    /// Summary
+    /// </summary>
+    public object? Summary { get; set; }
+
+    /// <summary>
     /// Total records
     /// </summary>
     public int TotalRecords { get; set; }
