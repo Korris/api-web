@@ -51,7 +51,7 @@ public class PostFavoriteUpdateH : BaseH, IRequestHandler<PostFavoriteUpdateR, S
         }
 
         #region -- Validate on server --
-        var hasPost = await _context.SocialPostAvailable.AnyAsync(p => p.Id == request.PostId, cancellationToken);
+        var hasPost = await _context.Available<SocialPost>().AnyAsync(p => p.Id == request.PostId, cancellationToken);
         if (!hasPost)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.PostId).ToCamelCase(), Value = request.PostId } };

@@ -46,8 +46,8 @@ public partial class TagService : ITagService
     public async Task<List<string>> AddTagsToPost(Guid postId, List<string> tags, Guid userId)
     {
         // Find all tags associated with the post
-        var qTagPost = _context.DocumentTagPostAvailable.Where(p => p.PostId == postId);
-        var tagsDb = await (from a in _context.TagAvailable
+        var qTagPost = _context.Available<DocumentTagPost>().Where(p => p.PostId == postId);
+        var tagsDb = await (from a in _context.Available<Tag>()
                             join b in qTagPost
                                on a.Id equals b.TagId into g
                             from b in g.DefaultIfEmpty()
@@ -102,7 +102,7 @@ public partial class TagService : ITagService
             var listTagNeedToAdd = new List<Guid>();
 
             // Find all tag in database
-            var tagsDb = await _context.TagAvailable.Where(p => tags.Contains(p.Name + "")).ToListAsync();
+            var tagsDb = await _context.Available<Tag>().Where(p => tags.Contains(p.Name + "")).ToListAsync();
 
             // Check if tag not created, should create tag first.
             var listTagNotCreated = tags.Except(tagsDb.Select(x => x.Name)).ToList();
@@ -116,11 +116,11 @@ public partial class TagService : ITagService
             var listTagExistNotAdd = tags.Except(tagsPostDb.Select(x => x.Name)).ToList();
             if (listTagExistNotAdd.Count > 0)
             {
-                var idTagExist = _context.TagAvailable.Where(p => listTagExistNotAdd.Contains(p.Name)).Select(x => x.Id).ToArray();
+                var idTagExist = _context.Available<Tag>().Where(p => listTagExistNotAdd.Contains(p.Name)).Select(x => x.Id).ToArray();
                 listTagNeedToAdd.AddRange(idTagExist);
             }
 
-            var idTagsToUpdateShow = await _context.TagAvailable
+            var idTagsToUpdateShow = await _context.Available<Tag>()
                 .Where(x => tagsToUpdateShow.Contains(x.Name))
                 .Select(x => x.Id)
                 .ToListAsync();
@@ -130,7 +130,7 @@ public partial class TagService : ITagService
                 .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
 
             // Update tags to hide
-            var idTagsToUpdateHidden = await _context.TagAvailable
+            var idTagsToUpdateHidden = await _context.Available<Tag>()
                 .Where(x => tagsToUpdateHidden.Contains(x.Name))
                 .Select(x => x.Id)
                 .ToListAsync();
@@ -255,7 +255,7 @@ public partial class TagService : ITagService
     /// <returns></returns>
     public async Task<List<TagViewDto>> GetTagsByPostIdAsync(Guid postId)
     {
-        return await (from a in _context.TagAvailable
+        return await (from a in _context.Available<Tag>()
                       join b in _context.DocumentTagPosts
                           on a.Id equals b.TagId
                       where b.PostId == postId

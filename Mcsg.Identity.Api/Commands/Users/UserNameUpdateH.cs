@@ -71,7 +71,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         }
 
         // UserNameHistory
-        var hasUserNameHistory = await _context.UserNameHistoryAvailable.AnyAsync(p => p.UserName == newUserName, cancellationToken);
+        var hasUserNameHistory = await _context.Available<UserNameHistory>().AnyAsync(p => p.UserName == newUserName, cancellationToken);
         if (hasUserNameHistory)
         {
             return res.SetError(nameof(E107), E107);
@@ -146,7 +146,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         var userNameWaitingChangedAfter = _setting.UserNameWaitingChangedAfter;
         var userNameChangedInRemaining = _setting.UserNameChangedInRemaining;
 
-        var createdOns = await _context.UserNameHistoryAvailable
+        var createdOns = await _context.Available<UserNameHistory>()
             .Where(p => p.UserId == userId)
             .Select(p => p.CreatedOn)
             .ToListAsync(cancellationToken);

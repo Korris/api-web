@@ -70,7 +70,7 @@ public partial class PostLinkService : IPostLinkService
 
     public async Task<bool> RemoveLinkAsync(Guid postId)
     {
-        var postLinks = await _context.DocumentPostLinkAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var postLinks = await _context.Available<DocumentPostLink>().Where(p => p.PostId == postId).ToListAsync();
         postLinks.ForEach(p => p.IsDelete = true);
         var result = await _context.SaveChangesAsync(default);
 

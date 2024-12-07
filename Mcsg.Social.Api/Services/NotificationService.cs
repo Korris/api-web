@@ -40,7 +40,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
     {
         var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
-        var ett = await _context.NotificationAvailable.FirstOrDefaultAsync(p => p.Id == request.NotificationId);
+        var ett = await _context.Available<Notification>().FirstOrDefaultAsync(p => p.Id == request.NotificationId);
         if (ett == null)
         {
             throw new NotFoundException(ErrorCodes.QueryEmpty, ErrorCodes.QueryEmpty);
@@ -61,7 +61,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
 
         // Update Status
-        var result = await _context.NotificationAvailable
+        var result = await _context.Available<Notification>()
             .Where(p => p.ReceiverId == userId)
             .ExecuteUpdateAsync(p => p.SetProperty(q => q.Status, NotificationStatus.Read));
 
@@ -437,7 +437,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
         var qPostComment = _context.Set<PC>().Where(p => !p.IsDelete);
 
         var q = from pc in qPostComment
-                join sp in _context.ComicSubPostAvailable
+                join sp in _context.Available<ComicSubPost>()
                 on pc.PostId equals sp.Id into spJoined
                 from sp in spJoined.DefaultIfEmpty()
                 join p in qPost

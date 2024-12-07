@@ -41,7 +41,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var postId = await _context.SocialSubPostAvailable
+        var postId = await _context.Available<SocialSubPost>()
                                    .Where(p => p.Id == targetId)
                                    .Select(p => p.PostId)
                                    .FirstOrDefaultAsync();
@@ -143,7 +143,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
 
         var items = await multi.ReadAsync<ReactionsUserModel>().ConfigureAwait(false);
         var userId = request.UserId;
-        var followingList = await _context.UserFollowAvailable
+        var followingList = await _context.Available<UserFollow>()
                             .Where(p => userId == p.UserFollowerId)
                             .Select(p => p.UserFollowingId)
                             .ToListAsync();
@@ -172,7 +172,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
     {
         var targetId = request.TargetId;
 
-        var postId = await _context.SocialSubPostAvailable
+        var postId = await _context.Available<SocialSubPost>()
                                    .Where(p => p.Id == targetId)
                                    .Select(p => p.PostId)
                                    .FirstOrDefaultAsync();

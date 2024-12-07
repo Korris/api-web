@@ -2,12 +2,13 @@
 
 namespace Mcsg.Comic.Api.Services;
 
-using Api.Constants;
 using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
+using Constants;
 using Interfaces;
 using Models;
 using Requests;
@@ -117,7 +118,7 @@ public partial class ComicService : IComicService
 
     public async Task<float> GetLatestOrderChapter(string hashPostId)
     {
-        var postId = await _context.ComicPostAvailable.AsNoTracking()
+        var postId = await _context.Available<ComicPost>()
             .Where(p => p.HashId == hashPostId)
             .Select(p => p.Id)
             .FirstOrDefaultAsync();
@@ -127,7 +128,7 @@ public partial class ComicService : IComicService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var latestOrder = await _context.ComicSubPostAvailable.AsNoTracking()
+        var latestOrder = await _context.Available<ComicSubPost>()
             .Where(p => p.PostId == postId)
             .OrderByDescending(p => p.Order)
             .Select(p => p.Order)

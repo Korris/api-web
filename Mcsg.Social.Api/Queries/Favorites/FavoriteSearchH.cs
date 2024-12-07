@@ -58,26 +58,26 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         }
         var userId = request.UserId.Value;
 
-        IQueryable<BasePost> qPost = _context.ComicPostAvailable.AsNoTracking().Where(p => p.Status == PostStatus.Public);
-        var qFavorite = _context.ComicPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId);
+        IQueryable<BasePost> qPost = _context.Available<ComicPost>().Where(p => p.Status == PostStatus.Public);
+        var qFavorite = _context.Available<ComicPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId);
 
         var type = request.ServiceType.ToEnum(PostType.Comic);
         var schema = type == PostType.Feed ? "social" : type.ToString().ToLower();
         switch (type)
         {
             case PostType.Feed:
-                qPost = _context.SocialPostAvailable.AsNoTracking().Where(p => p.Status == PostStatus.Public);
-                qFavorite = _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId);
+                qPost = _context.Available<SocialPost>().Where(p => p.Status == PostStatus.Public);
+                qFavorite = _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId);
                 break;
 
             case PostType.Story:
-                qPost = _context.StoryPostAvailable.AsNoTracking().Where(p => p.Status == PostStatus.Public);
-                qFavorite = _context.StoryPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId);
+                qPost = _context.Available<StoryPost>().Where(p => p.Status == PostStatus.Public);
+                qFavorite = _context.Available<StoryPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId);
                 break;
 
             case PostType.Document:
-                qPost = _context.DocumentPostAvailable.AsNoTracking().Where(p => p.Status == PostStatus.Public);
-                qFavorite = _context.DocumentPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId);
+                qPost = _context.Available<DocumentPost>().Where(p => p.Status == PostStatus.Public);
+                qFavorite = _context.Available<DocumentPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId);
                 break;
 
             default:
@@ -99,12 +99,12 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
             if (type == PostType.Feed && !string.IsNullOrWhiteSpace(keyword))
             {
                 var qSubPost = from post in qPost
-                               join subpost in _context.SocialSubPostAvailable
+                               join subpost in _context.Available<SocialSubPost>()
                                on post.Id equals subpost.PostId
                                select new { post, subpost.Id };
 
                 var qResource = from s in qSubPost
-                                join resource in _context.SocialResourceAvailable
+                                join resource in _context.Available<SocialResource>()
                                 on s.Id equals resource.SubPostId
                                 select new { s.post, resource.Type };
 
@@ -112,13 +112,13 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                 if (resourceType == ResourceType.Video || resourceType == ResourceType.Image)
                 {
                     var postIds = await qResource.Where(p => p.Type == resourceType).Select(p => p.post.Id).ToListAsync(cancellationToken);
-                    qPost = _context.SocialPostAvailable.AsNoTracking().WhereIf(postIds.Count > 0, p => postIds.Contains(p.Id));
+                    qPost = _context.Available<SocialPost>().WhereIf(postIds.Count > 0, p => postIds.Contains(p.Id));
                 }
 
                 if (resourceType == ResourceType.Link)
                 {
                     qPost = from post in qPost
-                            join metadata in _context.SocialMetaDataAvailable.Where(p => !string.IsNullOrEmpty(p.Title))
+                            join metadata in _context.SocialMetaDatas.Where(p => !string.IsNullOrEmpty(p.Title))
                             on post.Id equals metadata.PostId
                             select post;
                 }
@@ -250,7 +250,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         {
             var result = await connection.QueryAsync<FeedBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
 
-            var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
+            var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
 
             if (result != null && result.Any())
             {

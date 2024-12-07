@@ -60,16 +60,15 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
         IQueryable<BaseSubPost> qSubReport;
         IQueryable<BasePostComment> qComment;
 
-        var q = _context.SocialReportAvailable.AsNoTracking().Where(p => p.Id == entityId);
+        var q = _context.Available<SocialReport>(false).Where(p => p.Id == entityId);
         SocialReport.ViewDetailDto? data = null;
 
         var type = request.EntityType.ToEnum(NotificationEntityType.ComicPostDelete);
         switch (request.NotificationType)
         {
             case NotificationType.LockSocial:
-                var sp = _context.SocialPosts.AsNoTracking();
                 data = await (from socialReport in q
-                              join socialPost in sp
+                              join socialPost in _context.SocialPosts
                               on socialReport.EntityId
                               equals socialPost.Id
                               select new SocialReport.ViewDetailDto
@@ -84,8 +83,7 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
                 break;
 
             case NotificationType.DeleteSocial:
-
-                data = await _context.SocialPosts.AsNoTracking()
+                data = await _context.SocialPosts
                     .Where(p => p.Id == entityId)
                     .Select(p => new SocialReport.ViewDetailDto
                     {
@@ -98,13 +96,13 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
             case NotificationType.DeleteSubPost:
                 if (type == NotificationEntityType.ComicSubPostDelete)
                 {
-                    qSubReport = _context.ComicSubPosts.AsNoTracking();
-                    qPost = _context.ComicPosts.AsNoTracking();
+                    qSubReport = _context.ComicSubPosts;
+                    qPost = _context.ComicPosts;
                 }
                 else
                 {
-                    qSubReport = _context.StorySubPosts.AsNoTracking();
-                    qPost = _context.StoryPosts.AsNoTracking();
+                    qSubReport = _context.StorySubPosts;
+                    qPost = _context.StoryPosts;
                 }
 
                 data = await (from subpost in qSubReport
@@ -122,15 +120,15 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
             case NotificationType.LockSubPost:
                 if (type == NotificationEntityType.ComicSubPostLock)
                 {
-                    qReport = _context.ComicReportAvailable.AsNoTracking();
-                    qSubReport = _context.ComicSubPosts.AsNoTracking();
-                    qPost = _context.ComicPosts.AsNoTracking();
+                    qReport = _context.Available<ComicReport>();
+                    qSubReport = _context.ComicSubPosts;
+                    qPost = _context.ComicPosts;
                 }
                 else
                 {
-                    qReport = _context.StoryReportAvailable.AsNoTracking();
-                    qSubReport = _context.StorySubPosts.AsNoTracking();
-                    qPost = _context.StoryPosts.AsNoTracking();
+                    qReport = _context.Available<StoryReport>();
+                    qSubReport = _context.StorySubPosts;
+                    qPost = _context.StoryPosts;
                 }
 
                 data = await (from report in qReport.Where(p => p.Id == entityId)
@@ -150,8 +148,8 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
 
             case NotificationType.DeletePost:
                 qPost = type == NotificationEntityType.ComicPostDelete
-                    ? _context.ComicPosts.AsNoTracking()
-                    : _context.StoryPosts.AsNoTracking();
+                    ? _context.ComicPosts
+                    : _context.StoryPosts;
 
                 data = await (from post in qPost.Where(p => p.Id == entityId)
                               select new SocialReport.ViewDetailDto
@@ -165,13 +163,13 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
             case NotificationType.LockPost:
                 if (type == NotificationEntityType.ComicPostLock)
                 {
-                    qReport = _context.ComicReportAvailable.AsNoTracking();
-                    qPost = _context.ComicPosts.AsNoTracking();
+                    qReport = _context.Available<ComicReport>();
+                    qPost = _context.ComicPosts;
                 }
                 else
                 {
-                    qReport = _context.StoryReportAvailable.AsNoTracking();
-                    qPost = _context.StoryPosts.AsNoTracking();
+                    qReport = _context.Available<StoryReport>();
+                    qPost = _context.StoryPosts;
                 }
 
                 data = await (from report in qReport.Where(p => p.Id == entityId)
@@ -195,28 +193,28 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
                     case NotificationEntityType.ComicPostCommentDelete:
                     case NotificationEntityType.ComicSubPostCommentDelete:
                         qComment = type == NotificationEntityType.ComicPostCommentDelete
-                            ? _context.ComicPostComments.AsNoTracking()
-                            : _context.ComicSubPostComments.AsNoTracking();
+                            ? _context.ComicPostComments
+                            : _context.ComicSubPostComments;
                         break;
 
                     case NotificationEntityType.DocumentPostCommentDelete:
                     case NotificationEntityType.DocumentSubPostCommentDelete:
                         qComment = type == NotificationEntityType.DocumentPostCommentDelete
-                            ? _context.DocumentPostComments.AsNoTracking()
-                            : _context.DocumentSubPostComments.AsNoTracking();
+                            ? _context.DocumentPostComments
+                            : _context.DocumentSubPostComments;
                         break;
 
                     case NotificationEntityType.SocialPostCommentDelete:
                     case NotificationEntityType.SocialSubPostCommentDelete:
                         qComment = type == NotificationEntityType.SocialPostCommentDelete
-                            ? _context.SocialPostComments.AsNoTracking()
-                            : _context.SocialSubPostComments.AsNoTracking();
+                            ? _context.SocialPostComments
+                            : _context.SocialSubPostComments;
                         break;
 
                     default:
                         qComment = type == NotificationEntityType.StoryPostCommentDelete
-                            ? _context.StoryPostComments.AsNoTracking()
-                            : _context.StorySubPostComments.AsNoTracking();
+                            ? _context.StoryPostComments
+                            : _context.StorySubPostComments;
                         break;
                 }
 

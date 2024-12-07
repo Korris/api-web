@@ -42,7 +42,7 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var postId = await _context.DocumentSubPostAvailable
+        var postId = await _context.Available<DocumentSubPost>()
                                    .Where(p => p.Id == targetId)
                                    .Select(p => p.PostId)
                                    .FirstOrDefaultAsync();
@@ -144,7 +144,7 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
 
         var items = await multi.ReadAsync<ReactionsUserModel>().ConfigureAwait(false);
         var userId = request.UserId;
-        var followingList = await _context.UserFollowAvailable
+        var followingList = await _context.Available<UserFollow>()
                             .Where(p => userId == p.UserFollowerId)
                             .Select(p => p.UserFollowingId)
                             .ToListAsync();
@@ -173,7 +173,7 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
     {
         var targetId = request.TargetId;
 
-        var postId = await _context.DocumentSubPostAvailable
+        var postId = await _context.Available<DocumentSubPost>()
                                    .Where(p => p.Id == targetId)
                                    .Select(p => p.PostId)
                                    .FirstOrDefaultAsync();

@@ -6,6 +6,7 @@ namespace Mcsg.Document.Api.Queries;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -51,7 +52,7 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
         }
 
         #region -- Validate on server --
-        var ettPost = await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId, cancellationToken);
+        var ettPost = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.HashId == request.PostHashId, cancellationToken);
         if (ettPost == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.PostHashId).ToCamelCase(), Value = request.PostHashId + "" } };
@@ -59,8 +60,8 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
         }
         #endregion
 
-        var q = from sp in _context.DocumentSubPostAvailable
-                join r in _context.DocumentResourceAvailable
+        var q = from sp in _context.Available<DocumentSubPost>()
+                join r in _context.Available<DocumentResource>()
                 on sp.Id equals r.SubPostId
                 where sp.PostId == ettPost.Id && sp.IsAllowDownload
                 orderby sp.Order

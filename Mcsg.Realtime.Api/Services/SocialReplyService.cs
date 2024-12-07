@@ -77,7 +77,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -89,7 +89,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
         }
         else
         {
-            var subPost = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 order = subPost.Order;
@@ -136,11 +136,11 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
         #region -- Validate on server --
         // Commnent
         var ett = req.Type == "post"
-                ? await _context.SocialPostCommentAvailable
+                ? await _context.Available<SocialPostComment>()
                         .Where(p => p.Id == req.ReplyCommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync()
-                : await _context.SocialSubPostCommentAvailable
+                : await _context.Available<SocialSubPostComment>()
                         .Where(p => p.Id == req.ReplyCommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync();
@@ -172,7 +172,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -183,7 +183,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
         }
         else
         {
-            var subPost = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -307,7 +307,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
     #region Update
     private async Task<ReplyCommentResp> UpdateReplyToPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<SocialPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -347,7 +347,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
     }
     private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<SocialSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -390,7 +390,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
     #region Delete
     private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<SocialPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -422,7 +422,7 @@ public partial class SocialReplyService : BaseS, ISocialReplyService
     }
     private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<SocialSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);

@@ -5,6 +5,7 @@ namespace Mcsg.Realtime.Api.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
 using Interfaces;
 using Requests;
@@ -36,9 +37,9 @@ public partial class FollowPostService : IFollowPostService
             var microService = req.MicroService.ToEnum(MicroService.Social);
             var qTitle = microService switch
             {
-                MicroService.Comic => _context.ComicPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
-                MicroService.Document => _context.DocumentPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
-                _ => _context.StoryPostAvailable.Where(p => p.Id == req.PostId).Select(p => p.Title),
+                MicroService.Comic => _context.Available<ComicPost>().Where(p => p.Id == req.PostId).Select(p => p.Title),
+                MicroService.Document => _context.Available<DocumentPost>().Where(p => p.Id == req.PostId).Select(p => p.Title),
+                _ => _context.Available<StoryPost>().Where(p => p.Id == req.PostId).Select(p => p.Title),
             };
             var title = await qTitle.FirstOrDefaultAsync();
 

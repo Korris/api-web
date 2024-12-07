@@ -75,7 +75,7 @@ public class AuthenticationResetPasswordH : BaseSettingH, IRequestHandler<Authen
         User? user = null;
         if (forRegister)
         {
-            var qUserNameHistory = _context.UserNameHistoryAvailable.AsNoTracking();
+            var qUserNameHistory = _context.Available<UserNameHistory>();
 
             // Find by UserName
             user = await (from a in qUser

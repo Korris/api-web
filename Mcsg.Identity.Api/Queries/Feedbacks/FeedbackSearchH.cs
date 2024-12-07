@@ -20,6 +20,7 @@ using Commands;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Filters;
 using Interfaces;
@@ -50,7 +51,7 @@ public class FeedbackSearchH : BaseMinioH, IRequestHandler<FeedbackSearchR, Sing
     {
         var res = new SearchResponse(request.PageNum, request.PageSize, request.Paging);
 
-        var q = _context.FeedbackAvailable.AsNoTracking();
+        var q = _context.Available<Feedback>(false);
 
         #region -- Filter --
         string? keyword = null;

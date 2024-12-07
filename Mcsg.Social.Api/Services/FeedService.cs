@@ -113,7 +113,7 @@ public partial class FeedService : IFeedService
             var listItemResponse = new List<FeedDto>();
 
             var userId = feedLoadReq.UserId;
-            var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
+            var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
 
             var body = "";
             foreach (var i in items)
@@ -434,7 +434,7 @@ public partial class FeedService : IFeedService
         {
             MapReactionFeedDtoResponse(data, postReactionResponse.ToList());
         }
-        data.IsFavorite = await _context.SocialPostFavoriteAvailable.AnyAsync(p => p.UserId == userId && p.PostId == data.ParentId);
+        data.IsFavorite = await _context.Available<SocialPostFavorite>().AnyAsync(p => p.UserId == userId && p.PostId == data.ParentId);
         data.Body = await _businessText.Process(data.Body);
         return data;
     }
@@ -499,8 +499,8 @@ public partial class FeedService : IFeedService
             throw new NotFoundException(nameof(E204), E204);
         }
 
-        dbFeed.IsFollowing = await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userId && p.UserFollowingId == dbFeed.UserId);
-        dbFeed.IsFavorite = await _context.SocialPostFavoriteAvailable.AnyAsync(p => p.UserId == userId && p.PostId == dbFeed.Id);
+        dbFeed.IsFollowing = await _context.Available<UserFollow>().AnyAsync(p => p.UserFollowerId == userId && p.UserFollowingId == dbFeed.UserId);
+        dbFeed.IsFavorite = await _context.Available<SocialPostFavorite>().AnyAsync(p => p.UserId == userId && p.PostId == dbFeed.Id);
 
         dbFeed.Body = await _businessText.Process(dbFeed.Body);
 
@@ -620,7 +620,7 @@ public partial class FeedService : IFeedService
         };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
 
-        var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId)
+        var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId)
                                                                 .Select(p => p.PostId)
                                                                 .ToListAsync();
         if (result != null && result.Any())

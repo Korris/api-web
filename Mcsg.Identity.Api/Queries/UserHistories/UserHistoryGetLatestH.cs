@@ -18,6 +18,7 @@ namespace Mcsg.Identity.Api.Queries;
 
 using Commands;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Responses;
 using Requests;
 
@@ -43,9 +44,9 @@ public class UserHistoryGetLatestH : BaseH, IRequestHandler<UserHistoryGetLatest
     public async Task<SingleResponse> Handle(UserHistoryGetLatestR request, CancellationToken cancellationToken)
     {
         var res = new SingleResponse();
-        var userId = await _context.UserNameHistoryAvailable.Where(p => p.UserName == request.NewUserName).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken);
+        var userId = await _context.Available<UserNameHistory>().Where(p => p.UserName == request.NewUserName).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken);
 
-        var latestUserName = await _context.UserNameHistoryAvailable.Where(p => p.UserId == userId)
+        var latestUserName = await _context.Available<UserNameHistory>().Where(p => p.UserId == userId)
             .OrderByDescending(p => p.CreatedOn)
             .Select(p => p.UserName)
             .FirstOrDefaultAsync(cancellationToken);

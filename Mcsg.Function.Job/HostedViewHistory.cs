@@ -119,7 +119,7 @@ public class HostedViewHistory : BackgroundService
                 return;
             }
 
-            var check = await context.ViewHistoryAvailable
+            var check = await context.ViewHistories
                 .Where(p => p.EntityId == payload.EntityId
                     && p.UsedId == payload.UserId
                     && p.EntityType == payload.EntityType

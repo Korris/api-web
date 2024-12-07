@@ -79,7 +79,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -91,7 +91,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         }
         else
         {
-            var subPost = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<ComicSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 order = subPost.Order;
@@ -119,7 +119,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
             if (commentNotiRequest.Type == "subpost")
             {
                 commentNotiRequest.Order = order;
-                var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
+                var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
                 commentNotiRequest.PostHashId = post.HashId;
             }
             await _notificationService.AddCommentNotification(commentNotiRequest);
@@ -140,7 +140,6 @@ public partial class ComicCommentService : BaseS, IComicCommentService
 
         var userIds = response.Mentions.Select(p => p.EntityId).ToList();
         var userInfos = await _context.UserAvailable
-            .AsNoTracking()
             .Where(p => userIds.Contains(p.Id))
             .Select(p => new
             {
@@ -179,11 +178,11 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         #region -- Validate on server --
         // Commnent
         var ett = req.Type == "post"
-                ? await _context.ComicPostCommentAvailable
+                ? await _context.Available<ComicPostComment>()
                         .Where(p => p.Id == req.CommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync()
-                : await _context.ComicSubPostCommentAvailable
+                : await _context.Available<ComicSubPostComment>()
                         .Where(p => p.Id == req.CommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync();
@@ -214,7 +213,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -225,7 +224,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         }
         else
         {
-            var subPost = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<ComicSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -343,7 +342,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
     #region Update
     private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<ComicPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -380,7 +379,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
     }
     private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<ComicSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -420,7 +419,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
     #region Delete
     private async Task<PostCommentResp> DeleteCommentInPost(DeleteCommentReq req)
     {
-        var comment = await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<ComicPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -454,7 +453,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
 
     private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req)
     {
-        var comment = await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<ComicSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -464,7 +463,7 @@ public partial class ComicCommentService : BaseS, IComicCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
-        var post = await _context.ComicSubPostAvailable.FirstOrDefaultAsync(p => p.Id == comment.PostId);
+        var post = await _context.Available<ComicSubPost>().FirstOrDefaultAsync(p => p.Id == comment.PostId);
 
         var command = string.Format(DeleteCommentCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,

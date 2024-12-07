@@ -77,12 +77,12 @@ public class ComicNotificationService : BaseS, IComicNotificationService
 
         if (comment.Type == PostTypes.Post)
         {
-            var parentComment = await _context.ComicPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
+            var parentComment = await _context.Available<ComicPostComment>().FirstOrDefaultAsync(p => p.Id == id);
             receiverId = parentComment.AuthorId;
         }
         else
         {
-            var parentComment = await _context.ComicSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == id);
+            var parentComment = await _context.Available<ComicSubPostComment>().FirstOrDefaultAsync(p => p.Id == id);
             receiverId = parentComment.AuthorId;
         }
 
@@ -92,11 +92,11 @@ public class ComicNotificationService : BaseS, IComicNotificationService
             IQueryable<string?> qHashId;
             if (comment.Type == PostTypes.Post)
             {
-                qHashId = _context.ComicPostAvailable.Where(p => p.Id == comment.PostId).Select(p => p.HashId);
+                qHashId = _context.Available<ComicPost>().Where(p => p.Id == comment.PostId).Select(p => p.HashId);
             }
             else
             {
-                qHashId = _context.ComicSubPostAvailable.Where(p => p.Id == comment.PostId).Select(p => p.HashId);
+                qHashId = _context.Available<ComicSubPost>().Where(p => p.Id == comment.PostId).Select(p => p.HashId);
             }
             var hashId = await qHashId.FirstOrDefaultAsync();
 
@@ -175,7 +175,7 @@ public class ComicNotificationService : BaseS, IComicNotificationService
         // React to post
         if (reaction.EntityType == NotificationEntityType.SocialPostReaction)
         {
-            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.Id == reaction.TargetId);
+            var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.Id == reaction.TargetId);
             if (post != null)
             {
                 receiverId = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;

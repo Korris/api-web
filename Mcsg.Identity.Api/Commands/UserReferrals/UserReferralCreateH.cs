@@ -50,7 +50,7 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
 
         #region -- Validate on server --
 
-        if (await _context.UserReferralAvailable.AnyAsync(p => p.UserRefereeId == request.UserId))
+        if (await _context.Available<UserReferral>().AnyAsync(p => p.UserRefereeId == request.UserId))
         {
             throw new BadRequestException(nameof(E118), E118);
         }
@@ -64,7 +64,7 @@ public class UserReferralCreateH : BaseH, IRequestHandler<UserReferralCreateR, S
             throw new BadRequestException(nameof(E116), E116);
         }
 
-        var hasUserSocial = await _context.UserSocialAvailable.AnyAsync(p => p.UserId == request.UserId, cancellationToken);
+        var hasUserSocial = await _context.Available<UserSocial>().AnyAsync(p => p.UserId == request.UserId, cancellationToken);
         if (!hasUserSocial)
         {
             throw new BadRequestException(nameof(E117), E117);

@@ -139,7 +139,7 @@ public partial class FavoriteService : BaseS, IFavoriteService
             var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
 
-            var postIds = await _context.SocialPostFavoriteAvailable.Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
+            var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
 
             foreach (var item in items)
             {

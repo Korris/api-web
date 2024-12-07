@@ -74,10 +74,10 @@ public partial class UserService : IUserService
             var userFollowingIds = new List<Guid>();
             if (userId != null)
             {
-                userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
-                                                                        .Where(p => p.UserFollowerId == userId)
-                                                                        .Select(p => p.UserFollowingId)
-                                                                        .ToListAsync();
+                userFollowingIds = await _context.Available<UserFollow>()
+                    .Where(p => p.UserFollowerId == userId)
+                    .Select(p => p.UserFollowingId)
+                    .ToListAsync();
                 isHaveUser = userFollowingIds.Count > 0;
             }
 

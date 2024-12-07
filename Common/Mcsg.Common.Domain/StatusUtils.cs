@@ -1,6 +1,6 @@
-﻿using Mcsg.Common.Core.Enums;
+﻿namespace Mcsg.Common.Domain;
 
-namespace Mcsg.Common.Domain;
+using Core.Enums;
 
 /// <summary>
 /// StatusUtils

@@ -6,6 +6,7 @@ using Api.Constants;
 using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Interfaces;
@@ -115,7 +116,7 @@ public partial class StoryService : IStoryService
 
     public async Task<float> GetLatestOrderChapter(string hashPostId)
     {
-        var postId = await _context.StoryPostAvailable.AsNoTracking()
+        var postId = await _context.Available<StoryPost>()
             .Where(p => p.HashId == hashPostId)
             .Select(p => p.Id)
             .FirstOrDefaultAsync();
@@ -125,7 +126,7 @@ public partial class StoryService : IStoryService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        var latestOrder = await _context.StorySubPostAvailable.AsNoTracking()
+        var latestOrder = await _context.Available<StorySubPost>()
             .Where(p => p.PostId == postId)
             .OrderByDescending(p => p.Order)
             .Select(p => p.Order)

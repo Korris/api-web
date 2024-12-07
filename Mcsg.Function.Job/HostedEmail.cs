@@ -9,6 +9,7 @@ using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Interfaces;
 using static Common.SeedWork.Constants.Information;
 
@@ -111,7 +112,7 @@ public class HostedEmail : BackgroundService
             var context = scope.ServiceProvider.GetRequiredService<IMcsgContext>();
             var id = new Guid(msg.DevName); // TODO
 
-            var ett = await context.JobAvailable.FirstOrDefaultAsync(p => p.Id == id);
+            var ett = await context.Available<Job>().FirstOrDefaultAsync(p => p.Id == id);
             if (ett != null && ett.Status != JobStatus.Success)
             {
                 ett.Status = JobStatus.Processing;

@@ -254,7 +254,7 @@ public partial class PostService : BaseMinioS, IPostService
             throw new NotFoundException(nameof(E204), E204);
         }
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
-        dbPost.IsFollowing = userId == null ? false : await _context.ComicPostFavoriteAvailable.AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
+        dbPost.IsFollowing = userId == null ? false : await _context.Available<ComicPostFavorite>().AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
         var result = MappingFeedRespone(dbPost, req.UserId);
 
         result.CoverHashId = Path.GetFileNameWithoutExtension(result.CoverUrl);
@@ -272,7 +272,7 @@ public partial class PostService : BaseMinioS, IPostService
             MapReactionPostSeriesResponse(result, postReactionResponse.ToList());
         }
 
-        result.FollowCount = await _context.ComicPostFavoriteAvailable.Where(p => p.PostId == result.Id).CountAsync();
+        result.FollowCount = await _context.Available<ComicPostFavorite>().Where(p => p.PostId == result.Id).CountAsync();
         result.IsCensored = !req.IsAdministrator && result.Status == PostStatus.Inactive && req.UserName != result.UserName;
         result.IsBlur = result.Status == PostStatus.Inactive || result.IsMature;
 
@@ -500,7 +500,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         try
         {
-            var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId);
+            var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.HashId == request.HashId);
             if (post == null)
             {
                 throw new NotFoundException(nameof(E204), E204);
@@ -894,7 +894,7 @@ public partial class PostService : BaseMinioS, IPostService
         var profileName = request.ProfileName;
 
         #region -- Validate on server --
-        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId);
+        var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.HashId == request.HashId);
         if (post == null)
         {
             throw new NotFoundException(nameof(E204), E204);
@@ -950,7 +950,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         if (currentTitle != request.Title)
         {
-            var currentEntity = await _context.SmartLookupAvailable.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Comic && p.Keyword == currentTitle);
+            var currentEntity = await _context.SmartLookups.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Comic && p.Keyword == currentTitle);
             if (currentEntity != null)
             {
                 currentEntity.Keyword = request.Title;
@@ -1028,7 +1028,7 @@ public partial class PostService : BaseMinioS, IPostService
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
 
-        if (!await _context.ComicPostAvailable.AnyAsync(p => p.Id == postId))
+        if (!await _context.Available<ComicPost>().AnyAsync(p => p.Id == postId))
         {
             throw new BadRequestException(ApiErrorCode.NOT_FOUND, ApiErrorMessage.NOT_FOUND);
         }
@@ -1105,7 +1105,7 @@ public partial class PostService : BaseMinioS, IPostService
             var mappedItems = MappingTopSeries(items);
             var postIds = mappedItems.Select(x => x.Id).ToList();
 
-            var followCounts = await _context.ComicPostFavoriteAvailable
+            var followCounts = await _context.Available<ComicPostFavorite>()
                               .Where(p => postIds.Contains(p.PostId))
                               .GroupBy(p => p.PostId)
                               .Select(p => new { PostId = p.Key, Count = p.Count() })
@@ -1170,7 +1170,7 @@ public partial class PostService : BaseMinioS, IPostService
             var mappedItems = MappingTopSeries(items);
             var postIds = mappedItems.Select(x => x.Id).ToList();
 
-            var followCounts = await _context.ComicPostFavoriteAvailable
+            var followCounts = await _context.Available<ComicPostFavorite>()
                               .Where(p => postIds.Contains(p.PostId))
                               .GroupBy(p => p.PostId)
                               .Select(p => new { PostId = p.Key, Count = p.Count() })
@@ -1705,12 +1705,12 @@ public partial class PostService : BaseMinioS, IPostService
 
     public async Task<List<ChapterList>> GetAllChapters(string hashId)
     {
-        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var postId = await _context.Available<ComicPost>().Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         if (postId == Guid.Empty)
         {
             throw new NotFoundException(nameof(E204), E204);
         }
-        return await _context.ComicSubPostAvailable.Where(p => p.PostId == postId)
+        return await _context.Available<ComicSubPost>().Where(p => p.PostId == postId)
             .OrderBy(p => p.Sort)
             .Select(p => new ChapterList
             {
@@ -1801,7 +1801,7 @@ public partial class PostService : BaseMinioS, IPostService
         }
 
         #region -- Validate on server --
-        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
+        var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
             throw new NotFoundException(nameof(E204), E204);
@@ -1818,13 +1818,13 @@ public partial class PostService : BaseMinioS, IPostService
         }
 
         var hashIds = request?.Files.Select(x => x.HashId).ToList();
-        var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        var resourceList = await _context.Available<ComicResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         if (resourceList.Count == 0)
         {
             throw new BadRequestException(nameof(E201), E201);
         }
 
-        var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
+        var hasSubPost = await _context.Available<ComicSubPost>().AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
         if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
@@ -1860,8 +1860,8 @@ public partial class PostService : BaseMinioS, IPostService
             IsExclusive = false, //BCW-37
             IsPremium = request.IsPremium,
             PostHashId = post.HashId,
-            Sort = !await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id) ? 1 :
-                    await _context.ComicSubPostAvailable.Where(p => p.PostId == post.Id).MaxAsync(p => p.Sort) + 1
+            Sort = !await _context.Available<ComicSubPost>().AnyAsync(p => p.PostId == post.Id) ? 1 :
+                    await _context.Available<ComicSubPost>().Where(p => p.PostId == post.Id).MaxAsync(p => p.Sort) + 1
         };
 
         post.ModifiedOn = DateTime.UtcNow;
@@ -1922,8 +1922,9 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
         }
+
         #region -- Validate on server --
-        var post = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
+        var post = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
         {
             throw new NotFoundException(nameof(E204), E204);
@@ -1940,14 +1941,14 @@ public partial class PostService : BaseMinioS, IPostService
             throw new NotFoundException(nameof(E208), E208);
         }
 
-        var hasSubPost = await _context.ComicSubPostAvailable.AnyAsync(p => p.PostId == post.Id && p.Order == request.Order && p.Id != subPost.Id);
+        var hasSubPost = await _context.Available<ComicSubPost>().AnyAsync(p => p.PostId == post.Id && p.Order == request.Order && p.Id != subPost.Id);
         if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
 
         var hashIds = request?.Files.Select(x => x.HashId).ToList();
-        var resourceList = await _context.ComicResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        var resourceList = await _context.Available<ComicResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         if (resourceList.Count == 0)
         {
             throw new BadRequestException(nameof(E201), E201);
@@ -2062,11 +2063,11 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var result = new List<ChapterResponse>();
         var userId = orders.UserId;
-        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var postId = await _context.Available<ComicPost>().Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         var fromOrder = orders.Order1;
         var toOrder = orders.Order2;
-        var chapterFr = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
-        var chapterTo = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterFr = await _context.Available<ComicSubPost>().Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterTo = await _context.Available<ComicSubPost>().Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
         if (chapterFr == null || chapterTo == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, chapterFr == null ? orders?.Order1 : orders?.Order2));
@@ -2080,12 +2081,12 @@ public partial class PostService : BaseMinioS, IPostService
 
         if (fromOrder < toOrder)
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort <= toOrder && c.PostId == postId)
+            await _context.Available<ComicSubPost>().Where(c => c.Sort > fromOrder && c.Sort <= toOrder && c.PostId == postId)
           .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort - 1));
         }
         else
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort < fromOrder && c.Sort >= toOrder && c.PostId == postId)
+            await _context.Available<ComicSubPost>().Where(c => c.Sort < fromOrder && c.Sort >= toOrder && c.PostId == postId)
         .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
         }
 
@@ -2098,11 +2099,11 @@ public partial class PostService : BaseMinioS, IPostService
     public async Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders)
     {
         var userId = orders.UserId;
-        var postId = await _context.ComicPostAvailable.Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
+        var postId = await _context.Available<ComicPost>().Where(p => p.HashId == hashId).Select(p => p.Id).FirstOrDefaultAsync();
         var fromOrder = orders.Order1;
         var toOrder = orders.Order2;
-        var chapterFr = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
-        var chapterTo = await _context.ComicSubPostAvailable.Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterFr = await _context.Available<ComicSubPost>().Where(x => x.Sort == orders.Order1 && x.PostId == postId).FirstOrDefaultAsync();
+        var chapterTo = await _context.Available<ComicSubPost>().Where(x => x.Sort == orders.Order2 && x.PostId == postId).FirstOrDefaultAsync();
         if (chapterFr == null || chapterTo == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, string.Format(ApiErrorMessage.CHAPTER_NOT_EXIST, chapterFr == null ? orders?.Order1 : orders?.Order2));
@@ -2116,12 +2117,12 @@ public partial class PostService : BaseMinioS, IPostService
 
         if (fromOrder < toOrder)
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort > fromOrder && c.Sort < toOrder && c.PostId == postId)
+            await _context.Available<ComicSubPost>().Where(c => c.Sort > fromOrder && c.Sort < toOrder && c.PostId == postId)
            .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort - 1));
         }
         else
         {
-            await _context.ComicSubPostAvailable.Where(c => c.Sort >= toOrder && c.Sort < fromOrder && c.PostId == postId)
+            await _context.Available<ComicSubPost>().Where(c => c.Sort >= toOrder && c.Sort < fromOrder && c.PostId == postId)
           .ExecuteUpdateAsync(s => s.SetProperty(p => p.Sort, p => p.Sort + 1));
         }
 
@@ -2162,7 +2163,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var res = new List<RewardDto>();
 
-        var check = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
+        var check = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
             var rewardType = RewardType.FirstFeed;
@@ -2281,7 +2282,7 @@ public partial class PostService : BaseMinioS, IPostService
             return order >= 0 ? order.Value : 0;
         }
 
-        var orders = await _context.ComicSubPostAvailable.Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();
+        var orders = await _context.Available<ComicSubPost>().Where(p => p.PostId == postId).Select(p => p.Order).ToListAsync();
 
         return orders.Count > 0 ? (int)orders.Max() + 1 : 1;
     }
@@ -2294,8 +2295,8 @@ public partial class PostService : BaseMinioS, IPostService
     /// <returns>The matching subpost if found; otherwise, null.</returns>
     private async Task<ComicSubPost?> FindSubPost(string? postHashId, float order)
     {
-        var q = from a in _context.ComicSubPostAvailable
-                join b in _context.ComicPostAvailable on a.PostId equals b.Id
+        var q = from a in _context.Available<ComicSubPost>()
+                join b in _context.Available<ComicPost>() on a.PostId equals b.Id
                 where b.HashId == postHashId && a.Order == order
                 select a;
         return await q.FirstOrDefaultAsync();

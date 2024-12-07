@@ -619,7 +619,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var res = new List<RewardDto>();
 
-        var check = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
+        var check = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.UserId == userId && p.Type == type);
         if (check == null)
         {
             var rewardType = RewardType.FirstFeed;
@@ -670,7 +670,7 @@ public partial class PostService : BaseMinioS, IPostService
                     else
                     {
                         var lastHashId = input.PostRandomIds?.LastOrDefault();
-                        var isDataFromSubPost = await _context.SocialSubPostAvailable.AnyAsync(p => p.HashId == lastHashId);
+                        var isDataFromSubPost = await _context.Available<SocialSubPost>().AnyAsync(p => p.HashId == lastHashId);
                         var tableName = isDataFromSubPost ? @"social.""SocialSubPosts""" : @"social.""SocialPosts""";
                         var createdOnQuery = $@"SELECT sp.""CreatedOn""
                                                 FROM {tableName} sp 
@@ -755,8 +755,8 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var userId = req.UserId;
         var followedComicCount = await (
-            from a in _context.ComicPostAvailable.AsNoTracking()
-            join b in _context.ComicPostFavoriteAvailable.AsNoTracking()
+            from a in _context.Available<ComicPost>()
+            join b in _context.Available<ComicPostFavorite>()
                 on a.Id equals b.PostId
             where b.UserId == userId
                   && !a.IsDelete
@@ -765,8 +765,8 @@ public partial class PostService : BaseMinioS, IPostService
         ).CountAsync();
 
         var followedStoryCount = await (
-            from a in _context.StoryPosts.AsNoTracking()
-            join b in _context.StoryPostFavoriteAvailable.AsNoTracking()
+            from a in _context.Available<StoryPost>()
+            join b in _context.Available<StoryPostFavorite>()
                 on a.Id equals b.PostId
             where b.UserId == userId
                   && !b.IsDelete

@@ -118,7 +118,7 @@ public partial class SmartLookupService : BaseSettingS, ISmartLookupService
     {
         var tag = nameof(LookupKeywordType.Tag);
         var people = nameof(LookupKeywordType.People);
-        var q = _context.SmartLookupUserAvailable.Where(p => p.UserId == userId).OrderByDescending(x => x.CreatedOn).Take(6)
+        var q = _context.SmartLookupUsers.Where(p => p.UserId == userId).OrderByDescending(x => x.CreatedOn).Take(6)
             .Select(p => new RecentSearchResponse
             {
                 Id = p.Id,

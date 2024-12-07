@@ -59,7 +59,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         switch (type)
         {
             case EntityType.Post:
-                var post = await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var post = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (post == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -70,7 +70,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.SubPost:
-                var subPost = await _context.DocumentSubPostAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var subPost = await _context.Available<DocumentSubPost>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (subPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -81,7 +81,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.CommentPost:
-                var commentPost = await _context.DocumentPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var commentPost = await _context.Available<DocumentPostComment>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (commentPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -92,7 +92,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.CommentSubPost:
-                var commentSubPost = await _context.DocumentSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var commentSubPost = await _context.Available<DocumentSubPostComment>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (commentSubPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -113,10 +113,10 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         }
 
         // Check data is existed to avoid people spam
-        var ett = await _context.DocumentReportAvailable.FirstOrDefaultAsync(p => p.EntityId == entityId, cancellationToken);
+        var ett = await _context.Available<DocumentReport>().FirstOrDefaultAsync(p => p.EntityId == entityId, cancellationToken);
         if (ett != null)
         {
-            var hasDetail = await _context.DocumentReportDetailAvailable.AnyAsync(p => p.ReportId == ett.Id && p.UserId == userId, cancellationToken);
+            var hasDetail = await _context.Available<DocumentReportDetail>().AnyAsync(p => p.ReportId == ett.Id && p.UserId == userId, cancellationToken);
             if (hasDetail && ett.Status == ReportStatus.Reviewing)
             {
                 return res.SetError(nameof(E115), E115);

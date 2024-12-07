@@ -147,7 +147,7 @@ public partial class SoundService : ISoundService
 
     public async Task<bool> RemoveSoundAsync(Guid postId)
     {
-        var backgroundMediaPosts = await _context.BackgroundMediaPostAvailable.Where(p => p.PostId == postId).ToListAsync();
+        var backgroundMediaPosts = await _context.Available<BackgroundMediaPost>().Where(p => p.PostId == postId).ToListAsync();
         backgroundMediaPosts.ForEach(p => p.Status = BackgroundMediaPostStatus.Remove);
         var result = await _context.SaveChangesAsync(default);
 

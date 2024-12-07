@@ -126,7 +126,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         if (req.UserId != null)
         {
-            userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+            userFollowingIds = await _context.Available<UserFollow>()
                 .Where(p => p.UserFollowerId == req.UserId)
                 .Select(p => p.UserFollowingId)
                 .ToListAsync();
@@ -135,7 +135,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == user.Id);
+        var qUserFollow = _context.Available<UserFollow>().Where(p => p.UserFollowerId == user.Id);
 
         var userFollowing = from a in qUser
                             join b in qUserFollow
@@ -199,7 +199,7 @@ public partial class UserService : BaseMinioS, IUserService
                                            .FirstOrDefaultAsync();
 
             var qUser = _context.UserAvailable;
-            var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowerId == userId);
+            var qUserFollow = _context.Available<UserFollow>().Where(p => p.UserFollowerId == userId);
 
             result = await (from a in qUser
                             where !qUserFollow
@@ -419,7 +419,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         if (req.UserId != null)
         {
-            userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
+            userFollowingIds = await _context.Available<UserFollow>()
                 .Where(p => p.UserFollowerId == req.UserId)
                 .Select(p => p.UserFollowingId)
                 .ToListAsync();
@@ -428,7 +428,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         var offset = req.PageSize * (req.PageNumber - 1);
         var qUser = _context.UserAvailable;
-        var qUserFollow = _context.UserFollowAvailable.Where(p => p.UserFollowingId == user.Id);
+        var qUserFollow = _context.Available<UserFollow>().Where(p => p.UserFollowingId == user.Id);
 
         var userFollowed = from a in qUser
                            join b in qUserFollow
@@ -508,7 +508,7 @@ public partial class UserService : BaseMinioS, IUserService
 
         res.NumberOfFollowing = await GetFollowingCountAsync(user.Id);
         res.NumberOfFollowers = await GetFollowerCountAsync(user.Id);
-        res.IsFollowing = userFollowerId != null && await _context.UserFollowAvailable.AnyAsync(p => p.UserFollowerId == userFollowerId && p.UserFollowingId == user.Id);
+        res.IsFollowing = userFollowerId != null && await _context.Available<UserFollow>().AnyAsync(p => p.UserFollowerId == userFollowerId && p.UserFollowingId == user.Id);
 
         if (decryptEmail)
         {
@@ -529,7 +529,7 @@ public partial class UserService : BaseMinioS, IUserService
             throw new BadRequestException(nameof(E120), E120);
         }
 
-        return await (from a in _context.UserFollowAvailable
+        return await (from a in _context.Available<UserFollow>()
                       join b in _context.Users on a.UserFollowerId equals b.Id
                       where a.UserFollowingId == userId && b.IsDelete == false
                       select a).CountAsync();
@@ -542,7 +542,7 @@ public partial class UserService : BaseMinioS, IUserService
             throw new BadRequestException(nameof(E120), E120);
         }
 
-        return await (from a in _context.UserFollowAvailable
+        return await (from a in _context.Available<UserFollow>()
                       join b in _context.Users on a.UserFollowingId equals b.Id
                       where a.UserFollowerId == userId && b.IsDelete == false
                       select a).CountAsync();

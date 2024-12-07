@@ -87,7 +87,7 @@ public class CountService<TP, TS> : BaseS, ICountService<TP, TS> where TP : Enti
             }
 
             postId = post.Id;
-            var smartCountAction = await _context.SmartCountActionAvailable.FirstOrDefaultAsync(x => x.EntityId == postId);
+            var smartCountAction = await _context.SmartCountActions.FirstOrDefaultAsync(x => x.EntityId == postId);
             if (smartCountAction != null)
             {
                 smartCountAction.Count++;

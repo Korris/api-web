@@ -5,6 +5,7 @@ namespace Mcsg.Function.Job.Services;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Interfaces;
 
 /// <summary>
@@ -75,7 +76,7 @@ public class DeleteAccountService : IDeleteAccountService
             var userIds = deletedUsers.Select(p => p.Id).ToList();
             if (userIds.Count > 0)
             {
-                await _context.UserSocialAvailable
+                await _context.Available<UserSocial>()
                     .Where(p => userIds.Contains(p.UserId))
                     .ExecuteUpdateAsync(p => p.SetProperty(q => q.IsDelete, true), default);
             }

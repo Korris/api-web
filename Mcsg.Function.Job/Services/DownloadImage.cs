@@ -5,6 +5,7 @@ namespace Mcsg.Function.Job.Services;
 using Common.Core.Enums;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Enums;
 using Interfaces;
 using static Common.SeedWork.Constants.Setting;
@@ -36,7 +37,7 @@ public class DownloadImage : IDownloadImage
     public async Task Run()
     {
         // Take 1 chapter
-        var qSubPost = _context.ComicSubPostAvailable.Where(p => p.Status == PostStatus.WaitingForDownload);
+        var qSubPost = _context.Available<ComicSubPost>().Where(p => p.Status == PostStatus.WaitingForDownload);
         var subPostId = await qSubPost.OrderBy(p => p.Order).Select(p => p.Id).FirstOrDefaultAsync();
         if (subPostId == Guid.Empty)
         {
@@ -44,7 +45,7 @@ public class DownloadImage : IDownloadImage
         }
 
         var ts = TimeSpan.FromMinutes(5);
-        var qResource = _context.ComicResourceAvailable.Where(p => p.SubPostId == subPostId);
+        var qResource = _context.Available<ComicResource>().Where(p => p.SubPostId == subPostId);
         qResource = qResource.Where(p => p.Status == ResourceStatus.WaitingForDownload && p.ExternalUrl != null);
         var resource = await qResource.ToListAsync();
 

@@ -21,6 +21,7 @@ using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
+using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -86,7 +87,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
 
         #region -- Validate on server --
         // Post
-        var ett = await _context.ComicPostAvailable.FirstOrDefaultAsync(p => p.HashId == request.HashId && p.Type == PostType.Feed, cancellationToken);
+        var ett = await _context.Available<ComicPost>().FirstOrDefaultAsync(p => p.HashId == request.HashId && p.Type == PostType.Feed, cancellationToken);
         if (ett == null)
         {
             throw new NotFoundException(nameof(E204), E204);

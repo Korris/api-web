@@ -120,7 +120,7 @@ public partial class SmartLookupService : BaseSettingS, ISmartLookupService
     {
         var tag = nameof(LookupKeywordType.Tag);
         var people = nameof(LookupKeywordType.People);
-        var q = from slu in _context.SmartLookupUserAvailable
+        var q = from slu in _context.SmartLookupUsers
                 join u in _context.UserAvailable on slu.Keyword equals u.ProfileName into userGroup
                 from u in userGroup.DefaultIfEmpty()
                 where slu.UserId == userId
@@ -188,7 +188,7 @@ public partial class SmartLookupService : BaseSettingS, ISmartLookupService
                 .Select(p => p.Id).FirstOrDefault(),
             EntityType.User => _context.UserAvailable.Where(p => p.ProfileName == res.Keyword).Select(p => p.Id)
                 .FirstOrDefault(),
-            EntityType.Tag => _context.TagAvailable.Where(p => p.Name == res.Keyword).Select(p => p.Id)
+            EntityType.Tag => _context.Available<Tag>().Where(p => p.Name == res.Keyword).Select(p => p.Id)
                 .FirstOrDefault(),
             _ => smartLookupObj.EntityId
         };

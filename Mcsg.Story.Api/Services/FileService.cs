@@ -252,7 +252,7 @@ public class FileService : IFileService
         }
 
         var resourcesDb = await QueryResourceByPostId(dto.PostId).ToArrayAsync();
-        var subPostDB = await _context.StorySubPostAvailable.Where(p => p.PostId == dto.PostId).ToListAsync();
+        var subPostDB = await _context.Available<StorySubPost>().Where(p => p.PostId == dto.PostId).ToListAsync();
 
         //Update
         var resourceDbHashId = resourcesDb.Select(x => x.HashId).ToList();
@@ -294,8 +294,8 @@ public class FileService : IFileService
         resourcesResult = resourcesResult.Where(x => !listRemoveHashId.Contains(x.HashId)).ToList();
         var subPosts = new List<SubUploadFileDto>();
 
-        var subpostAndResourceHashId = await (from a in _context.StorySubPostAvailable
-                                              join b in _context.StoryResourceAvailable
+        var subpostAndResourceHashId = await (from a in _context.Available<StorySubPost>()
+                                              join b in _context.Available<StoryResource>()
                                                 on a.Id equals b.SubPostId into g1
                                               from b in g1.DefaultIfEmpty()
                                               join c in _context.StoryPosts
@@ -403,9 +403,9 @@ public class FileService : IFileService
         {
             return Tuple.Create(response, subPostResponses);
         }
-        var resourceDb = await _context.StoryResourceAvailable.Where(p => p.SubPostId == dto.SubPostId).ToListAsync();
+        var resourceDb = await _context.Available<StoryResource>().Where(p => p.SubPostId == dto.SubPostId).ToListAsync();
         var resourceHashIdRemove = resourceDb.Where(p => !hashIds.Contains(p.HashId)).Select(p => p.HashId).ToList();
-        var resourceList = await _context.StoryResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        var resourceList = await _context.Available<StoryResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         if (resourceHashIdRemove.Count > 0)
         {
             await RemoveResource(resourceHashIdRemove, new List<Guid?>());
@@ -483,7 +483,7 @@ public class FileService : IFileService
     /// <returns>Return a query</returns>
     private IQueryable<StoryResource> QueryResourceByPostId(Guid postId)
     {
-        return from a in _context.StoryResourceAvailable
+        return from a in _context.Available<StoryResource>()
                join b in _context.StorySubPosts
                   on a.SubPostId equals b.Id
                where a.Type != ResourceType.Temp && b.PostId == postId
@@ -502,7 +502,7 @@ public class FileService : IFileService
 
         if (hashIds?.Count > 0)
         {
-            var a = await _context.StoryResourceAvailable.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+            var a = await _context.Available<StoryResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
             a.ForEach(p => p.IsDelete = true);
 
             willDelete = true;
@@ -510,7 +510,7 @@ public class FileService : IFileService
 
         if (subPostIds?.Count > 0)
         {
-            var b = await _context.StorySubPostAvailable.Where(p => subPostIds.Contains(p.Id)).ToListAsync();
+            var b = await _context.Available<StorySubPost>().Where(p => subPostIds.Contains(p.Id)).ToListAsync();
             b.ForEach(p => p.IsDelete = true);
 
             willDelete = true;

@@ -7,6 +7,7 @@ namespace Mcsg.Social.Api.Commands;
 using Analytic.Application.Protos;
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -54,7 +55,7 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
 
         #region -- Validate on server --
         // SubPost
-        var ett = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == request.Id && p.UserId == userId, cancellationToken);
+        var ett = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == request.Id && p.UserId == userId, cancellationToken);
         if (ett == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.Id).ToCamelCase(), Value = request.Id } };

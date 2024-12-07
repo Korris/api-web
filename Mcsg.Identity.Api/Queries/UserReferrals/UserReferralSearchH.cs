@@ -48,7 +48,7 @@ public class UserReferralSearchH : BaseH, IRequestHandler<UserReferralSearchR, S
     {
         var res = new SearchResponse(request.PageNum, request.PageSize, request.Paging);
 
-        var q = _context.UserReferralAvailable.Include(p => p.UserReferee).AsNoTracking();
+        var q = _context.Available<UserReferral>().Include(p => p.UserReferee).AsNoTracking();
 
         #region -- Filter --
         var userId = request.UserId;

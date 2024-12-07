@@ -28,7 +28,7 @@ public partial class ChartService : IChartService
 
         #region -- Comment --
         var commentCounts = await qPost
-            .Join(_context.SocialPostCommentAvailable, post => post.Id, comment => comment.PostId, (post, comment) => new { Post = post, Comment = comment })
+            .Join(_context.Available<SocialPostComment>(), post => post.Id, comment => comment.PostId, (post, comment) => new { Post = post, Comment = comment })
             .GroupBy(x => x.Post.CreatedOn.Date)
             .Select(group => new ChartResponse
             {
@@ -38,8 +38,8 @@ public partial class ChartService : IChartService
             .ToListAsync();
 
         var subCommentCounts = await qPost
-            .Join(_context.SocialSubPostAvailable, post => post.Id, subPost => subPost.PostId, (post, subPost) => new { Post = post, SubPost = subPost })
-            .Join(_context.SocialSubPostCommentAvailable, x => x.SubPost.Id, subComment => subComment.PostId, (x, subComment) => new { x.Post, SubComment = subComment })
+            .Join(_context.Available<SocialSubPost>(), post => post.Id, subPost => subPost.PostId, (post, subPost) => new { Post = post, SubPost = subPost })
+            .Join(_context.Available<SocialSubPostComment>(), x => x.SubPost.Id, subComment => subComment.PostId, (x, subComment) => new { x.Post, SubComment = subComment })
             .GroupBy(x => x.Post.CreatedOn.Date)
             .Select(group => new ChartResponse
             {
@@ -63,7 +63,7 @@ public partial class ChartService : IChartService
         #region -- Reaction --
         var postReactionCounts = await (
             from post in qPost
-            join reaction in _context.SocialPostReactionAvailable on post.Id equals reaction.TargetId
+            join reaction in _context.Available<SocialPostReaction>() on post.Id equals reaction.TargetId
             group 1 by post.CreatedOn.Date into g
             select new ChartResponse
             {
@@ -74,7 +74,7 @@ public partial class ChartService : IChartService
 
         var subPostReactionCounts = await (
             from post in qPost
-            join subPost in _context.SocialSubPostAvailable on post.Id equals subPost.PostId
+            join subPost in _context.Available<SocialSubPost>() on post.Id equals subPost.PostId
             join subPostReaction in _context.SocialSubPostReactions on subPost.Id equals subPostReaction.TargetId
             group 1 by post.CreatedOn.Date into g
             select new ChartResponse
@@ -120,9 +120,9 @@ public partial class ChartService : IChartService
         result.PostInteraction = await GetSocialInteractionsAsync(userId, dateToCompare, dateToGetData);
         result.ComicStoryInteraction = await GetComicStoryInteractionsAsync(userId, dateToCompare, dateToGetData);
 
-        result.PostCount = await _context.SocialPostAvailable.CountAsync(p => p.CreatedBy == userId);
-        result.ComicCount = await _context.ComicPostAvailable.CountAsync(p => p.CreatedBy == userId);
-        result.StoryCount = await _context.StoryPostAvailable.CountAsync(p => p.CreatedBy == userId);
+        result.PostCount = await _context.Available<SocialPost>().CountAsync(p => p.CreatedBy == userId);
+        result.ComicCount = await _context.Available<ComicPost>().CountAsync(p => p.CreatedBy == userId);
+        result.StoryCount = await _context.Available<StoryPost>().CountAsync(p => p.CreatedBy == userId);
 
         return result;
     }
@@ -138,15 +138,15 @@ public partial class ChartService : IChartService
 
         if (isComic)
         {
-            var comicPostCommentLast14Days = from post in _context.ComicPostAvailable
-                                             join postComment in _context.ComicPostCommentAvailable
+            var comicPostCommentLast14Days = from post in _context.Available<ComicPost>()
+                                             join postComment in _context.Available<ComicPostComment>()
                                              on post.Id equals postComment.PostId
                                              where post.UserId == userId
                                              && postComment.CreatedOn >= lastDayToCompare
                                              select postComment;
 
-            var comicReactionsLast14Days = from post in _context.ComicPostAvailable
-                                           join postReaction in _context.ComicPostReactionAvailable
+            var comicReactionsLast14Days = from post in _context.Available<ComicPost>()
+                                           join postReaction in _context.Available<ComicPostReaction>()
                                            on post.Id equals postReaction.TargetId
                                            where post.UserId == userId
                                              && postReaction.CreatedOn >= lastDayToCompare
@@ -171,15 +171,15 @@ public partial class ChartService : IChartService
         }
         else
         {
-            var comicPostCommentLast14Days = from post in _context.StoryPostAvailable
-                                             join postComment in _context.StoryPostCommentAvailable
+            var comicPostCommentLast14Days = from post in _context.Available<StoryPost>()
+                                             join postComment in _context.Available<StoryPostComment>()
                                              on post.Id equals postComment.PostId
                                              where post.UserId == userId
                                              && postComment.CreatedOn >= lastDayToCompare
                                              select postComment;
 
-            var comicReactionsLast14Days = from post in _context.StoryPostAvailable
-                                           join postReaction in _context.StoryPostReactionAvailable
+            var comicReactionsLast14Days = from post in _context.Available<StoryPost>()
+                                           join postReaction in _context.Available<StoryPostReaction>()
                                            on post.Id equals postReaction.TargetId
                                            where post.UserId == userId
                                              && postReaction.CreatedOn >= lastDayToCompare
@@ -213,8 +213,8 @@ public partial class ChartService : IChartService
         IQueryable<ChartResponse> query;
         if (isComic)
         {
-            query = from comment in _context.ComicPostReactionAvailable
-                    join post in _context.ComicPostAvailable
+            query = from comment in _context.Available<ComicPostReaction>()
+                    join post in _context.Available<ComicPost>()
                     on comment.TargetId equals post.Id
                     where post.CreatedBy == userId
                     && comment.CreatedOn >= date
@@ -228,8 +228,8 @@ public partial class ChartService : IChartService
         }
         else
         {
-            query = from comment in _context.StoryPostReactionAvailable
-                    join post in _context.StoryPostAvailable
+            query = from comment in _context.Available<StoryPostReaction>()
+                    join post in _context.Available<StoryPost>()
                     on comment.TargetId equals post.Id
                     where post.CreatedBy == userId
                     && comment.CreatedOn >= date
@@ -251,8 +251,8 @@ public partial class ChartService : IChartService
         IQueryable<ChartResponse> query;
         if (isComic)
         {
-            query = from comment in _context.ComicPostCommentAvailable
-                    join post in _context.ComicPostAvailable
+            query = from comment in _context.Available<ComicPostComment>()
+                    join post in _context.Available<ComicPost>()
                     on comment.PostId equals post.Id
                     where post.CreatedBy == userId
                     && comment.CreatedOn >= date
@@ -266,8 +266,8 @@ public partial class ChartService : IChartService
         }
         else
         {
-            query = from comment in _context.StoryPostCommentAvailable
-                    join post in _context.StoryPostAvailable
+            query = from comment in _context.Available<StoryPostComment>()
+                    join post in _context.Available<StoryPost>()
                     on comment.PostId equals post.Id
                     where post.CreatedBy == userId
                     && comment.CreatedOn >= date
@@ -284,28 +284,28 @@ public partial class ChartService : IChartService
 
     public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
     {
-
         var days = isGetDataIn7Days ? 7 : 30;
         var today = DateTime.Today.ToUniversalTime();
-        DateTime lastDayToGetData = today.AddDays(-days);
-        DateTime lastDayToCompare = today.AddDays(-days * 2);
-        var userFollowingIds = await _context.UserFollowAvailable.AsNoTracking()
-                                                                    .Where(p => p.UserFollowerId == userId)
-                                                                    .Select(p => p.UserFollowingId)
-                                                                    .ToListAsync();
+        var lastDayToGetData = today.AddDays(-days);
+        var lastDayToCompare = today.AddDays(-days * 2);
 
-        var userFollowingThisUserForChart = _context.UserFollowAvailable
-                                                .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
-                                                .GroupBy(p => p.CreatedOn.Date)
-                                                .Select(g => new ChartResponse
-                                                {
-                                                    Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                                                    Quantity = g.Count()
-                                                })
-                                                .ToList();
+        var userFollowingIds = await _context.Available<UserFollow>()
+            .Where(p => p.UserFollowerId == userId)
+            .Select(p => p.UserFollowingId)
+            .ToListAsync();
+
+        var userFollowingThisUserForChart = _context.Available<UserFollow>()
+            .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
+            .GroupBy(p => p.CreatedOn.Date)
+            .Select(g => new ChartResponse
+            {
+                Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                Quantity = g.Count()
+            })
+            .ToList();
 
         var userFollowing = from a in _context.UserAvailable
-                            join b in _context.UserFollowAvailable
+                            join b in _context.Available<UserFollow>()
                               on a.Id equals b.UserFollowerId
                             where b.UserFollowingId == userId
                             && b.CreatedOn >= lastDayToGetData
@@ -349,8 +349,8 @@ public partial class ChartService : IChartService
 
         var countCommentSubPost = await (
             from posts in qPost
-            join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
-            join subPostComments in _context.SocialSubPostCommentAvailable on subPosts.Id equals subPostComments.PostId
+            join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
+            join subPostComments in _context.Available<SocialSubPostComment>() on subPosts.Id equals subPostComments.PostId
             select 1
             )
             .CountAsync();
@@ -366,8 +366,8 @@ public partial class ChartService : IChartService
 
         var countCommentSubPostBefore = await (
             from posts in qPostPreviousPeriod
-            join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
-            join subPostComments in _context.SocialSubPostCommentAvailable on subPosts.Id equals subPostComments.PostId
+            join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
+            join subPostComments in _context.Available<SocialSubPostComment>() on subPosts.Id equals subPostComments.PostId
             select 1
         ).CountAsync();
 
@@ -378,7 +378,7 @@ public partial class ChartService : IChartService
         #region -- Total Reaction --
         var countReact = await (
                 from posts in qPost
-                join reactions in _context.SocialPostReactionAvailable on posts.Id equals reactions.TargetId
+                join reactions in _context.Available<SocialPostReaction>() on posts.Id equals reactions.TargetId
                 where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
                 select 1
             )
@@ -386,7 +386,7 @@ public partial class ChartService : IChartService
 
         var countReactSubPost = await (
                 from posts in qPost
-                join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
+                join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
                 join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
                 select 1
                 )
@@ -395,14 +395,14 @@ public partial class ChartService : IChartService
         #region -- Reaction in the previous 7-day period --
         var countReactBefore = await (
                 from posts in qPostPreviousPeriod
-                join reactions in _context.SocialPostReactionAvailable on posts.Id equals reactions.TargetId
+                join reactions in _context.Available<SocialPostReaction>() on posts.Id equals reactions.TargetId
                 select 1
             )
             .CountAsync();
 
         var countReactSubPostBefore = await (
                 from posts in qPostPreviousPeriod
-                join subPosts in _context.SocialSubPostAvailable on posts.Id equals subPosts.PostId
+                join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
                 join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
                 select 1
             )
@@ -457,7 +457,7 @@ public partial class ChartService : IChartService
 
     private async Task<Interactions> GetFollowerInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var userFollowing = from a in _context.UserFollowAvailable
+        var userFollowing = from a in _context.Available<UserFollow>()
                             where a.UserFollowingId == userId &&
                             a.CreatedOn >= dateToCompare
                             select a;
@@ -470,15 +470,15 @@ public partial class ChartService : IChartService
 
     private async Task<Reaction> GetComicInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.ComicPostAvailable
-                                    join postComment in _context.ComicPostCommentAvailable
+        var postCommentLast14Days = from post in _context.Available<ComicPost>()
+                                    join postComment in _context.Available<ComicPostComment>()
                                     on post.Id equals postComment.PostId
                                     where post.UserId == userId
                                     && postComment.CreatedOn >= dateToCompare
                                     select postComment;
 
-        var postReactionsLast14Days = from post in _context.ComicPostAvailable
-                                      join postReaction in _context.ComicPostReactionAvailable
+        var postReactionsLast14Days = from post in _context.Available<ComicPost>()
+                                      join postReaction in _context.Available<ComicPostReaction>()
                                       on post.Id equals postReaction.TargetId
                                       where post.UserId == userId
                                       && postReaction.CreatedOn >= dateToCompare
@@ -495,15 +495,15 @@ public partial class ChartService : IChartService
 
     private async Task<Interactions> GetSocialInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.SocialPostAvailable
-                                    join postComment in _context.SocialPostCommentAvailable
+        var postCommentLast14Days = from post in _context.Available<SocialPost>()
+                                    join postComment in _context.Available<SocialPostComment>()
                                     on post.Id equals postComment.PostId
                                     where post.UserId == userId
                                     && postComment.CreatedOn >= dateToCompare
                                     select postComment;
 
-        var postReactionsLast14Days = from post in _context.SocialPostAvailable
-                                      join postReaction in _context.SocialPostReactionAvailable
+        var postReactionsLast14Days = from post in _context.Available<SocialPost>()
+                                      join postReaction in _context.Available<SocialPostReaction>()
                                       on post.Id equals postReaction.TargetId
                                       where post.UserId == userId
                                       && postReaction.CreatedOn >= dateToCompare
@@ -520,15 +520,15 @@ public partial class ChartService : IChartService
 
     private async Task<Reaction> GetStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.StoryPostAvailable
-                                    join postComment in _context.StoryPostCommentAvailable
+        var postCommentLast14Days = from post in _context.Available<StoryPost>()
+                                    join postComment in _context.Available<StoryPostComment>()
                                     on post.Id equals postComment.PostId
                                     where post.UserId == userId
                                     && postComment.CreatedOn >= dateToCompare
                                     select postComment;
 
-        var postReactionsLast14Days = from post in _context.StoryPostAvailable
-                                      join postReaction in _context.StoryPostReactionAvailable
+        var postReactionsLast14Days = from post in _context.Available<StoryPost>()
+                                      join postReaction in _context.Available<StoryPostReaction>()
                                       on post.Id equals postReaction.TargetId
                                       where post.UserId == userId
                                       && postReaction.CreatedOn >= dateToCompare
@@ -566,7 +566,7 @@ public partial class ChartService : IChartService
 
     private IQueryable<SocialPost> GetSocialPostQuery(Guid? userId, DateTime fr, DateTime to)
     {
-        return _context.SocialPostAvailable.Where(p => p.UserId == userId && fr <= p.CreatedOn && p.CreatedOn <= to);
+        return _context.Available<SocialPost>().Where(p => p.UserId == userId && fr <= p.CreatedOn && p.CreatedOn <= to);
     }
 
     #region -- Fields --

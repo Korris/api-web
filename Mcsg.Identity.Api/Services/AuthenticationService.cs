@@ -269,7 +269,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var existUserId = Guid.Empty;
 
         // Check user exist with socialId
-        var userSocial = await _context.UserSocialAvailable.FirstOrDefaultAsync(p => (p.SocialId == encryptedSocialId || p.SocialId == socialId) && p.Type == socialType);
+        var userSocial = await _context.Available<UserSocial>().FirstOrDefaultAsync(p => (p.SocialId == encryptedSocialId || p.SocialId == socialId) && p.Type == socialType);
         if (userSocial != null)
         {
             existUserId = userSocial.UserId;
@@ -749,7 +749,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
 
-            var postIds = await _context.ComicPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
+            var postIds = await _context.Available<ComicPost>().Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             var now = DateTime.UtcNow;
             var sql = "CALL comic.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
@@ -758,7 +758,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 var data = await connection.QueryAsync(sql, param);
             }
 
-            postIds = await _context.SocialPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
+            postIds = await _context.Available<SocialPost>().Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             now = DateTime.UtcNow;
             sql = "CALL social.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
@@ -767,7 +767,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 var data = await connection.QueryAsync(sql, param);
             }
 
-            postIds = await _context.StoryPostAvailable.Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
+            postIds = await _context.Available<StoryPost>().Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             now = DateTime.UtcNow;
             sql = "CALL story.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
             foreach (var i in postIds)
@@ -841,7 +841,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         User? user = null;
         if (forRegister)
         {
-            var qUserNameHistory = _context.UserNameHistoryAvailable.AsNoTracking();
+            var qUserNameHistory = _context.Available<UserNameHistory>();
 
             // Find by UserName
             user = await (from a in qUser

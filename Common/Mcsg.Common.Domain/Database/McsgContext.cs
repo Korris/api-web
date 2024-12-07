@@ -7,7 +7,6 @@ namespace Mcsg.Common.Domain;
 
 using Core.Constants;
 using Entities;
-using SeedWork.Extensions;
 
 /// <summary>
 /// McsgContext
@@ -56,56 +55,6 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
         builder.Entity<OpenIddictEntityFrameworkCoreToken>(p => p.ToTable("OpenIdTokens", DbSchema.OpenId));
 
         //DataSeeder.Seed(builder);
-    }
-
-    #endregion
-
-    #region -- Implements --
-
-    /// <summary>
-    /// Make serial number
-    /// </summary>
-    /// <param name="q">Queryable</param>
-    /// <param name="sOrderBy">Selector for OrderBy statement</param>
-    /// <param name="sSelect">Selector for Select statement</param>
-    /// <param name="prefix">Prefix</param>
-    /// <returns>Return the result</returns>
-    public string MakeNo<T>(IQueryable<T> q, Func<T, Guid> sOrderBy, Func<T, string> sSelect, string prefix)
-    {
-        // Prefix
-        if (string.IsNullOrWhiteSpace(prefix))
-        {
-            prefix = "UN";
-        }
-        else
-        {
-            prefix = prefix.Trim();
-        }
-        var ym = DateTime.Now.ToString("yyyyMM");
-        prefix += ym + "-{0:0000#}";
-
-        // First
-        var m = q.OrderBy(sOrderBy).Select(sSelect).LastOrDefault();
-        if (m == null)
-        {
-            return string.Format(prefix, 1);
-        }
-
-        // Next
-        var arr = m.Split('-').LastOrDefault();
-        var num = arr == null ? "0" : arr.ToNumber();
-        var seq = Convert.ToUInt32(num) + 1;
-        return string.Format(prefix, seq);
-    }
-
-    /// <summary>
-    /// Set
-    /// </summary>
-    /// <typeparam name="T">Entity type</typeparam>
-    /// <returns>Return the result</returns>
-    public new DbSet<T> Set<T>() where T : class
-    {
-        return base.Set<T>();
     }
 
     #endregion

@@ -59,7 +59,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         switch (type)
         {
             case EntityType.Post:
-                var post = await _context.SocialPostAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (post == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -70,7 +70,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.SubPost:
-                var subPost = await _context.SocialSubPostAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var subPost = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (subPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -81,7 +81,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.CommentPost:
-                var commentPost = await _context.SocialPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var commentPost = await _context.Available<SocialPostComment>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (commentPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -92,7 +92,7 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
                 break;
 
             case EntityType.CommentSubPost:
-                var commentSubPost = await _context.SocialSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
+                var commentSubPost = await _context.Available<SocialSubPostComment>().FirstOrDefaultAsync(p => p.Id == entityId, cancellationToken);
                 if (commentSubPost == null)
                 {
                     var t = new List<DicDto> { new() { Key = nameof(request.EntityId).ToCamelCase(), Value = entityId } };
@@ -113,10 +113,10 @@ public class ReportCreateH : BaseH, IRequestHandler<ReportCreateR, SingleRespons
         }
 
         // Check data is existed to avoid people spam
-        var ett = await _context.SocialReportAvailable.FirstOrDefaultAsync(p => p.EntityId == entityId, cancellationToken);
+        var ett = await _context.Available<SocialReport>().FirstOrDefaultAsync(p => p.EntityId == entityId, cancellationToken);
         if (ett != null)
         {
-            var hasDetail = await _context.SocialReportDetailAvailable.AnyAsync(p => p.ReportId == ett.Id && p.UserId == userId, cancellationToken);
+            var hasDetail = await _context.Available<SocialReportDetail>().AnyAsync(p => p.ReportId == ett.Id && p.UserId == userId, cancellationToken);
             if (hasDetail && ett.Status == ReportStatus.Reviewing)
             {
                 return res.SetError(nameof(E115), E115);

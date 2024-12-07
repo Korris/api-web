@@ -7,6 +7,7 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.Domain.Entities;
 using Dtos;
 using Interfaces;
 using Requests;
@@ -53,7 +54,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddComicResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.ComicResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.Available<ComicResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -93,7 +94,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddDocumentResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.DocumentResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.Available<DocumentResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -132,7 +133,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddSocialResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.SocialResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.Available<SocialResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -172,7 +173,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddStoryResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.StoryResourceAvailable.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.Available<StoryResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;

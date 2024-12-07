@@ -18,6 +18,7 @@ using OpenIddict.EntityFrameworkCore.Models;
 namespace Mcsg.Common.Domain;
 
 using Entities;
+using SeedWork;
 
 /// <summary>
 /// Interface McsgContext
@@ -53,9 +54,8 @@ public interface IMcsgContext
     /// <param name="sOrderBy">Selector for OrderBy statement</param>
     /// <param name="sSelect">Selector for Select statement</param>
     /// <param name="prefix">Prefix</param>
-    /// <param name="useDateTime">Use DateTime</param>
     /// <returns>Return the result</returns>
-    string MakeNo<T>(IQueryable<T> q, Func<T, ulong> sOrderBy, Func<T, string> sSelect, string prefix, bool useDateTime = false);
+    string MakeNo<T>(IQueryable<T> q, Func<T, Guid> sOrderBy, Func<T, string> sSelect, string prefix);
 
     /// <summary>
     /// Set
@@ -63,6 +63,14 @@ public interface IMcsgContext
     /// <typeparam name="T">Entity type</typeparam>
     /// <returns>Return the result</returns>
     DbSet<T> Set<T>() where T : class;
+
+    /// <summary>
+    /// Available
+    /// </summary>
+    /// <typeparam name="T">Entity type</typeparam>
+    /// <param name="isTracking">Is tracking</param>
+    /// <returns>Return the result</returns>
+    IQueryable<T> Available<T>(bool isTracking = true) where T : AuditableEntity;
 
     #endregion
 
@@ -292,219 +300,7 @@ public interface IMcsgContext
     #endregion
 
     #region -- IQueryable --
-    IQueryable<BackgroundMedia> BackgroundMediaAvailable { get; }
-
-    IQueryable<BackgroundMediaPost> BackgroundMediaPostAvailable { get; }
-
-    IQueryable<ComicMetaData> ComicMetaDataAvailable { get; }
-
-    IQueryable<ComicPost> ComicPostAvailable { get; }
-
-    IQueryable<ComicPostComment> ComicPostCommentAvailable { get; }
-
-    IQueryable<ComicPostCommentReaction> ComicPostCommentReactionAvailable { get; }
-
-    IQueryable<ComicPostFavorite> ComicPostFavoriteAvailable { get; }
-
-    IQueryable<ComicPostHide> ComicPostHideAvailable { get; }
-
-    IQueryable<ComicPostLink> ComicPostLinkAvailable { get; }
-
-    IQueryable<ComicPostReaction> ComicPostReactionAvailable { get; }
-
-    IQueryable<ComicPostShare> ComicPostShareAvailable { get; }
-
-    IQueryable<ComicReport> ComicReportAvailable { get; }
-
-    IQueryable<ComicReportDetail> ComicReportDetailAvailable { get; }
-
-    IQueryable<ComicResource> ComicResourceAvailable { get; }
-
-    IQueryable<ComicSubPost> ComicSubPostAvailable { get; }
-
-    IQueryable<ComicSubPostComment> ComicSubPostCommentAvailable { get; }
-
-    IQueryable<ComicSubPostCommentReaction> ComicSubPostCommentReactionAvailable { get; }
-
-    IQueryable<ComicSubPostReaction> ComicSubPostReactionAvailable { get; }
-
-    IQueryable<ComicTagPost> ComicTagPostAvailable { get; }
-
-    IQueryable<CrawComic> CrawComicAvailable { get; }
-
-    IQueryable<CrawComicChapter> CrawComicChapterAvailable { get; }
-
-    IQueryable<Device> DeviceAvailable { get; }
-
-    IQueryable<DocumentMetaData> DocumentMetaDataAvailable { get; }
-
-    IQueryable<DocumentPost> DocumentPostAvailable { get; }
-
-    IQueryable<DocumentPostComment> DocumentPostCommentAvailable { get; }
-
-    IQueryable<DocumentPostCommentReaction> DocumentPostCommentReactionAvailable { get; }
-
-    IQueryable<DocumentPostFavorite> DocumentPostFavoriteAvailable { get; }
-
-    IQueryable<DocumentPostHide> DocumentPostHideAvailable { get; }
-
-    IQueryable<DocumentPostLink> DocumentPostLinkAvailable { get; }
-
-    IQueryable<DocumentPostReaction> DocumentPostReactionAvailable { get; }
-
-    IQueryable<DocumentPostShare> DocumentPostShareAvailable { get; }
-
-    IQueryable<DocumentReport> DocumentReportAvailable { get; }
-
-    IQueryable<DocumentReportDetail> DocumentReportDetailAvailable { get; }
-
-    IQueryable<DocumentResource> DocumentResourceAvailable { get; }
-
-    IQueryable<DocumentSubPost> DocumentSubPostAvailable { get; }
-
-    IQueryable<DocumentSubPostComment> DocumentSubPostCommentAvailable { get; }
-
-    IQueryable<DocumentSubPostCommentReaction> DocumentSubPostCommentReactionAvailable { get; }
-
-    IQueryable<DocumentSubPostReaction> DocumentSubPostReactionAvailable { get; }
-
-    IQueryable<DocumentTagPost> DocumentTagPostAvailable { get; }
-
-    IQueryable<Feedback> FeedbackAvailable { get; }
-
-    IQueryable<Job> JobAvailable { get; }
-
-    IQueryable<Mention> MentionAvailable { get; }
-
-    IQueryable<Notification> NotificationAvailable { get; }
-
-    IQueryable<NotificationObject> NotificationObjectAvailable { get; }
-
-    IQueryable<OpenIddictEntityFrameworkCoreApplication> OpenIdApplicationAvailable { get; }
-
-    IQueryable<OpenIddictEntityFrameworkCoreAuthorization> OpenIdAuthorizationAvailable { get; }
-
-    IQueryable<OpenIddictEntityFrameworkCoreScope> OpenIdScopeAvailable { get; }
-
-    IQueryable<OpenIddictEntityFrameworkCoreToken> OpenIdTokenAvailable { get; }
-
-    IQueryable<Rating> RatingAvailable { get; }
-
-    IQueryable<Role> RoleAvailable { get; }
-
-    //IQueryable<RoleClaim> RoleClaimAvailable { get; }
-
-    IQueryable<SmartCountAction> SmartCountActionAvailable { get; }
-
-    IQueryable<SmartLookup> SmartLookupAvailable { get; }
-
-    IQueryable<SmartLookupUser> SmartLookupUserAvailable { get; }
-
-    IQueryable<SocialMetaData> SocialMetaDataAvailable { get; }
-
-    IQueryable<SocialPost> SocialPostAvailable { get; }
-
-    IQueryable<SocialPostComment> SocialPostCommentAvailable { get; }
-
-    IQueryable<SocialPostCommentReaction> SocialPostCommentReactionAvailable { get; }
-
-    IQueryable<SocialPostFavorite> SocialPostFavoriteAvailable { get; }
-
-    IQueryable<SocialPostHide> SocialPostHideAvailable { get; }
-
-    IQueryable<SocialPostLink> SocialPostLinkAvailable { get; }
-
-    IQueryable<SocialPostReaction> SocialPostReactionAvailable { get; }
-
-    IQueryable<SocialPostShare> SocialPostShareAvailable { get; }
-
-    IQueryable<SocialReport> SocialReportAvailable { get; }
-
-    IQueryable<SocialReportDetail> SocialReportDetailAvailable { get; }
-
-    IQueryable<SocialResource> SocialResourceAvailable { get; }
-
-    IQueryable<SocialSubPost> SocialSubPostAvailable { get; }
-
-    IQueryable<SocialSubPostComment> SocialSubPostCommentAvailable { get; }
-
-    IQueryable<SocialSubPostCommentReaction> SocialSubPostCommentReactionAvailable { get; }
-
-    IQueryable<SocialSubPostReaction> SocialSubPostReactionAvailable { get; }
-
-    IQueryable<SocialTagPost> SocialTagPostAvailable { get; }
-
-    IQueryable<StoryMetaData> StoryMetaDataAvailable { get; }
-
-    IQueryable<StoryPost> StoryPostAvailable { get; }
-
-    IQueryable<StoryPostComment> StoryPostCommentAvailable { get; }
-
-    IQueryable<StoryPostCommentReaction> StoryPostCommentReactionAvailable { get; }
-
-    IQueryable<StoryPostFavorite> StoryPostFavoriteAvailable { get; }
-
-    IQueryable<StoryPostHide> StoryPostHideAvailable { get; }
-
-    IQueryable<StoryPostLink> StoryPostLinkAvailable { get; }
-
-    IQueryable<StoryPostReaction> StoryPostReactionAvailable { get; }
-
-    IQueryable<StoryPostShare> StoryPostShareAvailable { get; }
-
-    IQueryable<StoryReport> StoryReportAvailable { get; }
-
-    IQueryable<StoryReportDetail> StoryReportDetailAvailable { get; }
-
-    IQueryable<StoryResource> StoryResourceAvailable { get; }
-
-    IQueryable<StorySubPost> StorySubPostAvailable { get; }
-
-    IQueryable<StorySubPostComment> StorySubPostCommentAvailable { get; }
-
-    IQueryable<StorySubPostCommentReaction> StorySubPostCommentReactionAvailable { get; }
-
-    IQueryable<StorySubPostReaction> StorySubPostReactionAvailable { get; }
-
-    IQueryable<StoryTagPost> StoryTagPostAvailable { get; }
-
-    IQueryable<SystemResource> SystemResourceAvailable { get; }
-
-    IQueryable<SystemSetting> SystemSettingAvailable { get; }
-
-    IQueryable<SystemSettingHistory> SystemSettingHistoryAvailable { get; }
-
-    IQueryable<Tag> TagAvailable { get; }
-
-    IQueryable<TagFavorite> TagFavoriteAvailable { get; }
-
     IQueryable<User> UserAvailable { get; }
-
-    IQueryable<UserBlock> UserBlockAvailable { get; }
-
-    //IQueryable<UserClaim> UserClaimAvailable { get; }
-
-    IQueryable<UserExclusiveSubPost> UserExclusiveSubPostAvailable { get; }
-
-    IQueryable<UserFollow> UserFollowAvailable { get; }
-
-    //IQueryable<UserLogin> UserLoginAvailable { get; }
-
-    IQueryable<UserNameHistory> UserNameHistoryAvailable { get; }
-
-    IQueryable<UserOtp> UserOtpAvailable { get; }
-
-    IQueryable<UserReferral> UserReferralAvailable { get; }
-
-    IQueryable<UserRefreshToken> UserRefreshTokenAvailable { get; }
-
-    IQueryable<UserRelation> UserRelationAvailable { get; }
-
-    IQueryable<UserSocial> UserSocialAvailable { get; }
-
-    //IQueryable<UserToken> UserTokenAvailable { get; }
-
-    IQueryable<ViewHistory> ViewHistoryAvailable { get; }
     #endregion
 
     #endregion

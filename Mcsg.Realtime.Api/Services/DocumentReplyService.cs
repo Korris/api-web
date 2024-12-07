@@ -77,7 +77,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -89,7 +89,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
         }
         else
         {
-            var subPost = await _context.DocumentSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<DocumentSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 order = subPost.Order;
@@ -114,7 +114,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
             if (commentNotiRequest.Type == PostTypes.SubPost)
             {
                 response.Order = commentNotiRequest.Order = order;
-                var post = await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
+                var post = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
                 commentNotiRequest.PostHashId = post.HashId;
             }
             commentNotiRequest.CommentId = req.ReplyToCommentId;
@@ -144,11 +144,11 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
         #region -- Validate on server --
         // Commnent
         var ett = req.Type == "post"
-                ? await _context.DocumentPostCommentAvailable
+                ? await _context.Available<DocumentPostComment>()
                         .Where(p => p.Id == req.ReplyCommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync()
-                : await _context.DocumentSubPostCommentAvailable
+                : await _context.Available<DocumentSubPostComment>()
                         .Where(p => p.Id == req.ReplyCommentId)
                         .Select(p => new { p.CreatedBy })
                         .FirstOrDefaultAsync();
@@ -180,7 +180,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
 
         if (req.Type == PostTypes.Post)
         {
-            var post = await _context.DocumentPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var post = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (post != null)
             {
                 pDto.Id = post.Id;
@@ -191,7 +191,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
         }
         else
         {
-            var subPost = await _context.DocumentSubPostAvailable.FirstOrDefaultAsync(p => p.Id == req.PostId);
+            var subPost = await _context.Available<DocumentSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
             if (subPost != null)
             {
                 pDto.Id = subPost.Id;
@@ -315,7 +315,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
     #region Update
     private async Task<ReplyCommentResp> UpdateReplyToPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.DocumentPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<DocumentPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -355,7 +355,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
     }
     private async Task<ReplyCommentResp> UpdateReplyToSubPostComment(UpdateReplyCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.DocumentSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<DocumentSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -398,7 +398,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
     #region Delete
     private async Task<ReplyCommentResp> DeleteReplyToPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _context.DocumentPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<DocumentPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -430,7 +430,7 @@ public partial class DocumentReplyService : BaseS, IDocumentReplyService
     }
     private async Task<ReplyCommentResp> DeleteReplyToSubPostComment(DeleteReplyCommentReq req)
     {
-        var comment = await _context.DocumentSubPostCommentAvailable.FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
+        var comment = await _context.Available<DocumentSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.ReplyCommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);

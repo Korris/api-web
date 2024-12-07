@@ -184,43 +184,43 @@ public class NotificationService : BaseS, INotificationService
         switch (targetType)
         {
             case NotificationTargetType.Comic:
-                qAuthorId = _context.ComicPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.ComicPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<ComicPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<ComicPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.SubComic:
-                qAuthorId = _context.ComicSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.ComicSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<ComicSubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<ComicSubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Document:
-                qAuthorId = _context.DocumentPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<DocumentPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<DocumentPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.SubDocument:
-                qAuthorId = _context.DocumentSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.DocumentSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<DocumentSubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<DocumentSubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Social:
-                qAuthorId = _context.SocialPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.SocialPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<SocialPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<SocialPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.SubSocial:
-                qAuthorId = _context.SocialSubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.SocialSubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<SocialSubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<SocialSubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Story:
-                qAuthorId = _context.StoryPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.StoryPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<StoryPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<StoryPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.SubStory:
-                qAuthorId = _context.StorySubPostCommentAvailable.Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.StorySubPostAvailable.Where(p => p.Id == postId).Select(p => p.HashId);
+                qAuthorId = _context.Available<StorySubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<StorySubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
                 break;
         }
 
@@ -315,7 +315,7 @@ public class NotificationService : BaseS, INotificationService
         // Reaction for comment => Find Id of Post
         if (isCommentReaction)
         {
-            var qComment = _context.SocialPostCommentAvailable.Where(p => p.Id == targetId)
+            var qComment = _context.Available<SocialPostComment>().Where(p => p.Id == targetId)
                 .Select(p => new
                 {
                     p.Id,
@@ -328,7 +328,7 @@ public class NotificationService : BaseS, INotificationService
             switch (entityType)
             {
                 case NotificationEntityType.SocialPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
-                    qComment = _context.SocialPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<SocialPostComment>().Where(p => p.Id == targetId)
                         .Select(p => new
                         {
                             p.Id,
@@ -339,7 +339,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.ComicPostCommentReaction or NotificationEntityType.ComicPostCommentReplyReaction:
-                    qComment = _context.ComicPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<ComicPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -350,7 +350,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.DocumentPostCommentReaction or NotificationEntityType.DocumentPostCommentReplyReaction:
-                    qComment = _context.DocumentPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<DocumentPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -361,7 +361,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.StoryPostCommentReaction or NotificationEntityType.StoryPostCommentReplyReaction:
-                    qComment = _context.StoryPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<StoryPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -372,7 +372,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.SocialSubPostCommentReaction or NotificationEntityType.SocialSubPostCommentReplyReaction:
-                    qComment = _context.SocialSubPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<SocialSubPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -383,7 +383,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.ComicSubPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
-                    qComment = _context.ComicSubPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<ComicSubPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -394,7 +394,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.DocumentSubPostCommentReaction or NotificationEntityType.SocialPostCommentReplyReaction:
-                    qComment = _context.DocumentSubPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<DocumentSubPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -405,7 +405,7 @@ public class NotificationService : BaseS, INotificationService
                     break;
 
                 case NotificationEntityType.StorySubPostCommentReaction or NotificationEntityType.StorySubPostCommentReplyReaction:
-                    qComment = _context.StorySubPostCommentAvailable.Where(p => p.Id == targetId)
+                    qComment = _context.Available<StorySubPostComment>().Where(p => p.Id == targetId)
                     .Select(p => new
                     {
                         p.Id,
@@ -438,7 +438,7 @@ public class NotificationService : BaseS, INotificationService
             response.Message = reaction.AuthorName + NotificationContent.ReactOnComment;
         }
 
-        var q = _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
+        var q = _context.Available<SocialPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
         switch (reaction.EntityType)
         {
             case NotificationEntityType.SocialPostReaction:
@@ -449,40 +449,40 @@ public class NotificationService : BaseS, INotificationService
             case NotificationEntityType.ComicPostReaction:
             case NotificationEntityType.ComicPostCommentReaction:
             case NotificationEntityType.ComicPostCommentReplyReaction:
-                q = _context.ComicPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
+                q = _context.Available<ComicPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
                 break;
 
             case NotificationEntityType.DocumentPostReaction:
             case NotificationEntityType.DocumentPostCommentReaction:
             case NotificationEntityType.DocumentPostCommentReplyReaction:
-                q = _context.DocumentPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
+                q = _context.Available<DocumentPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
                 break;
 
             case NotificationEntityType.StoryPostReaction:
             case NotificationEntityType.StoryPostCommentReaction:
             case NotificationEntityType.StoryPostCommentReplyReaction:
-                q = _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
+                q = _context.Available<StoryPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
                 break;
 
             case NotificationEntityType.SocialSubPostReaction:
             case NotificationEntityType.SocialSubPostCommentReaction:
             case NotificationEntityType.SocialSubPostCommentReplyReaction:
-                q = _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = (float)p.Order, p.PostId });
+                q = _context.Available<SocialSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = (float)p.Order, p.PostId });
                 break;
 
             case NotificationEntityType.ComicSubPostCommentReaction:
             case NotificationEntityType.ComicSubPostCommentReplyReaction:
-                q = _context.ComicSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
+                q = _context.Available<ComicSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
             case NotificationEntityType.DocumentSubPostCommentReaction:
             case NotificationEntityType.DocumentSubPostCommentReplyReaction:
-                q = _context.DocumentSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
+                q = _context.Available<DocumentSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
             case NotificationEntityType.StorySubPostCommentReaction:
             case NotificationEntityType.StorySubPostCommentReplyReaction:
-                q = _context.StorySubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
+                q = _context.Available<StorySubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, p.Order, p.PostId });
                 break;
 
             default:
@@ -506,27 +506,27 @@ public class NotificationService : BaseS, INotificationService
                 switch (reaction.EntityType)
                 {
                     case NotificationEntityType.ComicSubPostCommentReaction:
-                        qHashId = _context.ComicPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<ComicPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     case NotificationEntityType.DocumentSubPostCommentReaction:
-                        qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<DocumentPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     case NotificationEntityType.StorySubPostCommentReaction:
-                        qHashId = _context.StoryPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<StoryPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     case NotificationEntityType.ComicSubPostCommentReplyReaction:
-                        qHashId = _context.ComicPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<ComicPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     case NotificationEntityType.DocumentSubPostCommentReplyReaction:
-                        qHashId = _context.DocumentPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<DocumentPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     case NotificationEntityType.StorySubPostCommentReplyReaction:
-                        qHashId = _context.StoryPostAvailable.Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
+                        qHashId = _context.Available<StoryPost>().Where(p => p.Id == postIdOfSubPost).Select(p => p.HashId);
                         break;
 
                     default:
@@ -637,17 +637,17 @@ public class NotificationService : BaseS, INotificationService
         {
             var qPostId = request.EntityType switch
             {
-                NotificationEntityType.ComicPostCommentMention => _context.ComicPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.DocumentPostCommentMention => _context.DocumentPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.SocialPostCommentMention => _context.SocialPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.StoryPostCommentMention => _context.StoryPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.ComicPostCommentMention => _context.Available<ComicPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.DocumentPostCommentMention => _context.Available<DocumentPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.SocialPostCommentMention => _context.Available<SocialPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.StoryPostCommentMention => _context.Available<StoryPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
 
-                NotificationEntityType.ComicSubPostCommentMention => _context.ComicSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.DocumentSubPostCommentMention => _context.DocumentSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.SocialSubPostCommentMention => _context.SocialSubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
-                NotificationEntityType.StorySubPostCommentMention => _context.StorySubPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.ComicSubPostCommentMention => _context.Available<ComicSubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.DocumentSubPostCommentMention => _context.Available<DocumentSubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.SocialSubPostCommentMention => _context.Available<SocialSubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.StorySubPostCommentMention => _context.Available<StorySubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
 
-                _ => _context.SocialPostCommentAvailable.Where(p => p.Id == request.TargetId).Select(p => p.PostId)
+                _ => _context.Available<SocialPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId)
             };
 
             targetId = await qPostId.FirstOrDefaultAsync();
@@ -657,17 +657,17 @@ public class NotificationService : BaseS, INotificationService
 
         var qPost = request.EntityType switch
         {
-            NotificationEntityType.ComicPostCommentMention => _context.ComicPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
-            NotificationEntityType.DocumentPostCommentMention => _context.DocumentPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
-            NotificationEntityType.SocialPostMention => _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
-            NotificationEntityType.StoryPostCommentMention => _context.StoryPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            NotificationEntityType.ComicPostCommentMention => _context.Available<ComicPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            NotificationEntityType.DocumentPostCommentMention => _context.Available<DocumentPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            NotificationEntityType.SocialPostMention => _context.Available<SocialPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            NotificationEntityType.StoryPostCommentMention => _context.Available<StoryPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
 
-            NotificationEntityType.ComicSubPostCommentMention => _context.ComicSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
-            NotificationEntityType.DocumentSubPostCommentMention => _context.DocumentSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
-            NotificationEntityType.SocialSubPostCommentMention => _context.SocialSubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = (float)p.Order, p.PostId }),
-            NotificationEntityType.StorySubPostCommentMention => _context.StorySubPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+            NotificationEntityType.ComicSubPostCommentMention => _context.Available<ComicSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+            NotificationEntityType.DocumentSubPostCommentMention => _context.Available<DocumentSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
+            NotificationEntityType.SocialSubPostCommentMention => _context.Available<SocialSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = (float)p.Order, p.PostId }),
+            NotificationEntityType.StorySubPostCommentMention => _context.Available<StorySubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
 
-            _ => _context.SocialPostAvailable.Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            _ => _context.Available<SocialPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
         };
 
         var post = await qPost.FirstOrDefaultAsync();
@@ -681,8 +681,8 @@ public class NotificationService : BaseS, INotificationService
             {
                 response.Order = post.Order;
                 postHashId = request.EntityType == NotificationEntityType.DocumentSubPostCommentMention
-                    ? await _context.DocumentPostAvailable.Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync()
-                    : await _context.StoryPostAvailable.Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync();
+                    ? await _context.Available<DocumentPost>().Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync()
+                    : await _context.Available<StoryPost>().Where(p => p.Id == post.PostId).Select(p => p.HashId).FirstOrDefaultAsync();
             }
 
             if (!isMentionComment)
@@ -1006,7 +1006,7 @@ public class NotificationService : BaseS, INotificationService
             return response;
         }
 
-        var details = await _context.SocialReportDetailAvailable
+        var details = await _context.Available<SocialReportDetail>()
             .Where(p => p.ReportId == request.EntityId && p.Status != ReportDetailStatus.SentNotification)
             .Select(p => new
             {
@@ -1071,7 +1071,7 @@ public class NotificationService : BaseS, INotificationService
 
             if (receiverId != followResp.CreatedByUserId)
             {
-                var notiObj = await (from a in _context.NotificationObjectAvailable
+                var notiObj = await (from a in _context.Available<NotificationObject>()
                                      join b in _context.Notifications on a.Id equals b.NotificationObjectId
                                      where a.ActorId == followResp.CreatedByUserId
                                            && b.ReceiverId == followResp.FollowedId
@@ -1084,13 +1084,13 @@ public class NotificationService : BaseS, INotificationService
 
                 if (notiObj != null)
                 {
-                    await _context.NotificationAvailable
+                    await _context.Available<Notification>()
                         .Where(p => p.NotificationObjectId == notiObj.Id)
                         .ExecuteUpdateAsync(x => x
                             .SetProperty(p => p.Status, p => NotificationStatus.UnRead)
                             .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
                             .SetProperty(p => p.ModifiedOn, p => DateTime.UtcNow));
-                    await _context.NotificationObjectAvailable
+                    await _context.Available<NotificationObject>()
                         .Where(p => p.Id == notiObj.Id)
                         .ExecuteUpdateAsync(x => x
                             .SetProperty(p => p.CreatedOn, p => DateTime.UtcNow)
@@ -1133,7 +1133,7 @@ public class NotificationService : BaseS, INotificationService
     {
         var response = new NotificationResponse();
 
-        var q = _context.ComicPosts.AsNoTracking()
+        var q = _context.ComicPosts
             .Where(p => p.Id == request.EntityId)
             .Select(p => new
             {
@@ -1145,7 +1145,7 @@ public class NotificationService : BaseS, INotificationService
         switch (type)
         {
             case AddDeletionType.ComicSubPost:
-                q = _context.ComicSubPosts.AsNoTracking()
+                q = _context.ComicSubPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1155,7 +1155,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.ComicPostComment:
-                q = _context.ComicPostComments.AsNoTracking()
+                q = _context.ComicPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1165,7 +1165,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.ComicSubPostComment:
-                q = _context.ComicSubPostComments.AsNoTracking()
+                q = _context.ComicSubPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1175,7 +1175,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.DocumentPost:
-                q = _context.DocumentPosts.AsNoTracking()
+                q = _context.DocumentPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1185,7 +1185,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.DocumentSubPost:
-                q = _context.DocumentSubPosts.AsNoTracking()
+                q = _context.DocumentSubPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1195,7 +1195,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.DocumentPostComment:
-                q = _context.DocumentPostComments.AsNoTracking()
+                q = _context.DocumentPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1205,7 +1205,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.DocumentSubPostComment:
-                q = _context.DocumentSubPostComments.AsNoTracking()
+                q = _context.DocumentSubPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1215,7 +1215,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.SocialPost:
-                q = _context.SocialPosts.AsNoTracking()
+                q = _context.SocialPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1225,7 +1225,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.SocialPostComment:
-                q = _context.SocialPostComments.AsNoTracking()
+                q = _context.SocialPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1235,7 +1235,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.SocialSubPostComment:
-                q = _context.SocialSubPostComments.AsNoTracking()
+                q = _context.SocialSubPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1245,7 +1245,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.StoryPost:
-                q = _context.StoryPosts.AsNoTracking()
+                q = _context.StoryPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1255,7 +1255,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.StorySubPost:
-                q = _context.StorySubPosts.AsNoTracking()
+                q = _context.StorySubPosts
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1265,7 +1265,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.StoryPostComment:
-                q = _context.StoryPostComments.AsNoTracking()
+                q = _context.StoryPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1275,7 +1275,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddDeletionType.StorySubPostComment:
-                q = _context.StorySubPostComments.AsNoTracking()
+                q = _context.StorySubPostComments
                    .Where(p => p.Id == request.EntityId)
                    .Select(p => new
                    {
@@ -1394,9 +1394,9 @@ public class NotificationService : BaseS, INotificationService
     {
         var response = new NotificationResponse();
 
-        var q = from report in _context.ComicReportAvailable.AsNoTracking()
-                join reportDetail in _context.ComicReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                join post in _context.ComicPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+        var q = from report in _context.Available<ComicReport>()
+                join reportDetail in _context.Available<ComicReportDetail>() on report.Id equals reportDetail.ReportId
+                join post in _context.Available<ComicPost>() on report.EntityId equals post.Id
                 where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                 orderby reportDetail.CreatedOn descending
                 select new
@@ -1417,9 +1417,9 @@ public class NotificationService : BaseS, INotificationService
         switch (type)
         {
             case AddLockType.ComicSubPost:
-                q = from report in _context.ComicReportAvailable.AsNoTracking()
-                    join reportDetail in _context.ComicReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.ComicSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<ComicReport>()
+                    join reportDetail in _context.Available<ComicReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<ComicSubPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
@@ -1438,9 +1438,9 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddLockType.DocumentPost:
-                q = from report in _context.DocumentReportAvailable.AsNoTracking()
-                    join reportDetail in _context.DocumentReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.DocumentPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<DocumentReport>()
+                    join reportDetail in _context.Available<DocumentReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<DocumentPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
@@ -1459,9 +1459,9 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddLockType.DocumentSubPost:
-                q = from report in _context.DocumentReportAvailable.AsNoTracking()
-                    join reportDetail in _context.DocumentReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.DocumentSubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<DocumentReport>()
+                    join reportDetail in _context.Available<DocumentReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<DocumentSubPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
@@ -1480,9 +1480,9 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddLockType.SocialPost:
-                q = from report in _context.SocialReportAvailable.AsNoTracking()
-                    join reportDetail in _context.SocialReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.SocialPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<SocialReport>()
+                    join reportDetail in _context.Available<SocialReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<SocialPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
@@ -1501,9 +1501,9 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddLockType.StoryPost:
-                q = from report in _context.StoryReportAvailable.AsNoTracking()
-                    join reportDetail in _context.StoryReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.StoryPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<StoryReport>()
+                    join reportDetail in _context.Available<StoryReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<StoryPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
@@ -1522,9 +1522,9 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case AddLockType.StorySubPost:
-                q = from report in _context.StoryReportAvailable.AsNoTracking()
-                    join reportDetail in _context.StoryReportDetailAvailable.AsNoTracking() on report.Id equals reportDetail.ReportId
-                    join post in _context.StorySubPostAvailable.AsNoTracking() on report.EntityId equals post.Id
+                q = from report in _context.Available<StoryReport>()
+                    join reportDetail in _context.Available<StoryReportDetail>() on report.Id equals reportDetail.ReportId
+                    join post in _context.Available<StorySubPost>() on report.EntityId equals post.Id
                     where report.Id == request.EntityId && reportDetail.TagData != null && reportDetail.TagData.Contains(TagData.Admin)
                     orderby reportDetail.CreatedOn descending
                     select new
