@@ -243,6 +243,7 @@ public class Program
         app.UseResponseCaching();
 
         app.MapGrpcService<Protos.Services.UserService>();
+        app.MapGrpcService<Protos.Services.UserAuthenticatorService>();
 
         app.Run();
     }

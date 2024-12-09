@@ -2,6 +2,7 @@
 using FluentValidation;
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
+using OtpNet;
 
 namespace Mcsg.Identity.Api.Services;
 
@@ -236,6 +237,32 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult)
         {
+            var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
+            {
+                p.IsLogin,
+                p.Secretkey
+            }).FirstOrDefaultAsync(default);
+
+            if (userAuthenticator?.IsLogin == true)
+            {
+                if (string.IsNullOrWhiteSpace(request.OtpCode))
+                {
+                    return new TokenDto
+                    {
+                        IsRequired2Fa = true
+                    };
+                }
+
+                var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
+                var otpGenerator = new Totp(secretKeyBytes);
+
+                if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                {
+                    throw new BadRequestException(nameof(E301), E301);
+                }
+            }
+
             user.SessionId = request.SessionId;
             return await CreateAccessToken(user, request.RemoteIp);
         }
@@ -310,6 +337,32 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 else if (user.Status == UserStatus.Banned)
                 {
                     throw new ForbiddenAccessException(nameof(E311), E311 + " - " + user.StatusReason);
+                }
+            }
+
+            var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
+            {
+                p.IsLogin,
+                p.Secretkey
+            }).FirstOrDefaultAsync(default);
+
+            if (userAuthenticator?.IsLogin == true)
+            {
+                if (string.IsNullOrWhiteSpace(request.OtpCode))
+                {
+                    return new TokenDto
+                    {
+                        IsRequired2Fa = true
+                    };
+                }
+
+                var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
+                var otpGenerator = new Totp(secretKeyBytes);
+
+                if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                {
+                    throw new BadRequestException(nameof(E301), E301);
                 }
             }
 

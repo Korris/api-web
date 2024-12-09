@@ -19,5 +19,10 @@ public class AuthenticationLoginSocialR : BaseR
     /// </summary>
     public string SocialToken { get; set; } = default!;
 
+    /// <summary>
+    /// OtpCode
+    /// </summary>
+    public string? OtpCode { get; set; }
+
     #endregion
 }

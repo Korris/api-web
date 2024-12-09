@@ -33,5 +33,10 @@ public class AuthenticationLoginUserR : AuthenticationFormBaseR
     [JsonIgnore]
     public bool IsForAdmin { get; private set; }
 
+    /// <summary>
+    /// OtpCode
+    /// </summary>
+    public string? OtpCode { get; set; }
+
     #endregion
 }

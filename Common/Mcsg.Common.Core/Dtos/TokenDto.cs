@@ -37,5 +37,10 @@ public class TokenDto
     /// </summary>
     public bool IsFirstTimeLoginBySocial { get; set; }
 
+    /// <summary>
+    /// IsRequired2Fa
+    /// </summary>
+    public bool IsRequired2Fa { get; set; }
+
     #endregion
 }

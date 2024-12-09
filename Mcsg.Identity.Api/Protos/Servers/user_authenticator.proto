@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Mcsg.Identity.Api.Protos";
+
+package user_authenticator;
+
+service UserAuthenticatorProto {
+    rpc View (UserAuthenticatorViewReq) returns (UserAuthenticatorViewRsp);
+}
+
+message UserAuthenticatorViewReq {
+    string userId = 1;
+}
+
+message UserAuthenticatorViewRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
+    string secretKey = 4;
+    bool isTransaction = 5;
+}
