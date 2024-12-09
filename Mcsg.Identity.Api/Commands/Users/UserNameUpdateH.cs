@@ -83,7 +83,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         {
             if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
             {
-                return res.SetError(nameof(E128), E128 + dto.TimeWaiting);
+                return res.SetErrorData(nameof(E128), E128, dto.TimeWaiting);
             }
         }
         #endregion

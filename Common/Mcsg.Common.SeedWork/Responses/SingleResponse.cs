@@ -87,6 +87,21 @@ public class SingleResponse
     }
 
     /// <summary>
+    /// Set error code
+    /// </summary>
+    /// <param name="code">Error code</param>
+    /// <param name="message">Error message</param>
+    /// <param name="data">Data</param>
+    public SingleResponse SetErrorData(string code, string? message, object? data)
+    {
+        Code = code;
+        SetError(message);
+        Data = data;
+
+        return this;
+    }
+
+    /// <summary>
     /// Set success
     /// </summary>
     /// <param name="data">Data</param>
