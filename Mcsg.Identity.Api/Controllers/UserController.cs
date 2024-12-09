@@ -72,7 +72,7 @@ public class UserController : ControllerBase
     /// <returns>Returns the result</returns>
     [HttpPost("v1/UpdateUserName"), Authorize]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> UpdateUserName([FromBody] UserSyncToAnaR request)
+    public async Task<IActionResult> UpdateUserName([FromBody] UserNameUpdateR request)
     {
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
