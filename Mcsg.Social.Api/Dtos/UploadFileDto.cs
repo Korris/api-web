@@ -17,4 +17,5 @@ public class UploadFileDto
     public double Size { get; set; }
     public MinioInstanceType? MinioInstance { get; set; }
     public string? BucketName { get; set; }
+    public string? ThumbnailHashId { get; set; }
 }

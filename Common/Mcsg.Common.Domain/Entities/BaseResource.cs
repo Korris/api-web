@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
@@ -12,6 +13,43 @@ using SeedWork.Enums;
 public class BaseResource : AuditableEntity
 {
     #region -- Methods --
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="hashId"></param>
+    /// <param name="name"></param>
+    /// <param name="url"></param>
+    /// <param name="bucketName"></param>
+    /// <param name="type"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="compressedSize"></param>
+    /// <param name="minioInstance"></param>
+    /// <param name="createdBy"></param>
+    /// <returns></returns>
+    public static SocialResource Create(IFormFile file, string hashId, string name, string url, string bucketName, ResourceType type, int width, int height, double compressedSize, MinioInstanceType? minioInstance, Guid createdBy)
+    {
+        var res = new SocialResource
+        {
+            AuthorId = createdBy,
+            HashId = hashId,
+            Title = Path.GetFileNameWithoutExtension(file.FileName),
+            Name = name,
+            Url = url,
+            BucketName = bucketName,
+            Type = type,
+            Width = width,
+            Height = height,
+            Size = file.Length,
+            CompressedSize = compressedSize,
+            MinioInstance = minioInstance,
+            CreatedBy = createdBy
+        };
+
+        return res;
+    }
 
     /// <summary>
     /// Convert to data transfer object
