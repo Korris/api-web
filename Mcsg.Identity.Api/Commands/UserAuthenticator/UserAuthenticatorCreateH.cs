@@ -69,7 +69,14 @@ public class UserAuthenticatorCreateH : BaseSettingH, IRequestHandler<UserAuthen
         }
         else
         {
-            ett.Update(encryptedSecretKey, userId);
+            if (ett.IsDelete)
+            {
+                ett.Update(encryptedSecretKey, userId);
+            }
+            else
+            {
+                secretKey = _aes.DecryptText(ett.Secretkey) + "";
+            }
         }
 
         await _context.SaveChangesAsync(cancellationToken);
