@@ -167,7 +167,9 @@ public class StoryController : ControllerBase
     [HttpGet("{hashId}/chapters-list")]
     public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {
-        var result = await _storyService.GetChaptersListSimple(hashId);
+        var request = new StoryHashIdR { HashId = hashId };
+        request.Analyze(HttpContext);
+        var result = await _storyService.GetChaptersListSimple(request);
         return Ok(result);
     }
 

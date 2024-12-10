@@ -829,7 +829,7 @@ LIMIT 1
                 return @"SELECT sp.""Id"", sp.""Title"", sp.""Order"", sp.""IsPremium""
                     FROM ""story"".""StorySubPosts"" sp
                     INNER JOIN ""story"".""StoryPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
-                    WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false and sp.""Status"" = 1
+                    WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false AND (sp.""Status"" = ANY (@PostStatus) OR sp.""UserId"" = @UserId)
                     AND sp.""IsPremium"" = false AND sp.""PublishDate"" < @CurrentDate
                     ORDER BY sp.""Sort"";
 

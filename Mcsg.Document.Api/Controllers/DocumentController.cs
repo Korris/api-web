@@ -167,7 +167,9 @@ public class DocumentController : ControllerBase
     [HttpGet("{hashId}/chapters-list")]
     public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {
-        var result = await _documentService.GetChaptersListSimple(hashId);
+        var request = new DocumentHashIdR { HashId = hashId };
+        request.Analyze(HttpContext);
+        var result = await _documentService.GetChaptersListSimple(request);
         return Ok(result);
     }
 

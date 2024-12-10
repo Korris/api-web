@@ -89,7 +89,7 @@ public partial class StoryService : IStoryService
         return await _postService.GetAllChapters(hashId);
     }
 
-    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(StoryHashIdR hashId)
     {
         return await _postService.GetChaptersListSimple(hashId);
     }

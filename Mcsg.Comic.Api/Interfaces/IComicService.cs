@@ -18,7 +18,7 @@ public interface IComicService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopAsync(ComicPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationAsync(ComicRelationPostSeriesR request);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
-    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
+    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(ComicHashIdR hashId);
     Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(ComicPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetByTagName(ComicPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);

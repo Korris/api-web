@@ -91,7 +91,7 @@ public partial class DocumentService : IDocumentService
         return await _postService.GetAllChapters(hashId);
     }
 
-    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(DocumentHashIdR hashId)
     {
         return await _postService.GetChaptersListSimple(hashId);
     }

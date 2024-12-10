@@ -167,7 +167,9 @@ public class ComicController : ControllerBase
     [HttpGet("{hashId}/chapters-list")]
     public async Task<IActionResult> GetChaptersListSimple(string hashId)
     {
-        var result = await _comicService.GetChaptersListSimple(hashId);
+        var request = new ComicHashIdR { HashId = hashId };
+        request.Analyze(HttpContext);
+        var result = await _comicService.GetChaptersListSimple(request);
         return Ok(result);
     }
 

@@ -1687,16 +1687,19 @@ public partial class PostService : BaseMinioS, IPostService
             }).ToListAsync();
     }
 
-    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId)
+    public async Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(DocumentHashIdR request)
     {
         PagedResponse<ChapterTOCResponse> results;
         var query = GetSeriesChaptersSimpleByHashId;
+        var statuses = request.IsAdministrator ? StatusUtils.PostStatusInt : StatusUtils.PostStatusIntPublic;
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
                 {
-                    PostHashId = hashId,
-                    CurrentDate = DateTime.UtcNow
+                    PostHashId = request.HashId,
+                    CurrentDate = DateTime.UtcNow,
+                    PostStatus = statuses,
+                    UserId = request.UserId
                 });
         var items = await multi.ReadAsync<ChapterTOCResponse>().ConfigureAwait(false);
 

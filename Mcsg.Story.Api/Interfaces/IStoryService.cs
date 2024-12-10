@@ -18,7 +18,7 @@ public interface IStoryService
     Task<PagedResponse<PostSeriesTopResponse>> GetTopAsync(StoryPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetRelationAsync(StoryRelationPostSeriesR request);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request);
-    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
+    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(StoryHashIdR hashId);
     Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(StoryPostByProFileNameR request);
     Task<PagedResponse<PostBoxResposne>> GetByTagName(StoryPostByTagNameR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);

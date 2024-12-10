@@ -17,7 +17,7 @@ public interface IPostService
     Task<PostSeriesResponse> GetSeries(StoryHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(ChapterOrderR req);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, StoryChapterListR request);
-    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(string hashId);
+    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(StoryHashIdR hashId);
     Task<PagedResponse<ChapterTOCExtendResponse>> GetChaptersListSimple(Guid userId, string hashId, StoryChapterListR loadReq);
     Task<PagedResponse<PostSeriesTopResponse>> GetMySeries(PostType type, StoryPostListSeriesR request);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesByPage(PostType type, PostSeriesSelectedType selectedType, StoryTopPostR loadReq);
