@@ -264,6 +264,17 @@ public class Validator
     }
 
     /// <summary>
+    /// Comment
+    /// </summary>
+    public class Comment
+    {
+        /// <summary>
+        /// Max length
+        /// </summary>
+        public const ushort Max = 8000;
+    }
+
+    /// <summary>
     /// Caption
     /// </summary>
     public class Caption

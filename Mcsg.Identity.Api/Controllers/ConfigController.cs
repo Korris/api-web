@@ -92,6 +92,10 @@ public class ConfigController : ControllerBase
             {
                 Validator.Content.Max
             },
+            Comment = new
+            {
+                Comment.Max
+            },
             Summary = new
             {
                 Summary.Max
