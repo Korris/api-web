@@ -286,6 +286,8 @@ public interface IMcsgContext
 
     DbSet<UserOtp> UserOtps { get; set; }
 
+    DbSet<UserRecovery> UserRecoveries { get; set; }
+
     DbSet<UserReferral> UserReferrals { get; set; }
 
     DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
