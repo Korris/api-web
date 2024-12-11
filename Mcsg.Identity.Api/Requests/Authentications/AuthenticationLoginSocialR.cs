@@ -24,5 +24,10 @@ public class AuthenticationLoginSocialR : BaseR
     /// </summary>
     public string? OtpCode { get; set; }
 
+    /// <summary>
+    /// IsUseRecovery
+    /// </summary>
+    public bool? IsRecoveryMode { get; set; }
+
     #endregion
 }

@@ -42,5 +42,10 @@ public class TokenDto
     /// </summary>
     public bool IsRequired2Fa { get; set; }
 
+    /// <summary>
+    /// IsRecoveryButtonShowing
+    /// </summary>
+    public bool IsRecoveryButtonShowing { get; set; }
+
     #endregion
 }

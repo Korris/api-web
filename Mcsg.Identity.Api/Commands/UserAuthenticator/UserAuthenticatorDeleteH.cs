@@ -6,6 +6,7 @@ namespace Mcsg.Identity.Api.Commands;
 
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
@@ -69,6 +70,12 @@ public class UserAuthenticatorDeleteH : BaseH, IRequestHandler<UserAuthenticator
         var isMatch = otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched);
         if (isMatch)
         {
+            var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.UserId == userId).ToListAsync(cancellationToken);
+            foreach (var i in ettRecovery)
+            {
+                i.Delete(userId);
+            }
+
             ett.Delete(userId);
         }
         else

@@ -337,6 +337,16 @@ public static class Error
     /// </summary>
     public const string E312 = "New password should different current";
 
+    /// <summary>
+    /// Incorrect recovery code
+    /// </summary>
+    public const string E313 = "Incorrect recovery code";
+
+    /// <summary>
+    /// The recovery code has already been used
+    /// </summary>
+    public const string E314 = "The recovery code has already been used";
+
     #endregion
 
     #region -- E4xx --

@@ -669,4 +669,20 @@ public class Setting : SeedWork.Constants.Setting
             };
         }
     }
+
+    /// <summary>
+    /// UserRecovery config
+    /// </summary>
+    public class UserRecoveryConfig
+    {
+        /// <summary>
+        /// Hash length
+        /// </summary>
+        public const int HashLength = 6;
+
+        /// <summary>
+        /// NumberOf codes
+        /// </summary>
+        public const int NumberOfCodes = 6;
+    }
 }

@@ -249,19 +249,38 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (string.IsNullOrWhiteSpace(request.OtpCode))
                 {
+                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn != null);
                     return new TokenDto
                     {
-                        IsRequired2Fa = true
+                        IsRequired2Fa = true,
+                        IsRecoveryButtonShowing = hasRecovery
                     };
                 }
 
-                var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
-                var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
-                var otpGenerator = new Totp(secretKeyBytes);
-
-                if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                if (request.IsRecoveryMode == true)
                 {
-                    throw new BadRequestException(nameof(E301), E301);
+                    var encryptedCode = _aes.EncryptText(request.OtpCode);
+                    var ettRecovery = await _context.Available<UserRecovery>(false).Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+                    if (ettRecovery == null)
+                    {
+                        throw new BadRequestException(nameof(E313), E313);
+                    }
+
+                    if (ettRecovery.ModifiedOn != null)
+                    {
+                        throw new BadRequestException(nameof(E314), E314);
+                    }
+                }
+                else
+                {
+                    var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                    var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
+                    var otpGenerator = new Totp(secretKeyBytes);
+
+                    if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                    {
+                        throw new BadRequestException(nameof(E301), E301);
+                    }
                 }
             }
 
@@ -352,19 +371,38 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (string.IsNullOrWhiteSpace(request.OtpCode))
                 {
+                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn != null);
                     return new TokenDto
                     {
-                        IsRequired2Fa = true
+                        IsRequired2Fa = true,
+                        IsRecoveryButtonShowing = hasRecovery
                     };
                 }
 
-                var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
-                var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
-                var otpGenerator = new Totp(secretKeyBytes);
-
-                if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                if (request.IsRecoveryMode == true)
                 {
-                    throw new BadRequestException(nameof(E301), E301);
+                    var encryptedCode = _aes.EncryptText(request.OtpCode);
+                    var ettRecovery = await _context.Available<UserRecovery>(false).Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+                    if (ettRecovery == null)
+                    {
+                        throw new BadRequestException(nameof(E313), E313);
+                    }
+
+                    if (ettRecovery.ModifiedOn != null)
+                    {
+                        throw new BadRequestException(nameof(E314), E314);
+                    }
+                }
+                else
+                {
+                    var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                    var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
+                    var otpGenerator = new Totp(secretKeyBytes);
+
+                    if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
+                    {
+                        throw new BadRequestException(nameof(E301), E301);
+                    }
                 }
             }
 

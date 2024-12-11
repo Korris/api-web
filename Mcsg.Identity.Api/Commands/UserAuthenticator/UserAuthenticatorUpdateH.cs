@@ -6,11 +6,13 @@ namespace Mcsg.Identity.Api.Commands;
 
 using Common.Core.Extensions;
 using Common.Domain;
+using Common.Domain.Entities;
 using Common.SeedWork;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Validators;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
@@ -64,6 +66,7 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
 
         var isMatch = false;
         var otp = request.OtpCode;
+        List<string> codes = [];
         if (otp != null) // active 2FA
         {
             var secretKey = _aes.DecryptText(ett.Secretkey);
@@ -73,6 +76,17 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
             isMatch = otpGenerator.VerifyTotp(otp, out long timeStepMatched);
             if (isMatch)
             {
+                var ettRecovery = new List<UserRecovery>();
+
+                codes = GenerateRecoveryCodes();
+                foreach (var i in codes)
+                {
+                    var encryptedCode = _aes.EncryptText(i) + "";
+                    ettRecovery.Add(UserRecovery.Create(encryptedCode, userId));
+                }
+
+                await _context.UserRecoveries.AddRangeAsync(ettRecovery, cancellationToken);
+
                 ett.Update(userId);
             }
             else
@@ -88,7 +102,33 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return res.SetSuccess(isMatch);
+        var data = new
+        {
+            isMatch,
+            recoveryCodes = string.Join(",", codes)
+        };
+
+        return res.SetSuccess(data);
+    }
+
+    /// <summary>
+    /// GenerateRecoveryCodes
+    /// </summary>
+    /// <returns></returns>
+    private List<string> GenerateRecoveryCodes()
+    {
+        var codes = new List<string>();
+
+        while (codes.Count < UserRecoveryConfig.NumberOfCodes)
+        {
+            var code = UserRecoveryConfig.HashLength.GetRandomString();
+            if (!codes.Any(p => p == code))
+            {
+                codes.Add(code + "");
+            }
+        }
+
+        return codes;
     }
 
     #endregion
