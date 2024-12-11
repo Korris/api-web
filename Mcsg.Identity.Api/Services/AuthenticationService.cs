@@ -229,7 +229,9 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
         }
 
-        if (request.IsForAdmin && user.Type != UserType.Administrator)
+        var adminTypes = new[] { UserType.ContentAdmin, UserType.Admin, UserType.SystemAdmin };
+
+        if (request.IsForAdmin && !adminTypes.Contains(user.Type))
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
         }

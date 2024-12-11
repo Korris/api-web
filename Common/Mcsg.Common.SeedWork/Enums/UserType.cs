@@ -34,7 +34,17 @@ public enum UserType
     Premium,
 
     /// <summary>
-    /// Administrator
+    /// ContentAdmin
     /// </summary>
-    Administrator
+    ContentAdmin,
+
+    /// <summary>
+    /// Admin
+    /// </summary>
+    Admin,
+
+    /// <summary>
+    /// SystemAdmin
+    /// </summary>
+    SystemAdmin
 }
