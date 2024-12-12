@@ -158,6 +158,11 @@ public class ConfigController : ControllerBase
         {
             res.SetSuccess(k.ToCamelCase(), v.Cast<double?>("double") ?? 0);
         }
+        k = "MinimumBalance";
+        if (dic.TryGetValue(k, out v))
+        {
+            res.SetSuccess(k.ToCamelCase(), v.Cast<decimal?>("decimal") ?? 0);
+        }
 
         #endregion
 
