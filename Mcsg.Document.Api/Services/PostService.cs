@@ -1765,11 +1765,6 @@ public partial class PostService : BaseMinioS, IPostService
             throw new BadRequestException(nameof(E109));
         }
 
-        if (!request.IsPublicNow && request.PublishDate == null)
-        {
-            throw new BadRequestException(ApiErrorCode.POST_DATE_PUBLISH_NULL, ApiErrorMessage.POST_DATE_PUBLISH_NULL);
-        }
-
         #region -- Validate on server --
         var post = await _context.Available<DocumentPost>().FirstOrDefaultAsync(p => p.HashId == request.PostHashId);
         if (post == null)
