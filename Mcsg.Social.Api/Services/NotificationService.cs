@@ -632,7 +632,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 continue;
             }
 
-            i.Amount = transactionData.Amount.ToString("N0");
+            i.Amount = Convert.ToDecimal(transactionData.Amount).ToString("N0");
             i.ReferenceNumber = transactionData.ReferenceNumber;
         }
     }

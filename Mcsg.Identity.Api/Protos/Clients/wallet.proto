@@ -30,5 +30,5 @@ message TransactionGetReq {
 message TransactionProtoDto {
     string transactionId = 1;
     string referenceNumber = 2;
-    float amount = 3;
+    string amount = 3;
 }
