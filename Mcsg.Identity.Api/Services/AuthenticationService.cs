@@ -773,7 +773,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            throw new NotFoundException(nameof(E303), E303);
+            throw new UnauthorizedAccessException(nameof(E303), E303);
         }
 
         user.SessionId = request.SessionId;
