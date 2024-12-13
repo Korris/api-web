@@ -21,11 +21,6 @@ public enum PaymentMethodType
     CreaditCard,
 
     /// <summary>
-    /// Momo
-    /// </summary>
-    Momo,
-
-    /// <summary>
     /// Paypal
     /// </summary>
     Paypal,
@@ -48,10 +43,5 @@ public enum PaymentMethodType
     /// <summary>
     /// USDT
     /// </summary>
-    Usdt,
-
-    /// <summary>
-    /// ZaloPay
-    /// </summary>
-    ZaloPay
+    Usdt
 }

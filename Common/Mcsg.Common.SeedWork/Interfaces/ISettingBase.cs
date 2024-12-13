@@ -132,11 +132,6 @@ public interface ISettingBase
     OtpDto Otp { get; }
 
     /// <summary>
-    /// ZaloPay
-    /// </summary>
-    ZaloPayDto ZaloPay { get; }
-
-    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     string? Origins { get; set; }

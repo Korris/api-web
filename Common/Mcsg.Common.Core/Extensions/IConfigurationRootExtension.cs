@@ -123,27 +123,6 @@ public static class IConfigurationRootExtension
     }
 
     /// <summary>
-    /// Load ZaloPay settings
-    /// </summary>
-    /// <param name="config">Configuration</param>
-    /// <param name="setting">Setting object to be populated</param>
-    /// <param name="prefix">Configuration prefix for settings</param>
-    public static void LoadSettingZaloPay(this IConfigurationRoot config, SettingBase setting, string prefix)
-    {
-        setting.ZaloPay.Url ??= config.GetConfigValue<string>($"{prefix}:Url");
-        setting.ZaloPay.AppId ??= config.GetConfigValue<string>($"{prefix}:AppId");
-        setting.ZaloPay.AppUser ??= config.GetConfigValue<string>($"{prefix}:AppUser");
-        setting.ZaloPay.Key1 ??= config.GetConfigValue<string>($"{prefix}:Key1");
-        setting.ZaloPay.Key2 ??= config.GetConfigValue<string>($"{prefix}:Key2");
-        setting.ZaloPay.RedirectUrl ??= config.GetConfigValue<string>($"{prefix}:RedirectUrl");
-        setting.ZaloPay.CallBackUrl ??= config.GetConfigValue<string>($"{prefix}:CallBackUrl");
-
-        setting.ZaloPay.QueryScheduleMinutes = setting.ZaloPay.QueryScheduleMinutes == 0
-            ? config.GetConfigValue<int>($"{prefix}:QueryScheduleMinutes")
-            : setting.ZaloPay.QueryScheduleMinutes;
-    }
-
-    /// <summary>
     /// Generic helper method to fetch values from config and cast to the desired type, with null checking.
     /// </summary>
     /// <typeparam name="T"></typeparam>

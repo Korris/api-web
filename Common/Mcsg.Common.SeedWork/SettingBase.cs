@@ -150,11 +150,6 @@ public class SettingBase : ISettingBase
     public OtpDto Otp { get; }
 
     /// <summary>
-    /// ZaloPay
-    /// </summary>
-    public ZaloPayDto ZaloPay { get; }
-
-    /// <summary>
     /// The origins that are allowed (CORS)
     /// </summary>
     public string? Origins { get; set; }
@@ -187,7 +182,6 @@ public class SettingBase : ISettingBase
         Api = new ApiDto();
         Rpc = new ApiDto();
         Otp = new OtpDto();
-        ZaloPay = new ZaloPayDto();
 
         EncryptKey = string.Empty;
     }

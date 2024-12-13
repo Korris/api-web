@@ -12,7 +12,5 @@ public class PaymentTransData
 
 public enum PaymentTransType
 {
-    BANK,
-    ZALO_PAY,
-    MOMO
+    BANK
 }
