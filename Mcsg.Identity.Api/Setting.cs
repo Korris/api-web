@@ -63,6 +63,21 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public string UsernameIsReserved { get; set; }
 
+    /// <summary>
+    /// The conversion rate as a decimal value
+    /// </summary>
+    public decimal ConversionRatePoint { get; set; }
+
+    /// <summary>
+    /// The minimum amount required to make a deposit
+    /// </summary>
+    public decimal MinimumDeposit { get; set; }
+
+    /// <summary>
+    /// The maximum amount required to make a deposit
+    /// </summary>
+    public decimal MaximumDeposit { get; set; }
+
     #endregion
 
     #region -- Methods --

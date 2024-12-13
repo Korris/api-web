@@ -188,6 +188,9 @@ public class Program
             if (set.TryGetValue(nameof(st.UserNameChangedInRemaining), out ett)) st.UserNameChangedInRemaining = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
+            if (set.TryGetValue(nameof(st.ConversionRatePoint), out ett)) st.ConversionRatePoint = ett.Value.Cast<decimal?>("decimal") ?? 0;
+            if (set.TryGetValue(nameof(st.MinimumDeposit), out ett)) st.MinimumDeposit = ett.Value.Cast<decimal?>("decimal") ?? 0;
+            if (set.TryGetValue(nameof(st.MaximumDeposit), out ett)) st.MaximumDeposit = ett.Value.Cast<decimal?>("decimal") ?? 0;
 
             var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
             st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
