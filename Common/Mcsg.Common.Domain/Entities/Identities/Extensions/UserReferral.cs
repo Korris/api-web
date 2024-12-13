@@ -51,7 +51,7 @@ partial class UserReferral
             Id = Id,
             UserReferee = new UserDto
             {
-                Id = UserReferee.Id,
+                Id = UserRefereeId,
                 ProfileName = UserReferee?.ProfileName,
                 UserAvatar = UserReferee?.Avatar,
                 UserName = UserReferee?.UserName
