@@ -19,7 +19,7 @@ public class UserProfileUpdateV : AbstractValidator<UserProfileUpdateR>
     public UserProfileUpdateV()
     {
         var t = nameof(ProfileName);
-        RuleFor(p => p.ProfileName.Triz())
+        RuleFor(p => p.NewProfileName.Triz())
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage($"{t} {NotEmpty}")
             .MinimumLength(ProfileName.Min).WithMessage($"{t} {MinimumLength} {ProfileName.Min}")
