@@ -147,7 +147,7 @@ public class Validator
         /// Special characters are not allowed at the beginning or consecutively.<br/>
         /// Maximum length: 50 characters.<br/>
         /// </summary>
-        public const string Regex = @"^(?!.*[^\p{L}\p{N} ]{2})[\p{L}\p{N}](?:[\p{L}\p{N}]|[^\p{L}\p{N} ](?![^\p{L}\p{N} ])| ){0,49}$";
+        public const string Regex = @"^(?!.*[^\p{L}\p{N} ]{2})(?!.*[\p{So}])[\p{L}\p{N}](?:[\p{L}\p{N}]|[^\p{L}\p{N} ](?![^\p{L}\p{N} ])| ){0,49}$";
 
         /// <summary>
         /// Regex message for validating.
