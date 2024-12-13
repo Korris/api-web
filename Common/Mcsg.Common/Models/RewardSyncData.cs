@@ -5,5 +5,5 @@ using Core.Enums;
 public class RewardSyncData
 {
     public RewardType Type { get; set; }
-    public float Point { get; set; }
+    public decimal Point { get; set; }
 }

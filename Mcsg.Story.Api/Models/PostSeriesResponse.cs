@@ -79,10 +79,11 @@ public class NewPostSeriesResponse : PostSeriesResponse
 {
     public List<RewardDto> Rewards { get; set; }
 }
+
 public class ChaptersExclusiveData
 {
     public int Count { get; set; }
-    public float Amount { get; set; }
+    public decimal Amount { get; set; }
 }
 
 public class PostBoxResposne

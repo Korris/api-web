@@ -10,7 +10,7 @@ public class RealTimeTransactionUpdateReq
     public string ReferenceNumber { get; set; } = string.Empty;
     public TransactionStatus TransactionStatus { get; set; }
     public string WalletAddress { get; set; }
-    public float Point { get; set; }
-    public float RewardPoint { get; set; }
-    public float TotalPoint { get; set; }
+    public decimal Point { get; set; }
+    public decimal RewardPoint { get; set; }
+    public decimal TotalPoint { get; set; }
 }

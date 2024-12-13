@@ -61,22 +61,22 @@ public class Setting : SeedWork.Constants.Setting
         /// <summary>
         /// Chapter price
         /// </summary>
-        public const float ChapterPrice = 2000;
+        public const decimal ChapterPrice = 2000;
 
         /// <summary>
         /// Minimum point can with draw
         /// </summary>
-        public const float MinimumPointCanWithDraw = 50000;
+        public const decimal MinimumPointCanWithDraw = 50000;
 
         /// <summary>
         /// Minimum point can deposit
         /// </summary>
-        public const float MinimumPointCanDeposit = 10000;
+        public const decimal MinimumPointCanDeposit = 10000;
 
         /// <summary>
         /// Maximum point can deposit
         /// </summary>
-        public const float MaximumPointCanDeposit = 999999;
+        public const decimal MaximumPointCanDeposit = 999999;
 
         /// <summary>
         /// Free username length
