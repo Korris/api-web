@@ -77,7 +77,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res.SetError(nameof(E107), E107);
         }
 
-        var dto = await Validate(user.Id, cancellationToken);
+        var dto = await Validate(user.Id, request.TimezoneOffset, cancellationToken);
 
         if (dto.TimePassed.TotalMinutes < dto.UserNameWaitingChangedAfter)
         {
@@ -116,7 +116,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        dto = await Validate(user.Id, cancellationToken);
+        dto = await Validate(user.Id, request.TimezoneOffset, cancellationToken);
 
         string m100 = $"{S100}. You have {dto.TimeRemaining} left to edit username again";
         string m101 = $"{S101}. You need to wait {dto.TimeWaiting} to edit username";
@@ -144,9 +144,10 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
     /// Validate the user's ability to change their username
     /// </summary>
     /// <param name="userId">User ID</param>
+    /// <param name="timezoneOffset">Timezone offset</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Returns the validation result as a <see cref="ChangeUserNameValidatorDto"/></returns>
-    private async Task<ChangeUserNameValidatorDto> Validate(Guid userId, CancellationToken cancellationToken)
+    private async Task<ChangeUserNameValidatorDto> Validate(Guid userId, int timezoneOffset, CancellationToken cancellationToken)
     {
         var userNameWaitingChangedAfter = _setting.UserNameWaitingChangedAfter;
         var userNameChangedInRemaining = _setting.UserNameChangedInRemaining;
@@ -175,7 +176,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             CanUpdateUserName = canUpdateUserName,
             UpdatedUserName = updatedUserName,
             TimeRemaining = timeRemaining,
-            TimeWaiting = waitTime,
+            TimeWaiting = waitTime.AddMinutes(-timezoneOffset),
             ModifiedCount = modifiedCount,
             UserNameWaitingChangedAfter = userNameWaitingChangedAfter,
             UserNameChangedInRemaining = userNameChangedInRemaining,
