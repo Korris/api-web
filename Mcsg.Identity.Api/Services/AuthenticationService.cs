@@ -242,7 +242,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
             {
                 p.IsLogin,
-                p.Secretkey
+                p.SecretKey
             }).FirstOrDefaultAsync(default);
 
             if (userAuthenticator?.IsLogin == true)
@@ -278,7 +278,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 }
                 else
                 {
-                    var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                    var secretKey = _aes.DecryptText(userAuthenticator.SecretKey);
                     var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
                     var otpGenerator = new Totp(secretKeyBytes);
 
@@ -369,7 +369,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
             {
                 p.IsLogin,
-                p.Secretkey
+                p.SecretKey
             }).FirstOrDefaultAsync(default);
 
             if (userAuthenticator?.IsLogin == true)
@@ -405,7 +405,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 }
                 else
                 {
-                    var secretKey = _aes.DecryptText(userAuthenticator.Secretkey);
+                    var secretKey = _aes.DecryptText(userAuthenticator.SecretKey);
                     var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
                     var otpGenerator = new Totp(secretKeyBytes);
 

@@ -5697,7 +5697,7 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp");
 
-                    b.Property<string>("Secretkey")
+                    b.Property<string>("SecretKey")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 

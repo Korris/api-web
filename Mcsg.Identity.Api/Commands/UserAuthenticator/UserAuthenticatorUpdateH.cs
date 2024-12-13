@@ -69,7 +69,7 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
         List<string> codes = [];
         if (otp != null) // active 2FA
         {
-            var secretKey = _aes.DecryptText(ett.Secretkey);
+            var secretKey = _aes.DecryptText(ett.SecretKey);
             var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
             var otpGenerator = new Totp(secretKeyBytes);
 

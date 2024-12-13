@@ -541,7 +541,7 @@ namespace Mcsg.Common.Domain.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    Secretkey = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    SecretKey = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     IsLogin = table.Column<bool>(type: "boolean", nullable: false),
                     IsTransaction = table.Column<bool>(type: "boolean", nullable: false),

@@ -63,7 +63,7 @@ public class UserAuthenticatorDeleteH : BaseH, IRequestHandler<UserAuthenticator
         }
         #endregion
 
-        var secretKey = _aes.DecryptText(ett.Secretkey);
+        var secretKey = _aes.DecryptText(ett.SecretKey);
         var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
         var otpGenerator = new Totp(secretKeyBytes);
 

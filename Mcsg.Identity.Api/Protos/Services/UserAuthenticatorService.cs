@@ -27,12 +27,12 @@ public class UserAuthenticatorService : UserAuthenticatorProto.UserAuthenticator
             var ett = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == userId).Select(p => new UserAuthenticator
             {
                 Id = p.Id,
-                Secretkey = p.Secretkey,
+                SecretKey = p.SecretKey,
                 IsTransaction = p.IsTransaction
             }).FirstOrDefaultAsync(default);
             if (ett != null)
             {
-                res.SecretKey = ett.Secretkey;
+                res.SecretKey = ett.SecretKey;
                 res.IsTransaction = ett.IsTransaction;
 
                 res.Success = true;

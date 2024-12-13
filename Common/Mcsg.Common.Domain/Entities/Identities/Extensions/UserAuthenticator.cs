@@ -24,7 +24,7 @@ partial class UserAuthenticator
         var res = new UserAuthenticator
         {
             UserId = createdBy,
-            Secretkey = secretKey,
+            SecretKey = secretKey,
             CreatedBy = createdBy
         };
 
@@ -38,7 +38,7 @@ partial class UserAuthenticator
     /// <param name="modifiedBy">Modified by</param>
     public void Update(string secretKey, Guid modifiedBy)
     {
-        Secretkey = secretKey;
+        SecretKey = secretKey;
         IsDelete = false;
 
         ModifiedBy = modifiedBy;

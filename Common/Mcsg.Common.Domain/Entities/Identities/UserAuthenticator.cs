@@ -13,7 +13,7 @@ public partial class UserAuthenticator : AuditableEntity
     public AuthenticatorType Type { get; set; }
 
     [StringLength(Validator.Token.Max)]
-    public string? Secretkey { get; set; }
+    public string? SecretKey { get; set; }
 
     public bool IsActive { get; set; }
 

@@ -75,7 +75,7 @@ public class UserAuthenticatorCreateH : BaseSettingH, IRequestHandler<UserAuthen
             }
             else
             {
-                secretKey = _aes.DecryptText(ett.Secretkey) + "";
+                secretKey = _aes.DecryptText(ett.SecretKey) + "";
             }
         }
 
