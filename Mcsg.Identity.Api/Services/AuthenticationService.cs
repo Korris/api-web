@@ -249,7 +249,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (string.IsNullOrWhiteSpace(request.OtpCode))
                 {
-                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn != null);
+                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
                     return new TokenDto
                     {
                         IsRequired2Fa = true,
@@ -260,7 +260,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 if (request.IsRecoveryMode == true)
                 {
                     var encryptedCode = _aes.EncryptText(request.OtpCode);
-                    var ettRecovery = await _context.Available<UserRecovery>(false).Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+                    var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
                     if (ettRecovery == null)
                     {
                         throw new BadRequestException(nameof(E313), E313);
@@ -269,6 +269,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                     if (ettRecovery.ModifiedOn != null)
                     {
                         throw new BadRequestException(nameof(E314), E314);
+                    }
+                    else
+                    {
+                        ettRecovery.Update(user.Id);
+                        await _context.SaveChangesAsync(default);
                     }
                 }
                 else
@@ -371,7 +376,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             {
                 if (string.IsNullOrWhiteSpace(request.OtpCode))
                 {
-                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn != null);
+                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
                     return new TokenDto
                     {
                         IsRequired2Fa = true,
@@ -382,7 +387,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 if (request.IsRecoveryMode == true)
                 {
                     var encryptedCode = _aes.EncryptText(request.OtpCode);
-                    var ettRecovery = await _context.Available<UserRecovery>(false).Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+                    var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
                     if (ettRecovery == null)
                     {
                         throw new BadRequestException(nameof(E313), E313);
@@ -391,6 +396,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                     if (ettRecovery.ModifiedOn != null)
                     {
                         throw new BadRequestException(nameof(E314), E314);
+                    }
+                    else
+                    {
+                        ettRecovery.Update(user.Id);
+                        await _context.SaveChangesAsync(default);
                     }
                 }
                 else

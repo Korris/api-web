@@ -32,6 +32,16 @@ partial class UserRecovery
     }
 
     /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="modifiedBy"></param>
+    public void Update(Guid modifiedBy)
+    {
+        ModifiedBy = modifiedBy;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Delete
     /// </summary>
     /// <param name="modifiedBy"></param>
