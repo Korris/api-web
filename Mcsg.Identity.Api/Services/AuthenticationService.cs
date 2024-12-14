@@ -493,7 +493,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
     public async Task<bool> LogOut(BaseR request)
     {
-        return await _tokenService.DeleteAsync(request.UserId ?? Guid.Empty);
+        return await _tokenService.DeleteAsync(request.UserId);
     }
 
     public async Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request)

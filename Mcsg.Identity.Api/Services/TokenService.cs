@@ -20,11 +20,7 @@ public class TokenService : BaseSettingS, ITokenService
     /// </summary>
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
-    /// <param name="userManager">User manager</param>
-    public TokenService(IMcsgContext context, ISetting setting, ApplicationUserManager userManager) : base(context, setting)
-    {
-        _userManager = userManager;
-    }
+    public TokenService(IMcsgContext context, ISetting setting) : base(context, setting) { }
 
     /// <summary>
     /// IsValid async
@@ -62,22 +58,14 @@ public class TokenService : BaseSettingS, ITokenService
             return null;
         }
 
-        var ett = await _context.UserRefreshTokens.OrderByDescending(p => p.RefreshTokenExpiryTime).FirstOrDefaultAsync(p => p.UserId == user.Id);
-        if (ett != null)
+        var ett = new UserRefreshToken
         {
-            ett.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt);
-        }
-        else
-        {
-            ett = new UserRefreshToken
-            {
-                UserId = user.Id,
-                RefreshToken = SecurityToken.GenerateToken(),
-                RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
-            };
-            await _context.UserRefreshTokens.AddAsync(ett);
-        }
+            UserId = user.Id,
+            RefreshToken = SecurityToken.GenerateToken(),
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
+        };
 
+        await _context.UserRefreshTokens.AddAsync(ett);
         await _context.SaveChangesAsync(default);
 
         return new RefreshTokenDto
@@ -92,21 +80,17 @@ public class TokenService : BaseSettingS, ITokenService
     /// </summary>
     /// <param name="userId">UserId</param>
     /// <returns>Returns the result</returns>
-    public async Task<bool> DeleteAsync(Guid userId)
+    public async Task<bool> DeleteAsync(Guid? userId)
     {
+        if (userId == null)
+        {
+            return false;
+        }
+
         var etts = await _context.UserRefreshTokens.Where(p => p.UserId == userId).ToListAsync();
         _context.UserRefreshTokens.RemoveRange(etts);
         return await _context.SaveChangesAsync(default) > 0;
     }
-
-    #endregion
-
-    #region -- Fields --
-
-    /// <summary>
-    /// User manager
-    /// </summary>
-    private readonly ApplicationUserManager _userManager;
 
     #endregion
 }

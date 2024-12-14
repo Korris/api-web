@@ -24,5 +24,5 @@ public interface ITokenService
     /// </summary>
     /// <param name="userId">UserId</param>
     /// <returns>Returns the result</returns>
-    Task<bool> DeleteAsync(Guid userId);
+    Task<bool> DeleteAsync(Guid? userId);
 }
