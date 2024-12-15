@@ -605,6 +605,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Admin
         /// </summary>
         public const string Admin = ";admin;";
+
+        /// <summary>
+        /// Thumb
+        /// </summary>
+        public const string Thumb = ";thumb;";
     }
 
     /// <summary>
