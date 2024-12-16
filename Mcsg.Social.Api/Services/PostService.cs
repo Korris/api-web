@@ -17,6 +17,7 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Constants;
 using Dtos;
@@ -375,6 +376,7 @@ public partial class PostService : BaseMinioS, IPostService
             Id = x.Id,
             Tags = x.Tags,
             TotalComment = x.TotalComment,
+            PostType = x.PostType.ToEnum(PostType.Feed),
             Reaction = new ReactionsResponse
             {
                 TotalReacts = x.TotalReacts,
