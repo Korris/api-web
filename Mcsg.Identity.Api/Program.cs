@@ -247,6 +247,7 @@ public class Program
 
         app.MapGrpcService<Protos.Services.UserService>();
         app.MapGrpcService<Protos.Services.UserAuthenticatorService>();
+        app.MapGrpcService<Protos.Services.UserRecoveryService>();
 
         app.Run();
     }

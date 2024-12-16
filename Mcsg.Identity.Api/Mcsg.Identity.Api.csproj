@@ -21,6 +21,7 @@
     <ItemGroup>
         <Protobuf Include="Protos\Clients\user.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\wallet.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Servers\user_recovery.proto" GrpcServices="Server" />
         <Protobuf Include="Protos\Servers\user_authenticator.proto" GrpcServices="Server" />
         <Protobuf Include="Protos\Servers\identity.proto" GrpcServices="Server" />
     </ItemGroup>
