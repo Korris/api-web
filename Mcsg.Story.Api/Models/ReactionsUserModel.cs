@@ -10,4 +10,5 @@ public class ReactionsUserModel
     public string AuthorAvatar { get; set; }
     public string? UserName { get; set; }
     public bool IsFollowing { get; set; }
+    public bool IsDeletedUser { get; set; }
 }

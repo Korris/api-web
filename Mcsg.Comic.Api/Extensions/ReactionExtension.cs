@@ -9,7 +9,7 @@ public static class ReactionExtension
                                                                 ELSE 0
                                                             END AS ""ReactByCurrent""
                                                             FROM {0} r
-                                                            INNER JOIN ""identity"".""Users"" u ON r.""AuthorId"" = u.""Id"" AND u.""IsDelete"" = false
+                                                            INNER JOIN ""identity"".""Users"" u ON r.""AuthorId"" = u.""Id""
                                                             WHERE ""TargetId"" = ANY(@TargetIds)
                                                             AND r.""IsDelete"" = false
                                                             GROUP BY r.""Type"", r.""TargetId"", r.""AuthorId""

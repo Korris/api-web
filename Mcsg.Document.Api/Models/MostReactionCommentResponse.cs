@@ -23,6 +23,7 @@ public class BasicCommentResponse
     public string ProfileId { get; set; }
     public string AuthorName { get; set; }
     public string? UserName { get; set; }
+    public bool IsDeletedUser { get; set; }
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
