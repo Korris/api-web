@@ -97,5 +97,24 @@ public class PostBoxResposne
     public bool IsMature { get; set; }
     public string HashId { get; set; }
     public PostType Type { get; set; }
+    public ReactionsResponse? Reaction { get; set; }
     public List<ChapterBasicResponse> Chapters { get; set; } = new List<ChapterBasicResponse>();
+
+    [JsonIgnore]
+    public ExternalResource ExternalResource { get; set; }
+    public bool IsExternalSource => ExternalResource != ExternalResource.None;
+
+    public HideOption Hide { get; set; }
+    public bool HideIos => (Hide & HideOption.Ios) == HideOption.Ios;
+    public bool HideAndroid => (Hide & HideOption.Android) == HideOption.Android;
+    public bool HideWeb => (Hide & HideOption.Web) == HideOption.Web;
+    public bool HideAll => (Hide & HideOption.All) == HideOption.All;
+    public PostStatus Status { get; set; }
+    public bool IsArchived => Status == PostStatus.Inactive;
+    public bool IsCensored { get; set; }
+    public bool IsBlur { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    public DateTime LatestCreatedOn { get; set; }
 }

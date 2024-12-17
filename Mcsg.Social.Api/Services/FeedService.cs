@@ -243,6 +243,20 @@ public partial class FeedService : IFeedService
             results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
             results.Items = listItemResponse;
 
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostReactions"""), new
+            {
+                TargetIds = items.Select(p => p.Id).ToList(),
+                feedLoadReq.UserId
+            });
+
+            foreach (var item in results.Items)
+            {
+                var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapPostBoxReactionResponse(item, postReaction);
+                }
+            }
         }
         else
         {
@@ -972,6 +986,19 @@ public partial class FeedService : IFeedService
                 .Replace("[AdditionalTotalCondition]", additionalTotalCondition);
         }
         return query;
+    }
+
+    private void MapPostBoxReactionResponse(FeedDto item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     #endregion
