@@ -17,6 +17,9 @@ public class BaseSubPost : AuditableHasPrivateEntity
     [StringLength(Validator.Hashtag.Max)]
     public string? HashId { get; set; }
 
+    [StringLength(Validator.Url.Max)]
+    public string? ThumbnailUrl { get; set; }
+
     public string? Body { get; set; }
     public string? CreatorNote { get; set; }
 
