@@ -543,7 +543,7 @@ public partial class PostService : BaseMinioS, IPostService
                         request.PageSize,
                         Offet = offset,
                         LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                        PostStatus = StatusUtils.PostStatusInt,
+                        PostStatus = StatusUtils.PostStatusIntPublic,
                         TagIds = tagIds,
                         AuthorId = post.CreatedBy.Value,
                         request.HashId,
