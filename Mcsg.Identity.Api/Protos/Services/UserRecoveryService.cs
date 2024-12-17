@@ -98,6 +98,31 @@ public class UserRecoveryService : UserRecoveryProto.UserRecoveryProtoBase
         return res;
     }
 
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <param name="context">Context</param>
+    /// <returns>Return the result</returns>
+    public override async Task<UserRecoveryCheckRsp> Check(UserRecoveryCheckReq request, ServerCallContext context)
+    {
+        var res = new UserRecoveryCheckRsp();
+
+        try
+        {
+            var userId = new Guid(request.UserId);
+            res.HasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == userId && p.ModifiedOn == null);
+            res.Success = true;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
     #endregion
 
     #region -- Methods --
