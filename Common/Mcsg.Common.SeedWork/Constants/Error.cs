@@ -396,6 +396,40 @@ public static class Error
 
     #endregion
 
+    #region -- E7xx --
+
+    /// <summary>
+    /// Can't donate to yourself
+    /// </summary>
+    public const string E700 = "User can not send donate to yourself";
+
+    /// <summary>
+    /// Invalid amount
+    /// </summary>
+    public const string E701 = "The amount must be a positive number greater than zero.";
+
+    /// <summary>
+    /// Proto problem
+    /// </summary>
+    public const string E702 = "There's a problem with the proto";
+
+    /// <summary>
+    /// Not enough balance
+    /// </summary>
+    public const string E703 = "Not enough balance";
+
+    /// <summary>
+    /// Transaction not found
+    /// </summary>
+    public const string E704 = "Transaction not found";
+
+    /// <summary>
+    /// Transaction not found
+    /// </summary>
+    public const string E705 = "The minimum transaction amount must be greater than or equal to 100.";
+
+    #endregion
+
     #region -- E9xx --
 
     /// <summary>

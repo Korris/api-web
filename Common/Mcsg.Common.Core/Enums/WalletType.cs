@@ -1,9 +1,9 @@
 ﻿namespace Mcsg.Common.Core.Enums;
 
 /// <summary>
-/// UserWallet type
+/// Wallet type
 /// </summary>
-public enum UserWalletType
+public enum WalletType
 {
     /// <summary>
     /// Normal
