@@ -5,14 +5,12 @@ namespace Mcsg.Social.Api.Services;
 
 using Analytic.Application.Protos;
 using Common.Core.Constants;
-using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
-using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Dtos;
@@ -92,13 +90,11 @@ public class FileService : IFileService
         var objectName = "";
         var objectNameOriginal = "";
         var compressedSize = file.Length;
-        string? thumbnailHashId = null;
-        var bucketNamePublic = _sc.GetStrategy(minioInstance).BucketNamePublic;
 
         var type = string.IsNullOrWhiteSpace(request.Type) ? "" : $"/{request.Type}".ToPlural();
         if (request.IsPublic == true)
         {
-            bucketName = bucketNamePublic;
+            bucketName = _sc.GetStrategy(minioInstance).BucketNamePublic;
             objectName = $"{Setting.MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
 
             if (request.Type == "Thumb")
@@ -139,16 +135,12 @@ public class FileService : IFileService
             {
                 compressedSize = stream.Length;
                 await _sc.GetStrategy(minioInstance).PutObject(stream, objectNameOriginal, bucketName);
-
-                await ResizeImage(stream, bucketNamePublic, objectNameOriginal, minioInstance);
             }
         }
         else if (file.IsVideo())
         {
             var tempFolder = Path.GetTempPath();
             var orgfile = Path.Combine(tempFolder, hashFileName);
-
-            thumbnailHashId = ResourceConfig.HashLength.GetRandomString();
 
             using (var fsOrgfile = new FileStream(orgfile, FileMode.Create))
             {
@@ -165,8 +157,6 @@ public class FileService : IFileService
 
                         await _sc.GetStrategy(minioInstance).PutObject(fsOrgfile, objectName, bucketName);
                     }
-
-                    await UploadThumbnailFromVideo(file, thumbnailHashId, user, orgfile, minioInstance);
                 }
                 catch
                 {
@@ -192,8 +182,6 @@ public class FileService : IFileService
                             File.Delete(orgfile);
                             File.Delete(targetFile);
                         }
-
-                        await UploadThumbnailFromVideo(file, thumbnailHashId, user, orgfile, minioInstance);
                     }
                     catch (Exception ex)
                     {
@@ -224,8 +212,22 @@ public class FileService : IFileService
         }
 
         // Insert to resource with type is temp
-        var resourceType = file.IsImageType() ? ResourceType.Image : ResourceType.Video;
-        var resource = SocialResource.Create(file, hashId, hashFileName, objectName, bucketName, resourceType, imgWidth, imgHeight, compressedSize, minioInstance, user.Id);
+        var resource = new SocialResource
+        {
+            AuthorId = request.UserId,
+            HashId = hashId,
+            Title = Path.GetFileNameWithoutExtension(fileTitle),
+            Name = hashFileName,
+            Url = objectName,
+            BucketName = bucketName,
+            Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
+            CreatedBy = request.UserId,
+            Width = imgWidth,
+            Height = imgHeight,
+            Size = file.Length,
+            CompressedSize = compressedSize,
+            MinioInstance = minioInstance
+        };
 
         await _context.SocialResources.AddAsync(resource);
         await _context.SaveChangesAsync(default);
@@ -247,8 +249,7 @@ public class FileService : IFileService
             Width = imgWidth,
             Height = imgHeight,
             Type = resource.Type,
-            Size = resource.Size,
-            ThumbnailHashId = thumbnailHashId
+            Size = resource.Size
         };
     }
 
@@ -266,17 +267,16 @@ public class FileService : IFileService
 
         foreach (var resource in resources)
         {
-            var subPost = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
+            var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
             var shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
 
             subPosts.Add(new SubUploadFileDto
             {
                 Status = PostStatus.Public,
-                ThumbnailUrl = subPost.ThumbnailUrl,
                 Files = [
                     new UploadFileDto
                     {
-                        SubPostHashId = subPost?.HashId,
+                        SubPostHashId = subPostHashId?.HashId,
                         HashId = resource?.HashId,
                         Url = shareUrl,
                         Height = resource.Height,
@@ -511,21 +511,8 @@ public class FileService : IFileService
 
                 resource.SubPost = subPost;
 
-                // Change thumbnail resource from Post to SubPost
-                var thumbnaiUrl = string.Empty;
-                if (!string.IsNullOrEmpty(resourceReq.ThumbnailHashId))
-                {
-                    var thumbnailResource = await _context.SocialResources.FirstOrDefaultAsync(p => p.HashId == resourceReq.ThumbnailHashId);
-                    if (thumbnailResource != null)
-                    {
-                        thumbnailResource.SubPost = subPost;
-                    }
-
-                    thumbnaiUrl = await GetPublicUrl(resourceReq.ThumbnailHashId);
-                }
-
                 subPosts.Add(subPost);
-                subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPost.Id, ThumbnailUrl = thumbnaiUrl });
+                subPostResponses.Add(new SubUploadFileDto { HashId = subPost.HashId, Id = subPost.Id });
             }
 
             resource.Type = resource.Name.GetResourceType();
@@ -594,93 +581,6 @@ public class FileService : IFileService
         {
             await _context.SaveChangesAsync(default);
         }
-    }
-
-    /// <summary>
-    /// GetPublicUrl
-    /// </summary>
-    /// <param name="hashId"></param>
-    /// <returns></returns>
-    private async Task<string> GetPublicUrl(string hashId)
-    {
-        var resource = await _context.SocialResources.Where(p => p.HashId == hashId)
-            .Select(p => new { p.Url, p.BucketName, p.MinioInstance })
-            .FirstOrDefaultAsync();
-        if (resource == null)
-        {
-            return string.Empty;
-        }
-        var minioInstance = resource.MinioInstance ?? MinioInstanceType.Default;
-        var bucketNamePublic = _setting.GetMinio(minioInstance).BucketNamePublic;
-        return _setting.GetMinio(minioInstance).GetPublicUrl(bucketNamePublic, resource.Url);
-    }
-
-    /// <summary>
-    /// UploadThumbnailFromVideo
-    /// </summary>
-    /// <param name="file"></param>
-    /// <param name="hashId"></param>
-    /// <param name="user"></param>
-    /// <param name="orgfile"></param>
-    /// <param name="minioInstance"></param>
-    /// <returns></returns>
-    private async Task UploadThumbnailFromVideo(IFormFile file, string hashId, User user, string orgfile, MinioInstanceType minioInstance)
-    {
-        var hashFileName = $"{hashId}.jpg";
-        var path = Path.Combine(Path.GetTempPath(), hashFileName);
-        var type = $"/{PostResourceType.Thumb}".ToPlural();
-        var objectName = $"{MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
-
-        var command = "-frames:v 1 -update 1";
-        orgfile.RunFfmpeg(path, command);
-
-        using (var stream = new FileStream(path, FileMode.Open))
-        {
-            var bucketNamePublic = _setting.GetMinio(minioInstance).BucketNamePublic;
-            var image = await ResizeImage(stream, bucketNamePublic, objectName, minioInstance);
-            if (image != null)
-            {
-                var size = image.Stream?.Length ?? 0;
-                var ett = SocialResource.Create(file, hashId, hashFileName, image.ObjectName + "", bucketNamePublic, ResourceType.Image, image.Width, image.Height, size, minioInstance, user.Id);
-
-                await _context.SocialResources.AddAsync(ett);
-                await _context.SaveChangesAsync(default);
-            }
-        }
-
-        File.Delete(path);
-    }
-
-    /// <summary>
-    /// ResizeImage
-    /// </summary>
-    /// <param name="fs"></param>
-    /// <param name="bucketName"></param>
-    /// <param name="objectName"></param>
-    /// <param name="minioInstance"></param>
-    /// <returns></returns>
-    private async Task<ImageRatio?> ResizeImage(Stream fs, string bucketName, string objectName, MinioInstanceType minioInstance)
-    {
-        var res = new ImageRatio
-        {
-            Width = 200,
-            Height = 200,
-        };
-
-        var fsResize = fs.ResizeImage((uint)res.Width, (uint)res.Height, 100);
-        if (fsResize == null)
-        {
-            return null;
-        }
-
-        res.ObjectName = objectName.RemoveNameSuffix().Replace("temp", PostResourceType.Thumb.ToPlural());
-        await _sc.GetStrategy(minioInstance).PutObject(fsResize, res.ObjectName, bucketName);
-
-        var ms = new MemoryStream();
-        fsResize.CopyTo(ms);
-        res.Stream = ms;
-
-        return res;
     }
 
     #region -- Subpost --

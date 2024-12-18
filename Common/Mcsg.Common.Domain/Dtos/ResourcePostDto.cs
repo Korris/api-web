@@ -16,8 +16,7 @@ public class ResourcePostDto
         {
             HashId = HashId,
             Order = Order,
-            Body = Body,
-            ThumbnailHashId = ThumbnailHashId
+            Body = Body
         };
     }
 
@@ -39,11 +38,6 @@ public class ResourcePostDto
     /// Body
     /// </summary>
     public string? Body { get; set; }
-
-    /// <summary>
-    /// ThumbnailHashId
-    /// </summary>
-    public string? ThumbnailHashId { get; set; }
 
     #endregion
 }

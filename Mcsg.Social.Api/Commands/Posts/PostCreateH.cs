@@ -13,7 +13,6 @@
 
 using Grpc.Net.Client;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Web;
 
 namespace Mcsg.Social.Api.Commands;
@@ -26,7 +25,6 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
-using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
@@ -34,7 +32,6 @@ using Extensions;
 using Interfaces;
 using Requests;
 using Validators;
-using static Common.Core.Constants.Setting;
 using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 
@@ -110,12 +107,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
-
-        if (request.Files?.Count > 0)
-        {
-            var hashId = string.IsNullOrEmpty(request.Files[0].ThumbnailHashId) ? request.Files[0].HashId : request.Files[0].ThumbnailHashId;
-            request.ThumbnailUrl = await GetPublicUrl(hashId + "");
-        }
 
         // Create
         var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
@@ -281,26 +272,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         }
 
         return res;
-    }
-
-    /// <summary>
-    /// GetPublicUrl
-    /// </summary>
-    /// <param name="hashId"></param>
-    /// <returns></returns>
-    private async Task<string> GetPublicUrl(string hashId)
-    {
-        var resource = await _context.SocialResources.Where(p => p.HashId == hashId)
-            .Select(p => new { p.Url, p.BucketName, p.MinioInstance })
-            .FirstOrDefaultAsync();
-        if (resource == null)
-        {
-            return string.Empty;
-        }
-        var minioInstance = resource.MinioInstance ?? MinioInstanceType.Default;
-        var bucketNamePublic = _setting.GetMinio(minioInstance).BucketNamePublic;
-        var objectName = resource.Url.RemoveNameSuffix().Replace("temp", PostResourceType.Thumb.ToPlural());
-        return await _sc.GetPublicUrl(objectName, bucketNamePublic, minioInstance);
     }
 
     #endregion
