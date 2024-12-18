@@ -213,11 +213,6 @@ public class Setting : SeedWork.Constants.Setting
         public const string Video = "videos";
 
         /// <summary>
-        /// Thumb
-        /// </summary>
-        public const string Thumb = "thumbs";
-
-        /// <summary>
         /// Other
         /// </summary>
         public const string Other = "others";
@@ -610,11 +605,6 @@ public class Setting : SeedWork.Constants.Setting
         /// Admin
         /// </summary>
         public const string Admin = ";admin;";
-
-        /// <summary>
-        /// Thumb
-        /// </summary>
-        public const string Thumb = ";thumb;";
     }
 
     /// <summary>

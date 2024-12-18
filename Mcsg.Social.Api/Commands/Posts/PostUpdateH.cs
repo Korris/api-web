@@ -218,12 +218,6 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
                     resourceResponse.Add(resource);
                 }
             }
-
-            if (ett.ThumbnailUrl == null)
-            {
-                ett.ThumbnailUrl = subPost.ThumbnailUrl;
-                await _context.SaveChangesAsync(default);
-            }
         }
 
         result.Resources = resourceResponse;
