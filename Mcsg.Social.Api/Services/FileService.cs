@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Social.Api.Services;
 
 using Analytic.Application.Protos;
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -80,7 +79,7 @@ public class FileService : IFileService
         }
 
         // Upload to temp folder
-        var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
+        var hashId = ResourceConfig.HashLength.GetRandomString();
         var hashFileName = file.GetHashName(hashId);
         var fileTitle = file.FileName;
         var imgWidth = 0;
@@ -95,9 +94,9 @@ public class FileService : IFileService
         if (request.IsPublic == true)
         {
             bucketName = _sc.GetStrategy(minioInstance).BucketNamePublic;
-            objectName = $"{Setting.MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
+            objectName = $"{MinioFolder.Social}/{user.UserFolder}{type}/{hashFileName}";
 
-            if (request.Type == "Thumb")
+            if (request.Type == PostResourceType.Thumb)
             {
                 objectNameOriginal = objectName.AppendNameSuffix();
             }
@@ -105,7 +104,7 @@ public class FileService : IFileService
         else
         {
             var tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
-            objectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
+            objectName = $"{MinioFolder.Social}/{tempBlobName}";
         }
 
         if (file.IsImage() && !file.IsGifAnimated())
@@ -212,22 +211,8 @@ public class FileService : IFileService
         }
 
         // Insert to resource with type is temp
-        var resource = new SocialResource
-        {
-            AuthorId = request.UserId,
-            HashId = hashId,
-            Title = Path.GetFileNameWithoutExtension(fileTitle),
-            Name = hashFileName,
-            Url = objectName,
-            BucketName = bucketName,
-            Type = file.IsImageType() ? ResourceType.Image : ResourceType.Video,
-            CreatedBy = request.UserId,
-            Width = imgWidth,
-            Height = imgHeight,
-            Size = file.Length,
-            CompressedSize = compressedSize,
-            MinioInstance = minioInstance
-        };
+        var resourceType = file.IsImageType() ? ResourceType.Image : ResourceType.Video;
+        var resource = SocialResource.Create(file, hashId, hashFileName, objectName, bucketName, resourceType, imgWidth, imgHeight, compressedSize, minioInstance, user.Id);
 
         await _context.SocialResources.AddAsync(resource);
         await _context.SaveChangesAsync(default);
@@ -267,7 +252,7 @@ public class FileService : IFileService
 
         foreach (var resource in resources)
         {
-            var subPostHashId = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
+            var subPost = subPostResponses.FirstOrDefault(p => p.Id == resource.SubPostId);
             var shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, resource.MinioInstance);
 
             subPosts.Add(new SubUploadFileDto
@@ -276,7 +261,7 @@ public class FileService : IFileService
                 Files = [
                     new UploadFileDto
                     {
-                        SubPostHashId = subPostHashId?.HashId,
+                        SubPostHashId = subPost?.HashId,
                         HashId = resource?.HashId,
                         Url = shareUrl,
                         Height = resource.Height,
@@ -420,14 +405,14 @@ public class FileService : IFileService
                 var tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                tempBlobName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
+                tempBlobName = $"{MinioFolder.Social}/{tempBlobName}";
                 var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
                     await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempBlobName, null);
                 }
 
-                targetBlobName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
+                targetBlobName = $"{MinioFolder.Social}/{targetBlobName}";
                 var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
@@ -475,10 +460,10 @@ public class FileService : IFileService
             var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
             var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
-            var tempObjectName = $"{Setting.MinioFolder.Social}/{tempBlobName}";
+            var tempObjectName = $"{MinioFolder.Social}/{tempBlobName}";
             var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempObjectName, null);
 
-            var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
+            var targetObjectName = $"{MinioFolder.Social}/{targetBlobName}";
             var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
 
             if (isExistTempFile != null && isExistTargetFile == null)
@@ -503,7 +488,7 @@ public class FileService : IFileService
                     Order = resourceReq.Order,
                     Permission = PostPermission.Public,
                     PublishDate = DateTime.UtcNow,
-                    HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
+                    HashId = PostConfig.SubHashLength.GetRandomString(),
                     IsExclusive = false
                 };
 

@@ -2,7 +2,6 @@
 
 namespace Mcsg.Document.Api.Services;
 
-using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -78,7 +77,7 @@ public class FileService : IFileService
         }
 
         // Upload to temp folder
-        var hashId = Setting.ResourceConfig.HashLength.GetRandomString();
+        var hashId = ResourceConfig.HashLength.GetRandomString();
         var hashFileName = file.GetHashName(hashId);
         var fileTitle = file.FileName;
         var imgWidth = 0;
@@ -93,9 +92,9 @@ public class FileService : IFileService
         if (request.IsPublic == true)
         {
             bucketName = _sc.GetStrategy(minioInstance).BucketNamePublic;
-            objectName = $"{Setting.MinioFolder.Document}/{user.UserFolder}{type}/{hashFileName}";
+            objectName = $"{MinioFolder.Document}/{user.UserFolder}{type}/{hashFileName}";
 
-            if (request.Type == "Thumb")
+            if (request.Type == PostResourceType.Thumb)
             {
                 objectNameOriginal = objectName.AppendNameSuffix();
             }
@@ -103,7 +102,7 @@ public class FileService : IFileService
         else
         {
             var tempBlobName = hashFileName.GetTempBlobName(user.UserFolder);
-            objectName = $"{Setting.MinioFolder.Document}/{tempBlobName}";
+            objectName = $"{MinioFolder.Document}/{tempBlobName}";
         }
 
         if (file.IsImage() && !file.IsGifAnimated())
@@ -390,14 +389,14 @@ public class FileService : IFileService
                 var tempBlobName = resource.Name.GetTempBlobName(userFolder);
                 var targetBlobName = resource.Name.GetMediaBlobName(userFolder);
 
-                tempBlobName = $"{Setting.MinioFolder.Document}/{tempBlobName}";
+                tempBlobName = $"{MinioFolder.Document}/{tempBlobName}";
                 var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempBlobName, null);
                 if (isExistTempFile != null)
                 {
                     await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempBlobName, null);
                 }
 
-                targetBlobName = $"{Setting.MinioFolder.Document}/{targetBlobName}";
+                targetBlobName = $"{MinioFolder.Document}/{targetBlobName}";
                 var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetBlobName, null);
                 if (isExistTargetFile != null)
                 {
@@ -449,10 +448,10 @@ public class FileService : IFileService
             var tempBlobName = resource.Name.GetTempBlobName(dto.UserFolder);
             var targetBlobName = resource.Name.GetMediaBlobName(dto.SubFolder);
 
-            var tempObjectName = $"{Setting.MinioFolder.Document}/{tempBlobName}";
+            var tempObjectName = $"{MinioFolder.Document}/{tempBlobName}";
             var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempObjectName, null);
 
-            var targetObjectName = $"{Setting.MinioFolder.Document}/{targetBlobName}";
+            var targetObjectName = $"{MinioFolder.Document}/{targetBlobName}";
             var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
 
             if (isExistTempFile != null && isExistTargetFile == null)
@@ -477,7 +476,7 @@ public class FileService : IFileService
                     Order = resourceReq.Order,
                     Permission = PostPermission.Public,
                     PublishDate = DateTime.UtcNow,
-                    HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
+                    HashId = PostConfig.SubHashLength.GetRandomString(),
                     IsExclusive = false
                 };
 

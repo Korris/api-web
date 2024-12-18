@@ -20,7 +20,7 @@ public class ImageRatio
     /// <summary>
     /// Stream
     /// </summary>
-    public MemoryStream? Stream { get; set; }
+    public Stream? Stream { get; set; }
 
     /// <summary>
     /// Object name
