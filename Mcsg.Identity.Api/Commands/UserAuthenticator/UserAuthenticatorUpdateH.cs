@@ -12,7 +12,6 @@ using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Validators;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
@@ -109,26 +108,6 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
         };
 
         return res.SetSuccess(data);
-    }
-
-    /// <summary>
-    /// GenerateRecoveryCodes
-    /// </summary>
-    /// <returns></returns>
-    private List<string> GenerateRecoveryCodes()
-    {
-        var codes = new List<string>();
-
-        while (codes.Count < UserRecoveryConfig.NumberOfCodes)
-        {
-            var code = UserRecoveryConfig.HashLength.GetRandomString();
-            if (!codes.Any(p => p == code))
-            {
-                codes.Add(code + "");
-            }
-        }
-
-        return codes;
     }
 
     #endregion

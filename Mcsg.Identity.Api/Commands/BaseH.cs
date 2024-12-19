@@ -15,7 +15,9 @@ namespace Mcsg.Identity.Api.Commands;
 
 using Common.Core.Interfaces;
 using Common.Domain;
+using Common.SeedWork.Extensions;
 using Interfaces;
+using static Common.Core.Constants.Setting;
 
 /// <summary>
 /// Base handler
@@ -26,6 +28,30 @@ using Interfaces;
 /// <param name="context">DB context</param>
 public abstract class BaseH(IMcsgContext context)
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// GenerateRecoveryCodes
+    /// </summary>
+    /// <returns></returns>
+    protected List<string> GenerateRecoveryCodes()
+    {
+        var codes = new List<string>();
+
+        while (codes.Count < UserRecoveryConfig.NumberOfCodes)
+        {
+            var code = UserRecoveryConfig.HashLength.GetRandomString();
+            if (!codes.Any(p => p == code))
+            {
+                codes.Add(code + "");
+            }
+        }
+
+        return codes;
+    }
+
+    #endregion
+
     #region -- Fields --
 
     /// <summary>

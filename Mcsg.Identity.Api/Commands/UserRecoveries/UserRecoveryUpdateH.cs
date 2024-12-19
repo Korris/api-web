@@ -8,17 +8,14 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork;
-using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
-using Interfaces;
 using Validators;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
 /// Handler
 /// </summary>
-public class UserRecoveryUpdateH : BaseSettingH, IRequestHandler<UserRecoveryUpdateR, SingleResponse>
+public class UserRecoveryUpdateH : BaseH, IRequestHandler<UserRecoveryUpdateR, SingleResponse>
 {
     #region -- Methods --
 
@@ -26,10 +23,9 @@ public class UserRecoveryUpdateH : BaseSettingH, IRequestHandler<UserRecoveryUpd
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    /// <param name="setting">Setting</param>
     /// <param name="aes">Security aes</param>
     /// <param name="userManager">Application user manager</param>
-    public UserRecoveryUpdateH(IMcsgContext context, ISetting setting, ISecurityAes aes, ApplicationUserManager userManager) : base(context, setting)
+    public UserRecoveryUpdateH(IMcsgContext context, ISecurityAes aes, ApplicationUserManager userManager) : base(context)
     {
         _aes = aes;
         _userManager = userManager;
@@ -91,26 +87,6 @@ public class UserRecoveryUpdateH : BaseSettingH, IRequestHandler<UserRecoveryUpd
         await _context.SaveChangesAsync(cancellationToken);
 
         return res.SetSuccess(data);
-    }
-
-    /// <summary>
-    /// GenerateRecoveryCodes
-    /// </summary>
-    /// <returns></returns>
-    private List<string> GenerateRecoveryCodes()
-    {
-        var codes = new List<string>();
-
-        while (codes.Count < UserRecoveryConfig.NumberOfCodes)
-        {
-            var code = UserRecoveryConfig.HashLength.GetRandomString();
-            if (!codes.Any(p => p == code))
-            {
-                codes.Add(code + "");
-            }
-        }
-
-        return codes;
     }
 
     #endregion

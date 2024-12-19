@@ -72,13 +72,13 @@ partial class UserRecovery
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
+    /// <param name="secretKey">Secret key</param>
     /// <returns>Return the DTO</returns>
     public ViewDto ToViewDto(string secretKey)
     {
         var res = ToBaseDto<ViewDto>();
 
         res.SecretKey = secretKey;
-        res.IsUsed = false;
 
         return res;
     }
