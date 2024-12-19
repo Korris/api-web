@@ -120,7 +120,7 @@ LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
                             WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                             AND p.""Status"" = ANY (@PostStatus)
-                            [Permission]
+                            AND p.""Permission""= @PostPermission
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",
@@ -340,7 +340,8 @@ LIMIT 1
                                 WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
                                 AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL) 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
+                                AND qpost1.""IsDelete"" = false
+                                AND qpost1.""Permission"" = @PostPermission
                                 GROUP BY qpost1.""Id""";
             }
         }

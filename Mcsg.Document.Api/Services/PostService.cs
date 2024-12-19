@@ -440,8 +440,7 @@ public partial class PostService : BaseMinioS, IPostService
             .Replace("[SelectPostIdsQuery]", allSubQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedOn")
-            .Replace("[Permission]", "");
+            .Replace("[OrderBy]", "CreatedOn");
 
         var multi = await _postRepository
                 .Connection.QueryMultipleAsync(query, new
