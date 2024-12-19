@@ -1,5 +1,6 @@
 ﻿namespace Mcsg.Common.Domain.Entities;
 
+using Common.SeedWork;
 using SeedWork.Dtos;
 
 partial class UserRecovery
@@ -56,19 +57,30 @@ partial class UserRecovery
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
+    /// <param name="aes">Security aes</param>
     /// <returns>Return the DTO</returns>
-    public SearchDto ToSearchDto()
+    public SearchDto ToSearchDto(ISecurityAes aes)
     {
-        return ToBaseDto<SearchDto>();
+        var res = ToBaseDto<SearchDto>();
+
+        res.SecretKey = aes.DecryptText(SecretKey) + "";
+        res.IsUsed = ModifiedOn != null;
+
+        return res;
     }
 
     /// <summary>
     /// Convert to data transfer object
     /// </summary>
     /// <returns>Return the DTO</returns>
-    public ViewDto ToViewDto()
+    public ViewDto ToViewDto(string secretKey)
     {
-        return ToBaseDto<ViewDto>();
+        var res = ToBaseDto<ViewDto>();
+
+        res.SecretKey = secretKey;
+        res.IsUsed = false;
+
+        return res;
     }
 
     /// <summary>
@@ -92,6 +104,19 @@ partial class UserRecovery
     /// </summary>
     public class BaseDto : IdDto
     {
+        #region -- Properties --
+
+        /// <summary>
+        /// SecretKey
+        /// </summary>
+        public string SecretKey { get; set; } = default!;
+
+        /// <summary>
+        /// SecretKey
+        /// </summary>
+        public bool IsUsed { get; set; }
+
+        #endregion
     }
 
     /// <summary>

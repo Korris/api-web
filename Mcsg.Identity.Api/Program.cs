@@ -112,6 +112,7 @@ public class Program
             p.RegisterServicesFromAssembly(me.Assembly);
 
             p.AddDiUserAuthenticator();
+            p.AddDiUserRecovery();
             p.AddDiUserReferral();
             p.AddDiUser();
             p.AddDiFeedback();
