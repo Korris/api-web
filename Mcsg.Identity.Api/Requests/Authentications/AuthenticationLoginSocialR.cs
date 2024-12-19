@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Identity.Api.Requests;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Identity.Api.Requests;
 
 using Common.Core.Requests;
 
@@ -7,6 +9,19 @@ using Common.Core.Requests;
 /// </summary>
 public class AuthenticationLoginSocialR : BaseR
 {
+    #region -- Methods --
+
+    /// <summary>
+    /// Sets the IsForAdmin flag.
+    /// </summary>
+    /// <param name="isForAdmin">A boolean value indicating whether the action is for admin.</param>
+    public void SetForAdmin(bool isForAdmin)
+    {
+        IsForAdmin = isForAdmin;
+    }
+
+    #endregion
+
     #region -- Properties --
 
     /// <summary>
@@ -28,6 +43,12 @@ public class AuthenticationLoginSocialR : BaseR
     /// IsUseRecovery
     /// </summary>
     public bool? IsRecoveryMode { get; set; }
+
+    /// <summary>
+    /// For admin
+    /// </summary>
+    [JsonIgnore]
+    public bool IsForAdmin { get; private set; }
 
     #endregion
 }

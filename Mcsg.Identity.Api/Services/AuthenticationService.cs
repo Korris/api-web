@@ -229,8 +229,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
         }
 
+        // Validate admin role
         var adminTypes = new[] { UserType.ContentAdmin, UserType.Admin, UserType.SystemAdmin };
-
         if (request.IsForAdmin && !adminTypes.Contains(user.Type))
         {
             throw new ForbiddenAccessException(nameof(E309), E309);
@@ -364,6 +364,13 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 {
                     throw new ForbiddenAccessException(nameof(E311), E311 + " - " + user.StatusReason);
                 }
+            }
+
+            // Validate admin role
+            var adminTypes = new[] { UserType.ContentAdmin, UserType.Admin, UserType.SystemAdmin };
+            if (request.IsForAdmin && !adminTypes.Contains(user.Type))
+            {
+                throw new ForbiddenAccessException(nameof(E309), E309);
             }
 
             var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new

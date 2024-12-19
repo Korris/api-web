@@ -57,6 +57,15 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("social-login-admin")]
+    public async Task<IActionResult> LoginSocialAdmin(AuthenticationLoginSocialR request)
+    {
+        request.SetForAdmin(true);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginSocial(request);
+        return Ok(result);
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login(AuthenticationLoginUserR request)
     {
