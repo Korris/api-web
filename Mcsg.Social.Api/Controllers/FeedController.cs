@@ -28,7 +28,7 @@ public class FeedController : ControllerBase
     {
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
-        return Ok(response.Data);
+        return Ok(response.Data ?? response);
     }
 
     [HttpPut("{hashId}"), Authorize]
@@ -37,7 +37,7 @@ public class FeedController : ControllerBase
         request.Analyze(HttpContext);
         request.HashId = hashId;
         var response = await _mediator.Send(request);
-        return Ok(response.Data);
+        return Ok(response.Data ?? response);
     }
 
     [HttpGet("list")]
