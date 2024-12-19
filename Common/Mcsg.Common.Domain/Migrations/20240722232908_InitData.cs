@@ -822,7 +822,9 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
-                    Hide = table.Column<int>(type: "integer", nullable: false)
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -908,7 +910,9 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
-                    Hide = table.Column<int>(type: "integer", nullable: false)
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1113,7 +1117,9 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
-                    Hide = table.Column<int>(type: "integer", nullable: false)
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1198,7 +1204,9 @@ namespace Mcsg.Common.Domain.Migrations
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
                     ViewCount = table.Column<int>(type: "integer", nullable: false),
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
-                    Hide = table.Column<int>(type: "integer", nullable: false)
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true)
                 },
                 constraints: table =>
                 {

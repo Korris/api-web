@@ -25,7 +25,7 @@ public partial class BasePost : AuditableHasPrivateEntity
     [StringLength(Validator.Description.Max)]
     public string? StatusReason { get; set; }
 
-    [StringLength(32)]
+    [StringLength(Validator.ExternalCode.Max)]
     public string? ExternalCode { get; set; }
 
     public string? Body { get; set; }
@@ -41,4 +41,10 @@ public partial class BasePost : AuditableHasPrivateEntity
     public int ViewCount { get; set; }
     public ExternalResource ExternalResource { get; set; }
     public HideOption Hide { get; set; }
+
+    [StringLength(Validator.ShortBody.Max)]
+    public string? ShortBody { get; set; }
+
+    [StringLength(Validator.ShortCustomNote.Max)]
+    public string? ShortCustomNote { get; set; }
 }
