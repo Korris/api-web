@@ -48,6 +48,18 @@ partial class SocialPost
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="shortCustomNote"></param>
+    /// <returns></returns>
+    public SocialPost BuildCustomNote(string shortCustomNote)
+    {
+        ShortCustomNote = shortCustomNote;
+
+        return this;
+    }
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="title">Title</param>

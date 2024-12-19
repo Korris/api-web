@@ -108,8 +108,10 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
         // Create
         var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
-        await _context.SocialPosts.AddAsync(ett);
-        await _context.SaveChangesAsync(default);
+        ett.BuildCustomNote(request.ShortCustomNote);
+        await _context.SocialPosts.AddAsync(ett, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
         request.Content = await _businessText.Process(request.Content);
         if (receiverIds.Count() > 0)
         {

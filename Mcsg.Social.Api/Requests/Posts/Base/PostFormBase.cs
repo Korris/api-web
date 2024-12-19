@@ -64,5 +64,10 @@ public class PostFormBase : IdBaseR
     /// </summary>
     public string? CustomNote { get; set; }
 
+    /// <summary>
+    /// Short custom note
+    /// </summary>
+    public string? ShortCustomNote { get; set; }
+
     #endregion
 }
