@@ -5,6 +5,6 @@ using Common.Core.Requests;
 /// <summary>
 /// Request
 /// </summary>
-public class AuthenticationForceLogoutR : BaseR
+public class AuthenticationForceLogoutR : IdBaseR
 {
 }

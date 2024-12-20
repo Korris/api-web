@@ -49,7 +49,7 @@ public class AuthenticationForceLogoutH : BaseH, IRequestHandler<AuthenticationF
 
         var data = new { SessionId = request.SessionId.ToString() };
 
-        var userId = request.UserId.ToString() + "";
+        var userId = request.IsAdministrator ? request.Id.ToString() + "" : request.UserId.ToString() + "";
         await _hubContext.Clients.Group(userId).SendAsync(RealTimeTopic.ReceiveForceLogout, JsonConvert.SerializeObject(data), cancellationToken);
 
         return res.SetSuccess(data);
