@@ -68,6 +68,11 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
         List<string> codes = [];
         if (otp != null) // active 2FA
         {
+            if (ett.IsActive)
+            {
+                return res.SetError(nameof(E004), E004);
+            }
+
             var secretKey = _aes.DecryptText(ett.SecretKey);
             var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
             var otpGenerator = new Totp(secretKeyBytes);
@@ -95,6 +100,11 @@ public class UserAuthenticatorUpdateH : BaseH, IRequestHandler<UserAuthenticator
         }
         else // enable/disable for Login or Transaction
         {
+            if (!ett.IsActive)
+            {
+                return res.SetError(nameof(E004), E004);
+            }
+
             ett.Update(request.IsLogin, request.IsTransaction, userId);
             isMatch = true;
         }

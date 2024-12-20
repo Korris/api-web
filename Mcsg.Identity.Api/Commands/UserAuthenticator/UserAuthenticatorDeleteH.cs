@@ -61,6 +61,11 @@ public class UserAuthenticatorDeleteH : BaseH, IRequestHandler<UserAuthenticator
             var t = new List<DicDto> { new() { Key = nameof(userId).ToCamelCase(), Value = userId } };
             return res.SetError(nameof(E002), E002, t);
         }
+
+        if (!ett.IsActive)
+        {
+            return res.SetError(nameof(E005), E005);
+        }
         #endregion
 
         var secretKey = _aes.DecryptText(ett.SecretKey);
