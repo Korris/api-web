@@ -169,13 +169,16 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         if (!string.IsNullOrEmpty(item.SubPostResourceStr) && item.TotalResource > 0)
         {
             var subPostResources = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostResourceStr);
+            var subPostHashIds = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostStr);
             var resourceResponses = subPostResources?.Where(p => p != null).OrderBy(p => p.Order).ToList() ?? [];
             item.Resources = [];
 
-            foreach (var i in resourceResponses)
+            for (int i = 0; i < resourceResponses.Count; i++)
             {
-                i.Url = await _sc.GetCdnUrlAsync(i.Url, i.BucketName, i.MinioInstance, i.Type);
-                item.Resources.Add(i);
+                var resource = resourceResponses[i];
+                resource.Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type);
+                resource.SubPostHashId = subPostHashIds[i].HashId;
+                item.Resources.Add(resource);
             }
         }
         else if (item.Link != null)

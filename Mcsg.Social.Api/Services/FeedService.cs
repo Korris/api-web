@@ -786,7 +786,7 @@ public partial class FeedService : IFeedService
             IsCurrentUserAuthor = isMySelf
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
-
+        var subPostHashIds = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostStr);
         #region Mapping with db query list
         if (item.TotalResource > 0 && !string.IsNullOrEmpty(item.SubPostResourceStr))
         {
@@ -808,7 +808,10 @@ public partial class FeedService : IFeedService
                 }
 
                 i.Url = _sc.GetCdnUrl(i.Url, i.BucketName, i.MinioInstance, i.Type);
-
+                if (subPostHashIds.Any())
+                {
+                    i.SubPostHashId = subPostHashIds.FirstOrDefault(p => p.Id == i.SubPostId)?.HashId;
+                }
                 itemResponse.Resources.Add(i);
             }
         }
