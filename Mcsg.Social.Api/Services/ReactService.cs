@@ -54,10 +54,18 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         };
 
         var ett = await GetReactionByUser(request);
+
+        var authorId = postId != Guid.Empty
+            ? await GetUserIdByPostId(postId)
+            : await GetUserIdByPostId(targetId);
+
+        bool isReactNotification = authorId != userId;
+        bool isChange = false;
+        bool newReaction = false;
+
         if (ett != null)
         {
             response.ReactionId = ett.Id;
-            bool isChange = false;
             if (ett.IsDelete)
             {
                 ett.IsDelete = false;
@@ -76,9 +84,6 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
                 // Update when revert delete or update new type
                 await _context.SaveChangesAsync(default);
 
-                // Send Notification
-                await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
-
                 response.ReactionId = ett.Id;
                 response.IsDeleted = ett.IsDelete;
             }
@@ -88,12 +93,16 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
             ett = await AddNewReaction(targetId, type, userId);
             if (ett != null)
             {
-                await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
                 await AddCountQueue(targetId);
 
+                newReaction = true;
                 response.ReactionId = ett.Id;
                 response.IsDeleted = ett.IsDelete;
             }
+        }
+        if ((isChange || newReaction) && isReactNotification)
+        {
+            await SendReactNotificationAsync(ett.Id, request, targetId, type, isReply);
         }
 
         return response;
@@ -290,6 +299,14 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
                     break;
                 }
         }
+    }
+
+    private async Task<Guid> GetUserIdByPostId(Guid postId)
+    {
+        return await _context.Available<SocialPost>(false)
+            .Where(p => p.Id == postId)
+            .Select(p => p.UserId)
+            .FirstOrDefaultAsync();
     }
 
     #region -- Fields --
