@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mcsg.Social.Api.Commands;
+namespace Mcsg.Social.Api.Queries;
 
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -78,6 +78,7 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
                                   ExpiredBlock = socialReport.ExpiredBlock,
                                   ReasonType = socialReport.ReasonType,
                                   ReasonText = socialReport.ReasonText,
+                                  Permission = socialPost.Permission,
                               })
                            .FirstOrDefaultAsync(cancellationToken);
                 break;
@@ -142,6 +143,7 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
                                   ExpiredBlock = report.ExpiredBlock,
                                   ReasonType = report.ReasonType,
                                   ReasonText = report.ReasonText,
+                                  Permission = post.Permission
                               })
                               .FirstOrDefaultAsync(cancellationToken);
                 break;
@@ -183,6 +185,7 @@ public class ReportViewH : BaseH, IRequestHandler<ReportViewR, SingleResponse>
                                   ExpiredBlock = report.ExpiredBlock,
                                   ReasonType = report.ReasonType,
                                   ReasonText = report.ReasonText,
+                                  Permission = post.Permission
                               })
                               .FirstOrDefaultAsync(cancellationToken);
                 break;

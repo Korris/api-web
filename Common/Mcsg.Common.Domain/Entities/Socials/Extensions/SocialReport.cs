@@ -171,6 +171,11 @@ partial class SocialReport
         /// </summary>
         public string? ThumbnailUrl { get; set; }
 
+        /// <summary>
+        /// Permission
+        /// </summary>
+        public PostPermission Permission { get; set; }
+
         #endregion
     }
 

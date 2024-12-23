@@ -4,6 +4,7 @@ namespace Mcsg.Social.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
+using Queries;
 using Requests;
 
 /// <summary>
