@@ -64,6 +64,21 @@ public class Validator
     public const string Equal = "does not match";
 
     /// <summary>
+    /// After message
+    /// </summary>
+    public const string After = "must be after";
+
+    /// <summary>
+    /// Greater than message
+    /// </summary>
+    public const string GreaterThan = "must be greater than";
+
+    /// <summary>
+    /// Less than message
+    /// </summary>
+    public const string LessThan = "must be less than";
+
+    /// <summary>
     /// User name
     /// </summary>
     public class UserName

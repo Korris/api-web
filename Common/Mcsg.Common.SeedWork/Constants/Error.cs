@@ -428,6 +428,31 @@ public static class Error
     /// </summary>
     public const string E705 = "The minimum transaction amount must be greater than or equal to 100.";
 
+    /// <summary>
+    /// Transaction status
+    /// </summary>
+    public const string E706 = "Transaction status is incorrect.";
+
+    /// <summary>
+    /// Invalid from date
+    /// </summary>
+    public const string E707 = "From date must be greater than utc now";
+
+    /// <summary>
+    /// Cannot update
+    /// </summary>
+    public const string E708 = "Cannot update please create new data";
+
+    /// <summary>
+    /// Cannot delete
+    /// </summary>
+    public const string E709 = "Cannot delete please create new data";
+
+    /// <summary>
+    /// Invalid value
+    /// </summary>
+    public const string E710 = "The value must be greater than or equal 0";
+
     #endregion
 
     #region -- E9xx --
