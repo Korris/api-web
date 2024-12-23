@@ -547,7 +547,7 @@ partial class Notification
         public Guid? LocationId { get; set; }
         public string LocationHashId { get; set; } = default!;
         public NotificationEntityType EntityType { get; set; }
-        public string? EntityTypeString => EntityType.ToString();
+        public string? EntityTypeName => EntityType.ToString();
         public Guid? EntityId { get; set; }
         public string EntityHashId { get; set; } = default!;
         public NotificationAction Action { get; set; }

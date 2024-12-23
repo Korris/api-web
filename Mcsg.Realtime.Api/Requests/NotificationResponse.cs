@@ -1,4 +1,6 @@
-﻿namespace Mcsg.Realtime.Api.Requests;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Realtime.Api.Requests;
 
 using Common.Core.Enums;
 
@@ -23,4 +25,7 @@ public class NotificationResponse
     public ReactionType ReactionType { get; set; }
     public string? Amount { get; set; }
     public string? ReferenceNumber { get; set; }
+    [JsonIgnore]
+    public NotificationEntityType? EntityType { get; set; }
+    public string? EntityTypeName => EntityType.ToString();
 }

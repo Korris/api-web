@@ -1569,6 +1569,7 @@ public class NotificationService : BaseS, INotificationService
         response.ActorId = ett.ReportUserId;
         response.CreatedOn = noti.CreatedOn;
         response.NotificationType = notiType;
+        response.EntityType = entityType;
 
         await _hubcontext.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
