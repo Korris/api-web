@@ -61,6 +61,11 @@ public class UserRecoveryUpdateH : BaseH, IRequestHandler<UserRecoveryUpdateR, S
             return res.SetError(nameof(E303), E303);
         }
 
+        if (user.IsDelete)
+        {
+            return res.SetError(nameof(E305), E305);
+        }
+
         var isCorrectPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isCorrectPassword)
         {
