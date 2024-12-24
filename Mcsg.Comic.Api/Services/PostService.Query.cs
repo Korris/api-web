@@ -253,7 +253,7 @@ LIMIT 1
                                 ) postview ON postview.""EntityId"" = p.""Id""
                             WHERE NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) [AddNewUserNameContidion]
                             AND p.""Status"" = ANY (@PostStatus)
-                            [Permission]
+                            AND p.""Permission""= @PostPermission
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",

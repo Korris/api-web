@@ -402,7 +402,8 @@ public partial class PostService : BaseMinioS, IPostService
                 PageSize = 10,
                 Offet = 0,
                 LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                PostStatus = StatusUtils.PostStatusInt
+                PostStatus = StatusUtils.PostStatusInt,
+                PostPermission = (int)PostPermission.Public,
             });
         result = new PostSeriesAllTopResponse();// MappingTopSeries(dbFeed);
         var listHit = dbFeed.Where(x => x.SelectType == PostSeriesSelectedType.Hit).ToList();
@@ -589,7 +590,8 @@ public partial class PostService : BaseMinioS, IPostService
                     LastWeek = (DateTime.UtcNow.AddDays(-7)),
                     PageSize = loadReq.PageSize,
                     Offet = offset,
-                    PostStatus = (int)PostStatus.Public
+                    PostStatus = (int)PostStatus.Public,
+                    PostPermission = (int)PostPermission.Public,
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -622,6 +624,7 @@ public partial class PostService : BaseMinioS, IPostService
                     PageSize = loadReq.PageSize,
                     Offet = offset,
                     PostStatus = StatusUtils.PostStatusInt,
+                    PostPermission = (int)PostPermission.Public,
                     TagName = tagName
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -656,6 +659,7 @@ public partial class PostService : BaseMinioS, IPostService
                     loadReq.PageSize,
                     Offet = offset,
                     PostStatus = StatusUtils.PostStatusInt,
+                    PostPermission = (int)PostPermission.Public,
                     ProfileName = profileName,
                     Hide = loadReq.Hides,
                     MySelf = isMySelf
@@ -710,6 +714,7 @@ public partial class PostService : BaseMinioS, IPostService
                     PageSize = input.PageSize,
                     Offet = offset,
                     PostStatus = StatusUtils.PostStatusInt,
+                    PostPermission = (int)PostPermission.Public,
                     TagName = input.TagName,
                     Hide = input.Hides
                 });
@@ -865,6 +870,7 @@ public partial class PostService : BaseMinioS, IPostService
                     IsAccessPrivate = false,
                     PageSize = number,
                     PostStatus = StatusUtils.PostStatusInt,
+                    PostPermission = (int)PostPermission.Public,
                     Hide = req.Hides
                 });
 
@@ -1058,7 +1064,8 @@ public partial class PostService : BaseMinioS, IPostService
                     PageSize = loadReq.PageSize,
                     Offet = offset,
                     Hide = loadReq.Hides,
-                    PostStatus = StatusUtils.PostStatusInt
+                    PostStatus = StatusUtils.PostStatusInt,
+                    PostPermission = (int)PostPermission.Public
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
 
@@ -1123,6 +1130,7 @@ public partial class PostService : BaseMinioS, IPostService
                     Hide = loadReq.Hides,
                     PostStatus = StatusUtils.PostStatusInt,
                     ProfileName = loadReq.UserName,
+                    PostPermission = (int)PostPermission.Public,
                     MySelf = true,
                 });
         var items = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
@@ -1546,7 +1554,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         string topSelectPostIdQuery = "";
         string countTopQuery = PaginationCountResult;
-        var permission = $@"AND p.""Permission"" != 1";
+
         switch (selectedType)
         {
             case PostSeriesSelectedType.Hit:
@@ -1587,7 +1595,6 @@ public partial class PostService : BaseMinioS, IPostService
                 }
             case PostSeriesSelectedType.ByMyself:
                 {
-                    permission = "";
                     topSelectPostIdQuery = GetMyPostIdsQuery;
                     countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetMyPostCountQuery);
                     break;
@@ -1607,8 +1614,7 @@ public partial class PostService : BaseMinioS, IPostService
         var query = GetTopAllPostAllTypeByTagQuery.Replace("[SelectPostIdsQuery]", topSelectPostIdQuery)
             .Replace("[CountResults]", countTopQuery)
             .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedOn")
-            .Replace("[Permission]", permission);
+            .Replace("[OrderBy]", "CreatedOn");
 
         if (userName != null && userName != "")
         {
@@ -1787,13 +1793,13 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new BadRequestException(nameof(E201), E201);
         }
-        #endregion
 
         var hasSubPost = await _context.Available<DocumentSubPost>().AnyAsync(p => p.PostId == post.Id && p.Order == request.Order);
         if (hasSubPost)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_EXISTED, ApiErrorMessage.CHAPTER_EXISTED);
         }
+        #endregion
 
         var newOrder = await DetermineOrder(post.Id, request.Order, request.IsAutoGenerateOrder);
 
