@@ -21,7 +21,7 @@ public class UserProfileUpdateV : AbstractValidator<UserProfileUpdateR>
         var t = nameof(ProfileName);
         RuleFor(p => p.NewProfileName.Triz())
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage($"{t} {NotEmpty}")
+            .NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
             .MinimumLength(ProfileName.Min).WithMessage($"{t} {MinimumLength} {ProfileName.Min}")
             .MaximumLength(ProfileName.Max).WithMessage($"{t} {MaximumLength} {ProfileName.Max}")
             .Matches(ProfileName.Regex).WithMessage($"{t} {ProfileName.Message}");

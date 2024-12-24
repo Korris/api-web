@@ -18,10 +18,10 @@ public class ReportViewV : AbstractValidator<ReportViewR>
     public ReportViewV()
     {
         var t = "EntityId";
-        RuleFor(p => p.Id).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Id).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
         t = "EntityType";
-        RuleFor(p => p.NotificationType).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.NotificationType).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

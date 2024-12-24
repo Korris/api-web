@@ -18,7 +18,7 @@ public class UserAuthenticatorDeleteV : AbstractValidator<UserAuthenticatorDelet
     public UserAuthenticatorDeleteV()
     {
         var t = "OtpCode";
-        RuleFor(p => p.OtpCode.Triz()).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.OtpCode.Triz()).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

@@ -31,7 +31,7 @@ public class UserReferralCreateV : AbstractValidator<UserReferralCreateR>
     public UserReferralCreateV()
     {
         var t = "ReferralCode";
-        RuleFor(p => p.ReferralCode).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.ReferralCode).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

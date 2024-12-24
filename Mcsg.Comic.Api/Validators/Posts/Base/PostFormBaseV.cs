@@ -33,10 +33,11 @@ public class PostFormBaseV : AbstractValidator<PostFormBase>
     public PostFormBaseV()
     {
         var t = "Content";
-        RuleFor(p => p.Content).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Content).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
+        t = "Tags";
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
-        RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage("Duplicate hashtags are not allowed.");
+        RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage(DuplicateTag).WithName(t);
     }
 
     /// <summary>

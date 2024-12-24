@@ -18,7 +18,7 @@ public class FeedbackCreateV : AbstractValidator<FeedbackCreateR>
     public FeedbackCreateV()
     {
         var t = "Email";
-        RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}")
+        RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
             .EmailAddress().WithMessage("Invalid email format");
     }
 

@@ -59,6 +59,11 @@ public class Validator
     public const string Tag = "Invalid hashtag format. Hashtags must start with #, contain no spaces or special characters and be 1-33 characters long.";
 
     /// <summary>
+    /// DuplicateTag
+    /// </summary>
+    public const string DuplicateTag = "Duplicate hashtags are not allowed.";
+
+    /// <summary>
     /// Equal message
     /// </summary>
     public const string Equal = "does not match";

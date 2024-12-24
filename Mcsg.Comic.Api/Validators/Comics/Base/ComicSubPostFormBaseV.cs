@@ -18,17 +18,17 @@ public class ComicSubPostFormBaseV : AbstractValidator<ComicSubPostFormBaseR>
     public ComicSubPostFormBaseV()
     {
         var t = "Title";
-        RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}")
+        RuleFor(p => p.Title).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
             .MaximumLength(Title.Max).WithMessage($"{t} {MaximumLength} {Title.Max}");
 
         t = "Order";
-        RuleFor(p => p.Order).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Order).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
         t = "PublishDate";
-        RuleFor(p => p.PublishDate).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.PublishDate).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
         t = "Permission";
-        RuleFor(p => p.Permission).NotNull().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Permission).NotNull().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

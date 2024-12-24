@@ -16,6 +16,6 @@ public class ResourceViewV : AbstractValidator<ResourceViewR>
     public ResourceViewV()
     {
         var t = "PostHashId";
-        RuleFor(p => p.PostHashId).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.PostHashId).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 }

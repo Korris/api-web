@@ -21,10 +21,10 @@ public class AuthenticationFormBaseV : AbstractValidator<AuthenticationFormBaseR
         When(p => string.IsNullOrWhiteSpace(p.Email) && string.IsNullOrWhiteSpace(p.Phone), () =>
         {
             var t = nameof(Email);
-            RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}");
+            RuleFor(p => p.Email).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
             t = "Phone";
-            RuleFor(p => p.Phone).NotEmpty().WithMessage($"{t} {NotEmpty}");
+            RuleFor(p => p.Phone).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
         });
 
         When(p => !string.IsNullOrWhiteSpace(p.Phone), () =>

@@ -20,7 +20,7 @@ public class RatingCreateV : AbstractValidator<RatingCreateR>
         var t = "Email";
 
         t = "Satisfaction";
-        RuleFor(p => p.Satisfaction).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Satisfaction).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

@@ -22,12 +22,12 @@ public class AuthenticationRegisterUserV : AbstractValidator<AuthenticationRegis
         When(p => p.IsForAdmin, () =>
         {
             var t = nameof(Password);
-            RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}")
+            RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
                 .MinimumLength(Password.Min).WithMessage($"{t} {MinimumLength} {Password.Min}")
                 .MaximumLength(Password.Max).WithMessage($"{t} {MaximumLength} {Password.Max}");
 
             t = "ConfirmPassword";
-            RuleFor(p => p.ConfirmPassword).NotEmpty().WithMessage($"{t} {NotEmpty}")
+            RuleFor(p => p.ConfirmPassword).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
                 .MinimumLength(Password.Min).WithMessage($"{t} {MinimumLength} {Password.Min}")
                 .MaximumLength(Password.Max).WithMessage($"{t} {MaximumLength} {Password.Max}")
                 .Equal(x => x.Password).WithMessage($"{t} {Equal}");

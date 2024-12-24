@@ -18,7 +18,7 @@ public class AuthenticationDeleteUserV : AbstractValidator<AuthenticationDeleteU
     public AuthenticationDeleteUserV()
     {
         var t = nameof(Password);
-        RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}");
+        RuleFor(p => p.Password).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
     }
 
     #endregion

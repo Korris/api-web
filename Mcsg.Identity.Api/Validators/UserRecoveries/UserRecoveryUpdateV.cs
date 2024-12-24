@@ -18,7 +18,7 @@ public class UserRecoveryUpdateV : AbstractValidator<UserRecoveryUpdateR>
     public UserRecoveryUpdateV()
     {
         var t = "Password";
-        RuleFor(p => p.Password.Triz()).Cascade(CascadeMode.Stop).NotEmpty().WithMessage($"{t} {NotEmpty}")
+        RuleFor(p => p.Password.Triz()).Cascade(CascadeMode.Stop).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
             .MinimumLength(Password.Min).WithMessage($"{t} {MinimumLength} {Password.Min}")
             .MaximumLength(Password.Max).WithMessage($"{t} {MaximumLength} {Password.Max}");
     }
