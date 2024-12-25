@@ -124,6 +124,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
         ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, userId);
+        ett.BuildCustomNote(request.ShortCustomNote);
 
         var result = new FeedPostDto
         {
