@@ -663,6 +663,9 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user.DeletedBy = null;
 
             await _userManager.UpdateAsync(user);
+
+            _ = Task.Run(async () => await SyncDeleteRestoreToAna(user.Id, EntityStatus.Enabled));
+            _ = Task.Run(async () => await SyncDeleteRestoreToWal(user.Id, false));
         }
 
         // If otp is valid, email will be confirmed and then reset password
@@ -780,7 +783,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         await _userManager.UpdateAsync(user);
 
-        _ = Task.Run(async () => await SyncDeleteToAna(user.Id));
+        _ = Task.Run(async () => await SyncDeleteRestoreToAna(user.Id, EntityStatus.Deleted));
+        _ = Task.Run(async () => await SyncDeleteRestoreToWal(user.Id, true));
 
         return true;
     }
@@ -808,6 +812,15 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 var data = await connection.QueryAsync(sql, param);
             }
 
+            postIds = await _context.Available<DocumentPost>().Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
+            now = DateTime.UtcNow;
+            sql = "CALL document.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
+            foreach (var i in postIds)
+            {
+                var param = new { PostId = i, ModifiedBy = userId, ModifiedOn = now, IsDelete = isDelete };
+                var data = await connection.QueryAsync(sql, param);
+            }
+
             postIds = await _context.Available<SocialPost>().Where(p => p.UserId == userId).Select(p => p.Id).ToListAsync();
             now = DateTime.UtcNow;
             sql = "CALL social.sp_delete_restore_post_related_data(@PostId, @ModifiedBy, @ModifiedOn, @IsDelete);";
@@ -825,6 +838,14 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 var param = new { PostId = i, ModifiedBy = userId, ModifiedOn = now, IsDelete = isDelete };
                 var data = await connection.QueryAsync(sql, param);
             }
+
+            now = DateTime.UtcNow;
+            sql = @"CALL ""system"".sp_delete_restore_notification_and_related_data(@UserId, @ModifiedOn, @IsDelete);";
+            await connection.QueryAsync(sql, new { UserId = userId, ModifiedOn = now, IsDelete = isDelete });
+
+            now = DateTime.UtcNow;
+            sql = "CALL identity.sp_delete_user_and_related_data(@UserId, @ModifiedOn, @IsDelete);";
+            await connection.QueryAsync(sql, new { UserId = userId, ModifiedOn = now, IsDelete = isDelete });
 
             await connection.CloseAsync();
         }
@@ -1099,23 +1120,48 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         return res;
     }
 
-    private async Task<UserDeleteRsp> SyncDeleteToAna(Guid id)
+    private async Task<AnalyticDeleteRsp> SyncDeleteRestoreToAna(Guid userId, EntityStatus status)
     {
-        var res = new UserDeleteRsp { Success = true };
+        var res = new AnalyticDeleteRsp();
 
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
-            var client = new UserProto.UserProtoClient(channel);
+            var client = new AnalyticProto.AnalyticProtoClient(channel);
 
-            var request = new UserDeleteReq
+            var request = new AnalyticDeleteReq
             {
-                UserId = id.ToString()
+                UserId = userId.ToString(),
+                Status = (int)status
             };
-            var rsp = await client.DeleteAsync(request);
 
-            res.Message = rsp.Message;
-            res.Id = rsp.Id;
+            return await client.DeleteAsync(request);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<UserWalletDeleteRsp> SyncDeleteRestoreToWal(Guid userId, bool isDelete)
+    {
+        var res = new UserWalletDeleteRsp();
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Wallet.Wallet!);
+            var client = new UserWalletProto.UserWalletProtoClient(channel);
+
+            var request = new UserWalletDeleteReq
+            {
+                UserId = userId.ToString(),
+                IsDelete = isDelete
+            };
+
+            return await client.DeleteAsync(request);
         }
         catch (Exception ex)
         {

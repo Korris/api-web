@@ -8,6 +8,7 @@ package wallet;
 
 service UserWalletProto {
     rpc Create (UserWalletCreateReq) returns (BaseRsp);
+    rpc Delete (UserWalletDeleteReq) returns (UserWalletDeleteRsp);
     rpc GetTransactionInfo (TransactionGetReq) returns (BaseRsp);
 }
 
@@ -23,8 +24,18 @@ message UserWalletCreateReq {
     google.protobuf.StringValue profileName = 2;
 }
 
+message UserWalletDeleteReq {
+    string userId = 1;
+    bool isDelete = 2;
+}
+
 message TransactionGetReq {
     string transactionId = 1;
+}
+
+message UserWalletDeleteRsp {
+    bool success = 1;
+    string message = 2;
 }
 
 message TransactionProtoDto {
