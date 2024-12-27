@@ -44,5 +44,25 @@ public interface ISetting : ISettingBase
     /// </summary>
     bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// Percentage of feed taken from database
+    /// </summary>
+    double PercentFeed { get; set; }
+
+    /// <summary>
+    /// Percentage of story taken from database
+    /// </summary>
+    double PercentStory { get; set; }
+
+    /// <summary>
+    /// Percentage of comic taken from database
+    /// </summary>
+    double PercentComic { get; set; }
+
+    /// <summary>
+    /// Number of posts taken from database
+    /// </summary>
+    int NumberOfPosts { get; set; }
+
     #endregion
 }

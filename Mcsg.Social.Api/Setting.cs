@@ -48,6 +48,26 @@ public class Setting : SettingBase, ISetting
     /// </summary>
     public bool AllowSendingEmail { get; set; }
 
+    /// <summary>
+    /// Percentage of feed taken from database
+    /// </summary>
+    public double PercentFeed { get; set; }
+
+    /// <summary>
+    /// Percentage of story taken from database
+    /// </summary>
+    public double PercentStory { get; set; }
+
+    /// <summary>
+    /// Percentage of comic taken from database
+    /// </summary>
+    public double PercentComic { get; set; }
+
+    /// <summary>
+    /// Number of posts taken from database
+    /// </summary>
+    public int NumberOfPosts { get; set; }
+
     #endregion
 
     #region -- Methods --

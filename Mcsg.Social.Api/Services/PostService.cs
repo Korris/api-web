@@ -151,36 +151,29 @@ public partial class PostService : BaseMinioS, IPostService
     {
         try
         {
-            //TODO - Will get the percent from config later
-            // Get from DB
-            var value = 200;
-            var feedPercent = .6f;
-            var storyPercent = .1f;
-            var comicPercent = .3f;
+            var numberOfPosts = _setting.NumberOfPosts;
+            var percentFeed = _setting.PercentFeed;
+            var percentStory = _setting.PercentStory;
+            var percentComic = _setting.PercentComic;
+            var now = DateTime.UtcNow;
+            var frDate = now.StartOfDayUtc();
+            var toDate = now.EndOfDayUtc();
 
-            // Conver to amount
-            var feed = (int)Math.Round(value * feedPercent, 0);
-            var story = (int)Math.Round(value * storyPercent, 0);
-            var comic = (int)Math.Round(value * comicPercent, 0);
-            var param = new
+            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, (float)percentFeed, (float)percentComic, (float)percentStory, frDate.ToString(), toDate.ToString());
+
+            var listresults = new List<LatestPostsResponse>();
+
+            foreach (var post in mostEngagedPosts.Items)
             {
-                feed,
-                story,
-                comic,
-                feedPercent,
-                storyPercent,
-                comicPercent
-            };
-
-            var query = GetLatestPostsDataByTypeQuery;
-            query = query.Replace("[GetTotalCount]", GetCountPostDataByTypeQuery);
-
-            var multi = await _postCommentRepository.Connection.QueryMultipleAsync(query, param);
-
-            var listposts = await multi.ReadAsync<LatestPostsResponse>().ConfigureAwait(false);
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-
-            return new ListIdForHomePage() { TotalItems = totalItems, LatestPostsResponses = listposts.ToList() };
+                listresults.Add(new LatestPostsResponse
+                {
+                    PostId = post.PostId.ToGuid(),
+                    HashId = post.HashId,
+                    Type = (PostType)post.Type,
+                    Point = post.Point
+                });
+            }
+            return new ListIdForHomePage() { TotalItems = mostEngagedPosts.TotalRecords, LatestPostsResponses = listresults.ToList() };
         }
         catch (Exception ex)
         {
@@ -691,7 +684,7 @@ public partial class PostService : BaseMinioS, IPostService
                 {
                     Ids = input.PostRandomIds?.ToList(),
                     PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
-                    TargetDate = targetDate.Value.Date // Ensure a non-null value is used
+                    TargetDate = targetDate.Value.Date // Ensure mostEngagedPosts non-null numberOfPosts is used
                 });
 
                 results.AddRange(subPostIds); // Add new results to the list
@@ -740,7 +733,7 @@ public partial class PostService : BaseMinioS, IPostService
                 {
                     Ids = input.PostRandomIds?.ToList(),
                     PageSize = input.AmountItem - results.Count, // Get the remaining amount needed
-                    TargetDate = targetDate.Value.Date // Ensure a non-null value is used
+                    TargetDate = targetDate.Value.Date // Ensure mostEngagedPosts non-null numberOfPosts is used
                 });
 
                 results.AddRange(postIds); // Add new results to the list
@@ -777,6 +770,38 @@ public partial class PostService : BaseMinioS, IPostService
             select a
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
+    }
+    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, float feedPercent, float comicPercent, float storyPercent, string frDate, string toDate)
+    {
+        var res = new TrackingSummarySearchRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new TrackingSummaryProto.TrackingSummaryProtoClient(channel);
+
+            var request = new TrackingSummarySearchReq
+            {
+                Quantity = quantity,
+                FeedPercent = feedPercent,
+                ComicPercent = comicPercent,
+                StoryPercent = storyPercent,
+                FrDate = frDate,
+                ToDate = toDate
+            };
+            var rsp = await client.SearchAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+            res.TotalRecords = rsp.TotalRecords;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     #region -- Post --

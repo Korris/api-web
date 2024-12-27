@@ -1,0 +1,35 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package tracking_summary;
+
+service TrackingSummaryProto {
+    rpc Search (TrackingSummarySearchReq) returns (TrackingSummarySearchRsp);
+}
+
+message TrackingSummarySearchReq {
+    int32 quantity = 1;
+    float feedPercent = 2;
+    float comicPercent = 3;
+    float storyPercent = 4;
+    google.protobuf.StringValue  frDate = 5;
+    google.protobuf.StringValue  toDate = 6;
+}
+
+message TrackingSummarySearchRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSummaryDto items = 4;
+}
+
+message TrackingSummaryDto {
+    string postId = 1;
+    string hashId = 2;
+    int32 type = 3;
+    int32 point = 4;
+    google.protobuf.StringValue createdOn = 6;
+}

@@ -1041,96 +1041,6 @@ sp.""IsEnableComment""
             }
         }
 
-        private string GetLatestPostsDataByTypeQuery
-        {
-            get
-            {
-                return @$"WITH ranked_feed AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId"",
-        ROW_NUMBER() OVER (ORDER BY ""CreatedOn"" DESC) AS type_rank
-    FROM social.""SocialPosts""
-    WHERE ""IsDelete"" = false
-    AND ""Type"" = 0
-    AND ""Status"" IN(1,2)
-),
-ranked_story AS (
-    SELECT sp.""Id"", 
-        GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) AS ""CreatedOn"", 
-        sp.""HashId"",
-        ROW_NUMBER() OVER (ORDER BY GREATEST(sp.""CreatedOn"", COALESCE(MAX(ssp.""CreatedOn""), sp.""CreatedOn"")) DESC) AS type_rank
-    FROM story.""StoryPosts"" sp
-    LEFT JOIN story.""StorySubPosts"" ssp ON sp.""Id"" = ssp.""PostId""
-    WHERE sp.""IsDelete"" = false
-    AND ssp.""IsDelete"" = false
-    AND sp.""Type"" = 1
-    AND sp.""Status"" IN(1,2)
-    AND sp.""Permission"" = 0
-    GROUP BY sp.""Id"", sp.""CreatedOn"", sp.""HashId""
-),
-ranked_comic AS (
-    SELECT cp.""Id"", 
-        GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) AS ""CreatedOn"", 
-        cp.""HashId"",
-        ROW_NUMBER() OVER (ORDER BY GREATEST(cp.""CreatedOn"", COALESCE(MAX(csp.""CreatedOn""), cp.""CreatedOn"")) DESC) AS type_rank
-    FROM comic.""ComicPosts"" cp
-    LEFT JOIN comic.""ComicSubPosts"" csp ON cp.""Id"" = csp.""PostId""
-    WHERE cp.""IsDelete"" = false
-    AND csp.""IsDelete"" = false
-    AND cp.""Type"" = 2
-    AND cp.""Status""  IN(1,2)
-    AND cp.""Permission"" = 0
-    GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
-),
-limited_feed AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId""
-    FROM ranked_feed
-    WHERE type_rank <= @feed
-),
-limited_story AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId""
-    FROM ranked_story
-    WHERE type_rank <= @story
-),
-limited_comic AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId""
-    FROM ranked_comic
-    WHERE type_rank <= @comic
-),
-combined_posts AS (
-    SELECT ""Id"", ""CreatedOn"", ""HashId"", 0 AS ""Type"" FROM limited_feed
-    UNION ALL
-    SELECT ""Id"", ""CreatedOn"", ""HashId"", 1 AS ""Type"" FROM limited_story
-    UNION ALL
-    SELECT ""Id"", ""CreatedOn"", ""HashId"", 2 AS ""Type"" FROM limited_comic
-),
-numbered_posts AS (
-    SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
-        ROW_NUMBER() OVER (PARTITION BY ""Type"" ORDER BY ""CreatedOn"" DESC) AS num
-    FROM combined_posts
-),
-grouped_posts AS (
-    SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
-        CEILING(CAST(num AS FLOAT) / 
-        CASE
-            WHEN ""Type"" = 0 THEN @feedPercent * 10
-            WHEN ""Type"" = 1 THEN @storyPercent * 10
-            WHEN ""Type"" = 2 THEN @comicPercent * 10
-        END) AS group_number
-    FROM numbered_posts
-),
-final_grouped_posts AS (
-    SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"", group_number,
-        ROW_NUMBER() OVER (PARTITION BY group_number ORDER BY ""CreatedOn"" DESC) AS row_num
-    FROM grouped_posts
-)
-SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"", group_number
-FROM final_grouped_posts
-WHERE row_num <= 10
-ORDER BY group_number, row_num;
-
-[GetTotalCount]";
-            }
-        }
         private string GetLatestPostsByTagQuery
         {
             get
@@ -1237,25 +1147,6 @@ ORDER BY group_number, row_num;
                                                    FROM social.""SocialPosts""
                                                    WHERE ""IsDelete"" = false 
                                                    AND ""Status"" = {(int)PostStatus.Public}";
-
-        private string GetCountPostDataByTypeQuery => $@"SELECT (
-                                                    (SELECT COUNT(*) 
-                                                   FROM ""comic"".""ComicPosts""
-                                                   WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" IN(1,2)
-                                                   AND ""Permission"" = 1)
-                                                    +
-                                                    (SELECT COUNT(*) 
-                                                   FROM ""story"".""StoryPosts""
-                                                   WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" IN(1,2)
-                                                   AND ""Permission"" = 1)
-                                                    +
-                                                    (SELECT COUNT(*)
-                                                   FROM social.""SocialPosts""
-                                                   WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" IN(1,2))
-                                                    )";
 
         private string GetCountPostByTagQuery => $@"SELECT (
                                                     (SELECT COUNT(*) 
