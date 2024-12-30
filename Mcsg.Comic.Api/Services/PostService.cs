@@ -786,7 +786,7 @@ public partial class PostService : BaseMinioS, IPostService
                                   to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
                                   FROM ""comic"".""ComicPosts""  p
                                   JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
-                                  LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" 
+                                  LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" AND tp.""IsDelete"" = FALSE 
                                   LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
                                   LEFT JOIN ""comic"".""ComicPostComments"" pc on pc.""PostId""  = p.""Id"" 
                                   LEFT JOIN LATERAL 

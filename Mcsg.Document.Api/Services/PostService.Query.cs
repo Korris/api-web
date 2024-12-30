@@ -481,7 +481,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""document"".""DocumentPosts"" qpost1        
-                                 INNER JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id"" AND qtp.""PostId"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
@@ -499,7 +499,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT qpost1.""Id""
                                  FROM ""document"".""DocumentPosts"" qpost1
-                                 INNER JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id"" AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus) AND qpost1.""IsDelete"" = false                            

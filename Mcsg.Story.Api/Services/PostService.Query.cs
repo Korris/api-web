@@ -606,9 +606,10 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""story"".""StoryPosts"" qpost1        
-                                 INNER JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id"" AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType AND qpost1.""Status"" = @PostStatus
+                                WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType
+                                AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
                                 GROUP BY qpost1.""Id"", qpost1.""ModifiedOn""
@@ -623,10 +624,10 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT qpost1.""Id""
                                  FROM ""story"".""StoryPosts"" qpost1
-                                 INNER JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""story"".""StoryTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""  AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
-AND qpost1.""Status"" = @PostStatus AND qpost1.""IsDelete"" = false                            
+                                AND qpost1.""Status"" = ANY( @PostStatus ) AND qpost1.""IsDelete"" = false                            
                                 GROUP BY qpost1.""Id""";
             }
         }

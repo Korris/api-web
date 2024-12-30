@@ -612,7 +612,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""comic"".""ComicPosts"" qpost1        
-                                 INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id"" AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
@@ -630,7 +630,7 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
             {
                 return @"SELECT qpost1.""Id""
                                  FROM ""comic"".""ComicPosts"" qpost1
-                                 INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
+                                 INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id"" AND qtp.""IsDelete"" = false
                                 INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 WHERE  qtag.""Name"" = @TagName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus) AND qpost1.""IsDelete"" = false                            
