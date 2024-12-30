@@ -10,6 +10,7 @@ public interface IAuthenticationService
     Task CheckRegisterUser(AuthenticationRegisterUserR request);
     Task<VerifyUserResponse> RegisterUser(AuthenticationRegisterUserR request);
     Task<TokenDto> LoginUser(AuthenticationLoginUserR request);
+    Task<bool> VerifyOtp(AuthenticationVerifyOtpR request);
     Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request);
     Task<bool> LogOut(BaseR request);
     Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request);

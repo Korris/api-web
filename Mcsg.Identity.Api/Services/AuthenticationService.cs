@@ -239,54 +239,15 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var signinResult = await _userManager.CheckPasswordAsync(user, request.Password);
         if (signinResult)
         {
-            var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
+            var ok = await VerifyUserAuthenticator(user.Id, request.OtpCode, request.IsRecoveryMode);
+            if (!ok)
             {
-                p.IsLogin,
-                p.SecretKey
-            }).FirstOrDefaultAsync(default);
-
-            if (userAuthenticator?.IsLogin == true)
-            {
-                if (string.IsNullOrWhiteSpace(request.OtpCode))
+                var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
+                return new TokenDto
                 {
-                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
-                    return new TokenDto
-                    {
-                        IsRequired2Fa = true,
-                        IsRecoveryButtonShowing = hasRecovery
-                    };
-                }
-
-                if (request.IsRecoveryMode == true)
-                {
-                    var encryptedCode = _aes.EncryptText(request.OtpCode);
-                    var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
-                    if (ettRecovery == null)
-                    {
-                        throw new BadRequestException(nameof(E313), E313);
-                    }
-
-                    if (ettRecovery.ModifiedOn != null)
-                    {
-                        throw new BadRequestException(nameof(E314), E314);
-                    }
-                    else
-                    {
-                        ettRecovery.Update(user.Id);
-                        await _context.SaveChangesAsync(default);
-                    }
-                }
-                else
-                {
-                    var secretKey = _aes.DecryptText(userAuthenticator.SecretKey);
-                    var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
-                    var otpGenerator = new Totp(secretKeyBytes);
-
-                    if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
-                    {
-                        throw new BadRequestException(nameof(E301), E301);
-                    }
-                }
+                    IsRequired2Fa = true,
+                    IsRecoveryButtonShowing = hasRecovery
+                };
             }
 
             user.SessionId = request.SessionId;
@@ -296,6 +257,24 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         {
             throw new ForbiddenAccessException(nameof(E304), E304);
         }
+    }
+
+    public async Task<bool> VerifyOtp(AuthenticationVerifyOtpR request)
+    {
+        var vr = new AuthenticationVerifyOtpV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToValue();
+            throw new BadRequestException(nameof(E000), t);
+        }
+
+        var userId = request.UserId;
+        if (userId == null)
+        {
+            throw new NotFoundException(nameof(E303), E303);
+        }
+
+        return await VerifyUserAuthenticator(userId.Value, request.OtpCode, request.IsRecoveryMode);
     }
 
     public async Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request)
@@ -373,54 +352,15 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 throw new ForbiddenAccessException(nameof(E309), E309);
             }
 
-            var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == user.Id).Select(p => new
+            var ok = await VerifyUserAuthenticator(user.Id, request.OtpCode, request.IsRecoveryMode);
+            if (!ok)
             {
-                p.IsLogin,
-                p.SecretKey
-            }).FirstOrDefaultAsync(default);
-
-            if (userAuthenticator?.IsLogin == true)
-            {
-                if (string.IsNullOrWhiteSpace(request.OtpCode))
+                var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
+                return new TokenDto
                 {
-                    var hasRecovery = await _context.Available<UserRecovery>(false).AnyAsync(p => p.UserId == user.Id && p.ModifiedOn == null);
-                    return new TokenDto
-                    {
-                        IsRequired2Fa = true,
-                        IsRecoveryButtonShowing = hasRecovery
-                    };
-                }
-
-                if (request.IsRecoveryMode == true)
-                {
-                    var encryptedCode = _aes.EncryptText(request.OtpCode);
-                    var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
-                    if (ettRecovery == null)
-                    {
-                        throw new BadRequestException(nameof(E313), E313);
-                    }
-
-                    if (ettRecovery.ModifiedOn != null)
-                    {
-                        throw new BadRequestException(nameof(E314), E314);
-                    }
-                    else
-                    {
-                        ettRecovery.Update(user.Id);
-                        await _context.SaveChangesAsync(default);
-                    }
-                }
-                else
-                {
-                    var secretKey = _aes.DecryptText(userAuthenticator.SecretKey);
-                    var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
-                    var otpGenerator = new Totp(secretKeyBytes);
-
-                    if (!otpGenerator.VerifyTotp(request.OtpCode, out long timeStepMatched))
-                    {
-                        throw new BadRequestException(nameof(E301), E301);
-                    }
-                }
+                    IsRequired2Fa = true,
+                    IsRecoveryButtonShowing = hasRecovery
+                };
             }
 
             user.SessionId = request.SessionId;
@@ -1184,6 +1124,66 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// VerifyUserAuthenticator
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="otpCode"></param>
+    /// <param name="isRecoveryMode"></param>
+    /// <returns></returns>
+    /// <exception cref="BadRequestException"></exception>
+    private async Task<bool> VerifyUserAuthenticator(Guid userId, string? otpCode, bool? isRecoveryMode)
+    {
+        var userAuthenticator = await _context.Available<UserAuthenticator>(false).Where(p => p.UserId == userId).Select(p => new
+        {
+            p.IsLogin,
+            p.SecretKey
+        }).FirstOrDefaultAsync(default);
+
+        if (userAuthenticator?.IsLogin != true)
+        {
+            return true;
+        }
+
+        if (string.IsNullOrWhiteSpace(otpCode))
+        {
+            return false;
+        }
+
+        if (isRecoveryMode == true)
+        {
+            var encryptedCode = _aes.EncryptText(otpCode);
+            var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+            if (ettRecovery == null)
+            {
+                throw new BadRequestException(nameof(E313), E313);
+            }
+
+            if (ettRecovery.ModifiedOn != null)
+            {
+                throw new BadRequestException(nameof(E314), E314);
+            }
+            else
+            {
+                ettRecovery.Update(userId);
+                await _context.SaveChangesAsync(default);
+            }
+        }
+        else
+        {
+            var secretKey = _aes.DecryptText(userAuthenticator.SecretKey);
+            var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
+            var otpGenerator = new Totp(secretKeyBytes);
+
+            if (!otpGenerator.VerifyTotp(otpCode, out long timeStepMatched))
+            {
+                throw new BadRequestException(nameof(E301), E301);
+            }
+        }
+
+        return true;
     }
 
     #endregion

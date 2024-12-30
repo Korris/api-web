@@ -33,6 +33,7 @@ public static class DiAuthenticationExtension
     {
         p.AddBehavior<IRequestHandler<AuthenticationForceLogoutR, SingleResponse>, AuthenticationForceLogoutH>(life);
         p.AddBehavior<IRequestHandler<AuthenticationResetPasswordR, SingleResponse>, AuthenticationResetPasswordH>(life);
+        p.AddBehavior<IRequestHandler<AuthenticationVerifyOtpR, SingleResponse>, AuthenticationVerifyOtpH>(life);
     }
 
     /// <summary>

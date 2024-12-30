@@ -514,6 +514,17 @@ public class Validator
     }
 
     /// <summary>
+    /// OtpCode
+    /// </summary>
+    public class OtpCode
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 6;
+    }
+
+    /// <summary>
     /// URL
     /// </summary>
     public class Url

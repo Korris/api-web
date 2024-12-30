@@ -59,6 +59,22 @@ public class AuthenticationController : BaseController
         return Ok(response);
     }
 
+    /// <summary>
+    /// VerifyOtp
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPost("VerifyOtp"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> VerifyOtp([FromBody] AuthenticationVerifyOtpR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = AbsoluteUri;
+
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

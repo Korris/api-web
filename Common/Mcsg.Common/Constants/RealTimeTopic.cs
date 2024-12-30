@@ -16,6 +16,7 @@ public static class RealTimeTopic
     public const string ReceiveTransactionUpdate = "ReceiveTransactionUpdate";
     public const string ReceiveSendSuccessComment = "ReceiveSendSuccessComment";
     public const string ReceiveForceLogout = "ReceiveForceLogout";
+    public const string ReceiveVerifyOtp = "ReceiveVerifyOtp";
     #endregion
 
     #region Follow

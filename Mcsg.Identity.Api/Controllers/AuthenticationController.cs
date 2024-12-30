@@ -146,6 +146,14 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("verify-otp"), Authorize]
+    public async Task<IActionResult> VerifyOtp(AuthenticationVerifyOtpR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.VerifyOtp(request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --
