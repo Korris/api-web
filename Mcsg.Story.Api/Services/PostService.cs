@@ -775,6 +775,7 @@ public partial class PostService : BaseMinioS, IPostService
                                   p.""Hide"",
                                   p.""Status"",
                                   p.""ExternalResource"",
+                                  p.""UserId"",
                                   GREATEST(p.""CreatedOn"", MAX(sp.""PublishDate"")) AS ""LatestCreatedOn"",
                                   u.""ProfileName"",
                                   u.""UserName"",
@@ -1538,7 +1539,8 @@ public partial class PostService : BaseMinioS, IPostService
             Hide = x.Hide,
             ExternalResource = x.ExternalResource,
             Status = x.Status,
-            LatestCreatedOn = x.LatestCreatedOn
+            LatestCreatedOn = x.LatestCreatedOn,
+            UserId = x.UserId,
         }).ToList();
     }
 

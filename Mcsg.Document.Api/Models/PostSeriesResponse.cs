@@ -119,4 +119,5 @@ public class PostBoxResposne
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime LatestCreatedOn { get; set; }
+    public Guid UserId { get; set; }
 }
