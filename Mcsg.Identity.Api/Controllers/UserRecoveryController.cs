@@ -52,6 +52,19 @@ public class UserRecoveryController : BaseController
         return Ok(response);
     }
 
+    /// <summary>
+    /// View
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPatch("View")]
+    public async Task<IActionResult> View([FromBody] UserRecoveryViewR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = AbsoluteUri;
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

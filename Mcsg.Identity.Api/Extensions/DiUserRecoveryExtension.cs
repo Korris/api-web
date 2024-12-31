@@ -41,6 +41,7 @@ public static class DiUserRecoveryExtension
     public static void AddUserRecoveryQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<UserRecoverySearchR, SingleResponse>, UserRecoverySearchH>(life);
+        p.AddBehavior<IRequestHandler<UserRecoveryViewR, SingleResponse>, UserRecoveryViewH>(life);
     }
 
     #endregion
