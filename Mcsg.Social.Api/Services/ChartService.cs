@@ -24,29 +24,34 @@ public partial class ChartService : IChartService
         var daysAgoUtc = nowUtc.AddDays(-days);
         DateTime lastDayToGetData = nowUtc.AddDays(-days);
         DateTime lastDayToCompare = nowUtc.AddDays(-days * 2);
-        var qPost = GetSocialPostQuery(userId, daysAgoUtc, nowUtc);
+        var qPost = _context.Available<SocialPost>().Where(p => p.UserId == userId);
 
         #region -- Comment --
         var commentCounts = await qPost
-            .Join(_context.Available<SocialPostComment>(), post => post.Id, comment => comment.PostId, (post, comment) => new { Post = post, Comment = comment })
-            .GroupBy(x => x.Post.CreatedOn.Date)
-            .Select(group => new ChartResponse
+            .SelectMany(p => p.SocialPostComments)
+            .Where(q => !q.IsDelete && q.CreatedOn >= lastDayToGetData)
+            .GroupBy(p => p.CreatedOn.Date)
+            .Select(g => new ChartResponse
             {
-                Label = group.Key.ToLabel("dd MMMM"),
-                Quantity = group.Count()
+                Label = g.Key.ToLabel("dd MMMM"),
+                Quantity = g.Count()
             })
             .ToListAsync();
 
+
         var subCommentCounts = await qPost
-            .Join(_context.Available<SocialSubPost>(), post => post.Id, subPost => subPost.PostId, (post, subPost) => new { Post = post, SubPost = subPost })
-            .Join(_context.Available<SocialSubPostComment>(), x => x.SubPost.Id, subComment => subComment.PostId, (x, subComment) => new { x.Post, SubComment = subComment })
-            .GroupBy(x => x.Post.CreatedOn.Date)
-            .Select(group => new ChartResponse
+            .SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= lastDayToGetData)
+            .GroupBy(x => x.CreatedOn.Date)
+            .Select(g => new ChartResponse
             {
-                Label = group.Key.ToLabel("dd MMMM"),
-                Quantity = group.Count()
+                Label = g.Key.ToLabel("dd MMMM"),
+                Quantity = g.Count()
             })
             .ToListAsync();
+
 
         var totalComment = commentCounts.Concat(subCommentCounts)
             .GroupBy(x => x.Label)
@@ -61,28 +66,29 @@ public partial class ChartService : IChartService
         #endregion
 
         #region -- Reaction --
-        var postReactionCounts = await (
-            from post in qPost
-            join reaction in _context.Available<SocialPostReaction>() on post.Id equals reaction.TargetId
-            group 1 by post.CreatedOn.Date into g
-            select new ChartResponse
+        var postReactionCounts = await qPost
+            .SelectMany(p => p.SocialPostReactions)
+            .Where(q => !q.IsDelete && q.CreatedOn >= lastDayToGetData)
+            .GroupBy(p => p.CreatedOn.Date)
+            .Select(g => new ChartResponse
             {
                 Label = g.Key.ToLabel("dd MMMM"),
                 Quantity = g.Count()
-            }
-        ).ToListAsync();
+            })
+            .ToListAsync();
 
-        var subPostReactionCounts = await (
-            from post in qPost
-            join subPost in _context.Available<SocialSubPost>() on post.Id equals subPost.PostId
-            join subPostReaction in _context.SocialSubPostReactions on subPost.Id equals subPostReaction.TargetId
-            group 1 by post.CreatedOn.Date into g
-            select new ChartResponse
+        var subPostReactionCounts = await qPost
+            .SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostReactions)
+            .Where(q => !q.IsDelete && q.CreatedOn >= lastDayToGetData)
+            .GroupBy(q => q.CreatedOn.Date)
+            .Select(g => new ChartResponse
             {
                 Label = g.Key.ToLabel("dd MMMM"),
                 Quantity = g.Count()
-            }
-        ).ToListAsync();
+            })
+            .ToListAsync();
 
         var totalReaction = postReactionCounts.Concat(subPostReactionCounts)
             .GroupBy(x => x.Label)
@@ -96,7 +102,7 @@ public partial class ChartService : IChartService
         totalReaction = MapChartData(days, timezoneOffset, totalReaction);
         #endregion
 
-        var interactions = await GetNumberOfInteractionProfile(userId, isGetDataIn7Days);
+        var interactions = await GetNumberOfInteractionProfile(userId, lastDayToCompare, lastDayToGetData);
 
         return new FeedChartResponse
         {
@@ -104,7 +110,7 @@ public partial class ChartService : IChartService
             ChartResponseReact = totalReaction,
             CommentInteractions = interactions.CommentInteractions,
             ReactionInteractions = interactions.ReactionInteractions,
-            PostInteractions = await GetSocialInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
+            PostInteractions = interactions.PostInteractions
         };
     }
 
@@ -326,106 +332,51 @@ public partial class ChartService : IChartService
         };
     }
 
-    private async Task<FeedChartResponse> GetNumberOfInteractionProfile(Guid? userId, bool isGetDataIn7Days)
+    private async Task<FeedChartResponse> GetNumberOfInteractionProfile(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
         var result = new FeedChartResponse();
-        var nowUtc = DateTime.Today.ToUniversalTime();
-        var days = isGetDataIn7Days ? 7 : 30;
-        var daysAgoUtc = nowUtc.AddDays(-days);
-        var qPost = GetSocialPostQuery(userId, daysAgoUtc, nowUtc);
+        var qPost = _context.Available<SocialPost>().Where(p => p.UserId == userId);
 
-        int previousDays = days == 7 ? 7 : 30;
-        var previousPeriodStart = nowUtc.AddDays(-days - previousDays); // Start of the previous period
-        var previousPeriodEnd = nowUtc.AddDays(-days);
-        var qPostPreviousPeriod = GetSocialPostQuery(userId, previousPeriodStart, previousPeriodEnd);
+        #region -- Comment --
+        var qPostComment = qPost.SelectMany(p => p.SocialPostComments).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostComment = qPost.SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        #region -- Total Comment --
-        var countCommentPost = await (
-            from posts in qPost
-            join comments in _context.SocialPostComments on posts.Id equals comments.PostId
-            select 1
-            )
-            .CountAsync();
+        var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalComment = countPostComment + countSubPostComment;
 
-        var countCommentSubPost = await (
-            from posts in qPost
-            join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
-            join subPostComments in _context.Available<SocialSubPostComment>() on subPosts.Id equals subPostComments.PostId
-            select 1
-            )
-            .CountAsync();
-
-        var totalComment = countCommentPost + countCommentSubPost;
-
-        #region -- Comment in the previous 7-day period --
-        var countCommentPostBefore = await (
-            from posts in qPostPreviousPeriod
-            join comments in _context.SocialPostComments on posts.Id equals comments.PostId
-            select 1
-        ).CountAsync();
-
-        var countCommentSubPostBefore = await (
-            from posts in qPostPreviousPeriod
-            join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
-            join subPostComments in _context.Available<SocialSubPostComment>() on subPosts.Id equals subPostComments.PostId
-            select 1
-        ).CountAsync();
-
+        var countCommentPostBefore = await qPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countCommentSubPostBefore = await qSubPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
         var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
         #endregion
+
+        #region -- Reaction --
+        var qPostReaction = qPost.SelectMany(p => p.SocialPostReactions).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostReaction = qPost.SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostReactions)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
+
+        var countPostReaction = await qPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostReaction = await qSubPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalReaction = countPostReaction + countSubPostReaction;
+
+        var countPostReactionBefore = await qPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
         #endregion
 
-        #region -- Total Reaction --
-        var countReact = await (
-                from posts in qPost
-                join reactions in _context.Available<SocialPostReaction>() on posts.Id equals reactions.TargetId
-                where posts.UserId == userId && posts.CreatedOn >= daysAgoUtc && posts.CreatedOn <= nowUtc
-                select 1
-            )
-            .CountAsync();
-
-        var countReactSubPost = await (
-                from posts in qPost
-                join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
-                join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
-                select 1
-                )
-                .CountAsync();
-
-        #region -- Reaction in the previous 7-day period --
-        var countReactBefore = await (
-                from posts in qPostPreviousPeriod
-                join reactions in _context.Available<SocialPostReaction>() on posts.Id equals reactions.TargetId
-                select 1
-            )
-            .CountAsync();
-
-        var countReactSubPostBefore = await (
-                from posts in qPostPreviousPeriod
-                join subPosts in _context.Available<SocialSubPost>() on posts.Id equals subPosts.PostId
-                join subPostReacts in _context.SocialSubPostReactions on subPosts.Id equals subPostReacts.TargetId
-                select 1
-            )
-            .CountAsync();
-
-        var totalReactBefore = countReactBefore + countReactSubPostBefore;
-        #endregion
-        var totalReaction = countReact + countReactSubPost;
+        #region -- Post --
+        var totalData = totalComment + totalReaction;
+        var totalCompare = totalCommentBefore + totalReactionBefore;
         #endregion
 
-        result.CommentInteractions = new Interactions
-        {
-            Count = totalComment,
-            Percent = totalComment > 0 ? Math.Abs(((double)(totalCommentBefore - totalComment) / totalComment) * 100) : 0,
-            IsIncrease = totalComment > totalReactBefore
-
-        };
-        result.ReactionInteractions = new Interactions
-        {
-            Count = totalReaction,
-            Percent = totalReaction > 0 ? Math.Abs(((double)(totalReactBefore - totalReaction) / totalReaction) * 100) : 0,
-            IsIncrease = totalReaction > totalReactBefore
-        };
+        result.CommentInteractions = await GetInteractions(totalComment, totalCommentBefore);
+        result.ReactionInteractions = await GetInteractions(totalReaction, totalReactionBefore);
+        result.PostInteractions = await GetInteractions(totalData, totalCompare);
 
         return result;
     }
@@ -470,77 +421,107 @@ public partial class ChartService : IChartService
 
     private async Task<Reaction> GetComicInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.Available<ComicPost>()
-                                    join postComment in _context.Available<ComicPostComment>()
-                                    on post.Id equals postComment.PostId
-                                    where post.UserId == userId
-                                    && postComment.CreatedOn >= dateToCompare
-                                    select postComment;
+        var q = _context.Available<ComicPost>().Where(p => p.UserId == userId);
 
-        var postReactionsLast14Days = from post in _context.Available<ComicPost>()
-                                      join postReaction in _context.Available<ComicPostReaction>()
-                                      on post.Id equals postReaction.TargetId
-                                      where post.UserId == userId
-                                      && postReaction.CreatedOn >= dateToCompare
-                                      select postReaction;
+        var qPostComment = q.SelectMany(p => p.ComicPostComments).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostComment = q.SelectMany(p => p.ComicSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.ComicSubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
-                                    + await postReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var qPostReaction = q.SelectMany(p => p.ComicPostReactions).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostReaction = q.SelectMany(p => p.ComicSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.ComicSubPostReactions)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsPreviousLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
-                                + await postReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalComment = countPostComment + countSubPostComment;
 
-        return new Reaction(reactionsLast7Days, reactionsPreviousLast7Days);
+        var countCommentPostBefore = await qPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countCommentSubPostBefore = await qSubPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
+
+        var countPostReaction = await qPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostReaction = await qSubPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalReaction = countPostReaction + countSubPostReaction;
+
+        var countPostReactionBefore = await qPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
+
+        return new Reaction(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
     }
 
     private async Task<Interactions> GetSocialInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.Available<SocialPost>()
-                                    join postComment in _context.Available<SocialPostComment>()
-                                    on post.Id equals postComment.PostId
-                                    where post.UserId == userId
-                                    && postComment.CreatedOn >= dateToCompare
-                                    select postComment;
+        var q = _context.Available<SocialPost>().Where(p => p.UserId == userId);
 
-        var postReactionsLast14Days = from post in _context.Available<SocialPost>()
-                                      join postReaction in _context.Available<SocialPostReaction>()
-                                      on post.Id equals postReaction.TargetId
-                                      where post.UserId == userId
-                                      && postReaction.CreatedOn >= dateToCompare
-                                      select postReaction;
+        var qPostComment = q.SelectMany(p => p.SocialPostComments).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostComment = q.SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
-                                    + await postReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var qPostReaction = q.SelectMany(p => p.SocialPostReactions).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostReaction = q.SelectMany(p => p.SocialSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.SocialSubPostReactions)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsPreviousLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
-                                + await postReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalComment = countPostComment + countSubPostComment;
 
-        return await GetInteractions(reactionsLast7Days, reactionsPreviousLast7Days);
+        var countCommentPostBefore = await qPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countCommentSubPostBefore = await qSubPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
+
+        var countPostReaction = await qPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostReaction = await qSubPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalReaction = countPostReaction + countSubPostReaction;
+
+        var countPostReactionBefore = await qPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
+
+        return await GetInteractions(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
     }
 
     private async Task<Reaction> GetStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
-        var postCommentLast14Days = from post in _context.Available<StoryPost>()
-                                    join postComment in _context.Available<StoryPostComment>()
-                                    on post.Id equals postComment.PostId
-                                    where post.UserId == userId
-                                    && postComment.CreatedOn >= dateToCompare
-                                    select postComment;
+        var q = _context.Available<StoryPost>().Where(p => p.UserId == userId);
 
-        var postReactionsLast14Days = from post in _context.Available<StoryPost>()
-                                      join postReaction in _context.Available<StoryPostReaction>()
-                                      on post.Id equals postReaction.TargetId
-                                      where post.UserId == userId
-                                      && postReaction.CreatedOn >= dateToCompare
-                                      select postReaction;
+        var qPostComment = q.SelectMany(p => p.StoryPostComments).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostComment = q.SelectMany(p => p.StorySubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.StorySubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData)
-                                    + await postReactionsLast14Days.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var qPostReaction = q.SelectMany(p => p.StoryPostReactions).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostReaction = q.SelectMany(p => p.StorySubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.StorySubPostReactions)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
-        int reactionsPreviousLast7Days = await postCommentLast14Days.CountAsync(p => p.CreatedOn < dateToGetData)
-                                + await postReactionsLast14Days.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalComment = countPostComment + countSubPostComment;
 
-        return new Reaction(reactionsLast7Days, reactionsPreviousLast7Days);
+        var countCommentPostBefore = await qPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countCommentSubPostBefore = await qSubPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
+
+        var countPostReaction = await qPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostReaction = await qSubPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalReaction = countPostReaction + countSubPostReaction;
+
+        var countPostReactionBefore = await qPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
+
+        return new Reaction(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
     }
 
     private async Task<Interactions> GetComicStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
@@ -562,11 +543,6 @@ public partial class ChartService : IChartService
             Percent = dataToCompare > 0 ? Math.Abs(((double)(data - dataToCompare) / dataToCompare) * 100) : 0,
             IsIncrease = data > dataToCompare
         });
-    }
-
-    private IQueryable<SocialPost> GetSocialPostQuery(Guid? userId, DateTime fr, DateTime to)
-    {
-        return _context.Available<SocialPost>().Where(p => p.UserId == userId && fr <= p.CreatedOn && p.CreatedOn <= to);
     }
 
     #region -- Fields --
