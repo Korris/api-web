@@ -1201,7 +1201,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (isRecoveryMode == true)
         {
             var encryptedCode = _aes.EncryptText(otpCode);
-            var ettRecovery = await _context.Available<UserRecovery>().Where(p => p.SecretKey == encryptedCode).FirstOrDefaultAsync();
+            var ettRecovery = await _context.Available<UserRecovery>().FirstOrDefaultAsync(p => p.SecretKey == encryptedCode && p.UserId == userId);
             if (ettRecovery == null)
             {
                 throw new BadRequestException(nameof(E313), E313);
