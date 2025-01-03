@@ -64,6 +64,7 @@ setx Bumcheo_Ide_Db_Password "Local+54321z@"
 setx Bumcheo_Ide_SwaggerEnabled "TRUE"
 setx Bumcheo_Ide_DevMode "TRUE"
 setx Bumcheo_Ide_Protocols ""
+setx Bumcheo_Ide_ReCaptchaSecretKey "6Lcq0qwqAAAAAOyIGO_oaNglsSjJgNLODD7CjwmH"
 setx Bumcheo_Ide_Origins "http://localhost:3000"
 
 setx Bumcheo_Ope_Db_Host "ntada.postgres"

@@ -30,6 +30,11 @@ public interface ISetting : ISettingBase
     string NotificationRoutingKey { get; set; }
 
     /// <summary>
+    /// reCAPTCHA secret key
+    /// </summary>
+    string ReCaptchaSecretKey { get; set; }
+
+    /// <summary>
     /// Allow sending email
     /// </summary>
     bool AllowSendingEmail { get; set; }

@@ -34,6 +34,11 @@ public class Setting : SettingBase, ISetting
     public string NotificationRoutingKey { get; set; }
 
     /// <summary>
+    /// reCAPTCHA secret key
+    /// </summary>
+    public string ReCaptchaSecretKey { get; set; }
+
+    /// <summary>
     /// Allow sending email
     /// </summary>
     public bool AllowSendingEmail { get; set; }
