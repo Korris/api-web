@@ -99,6 +99,11 @@ public class Setting : SeedWork.Constants.Setting
         public const int RewardPoint = 1000;
 
         /// <summary>
+        /// Wallet address length
+        /// </summary>
+        public const int WalletAddressLength = 12;
+
+        /// <summary>
         /// Custom note
         /// </summary>
         public static string CustomNote = "{\"root\":{\"children\":[{\"children\":[],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1}],\"direction\":null,\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}";
@@ -605,6 +610,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Admin
         /// </summary>
         public const string Admin = ";admin;";
+
+        /// <summary>
+        /// Default
+        /// </summary>
+        public const string Default = ";default;";
     }
 
     /// <summary>
@@ -684,5 +694,78 @@ public class Setting : SeedWork.Constants.Setting
         /// NumberOf codes
         /// </summary>
         public const int NumberOfCodes = 6;
+    }
+
+    /// <summary>
+    /// ConversionRate key
+    /// </summary>
+    public class ConversionRateKey
+    {
+        /// <summary>
+        /// FFR to FFC
+        /// </summary>
+        public const string FfrToFfc = "FFR-FFC";
+
+        /// <summary>
+        /// FFR
+        /// </summary>
+        public const string Ffr = "FFR";
+
+        /// <summary>
+        /// FFC
+        /// </summary>
+        public const string Ffc = "FFC";
+    }
+
+    /// <summary>
+    /// ChargeFee key
+    /// </summary>
+    public class ChargeFeeKey
+    {
+        /// <summary>
+        /// SwapFfrToFfc
+        /// </summary>
+        public const string SwapFfrToFfc = "SwapFfrToFfc";
+
+        /// <summary>
+        /// SwapFfcToFfr
+        /// </summary>
+        public const string SwapFfcToFfr = "SwapFfcToFfr";
+
+        /// <summary>
+        /// TransferFfcToFfc
+        /// </summary>
+        public const string TransferFfcToFfc = "TransferFfcToFfc";
+
+        /// <summary>
+        /// DonateFfr
+        /// </summary>
+        public const string DonateFfr = "DonateFfr";
+
+        /// <summary>
+        /// WithdrawFfc
+        /// </summary>
+        public const string WithdrawFfc = "WithdrawFfc";
+    }
+
+    /// <summary>
+    /// SystemSetting key
+    /// </summary>
+    public class SystemSettingKey
+    {
+        /// <summary>
+        /// MinimumBalanceFfr
+        /// </summary>
+        public const string MinimumBalanceFfr = "MinimumBalanceFfr";
+
+        /// <summary>
+        /// MinimumBalanceFfc
+        /// </summary>
+        public const string MinimumBalanceFfc = "MinimumBalanceFfc";
+
+        /// <summary>
+        /// MinimumWithdrawFfc
+        /// </summary>
+        public const string MinimumWithdrawFfc = "MinimumWithdrawFfc";
     }
 }

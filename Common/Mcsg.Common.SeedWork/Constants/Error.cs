@@ -50,6 +50,11 @@ public static class Error
     /// </summary>
     public const string E005 = "Delete error";
 
+    /// <summary>
+    /// Proto problem
+    /// </summary>
+    public const string E006 = "There's a problem with the proto";
+
     #endregion
 
     #region -- E1xx --
@@ -347,6 +352,11 @@ public static class Error
     /// </summary>
     public const string E314 = "The recovery code has already been used";
 
+    /// <summary>
+    /// OTP expired
+    /// </summary>
+    public const string E315 = "OTP expired";
+
     #endregion
 
     #region -- E4xx --
@@ -399,19 +409,19 @@ public static class Error
     #region -- E7xx --
 
     /// <summary>
-    /// Can't donate to yourself
+    /// Can't donate
     /// </summary>
     public const string E700 = "User can not send donate to yourself";
 
     /// <summary>
-    /// Invalid amount
+    /// Can't transfer
     /// </summary>
-    public const string E701 = "The amount must be a positive number greater than zero.";
+    public const string E701 = "User can not send transfer to yourself";
 
     /// <summary>
-    /// Proto problem
+    /// Can't swap
     /// </summary>
-    public const string E702 = "There's a problem with the proto";
+    public const string E702 = "User can not swap to other address";
 
     /// <summary>
     /// Not enough balance
@@ -424,14 +434,14 @@ public static class Error
     public const string E704 = "Transaction not found";
 
     /// <summary>
-    /// Transaction not found
+    /// Minimum transaction amount
     /// </summary>
-    public const string E705 = "The minimum transaction amount must be greater than or equal to 100.";
+    public const string E705 = "The minimum transaction amount must be greater than or equal to";
 
     /// <summary>
     /// Transaction status
     /// </summary>
-    public const string E706 = "Transaction status is incorrect.";
+    public const string E706 = "Transaction status is incorrect";
 
     /// <summary>
     /// Invalid from date
@@ -439,9 +449,9 @@ public static class Error
     public const string E707 = "From date must be greater than utc now";
 
     /// <summary>
-    /// Cannot update
+    /// Invalid fee
     /// </summary>
-    public const string E708 = "Cannot update please create new data";
+    public const string E708 = "The percentage-based fee must not exceed 100%";
 
     /// <summary>
     /// Cannot delete
@@ -449,9 +459,24 @@ public static class Error
     public const string E709 = "Cannot delete please create new data";
 
     /// <summary>
-    /// Invalid value
+    /// Transaction already processed
     /// </summary>
-    public const string E710 = "The value must be greater than or equal 0";
+    public const string E710 = "Transaction already processed";
+
+    /// <summary>
+    /// UserWallet not found
+    /// </summary>
+    public const string E711 = "UserWallet not found";
+
+    /// <summary>
+    /// ConversionRate not found
+    /// </summary>
+    public const string E712 = "ConversionRate not found";
+
+    /// <summary>
+    /// Coin not found
+    /// </summary>
+    public const string E713 = "Coin not found";
 
     #endregion
 

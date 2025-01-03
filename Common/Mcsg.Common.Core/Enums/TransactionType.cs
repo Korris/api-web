@@ -31,6 +31,11 @@ public enum TransactionType
     Reward,
 
     /// <summary>
+    /// Swap
+    /// </summary>
+    Swap,
+
+    /// <summary>
     /// BuyPremium
     /// </summary>
     BuyPremium,
@@ -43,15 +48,5 @@ public enum TransactionType
     /// <summary>
     /// BuySeries
     /// </summary>
-    BuySeries,
-
-    /// <summary>
-    /// PlatformPayAffiliate
-    /// </summary>
-    PlatformPayAffiliate,
-
-    /// <summary>
-    /// PlatformPayCreator
-    /// </summary>
-    PlatformPayCreator
+    BuySeries
 }

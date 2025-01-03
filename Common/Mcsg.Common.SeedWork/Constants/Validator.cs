@@ -74,9 +74,14 @@ public class Validator
     public const string After = "must be after";
 
     /// <summary>
-    /// Greater than message
+    /// GreaterThan message
     /// </summary>
     public const string GreaterThan = "must be greater than";
+
+    /// <summary>
+    /// GreaterThanOrEqualTo message
+    /// </summary>
+    public const string GreaterThanOrEqualTo = "must be greater than or equal to";
 
     /// <summary>
     /// Less than message
