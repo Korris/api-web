@@ -576,8 +576,8 @@ public class FileService : IFileService
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
-
             var client = new SocialSubProto.SocialSubProtoClient(channel);
+
             var request = new SocialSubCreateReq
             {
                 Items = { etts.Select(p => new SocialSubProtoDto
@@ -607,7 +607,6 @@ public class FileService : IFileService
     {
 
         using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
-
         var client = new SocialSubProto.SocialSubProtoClient(channel);
 
         var res = new SocialSubDeleteRsp { Success = true };

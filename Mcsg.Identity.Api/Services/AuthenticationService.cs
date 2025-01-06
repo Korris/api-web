@@ -1061,11 +1061,11 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Wallet.Wallet!);
-
             var client = new UserWalletProto.UserWalletProtoClient(channel);
+
             var request = new UserWalletCreateReq
             {
-                Id = user.Id.ToString(),
+                UserId = user.Id.ToString(),
                 ProfileName = user.ProfileName
             };
             var rsp = await client.CreateAsync(request);

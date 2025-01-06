@@ -20,7 +20,7 @@ message BaseRsp {
 }
 
 message UserWalletCreateReq {
-    string id = 1;
+    string userId = 1;
     google.protobuf.StringValue profileName = 2;
 }
 
