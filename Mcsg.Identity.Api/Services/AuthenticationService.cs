@@ -610,7 +610,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         if (_setting.DevMode)
         {
-            res.Code = code;
+            res.OtpCode = code;
             res.UserName = user?.UserName;
         }
 
@@ -1023,7 +1023,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         if (_setting.DevMode)
         {
-            res.Code = code;
+            res.OtpCode = code;
             res.UserName = user.UserName;
         }
 
