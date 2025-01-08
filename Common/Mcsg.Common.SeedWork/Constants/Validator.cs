@@ -89,6 +89,11 @@ public class Validator
     public const string LessThan = "must be less than";
 
     /// <summary>
+    /// LessThanOrEqualTo message
+    /// </summary>
+    public const string LesssThanOrEqualTo = "must be less than or equal to";
+
+    /// <summary>
     /// User name
     /// </summary>
     public class UserName
@@ -194,6 +199,11 @@ public class Validator
         /// Maximum length
         /// </summary>
         public const ushort Max = 33;
+
+        /// <summary>
+        /// Maximum quantity
+        /// </summary>
+        public const ushort MaxQuantity = 10;
 
         /// <summary>
         /// Regex

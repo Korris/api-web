@@ -32,5 +32,5 @@ public class Regular
     /// This regex allows letters, diacritics, digits, and underscores, hyphens but no spaces.<br/>
     /// It requires at least one letter or digit, and can contain underscores.
     /// </summary>
-    public const string Tag = @"^(?=.*[\p{L}\p{M}0-9])[ \p{L}\p{M}0-9_-]+$";
+    public const string Tag = @"^(?=.*[\p{L}\p{M}0-9])[\p{L}\p{M}0-9_]+$";
 }
