@@ -7,14 +7,14 @@
             get
             {
                 return @"SELECT 
-                        t.""Name"",COUNT( t.""Id"") as Count
+                        t.""Name"",COUNT( tp.""Id"") as Count
                         FROM ""Tags"" t
                         LEFT JOIN story.""StoryTagPosts"" tp ON tp.""TagId"" = t.""Id"" 
+                        AND tp.""IsDelete"" = false 
                         WHERE t.""Name"" ILIKE @TagSearch
                         AND t.""IsDelete"" = false 
-                        AND tp.""IsDelete"" = false 
                         GROUP BY 
-                        t.""Name"", t.""Id""
+                        t.""Name""
                         ORDER BY Count DESC
                         LIMIT @PageSize
                         OFFSET 0;";
@@ -97,14 +97,14 @@
         {
             get
             {
-                return @"   SELECT  t.""Name"", t.""Id"" , COUNT( t.""Id"") 
+                return @"   SELECT  t.""Name"", t.""Id"" , COUNT( tp.""Id"") 
                             FROM {0} t
                             LEFT JOIN story.""StoryTagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
+                            AND tp.""IsDelete"" = false 
                             LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
-                            AND tp.""IsDelete"" = false 
                             AND ""Name"" LIKE @ExactKeyword  
                                 OR ""Name"" LIKE @StartsWithKeyword 
                                 OR ""Name"" LIKE @ContainsKeyword 
@@ -122,14 +122,14 @@
         {
             get
             {
-                return @"   SELECT t.""Name"", t.""Id"" , COUNT( t.""Id"") 
+                return @"   SELECT t.""Name"", t.""Id"" , COUNT( tp.""Id"") 
                             FROM {0} t
                             LEFT JOIN story.""StoryTagPosts"" tp  
                             ON tp.""TagId""  = t.""Id"" 
+                            AND tp.""IsDelete"" = false 
                             LEFT JOIN ""story"".""StoryPosts""  p 
                             ON p.""Id""  = tp.""PostId"" 
                             WHERE t.""IsDelete"" = false 
-                            AND tp.""IsDelete"" = false 
                             GROUP BY t.""Name"", t.""Id""
                             ORDER BY RANDOM()
                             LIMIT 4";
