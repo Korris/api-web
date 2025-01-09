@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/wrappers.proto";
-
 option csharp_namespace = "Mcsg.Wallet.Api.Protos";
 
 package wallet;
@@ -10,6 +8,7 @@ service UserWalletProto {
     rpc Create (UserWalletCreateReq) returns (BaseRsp);
     rpc Delete (UserWalletDeleteReq) returns (UserWalletDeleteRsp);
     rpc GetTransactionInfo (TransactionGetReq) returns (BaseRsp);
+    rpc AddAmount (UserWalletAddAmountReq) returns (BaseRsp);
 }
 
 message BaseRsp {
@@ -21,7 +20,6 @@ message BaseRsp {
 
 message UserWalletCreateReq {
     string userId = 1;
-    google.protobuf.StringValue profileName = 2;
 }
 
 message UserWalletDeleteReq {
@@ -31,6 +29,14 @@ message UserWalletDeleteReq {
 
 message TransactionGetReq {
     string transactionId = 1;
+}
+
+message UserWalletAddAmountReq {
+    string currencyUnit = 1;
+    string amount = 2;
+    string externalId = 3;
+    string userAddress = 4;
+    string lastedBlockNumber = 5;
 }
 
 message UserWalletDeleteRsp {

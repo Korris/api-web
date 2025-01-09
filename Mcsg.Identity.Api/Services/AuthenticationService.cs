@@ -1065,9 +1065,9 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             var request = new UserWalletCreateReq
             {
-                UserId = user.Id.ToString(),
-                ProfileName = user.ProfileName
+                UserId = user.Id.ToString()
             };
+
             var rsp = await client.CreateAsync(request);
             res.Id = rsp.Id;
         }
