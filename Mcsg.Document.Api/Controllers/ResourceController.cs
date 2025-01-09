@@ -27,6 +27,19 @@ public class ResourceController : BaseController
     }
 
     /// <summary>
+    /// Search
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>Return the result</returns>
+    [HttpPatch("Search"), Authorize]
+    public async Task<IActionResult> Search([FromBody] ResourceSearchR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
+    /// <summary>
     /// View
     /// </summary>
     /// <param name="request"></param>
@@ -36,7 +49,7 @@ public class ResourceController : BaseController
     {
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
-        return Ok(response.Data);
+        return Ok(response);
     }
 
     #endregion

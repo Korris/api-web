@@ -19,7 +19,7 @@ using static Common.SeedWork.Constants.Error;
 /// <summary>
 /// Handler
 /// </summary>
-public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleResponse>
+public class ResourceSearchH : BaseMinioH, IRequestHandler<ResourceSearchR, SingleResponse>
 {
     #region -- Methods --
 
@@ -27,7 +27,7 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
     /// Initialize
     /// </summary>
     /// <param name="context">DB context</param>
-    public ResourceViewH(IMcsgContext context, ISetting setting, IStorageClient sc) : base(context, setting, sc) { }
+    public ResourceSearchH(IMcsgContext context, ISetting setting, IStorageClient sc) : base(context, setting, sc) { }
 
     /// <summary>
     /// Handle
@@ -35,11 +35,11 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
     /// <param name="request">Request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Return the result</returns>
-    public async Task<SingleResponse> Handle(ResourceViewR request, CancellationToken cancellationToken)
+    public async Task<SingleResponse> Handle(ResourceSearchR request, CancellationToken cancellationToken)
     {
         var res = new SingleResponse();
 
-        var vr = new ResourceViewV().Validate(request);
+        var vr = new ResourceSearchV().Validate(request);
         if (!vr.IsValid)
         {
             var t = vr.Errors.ToDic();
@@ -63,7 +63,7 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
         var q = from sp in _context.Available<DocumentSubPost>()
                 join r in _context.Available<DocumentResource>()
                 on sp.Id equals r.SubPostId
-                where sp.PostId == ettPost.Id && sp.IsAllowDownload && sp.Order == request.Order
+                where sp.PostId == ettPost.Id && sp.IsAllowDownload
                 orderby sp.Order
                 select new
                 {

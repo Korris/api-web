@@ -5,9 +5,7 @@ using Common.Core.Requests;
 /// <summary>
 /// Request
 /// </summary>
-public class ResourceViewR : BaseR
+public class ResourceSearchR : BaseR
 {
     public string? PostHashId { get; set; }
-
-    public float? Order { get; set; }
 }

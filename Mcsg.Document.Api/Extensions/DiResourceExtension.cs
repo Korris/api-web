@@ -40,6 +40,7 @@ public static class DiResourceExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddResourceQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<ResourceSearchR, SingleResponse>, ResourceSearchH>(life);
         p.AddBehavior<IRequestHandler<ResourceViewR, SingleResponse>, ResourceViewH>(life);
     }
 
