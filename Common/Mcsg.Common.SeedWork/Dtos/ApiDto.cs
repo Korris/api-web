@@ -112,6 +112,11 @@ public class ApiDto
         /// Story
         /// </summary>
         public string? Story { get; set; }
+
+        /// <summary>
+        /// Notification
+        /// </summary>
+        public string? Notification { get; set; }
     }
 
     /// <summary>

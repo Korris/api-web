@@ -478,6 +478,16 @@ public static class Error
     /// </summary>
     public const string E713 = "Coin not found";
 
+    /// <summary>
+    /// Address not found
+    /// </summary>
+    public const string E714 = "Address not found";
+
+    /// <summary>
+    /// Can not with draw internal address
+    /// </summary>
+    public const string E715 = "Can not with draw internal address";
+
     #endregion
 
     #region -- E9xx --

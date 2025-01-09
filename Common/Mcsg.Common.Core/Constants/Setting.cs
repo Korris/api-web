@@ -660,6 +660,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string Ffc = "FFC";
 
         /// <summary>
+        /// BNB
+        /// </summary>
+        public const string Bnb = "BNB";
+
+        /// <summary>
         /// Dollar
         /// </summary>
         public const string Dollar = "$";
@@ -675,7 +680,8 @@ public class Setting : SeedWork.Constants.Setting
             return new Dictionary<string, string>
             {
                 { "FFR", "Lúa" },
-                { "FFC", "FocFoc Coin" }
+                { "FFC", "FocFoc Coin" },
+                { "BNB", "Binance Coin" }
             };
         }
     }
@@ -707,14 +713,19 @@ public class Setting : SeedWork.Constants.Setting
         public const string FfrToFfc = "FFR-FFC";
 
         /// <summary>
-        /// FFR
+        /// FFR to USD
         /// </summary>
         public const string Ffr = "FFR";
 
         /// <summary>
-        /// FFC
+        /// FFC to USD
         /// </summary>
         public const string Ffc = "FFC";
+
+        /// <summary>
+        /// BNB to USD
+        /// </summary>
+        public const string Bnb = "BNB";
     }
 
     /// <summary>
@@ -723,9 +734,14 @@ public class Setting : SeedWork.Constants.Setting
     public class ChargeFeeKey
     {
         /// <summary>
-        /// SwapFfrToFfc
+        /// DonateFfc
         /// </summary>
-        public const string SwapFfrToFfc = "SwapFfrToFfc";
+        public const string DonateFfc = "DonateFfc";
+
+        /// <summary>
+        /// DonateFfr
+        /// </summary>
+        public const string DonateFfr = "DonateFfr";
 
         /// <summary>
         /// SwapFfcToFfr
@@ -733,14 +749,14 @@ public class Setting : SeedWork.Constants.Setting
         public const string SwapFfcToFfr = "SwapFfcToFfr";
 
         /// <summary>
+        /// SwapFfrToFfc
+        /// </summary>
+        public const string SwapFfrToFfc = "SwapFfrToFfc";
+
+        /// <summary>
         /// TransferFfcToFfc
         /// </summary>
         public const string TransferFfcToFfc = "TransferFfcToFfc";
-
-        /// <summary>
-        /// DonateFfr
-        /// </summary>
-        public const string DonateFfr = "DonateFfr";
 
         /// <summary>
         /// WithdrawFfc

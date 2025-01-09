@@ -529,6 +529,17 @@ public class Validator
     }
 
     /// <summary>
+    /// Currency unit
+    /// </summary>
+    public class CurrencyUnit
+    {
+        /// <summary>
+        /// Maximum length
+        /// </summary>
+        public const ushort Max = 4;
+    }
+
+    /// <summary>
     /// OtpCode
     /// </summary>
     public class OtpCode

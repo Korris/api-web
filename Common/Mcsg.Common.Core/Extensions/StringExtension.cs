@@ -911,4 +911,50 @@ public static class StringExtension
         var output = input.RunFfprobe(command);
         return output.Trim().Split(',', StringSplitOptions.RemoveEmptyEntries);
     }
+
+    /// <summary>
+    /// GetConversionRateKey
+    /// </summary>
+    /// <param name="currencyUnit">Currency unit</param>
+    /// <returns>Returns the result</returns>
+    public static string GetConversionRateKey(this string? currencyUnit)
+    {
+        return currencyUnit switch
+        {
+            CurrencyUnit.Ffc => ConversionRateKey.Ffc,
+            CurrencyUnit.Bnb => ConversionRateKey.Bnb,
+
+            _ => ConversionRateKey.Ffr
+        };
+    }
+
+    /// <summary>
+    /// GetChargeFeeKey
+    /// </summary>
+    /// <param name="currencyUnit">Currency unit</param>
+    /// <returns>Returns the result</returns>
+    public static string GetChargeFeeKey(this string? currencyUnit)
+    {
+        return currencyUnit switch
+        {
+            CurrencyUnit.Ffc => ChargeFeeKey.DonateFfc,
+
+            _ => ChargeFeeKey.DonateFfr,
+        };
+    }
+
+    /// <summary>
+    /// GetMinimumBalanceKey
+    /// </summary>
+    /// <param name="currencyUnit">Currency unit</param>
+    /// <returns>Returns the result</returns>
+    public static string GetMinimumBalanceKey(this string? currencyUnit)
+    {
+        return currencyUnit switch
+        {
+            CurrencyUnit.Ffc => SystemSettingKey.MinimumBalanceFfc,
+
+            _ => SystemSettingKey.MinimumBalanceFfr,
+        };
+    }
 }
