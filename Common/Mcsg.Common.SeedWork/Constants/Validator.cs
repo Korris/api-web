@@ -91,7 +91,7 @@ public class Validator
     /// <summary>
     /// LessThanOrEqualTo message
     /// </summary>
-    public const string LesssThanOrEqualTo = "must be less than or equal to";
+    public const string LessThanOrEqualTo = "must be less than or equal to";
 
     /// <summary>
     /// User name
@@ -570,5 +570,21 @@ public class Validator
         /// Maximum length
         /// </summary>
         public const ushort Max = 64;
+    }
+
+    /// <summary>
+    /// ChapterRange
+    /// </summary>
+    public class ChapterRange
+    {
+        /// <summary>
+        /// Minimum range
+        /// </summary>
+        public const ushort Min = 1;
+
+        /// <summary>
+        /// Maximum range
+        /// </summary>
+        public const ushort Max = 9999;
     }
 }

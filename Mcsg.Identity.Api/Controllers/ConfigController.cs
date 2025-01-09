@@ -106,6 +106,11 @@ public class ConfigController : ControllerBase
             Title = new
             {
                 Title.Max
+            },
+            ChapterRange = new
+            {
+                ChapterRange.Min,
+                ChapterRange.Max
             }
         };
         res.SetSuccess(nameof(validators), validators);

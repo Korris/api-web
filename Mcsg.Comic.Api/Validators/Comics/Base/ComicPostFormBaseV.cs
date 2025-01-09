@@ -36,7 +36,7 @@ public class ComicPostFormBaseV : AbstractValidator<ComicPostFormBaseR>
         t = "Tags";
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
         RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage(DuplicateTag).WithName(t)
-            .Must(MaxQuantity).WithMessage($"{t} {LesssThanOrEqualTo} {Hashtag.MaxQuantity}");
+            .Must(MaxQuantity).WithMessage($"{t} {LessThanOrEqualTo} {Hashtag.MaxQuantity}");
     }
 
     /// <summary>

@@ -404,6 +404,11 @@ public static class Error
     /// </summary>
     public const string E601 = "You need to upgrade to a premium account to view this content";
 
+    /// <summary>
+    /// Invalid chapter range
+    /// </summary>
+    public const string E602 = "Order must be a valid number within the range of 1 to 9999";
+
     #endregion
 
     #region -- E7xx --

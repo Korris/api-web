@@ -12,6 +12,8 @@ using Constants;
 using Interfaces;
 using Models;
 using Requests;
+using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Validator;
 
 public partial class ComicService : IComicService
 {
@@ -133,6 +135,11 @@ public partial class ComicService : IComicService
             .OrderByDescending(p => p.Order)
             .Select(p => p.Order)
             .FirstOrDefaultAsync();
+
+        if (latestOrder >= ChapterRange.Max)
+        {
+            throw new BadRequestException(nameof(E602), E602);
+        }
 
         return (int)latestOrder + 1;
     }
