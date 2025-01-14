@@ -571,6 +571,7 @@ partial class Notification
         public string TargetType => ToTargetType(this);
         public string NotificationType => ToNotiType(this);
         public Guid? CommentId => EntityType.ToString().Contains("Comment") ? EntityId : null;
+        public string? CurrencyUnit { get; set; }
 
         #endregion
     }

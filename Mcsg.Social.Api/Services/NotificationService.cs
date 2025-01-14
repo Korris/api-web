@@ -634,6 +634,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
             i.Amount = Convert.ToDecimal(transactionData.Amount).ToString("N0");
             i.ReferenceNumber = transactionData.ReferenceNumber;
+            i.CurrencyUnit = transactionData.CurrencyUnit;
         }
     }
 

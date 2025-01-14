@@ -28,4 +28,5 @@ public class NotificationResponse
     [JsonIgnore]
     public NotificationEntityType? EntityType { get; set; }
     public string? EntityTypeName => EntityType.ToString();
+    public string? CurrencyUnit { get; set; }
 }

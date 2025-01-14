@@ -31,4 +31,5 @@ message TransactionProtoDto {
     string transactionId = 1;
     string referenceNumber = 2;
     string amount = 3;
+    string currencyUnit = 4;
 }

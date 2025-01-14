@@ -67,6 +67,7 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = GetTransactionType(notificationEntityType);
         response.UserAvatar = user?.Avatar;
+        response.CurrencyUnit = req.CurrencyUnit;
 
         await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 

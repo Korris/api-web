@@ -10,4 +10,5 @@ public class TransactionNotificationReq
     public TransactionType TransactionType { get; set; }
     public float Amount { get; set; }
     public string? ReferenceNumber { get; set; }
+    public string? CurrencyUnit { get; set; }
 }
