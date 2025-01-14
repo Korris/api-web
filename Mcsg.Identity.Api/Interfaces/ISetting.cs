@@ -64,15 +64,5 @@ public interface ISetting : ISettingBase
     /// </summary>
     string UsernameIsReserved { get; set; }
 
-    /// <summary>
-    /// The minimum amount required to make a deposit
-    /// </summary>
-    decimal MinimumDeposit { get; set; }
-
-    /// <summary>
-    /// The maximum amount required to make a deposit
-    /// </summary>
-    decimal MaximumDeposit { get; set; }
-
     #endregion
 }
