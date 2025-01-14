@@ -62,7 +62,6 @@ public class ConfigController : ControllerBase
         res.SetSuccess(nameof(DateTime.UtcNow).ToCamelCase(), DateTime.UtcNow.ToString("yyyy/MM/dd HH:mm:ss"));
         res.SetSuccess(nameof(s.AccountDeletedAfter).ToCamelCase(), s.AccountDeletedAfter);
         res.SetSuccess(nameof(s.AccountCreatedAfter).ToCamelCase(), s.AccountCreatedAfter);
-        res.SetSuccess(nameof(s.ConversionRatePoint).ToCamelCase(), s.ConversionRatePoint);
         res.SetSuccess(nameof(s.MinimumDeposit).ToCamelCase(), s.MinimumDeposit);
         res.SetSuccess(nameof(s.MaximumDeposit).ToCamelCase(), s.MaximumDeposit);
 

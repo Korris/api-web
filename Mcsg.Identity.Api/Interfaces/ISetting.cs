@@ -65,19 +65,14 @@ public interface ISetting : ISettingBase
     string UsernameIsReserved { get; set; }
 
     /// <summary>
-    /// The conversion rate as a decimal value
-    /// </summary>
-    public decimal ConversionRatePoint { get; set; }
-
-    /// <summary>
     /// The minimum amount required to make a deposit
     /// </summary>
-    public decimal MinimumDeposit { get; set; }
+    decimal MinimumDeposit { get; set; }
 
     /// <summary>
     /// The maximum amount required to make a deposit
     /// </summary>
-    public decimal MaximumDeposit { get; set; }
+    decimal MaximumDeposit { get; set; }
 
     #endregion
 }
