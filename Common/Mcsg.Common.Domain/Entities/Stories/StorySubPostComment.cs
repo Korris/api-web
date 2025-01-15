@@ -18,4 +18,6 @@ public partial class StorySubPostComment : BasePostComment
     [ForeignKey("ResourceId")]
     [InverseProperty("StorySubPostComments")]
     public virtual StoryResource? Resource { get; set; }
+
+    public Guid? ParagraphId { get; set; }
 }
