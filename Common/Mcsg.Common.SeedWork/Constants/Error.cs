@@ -493,6 +493,11 @@ public static class Error
     /// </summary>
     public const string E715 = "Can not with draw internal address";
 
+    /// <summary>
+    /// Invalid wallet address
+    /// </summary>
+    public const string E716 = "Invalid wallet address";
+
     #endregion
 
     #region -- E9xx --

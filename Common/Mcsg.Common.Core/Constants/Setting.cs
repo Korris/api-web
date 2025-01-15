@@ -660,9 +660,19 @@ public class Setting : SeedWork.Constants.Setting
         public const string Ffc = "FFC";
 
         /// <summary>
+        /// FTW
+        /// </summary>
+        public const string Ftw = "FTW";
+
+        /// <summary>
         /// BNB
         /// </summary>
         public const string Bnb = "BNB";
+
+        /// <summary>
+        /// BNBT
+        /// </summary>
+        public const string Bnbt = "BNBT";
 
         /// <summary>
         /// Dollar
@@ -783,5 +793,25 @@ public class Setting : SeedWork.Constants.Setting
         /// MinimumWithdrawFfc
         /// </summary>
         public const string MinimumWithdrawFfc = "MinimumWithdrawFfc";
+
+        /// <summary>
+        /// MinimumDepositFfr
+        /// </summary>
+        public const string MinimumDepositFfr = "MinimumDepositFfr";
+
+        /// <summary>
+        /// MaximumDepositFfr
+        /// </summary>
+        public const string MaximumDepositFfr = "MaximumDepositFfr";
+
+        /// <summary>
+        /// KindDonateFfr
+        /// </summary>
+        public const string KindDonateFfr = "KindDonateFfr";
+
+        /// <summary>
+        /// KindDonateFfc
+        /// </summary>
+        public const string KindDonateFfc = "KindDonateFfc";
     }
 }
