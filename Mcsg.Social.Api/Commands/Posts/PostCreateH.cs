@@ -209,6 +209,20 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             }
         }
 
+        if (result.MetaData != null && result.SubPosts.Count == 0)
+        {
+            var metaData = new UploadFileDto
+            {
+                HashId = result.HashId,
+                Url = result.MetaData.Url,
+                Type = ResourceType.Youtube
+            };
+            result.SubPosts.Add(new SubUploadFileDto
+            {
+                Files = new List<UploadFileDto> { metaData }
+            });
+        }
+
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
