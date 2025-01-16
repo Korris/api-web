@@ -353,6 +353,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string TransferTransaction = "TransferTransaction";
 
         /// <summary>
+        /// DonateTransaction
+        /// </summary>
+        public const string DepositTransaction = "DepositTransaction";
+
+        /// <summary>
         /// DeleteSocial
         /// </summary>
         public const string DeleteSocial = "DeleteSocial";

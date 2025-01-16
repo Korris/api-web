@@ -610,7 +610,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
     {
         var l = dtos
             .Where(p => p.EntityType == NotificationEntityType.TransferTransaction
-                || p.EntityType == NotificationEntityType.DonateTransaction)
+                || p.EntityType == NotificationEntityType.DonateTransaction
+                || p.EntityType == NotificationEntityType.DepositTransaction)
             .ToList();
         if (l.Count == 0)
         {

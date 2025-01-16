@@ -37,6 +37,7 @@ public class NotificationService : BaseS, INotificationService
         {
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
             TransactionType.Donate => NotificationEntityType.DonateTransaction,
+            TransactionType.Deposit => NotificationEntityType.DepositTransaction,
             _ => NotificationEntityType.TransferTransaction
         };
 
@@ -63,13 +64,14 @@ public class NotificationService : BaseS, INotificationService
         response.ReferenceNumber = req.ReferenceNumber;
         response.ActorId = req.AuthorId;
         response.ActorName = profileName;
-        response.Message = GetMessageTransaction(amount, profileName, notificationEntityType);
+        response.Message = GetMessageTransaction(amount, profileName, notificationEntityType, req.CurrencyUnit + "");
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = GetTransactionType(notificationEntityType);
         response.UserAvatar = user?.Avatar;
         response.CurrencyUnit = req.CurrencyUnit;
 
         await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -134,12 +136,13 @@ public class NotificationService : BaseS, INotificationService
         }
     }
 
-    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType)
+    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType, string currencyUnit)
     {
         return notificationEntityType switch
         {
             NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
             NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
+            NotificationEntityType.DepositTransaction => string.Format(NotificationContent.DepositTransaction, amount, currencyUnit),
             _ => string.Empty
         };
     }
@@ -150,6 +153,7 @@ public class NotificationService : BaseS, INotificationService
         {
             NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
             NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
+            NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
             _ => string.Empty
         };
     }

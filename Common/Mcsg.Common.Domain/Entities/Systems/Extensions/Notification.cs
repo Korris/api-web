@@ -323,6 +323,11 @@ partial class Notification
         {
             return string.Format(NotificationContent.TransferTransaction, noti.Amount, noti.ActorName);
         }
+
+        if (noti.EntityType == NotificationEntityType.DepositTransaction)
+        {
+            return string.Format(NotificationContent.DepositTransaction, noti.Amount, noti.CurrencyUnit);
+        }
         #endregion
 
         return "";
@@ -408,6 +413,7 @@ partial class Notification
 
             NotificationEntityType.TransferTransaction => Setting.NotificationTargetType.Transaction,
             NotificationEntityType.DonateTransaction => Setting.NotificationTargetType.Transaction,
+            NotificationEntityType.DepositTransaction => Setting.NotificationTargetType.Transaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationTargetType.RejectPostReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationTargetType.RejectCommentReport,
@@ -506,6 +512,7 @@ partial class Notification
 
             NotificationEntityType.TransferTransaction => Setting.NotificationType.TransferTransaction,
             NotificationEntityType.DonateTransaction => Setting.NotificationType.DonateTransaction,
+            NotificationEntityType.DepositTransaction => Setting.NotificationType.DepositTransaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationType.RejectReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationType.RejectReport,

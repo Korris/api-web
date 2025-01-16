@@ -410,6 +410,11 @@ public enum NotificationEntityType
     /// DonateTransaction
     /// </summary>
     DonateTransaction = 512,
+
+    /// <summary>
+    /// DepositTransaction
+    /// </summary>
+    DepositTransaction = 513,
     #endregion
 
     #region -- Report --
