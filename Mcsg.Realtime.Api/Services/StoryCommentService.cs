@@ -314,8 +314,14 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
             Status = CommentStatus.Public,
             ResourceId = resource?.Id ?? null,
             GifId = req.GifId,
-            CustomNote = req.CustomNote.RemoveMaliciousText()
+            CustomNote = req.CustomNote.RemoveMaliciousText(),
         };
+
+        if (req.ParagraphId != null)
+        {
+            comment.ParagraphId = Guid.Parse(req.ParagraphId);
+        }
+
         await _context.StorySubPostComments.AddAsync(comment);
         await _context.SaveChangesAsync(default);
 
@@ -334,7 +340,8 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
             ResourceUrl = resource?.Url ?? null,
             AuthorId = comment.AuthorId,
             GifId = req.GifId,
-            Mentions = req.Mentions
+            Mentions = req.Mentions,
+            ParagraphId = req.ParagraphId
         };
     }
     #endregion

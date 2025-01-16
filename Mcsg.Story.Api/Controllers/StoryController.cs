@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Mcsg.Story.Api.Controllers;
 
 using Common.Core.Enums;
 using Common.Core.Requests;
+using Common.SeedWork.Responses;
 using Interfaces;
 using Requests;
 
@@ -14,9 +17,9 @@ public class StoryController : ControllerBase
 {
     #region -- Methods --
 
-    public StoryController(ISetting setting, IStoryService storyService, IPostService postService, IPostReactService postReactService)
+    public StoryController(IMediator mediator, IStoryService storyService, IPostService postService, IPostReactService postReactService)
     {
-        _setting = setting;
+        _mediator = mediator;
         _postService = postService;
         _storyService = storyService;
         _postReactService = postReactService;
@@ -272,14 +275,28 @@ public class StoryController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// ViewParapraph
+    /// </summary>
+    /// <returns>Return the result</returns>
+    [HttpPatch("v1/ViewParapraph")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> ViewParapraph([FromForm] StoryPostViewParagraphR request)
+    {
+        request.Analyze(HttpContext);
+
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --
 
     /// <summary>
-    /// Setting
+    /// Mediator
     /// </summary>
-    private readonly ISetting _setting;
+    private readonly IMediator _mediator;
 
     private readonly IStoryService _storyService;
 

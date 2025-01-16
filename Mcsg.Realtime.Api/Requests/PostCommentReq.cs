@@ -12,4 +12,5 @@ public class PostCommentReq : BaseR
     public string GifId { get; set; }
     public string Type { get; set; } // post / subpost
     public string? CustomNote { get; set; }
+    public string? ParagraphId { get; set; }
 }

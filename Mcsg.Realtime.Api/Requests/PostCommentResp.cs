@@ -25,4 +25,5 @@ public class PostCommentResp
     public Guid PostIdOfPost { get; set; }
     public PostType PostType { get; set; }
     public bool IsDeleted { get; set; }
+    public string? ParagraphId { get; set; }
 }

@@ -118,6 +118,13 @@ public class CommentController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("story-chapter-paragraph")]
+    public async Task<IActionResult> GetStoryChapterComments([FromQuery] CommentParapraphLoadR request)
+    {
+        var result = await _commentService.GetCommentOfSubPostParagraphAsync(request, PostType.Story);
+        return Ok(result);
+    }
+
     [HttpGet("comment-most-reaction")]
     public async Task<IActionResult> GetCommentWithMostReaction([FromQuery] CommentMostReactionR request)
     {

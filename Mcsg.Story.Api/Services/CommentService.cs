@@ -686,6 +686,107 @@ public partial class CommentService : ICommentService
         return response;
     }
 
+    public async Task<CommentPagedResults<CommentResponse>> GetCommentOfSubPostParagraphAsync(CommentParapraphLoadR request, PostType postType)
+    {
+        var query = GetCommentOfSubPostParagraphQuery;
+        var postId = request.PostId;
+
+        if (postType == PostType.Feed)
+        {
+            var totalSubPost = await _postCommentRepository.Connection.QueryFirstOrDefaultAsync<SubPostCountModel>(CountSubPostOfPostParagraphQuery, new { PostId = request.PostId, ParagraphId = request.ParagraphId });
+
+            if (string.IsNullOrWhiteSpace(request.OrderBy))
+            {
+                request.OrderBy = "CreatedOn";
+            }
+
+            if (totalSubPost != null && totalSubPost.Count < 2)
+            {
+                // Load post comment instead of subpost comment when have post have only 1 subpost
+                query = GetCommentOfPostQuery;
+                postId = totalSubPost.PostId;
+            }
+        }
+
+        query = string.Format(query, request.OrderBy);
+
+        var offset = request.PageSize * (request.PageNumber - 1);
+        var result = await _postCommentRepository.Connection.QueryAsync<CommentQueryModel>(query, new { PostId = postId, ParagraphId = request.ParagraphId });
+        var totalRecord = result?.Count() ?? 0;
+        var totalComments = 0;
+        var comments = new List<CommentResponse>();
+        if (result != null && result.Any())
+        {
+            var commentModels = result.Where(x => x.CommentLevel == (int)CommentLevel.Comment).ToList();
+            totalComments = commentModels.Count();
+            var pagedComments = commentModels.Skip(offset).Take(request.PageSize).ToList();
+
+            var commentIds = pagedComments.Select(x => x.Id).ToList();
+            var mentions = await _mentionRepository.Connection.QueryAsync<UserMentionModel>(GetUserMentionsInComments, new { LocationIds = commentIds });
+            foreach (var comModel in pagedComments)
+            {
+                var comment = new CommentResponse()
+                {
+                    Id = comModel.Id,
+                    PostId = comModel.PostId,
+                    AuthorId = comModel.AuthorId,
+                    AuthorName = comModel.AuthorName,
+                    UserAvatar = comModel.UserAvatar,
+                    Body = comModel.Body,
+                    CreatedOn = comModel.CreatedOn,
+                    ResourceHashId = comModel.ResourceHashId,
+                    ResourceUrl = await _sc.GetPublicUrl(comModel.ResourceUrl, comModel.BucketName, comModel.MinioInstance),
+                    GifId = comModel.GifId,
+                    CustomNote = comModel.CustomNote.ForLexical()
+                };
+
+                comment.Body = await _businessText.Process(comment.Body);
+
+                var replyModels = result.Where(x => x.ParentId == comModel.Id
+                                    && x.CommentLevel == (int)CommentLevel.Reply).ToList();
+
+                var replies = new ReplyResponse()
+                {
+                    TotalReply = replyModels.Count
+                };
+                comment.ReplyCount = replyModels.Count;
+                comment.Replies = replies;
+
+                // Mention to comment
+                if (mentions != null && mentions.Any())
+                {
+                    var userMentioneds = mentions.Where(x => x.LocationId == comment.Id).ToList();
+                    comment.Mentions = _mapper.Map<List<UserMentionResponse>>(userMentioneds);
+                }
+
+                comments.Add(comment);
+            }
+        }
+
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
+        var userId = request.UserId;
+
+        var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = comments.Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        foreach (var comment in comments)
+        {
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionCommentResponse(comment, postCommentReaction);
+            }
+        }
+
+        CommentPagedResults<CommentResponse> response = new CommentPagedResults<CommentResponse>(totalRecord, request.PageNumber, request.PageSize);
+        response.Items = comments;
+        response.TotalComments = totalComments;
+        return response;
+    }
+
     #region -- Fields --
 
     /// <summary>

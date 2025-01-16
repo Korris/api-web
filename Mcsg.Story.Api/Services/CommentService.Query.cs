@@ -286,6 +286,38 @@
                                 ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
             }
         }
+
+        private string GetCommentOfSubPostParagraphQuery
+        {
+            get
+            {
+                return @$"WITH RECURSIVE cte AS (
+                                   SELECT ""Id"", ""ParentId"", ""PostId""
+                                            , ""AuthorId"", ""CreatedOn""
+                                            , ""Body"", ""CustomNote"", ""QuoteId"", ""ResourceId"", ""GifId"", ""IsDelete"", 1 AS CommentLevel
+                                   FROM {_subPostCommentRepository.TableName}
+                                   WHERE ""ParentId"" IS NULL AND ""PostId"" = @PostId AND ""ParagraphId"" = @ParagraphId
+                                   UNION ALL
+                                   SELECT post.""Id"", post.""ParentId"", post.""PostId""
+                                            , post.""AuthorId"", post.""CreatedOn""
+                                            , post.""Body"", post.""CustomNote"", post.""QuoteId"", post.""ResourceId"", post.""GifId"", post.""IsDelete"", ct.CommentLevel + 1
+                                   FROM cte ct
+                                   JOIN {_subPostCommentRepository.TableName} post ON post.""ParentId"" = ct.""Id""
+                                   INNER JOIN identity.""Users"" parentUser ON ct.""AuthorId"" = parentUser.""Id"" AND parentUser.""IsDelete"" = false
+                                )
+                                SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"", cte.""QuoteId"", cte.""CreatedOn""
+                                            , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
+                                            , us.""Avatar"" AS UserAvatar
+                                            , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId""
+                                            , cte.CommentLevel
+                                FROM cte
+                                LEFT JOIN identity.""Users"" us ON cte.""AuthorId"" = us.""Id""
+                                LEFT JOIN ""story"".""StoryResources"" res ON cte.""ResourceId"" = res.""Id""
+                                WHERE cte.""IsDelete"" = false AND us.""IsDelete"" = false
+                                ORDER BY cte.CommentLevel, cte.""{{0}}"" DESC";
+            }
+        }
+
         private string GetCommentByPostInHomePageQuery
         {
             get
@@ -389,6 +421,21 @@
                         GROUP BY T1.""PostId"" ";
             }
         }
+
+        private string CountSubPostOfPostParagraphQuery
+        {
+            get
+            {
+                return $@"SELECT T1.""PostId"", COUNT (DISTINCT T1.""Id"") AS ""Count"" 
+                        FROM ""story"".""StorySubPosts"" T1
+                        LEFT JOIN ""story"".""StorySubPosts"" T2
+                        ON T1.""PostId"" = T2.""PostId""
+                        WHERE T2.""Id"" = @PostId AND T2.""IsDelete"" = false 
+                        AND ""ParagraphId"" = @ParagraphId
+                        GROUP BY T1.""PostId"" ";
+            }
+        }
+
         private string GetUserMentionsInComments
         {
             get
