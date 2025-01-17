@@ -43,5 +43,10 @@ public class AuthenticationLoginUserR : AuthenticationFormBaseR
     /// </summary>
     public bool? IsRecoveryMode { get; set; }
 
+    /// <summary>
+    /// DeviceToken
+    /// </summary>
+    public string? DeviceToken { get; set; }
+
     #endregion
 }

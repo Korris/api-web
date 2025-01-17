@@ -50,5 +50,10 @@ public class AuthenticationLoginSocialR : BaseR
     [JsonIgnore]
     public bool IsForAdmin { get; private set; }
 
+    /// <summary>
+    /// DeviceToken
+    /// </summary>
+    public string? DeviceToken { get; set; }
+
     #endregion
 }

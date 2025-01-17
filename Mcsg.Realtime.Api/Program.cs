@@ -104,6 +104,14 @@ public class Program
         st.LoadStorages();
         builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
 
+        // Firebase
+        var environment = st.Environment == "local" ? "" : "." + st.Environment;
+        var credentialPath = $"{AppContext.BaseDirectory}firebase{environment}.json";
+        builder.Services.AddNotification(p =>
+        {
+            p.CredentialPath = credentialPath;
+        });
+
         // DbContext
         builder.Services.AddDataLibrary(csDb);
 

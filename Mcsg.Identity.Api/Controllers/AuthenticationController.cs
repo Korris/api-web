@@ -85,7 +85,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Logout([FromBody] AuthenticationLogoutR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.Logout(request.RefreshToken);
+        var result = await _authenticationService.Logout(request.RefreshToken,request.UserId, request.DeviceToken);
         return Ok(result);
     }
 

@@ -250,11 +250,37 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
 
             user.SessionId = request.SessionId;
+            await SaveDeviceToken(user.Id, request.DeviceToken);
             return await CreateAccessToken(user, request.RemoteIp);
         }
         else
         {
             throw new ForbiddenAccessException(nameof(E304), E304);
+        }
+    }
+
+    private async Task SaveDeviceToken(Guid userId, string? deviceToken)
+    {
+        if (!string.IsNullOrEmpty(deviceToken))
+        {
+            var device = await _context.Devices.FirstOrDefaultAsync(p => p.UserId == userId && p.Token == deviceToken);
+            if (device == null)
+            {
+                await _context.Devices.AddAsync(new Device
+                {
+                    UserId = userId,
+                    Token = deviceToken
+                });
+            }
+            else
+            {
+                if (device.IsDelete)
+                {
+                    await _context.Devices
+                                .Where(p => p.Id == device.Id)
+                                .ExecuteUpdateAsync(p => p.SetProperty(x => x.IsDelete, false));
+                }
+            }
         }
     }
 
@@ -363,6 +389,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
 
             user.SessionId = request.SessionId;
+            await SaveDeviceToken(user.Id, request.DeviceToken);
             return await CreateAccessToken(user, request.RemoteIp);
         }
         else
@@ -430,6 +457,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 await _context.UserSocials.AddAsync(ettUserSocial);
 
                 user.SessionId = request.SessionId;
+                await SaveDeviceToken(user.Id, request.DeviceToken);
                 var res = await CreateAccessToken(user, request.RemoteIp);
                 res.IsFirstTimeLoginBySocial = true;
                 return res;
@@ -437,8 +465,18 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
     }
 
-    public async Task<bool> Logout(string? refreshToken)
+    public async Task<bool> Logout(string? refreshToken, Guid? userId, string? deviceToken)
     {
+        if (!string.IsNullOrEmpty(deviceToken))
+        {
+            var device = await _context.Available<Device>().FirstOrDefaultAsync(p => p.UserId == userId && p.Token == deviceToken);
+            if (device != null)
+            {
+                await _context.Devices.Where(p => p.Id == device.Id)
+                    .ExecuteUpdateAsync(p => p.SetProperty(q => q.IsDelete, true));
+            }
+        }
+
         return await _tokenService.DeleteAsync(refreshToken);
     }
 
@@ -569,7 +607,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         if (changePasswordResult.Succeeded)
         {
             user.SessionId = request.SessionId;
-            await Logout(request.RefreshToken);
+            await Logout(request.RefreshToken, null, null);
             return await CreateAccessToken(user, null);
         }
         else

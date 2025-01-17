@@ -5,10 +5,15 @@ using Newtonsoft.Json;
 namespace Mcsg.Realtime.Api.Services;
 
 using Common.Constants;
+using Common.Core.Dtos;
 using Common.Core.Enums;
+using Common.Core.Extensions;
+using Common.Core.Interfaces;
+using Common.Core.Notifications;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
+using Common.Extensions;
 using Common.Models.RealTime;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -29,9 +34,11 @@ public class NotificationService : BaseS, INotificationService
     /// </summary>
     /// <param name="context">DB context</param>
     /// <param name="hc">Notification hub</param>
-    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hc) : base(context)
+    /// <param name="nc">Notification client</param>
+    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hc, INotificationClient nc) : base(context)
     {
         _hc = hc;
+        _nc = nc;
     }
 
     public async Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req)
@@ -76,9 +83,36 @@ public class NotificationService : BaseS, INotificationService
         response.NotificationType = GetTransactionType(notificationEntityType);
         response.UserAvatar = user?.Avatar;
         response.CurrencyUnit = req.CurrencyUnit;
+        var reponseNotify = JsonConvert.SerializeObject(response);
+        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, reponseNotify);
 
-        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
-        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, JsonConvert.SerializeObject(response));
+        if (req.TransactionType == TransactionType.Deposit)
+        {
+            await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, reponseNotify);
+            var deviceIds = await _context.Available<Device>(false).Where(p => p.UserId == req.ReceiverId).Select(p => p.Token).ToListAsync();
+            if (deviceIds.Count > 0)
+            {
+                _nc.SetStrategy(new NotificationFirebase { });
+                $"Request Id to send {deviceIds.ToJson()}".LogInfor();
+                Parallel.ForEach(deviceIds, item =>
+                {
+                    _nc.Handle(new NotificationInfoDto(item)
+                    {
+                        To = item,
+                        Subject = "Giao dịch thành công",
+                        Body = response.Message,
+                        Data = new Dictionary<string, string>()
+                        {
+                            {"type", response.NotificationType},
+                            {"currencyUnit", response.CurrencyUnit+""},
+                            {"referenceNumber", response.ReferenceNumber+""},
+                            {"amount",amount },
+                            {"userId",req.AuthorId.ToString()},
+                        }
+                    });
+                });
+            }
+        }
 
         return response;
     }
@@ -1598,6 +1632,11 @@ public class NotificationService : BaseS, INotificationService
     /// HubContext
     /// </summary>
     private readonly IHubContext<NotificationHub> _hc;
+
+    /// <summary>
+    /// Notification client
+    /// </summary>
+    private readonly INotificationClient _nc;
 
     /// <summary>
     /// UID empty
