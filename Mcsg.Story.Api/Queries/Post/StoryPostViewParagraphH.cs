@@ -61,11 +61,20 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
 
         var ids = textData.Where(p => !string.IsNullOrEmpty(p.Attrs?.Id)).Select(p => Guid.Parse(p.Attrs?.Id + "")).ToList();
 
-        var commentCounts = await _context.Available<StorySubPostComment>(false)
-            .Where(c => ids.Any(id => id == c.ParagraphId))
-            .GroupBy(c => c.ParagraphId)
-            .Select(g => new { g.Key, CommentCount = g.Count() })
-            .ToListAsync(cancellationToken);
+        var comments = _context.Available<StorySubPostComment>(false);
+        var result = from comment in comments
+                     where ids.Contains(comment.ParagraphId.Value)
+                     join reply in comments on comment.Id equals reply.ParentId into joined
+                     from reply in joined.DefaultIfEmpty()
+                     group new { comment, reply } by comment.ParagraphId into g
+                     select new
+                     {
+                         ParagraphId = g.Key,
+                         TotalComments = g.Select(x => x.comment.Id).Distinct().Count() +
+                                         g.Select(x => x.reply.Id).Distinct().Count()
+                     };
+
+        var commentCounts = result.ToList();
 
         var data = textData.Select(p =>
         {
@@ -81,7 +90,7 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
                 TextAlign = attr?.TextAlign,
                 Marks = firstContent?.Marks?.Select(m => m.Type).ToList() ?? [],
                 CommentCount = attr?.Id != null
-                    ? commentCounts.FirstOrDefault(c => c.Key == Guid.Parse(attr.Id))?.CommentCount ?? 0
+                    ? commentCounts.FirstOrDefault(c => c.ParagraphId == Guid.Parse(attr.Id))?.TotalComments ?? 0
                     : 0
             };
         }).ToList();
