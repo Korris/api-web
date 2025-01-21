@@ -61,6 +61,7 @@ public partial class PostLinkService : IPostLinkService
                     result.HashId = postLink.HashId;
                     result.Url = postLink.Url;
                     result.Type = postLink.Type.ToDisplay();
+                    result.PostLinkType = postLink.Type;
                 }
             }
         }
