@@ -559,9 +559,20 @@ public partial class PostService : BaseMinioS, IPostService
             var items = MapTopSeries(dbFeed.ToList(), request.UserId);
             if (items != null && items.Count() > 0)
             {
+                var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
+                {
+                    TargetIds = items.Select(p => p.Id).ToList(),
+                    UserId = request.UserId
+                });
                 var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
                 foreach (var item in items)
                 {
+                    var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                    if (postReaction.Count > 0)
+                    {
+                        MapReactionPostSeiresTopResponse(item, postReaction);
+                    }
                     item.IsCensored = !request.IsAdministrator && request.UserName != item.UserName && item.Status == PostStatus.Inactive;
                     item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature;
                 }

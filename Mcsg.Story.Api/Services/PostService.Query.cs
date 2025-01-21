@@ -142,8 +142,6 @@ LIMIT 1
                         post.""Status"", post.""Type"",post.""ViewCount"",post.""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
                         post.""SubPostStr"", 
-                        CASE WHEN COUNT(DISTINCT r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE null END AS ReactionByPostStr,
-                        COUNT(DISTINCT r.""Type"") AS TotalReact,
                         array_agg(DISTINCT tag.""Name"") as Tags from
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
@@ -199,7 +197,6 @@ LIMIT 1
                         AS post
                         LEFT JOIN ""story"".""StoryTagPosts"" tp ON tp.""PostId"" = post.""Id""
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-                        LEFT JOIN ""story"".""StoryPostReactions"" r ON r.""TargetId"" = post.""Id"" AND r.""IsDelete"" = FALSE
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
                         post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
