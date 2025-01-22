@@ -29,7 +29,7 @@ public static class NotificationContent
     public const string VideoUploadCompleted = "Video của bạn đã đăng tải thành công.";
     public const string VideoUploadFailed = "Video của bạn đã bị lỗi và đăng tải không thành công.";
 
-    public const string TransferTransaction = "Bạn vừa nhận {0} BC từ {1}.";
+    public const string TransferTransaction = "Bạn vừa nhận {0} {1} từ {2}.";
     public const string DonateTransaction = "Bạn đã nhận được Donate từ {0}.";
     public const string DepositTransaction = "Bạn vừa nạp {0} vào ví {1}.";
 }

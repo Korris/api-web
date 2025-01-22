@@ -63,7 +63,7 @@ public class NotificationService : BaseS, INotificationService
             .FirstOrDefaultAsync();
         var profileName = user?.ProfileName + "";
 
-        var amount = req.Amount.ToString("N0");
+        var amount = req.Amount.ToString();
         response.Id = noti.Id;
         response.Amount = amount;
         response.Status = noti.Status;
@@ -1541,7 +1541,7 @@ public class NotificationService : BaseS, INotificationService
     {
         return notificationEntityType switch
         {
-            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
+            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, currencyUnit, profileName),
             NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
             NotificationEntityType.DepositTransaction => string.Format(NotificationContent.DepositTransaction, amount, currencyUnit),
             _ => string.Empty

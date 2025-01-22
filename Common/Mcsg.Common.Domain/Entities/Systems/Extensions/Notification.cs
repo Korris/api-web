@@ -321,7 +321,7 @@ partial class Notification
         }
         if (noti.EntityType == NotificationEntityType.TransferTransaction)
         {
-            return string.Format(NotificationContent.TransferTransaction, noti.Amount, noti.ActorName);
+            return string.Format(NotificationContent.TransferTransaction, noti.Amount, noti.CurrencyUnit, noti.ActorName);
         }
 
         if (noti.EntityType == NotificationEntityType.DepositTransaction)
