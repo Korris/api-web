@@ -2,14 +2,14 @@
 
 using SeedWork.Dtos;
 
-partial class SocialSubPost
+partial class SocialSubPostReaction
 {
     #region -- Methods --
 
     /// <summary>
     /// Initialize
     /// </summary>
-    public SocialSubPost()
+    public SocialSubPostReaction()
     {
     }
 
@@ -23,21 +23,6 @@ partial class SocialSubPost
 
         ModifiedBy = modifiedBy;
         ModifiedOn = DateTime.UtcNow;
-
-        foreach (var res in SocialResources)
-        {
-            res.Delete(modifiedBy);
-        }
-
-        foreach (var com in SocialSubPostComments)
-        {
-            com.Delete(modifiedBy);
-        }
-
-        foreach (var rea in SocialSubPostReactions)
-        {
-            rea.Delete(modifiedBy);
-        }
     }
 
     /// <summary>
@@ -66,7 +51,7 @@ partial class SocialSubPost
     {
         return new T
         {
-            Id = Id,
+            Id = Id
         };
     }
 

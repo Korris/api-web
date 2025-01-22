@@ -55,12 +55,17 @@ public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, Sin
 
         #region -- Validate on server --
         // SubPost
-        var ett = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == request.Id && p.UserId == userId, cancellationToken);
+        var ett = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == request.Id || p.HashId == request.HashId, cancellationToken);
         if (ett == null)
         {
             var t = new List<DicDto> { new() { Key = nameof(request.Id).ToCamelCase(), Value = request.Id } };
             res.SetError(nameof(E002), E002, t);
             return res;
+        }
+
+        if (ett.UserId != userId)
+        {
+            return res.SetError(nameof(E309), E309);
         }
         #endregion
 

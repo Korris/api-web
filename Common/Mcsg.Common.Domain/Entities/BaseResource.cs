@@ -52,6 +52,18 @@ public class BaseResource : AuditableEntity
     }
 
     /// <summary>
+    /// Delete
+    /// </summary>
+    /// <param name="modifiedBy">Modified by</param>
+    public void Delete(Guid modifiedBy)
+    {
+        IsDelete = true;
+
+        ModifiedBy = modifiedBy;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    /// <summary>
     /// Convert to data transfer object
     /// </summary>
     /// <returns>Return the DTO</returns>

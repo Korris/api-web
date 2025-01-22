@@ -401,7 +401,7 @@ public partial class FeedService : IFeedService
         {
             Id = hashId
         });
-        var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery.ResourcesStr);
+        var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery?.ResourcesStr ?? "") ?? [];
         var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
         data.Resources = resource;
         /// if only 1 Resource when click popup will show data of this Post instead of SubPost
