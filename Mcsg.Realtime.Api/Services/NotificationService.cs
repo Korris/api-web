@@ -22,9 +22,16 @@ using NotificationType = Common.Core.Constants.Setting.NotificationType;
 
 public class NotificationService : BaseS, INotificationService
 {
-    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hubcontext) : base(context)
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context">DB context</param>
+    /// <param name="hc">Notification hub</param>
+    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hc) : base(context)
     {
-        _hubcontext = hubcontext;
+        _hc = hc;
     }
 
     public async Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req)
@@ -70,8 +77,8 @@ public class NotificationService : BaseS, INotificationService
         response.UserAvatar = user?.Avatar;
         response.CurrencyUnit = req.CurrencyUnit;
 
-        await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
-        await _hubcontext.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -111,69 +118,11 @@ public class NotificationService : BaseS, INotificationService
                 response.UserAvatar = comment.UserAvatar;
                 response.Order = comment.Order ?? 0;
 
-                await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
 
         return response;
-    }
-
-    private string GetTargetType(CommentNotificationReq comment)
-    {
-        switch (comment.PostType)
-        {
-            case PostType.Comic:
-                return comment.Type == PostTypes.Post ? NotificationTargetType.Comic : NotificationTargetType.SubComic;
-
-            case PostType.Document:
-                return comment.Type == PostTypes.Post ? NotificationTargetType.Document : NotificationTargetType.SubDocument;
-
-            case PostType.Story:
-                return comment.Type == PostTypes.Post ? NotificationTargetType.Story : NotificationTargetType.SubStory;
-
-            default:
-                return comment.Type == PostTypes.Post ? NotificationTargetType.Social : NotificationTargetType.SubSocial;
-        }
-    }
-
-    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType, string currencyUnit)
-    {
-        return notificationEntityType switch
-        {
-            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
-            NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
-            NotificationEntityType.DepositTransaction => string.Format(NotificationContent.DepositTransaction, amount, currencyUnit),
-            _ => string.Empty
-        };
-    }
-
-    private string GetTransactionType(NotificationEntityType notificationEntityType)
-    {
-        return notificationEntityType switch
-        {
-            NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
-            NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
-            NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
-            _ => string.Empty
-        };
-    }
-
-    private string GetMessage(CommentNotificationReq comment)
-    {
-        switch (comment.PostType)
-        {
-            case PostType.Comic:
-                return comment.AuthorName + NotificationContent.CommentOnComic;
-
-            case PostType.Document:
-                return comment.AuthorName + NotificationContent.CommentOnDocument;
-
-            case PostType.Story:
-                return comment.AuthorName + NotificationContent.CommentOnStory;
-
-            default:
-                return comment.AuthorName + NotificationContent.CommentOnFeed;
-        }
     }
 
     public async Task<NotificationResponse> AddReplyNotification(CommentNotificationReq comment)
@@ -261,7 +210,7 @@ public class NotificationService : BaseS, INotificationService
             response.ReplyCommentId = comment.Id;
             response.CommentId = comment.ReplyToCommentId;
 
-            await _hubcontext.Clients.Group(authorId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hc.Clients.Group(authorId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         return response;
@@ -295,7 +244,7 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = NotificationType.Video + video.Action.ToString();
 
-        await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -620,7 +569,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ReactionType = reaction.ReactionType;
             }
 
-            await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         return response;
@@ -735,7 +684,7 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Mention;
                 response.Message = request.UserProfileName + (isMentionComment ? NotificationContent.MentionOnComment : NotificationContent.MentionOnPost);
 
-                await _hubcontext.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                await _hc.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
         }
     }
@@ -780,7 +729,7 @@ public class NotificationService : BaseS, INotificationService
             response.NotificationType = NotificationType.Mention;
             response.UserAvatar = mention.UserAvatar;
 
-            await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         return response;
@@ -885,7 +834,7 @@ public class NotificationService : BaseS, INotificationService
     {
         if (req != null && req.UserId != Guid.Empty && !string.IsNullOrEmpty(req.TransactionId))
         {
-            await _hubcontext.Clients.Group(req.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveTransactionUpdate, JsonConvert.SerializeObject(req));
+            await _hc.Clients.Group(req.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveTransactionUpdate, JsonConvert.SerializeObject(req));
         }
     }
 
@@ -895,24 +844,13 @@ public class NotificationService : BaseS, INotificationService
         {
             if (!string.IsNullOrEmpty(req.UserId))
             {
-                await _hubcontext.Clients.Group(req.UserId).SendAsync(req.TopicName, req.Message);
+                await _hc.Clients.Group(req.UserId).SendAsync(req.TopicName, req.Message);
             }
             else
             {
-                await _hubcontext.Clients.All.SendAsync(req.TopicName, req.Message);
+                await _hc.Clients.All.SendAsync(req.TopicName, req.Message);
             }
         }
-    }
-
-    private string GetVideoMessage(NotificationAction action)
-    {
-        return action switch
-        {
-            NotificationAction.Processing => NotificationContent.VideoUploadProcessing,
-            NotificationAction.Completed => NotificationContent.VideoUploadCompleted,
-            NotificationAction.Failed => NotificationContent.VideoUploadFailed,
-            _ => throw new NotSupportedException($"Unsupported video action: {action}"),
-        };
     }
 
     public async Task<NotificationResponse> AddFollowPostNotification(FollowPostNotificationReq request)
@@ -987,7 +925,7 @@ public class NotificationService : BaseS, INotificationService
             response.UserAvatar = request.UserAvatar;
         }
 
-        await _hubcontext.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -1056,7 +994,7 @@ public class NotificationService : BaseS, INotificationService
             response.TargetType = notiTargetType;
             response.NotificationType = NotificationType.RejectReport;
 
-            await _hubcontext.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hc.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
         }
 
         await _context.SocialReportDetails
@@ -1124,7 +1062,7 @@ public class NotificationService : BaseS, INotificationService
                     response.NotificationType = NotificationType.FollowUser;
                     response.UserAvatar = followResp.CreatedByUserAvata;
 
-                    await _hubcontext.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                    await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
                     return response;
                 }
@@ -1390,7 +1328,7 @@ public class NotificationService : BaseS, INotificationService
         response.CreatedOn = noti.CreatedOn;
         response.NotificationType = notiType;
 
-        await _hubcontext.Clients.Group(ett.CreatedBy.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(ett.CreatedBy.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
@@ -1576,15 +1514,92 @@ public class NotificationService : BaseS, INotificationService
         response.NotificationType = notiType;
         response.EntityType = entityType;
 
-        await _hubcontext.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await _hc.Clients.Group(ett.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
         return response;
     }
 
+    private string GetTargetType(CommentNotificationReq comment)
+    {
+        switch (comment.PostType)
+        {
+            case PostType.Comic:
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Comic : NotificationTargetType.SubComic;
+
+            case PostType.Document:
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Document : NotificationTargetType.SubDocument;
+
+            case PostType.Story:
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Story : NotificationTargetType.SubStory;
+
+            default:
+                return comment.Type == PostTypes.Post ? NotificationTargetType.Social : NotificationTargetType.SubSocial;
+        }
+    }
+
+    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType, string currencyUnit)
+    {
+        return notificationEntityType switch
+        {
+            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, profileName),
+            NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
+            NotificationEntityType.DepositTransaction => string.Format(NotificationContent.DepositTransaction, amount, currencyUnit),
+            _ => string.Empty
+        };
+    }
+
+    private string GetTransactionType(NotificationEntityType notificationEntityType)
+    {
+        return notificationEntityType switch
+        {
+            NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
+            NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
+            NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
+            _ => string.Empty
+        };
+    }
+
+    private string GetMessage(CommentNotificationReq comment)
+    {
+        switch (comment.PostType)
+        {
+            case PostType.Comic:
+                return comment.AuthorName + NotificationContent.CommentOnComic;
+
+            case PostType.Document:
+                return comment.AuthorName + NotificationContent.CommentOnDocument;
+
+            case PostType.Story:
+                return comment.AuthorName + NotificationContent.CommentOnStory;
+
+            default:
+                return comment.AuthorName + NotificationContent.CommentOnFeed;
+        }
+    }
+
+    private string GetVideoMessage(NotificationAction action)
+    {
+        return action switch
+        {
+            NotificationAction.Processing => NotificationContent.VideoUploadProcessing,
+            NotificationAction.Completed => NotificationContent.VideoUploadCompleted,
+            NotificationAction.Failed => NotificationContent.VideoUploadFailed,
+            _ => throw new NotSupportedException($"Unsupported video action: {action}"),
+        };
+    }
+
+    #endregion
+
     #region -- Fields --
 
-    private readonly IHubContext<NotificationHub> _hubcontext;
+    /// <summary>
+    /// HubContext
+    /// </summary>
+    private readonly IHubContext<NotificationHub> _hc;
 
+    /// <summary>
+    /// UID empty
+    /// </summary>
     private readonly Guid _uidEmpty = Guid.Empty;
 
     #endregion
