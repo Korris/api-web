@@ -14,9 +14,10 @@ message TrackingSummarySearchReq {
     int32 quantity = 1;
     float feedPercent = 2;
     float comicPercent = 3;
-    float storyPercent = 4;
-    google.protobuf.StringValue  frDate = 5;
-    google.protobuf.StringValue  toDate = 6;
+    float documentPercent = 4;
+    float storyPercent = 5;
+    google.protobuf.StringValue  frDate = 6;
+    google.protobuf.StringValue  toDate = 7;
 }
 
 message TrackingSummarySearchRsp {

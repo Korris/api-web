@@ -153,13 +153,14 @@ public partial class PostService : BaseMinioS, IPostService
         {
             var numberOfPosts = _setting.NumberOfPosts;
             var percentFeed = _setting.PercentFeed;
-            var percentStory = _setting.PercentStory;
             var percentComic = _setting.PercentComic;
+            var percentDocument = _setting.PercentDocument;
+            var percentStory = _setting.PercentStory;
             var now = DateTime.UtcNow;
             var frDate = now.StartOfDayUtc();
             var toDate = now.EndOfDayUtc();
 
-            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, (float)percentFeed, (float)percentComic, (float)percentStory, frDate.ToString(), toDate.ToString());
+            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, (float)percentFeed, (float)percentComic, (float)percentDocument, (float)percentStory, frDate.ToString(), toDate.ToString());
 
             var listresults = new List<LatestPostsResponse>();
 
@@ -187,24 +188,28 @@ public partial class PostService : BaseMinioS, IPostService
         {
             //TODO - Will get the percent from config later
             // Get from DB
-            var value = 200;
-            var feedPercent = .6f;
-            var storyPercent = .1f;
-            var comicPercent = .3f;
+            var value = _setting.NumberOfPosts;
+            var feedPercent = _setting.PercentFeed;
+            var storyPercent = _setting.PercentStory;
+            var comicPercent = _setting.PercentComic;
+            var documentPercent = _setting.PercentDocument;
 
             // Conver to amount
             var feed = (int)Math.Round(value * feedPercent, 0);
             var story = (int)Math.Round(value * storyPercent, 0);
             var comic = (int)Math.Round(value * comicPercent, 0);
+            var document = (int)Math.Round(value * documentPercent, 0);
 
             var param = new
             {
                 feed,
                 story,
                 comic,
+                document,
                 feedPercent,
                 storyPercent,
                 comicPercent,
+                documentPercent,
                 ExactKeyword = nameTag
             };
 
@@ -771,7 +776,7 @@ public partial class PostService : BaseMinioS, IPostService
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
-    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, float feedPercent, float comicPercent, float storyPercent, string frDate, string toDate)
+    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, float feedPercent, float comicPercent, float documentPercent, float storyPercent, string frDate, string toDate)
     {
         var res = new TrackingSummarySearchRsp { Success = true };
 
@@ -785,6 +790,7 @@ public partial class PostService : BaseMinioS, IPostService
                 Quantity = quantity,
                 FeedPercent = feedPercent,
                 ComicPercent = comicPercent,
+                DocumentPercent = documentPercent,
                 StoryPercent = storyPercent,
                 FrDate = frDate,
                 ToDate = toDate

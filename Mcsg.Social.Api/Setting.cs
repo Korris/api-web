@@ -54,14 +54,19 @@ public class Setting : SettingBase, ISetting
     public double PercentFeed { get; set; }
 
     /// <summary>
-    /// Percentage of story taken from database
-    /// </summary>
-    public double PercentStory { get; set; }
-
-    /// <summary>
     /// Percentage of comic taken from database
     /// </summary>
     public double PercentComic { get; set; }
+
+    /// <summary>
+    /// Percentage of document taken from database
+    /// </summary>
+    public double PercentDocument { get; set; }
+
+    /// <summary>
+    /// Percentage of story taken from database
+    /// </summary>
+    public double PercentStory { get; set; }
 
     /// <summary>
     /// Number of posts taken from database

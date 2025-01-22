@@ -1091,6 +1091,23 @@ ranked_comic AS (
     AND t.""Name"" ILIKE @ExactKeyword   
     GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
 ),
+ranked_document AS (
+    SELECT dp.""Id"", 
+        GREATEST(dp.""CreatedOn"", COALESCE(MAX(dsp.""CreatedOn""), dp.""CreatedOn"")) AS ""CreatedOn"",
+        dp.""HashId"",
+        ROW_NUMBER() OVER (ORDER BY GREATEST(dp.""CreatedOn"", COALESCE(MAX(dsp.""CreatedOn""), dp.""CreatedOn"")) DESC) AS type_rank
+    FROM document.""DocumentPosts"" dp
+    LEFT JOIN document.""DocumentTagPosts"" dtp ON dp.""Id"" = dtp.""PostId"" AND dtp.""IsDelete"" = false
+    LEFT JOIN ""Tags"" t ON t.""Id"" = dtp.""TagId""
+    LEFT JOIN document.""DocumentSubPosts"" dsp ON dp.""Id"" = dsp.""PostId""
+    WHERE dp.""IsDelete"" = false
+    AND dsp.""IsDelete"" = false
+    AND dp.""Type"" = 4
+    AND dp.""Status"" = 1
+    AND dp.""Permission"" = 0
+    AND t.""Name"" ILIKE @ExactKeyword
+    GROUP BY dp.""Id"", dp.""CreatedOn"", dp.""HashId""
+),
 limited_feed AS (
     SELECT ""Id"", ""CreatedOn"", ""HashId""
     FROM ranked_feed
@@ -1106,12 +1123,19 @@ limited_comic AS (
     FROM ranked_comic
     WHERE type_rank <= @comic
 ),
+limited_document AS (
+    SELECT ""Id"", ""CreatedOn"", ""HashId""
+    FROM ranked_document
+    WHERE type_rank <= @document
+),
 combined_posts AS (
     SELECT ""Id"", ""CreatedOn"", ""HashId"", 0 AS ""Type"" FROM limited_feed
     UNION ALL
     SELECT ""Id"", ""CreatedOn"", ""HashId"", 1 AS ""Type"" FROM limited_story
     UNION ALL
     SELECT ""Id"", ""CreatedOn"", ""HashId"", 2 AS ""Type"" FROM limited_comic
+    UNION ALL
+    SELECT ""Id"", ""CreatedOn"", ""HashId"", 4 AS ""Type"" FROM limited_document
 ),
 numbered_posts AS (
     SELECT ""Id"", ""Type"", ""CreatedOn"", ""HashId"",
@@ -1125,6 +1149,7 @@ grouped_posts AS (
             WHEN ""Type"" = 0 THEN @feedPercent * 10
             WHEN ""Type"" = 1 THEN @storyPercent * 10
             WHEN ""Type"" = 2 THEN @comicPercent * 10
+            WHEN ""Type"" = 4 THEN @documentPercent * 10
         END) AS group_number
     FROM numbered_posts
 ),
@@ -1174,7 +1199,16 @@ ORDER BY group_number, row_num;
                                                    WHERE p.""IsDelete"" = false 
                                                    AND p.""Status"" = {(int)PostStatus.Public}
                                                    AND p. ""Permission"" = 0
-                                                   AND t.""Name"" ILIKE @ExactKeyword))";
+                                                   AND t.""Name"" ILIKE @ExactKeyword))
+                                                    +
+                                                    (SELECT COUNT(*) 
+                                                   FROM ""document"".""DocumentPosts"" p
+                                                     LEFT JOIN document.""DocumentTagPosts"" tp on p.""Id"" = tp.""PostId"" AND tp.""IsDelete"" = false 
+                                                   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
+                                                   WHERE p.""IsDelete"" = false 
+                                                   AND p.""Status"" = {(int)PostStatus.Public}
+                                                   AND p. ""Permission"" = 0
+                                                   AND t.""Name"" ILIKE @ExactKeyword)";
 
         private string PremiumWhereQuery
         {

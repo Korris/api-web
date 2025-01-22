@@ -235,6 +235,7 @@ public class Program
             if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
             if (set.TryGetValue(nameof(st.PercentFeed), out ett)) st.PercentFeed = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.PercentComic), out ett)) st.PercentComic = ett.Value.Cast<double?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.PercentDocument), out ett)) st.PercentDocument = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.PercentStory), out ett)) st.PercentStory = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.NumberOfPosts), out ett)) st.NumberOfPosts = ett.Value.Cast<int?>(ett.DataType) ?? 0;
 

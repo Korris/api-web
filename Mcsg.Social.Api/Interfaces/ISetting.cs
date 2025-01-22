@@ -60,6 +60,11 @@ public interface ISetting : ISettingBase
     double PercentComic { get; set; }
 
     /// <summary>
+    /// Percentage of document taken from database
+    /// </summary>
+    double PercentDocument { get; set; }
+
+    /// <summary>
     /// Number of posts taken from database
     /// </summary>
     int NumberOfPosts { get; set; }
