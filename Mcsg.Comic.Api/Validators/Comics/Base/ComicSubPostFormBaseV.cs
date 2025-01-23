@@ -25,7 +25,7 @@ public class ComicSubPostFormBaseV : AbstractValidator<ComicSubPostFormBaseR>
         RuleFor(p => p.Order).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
         .InclusiveBetween(ChapterRange.Min, ChapterRange.Max).WithMessage($"{t} {GreaterThan} {ChapterRange.Min} and {LessThan} {ChapterRange.Max}")
         .Must(order => ValidateOrder(order ?? 0))
-        .WithMessage($"{t} {LessThan} 2");
+        .WithMessage($"{t} {LessThan} 2 decimal places.");
 
         t = "PublishDate";
         RuleFor(p => p.PublishDate).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);

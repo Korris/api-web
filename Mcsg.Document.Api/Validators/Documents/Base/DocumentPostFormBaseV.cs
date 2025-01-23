@@ -35,7 +35,8 @@ public class DocumentPostFormBaseV : AbstractValidator<DocumentPostFormBaseR>
 
         t = "Tags";
         RuleForEach(p => p.Tags).Must(Valid).WithMessage(Tag);
-        RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage(DuplicateTag).WithName(t);
+        RuleFor(p => p.Tags).Must(NoDuplicate).WithMessage(DuplicateTag).WithName(t)
+            .Must(MaxQuantity).WithMessage($"{t} {LessThanOrEqualTo} {Hashtag.MaxQuantity}");
     }
 
     /// <summary>
@@ -70,6 +71,21 @@ public class DocumentPostFormBaseV : AbstractValidator<DocumentPostFormBaseR>
         }
 
         return tags.Distinct().Count() == tags.Count;
+    }
+
+    /// <summary>
+    /// Max quantity
+    /// </summary>
+    /// <param name="tags">Tags</param>
+    /// <returns>Return the result</returns>
+    private bool MaxQuantity(List<string>? tags)
+    {
+        if (tags == null)
+        {
+            return true;
+        }
+
+        return tags.Count <= Hashtag.MaxQuantity;
     }
 
     #endregion
