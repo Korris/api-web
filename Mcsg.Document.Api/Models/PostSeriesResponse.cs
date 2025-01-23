@@ -60,6 +60,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public int TotalReact { get; set; }
     public ReactionsResponse? Reaction { get; set; }
     public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+    public PostType PostType => Type;
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {

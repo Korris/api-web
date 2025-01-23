@@ -560,7 +560,7 @@ public partial class PostService : BaseMinioS, IPostService
             if (items != null && items.Count() > 0)
             {
                 var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
-                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Comic.""ComicPostReactions"""), new
+                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"Story.""StoryPostReactions"""), new
                 {
                     TargetIds = items.Select(p => p.Id).ToList(),
                     UserId = request.UserId

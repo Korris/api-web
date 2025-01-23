@@ -309,18 +309,11 @@ public partial class PostService : BaseMinioS, IPostService
         }
         var profiles = await _businessText.GetProfiles(body);
 
-        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
-        var postCommentReactionResponse = await _postCommentRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
-        {
-            TargetIds = result.Select(p => p.Id).ToList(),
-            UserId = input.UserId
-        });
-
         foreach (var item in result)
         {
             item.ResourceUrl = await _sc.GetPublicUrl(item.ResourceUrl, item.BucketName, item.MinioInstance);
             item.Body = await _businessText.Process(item.Body, profiles);
-            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+            var postCommentReaction = await GetReactionsForType(result.Select(p => p.Id).ToList(), input.UserId, "Social");
             if (postCommentReaction.Count > 0)
             {
                 MapReactionNewsFeedResponse(item, postCommentReaction);
@@ -354,6 +347,23 @@ public partial class PostService : BaseMinioS, IPostService
 
         if (items.Any())
         {
+            var storyIds = items.Where(p => p.PostType == PostType.Story).Select(p => p.Id).ToList();
+            var comicIds = items.Where(p => p.PostType == PostType.Comic).Select(p => p.Id).ToList();
+            var reactions = await GetReactionsAsync(storyIds, comicIds, input.UserId);
+
+            foreach (var item in items)
+            {
+                var reactionsForItem = item.PostType switch
+                {
+                    PostType.Story => reactions.StoryReactions.Where(r => r.TargetId == item.Id).ToList(),
+                    PostType.Comic => reactions.ComicReactions.Where(r => r.TargetId == item.Id).ToList(),
+                    _ => new List<CommentReactionResponseQuery>()
+                };
+
+                if (reactionsForItem.Any())
+                    MapReactionRelatedBoxResponse(item, reactionsForItem);
+            }
+
             var results = new PagedResponse<RelatedBoxResponse>(0, input.PageNumber, input.PageSize);
             results.Items = items;
             return results;
@@ -362,6 +372,33 @@ public partial class PostService : BaseMinioS, IPostService
         {
             return new PagedResponse<RelatedBoxResponse>(0);
         }
+    }
+
+    private async Task<(List<CommentReactionResponseQuery> StoryReactions, List<CommentReactionResponseQuery> ComicReactions)> GetReactionsAsync(List<Guid> storyIds, List<Guid> comicIds, Guid? userId)
+    {
+        var storyReactions = storyIds.Any() ? await GetReactionsForType(storyIds, userId, "Story") : new List<CommentReactionResponseQuery>();
+        var comicReactions = comicIds.Any() ? await GetReactionsForType(comicIds, userId, "Comic") : new List<CommentReactionResponseQuery>();
+        return (storyReactions, comicReactions);
+    }
+
+    private async Task<List<CommentReactionResponseQuery>> GetReactionsForType(List<Guid> ids, Guid? userId, string type)
+    {
+        var query = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $"{type}.\"{type}PostReactions\"");
+        var data = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(query, new { TargetIds = ids, UserId = userId });
+        return data.ToList();
+    }
+
+    private void MapReactionRelatedBoxResponse(RelatedBoxResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
     }
 
     private List<RelatedBoxResponse> MappingRelatedBoxResponse(IEnumerable<RelatedBoxQueryResponse> posts)
@@ -375,11 +412,6 @@ public partial class PostService : BaseMinioS, IPostService
             Tags = x.Tags,
             TotalComment = x.TotalComment,
             PostType = x.PostType.ToEnum(PostType.Feed),
-            Reaction = new ReactionsResponse
-            {
-                TotalReacts = x.TotalReacts,
-                Reactions = x.ReactionStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionStr) : new List<ReactionResponse>()
-            }
         }).ToList();
     }
 
