@@ -10,7 +10,7 @@ using Interfaces;
 using Requests;
 
 /// <summary>
-/// Verify controller
+/// Verification controller
 /// </summary>
 public class VerificationController : BaseController
 {

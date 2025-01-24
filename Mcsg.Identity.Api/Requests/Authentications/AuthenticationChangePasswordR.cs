@@ -2,12 +2,10 @@
 
 namespace Mcsg.Identity.Api.Requests;
 
-using Common.Core.Requests;
-
 /// <summary>
 /// Request
 /// </summary>
-public class AuthenticationChangePasswordR : BaseR
+public class AuthenticationChangePasswordR : AuthenticationRefreshTokenR
 {
     #region -- Properties --
 

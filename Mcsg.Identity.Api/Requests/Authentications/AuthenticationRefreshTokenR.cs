@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Mcsg.Identity.Api.Requests;
+﻿namespace Mcsg.Identity.Api.Requests;
 
 using Common.Core.Requests;
 
@@ -14,8 +12,7 @@ public class AuthenticationRefreshTokenR : BaseR
     /// <summary>
     /// RefreshToken
     /// </summary>
-    [Required]
-    public string RefreshToken { get; set; } = default!;
+    public string? RefreshToken { get; set; }
 
     #endregion
 }

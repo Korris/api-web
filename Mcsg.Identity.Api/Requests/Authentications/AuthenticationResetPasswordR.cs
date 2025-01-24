@@ -1,4 +1,5 @@
 ﻿namespace Mcsg.Identity.Api.Requests;
+
 /// <summary>
 /// Request
 /// </summary>
@@ -12,14 +13,19 @@ public class AuthenticationResetPasswordR : AuthenticationResendOtpR
     public string Password { get; set; } = default!;
 
     /// <summary>
-    /// RetypePassword
+    /// ConfirmPassword
     /// </summary>
-    public string RetypePassword { get; set; } = default!;
+    public string ConfirmPassword { get; set; } = default!;
 
     /// <summary>
     /// OtpCode
     /// </summary>
     public string OtpCode { get; set; } = default!;
+
+    /// <summary>
+    /// RefreshToken
+    /// </summary>
+    public string? RefreshToken { get; set; }
 
     #endregion
 }

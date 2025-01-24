@@ -8,7 +8,7 @@ using Common.Core.Controllers;
 using Interfaces;
 
 /// <summary>
-/// UserAuthenticator controller
+/// UserRecovery controller
 /// </summary>
 [Authorize]
 public class UserRecoveryController : BaseController

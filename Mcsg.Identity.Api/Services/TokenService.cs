@@ -27,12 +27,17 @@ public class TokenService : BaseSettingS, ITokenService
     /// </summary>
     /// <param name="rt">Refresh token</param>
     /// <returns>Returns the result</returns>
-    public async Task<Guid?> IsValidAsync(string rt)
+    public async Task<Guid?> IsValidAsync(string? rt)
     {
+        if (string.IsNullOrWhiteSpace(rt))
+        {
+            return null;
+        }
+
         var ett = await _context.UserRefreshTokens.FirstOrDefaultAsync(p => p.RefreshToken == rt);
         if (ett == null)
         {
-            return Guid.Empty;
+            return null;
         }
 
         if (ett.RefreshTokenExpiryTime < DateTime.UtcNow)
@@ -40,7 +45,7 @@ public class TokenService : BaseSettingS, ITokenService
             _context.UserRefreshTokens.Remove(ett);
             await _context.SaveChangesAsync(default);
 
-            return Guid.Empty;
+            return null;
         }
 
         return ett.UserId;
@@ -61,6 +66,7 @@ public class TokenService : BaseSettingS, ITokenService
         var ett = new UserRefreshToken
         {
             UserId = user.Id,
+            SessionId = user.SessionId,
             RefreshToken = SecurityToken.GenerateToken(),
             RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(_setting.Jwt.TimeRt)
         };
@@ -79,17 +85,39 @@ public class TokenService : BaseSettingS, ITokenService
     /// Delete async
     /// </summary>
     /// <param name="userId">UserId</param>
+    /// <param name="rt">RefreshToken</param>
     /// <returns>Returns the result</returns>
-    public async Task<bool> DeleteAsync(Guid? userId)
+    public async Task<bool> DeleteAsync(Guid? userId, string? rt)
     {
         if (userId == null)
         {
             return false;
         }
 
-        var etts = await _context.UserRefreshTokens.Where(p => p.UserId == userId).ToListAsync();
-        _context.UserRefreshTokens.RemoveRange(etts);
-        return await _context.SaveChangesAsync(default) > 0;
+        var q = _context.UserRefreshTokens.Where(p => p.UserId == userId);
+        if (!string.IsNullOrWhiteSpace(rt))
+        {
+            q = q.Where(p => p.RefreshToken != rt);
+        }
+
+        return await q.ExecuteDeleteAsync() > 0;
+    }
+
+    /// <summary>
+    /// Delete async
+    /// </summary>
+    /// <param name="rt">RefreshToken</param>
+    /// <returns>Returns the result</returns>
+    public async Task<bool> DeleteAsync(string? rt)
+    {
+        if (string.IsNullOrWhiteSpace(rt))
+        {
+            return false;
+        }
+
+        var q = _context.UserRefreshTokens.Where(p => p.RefreshToken == rt);
+
+        return await q.ExecuteDeleteAsync() > 0;
     }
 
     #endregion

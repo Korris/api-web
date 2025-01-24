@@ -10,7 +10,7 @@ public interface ITokenService
     /// </summary>
     /// <param name="rt">Refresh token</param>
     /// <returns>Returns the result</returns>
-    Task<Guid?> IsValidAsync(string rt);
+    Task<Guid?> IsValidAsync(string? rt);
 
     /// <summary>
     /// Add async
@@ -23,6 +23,14 @@ public interface ITokenService
     /// Delete async
     /// </summary>
     /// <param name="userId">UserId</param>
+    /// <param name="rt">RefreshToken</param>
     /// <returns>Returns the result</returns>
-    Task<bool> DeleteAsync(Guid? userId);
+    Task<bool> DeleteAsync(Guid? userId, string? rt);
+
+    /// <summary>
+    /// Delete async
+    /// </summary>
+    /// <param name="rt">RefreshToken</param>
+    /// <returns>Returns the result</returns>
+    Task<bool> DeleteAsync(string? rt);
 }

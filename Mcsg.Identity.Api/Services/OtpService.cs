@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
@@ -8,7 +7,6 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Domain;
 using Common.Domain.Entities;
-using Common.Interfaces;
 using Common.Models;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
@@ -27,12 +25,10 @@ public partial class OtpService : BaseSettingS, IOtpService
     /// </summary>
     /// <param name="context"></param>
     /// <param name="setting"></param>
-    /// <param name="unitOfWork"></param>
     /// <param name="distributeManager"></param>
-    public OtpService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork, DistributeManager distributeManager) : base(context, setting)
+    public OtpService(IMcsgContext context, ISetting setting, DistributeManager distributeManager) : base(context, setting)
     {
         _distributeManager = distributeManager;
-        _userOtpRepository = unitOfWork.GetRepository<UserOtp>();
     }
 
     public async Task<UserOtp> CreateAsync(Guid userId, string to, UserOtpType type, string otpToken = "")
@@ -82,71 +78,40 @@ public partial class OtpService : BaseSettingS, IOtpService
         return userOtp;
     }
 
-    public async Task<bool> VerifyAsync(string otpToken, string otp, UserOtpType otpType)
+    public async Task<bool> VerifyAsync(string token, string code, UserOtpType otpType)
     {
-        try
+        if (string.IsNullOrWhiteSpace(token) && string.IsNullOrWhiteSpace(code))
         {
-            var nowUtc = DateTime.UtcNow;
-            var haveOtp = _context.UserOtps
-                .Count(u => u.Code == otp && u.OtpType == otpType && u.ExpiryTime > nowUtc);
-            var valid = haveOtp > 0;
+            return false;
+        }
 
-            return valid;
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-        }
+        var utc = DateTime.UtcNow;
+        return await _context.UserOtps.AnyAsync(p => p.Token == token && p.Code == code && p.OtpType == otpType && p.ExpiryTime > utc);
     }
 
-    public async Task<UserOtp> GetAsync(string otpToken, UserOtpType otpType)
+    public async Task<UserOtp?> GetAsync(string token, UserOtpType otpType)
     {
-        try
+        if (string.IsNullOrWhiteSpace(token))
         {
-            if (otpToken != null)
-            {
-                var dbOtp = await _userOtpRepository
-                    .Connection.QueryFirstOrDefaultAsync<UserOtp>(GetOtpQuery, new { Token = otpToken, Type = otpType });
+            return null;
+        }
 
-                return dbOtp;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-        }
+        return await _context.UserOtps.FirstOrDefaultAsync(p => p.Token == token && p.OtpType == otpType);
     }
 
-    public async Task<UserOtp> GetValidTokendAsync(string otpToken, UserOtpType otpType)
+    public async Task<UserOtp?> GetAsync(string? token, string? code)
     {
-        try
+        if (string.IsNullOrWhiteSpace(token) && string.IsNullOrWhiteSpace(code))
         {
-            if (otpToken != null)
-            {
-                var dbOtp = await _userOtpRepository
-                    .Connection.QueryFirstOrDefaultAsync<UserOtp>(GetValidOtpQuery, new { Token = otpToken, Type = otpType });
+            return null;
+        }
 
-                return dbOtp;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
-        }
+        return await _context.UserOtps.FirstOrDefaultAsync(p => p.Token == token && p.Code == code);
     }
 
     public async Task<bool> ClearAllUserOtpAsync(Guid userId, UserOtpType otpType)
     {
-        await _userOtpRepository.Connection.ExecuteAsync(DeleteUserOtpsQuery, new { UserId = userId, Type = otpType });
-        return true;
+        return await _context.UserOtps.Where(p => p.UserId == userId && p.OtpType == otpType).ExecuteDeleteAsync() > 0;
     }
 
     private async Task CreateEmailOtpAsync(string to, UserOtpType type, UserOtp userOtp)
@@ -175,7 +140,6 @@ public partial class OtpService : BaseSettingS, IOtpService
 
     #region -- Fields --
 
-    private readonly IRepository<UserOtp> _userOtpRepository;
     private readonly DistributeManager _distributeManager;
 
     private readonly IDictionary<UserOtpType, JobType> _otpJobTypeMapper = new Dictionary<UserOtpType, JobType> {

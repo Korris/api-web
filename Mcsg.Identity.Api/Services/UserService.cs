@@ -8,6 +8,7 @@ using Common.Core.Distributor;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.Enums;
@@ -59,56 +60,27 @@ public partial class UserService : BaseMinioS, IUserService
         return referralCode;
     }
 
-    public async Task<bool> ConfirmEmailAsync(Guid userId, string email)
+    public async Task<User.FullProfileDto> GetUserAsync(BaseR request)
     {
-        var iResult = await _userRepository.Connection.ExecuteAsync(UpdateEmailConfirmedCommand, new
+        var userId = request.UserId;
+        var q = _context.Available<UserRefreshToken>(false).Where(p => p.UserId == userId);
+        if (!request.FromMobile && !request.IsLocalhost)
         {
-            email,
-            id = userId
-        });
-
-        return iResult > 0;
-    }
-
-    public async Task<bool> ConfirmPhoneNumberAsync(Guid userId, string phone)
-    {
-        var iResult = await _userRepository.Connection.ExecuteAsync(UpdatePhoneNumberConfirmedCommand, new
+            q = q.Where(p => p.SessionId == request.SessionId);
+        }
+        var has = await q.AnyAsync();
+        if (!has)
         {
-            phone,
-            id = userId
-        });
+            throw new UnauthorizedAccessException(nameof(E302), E302);
+        }
 
-        return iResult > 0;
-    }
-
-    public async Task<User.FullProfileDto> GetCurrentUserAsync(Guid? userId)
-    {
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
-        if (user == null)
-        {
-            return new User.FullProfileDto();
-        }
-
-        var res = await CreateUserRespone(user, true);
-
-        // Check first login
-        if (user != null && user.LastLoginDate == null)
-        {
-            user.LastLoginDate = DateTime.UtcNow;
-            await _context.SaveChangesAsync(default);
-        }
-
-        return res;
+        return await CreateUserRespone(user, true);
     }
 
-    public async Task<User.FullProfileDto> GetUserByUserNameAsync(Guid? userFollowerId, string userName)
+    public async Task<User.FullProfileDto> GetUserAsync(string userName, Guid? userFollowerId)
     {
         var user = await _userManager.UserAvailable.FirstOrDefaultAsync(p => p.UserName == userName);
-        if (user == null)
-        {
-            return new User.FullProfileDto();
-        }
-
         return await CreateUserRespone(user, false, userFollowerId);
     }
 

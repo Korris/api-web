@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Identity.Api.Controllers;
 
-using Common.Core.Requests;
 using Interfaces;
 using Requests;
 using static Common.SeedWork.Constants.Setting;
@@ -82,11 +81,19 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("logout"), Authorize]
-    public async Task<IActionResult> Logout()
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] AuthenticationLogoutR request)
     {
-        var req = new BaseR(HttpContext);
-        var result = await _authenticationService.LogOut(req);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.Logout(request.RefreshToken);
+        return Ok(result);
+    }
+
+    [HttpPost("terminate-all-other-sessions")]
+    public async Task<IActionResult> TerminateAllOtherSessions([FromBody] AuthenticationTerminateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.TerminateAllOtherSessions(request.UserId, request.RefreshToken);
         return Ok(result);
     }
 

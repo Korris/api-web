@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser(string userName)
     {
         var req = new BaseR(HttpContext);
-        var result = await _userService.GetUserByUserNameAsync(req.UserId, userName);
+        var result = await _userService.GetUserAsync(userName, req.UserId);
         return Ok(result);
     }
 
@@ -61,7 +61,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetCurrentUser()
     {
         var req = new BaseR(HttpContext);
-        var result = await _userService.GetCurrentUserAsync(req.UserId);
+        var result = await _userService.GetUserAsync(req);
         return Ok(result);
     }
 

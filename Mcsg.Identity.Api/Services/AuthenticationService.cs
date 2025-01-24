@@ -11,7 +11,6 @@ using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
-using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork;
@@ -438,9 +437,23 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
     }
 
-    public async Task<bool> LogOut(BaseR request)
+    public async Task<bool> Logout(string? refreshToken)
     {
-        return await _tokenService.DeleteAsync(request.UserId);
+        return await _tokenService.DeleteAsync(refreshToken);
+    }
+
+    public async Task<bool> TerminateAllOtherSessions(Guid? userId, string? refreshToken)
+    {
+        if (userId == null)
+        {
+            var ettRefreshToken = await _context.UserRefreshTokens.FirstOrDefaultAsync(p => p.RefreshToken == refreshToken);
+            if (ettRefreshToken != null)
+            {
+                userId = ettRefreshToken.UserId;
+            }
+        }
+
+        return await _tokenService.DeleteAsync(userId, refreshToken);
     }
 
     public async Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request)
@@ -555,9 +568,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         if (changePasswordResult.Succeeded)
         {
-            await LogOut(request);
-
             user.SessionId = request.SessionId;
+            await Logout(request.RefreshToken);
             return await CreateAccessToken(user, null);
         }
         else
@@ -631,7 +643,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new BadRequestException(nameof(E301), E301);
         }
 
-        if (request.Password != request.RetypePassword)
+        if (request.Password != request.ConfirmPassword)
         {
             throw new BadRequestException(ErrorCodes.PassShouldEqualConfirmPass, ErrorMessage.PassShouldEqualConfirmPass);
         }
@@ -675,6 +687,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             await _userManager.UpdateAsync(user);
         }
 
+        await TerminateAllOtherSessions(user.Id, null);
         return resetPass.Succeeded;
     }
 

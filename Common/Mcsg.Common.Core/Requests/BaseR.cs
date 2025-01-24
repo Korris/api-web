@@ -360,6 +360,26 @@ public class BaseR : IRequest<SingleResponse>
     }
 
     /// <summary>
+    /// Is localhost
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsLocalhost
+    {
+        get
+        {
+            var headers = _hc?.Request.Headers;
+
+            var key = nameof(IsLocalhost);
+            if (headers != null && headers.ContainsKey(key))
+            {
+                return Convert.ToBoolean(headers[key]);
+            }
+
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Device type
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
