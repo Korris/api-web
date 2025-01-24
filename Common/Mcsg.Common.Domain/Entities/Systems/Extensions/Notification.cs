@@ -164,10 +164,10 @@ partial class Notification
         {
             if (entityType.Contains("Comment"))
             {
-                return noti.ActorName + NotificationContent.MentionOnComment;
+                return nameof(NotificationContent.MentionOnComment);
             }
 
-            return noti.ActorName + NotificationContent.MentionOnPost;
+            return nameof(NotificationContent.MentionOnPost);
         }
 
         #region -- Reaction --
@@ -175,19 +175,19 @@ partial class Notification
         {
             if (noti.EntityType.ToString().Contains("Comment"))
             {
-                return noti.ActorName + NotificationContent.ReactOnComment;
+                return nameof(NotificationContent.ReactOnComment);
             }
             else
             {
                 var notiContent = noti.EntityType switch
                 {
-                    NotificationEntityType.ComicPostReaction => NotificationContent.ReactOnComic,
-                    NotificationEntityType.DocumentPostReaction => NotificationContent.ReactOnDocument,
-                    NotificationEntityType.StoryPostReaction => NotificationContent.ReactOnStory,
-                    _ => NotificationContent.ReactOnFeed,
+                    NotificationEntityType.ComicPostReaction => nameof(NotificationContent.ReactOnComic),
+                    NotificationEntityType.DocumentPostReaction => nameof(NotificationContent.ReactOnDocument),
+                    NotificationEntityType.StoryPostReaction => nameof(NotificationContent.ReactOnStory),
+                    _ => nameof(NotificationContent.ReactOnFeed),
                 };
 
-                return noti.ActorName + notiContent;
+                return notiContent;
             }
         }
         #endregion
@@ -205,12 +205,16 @@ partial class Notification
             switch (noti.EntityType)
             {
                 case NotificationEntityType.FollowUser:
-                    return noti.ActorName + NotificationContent.FollowUser;
+                    return nameof(NotificationContent.FollowUser);
 
                 case NotificationEntityType.ComicPostFollow:
+                    return nameof(NotificationContent.FollowComic);
+
                 case NotificationEntityType.DocumentPostFollow:
+                    return nameof(NotificationContent.FollowDocument);
+
                 case NotificationEntityType.StoryPostFollow:
-                    return noti.FollowPostMessage;
+                    return nameof(NotificationContent.FollowStory);
             }
         }
         #endregion
@@ -218,34 +222,34 @@ partial class Notification
         #region -- Video --
         if (noti.EntityType == NotificationEntityType.Video && noti.Action == NotificationAction.Processing)
         {
-            return NotificationContent.VideoUploadProcessing;
+            return nameof(NotificationContent.VideoUploadProcessing);
         }
 
         if (noti.EntityType == NotificationEntityType.Video && noti.Action == NotificationAction.Completed)
         {
-            return NotificationContent.VideoUploadCompleted;
+            return nameof(NotificationContent.VideoUploadCompleted);
         }
 
         if (noti.EntityType == NotificationEntityType.Video && noti.Action == NotificationAction.Failed)
         {
-            return NotificationContent.VideoUploadFailed;
+            return nameof(NotificationContent.VideoUploadFailed);
         }
         #endregion
 
         #region -- Comment --
         if (commentEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.Mention)
         {
-            return noti.ActorName + NotificationContent.MentionOnComment;
+            return nameof(NotificationContent.MentionOnComment);
         }
 
         if (commentEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.Reaction)
         {
-            return noti.ActorName + NotificationContent.ReactOnComment;
+            return nameof(NotificationContent.ReactOnComment);
         }
 
         if (commentEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.Reply)
         {
-            return noti.ActorName + NotificationContent.ReplyOnComment;
+            return nameof(NotificationContent.ReplyOnComment);
         }
 
         if (commentEntities.Contains(noti.EntityType) && noti.Action == NotificationAction.Comment)
@@ -254,21 +258,21 @@ partial class Notification
             {
                 case NotificationEntityType.ComicPostComment:
                 case NotificationEntityType.ComicSubPostComment:
-                    return noti.ActorName + NotificationContent.CommentOnComic;
+                    return nameof(NotificationContent.CommentOnComic);
 
                 case NotificationEntityType.DocumentPostComment:
                 case NotificationEntityType.DocumentSubPostComment:
-                    return noti.ActorName + NotificationContent.CommentOnDocument;
+                    return nameof(NotificationContent.CommentOnDocument);
 
                 case NotificationEntityType.StoryPostComment:
                 case NotificationEntityType.StorySubPostComment:
-                    return noti.ActorName + NotificationContent.CommentOnStory;
+                    return nameof(NotificationContent.CommentOnStory);
 
                 case NotificationEntityType.SocialSubPostComment:
-                    return noti.ActorName + NotificationContent.CommentOnFeed;
+                    return nameof(NotificationContent.CommentOnFeed);
 
                 default:
-                    return noti.ActorName + NotificationContent.CommentOnFeed;
+                    return nameof(NotificationContent.CommentOnFeed);
             }
         }
         #endregion
@@ -305,28 +309,28 @@ partial class Notification
         #region -- Mention --
         if (noti.EntityType == NotificationEntityType.SocialPostCommentMention && noti.Action == NotificationAction.Mention)
         {
-            return noti.ActorName + NotificationContent.MentionOnComment;
+            return nameof(NotificationContent.MentionOnComment);
         }
 
         if (noti.EntityType == NotificationEntityType.SocialSubPostCommentMention && noti.Action == NotificationAction.Mention)
         {
-            return noti.ActorName + NotificationContent.MentionOnReply;
+            return nameof(NotificationContent.MentionOnReply);
         }
         #endregion
 
         #region -- Transaction --
         if (noti.EntityType == NotificationEntityType.DonateTransaction)
         {
-            return string.Format(NotificationContent.DonateTransaction, noti.ActorName);
+            return nameof(NotificationContent.DonateTransaction);
         }
         if (noti.EntityType == NotificationEntityType.TransferTransaction)
         {
-            return string.Format(NotificationContent.TransferTransaction, noti.Amount, noti.CurrencyUnit, noti.ActorName);
+            return nameof(NotificationContent.TransferTransaction);
         }
 
         if (noti.EntityType == NotificationEntityType.DepositTransaction)
         {
-            return string.Format(NotificationContent.DepositTransaction, noti.Amount, noti.CurrencyUnit);
+            return nameof(NotificationContent.DepositTransaction);
         }
         #endregion
 
@@ -579,6 +583,7 @@ partial class Notification
         public string NotificationType => ToNotiType(this);
         public Guid? CommentId => EntityType.ToString().Contains("Comment") ? EntityId : null;
         public string? CurrencyUnit { get; set; }
+        public string? PostName { get; set; }
 
         #endregion
     }

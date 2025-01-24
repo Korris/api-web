@@ -501,6 +501,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
             }
 
             i.FollowPostMessage = string.Format(content, i.ActorName, title);
+            i.PostName = title;
         }
     }
     #endregion
@@ -633,7 +634,9 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 continue;
             }
 
-            i.Amount = Convert.ToDecimal(transactionData.Amount).ToString("N0");
+            i.Amount = transactionData.Type == (int)TransactionType.Swap
+                ? Convert.ToDecimal(double.Parse(transactionData.Amount) * transactionData.ConversionRate).ToString()
+                : Convert.ToDecimal(transactionData.Amount).ToString();
             i.ReferenceNumber = transactionData.ReferenceNumber;
             i.CurrencyUnit = transactionData.CurrencyUnit;
         }

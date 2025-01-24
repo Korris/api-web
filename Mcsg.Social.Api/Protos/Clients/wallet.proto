@@ -32,4 +32,6 @@ message TransactionProtoDto {
     string referenceNumber = 2;
     string amount = 3;
     string currencyUnit = 4;
+    int32 type = 5;
+    double conversionRate = 6;
 }

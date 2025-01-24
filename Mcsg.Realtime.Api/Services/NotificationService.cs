@@ -71,7 +71,7 @@ public class NotificationService : BaseS, INotificationService
         response.ReferenceNumber = req.ReferenceNumber;
         response.ActorId = req.AuthorId;
         response.ActorName = profileName;
-        response.Message = GetMessageTransaction(amount, profileName, notificationEntityType, req.CurrencyUnit + "");
+        response.Message = GetMessageTransaction(notificationEntityType);
         response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
         response.NotificationType = GetTransactionType(notificationEntityType);
         response.UserAvatar = user?.Avatar;
@@ -199,7 +199,7 @@ public class NotificationService : BaseS, INotificationService
             response.LocationId = comment.PostId;
             response.LocationHashId = hashId + "";
             response.EntityId = comment.Id;
-            response.Message = comment.AuthorName + NotificationContent.ReplyOnComment;
+            response.Message = nameof(NotificationContent.ReplyOnComment);
             response.TargetType = targetType;
             response.ActorId = comment.AuthorId;
             response.ActorName = comment.AuthorName;
@@ -389,7 +389,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ReplyCommentId = reaction.TargetId;
             }
 
-            response.Message = reaction.AuthorName + NotificationContent.ReactOnComment;
+            response.Message = nameof(NotificationContent.ReactOnComment);
         }
 
         var q = _context.Available<SocialPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.UserId, Order = 0f, PostId = _uidEmpty });
@@ -494,16 +494,16 @@ public class NotificationService : BaseS, INotificationService
             {
                 var notiContent = reaction.EntityType switch
                 {
-                    NotificationEntityType.ComicPostReaction => NotificationContent.ReactOnComic,
-                    NotificationEntityType.DocumentPostReaction => NotificationContent.ReactOnDocument,
-                    NotificationEntityType.StoryPostReaction => NotificationContent.ReactOnStory,
-                    _ => NotificationContent.ReactOnFeed,
+                    NotificationEntityType.ComicPostReaction => nameof(NotificationContent.ReactOnComic),
+                    NotificationEntityType.DocumentPostReaction => nameof(NotificationContent.ReactOnDocument),
+                    NotificationEntityType.StoryPostReaction => nameof(NotificationContent.ReactOnStory),
+                    _ => nameof(NotificationContent.ReactOnFeed),
                 };
 
                 receiverId = ett.UserId;
                 locationId = ett.Id;
                 locationHashId = ett.HashId;
-                response.Message = reaction.AuthorName + notiContent;
+                response.Message = notiContent;
             }
 
             response.TargetType = reaction.EntityType switch
@@ -682,7 +682,7 @@ public class NotificationService : BaseS, INotificationService
                 response.ActorName = request.UserProfileName;
                 response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
                 response.NotificationType = NotificationType.Mention;
-                response.Message = request.UserProfileName + (isMentionComment ? NotificationContent.MentionOnComment : NotificationContent.MentionOnPost);
+                response.Message = (isMentionComment ? nameof(NotificationContent.MentionOnComment) : nameof(NotificationContent.MentionOnPost));
 
                 await _hc.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
@@ -721,7 +721,7 @@ public class NotificationService : BaseS, INotificationService
             response.LocationId = mention.LocationId;
             response.LocationHashId = mention.PostHashId;
             response.EntityId = mention.EntityId;
-            response.Message = mention.AuthorName + NotificationContent.MentionOnComment;
+            response.Message = nameof(NotificationContent.MentionOnComment);
             response.TargetType = targetType;
             response.ActorId = mention.AuthorId;
             response.ActorName = mention.AuthorName;
@@ -866,9 +866,9 @@ public class NotificationService : BaseS, INotificationService
 
         var notiContent = request.NotificationEntityType switch
         {
-            NotificationEntityType.ComicPostFollow => NotificationContent.FollowComic,
-            NotificationEntityType.DocumentPostFollow => NotificationContent.FollowDocument,
-            _ => NotificationContent.FollowStory,
+            NotificationEntityType.ComicPostFollow => nameof(NotificationContent.FollowComic),
+            NotificationEntityType.DocumentPostFollow => nameof(NotificationContent.FollowDocument),
+            _ => nameof(NotificationContent.FollowStory),
         };
 
         var notificationObject = await _context.NotificationObjects
@@ -893,13 +893,14 @@ public class NotificationService : BaseS, INotificationService
             response.Status = NotificationStatus.UnRead;
             response.LocationId = request.PostId;
             response.LocationHashId = request.PostHashId;
-            response.Message = string.Format(notiContent, request.ActorName, request.PostName);
+            response.Message = notiContent;
             response.TargetType = notiTargetType;
             response.ActorId = request.ActorId;
             response.ActorName = request.ActorName;
             response.CreatedOn = notificationObject?.CreatedOn ?? DateTime.UtcNow;
             response.NotificationType = NotificationType.FollowPost;
             response.UserAvatar = request.UserAvatar;
+            response.PostName = request.PostName;
         }
         else
         {
@@ -916,13 +917,14 @@ public class NotificationService : BaseS, INotificationService
             response.Status = noti.Status;
             response.LocationId = request.PostId;
             response.LocationHashId = request.PostHashId;
-            response.Message = string.Format(notiContent, request.ActorName, request.PostName);
+            response.Message = notiContent;
             response.TargetType = notiTargetType;
             response.ActorId = request.ActorId;
             response.ActorName = request.ActorName;
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
             response.NotificationType = NotificationType.FollowPost;
             response.UserAvatar = request.UserAvatar;
+            response.PostName = request.PostName;
         }
 
         await _hc.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
@@ -1054,7 +1056,7 @@ public class NotificationService : BaseS, INotificationService
                     response.LocationId = null;
                     response.LocationHashId = followResp.CreatedByUserName;
                     response.EntityId = null;
-                    response.Message = followResp.CreatedByUserName + NotificationContent.FollowUser;
+                    response.Message = nameof(NotificationContent.FollowUser);
                     response.TargetType = NotificationTargetType.FollowUser;
                     response.ActorId = followResp.CreatedByUserId;
                     response.ActorName = followResp.CreatedByUserName;
@@ -1537,13 +1539,13 @@ public class NotificationService : BaseS, INotificationService
         }
     }
 
-    private string GetMessageTransaction(string amount, string profileName, NotificationEntityType notificationEntityType, string currencyUnit)
+    private string GetMessageTransaction(NotificationEntityType notificationEntityType)
     {
         return notificationEntityType switch
         {
-            NotificationEntityType.TransferTransaction => string.Format(NotificationContent.TransferTransaction, amount, currencyUnit, profileName),
-            NotificationEntityType.DonateTransaction => string.Format(NotificationContent.DonateTransaction, profileName),
-            NotificationEntityType.DepositTransaction => string.Format(NotificationContent.DepositTransaction, amount, currencyUnit),
+            NotificationEntityType.TransferTransaction => nameof(NotificationContent.TransferTransaction),
+            NotificationEntityType.DonateTransaction => nameof(NotificationContent.DonateTransaction),
+            NotificationEntityType.DepositTransaction => nameof(NotificationContent.DepositTransaction),
             _ => string.Empty
         };
     }
@@ -1564,16 +1566,16 @@ public class NotificationService : BaseS, INotificationService
         switch (comment.PostType)
         {
             case PostType.Comic:
-                return comment.AuthorName + NotificationContent.CommentOnComic;
+                return nameof(NotificationContent.CommentOnComic);
 
             case PostType.Document:
-                return comment.AuthorName + NotificationContent.CommentOnDocument;
+                return nameof(NotificationContent.CommentOnDocument);
 
             case PostType.Story:
-                return comment.AuthorName + NotificationContent.CommentOnStory;
+                return nameof(NotificationContent.CommentOnStory);
 
             default:
-                return comment.AuthorName + NotificationContent.CommentOnFeed;
+                return nameof(NotificationContent.CommentOnFeed);
         }
     }
 
@@ -1581,9 +1583,9 @@ public class NotificationService : BaseS, INotificationService
     {
         return action switch
         {
-            NotificationAction.Processing => NotificationContent.VideoUploadProcessing,
-            NotificationAction.Completed => NotificationContent.VideoUploadCompleted,
-            NotificationAction.Failed => NotificationContent.VideoUploadFailed,
+            NotificationAction.Processing => nameof(NotificationContent.VideoUploadProcessing),
+            NotificationAction.Completed => nameof(NotificationContent.VideoUploadCompleted),
+            NotificationAction.Failed => nameof(NotificationContent.VideoUploadFailed),
             _ => throw new NotSupportedException($"Unsupported video action: {action}"),
         };
     }

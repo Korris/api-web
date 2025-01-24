@@ -29,4 +29,5 @@ public class NotificationResponse
     public NotificationEntityType? EntityType { get; set; }
     public string? EntityTypeName => EntityType.ToString();
     public string? CurrencyUnit { get; set; }
+    public string? PostName { get; set; }
 }
