@@ -630,6 +630,7 @@ public partial class CommentService : ICommentService
                     PostId = comModel.PostId,
                     AuthorId = comModel.AuthorId,
                     AuthorName = comModel.AuthorName,
+                    UserName = comModel.UserName,
                     UserAvatar = comModel.UserAvatar,
                     Body = comModel.Body,
                     CreatedOn = comModel.CreatedOn,

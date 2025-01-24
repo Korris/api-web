@@ -275,7 +275,7 @@
                                 )
                                 SELECT cte.""Id"" , cte.""ParentId"", cte.""PostId"", cte.""Body"", cte.""CustomNote"", cte.""QuoteId"", cte.""CreatedOn""
                                             , cte.""AuthorId"", (CASE WHEN us.""ProfileName"" IS NULL THEN us.""UserName""  ELSE us.""ProfileName"" END) AS AuthorName
-                                            , us.""Avatar"" AS UserAvatar
+                                            , us.""Avatar"" AS UserAvatar, us.""UserName""
                                             , cte.""ResourceId"", res.""HashId"" AS ResourceHashId, res.""Name"" AS ResourceName, res.""Url"" AS ResourceUrl, res.""MinioInstance"", cte.""GifId""
                                             , cte.CommentLevel
                                 FROM cte
