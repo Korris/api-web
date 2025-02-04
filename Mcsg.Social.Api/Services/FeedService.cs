@@ -347,7 +347,8 @@ public partial class FeedService : IFeedService
                              'Name', r.""Name"",
                              'Order',r.""Order"",
                              'HashId',r.""HashId"",
-                             'SubPostHashId',sp.""HashId""
+                             'SubPostHashId',sp.""HashId"",
+                             'Body', sp.""Body""
                          )
                          )) AS Resources
                          FROM social.""SocialSubPosts"" sp
@@ -368,6 +369,7 @@ public partial class FeedService : IFeedService
                          sp.""CreatedOn"", 
                          sp.""Body"",
                          sp.""CreatedBy"",
+                         p.""CustomNote"", 
                          COALESCE(psb.""HashId"", (
                              SELECT ps.""HashId"" 
                              FROM social.""SocialSubPosts"" ps 
@@ -433,7 +435,8 @@ public partial class FeedService : IFeedService
                      Type = data.ResourceType,
                      Name = data.ResourceName
                  }
-             }
+             },
+            Body = data.Body
         });
 
         var tableName = data.Resources.Count == 1 ? $@"social.""SocialPostReactions""" : $@"social.""SocialSubPostReactions""";
