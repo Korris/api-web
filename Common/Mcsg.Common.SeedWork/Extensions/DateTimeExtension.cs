@@ -51,7 +51,7 @@ public static class DateTimeExtension
     /// <returns>Return end day at 23:59:59</returns>
     public static DateTime EndOfDay(this DateTime d, int timezoneOffset = 0)
     {
-        return d.Date.AddDays(1).AddSeconds(-1).AddMinutes(timezoneOffset);
+        return d.Date.AddDays(1).AddMicroseconds(-1).AddMinutes(timezoneOffset);
     }
 
     /// <summary>

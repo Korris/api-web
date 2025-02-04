@@ -620,6 +620,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Default
         /// </summary>
         public const string Default = ";default;";
+
+        /// <summary>
+        /// Popular
+        /// </summary>
+        public const string Popular = ";Popular;";
     }
 
     /// <summary>

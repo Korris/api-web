@@ -498,6 +498,16 @@ public static class Error
     /// </summary>
     public const string E716 = "Invalid wallet address";
 
+    /// <summary>
+    /// Package not found
+    /// </summary>
+    public const string E717 = "Package not found";
+
+    /// <summary>
+    /// Can't buy the same package while its usage period is still active
+    /// </summary>
+    public const string E718 = "Can't buy the same package while its usage period is still active";
+
     #endregion
 
     #region -- E9xx --
