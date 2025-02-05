@@ -1,0 +1,34 @@
+﻿{
+  "notificationContent": {
+    "CommentOnComic": "{{actorName}} commented on your comic.",
+    "CommentOnDocument": "{{actorName}} commented on your document.",
+    "CommentOnFeed": "{{actorName}} commented on your post.",
+    "CommentOnStory": "{{actorName}} commented on your story.",
+
+    "ReactOnComic": "{{actorName}} reacted to your comic.",
+    "ReactOnDocument": "{{actorName}} reacted to your document.",
+    "ReactOnFeed": "{{actorName}} reacted to your post.",
+    "ReactOnStory": "{{actorName}} reacted to your story.",
+
+    "FollowComic": "{{actorName}} followed your comic {{postName}}.",
+    "FollowDocument": "{{actorName}} followed your document {{postName}}.",
+    "FollowStory": "{{actorName}} followed your story {{postName}}.",
+    "FollowUser": "{{actorName}} followed you.",
+
+    "ReplyOnComment": "{{actorName}} replied to your comment on a post:",
+    "MentionOnComment": "{{actorName}} mentioned you in a comment.",
+    "MentionOnPost": "{{actorName}} mentioned you in their post.",
+    "MentionOnReply": "{{actorName}} mentioned you in a reply to a comment.",
+
+    "ReactOnComment": "{{actorName}} reacted to your comment.",
+    "ReactOnReply": "{{actorName}} reacted to your reply.",
+
+    "VideoUploadProcessing": "Your video is being uploaded.",
+    "VideoUploadCompleted": "Your video has been uploaded successfully.",
+    "VideoUploadFailed": "Your video upload failed.",
+
+    "TransferTransaction": "You just received {{amount}} {{currencyUnit}} from {{actorName}}.",
+    "DonateTransaction": "You received a donation from {{actorName}}.",
+    "DepositTransaction": "You just deposited {{amount}} into wallet {{currencyUnit}}."
+  }
+}

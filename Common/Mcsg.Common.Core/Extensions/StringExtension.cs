@@ -18,6 +18,7 @@ using Serilog;
 using Serilog.Events;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -1108,5 +1109,36 @@ public static class StringExtension
 
             _ => SystemSettingKey.MinimumBalanceFfr,
         };
+    }
+
+    /// <summary>
+    /// FormatCurrency
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="languageCode"></param>
+    /// <returns></returns>
+    public static string FormatCurrency(this string value, string languageCode)
+    {
+        double number;
+
+        // Try to parse the input string as a number
+        if (!double.TryParse(value, out number))
+        {
+            return "Invalid number format";
+        }
+
+        // Define cultures
+        CultureInfo culture = languageCode.ToLower() switch
+        {
+            LanguageCode.vi => new CultureInfo("vi-VN"), // Vietnamese culture
+            _ => new CultureInfo("en-US")     // Default to English (US) culture
+        };
+
+        // Define the format for integers and decimals
+        string formattedNumber = number % 1 == 0
+            ? number.ToString("#,0", culture)  // No decimals for whole numbers
+            : number.ToString("#,0.0#", culture); // Show decimals for non-whole numbers
+
+        return formattedNumber;
     }
 }

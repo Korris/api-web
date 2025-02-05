@@ -824,4 +824,20 @@ public class Setting : SeedWork.Constants.Setting
         /// </summary>
         public const string KindDonateFfc = "KindDonateFfc";
     }
+
+    /// <summary>
+    /// Language code
+    /// </summary>
+    public class LanguageCode
+    {
+        /// <summary>
+        /// VN
+        /// </summary>
+        public const string vi = "vi-vn";
+
+        /// <summary>
+        /// EN
+        /// </summary>
+        public const string en = "en-us";
+    }
 }

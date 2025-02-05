@@ -76,10 +76,26 @@ public partial class NotificationService : BaseSettingS, INotificationService
         query = query.Replace("[UnreadCondition]", "");
         query = query.Replace("[UnreadCountCondition]", "");
 
+        return await GetNotificationData(request, query);
+    }
+
+    public async Task<PagedResponse<Notification.SearchDto>> GetUnReadNotificationByReceiverAsync(NotificationR request)
+    {
+        var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
+
+        var query = GetNotificationByUserQuery;
+        query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");
+        query = query.Replace("[UnreadCountCondition]", $@"AND noti.""Status"" = 0");
+
+        return await GetNotificationData(request, query);
+    }
+
+    public async Task<PagedResponse<Notification.SearchDto>> GetNotificationData(NotificationR request, string query)
+    {
         var offset = request.PageSize * (request.PageNumber - 1);
         var param = new
         {
-            ReceiverId = userId,
+            ReceiverId = request.UserId,
             request.PageSize,
             Offet = offset
         };
@@ -97,45 +113,6 @@ public partial class NotificationService : BaseSettingS, INotificationService
             await CheckDataReplyCommentReaction(items);
             await CheckDataFollowUser(items);
             await CheckDataTransaction(items);
-
-            var response = new PagedResponse<Notification.SearchDto>(totalItems, request.PageNumber, request.PageSize)
-            {
-                Items = items
-            };
-
-            return response;
-        }
-        else
-        {
-            return new PagedResponse<Notification.SearchDto>(0);
-        }
-    }
-
-    public async Task<PagedResponse<Notification.SearchDto>> GetUnReadNotificationByReceiverAsync(NotificationR request)
-    {
-        var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
-
-        var query = GetNotificationByUserQuery;
-        query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");
-        query = query.Replace("[UnreadCountCondition]", $@"AND noti.""Status"" = 0");
-
-        var offset = request.PageSize * (request.PageNumber - 1);
-        var param = new
-        {
-            ReceiverId = userId,
-            request.PageSize,
-            Offet = offset
-        };
-        var multi = await _notiRepository.Connection.QueryMultipleAsync(query, param);
-
-        var items = await multi.ReadAsync<Notification.SearchDto>().ConfigureAwait(false);
-        if (items != null)
-        {
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-
-            await CheckDataCommentOnSubPost(items);
-            await CheckDataFollowPost(items);
-            await CheckDataCommentReaction(items);
 
             var response = new PagedResponse<Notification.SearchDto>(totalItems, request.PageNumber, request.PageSize)
             {

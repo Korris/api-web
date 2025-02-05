@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Mcsg.Realtime.Api.Services;
 
@@ -13,7 +14,6 @@ using Common.Core.Notifications;
 using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Entities;
-using Common.Extensions;
 using Common.Models.RealTime;
 using Common.SeedWork.Extensions;
 using Constants;
@@ -35,18 +35,16 @@ public class NotificationService : BaseS, INotificationService
     /// <param name="context">DB context</param>
     /// <param name="hc">Notification hub</param>
     /// <param name="nc">Notification client</param>
-    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hc, INotificationClient nc) : base(context)
+    public NotificationService(IMcsgContext context, IHubContext<NotificationHub> hc, INotificationClient nc,
+        IWebHostEnvironment environment) : base(context)
     {
         _hc = hc;
         _nc = nc;
+        _basePath = Path.Combine(environment.ContentRootPath, "Translation");
     }
 
     public async Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req)
     {
-        var response = new NotificationResponse();
-
-        var noti = new NotificationDto();
-
         var notificationEntityType = req.TransactionType switch
         {
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
@@ -55,63 +53,41 @@ public class NotificationService : BaseS, INotificationService
             _ => NotificationEntityType.TransferTransaction
         };
 
-        noti = await AddNotificationAsync(
-                            actorId: req.AuthorId
-                          , receiverId: req.ReceiverId
-                          , action: NotificationAction.Transaction
-                          , entityType: notificationEntityType
-                          , entityId: req.Id);
-        var user = await _context.UserAvailable.Where(p => p.Id == req.AuthorId)
-            .Select(p => new
-            {
-                p.ProfileName,
-                p.Avatar
-            })
-            .FirstOrDefaultAsync();
-        var profileName = user?.ProfileName + "";
+        var noti = await AddNotificationAsync(
+            actorId: req.AuthorId,
+            receiverId: req.ReceiverId,
+            action: NotificationAction.Transaction,
+            entityType: notificationEntityType,
+            entityId: req.Id);
 
-        var amount = req.Amount.ToString();
-        response.Id = noti.Id;
-        response.Amount = amount;
-        response.Status = noti.Status;
-        response.EntityId = req.Id;
-        response.ReferenceNumber = req.ReferenceNumber;
-        response.ActorId = req.AuthorId;
-        response.ActorName = profileName;
-        response.Message = GetMessageTransaction(notificationEntityType);
-        response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-        response.NotificationType = GetTransactionType(notificationEntityType);
-        response.UserAvatar = user?.Avatar;
-        response.CurrencyUnit = req.CurrencyUnit;
-        var reponseNotify = JsonConvert.SerializeObject(response);
-        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, reponseNotify);
+        var user = await _context.UserAvailable
+            .Where(p => p.Id == req.AuthorId)
+            .Select(p => new { p.ProfileName, p.Avatar })
+            .FirstOrDefaultAsync();
+
+        var response = new NotificationResponse
+        {
+            Id = noti.Id,
+            Amount = req.Amount.ToString(),
+            Status = noti.Status,
+            EntityId = req.Id,
+            ReferenceNumber = req.ReferenceNumber,
+            ActorId = req.AuthorId,
+            ActorName = user?.ProfileName ?? "",
+            Message = GetMessageTransaction(notificationEntityType),
+            CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow,
+            NotificationType = GetTransactionType(notificationEntityType),
+            UserAvatar = user?.Avatar,
+            CurrencyUnit = req.CurrencyUnit
+        };
+
+        var responseNotify = JsonConvert.SerializeObject(response);
+        await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, responseNotify);
+        await SendFireBaseNotification(new List<Guid> { req.ReceiverId }, response, "Giao dịch thành công");
 
         if (req.TransactionType == TransactionType.Deposit)
         {
-            await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, reponseNotify);
-            var deviceIds = await _context.Available<Device>(false).Where(p => p.UserId == req.ReceiverId).Select(p => p.Token).ToListAsync();
-            if (deviceIds.Count > 0)
-            {
-                _nc.SetStrategy(new NotificationFirebase { });
-                $"Request Id to send {deviceIds.ToJson()}".LogInfor();
-                Parallel.ForEach(deviceIds, item =>
-                {
-                    _nc.Handle(new NotificationInfoDto(item)
-                    {
-                        To = item,
-                        Subject = "Giao dịch thành công",
-                        Body = response.Message,
-                        Data = new Dictionary<string, string>()
-                        {
-                            {"type", response.NotificationType},
-                            {"currencyUnit", response.CurrencyUnit+""},
-                            {"referenceNumber", response.ReferenceNumber+""},
-                            {"amount",amount },
-                            {"userId",req.AuthorId.ToString()},
-                        }
-                    });
-                });
-            }
+            await _hc.Clients.Group(req.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveDepositSucces, responseNotify);
         }
 
         return response;
@@ -153,6 +129,7 @@ public class NotificationService : BaseS, INotificationService
                 response.Order = comment.Order ?? 0;
 
                 await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
             }
         }
 
@@ -212,16 +189,16 @@ public class NotificationService : BaseS, INotificationService
                 break;
         }
 
-        var authorId = await qAuthorId.FirstOrDefaultAsync();
+        var receiverId = await qAuthorId.FirstOrDefaultAsync();
 
         // Dont notify when comment on their feed
-        if (authorId != Guid.Empty && authorId != comment.AuthorId)
+        if (receiverId != Guid.Empty && receiverId != comment.AuthorId)
         {
             var hashId = await qHashId.FirstOrDefaultAsync();
 
             var noti = await AddNotificationAsync(
                                         actorId: comment.AuthorId
-                                        , receiverId: authorId
+                                        , receiverId: receiverId
                                         , action: comment.IsReply ? NotificationAction.Reply : NotificationAction.Comment
                                         , entityType: comment.EntityType
                                         , entityId: comment.Id
@@ -244,7 +221,8 @@ public class NotificationService : BaseS, INotificationService
             response.ReplyCommentId = comment.Id;
             response.CommentId = comment.ReplyToCommentId;
 
-            await _hc.Clients.Group(authorId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
         }
 
         return response;
@@ -604,6 +582,7 @@ public class NotificationService : BaseS, INotificationService
             }
 
             await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
         }
 
         return response;
@@ -720,6 +699,8 @@ public class NotificationService : BaseS, INotificationService
 
                 await _hc.Clients.Group(item.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             }
+
+            await SendFireBaseNotification(request.ReceiversId, response, "FocFoc");
         }
     }
 
@@ -764,6 +745,7 @@ public class NotificationService : BaseS, INotificationService
             response.UserAvatar = mention.UserAvatar;
 
             await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
         }
 
         return response;
@@ -962,6 +944,7 @@ public class NotificationService : BaseS, INotificationService
         }
 
         await _hc.Clients.Group(request.ReceiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        await SendFireBaseNotification(new List<Guid> { request.ReceiverId }, response, "FocFoc");
 
         return response;
     }
@@ -1099,6 +1082,7 @@ public class NotificationService : BaseS, INotificationService
                     response.UserAvatar = followResp.CreatedByUserAvata;
 
                     await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+                    await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
 
                     return response;
                 }
@@ -1624,6 +1608,133 @@ public class NotificationService : BaseS, INotificationService
         };
     }
 
+    private async Task SendFireBaseNotification(List<Guid> receiverIds, NotificationResponse response, string subject)
+    {
+        var deviceInfos = await _context.Available<Device>(false)
+             .Where(p => receiverIds.Contains(p.UserId))
+             .Join(_context.Users,
+                device => device.UserId,
+                user => user.Id,
+                (device, user) => new
+                {
+                    device.Token,
+                    device.UserId,
+                    Language = user.Language ?? LanguageCode.en,
+                })
+             .ToListAsync();
+
+        if (deviceInfos.Count <= 0) return;
+
+        var data = response.GetType()
+                            .GetProperties()
+                            .ToDictionary(prop => prop.Name.ToCamelCase(),
+                                          prop => (prop.GetValue(response)?.ToString() ?? ""));
+
+        _nc.SetStrategy(new NotificationFirebase());
+
+        await Parallel.ForEachAsync(deviceInfos, async (deviceInfo, cancellationToken) =>
+        {
+            var localizedBody = GetLocalizedMessage(response.Message, deviceInfo.Language);
+            var body = GetMessageNotification(response.Message, localizedBody, response, deviceInfo.Language);
+            await SendFireBase(deviceInfo.Token, subject, body, data);
+        });
+    }
+
+    private async Task SendFireBase(string token, string subject, string body, Dictionary<string, string> data)
+    {
+        await _nc.Handle(new NotificationInfoDto(token)
+        {
+            To = token,
+            Subject = subject,
+            Body = body,
+            Data = data
+        });
+    }
+
+    private string GetLocalizedMessage(string messageKey, string language)
+    {
+        string filePath = Path.Combine(_basePath, $"{language}.json");
+        string json = File.ReadAllText(filePath);
+        JObject jObj = JObject.Parse(json);
+
+        var messageProperty = jObj.Descendants()
+                                  .OfType<JProperty>()
+                                  .FirstOrDefault(p => p.Name == messageKey);
+
+        if (messageProperty != null)
+        {
+            return messageProperty.Value.ToString();
+        }
+
+        return messageKey;
+    }
+
+    private string GetMessageNotification(string messageKey, string message, NotificationResponse response, string languageCode)
+    {
+        var parameters = new Dictionary<string, string>();
+        switch (messageKey)
+        {
+            case "CommentOnComic":
+            case "CommentOnDocument":
+            case "CommentOnFeed":
+            case "CommentOnStory":
+            case "ReactOnComic":
+            case "ReactOnDocument":
+            case "ReactOnFeed":
+            case "ReactOnStory":
+            case "ReplyOnComment":
+            case "MentionOnComment":
+            case "MentionOnPost":
+            case "MentionOnReply":
+            case "ReactOnComment":
+            case "ReactOnReply":
+            case "VideoUploadProcessing":
+            case "VideoUploadCompleted":
+            case "VideoUploadFailed":
+            case "FollowUser":
+            case "DonateTransaction":
+                parameters = new Dictionary<string, string>()
+                {
+                    ["actorName"] = response.ActorName
+                };
+                break;
+
+            case "FollowComic":
+            case "FollowDocument":
+            case "FollowStory":
+                parameters = new Dictionary<string, string>()
+                {
+                    ["actorName"] = response.ActorName,
+                    ["postName"] = response.PostName
+                };
+                break;
+            case "TransferTransaction":
+                parameters = new Dictionary<string, string>()
+                {
+                    ["amount"] = response.Amount.FormatCurrency(languageCode),
+                    ["currencyUnit"] = response.CurrencyUnit,
+                    ["actorName"] = response.ActorName,
+                };
+                break;
+            case "DepositTransaction":
+                parameters = new Dictionary<string, string>()
+                {
+                    ["amount"] = response.Amount.FormatCurrency(languageCode),
+                    ["currencyUnit"] = response.CurrencyUnit
+                };
+                break;
+            default:
+                break;
+        }
+
+        foreach (var param in parameters)
+        {
+            message = message.Replace($"{{{{{param.Key}}}}}", param.Value);
+        }
+
+        return message;
+    }
+
     #endregion
 
     #region -- Fields --
@@ -1642,6 +1753,11 @@ public class NotificationService : BaseS, INotificationService
     /// UID empty
     /// </summary>
     private readonly Guid _uidEmpty = Guid.Empty;
+
+    /// <summary>
+    /// BasePath
+    /// </summary>
+    private readonly string _basePath;
 
     #endregion
 }

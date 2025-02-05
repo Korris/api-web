@@ -97,6 +97,7 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
             {
                 await AddCountQueue(targetId);
 
+                newReaction = true;
                 response.ReactionId = ett.Id;
                 response.IsDeleted = ett.IsDelete;
             }
