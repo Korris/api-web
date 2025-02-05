@@ -15,4 +15,5 @@ public partial class UserRefreshToken : AuditableEntity
 
     [Column(TypeName = "timestamp")]
     public DateTime? RefreshTokenExpiryTime { get; set; }
+    public Guid SessionId { get; set; }
 }

@@ -146,6 +146,12 @@ public partial class User : IdentityUser<Guid>
     [StringLength(Validator.TagData.Max)]
     public string? TagData { get; set; }
 
+    /// <summary>
+    /// ISO 639-1 standard language codes (vi-vn, en-us)
+    /// </summary>
+    [StringLength(Validator.Code.Max)]
+    public string? Language { get; set; }
+
     [InverseProperty("Author")]
     public virtual ICollection<ComicPostCommentReaction> ComicPostCommentReactions { get; set; } = new List<ComicPostCommentReaction>();
 

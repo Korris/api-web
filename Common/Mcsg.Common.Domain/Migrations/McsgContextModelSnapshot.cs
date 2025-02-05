@@ -5598,6 +5598,10 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsWalletShowing")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Language")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
                     b.Property<DateTime?>("LastLoginDate")
                         .HasColumnType("timestamp");
 
@@ -6154,6 +6158,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SyncError")
                         .HasMaxLength(1024)
