@@ -799,6 +799,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         _ = Task.Run(async () => await SyncDeleteRestoreToAna(user.Id, EntityStatus.Deleted));
         _ = Task.Run(async () => await SyncDeleteRestoreToWal(user.Id, true));
 
+        await TerminateAllOtherSessions(user.Id, null);
         return true;
     }
 
