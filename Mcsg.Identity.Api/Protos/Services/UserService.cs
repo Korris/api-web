@@ -26,8 +26,7 @@ public class UserService : UserProto.UserProtoBase
             var ett = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == id);
             if (ett != null)
             {
-                var premiumDate = request.PremiumDate.ToDateTime();
-                ett.PremiumDate = DateOnly.FromDateTime(premiumDate);
+                ett.PremiumDate = request.PremiumDate.ToDateTime();
 
                 res.Success = await _context.SaveChangesAsync(context.CancellationToken) > 0;
                 res.Id = ett.Id.ToString();

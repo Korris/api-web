@@ -5652,8 +5652,8 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<DateOnly?>("PremiumDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("PremiumDate")
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("ProfileId")
                         .HasMaxLength(50)

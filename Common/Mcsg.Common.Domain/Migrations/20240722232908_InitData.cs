@@ -675,7 +675,7 @@ namespace Mcsg.Common.Domain.Migrations
                     StatusReason = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     CoverPhoto = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    PremiumDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    PremiumDate = table.Column<DateTime>(type: "timestamp", nullable: true),
                     IsActiveEarning = table.Column<bool>(type: "boolean", nullable: false),
                     IsWalletShowing = table.Column<bool>(type: "boolean", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),

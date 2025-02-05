@@ -59,7 +59,9 @@ public partial class User : IdentityUser<Guid>
     [StringLength(Validator.Location.Max)]
     public string? Location { get; set; }
 
-    public DateOnly? PremiumDate { get; set; }
+    [Column(TypeName = "timestamp")]
+    public DateTime? PremiumDate { get; set; }
+
     public bool IsActiveEarning { get; set; }
     public bool IsWalletShowing { get; set; }
 

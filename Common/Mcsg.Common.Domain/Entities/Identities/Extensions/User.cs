@@ -132,7 +132,7 @@ partial class User
     /// Host
     /// </summary>
     [NotMapped]
-    public bool IsPremium => PremiumDate != null && PremiumDate > DateOnly.FromDateTime(DateTime.UtcNow);
+    public bool IsPremium => PremiumDate != null && PremiumDate > DateTime.UtcNow;
 
     /// <summary>
     /// UserFolder on MinIO
@@ -234,7 +234,7 @@ partial class User
         public bool EmailConfirmed { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
         public string? ProfileId { get; set; }
-        public DateOnly? PremiumDate { get; set; }
+        public DateTime? PremiumDate { get; set; }
         public bool IsPremium { get; set; }
         public int? NumberOfFollowing { get; set; }
         public int? NumberOfFollowers { get; set; }
