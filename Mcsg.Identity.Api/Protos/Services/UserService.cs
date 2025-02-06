@@ -27,6 +27,8 @@ public class UserService : UserProto.UserProtoBase
             if (ett != null)
             {
                 ett.PremiumDate = request.PremiumDate.ToDateTime();
+                ett.NextCheckPremium = null;
+                ett.IsExpiredSubscriptionSent = null;
 
                 res.Success = await _context.SaveChangesAsync(context.CancellationToken) > 0;
                 res.Id = ett.Id.ToString();

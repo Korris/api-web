@@ -694,6 +694,8 @@ namespace Mcsg.Common.Domain.Migrations
                     SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Language = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: true),
+                    NextCheckPremium = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsExpiredSubscriptionSent = table.Column<bool>(type: "boolean", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

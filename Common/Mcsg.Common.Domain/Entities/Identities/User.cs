@@ -154,6 +154,17 @@ public partial class User : IdentityUser<Guid>
     [StringLength(Validator.Code.Max)]
     public string? Language { get; set; }
 
+    /// <summary>
+    /// Schedules the next premium check date.
+    /// </summary>
+    [Column(TypeName = "timestamp")]
+    public DateTime? NextCheckPremium { get; set; }
+
+    /// <summary>
+    /// Indicates whether the expired subscription notification has been sent.
+    /// </summary>
+    public bool? IsExpiredSubscriptionSent { get; set; }
+
     [InverseProperty("Author")]
     public virtual ICollection<ComicPostCommentReaction> ComicPostCommentReactions { get; set; } = new List<ComicPostCommentReaction>();
 

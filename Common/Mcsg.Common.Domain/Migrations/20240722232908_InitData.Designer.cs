@@ -5598,6 +5598,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("IsExpiredSubscriptionSent")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsWalletShowing")
                         .HasColumnType("boolean");
 
@@ -5633,6 +5636,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<DateTime?>("NextCheckPremium")
                         .HasColumnType("timestamp");
 
                     b.Property<string>("NormalizedEmail")
