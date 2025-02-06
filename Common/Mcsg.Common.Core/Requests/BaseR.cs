@@ -484,25 +484,29 @@ public class BaseR : IRequest<SingleResponse>
     public string MicroService { get; set; } = Enums.MicroService.Social.ToString();
 
     /// <summary>
-    /// Old Client ID in cookie
+    /// Old Client ID in Cookies or Headers
     /// </summary>
     public Guid ClientId
     {
         get
         {
-            var t = _hc?.Request.Cookies[nameof(ClientId)];
+            var key = nameof(ClientId);
+            var t = _hc?.Request.Cookies[key];
+            t ??= _hc?.Request.Headers[key];
             return t.ToGuid();
         }
     }
 
     /// <summary>
-    /// Old Session ID in cookie
+    /// Old Session ID in Cookies or Headers
     /// </summary>
     public Guid SessionId
     {
         get
         {
-            var t = _hc?.Request.Cookies[nameof(SessionId)];
+            var key = nameof(SessionId);
+            var t = _hc?.Request.Cookies[key];
+            t ??= _hc?.Request.Headers[key];
             return t.ToGuid();
         }
     }
