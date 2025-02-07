@@ -111,4 +111,34 @@ public class NotificationController : ControllerBase
 
         return Ok(response);
     }
+
+    /// <summary>
+    /// RemindExpiredSubscription
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("RemindExpiredSubscription")]
+    public async Task<IActionResult> RemindExpiredSubscription([FromBody] RemindExpiredSubscriptionR request)
+    {
+        request.Analyze(HttpContext);
+
+        await _notificationService.RemindExpiredSubscriptionNotification(request);
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// ExpiredSubscription
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("ExpiredSubscription")]
+    public async Task<IActionResult> ExpiredSubscription([FromBody] ExpiredSubscriptionR request)
+    {
+        request.Analyze(HttpContext);
+
+        await _notificationService.ExpiredSubscriptionNotification(request);
+
+        return Ok();
+    }
 }

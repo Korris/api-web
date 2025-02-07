@@ -29,6 +29,9 @@
 
     "TransferTransaction": "Bạn vừa nhận {{amount}} {{currencyUnit}} từ {{actorName}}.",
     "DonateTransaction": "Bạn đã nhận được Donate từ {{actorName}}.",
-    "DepositTransaction": "Bạn vừa nạp {{amount}} vào ví {{currencyUnit}}."
+    "DepositTransaction": "Bạn vừa nạp {{amount}} vào ví {{currencyUnit}}.",
+
+    "RemindExpiredSubscription": "Gói Premium của bạn sắp hết hạn. Các quyền lợi sẽ vẫn được duy trì đến ngày {{expiredDate}}.",
+    "ExpiredSubscription": "Gói Premium của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng các quyền lợi."
   }
 }

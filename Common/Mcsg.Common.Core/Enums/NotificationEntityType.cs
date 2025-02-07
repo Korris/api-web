@@ -426,6 +426,18 @@ public enum NotificationEntityType
     /// <summary>
     /// RejectPostReport
     /// </summary>
-    RejectPostReport = 522
+    RejectPostReport = 522,
+    #endregion
+
+    #region Subscription
+    /// <summary>
+    /// RemindExpiredSubscription
+    /// </summary>
+    RemindExpiredSubscription = 531,
+
+    /// <summary>
+    /// ExpiredSubscription
+    /// </summary>
+    ExpiredSubscription = 532,
     #endregion
 }

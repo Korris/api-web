@@ -30,4 +30,5 @@ public class NotificationResponse
     public string? EntityTypeName => EntityType.ToString();
     public string? CurrencyUnit { get; set; }
     public string? PostName { get; set; }
+    public DateTime ExpiredDate { get; set; }
 }

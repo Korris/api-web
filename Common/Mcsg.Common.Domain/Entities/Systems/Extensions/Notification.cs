@@ -159,6 +159,12 @@ partial class Notification
             NotificationEntityType.StorySubPostLock
         ];
 
+        List<NotificationEntityType> subscriptionEntities =
+        [
+           NotificationEntityType.RemindExpiredSubscription,
+           NotificationEntityType.ExpiredSubscription,
+        ];
+
         var entityType = noti.EntityType.ToString();
         if (entityType.Contains("Mention"))
         {
@@ -334,6 +340,18 @@ partial class Notification
         }
         #endregion
 
+        #region -- Subscription --
+        if (noti.EntityType == NotificationEntityType.RemindExpiredSubscription)
+        {
+            return nameof(NotificationContent.RemindExpiredSubscription);
+        }
+
+        if (noti.EntityType == NotificationEntityType.ExpiredSubscription)
+        {
+            return nameof(NotificationContent.ExpiredSubscription);
+        }
+        #endregion
+
         return "";
     }
 
@@ -421,6 +439,9 @@ partial class Notification
 
             NotificationEntityType.RejectPostReport => Setting.NotificationTargetType.RejectPostReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationTargetType.RejectCommentReport,
+
+            NotificationEntityType.RemindExpiredSubscription => Setting.NotificationTargetType.Subscription,
+            NotificationEntityType.ExpiredSubscription => Setting.NotificationTargetType.Subscription,
 
             NotificationEntityType.ComicPostCommentDelete
          or NotificationEntityType.ComicSubPostCommentDelete
@@ -521,6 +542,9 @@ partial class Notification
             NotificationEntityType.RejectPostReport => Setting.NotificationType.RejectReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationType.RejectReport,
 
+            NotificationEntityType.RemindExpiredSubscription => Setting.NotificationType.RemindExpiredSubscription,
+            NotificationEntityType.ExpiredSubscription => Setting.NotificationType.ExpiredSubscription,
+
             NotificationEntityType.ComicPostCommentDelete
          or NotificationEntityType.ComicSubPostCommentDelete
          or NotificationEntityType.StoryPostCommentDelete
@@ -584,6 +608,7 @@ partial class Notification
         public Guid? CommentId => EntityType.ToString().Contains("Comment") ? EntityId : null;
         public string? CurrencyUnit { get; set; }
         public string? PostName { get; set; }
+        public DateTime ExpiredDate { get; set; }
 
         #endregion
     }

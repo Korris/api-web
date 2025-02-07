@@ -32,4 +32,7 @@ public static class NotificationContent
     public const string TransferTransaction = "Bạn vừa nhận {0} {1} từ {2}.";
     public const string DonateTransaction = "Bạn đã nhận được Donate từ {0}.";
     public const string DepositTransaction = "Bạn vừa nạp {0} vào ví {1}.";
+
+    public const string RemindExpiredSubscription = "RemindExpiredSubscription";
+    public const string ExpiredSubscription = "ExpiredSubscription";
 }

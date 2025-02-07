@@ -113,6 +113,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
             await CheckDataReplyCommentReaction(items);
             await CheckDataFollowUser(items);
             await CheckDataTransaction(items);
+            await CheckDataSubscription(items, request.UserId.Value);
 
             var response = new PagedResponse<Notification.SearchDto>(totalItems, request.PageNumber, request.PageSize)
             {
@@ -616,6 +617,30 @@ public partial class NotificationService : BaseSettingS, INotificationService
                 : Convert.ToDecimal(transactionData.Amount).ToString();
             i.ReferenceNumber = transactionData.ReferenceNumber;
             i.CurrencyUnit = transactionData.CurrencyUnit;
+        }
+    }
+
+    private async Task CheckDataSubscription(IEnumerable<Notification.SearchDto> dtos, Guid userId)
+    {
+        var l = dtos
+            .Where(p => p.EntityType == NotificationEntityType.RemindExpiredSubscription)
+            .ToList();
+        if (l.Count == 0)
+        {
+            return;
+        }
+
+        var premiumDate = await _context.Users.AsNoTracking()
+            .Where(p => p.Id == userId && p.PremiumDate != null)
+            .Select(p => p.PremiumDate)
+            .FirstOrDefaultAsync();
+
+        if (premiumDate != null)
+        {
+            foreach (var i in l)
+            {
+                i.ExpiredDate = premiumDate.Value;
+            }
         }
     }
 

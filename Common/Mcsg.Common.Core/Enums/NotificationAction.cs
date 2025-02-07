@@ -103,5 +103,10 @@ public enum NotificationAction
     /// <summary>
     /// RejectCommentReport
     /// </summary>
-    RejectCommentReport
+    RejectCommentReport,
+
+    /// <summary>
+    /// Remind
+    /// </summary>
+    Remind
 }

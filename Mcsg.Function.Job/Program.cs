@@ -16,6 +16,7 @@ using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
+using Quartz;
 using Services;
 using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
@@ -127,6 +128,7 @@ public class Program
         builder.Services.AddScoped<IDeleteAccountService, DeleteAccountService>();
         builder.Services.AddScoped<IDownloadImage, DownloadImage>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IExpiredSubscriptionService, ExpiredSubscriptionService>();
         builder.Services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
         builder.Services.AddSingleton<IEmailSender, SmtpSender>();
         builder.Services.AddScoped<ISmsService, SmsService>();
@@ -146,6 +148,7 @@ public class Program
         // AddHostedService
         builder.Services.AddHostedService<HostedDeleteAccount>();
         //builder.Services.AddHostedService<HostedDownloadImage>(); not in use for now
+        builder.Services.AddHostedService<HostedExpiredSubscription>();
         builder.Services.AddHostedService<HostedEmail>();
         builder.Services.AddHostedService<HostedExclusiveUnlock>();
         builder.Services.AddHostedService<HostedSmartCountComment>();
@@ -153,6 +156,20 @@ public class Program
         builder.Services.AddHostedService<HostedSmartLoopkup>();
         builder.Services.AddHostedService<HostedSms>();
         builder.Services.AddHostedService<HostedViewHistory>();
+        builder.Services.AddQuartz(q =>
+        {
+            // Just use the name of your job that you created in the Jobs folder.
+            var jobKey = new JobKey("RemindExpiredSubscriptionJob");
+            q.AddJob<RemindExpiredSubscriptionJob>(opts => opts.WithIdentity(jobKey));
+
+            q.AddTrigger(opts => opts
+                .ForJob(jobKey)
+                .WithIdentity("RemindExpiredSubscriptionJob-trigger")
+                //This Cron interval can be described as "run every minute" (when second is zero)
+                .WithCronSchedule("0 0 0 * * ?")
+            );
+        });
+        builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

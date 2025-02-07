@@ -949,6 +949,51 @@ public class NotificationService : BaseS, INotificationService
         return response;
     }
 
+    public async Task RemindExpiredSubscriptionNotification(RemindExpiredSubscriptionR request)
+    {
+        var response = new NotificationResponse();
+
+        foreach (var i in request.RemindDatas)
+        {
+            var noti = await AddNotificationAsync(
+                          actorId: i.UserId
+                        , receiverId: i.UserId
+                        , action: NotificationAction.Remind
+                        , entityType: NotificationEntityType.RemindExpiredSubscription);
+
+            response.Id = noti.Id;
+            response.Status = noti.Status;
+            response.Message = NotificationType.RemindExpiredSubscription;
+            response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+            response.NotificationType = NotificationType.RemindExpiredSubscription;
+            response.ExpiredDate = i.ExpiredDate;
+            await _hc.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await SendFireBaseNotification(new List<Guid> { i.UserId }, response, "FocFoc");
+        }
+    }
+
+    public async Task ExpiredSubscriptionNotification(ExpiredSubscriptionR request)
+    {
+        var response = new NotificationResponse();
+
+        foreach (var userId in request.UserIds)
+        {
+            var noti = await AddNotificationAsync(
+                          actorId: userId
+                        , receiverId: userId
+                        , action: NotificationAction.Remind
+                        , entityType: NotificationEntityType.ExpiredSubscription);
+
+            response.Id = noti.Id;
+            response.Status = noti.Status;
+            response.Message = NotificationType.ExpiredSubscription;
+            response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
+            response.NotificationType = NotificationType.ExpiredSubscription;
+            await _hc.Clients.Group(userId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+        }
+        await SendFireBaseNotification(request.UserIds, response, "FocFoc");
+    }
+
     public async Task<NotificationResponse> AddRejecton(NotificationAddRejectionR request)
     {
         var response = new NotificationResponse();
@@ -1708,6 +1753,7 @@ public class NotificationService : BaseS, INotificationService
                     ["postName"] = response.PostName
                 };
                 break;
+
             case "TransferTransaction":
                 parameters = new Dictionary<string, string>()
                 {
@@ -1716,6 +1762,7 @@ public class NotificationService : BaseS, INotificationService
                     ["actorName"] = response.ActorName,
                 };
                 break;
+
             case "DepositTransaction":
                 parameters = new Dictionary<string, string>()
                 {
@@ -1723,6 +1770,14 @@ public class NotificationService : BaseS, INotificationService
                     ["currencyUnit"] = response.CurrencyUnit
                 };
                 break;
+
+            case "RemindExpiredSubscription":
+                parameters = new Dictionary<string, string>()
+                {
+                    ["expiredDate"] = response.ExpiredDate.ToString("HH:mm, dd.MM.yyyy")
+                };
+                break;
+
             default:
                 break;
         }

@@ -24,4 +24,6 @@ public interface INotificationService
     Task<NotificationResponse> AddTransactionNotification(TransactionNotificationReq req);
     Task<NotificationResponse> AddDeletion(NotificationAddDeletionR request);
     Task<NotificationResponse> AddLock(NotificationAddLockR request);
+    Task RemindExpiredSubscriptionNotification(RemindExpiredSubscriptionR request);
+    Task ExpiredSubscriptionNotification(ExpiredSubscriptionR request);
 }

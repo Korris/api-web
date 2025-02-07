@@ -396,6 +396,16 @@ public class Setting : SeedWork.Constants.Setting
         /// DeleteComment
         /// </summary>
         public const string DeleteComment = "DeleteComment";
+
+        /// <summary>
+        /// RemindExpiredSubscription
+        /// </summary>
+        public const string RemindExpiredSubscription = "RemindExpiredSubscription";
+
+        /// <summary>
+        /// ExpiredSubscription
+        /// </summary>
+        public const string ExpiredSubscription = "ExpiredSubscription";
     }
 
     /// <summary>
@@ -547,6 +557,11 @@ public class Setting : SeedWork.Constants.Setting
         /// RejectPostReport
         /// </summary>
         public const string RejectPostReport = "RejectPostReport";
+
+        /// <summary>
+        /// Subscription
+        /// </summary>
+        public const string Subscription = "Subscription";
     }
 
     /// <summary>
