@@ -50,6 +50,7 @@ public class NotificationService : BaseS, INotificationService
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
             TransactionType.Donate => NotificationEntityType.DonateTransaction,
             TransactionType.Deposit => NotificationEntityType.DepositTransaction,
+            TransactionType.BuyPremium => NotificationEntityType.BuyPremiumTransaction,
             _ => NotificationEntityType.TransferTransaction
         };
 
@@ -62,7 +63,7 @@ public class NotificationService : BaseS, INotificationService
 
         var user = await _context.UserAvailable
             .Where(p => p.Id == req.AuthorId)
-            .Select(p => new { p.ProfileName, p.Avatar })
+            .Select(p => new { p.ProfileName, p.Avatar, p.PremiumDate })
             .FirstOrDefaultAsync();
 
         var response = new NotificationResponse
@@ -78,7 +79,8 @@ public class NotificationService : BaseS, INotificationService
             CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow,
             NotificationType = GetTransactionType(notificationEntityType),
             UserAvatar = user?.Avatar,
-            CurrencyUnit = req.CurrencyUnit
+            CurrencyUnit = req.CurrencyUnit,
+            ExpiredDate = user?.PremiumDate
         };
 
         var responseNotify = JsonConvert.SerializeObject(response);
@@ -1609,6 +1611,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.TransferTransaction => nameof(NotificationContent.TransferTransaction),
             NotificationEntityType.DonateTransaction => nameof(NotificationContent.DonateTransaction),
             NotificationEntityType.DepositTransaction => nameof(NotificationContent.DepositTransaction),
+            NotificationEntityType.BuyPremiumTransaction => nameof(NotificationContent.BuyPremiumTransaction),
             _ => string.Empty
         };
     }
@@ -1620,6 +1623,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.TransferTransaction => NotificationType.TransferTransaction,
             NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
             NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
+            NotificationEntityType.BuyPremiumTransaction => NotificationType.BuyPremiumTransaction,
             _ => string.Empty
         };
     }
@@ -1774,7 +1778,7 @@ public class NotificationService : BaseS, INotificationService
             case "RemindExpiredSubscription":
                 parameters = new Dictionary<string, string>()
                 {
-                    ["expiredDate"] = response.ExpiredDate.ToString("HH:mm, dd.MM.yyyy")
+                    ["expiredDate"] = response.ExpiredDate?.ToString("HH:mm, dd.MM.yyyy")
                 };
                 break;
 

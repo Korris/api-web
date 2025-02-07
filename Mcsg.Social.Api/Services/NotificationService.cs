@@ -622,8 +622,14 @@ public partial class NotificationService : BaseSettingS, INotificationService
 
     private async Task CheckDataSubscription(IEnumerable<Notification.SearchDto> dtos, Guid userId)
     {
+        var notificationEntityTypes = new List<NotificationEntityType>
+        {
+            NotificationEntityType.RemindExpiredSubscription,
+            NotificationEntityType.BuyPremiumTransaction
+        };
+
         var l = dtos
-            .Where(p => p.EntityType == NotificationEntityType.RemindExpiredSubscription)
+            .Where(p => notificationEntityTypes.Contains(p.EntityType))
             .ToList();
         if (l.Count == 0)
         {

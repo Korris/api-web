@@ -35,4 +35,5 @@ public static class NotificationContent
 
     public const string RemindExpiredSubscription = "RemindExpiredSubscription";
     public const string ExpiredSubscription = "ExpiredSubscription";
+    public const string BuyPremiumTransaction = "BuyPremiumTransaction";
 }

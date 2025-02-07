@@ -32,6 +32,7 @@
     "DepositTransaction": "You just deposited {{amount}} into wallet {{currencyUnit}}.",
 
     "RemindExpiredSubscription": "Your Premium plan is about to expire. Privileges will remain until {{expiredDate}}",
-    "ExpiredSubscription": "Your Premium plan has expired. Please renew to c ontinue using the privileges."
+    "ExpiredSubscription": "Your Premium plan has expired. Please renew to c ontinue using the privileges.",
+    "BuyPremiumTransaction": "Congratulations! Your Premium is activated! 🎉  Enjoy our privileges now!"
   }
 }

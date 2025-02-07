@@ -338,6 +338,11 @@ partial class Notification
         {
             return nameof(NotificationContent.DepositTransaction);
         }
+
+        if (noti.EntityType == NotificationEntityType.BuyPremiumTransaction)
+        {
+            return nameof(NotificationContent.BuyPremiumTransaction);
+        }
         #endregion
 
         #region -- Subscription --
@@ -436,6 +441,7 @@ partial class Notification
             NotificationEntityType.TransferTransaction => Setting.NotificationTargetType.Transaction,
             NotificationEntityType.DonateTransaction => Setting.NotificationTargetType.Transaction,
             NotificationEntityType.DepositTransaction => Setting.NotificationTargetType.Transaction,
+            NotificationEntityType.BuyPremiumTransaction => Setting.NotificationTargetType.Transaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationTargetType.RejectPostReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationTargetType.RejectCommentReport,
@@ -538,6 +544,7 @@ partial class Notification
             NotificationEntityType.TransferTransaction => Setting.NotificationType.TransferTransaction,
             NotificationEntityType.DonateTransaction => Setting.NotificationType.DonateTransaction,
             NotificationEntityType.DepositTransaction => Setting.NotificationType.DepositTransaction,
+            NotificationEntityType.BuyPremiumTransaction => Setting.NotificationType.BuyPremiumTransaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationType.RejectReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationType.RejectReport,
@@ -608,6 +615,8 @@ partial class Notification
         public Guid? CommentId => EntityType.ToString().Contains("Comment") ? EntityId : null;
         public string? CurrencyUnit { get; set; }
         public string? PostName { get; set; }
+
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime ExpiredDate { get; set; }
 
         #endregion

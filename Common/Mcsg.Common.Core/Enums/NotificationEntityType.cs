@@ -415,6 +415,11 @@ public enum NotificationEntityType
     /// DepositTransaction
     /// </summary>
     DepositTransaction = 513,
+
+    /// <summary>
+    /// BuyPremiumTransaction
+    /// </summary>
+    BuyPremiumTransaction = 514,
     #endregion
 
     #region -- Report --
