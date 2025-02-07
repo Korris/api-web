@@ -339,34 +339,32 @@ public partial class PostService : BaseMinioS, IPostService
                 PostStatus = StatusUtils.PostStatusInt,
             }, splitOn: "Id, Id");
 
-        if (subpost != null)
-        {
-            if (subpost.CreatedBy != userId && subpost.UserId != userId)
-            {
-                if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
-                {
-                    throw new BadRequestException(nameof(E204), E204);
-                }
-                //Check permission
-                if (subpost.Permission == PostPermission.Private)
-                {
-                    throw new BadRequestException(nameof(E204), E204);
-                }
-                //Check IsExclusive
-                if (subpost.IsExclusive && subpost.UserExclusiveId == null)
-                {
-                    throw new BadRequestException(ApiErrorCode.NEED_BUY_TO_READ, ApiErrorMessage.NEED_BUY_TO_READ);
-                }
-                if (subpost.Permission == PostPermission.Premium && (!isPremium && subpost.UserExclusiveId == null))
-                {
-                    //Todo implement Premium
-                    throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_READ, ApiErrorMessage.NEED_PREMIUM_TO_READ);
-                }
-            }
-        }
-        else
+        if (subpost == null)
         {
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
+        }
+
+        if (subpost.CreatedBy != userId && subpost.UserId != userId)
+        {
+            if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
+            {
+                throw new BadRequestException(nameof(E204), E204);
+            }
+            //Check permission
+            if (subpost.Permission == PostPermission.Private)
+            {
+                throw new BadRequestException(nameof(E204), E204);
+            }
+            //Check IsExclusive
+            if (subpost.IsExclusive && subpost.UserExclusiveId == null)
+            {
+                throw new BadRequestException(ApiErrorCode.NEED_BUY_TO_READ, ApiErrorMessage.NEED_BUY_TO_READ);
+            }
+            if (subpost.Permission == PostPermission.Premium && (!isPremium && subpost.UserExclusiveId == null))
+            {
+                //Todo implement Premium
+                throw new BadRequestException(ApiErrorCode.NEED_PREMIUM_TO_READ, ApiErrorMessage.NEED_PREMIUM_TO_READ);
+            }
         }
 
         subpost.IsCensored = !req.IsAdministrator && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
