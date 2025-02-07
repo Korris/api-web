@@ -344,6 +344,21 @@ public partial class PostService : BaseMinioS, IPostService
             throw new BadRequestException(ApiErrorCode.CHAPTER_NOT_EXIST, ApiErrorMessage.CHAPTER_NOT_EXIST);
         }
 
+        //Validate premium
+        if (subpost.IsPremium)
+        {
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException(nameof(E109), E109);
+            }
+
+            var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
+            if (user?.IsPremium != true)
+            {
+                throw new BadRequestException(nameof(E601), E601);
+            }
+        }
+
         if (subpost.CreatedBy != userId && subpost.UserId != userId)
         {
             if (subpost.PublishDate != null && subpost.PublishDate > DateTime.UtcNow)
