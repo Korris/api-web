@@ -13,6 +13,7 @@
 
 using Ganss.Xss;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Events;
 using System.Collections;
@@ -316,6 +317,157 @@ public static class StringExtension
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// Convert Lexical to Tiptap
+    /// </summary>
+    /// <param name="json">Lexical JSON</param>
+    /// <returns>Return Tiptap JSON</returns>
+    public static string? ConvertLexicalToTiptap(this string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            JObject frData = JObject.Parse(json);
+            JObject toData = new()
+            {
+                ["type"] = "doc",
+                ["content"] = new JArray()
+            };
+
+            var fr = frData["root"]?["children"];
+            if (fr == null)
+            {
+                return null;
+            }
+            var to = (JArray)toData["content"]!;
+
+            foreach (var i in fr)
+            {
+                JObject paragraph = new()
+                {
+                    ["type"] = "paragraph",
+                    ["attrs"] = new JObject { ["id"] = Guid.NewGuid().ToString(), ["textAlign"] = null },
+                    ["content"] = new JArray()
+                };
+
+                var paragraphContent = (JArray?)paragraph["content"];
+                var node = i["children"];
+                if (node != null && paragraphContent != null)
+                {
+                    foreach (var j in node)
+                    {
+                        if (j["type"]?.ToString() == "text")
+                        {
+                            JObject textNode = new()
+                            {
+                                ["type"] = "text",
+                                ["text"] = j["text"]?.ToString()
+                            };
+                            paragraphContent.Add(textNode);
+                        }
+                    }
+                }
+
+                to.Add(paragraph);
+            }
+
+            return JsonConvert.SerializeObject(toData, Formatting.None);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Convert Tiptap to Lexical
+    /// </summary>
+    /// <param name="json">Tiptap JSON</param>
+    /// <returns>Return Lexical JSON</returns>
+    public static string? ConvertTiptapToLexical(this string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            JObject frData = JObject.Parse(json);
+            JObject toData = new()
+            {
+                ["root"] = new JObject
+                {
+                    ["type"] = "root",
+                    ["version"] = 1,
+                    ["children"] = new JArray(),
+                    ["direction"] = "ltr",
+                    ["format"] = "",
+                    ["indent"] = 0
+                }
+            };
+
+            var fr = frData["content"];
+            if (fr == null)
+            {
+                return null;
+            }
+            var to = (JArray?)toData["root"]?["children"]!;
+
+            foreach (var i in fr)
+            {
+                var node = i["content"];
+                if (i["type"]?.ToString() == "paragraph" && node != null)
+                {
+                    JArray textChildren = [];
+
+                    foreach (var j in node)
+                    {
+                        if (j["type"]?.ToString() == "text" && j["text"] != null)
+                        {
+                            textChildren.Add(new JObject
+                            {
+                                ["type"] = "text",
+                                ["version"] = 1,
+                                ["text"] = j["text"]?.ToString(),
+                                ["detail"] = 0,
+                                ["format"] = 0,
+                                ["mode"] = "normal",
+                                ["style"] = ""
+                            });
+                        }
+                    }
+
+                    to.Add(new JObject
+                    {
+                        ["type"] = "paragraph",
+                        ["version"] = 1,
+                        ["children"] = textChildren,
+                        ["direction"] = "ltr",
+                        ["format"] = "",
+                        ["indent"] = 0,
+                        ["textFormat"] = 0,
+                        ["textStyle"] = ""
+                    });
+                }
+            }
+
+            return JsonConvert.SerializeObject(toData, Formatting.None);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return null;
     }
 
     #endregion

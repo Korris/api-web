@@ -30,6 +30,20 @@ public class SubPostController : BaseController
     }
 
     /// <summary>
+    /// DataPatch
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("DataPatch"), Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> DataPatch([FromBody] SubPostDataPatchR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
+    }
+
+    /// <summary>
     /// SyncToAna
     /// </summary>
     /// <param name="request">Request</param>

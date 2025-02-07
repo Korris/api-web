@@ -44,6 +44,7 @@ public static class DiSubPostExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddSubPostCommands(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<SubPostDataPatchR, SingleResponse>, SubPostDataPatchH>(life);
         p.AddBehavior<IRequestHandler<SubPostSyncToAnaR, SingleResponse>, SubPostSyncToAnaH>(life);
     }
 
