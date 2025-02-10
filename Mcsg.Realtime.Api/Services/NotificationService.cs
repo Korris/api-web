@@ -1794,6 +1794,54 @@ public class NotificationService : BaseS, INotificationService
         return message;
     }
 
+    public async Task AddSubPostNotification(NotificationAddSubPostR request)
+    {
+        var notificationEntityType = request.PostType switch
+        {
+            PostType.Comic => NotificationEntityType.ComicSubPostAdd,
+            PostType.Document => NotificationEntityType.DocumentSubPostAdd,
+            _ => NotificationEntityType.StorySubPostAdd
+        };
+
+        var targetType = request.PostType switch
+        {
+            PostType.Comic => NotificationTargetType.ComicSubPostAdd,
+            PostType.Document => NotificationTargetType.DocumentSubPostAdd,
+            _ => NotificationTargetType.StorySubPostAdd,
+        };
+
+        var notis = await AddNotificationsAsync(
+                      actorId: request.AuthorId
+                    , receiverIds: request.FollowerUserIds
+                    , action: NotificationAction.AddSubPost
+                    , entityType: notificationEntityType
+                    , entityId: request.SubPostId
+                    , locationId: request.PostId
+                    , locationHashId: request.PostHashId);
+
+        foreach (var noti in notis)
+        {
+            var response = new NotificationResponse
+            {
+                Id = noti.Id,
+                Status = noti.Status,
+                EntityId = request.SubPostId,
+                Message = nameof(NotificationContent.AddSubPost),
+                CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow,
+                NotificationType = NotificationType.AddSubPost,
+                PostName = request.PostName,
+                EntityType = notificationEntityType,
+                TargetType = targetType,
+                LocationHashId= request.PostHashId,
+                Order = request.Order,
+                PostThumbnailUrl = request.PostThumbnailUrl
+            };
+            await _hc.Clients.Group(noti.ReceiverId.ToString())
+                .SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
+            await SendFireBaseNotification(new List<Guid> { noti.ReceiverId }, response, "FocFoc");
+        }
+    }
+
     #endregion
 
     #region -- Fields --

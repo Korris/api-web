@@ -132,6 +132,7 @@ public class Program
         builder.Services.AddScoped(typeof(ICountService<,>), typeof(CountService<,>));
         builder.Services.AddSingleton<IEmailSender, SmtpSender>();
         builder.Services.AddScoped<ISmsService, SmsService>();
+        builder.Services.AddScoped<IPublishChapterSentService, PublishChapterSentService>();
         builder.Services.AddScoped<IExclusiveUnlockService, ExclusiveUnlockService>();
         #endregion
 
@@ -151,6 +152,7 @@ public class Program
         builder.Services.AddHostedService<HostedExpiredSubscription>();
         builder.Services.AddHostedService<HostedEmail>();
         builder.Services.AddHostedService<HostedExclusiveUnlock>();
+        builder.Services.AddHostedService<HostedPublishChapterSent>();
         builder.Services.AddHostedService<HostedSmartCountComment>();
         builder.Services.AddHostedService<HostedSmartCountReact>();
         builder.Services.AddHostedService<HostedSmartLoopkup>();

@@ -108,5 +108,10 @@ public enum NotificationAction
     /// <summary>
     /// Remind
     /// </summary>
-    Remind
+    Remind,
+
+    /// <summary>
+    /// AddSubPost
+    /// </summary>
+    AddSubPost
 }

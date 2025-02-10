@@ -357,6 +357,15 @@ partial class Notification
         }
         #endregion
 
+        #region -- AddSubPost --
+        if (noti.EntityType == NotificationEntityType.ComicSubPostAdd ||
+            noti.EntityType == NotificationEntityType.DocumentSubPostAdd ||
+            noti.EntityType == NotificationEntityType.StorySubPostAdd)
+        {
+            return nameof(NotificationContent.AddSubPost);
+        }
+        #endregion
+
         return "";
     }
 
@@ -458,6 +467,10 @@ partial class Notification
          or NotificationEntityType.DocumentPostCommentDelete
          or NotificationEntityType.DocumentSubPostCommentDelete
          => Setting.NotificationType.DeleteComment,
+
+            NotificationEntityType.ComicSubPostAdd => Setting.NotificationTargetType.ComicSubPostAdd,
+            NotificationEntityType.DocumentSubPostAdd => Setting.NotificationTargetType.DocumentSubPostAdd,
+            NotificationEntityType.StorySubPostAdd => Setting.NotificationTargetType.StorySubPostAdd,
 
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}")
         };
@@ -562,6 +575,11 @@ partial class Notification
          or NotificationEntityType.DocumentSubPostCommentDelete
          => Setting.NotificationType.DeleteComment,
 
+            NotificationEntityType.ComicSubPostAdd
+         or NotificationEntityType.DocumentSubPostAdd
+         or NotificationEntityType.StorySubPostAdd
+        => Setting.NotificationType.AddSubPost,
+
             _ => throw new NotSupportedException($"Unsupported entity type: {noti.EntityType}")
         };
     }
@@ -615,6 +633,7 @@ partial class Notification
         public Guid? CommentId => EntityType.ToString().Contains("Comment") ? EntityId : null;
         public string? CurrencyUnit { get; set; }
         public string? PostName { get; set; }
+        public string? PostThumbnailUrl { get; set; }
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime ExpiredDate { get; set; }

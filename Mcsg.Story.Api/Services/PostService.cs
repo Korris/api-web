@@ -1897,6 +1897,12 @@ public partial class PostService : BaseMinioS, IPostService
             //}
         }
 
+        var isPremium = subPost.Permission == PostPermission.Premium;
+        if ((subPost.Permission == PostPermission.Public || isPremium) && request.IsPublicNow)
+        {
+            subPost.IsPublishChapterSent = await SendAddSubPostNotificationAsync(subPost, post, isPremium);
+        }
+
         await _context.StorySubPosts.AddAsync(subPost);
         await _context.SaveChangesAsync(default);
 
@@ -2500,6 +2506,68 @@ public partial class PostService : BaseMinioS, IPostService
         }
 
         return res;
+    }
+
+    private async Task<bool> AddSubPosttionNotificationAsync(NotificationAddSubPostR req)
+    {
+        var baseUrl = _setting.Api.Web.Realtime;
+        var urlBuilder = new System.Text.StringBuilder();
+        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/AddSubPost");
+
+        var url = urlBuilder.ToString();
+
+        var response = await url.MakePostRequest(req);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private async Task<bool> SendAddSubPostNotificationAsync(StorySubPost subPost, StoryPost post, bool isPremium)
+    {
+        var followerUserIds = await _context.Available<NotificationObject>(false)
+                .Where(p => p.LocationId == subPost.PostId && p.Action == NotificationAction.FollowPost)
+                .Select(p => p.ActorId)
+                .Distinct()
+                .ToListAsync();
+
+        if (isPremium && followerUserIds.Count > 0)
+        {
+            followerUserIds = await _context.UserAvailable
+                .Where(p => p.IsPremium && followerUserIds.Contains(p.Id))
+                .Select(p => p.Id)
+                .ToListAsync();
+        }
+
+        if (followerUserIds.Count <= 0)
+        {
+            return false;
+        }
+
+        var notiReq = new NotificationAddSubPostR
+        {
+            FollowerUserIds = followerUserIds,
+            PostType = post.Type,
+            AuthorId = subPost.UserId,
+            PostId = subPost.PostId,
+            PostName = post.Title,
+            SubPostId = subPost.Id,
+            PostHashId = post.HashId,
+            PostThumbnailUrl = post.ThumbnailUrl,
+            Order = subPost.Order
+        };
+
+        await AddSubPosttionNotificationAsync(notiReq);
+
+        return true;
     }
     #endregion
 

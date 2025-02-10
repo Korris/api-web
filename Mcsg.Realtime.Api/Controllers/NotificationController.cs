@@ -141,4 +141,19 @@ public class NotificationController : ControllerBase
 
         return Ok();
     }
+
+    /// <summary>
+    /// AddSubPost
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("AddSubPost")]
+    public async Task<IActionResult> AddSubPostNotification([FromBody] NotificationAddSubPostR request)
+    {
+        request.Analyze(HttpContext);
+
+        await _notificationService.AddSubPostNotification(request);
+
+        return Ok();
+    }
 }

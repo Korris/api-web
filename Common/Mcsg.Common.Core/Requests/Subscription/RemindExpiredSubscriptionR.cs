@@ -1,7 +1,7 @@
 ﻿namespace Mcsg.Common.Core.Requests;
 
 /// <summary>
-/// RemindExpiredSubscriptionR
+/// Request
 /// </summary>
 public class RemindExpiredSubscriptionR : BaseR
 {

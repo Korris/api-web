@@ -26,4 +26,5 @@ public interface INotificationService
     Task<NotificationResponse> AddLock(NotificationAddLockR request);
     Task RemindExpiredSubscriptionNotification(RemindExpiredSubscriptionR request);
     Task ExpiredSubscriptionNotification(ExpiredSubscriptionR request);
+    Task AddSubPostNotification(NotificationAddSubPostR request);
 }

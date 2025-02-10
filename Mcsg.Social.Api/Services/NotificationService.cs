@@ -118,7 +118,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
             await CheckDataReplyCommentReaction(items);
             await CheckDataFollowUser(items);
             await CheckDataTransaction(items);
-            await CheckDataSubscription(items, request.UserId.Value);
+            await CheckDataSubscription(items, request.UserId);
+            await CheckDataAddSubpost(items);
 
             var response = new PagedResponse<Notification.SearchDto>(totalItems, request.PageNumber, request.PageSize)
             {
@@ -555,6 +556,119 @@ public partial class NotificationService : BaseSettingS, INotificationService
     }
     #endregion
 
+    #region -- CheckDataAddSubpost --
+    private async Task CheckDataAddSubpost(IEnumerable<Notification.SearchDto> dtos)
+    {
+        var comicNotifications = dtos.Where(p => p.EntityType == NotificationEntityType.ComicSubPostAdd).ToList();
+        if (comicNotifications.Count > 0)
+        {
+            await MapsDataComicAddSubpost(comicNotifications);
+        }
+
+        var documentNotificatios = dtos.Where(p => p.EntityType == NotificationEntityType.DocumentSubPostAdd).ToList();
+        if (documentNotificatios.Count > 0)
+        {
+            await MapsDataDocumentAddSubpost(documentNotificatios);
+        }
+
+        var storyNotifications = dtos.Where(p => p.EntityType == NotificationEntityType.StorySubPostAdd).ToList();
+        if (storyNotifications.Count > 0)
+        {
+            await MapsDataStoryAddSubpost(storyNotifications);
+        }
+    }
+
+    private async Task MapsDataComicAddSubpost(List<Notification.SearchDto> dtos)
+    {
+        var postIds = dtos.Where(p => p.LocationId.HasValue).Select(p => p.LocationId).Distinct();
+        var subPostIds = dtos.Where(p => p.EntityId.HasValue).Select(p => p.EntityId).Distinct();
+
+        var posts = await _context.Available<ComicPost>(false)
+            .Where(p => postIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Title, p.ThumbnailUrl })
+            .ToDictionaryAsync(p => p.Id, p => (p.Title, p.ThumbnailUrl));
+
+        var subPosts = await _context.Available<ComicSubPost>(false)
+            .Where(p => subPostIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Order })
+            .ToDictionaryAsync(p => p.Id, p => p.Order);
+
+        foreach (var i in dtos)
+        {
+            if (i.EntityId.HasValue && subPosts.TryGetValue(i.EntityId.Value, out var orderValue))
+            {
+                i.Order = orderValue;
+            }
+
+            if (i.LocationId.HasValue && posts.TryGetValue(i.LocationId.Value, out var postData))
+            {
+                i.PostName = postData.Title;
+                i.PostThumbnailUrl = postData.ThumbnailUrl;
+            }
+        }
+    }
+
+    private async Task MapsDataDocumentAddSubpost(List<Notification.SearchDto> dtos)
+    {
+        var postIds = dtos.Where(p => p.LocationId.HasValue).Select(p => p.LocationId).Distinct();
+        var subPostIds = dtos.Where(p => p.EntityId.HasValue).Select(p => p.EntityId).Distinct();
+
+        var posts = await _context.Available<DocumentPost>(false)
+            .Where(p => postIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Title, p.ThumbnailUrl })
+            .ToDictionaryAsync(p => p.Id, p => (p.Title, p.ThumbnailUrl));
+
+        var subPosts = await _context.Available<DocumentSubPost>(false)
+            .Where(p => subPostIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Order })
+            .ToDictionaryAsync(p => p.Id, p => p.Order);
+
+        foreach (var i in dtos)
+        {
+            if (i.EntityId.HasValue && subPosts.TryGetValue(i.EntityId.Value, out var orderValue))
+            {
+                i.Order = orderValue;
+            }
+
+            if (i.LocationId.HasValue && posts.TryGetValue(i.LocationId.Value, out var postData))
+            {
+                i.PostName = postData.Title;
+                i.PostThumbnailUrl = postData.ThumbnailUrl;
+            }
+        }
+    }
+
+    private async Task MapsDataStoryAddSubpost(List<Notification.SearchDto> dtos)
+    {
+        var postIds = dtos.Where(p => p.LocationId.HasValue).Select(p => p.LocationId).Distinct();
+        var subPostIds = dtos.Where(p => p.EntityId.HasValue).Select(p => p.EntityId).Distinct();
+
+        var posts = await _context.Available<StoryPost>(false)
+            .Where(p => postIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Title, p.ThumbnailUrl })
+            .ToDictionaryAsync(p => p.Id, p => (p.Title, p.ThumbnailUrl));
+
+        var subPosts = await _context.Available<StorySubPost>(false)
+            .Where(p => subPostIds.Contains(p.Id))
+            .Select(p => new { p.Id, p.Order })
+            .ToDictionaryAsync(p => p.Id, p => p.Order);
+
+        foreach (var i in dtos)
+        {
+            if (i.EntityId.HasValue && subPosts.TryGetValue(i.EntityId.Value, out var orderValue))
+            {
+                i.Order = orderValue;
+            }
+
+            if (i.LocationId.HasValue && posts.TryGetValue(i.LocationId.Value, out var postData))
+            {
+                i.PostName = postData.Title;
+                i.PostThumbnailUrl = postData.ThumbnailUrl;
+            }
+        }
+    }
+    #endregion
+
     private async Task CheckDataFollowUser(IEnumerable<Notification.SearchDto> dtos)
     {
         var userFollowIds = dtos
@@ -625,7 +739,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
         }
     }
 
-    private async Task CheckDataSubscription(IEnumerable<Notification.SearchDto> dtos, Guid userId)
+    private async Task CheckDataSubscription(IEnumerable<Notification.SearchDto> dtos, Guid? userId)
     {
         var notificationEntityTypes = new List<NotificationEntityType>
         {

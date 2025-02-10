@@ -100,6 +100,11 @@ public enum NotificationEntityType
     /// ComicSubPostLock
     /// </summary>
     ComicSubPostLock,
+
+    /// <summary>
+    /// ComicSubPostAdd
+    /// </summary>
+    ComicSubPostAdd,
     #endregion
 
     #region -- Document --
@@ -197,6 +202,11 @@ public enum NotificationEntityType
     /// DocumentSubPostLock
     /// </summary>
     DocumentSubPostLock,
+
+    /// <summary>
+    /// DocumentSubPostAdd
+    /// </summary>
+    DocumentSubPostAdd,
     #endregion
 
     #region -- Social --
@@ -386,6 +396,11 @@ public enum NotificationEntityType
     /// StorySubPostLock
     /// </summary>
     StorySubPostLock,
+
+    /// <summary>
+    /// StorySubPostAdd
+    /// </summary>
+    StorySubPostAdd,
     #endregion
 
     #region -- Other --
@@ -434,7 +449,7 @@ public enum NotificationEntityType
     RejectPostReport = 522,
     #endregion
 
-    #region Subscription
+    #region -- Subscription --
     /// <summary>
     /// RemindExpiredSubscription
     /// </summary>

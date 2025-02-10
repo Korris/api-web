@@ -411,6 +411,11 @@ public class Setting : SeedWork.Constants.Setting
         /// ExpiredSubscription
         /// </summary>
         public const string ExpiredSubscription = "ExpiredSubscription";
+
+        /// <summary>
+        /// AddSubPost
+        /// </summary>
+        public const string AddSubPost = "AddSubPost";
     }
 
     /// <summary>
@@ -567,6 +572,21 @@ public class Setting : SeedWork.Constants.Setting
         /// Subscription
         /// </summary>
         public const string Subscription = "Subscription";
+
+        /// <summary>
+        /// ComicSubPostAdd
+        /// </summary>
+        public const string ComicSubPostAdd = "ComicSubPostAdd";
+
+        /// <summary>
+        /// DocumentSubPostAdd
+        /// </summary>
+        public const string DocumentSubPostAdd = "DocumentSubPostAdd";
+
+        /// <summary>
+        /// StorySubPostAdd
+        /// </summary>
+        public const string StorySubPostAdd = "StorySubPostAdd";
     }
 
     /// <summary>
