@@ -20,4 +20,12 @@ using Common.Core.Requests;
 /// </summary>
 public class SubPostDataPatchR : BaseR
 {
+    #region -- Properties --
+
+    /// <summary>
+    /// Is Lexical to Tiptap
+    /// </summary>
+    public bool IsLexicalToTiptap { get; set; }
+
+    #endregion
 }

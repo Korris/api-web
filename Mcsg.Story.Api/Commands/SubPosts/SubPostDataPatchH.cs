@@ -55,11 +55,17 @@ public class SubPostDataPatchH : BaseSettingH, IRequestHandler<SubPostDataPatchR
             return res.SetError(nameof(E000), E000, t);
         }
 
-        var etts = await _context.StorySubPosts.Where(p => p.Body != null && p.Body.StartsWith("{\"root\":")).ToListAsync(cancellationToken);
+        var body = "{\"type\":";
+        if (request.IsLexicalToTiptap)
+        {
+            body = "{\"root\":";
+        }
+
+        var etts = await _context.StorySubPosts.Where(p => p.Body != null && p.Body.StartsWith(body)).ToListAsync(cancellationToken);
 
         foreach (var i in etts)
         {
-            i.Body = i.Body.ConvertLexicalToTiptap();
+            i.Body = request.IsLexicalToTiptap ? i.Body.ConvertLexicalToTiptap() : i.Body.ConvertTiptapToLexical();
         }
 
         var data = await _context.SaveChangesAsync(cancellationToken);
