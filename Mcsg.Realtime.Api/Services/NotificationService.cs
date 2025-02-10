@@ -157,7 +157,7 @@ public class NotificationService : BaseS, INotificationService
 
             case NotificationTargetType.SubComic:
                 qAuthorId = _context.Available<ComicSubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.Available<ComicSubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
+                qHashId = _context.Available<ComicPost>().Where(p => p.ComicSubPosts.Any(p => p.Id == postId)).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Document:
@@ -167,7 +167,7 @@ public class NotificationService : BaseS, INotificationService
 
             case NotificationTargetType.SubDocument:
                 qAuthorId = _context.Available<DocumentSubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.Available<DocumentSubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
+                qHashId = _context.Available<DocumentPost>().Where(p => p.DocumentSubPosts.Any(p => p.Id == postId)).Select(p => p.HashId);
                 break;
 
             case NotificationTargetType.Social:
@@ -187,7 +187,7 @@ public class NotificationService : BaseS, INotificationService
 
             case NotificationTargetType.SubStory:
                 qAuthorId = _context.Available<StorySubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
-                qHashId = _context.Available<StorySubPost>().Where(p => p.Id == postId).Select(p => p.HashId);
+                qHashId = _context.Available<StoryPost>().Where(p => p.StorySubPosts.Any(p => p.Id == postId)).Select(p => p.HashId);
                 break;
         }
 
