@@ -136,10 +136,10 @@ public class Program
             .AddServer(p =>
             {
                 p.AllowClientCredentialsFlow().AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange().AllowRefreshTokenFlow();
-                p.SetTokenEndpointUris("/connect/token").SetAuthorizationEndpointUris("/connect/authorize").SetUserinfoEndpointUris("/connect/userinfo");
+                p.SetTokenEndpointUris("/connect/token").SetAuthorizationEndpointUris("/connect/authorize").SetUserInfoEndpointUris("/connect/userinfo");
                 p.AddEphemeralEncryptionKey().AddEphemeralSigningKey().DisableAccessTokenEncryption();
                 p.RegisterScopes("api");
-                p.UseAspNetCore().DisableTransportSecurityRequirement().EnableTokenEndpointPassthrough().EnableAuthorizationEndpointPassthrough().EnableUserinfoEndpointPassthrough();
+                p.UseAspNetCore().DisableTransportSecurityRequirement().EnableTokenEndpointPassthrough().EnableAuthorizationEndpointPassthrough().EnableUserInfoEndpointPassthrough();
             });
         #endregion
 
