@@ -351,13 +351,15 @@ public partial class PostService : BaseMinioS, IPostService
         {
             if (userId == null)
             {
-                throw new UnauthorizedAccessException(nameof(E109), E109);
+                subpost.Files = [];
+                subpost.Body = "";
             }
 
             var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
-            if (user?.IsPremium != true)
+            if (subpost.UserId != user?.Id && user?.IsPremium != true)
             {
-                throw new BadRequestException(nameof(E601), E601);
+                subpost.Files = [];
+                subpost.Body = "";
             }
         }
 
