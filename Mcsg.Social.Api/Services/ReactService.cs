@@ -41,23 +41,62 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var postId = await _context.Available<SocialSubPost>()
-                                   .Where(p => p.Id == targetId)
-                                   .Select(p => p.PostId)
-                                   .FirstOrDefaultAsync();
+        var postId = Guid.Empty;
+        var subPostId = Guid.Empty;
+        var authorId = Guid.Empty;
+        Type entityType = typeof(T);
+        switch (entityType.Name)
+        {
+            case nameof(SocialPostReaction):
+                postId = targetId;
+                authorId = await _context.Available<SocialPost>(false)
+                    .Where(p => p.Id == targetId)
+                    .Select(p => p.UserId)
+                    .FirstOrDefaultAsync();
+                break;
+
+            case nameof(SocialSubPostReaction):
+                var subPost = await _context.Available<SocialSubPost>(false)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = subPost!.PostId;
+                subPostId = targetId;
+                authorId = subPost.UserId;
+                break;
+
+            case nameof(SocialPostCommentReaction):
+                var commentPost = await _context.Available<SocialPostComment>(false)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = commentPost!.PostId;
+                authorId = commentPost.AuthorId;
+                break;
+
+            case nameof(SocialSubPostCommentReaction):
+                var commentSubPost = await _context.Available<SocialSubPostComment>(false)
+                    .Include(p => p.Post)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = commentSubPost!.Post.PostId;
+                subPostId = commentSubPost.PostId;
+                authorId = commentSubPost.AuthorId;
+                break;
+
+            default:
+                break;
+        }
 
         var response = new ReactionUpdateResponse
         {
             MicroService = MicroService.Social.ToString(),
-            TargetId = postId != Guid.Empty ? postId : targetId,
-            SubPostId = postId != Guid.Empty ? targetId : null
+            TargetId = postId,
+            SubPostId = subPostId
         };
 
         var ett = await GetReactionByUser(request);
-
-        var authorId = postId != Guid.Empty
-            ? await GetUserIdByPostId(postId)
-            : await GetUserIdByPostId(targetId);
 
         bool isReactNotification = authorId != userId;
         bool isChange = false;

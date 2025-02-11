@@ -42,23 +42,62 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var postId = await _context.Available<ComicSubPost>()
-                                   .Where(p => p.Id == targetId)
-                                   .Select(p => p.PostId)
-                                   .FirstOrDefaultAsync();
+        var postId = Guid.Empty;
+        var subPostId = Guid.Empty;
+        var authorId = Guid.Empty;
+        Type entityType = typeof(T);
+        switch (entityType.Name)
+        {
+            case nameof(ComicPostReaction):
+                postId = targetId;
+                authorId = await _context.Available<ComicPost>(false)
+                    .Where(p => p.Id == targetId)
+                    .Select(p => p.UserId)
+                    .FirstOrDefaultAsync();
+                break;
+
+            case nameof(ComicSubPostReaction):
+                var subPost = await _context.Available<ComicSubPost>(false)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = subPost!.PostId;
+                subPostId = targetId;
+                authorId = subPost.UserId;
+                break;
+
+            case nameof(ComicPostCommentReaction):
+                var commentPost = await _context.Available<ComicPostComment>(false)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = commentPost!.PostId;
+                authorId = commentPost.AuthorId;
+                break;
+
+            case nameof(ComicSubPostCommentReaction):
+                var commentSubPost = await _context.Available<ComicSubPostComment>(false)
+                    .Include(p => p.Post)
+                    .Where(p => p.Id == targetId)
+                    .FirstOrDefaultAsync();
+
+                postId = commentSubPost!.Post.PostId;
+                subPostId = commentSubPost.PostId;
+                authorId = commentSubPost.AuthorId;
+                break;
+
+            default:
+                break;
+        }
 
         var response = new ReactionUpdateResponse
         {
             MicroService = MicroService.Comic.ToString(),
-            TargetId = postId != Guid.Empty ? postId : targetId,
-            SubPostId = postId != Guid.Empty ? targetId : null
+            TargetId = postId,
+            SubPostId = subPostId
         };
 
         var ett = await GetReactionByUser(request);
-
-        var authorId = postId != Guid.Empty
-            ? await GetUserIdByPostId(postId)
-            : await GetUserIdByPostId(targetId);
 
         bool isReactNotification = authorId != userId;
         bool isChange = false;
@@ -85,7 +124,6 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
                 // Update when revert delete or update new type
                 await _context.SaveChangesAsync(default);
 
-                newReaction = true;
                 response.ReactionId = ett.Id;
                 response.IsDeleted = ett.IsDelete;
             }
