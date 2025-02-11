@@ -1817,6 +1817,7 @@ namespace Mcsg.Common.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
+                    IsPublishChapterSent = table.Column<bool>(type: "boolean", nullable: true),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
@@ -2049,6 +2050,7 @@ namespace Mcsg.Common.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
+                    IsPublishChapterSent = table.Column<bool>(type: "boolean", nullable: true),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     IsAllowDownload = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -2587,6 +2589,7 @@ namespace Mcsg.Common.Domain.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     IsPremium = table.Column<bool>(type: "boolean", nullable: false),
+                    IsPublishChapterSent = table.Column<bool>(type: "boolean", nullable: true),
                     Sort = table.Column<float>(type: "real", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),

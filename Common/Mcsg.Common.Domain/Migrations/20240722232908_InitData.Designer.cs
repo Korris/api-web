@@ -941,6 +941,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsPremium")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("IsPublishChapterSent")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uuid");
 
@@ -2257,6 +2260,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsPublishChapterSent")
                         .HasColumnType("boolean");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -4913,6 +4919,9 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsPublishChapterSent")
                         .HasColumnType("boolean");
 
                     b.Property<Guid?>("ModifiedBy")

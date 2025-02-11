@@ -6,6 +6,11 @@ public partial class StorySubPost : BaseSubPost
 {
     public bool IsPremium { get; set; }
 
+    /// <summary>
+    /// Indicates whether the publish chapter notification has been sent.
+    /// </summary>
+    public bool? IsPublishChapterSent { get; set; }
+
     public float Sort { get; set; } = 0;
 
     [InverseProperty("SubPost")]
