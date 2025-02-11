@@ -78,17 +78,15 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
 
         var data = textData.Select(p =>
         {
-            var firstContent = p.Content?.FirstOrDefault();
             var attr = p.Attrs;
 
             return new
             {
                 Type = p.Type,
-                Text = firstContent?.Text ?? "",
                 Id = attr?.Id,
                 Level = attr?.Level,
+                Content = p.Content,
                 TextAlign = attr?.TextAlign,
-                Marks = firstContent?.Marks?.Select(m => m.Type).ToList() ?? [],
                 CommentCount = attr?.Id != null
                     ? commentCounts.FirstOrDefault(c => c.ParagraphId == Guid.Parse(attr.Id))?.TotalComments ?? 0
                     : 0
@@ -122,6 +120,14 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
     public class Mark
     {
         public string? Type { get; set; }
+        public MarkAttrs? Attrs { get; set; }
+
+    }
+
+    public class MarkAttrs
+    {
+        public string? href { get; set; }
+        public string? target { get; set; }
     }
 
     #endregion
