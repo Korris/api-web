@@ -47,18 +47,15 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="unitOfWork"></param>
     /// <param name="tagService"></param>
     /// <param name="smartLookupRepository"></param>
-    /// <param name="fileService"></param>
     /// <param name="mapper"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
     {
         _googleSheet = googleSheet;
 
-        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _tagService = tagService;
-        _fileService = fileService;
         _mapper = mapper;
         _smartLookupService = smartLookupService;
         _postCommentRepository = postCommentRepository;
@@ -2516,12 +2513,10 @@ public partial class PostService : BaseMinioS, IPostService
     /// </summary>
     private readonly GoogleSheet _googleSheet;
 
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;
     private readonly ITagService _tagService;
-    private readonly IFileService _fileService;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
 

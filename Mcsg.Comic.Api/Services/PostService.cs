@@ -55,7 +55,6 @@ public partial class PostService : BaseMinioS, IPostService
     {
         _googleSheet = googleSheet;
 
-        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
         _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
         _tagService = tagService;
@@ -2527,7 +2526,6 @@ public partial class PostService : BaseMinioS, IPostService
     /// </summary>
     private readonly GoogleSheet _googleSheet;
 
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<ComicPost> _postRepository;
     private readonly IRepository<ComicPostComment> _postCommentRepository;
     private readonly IRepository<ComicSubPost> _subPostRepository;

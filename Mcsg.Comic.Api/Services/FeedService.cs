@@ -46,7 +46,6 @@ public partial class FeedService : IFeedService
         _postService = postService;
         _soundService = soundService;
 
-        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
         _feedDisplayConfig = feedDisplayConfig.CurrentValue;
         _mapper = mapper;
@@ -750,7 +749,6 @@ public partial class FeedService : IFeedService
     private readonly ISoundService _soundService;
 
     private readonly IRepository<ComicPost> _postRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly FeedDisplayConfig _feedDisplayConfig;
     private readonly IMapper _mapper;
 

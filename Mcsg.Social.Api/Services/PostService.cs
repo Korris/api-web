@@ -46,9 +46,7 @@ public partial class PostService : BaseMinioS, IPostService
     {
         _businessText = businessText;
 
-        _unitOfWork = unitOfWork;
         _postRepository = unitOfWork.GetRepository<SocialPost>();
-        _smartLookupRepository = unitOfWork.GetRepository<SmartLookup>();
         _mapper = mapper;
         _smartLookupService = smartLookupService;
         _postCommentRepository = unitOfWork.GetRepository<SocialPostComment>();
@@ -880,10 +878,8 @@ public partial class PostService : BaseMinioS, IPostService
     /// </summary>
     private readonly IBusinessText _businessText;
 
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<SocialPost> _postRepository;
     private readonly IRepository<SocialPostComment> _postCommentRepository;
-    private readonly IRepository<SmartLookup> _smartLookupRepository;
     private readonly IMapper _mapper;
     private readonly ISmartLookupService _smartLookupService;
 
