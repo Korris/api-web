@@ -341,8 +341,8 @@ public static class StringExtension
                 ["content"] = new JArray()
             };
 
-            var fr = frData["root"]?["children"];
-            if (fr == null)
+            var fr = frData["root"]?["children"] as JArray;
+            if (fr == null || fr.Count == 0)
             {
                 return null;
             }
@@ -350,27 +350,76 @@ public static class StringExtension
 
             foreach (var i in fr)
             {
+                var type = i["type"]?.ToString() ?? "paragraph";
                 JObject paragraph = new()
                 {
-                    ["type"] = "paragraph",
+                    ["type"] = type == "heading" ? "heading" : "paragraph",
                     ["attrs"] = new JObject { ["id"] = Guid.NewGuid().ToString(), ["textAlign"] = null },
                     ["content"] = new JArray()
                 };
 
                 var paragraphContent = (JArray?)paragraph["content"];
-                var node = i["children"];
-                if (node != null && paragraphContent != null)
+                var node = i["children"] as JArray;
+                if (node != null && node.Count > 0 && paragraphContent != null)
                 {
                     foreach (var j in node)
                     {
-                        if (j["type"]?.ToString() == "text")
+                        var nodeType = j["type"]?.ToString();
+                        if (nodeType == "text" && j["text"] != null)
                         {
                             JObject textNode = new()
                             {
                                 ["type"] = "text",
                                 ["text"] = j["text"]?.ToString()
                             };
+
+                            if (j["format"] != null)
+                            {
+                                JArray marks = [];
+                                int format = j.Value<int>("format");
+                                if ((format & 1) != 0)
+                                {
+                                    marks.Add(new JObject { ["type"] = "bold" });
+                                }
+                                if ((format & 2) != 0)
+                                {
+                                    marks.Add(new JObject { ["type"] = "italic" });
+                                }
+                                if ((format & 4) != 0)
+                                {
+                                    marks.Add(new JObject { ["type"] = "underline" });
+                                }
+                                if ((format & 8) != 0)
+                                {
+                                    marks.Add(new JObject { ["type"] = "strikethrough" });
+                                }
+                                if (marks.Count > 0)
+                                {
+                                    textNode["marks"] = marks;
+                                }
+                            }
+
                             paragraphContent.Add(textNode);
+                        }
+                        else if (nodeType == "link" && j["children"] is JArray linkChildren && linkChildren.Count > 0)
+                        {
+                            JObject linkNode = new()
+                            {
+                                ["type"] = "text",
+                                ["text"] = linkChildren[0]["text"]?.ToString(),
+                                ["marks"] = new JArray(new JObject
+                                {
+                                    ["type"] = "link",
+                                    ["attrs"] = new JObject
+                                    {
+                                        ["href"] = j["url"]?.ToString(),
+                                        ["target"] = "_blank",
+                                        ["rel"] = "noopener noreferrer nofollow",
+                                        ["class"] = "editor-link"
+                                    }
+                                })
+                            };
+                            paragraphContent.Add(linkNode);
                         }
                     }
                 }
@@ -416,8 +465,8 @@ public static class StringExtension
                 }
             };
 
-            var fr = frData["content"];
-            if (fr == null)
+            var fr = frData["content"] as JArray;
+            if (fr == null || fr.Count == 0)
             {
                 return null;
             }
@@ -425,16 +474,17 @@ public static class StringExtension
 
             foreach (var i in fr)
             {
-                var node = i["content"];
+                var node = i["content"] as JArray;
                 if (i["type"]?.ToString() == "paragraph" && node != null)
                 {
                     JArray textChildren = [];
 
                     foreach (var j in node)
                     {
-                        if (j["type"]?.ToString() == "text" && j["text"] != null)
+                        var nodeType = j["type"]?.ToString();
+                        if (nodeType == "text" && j["text"] != null)
                         {
-                            textChildren.Add(new JObject
+                            JObject textNode = new()
                             {
                                 ["type"] = "text",
                                 ["version"] = 1,
@@ -443,7 +493,43 @@ public static class StringExtension
                                 ["format"] = 0,
                                 ["mode"] = "normal",
                                 ["style"] = ""
-                            });
+                            };
+
+                            if (j["marks"] is JArray marks)
+                            {
+                                var format = 0;
+                                foreach (var k in marks)
+                                {
+                                    var markType = k["type"]?.ToString();
+                                    if (markType == "bold")
+                                    {
+                                        format |= 1;
+                                    }
+                                    if (markType == "italic")
+                                    {
+                                        format |= 2;
+                                    }
+                                    if (markType == "underline")
+                                    {
+                                        format |= 4;
+                                    }
+                                    if (markType == "strikethrough")
+                                    {
+                                        format |= 8;
+                                    }
+
+                                    var markAttr = k["attrs"];
+                                    if (markType == "link" && markAttr?["href"] != null)
+                                    {
+                                        textNode["type"] = "link";
+                                        textNode["target"] = markAttr?["target"]?.ToString();
+                                        textNode["url"] = markAttr?["href"]?.ToString();
+                                    }
+                                }
+                                textNode["format"] = format;
+                            }
+
+                            textChildren.Add(textNode);
                         }
                     }
 
