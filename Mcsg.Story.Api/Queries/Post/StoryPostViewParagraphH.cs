@@ -44,16 +44,33 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
         }
 
         // Retrieve and parse the StorySubPost Body as JSON
-        var jsonBody = await _context.Available<StorySubPost>(false)
+        var subPost = await _context.Available<StorySubPost>(false)
             .Where(p => p.Id == request.Id)
-            .Select(p => p.Body)
+            .Select(p => new { p.Body, p.IsPremium, p.UserId })
             .FirstOrDefaultAsync(cancellationToken);
-        if (jsonBody == null)
+
+        if (subPost == null || subPost.Body == null)
         {
             return res;
         }
 
-        var textData = JsonConvert.DeserializeObject<List<ChildrenObjectData>>(JObject.Parse(jsonBody).SelectToken("content")?.ToString() ?? "");
+        var userId = request.UserId;
+
+        if (subPost.IsPremium)
+        {
+            if (userId == null)
+            {
+                return res;
+            }
+
+            var isPremium = await _context.UserAvailable.Where(p => p.Id == userId).Select(p => p.IsPremium).FirstOrDefaultAsync();
+            if (subPost.UserId != userId && isPremium != true)
+            {
+                return res;
+            }
+        }
+
+        var textData = JsonConvert.DeserializeObject<List<ChildrenObjectData>>(JObject.Parse(subPost.Body).SelectToken("content")?.ToString() ?? "");
         if (textData == null || !textData.Any())
         {
             return res;
