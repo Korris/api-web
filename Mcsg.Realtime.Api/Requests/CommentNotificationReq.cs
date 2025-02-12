@@ -56,6 +56,16 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
                     return !isReply ? NotificationEntityType.ComicSubPostComment : NotificationEntityType.ComicSubPostCommentReply;
                 }
 
+            case PostType.Document:
+                if (type == PostTypes.Post)
+                {
+                    return !isReply ? NotificationEntityType.DocumentPostComment : NotificationEntityType.DocumentPostCommentReply;
+                }
+                else
+                {
+                    return !isReply ? NotificationEntityType.DocumentSubPostComment : NotificationEntityType.DocumentSubPostCommentReply;
+                }
+
             case PostType.Story:
                 if (type == PostTypes.Post)
                 {

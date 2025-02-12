@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -72,39 +73,43 @@ public partial class NotificationService : BaseSettingS, INotificationService
     {
         var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
-        var query = GetNotificationByUserQuery;
-        query = query.Replace("[UnreadCondition]", "");
-        query = query.Replace("[UnreadCountCondition]", "");
-
-        return await GetNotificationData(request, query);
+        return await GetNotificationData(request, false);
     }
 
     public async Task<PagedResponse<Notification.SearchDto>> GetUnReadNotificationByReceiverAsync(NotificationR request)
     {
         var userId = request.UserId ?? throw new NotFoundException(nameof(E303), E303);
 
-        var query = GetNotificationByUserQuery;
-        query = query.Replace("[UnreadCondition]", $@"AND noti.""Status"" = 0");
-        query = query.Replace("[UnreadCountCondition]", $@"AND noti.""Status"" = 0");
-
-        return await GetNotificationData(request, query);
+        return await GetNotificationData(request, true);
     }
 
-    public async Task<PagedResponse<Notification.SearchDto>> GetNotificationData(NotificationR request, string query)
+    public async Task<PagedResponse<Notification.SearchDto>> GetNotificationData(NotificationR request, bool unreadOnly)
     {
         var offset = request.PageSize * (request.PageNumber - 1);
         var param = new
         {
             ReceiverId = request.UserId,
             request.PageSize,
-            Offet = offset
+            PageNumber = offset,
+            UnreadOnly = unreadOnly
         };
-        var multi = await _notiRepository.Connection.QueryMultipleAsync(query, param);
 
-        var items = await multi.ReadAsync<Notification.SearchDto>().ConfigureAwait(false);
-        if (items != null)
+        IEnumerable<Notification.SearchDto> items;
+        var query = "SELECT * FROM social.fn_get_notifications_by_user(@ReceiverId, @PageSize, @PageNumber, @UnreadOnly)";
+
+        var connection = _context.Database.GetDbConnection();
+        try
         {
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
+            items = await connection.QueryAsync<Notification.SearchDto>(query, param);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        if (items.Any())
+        {
+            var totalItems = items.Count();
 
             await CheckDataReplyComment(items);
             await CheckDataCommentOnSubPost(items);
