@@ -818,7 +818,6 @@ public partial class PostService : BaseMinioS, IPostService
                                             WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false AND sp.""PublishDate"" < @CurrentDate
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
                                             ORDER BY sp.""Order"" DESC
-                                            LIMIT 2
                                         ) sp ON sp.""PostId"" = p.""Id""    
                                   [QueryCondition]
                                   GROUP BY p.""Id"" ,u.""ProfileName"", u.""UserName"", p.""Hide"", p.""Status"", p.""ExternalResource""
