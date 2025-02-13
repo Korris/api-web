@@ -12,7 +12,6 @@
 #endregion
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -138,12 +137,6 @@ public static class IServiceCollectionExtension
     {
         var maxFileSize = 1024 * 1024 * 1024; // 1024MB
         var bufferSize = 10 * 1024 * 1024; // 10MB
-
-        services.Configure<IISServerOptions>(p =>
-        {
-            p.MaxRequestBodySize = maxFileSize;
-            p.MaxRequestBodyBufferSize = bufferSize;
-        });
 
         services.Configure<KestrelServerOptions>(p =>
         {
