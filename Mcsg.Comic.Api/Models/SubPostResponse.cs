@@ -1,14 +1,7 @@
 ﻿namespace Mcsg.Comic.Api.Models;
 
 using Common.Core.Enums;
-using Common.Domain.Entities;
 using Dtos;
-
-public class SubPostResponseItem
-{
-    public string HashId { get; set; }
-    public IEnumerable<ComicResource> Resources { get; set; }
-}
 
 public class SubPostFeedQuery : SubPostFeedResponse
 {
