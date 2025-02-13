@@ -45,7 +45,8 @@ public class PostController : ControllerBase
     [HttpGet("latest-posts-by-type")]
     public async Task<IActionResult> GetLatestPostsByType()
     {
-        var result = await _postService.GetLatestPostsByType();
+        var req = new BaseR(HttpContext);
+        var result = await _postService.GetLatestPostsByType(req);
         return Ok(result);
     }
 

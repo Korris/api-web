@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -7,6 +8,7 @@ using System.Web;
 
 namespace Mcsg.Social.Api.Services;
 
+using Analytic.Application.Protos;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -16,6 +18,7 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Interfaces;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
@@ -61,6 +64,12 @@ public partial class FeedService : IFeedService
             PagedResponse<FeedDto> results;
             var offset = feedLoadReq.PageSize * (feedLoadReq.PageNumber - 1);
             var date = DateTime.UtcNow.Date;
+            var frDate = date.StartOfDayUtc();
+            var toDate = date.EndOfDayUtc();
+            var queryPostIds = new List<Guid>();
+            var listPostTracking = new TrackingSummaryGetFeedsRsp();
+            IEnumerable<FeedsListQueryDbDto> items;
+            var totalItems = 0;
 
             if (feedLoadReq.OrderBy == null)
             {
@@ -77,39 +86,60 @@ public partial class FeedService : IFeedService
                     date = lastMonday;
                 }
             }
-            else
-            {
-                query = string.Format(GetAllFeedsQuery, _postRepository.TableName, feedLoadReq.OrderBy);
-            }
-
-            query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
 
             var isMySelf = feedLoadReq.NewUserName == feedLoadReq.UserName;
             if (feedLoadReq.NewUserName != null)
             {
+                query = string.Format(GetAllFeedsQuery, _postRepository.TableName, feedLoadReq.OrderBy);
                 var newUserNameQuery = $@"OR (u.""UserName"" = @NewUserName AND @MySelf)";
                 query = query.Replace("[AddNewUserNameContidion]", newUserNameQuery);
+
+                query = AddAdditionalFeedQuery(feedLoadReq, query, loadFeedType);
+
+                var multi = await _postRepository
+                        .Connection.QueryMultipleAsync(query, new
+                        {
+                            Type = (int)PostType.Feed,
+                            IsAccessPrivate = false,
+                            feedLoadReq.PageSize,
+                            Offet = offset,
+                            Date = date,
+                            PostStatus = StatusUtils.PostStatusIntPublic,
+                            DateOnly = DateOnly.FromDateTime(date),
+                            Hide = feedLoadReq.Hides,
+                            MySelf = isMySelf,
+                            feedLoadReq.NewUserName,
+                        });
+                items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
+                totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
             }
             else
             {
-                query = query.Replace("[AddNewUserNameContidion]", "");
+                listPostTracking = await GetFeeds(feedLoadReq.PageNumber, feedLoadReq.PageSize, frDate.ToString(), toDate.ToString(), feedLoadReq.UserId);
+                queryPostIds = listPostTracking.Items.Select(x => Guid.Parse(x.PostId)).ToList();
+                totalItems = listPostTracking.TotalRecords;
+                var param = new
+                {
+                    PostIds = queryPostIds,
+                    PostStatus = StatusUtils.PostStatusIntPublic,
+                    Type = (int)PostType.Feed,
+                    MySelf = isMySelf,
+                };
+
+                query = "SELECT * FROM social.fn_get_posts_by_postid_trackings(@PostIds, @Type, @MySelf, @PostStatus)";
+
+                var connection = _context.Database.GetDbConnection();
+                try
+                {
+                    var tempResults = await connection.QueryAsync<FeedsListQueryDbDto>(query, param);
+                    items = [.. tempResults.OrderBy(p => queryPostIds.IndexOf(p.Id))];
+                }
+                finally
+                {
+                    await connection.CloseAsync();
+                }
             }
 
-            var multi = await _postRepository
-                    .Connection.QueryMultipleAsync(query, new
-                    {
-                        Type = (int)PostType.Feed,
-                        IsAccessPrivate = false,
-                        feedLoadReq.PageSize,
-                        Offet = offset,
-                        Date = date,
-                        PostStatus = StatusUtils.PostStatusIntPublic,
-                        DateOnly = DateOnly.FromDateTime(date),
-                        Hide = feedLoadReq.Hides,
-                        MySelf = isMySelf,
-                        feedLoadReq.NewUserName,
-                    });
-            var items = await multi.ReadAsync<FeedsListQueryDbDto>().ConfigureAwait(false);
             var listItemResponse = new List<FeedDto>();
 
             var userId = feedLoadReq.UserId;
@@ -133,8 +163,6 @@ public partial class FeedService : IFeedService
                 item.IsCensored = !feedLoadReq.IsAdministrator && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive;
             }
-
-            var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
 
             if (items != null && items.Count() > 0)
             {
@@ -975,22 +1003,14 @@ public partial class FeedService : IFeedService
     }
     private static string AddAdditionalFeedQuery(FeedLoadReq feedLoadReq, string query, LoadFeedType loadFeedType)
     {
-        if (string.IsNullOrEmpty(feedLoadReq.NewUserName))
-        {
-            query = query.Replace("[AdditionalCondition]", "")
-                .Replace("[AdditionalTotalQuery]", "")
-                .Replace("[AdditionalTotalCondition]", "");
-        }
-        else
-        {
-            var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
-            var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
-            var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
+        var additionalTotalQuery = @"INNER JOIN identity.""Users"" u ON u.""Id"" = p.""UserId"" ";
+        var additionalTotalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
+        var additionalCondition = @$"AND u.""UserName"" = '{feedLoadReq.NewUserName}'";
 
-            query = query.Replace("[AdditionalCondition]", additionalCondition)
-                .Replace("[AdditionalTotalQuery]", additionalTotalQuery)
-                .Replace("[AdditionalTotalCondition]", additionalTotalCondition);
-        }
+        query = query.Replace("[AdditionalCondition]", additionalCondition)
+            .Replace("[AdditionalTotalQuery]", additionalTotalQuery)
+            .Replace("[AdditionalTotalCondition]", additionalTotalCondition);
+
         return query;
     }
 
@@ -1005,6 +1025,38 @@ public partial class FeedService : IFeedService
             TotalReacts = reactions.Select(x => x.Count).Sum(),
             MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
         };
+    }
+
+    private async Task<TrackingSummaryGetFeedsRsp> GetFeeds(int pageNumber, int pageSize, string frDate, string toDate, Guid? userId)
+    {
+        var res = new TrackingSummaryGetFeedsRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new TrackingSummaryProto.TrackingSummaryProtoClient(channel);
+
+            var request = new TrackingSummaryGetFeedsReq
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                FrDate = frDate,
+                ToDate = toDate,
+                UserId = userId?.ToString()
+            };
+            var rsp = await client.GetFeedsAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+            res.TotalRecords = rsp.TotalRecords;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     #endregion

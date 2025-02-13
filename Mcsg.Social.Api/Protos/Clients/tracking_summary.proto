@@ -8,6 +8,7 @@ package tracking_summary;
 
 service TrackingSummaryProto {
     rpc Search (TrackingSummarySearchReq) returns (TrackingSummarySearchRsp);
+    rpc GetFeeds (TrackingSummaryGetFeedsReq) returns (TrackingSummaryGetFeedsRsp);
 }
 
 message TrackingSummarySearchReq {
@@ -16,11 +17,27 @@ message TrackingSummarySearchReq {
     float comicPercent = 3;
     float documentPercent = 4;
     float storyPercent = 5;
-    google.protobuf.StringValue  frDate = 6;
-    google.protobuf.StringValue  toDate = 7;
+    google.protobuf.StringValue frDate = 6;
+    google.protobuf.StringValue toDate = 7;
+    google.protobuf.StringValue userId = 8;
+}
+
+message TrackingSummaryGetFeedsReq {
+    int32 pageNumber = 1;
+    int32 pageSize = 2;
+    google.protobuf.StringValue frDate = 3;
+    google.protobuf.StringValue toDate = 4;
+    google.protobuf.StringValue userId = 5;
 }
 
 message TrackingSummarySearchRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSummaryDto items = 4;
+}
+
+message TrackingSummaryGetFeedsRsp {
     bool success = 1;
     string message = 2;
     int32 totalRecords = 3;

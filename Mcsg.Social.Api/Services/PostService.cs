@@ -145,7 +145,7 @@ public partial class PostService : BaseMinioS, IPostService
         }
     }
 
-    public async Task<ListIdForHomePage> GetLatestPostsByType()
+    public async Task<ListIdForHomePage> GetLatestPostsByType(BaseR req)
     {
         try
         {
@@ -158,7 +158,7 @@ public partial class PostService : BaseMinioS, IPostService
             var frDate = now.StartOfDayUtc();
             var toDate = now.EndOfDayUtc();
 
-            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, (float)percentFeed, (float)percentComic, (float)percentDocument, (float)percentStory, frDate.ToString(), toDate.ToString());
+            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, percentFeed, percentComic, percentDocument, percentStory, frDate.ToString(), toDate.ToString(), req.UserId);
 
             var listresults = new List<LatestPostsResponse>();
 
@@ -806,7 +806,8 @@ public partial class PostService : BaseMinioS, IPostService
         ).CountAsync();
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
-    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, float feedPercent, float comicPercent, float documentPercent, float storyPercent, string frDate, string toDate)
+
+    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, double feedPercent, double comicPercent, double documentPercent, double storyPercent, string frDate, string toDate, Guid? userId)
     {
         var res = new TrackingSummarySearchRsp { Success = true };
 
@@ -818,12 +819,13 @@ public partial class PostService : BaseMinioS, IPostService
             var request = new TrackingSummarySearchReq
             {
                 Quantity = quantity,
-                FeedPercent = feedPercent,
-                ComicPercent = comicPercent,
-                DocumentPercent = documentPercent,
-                StoryPercent = storyPercent,
+                FeedPercent = (float)feedPercent,
+                ComicPercent = (float)comicPercent,
+                DocumentPercent = (float)documentPercent,
+                StoryPercent = (float)storyPercent,
                 FrDate = frDate,
-                ToDate = toDate
+                ToDate = toDate,
+                UserId = userId?.ToString()
             };
             var rsp = await client.SearchAsync(request);
 

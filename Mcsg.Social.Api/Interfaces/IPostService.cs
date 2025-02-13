@@ -16,7 +16,7 @@ public interface IPostService
     Task<List<RewardDto>> CheckRewardsForPost(Guid currentUserId, PostType type);
     Task<List<MyPostSeriesResponse>> GetMyAllSeries(BaseR request);
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
-    Task<ListIdForHomePage> GetLatestPostsByType();
+    Task<ListIdForHomePage> GetLatestPostsByType(BaseR req);
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds, BaseR request);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
