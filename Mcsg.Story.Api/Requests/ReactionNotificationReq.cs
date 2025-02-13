@@ -9,7 +9,7 @@ public class ReactionNotificationReq
     public Guid AuthorId { get; set; }
     public string? AuthorName { get; set; }
     public string? UserAvatar { get; set; }
-    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.SocialPostReaction;
+    public NotificationEntityType EntityType { get; set; } = NotificationEntityType.StoryPostReaction;
     public ReactionType ReactionType { get; set; }
     public bool IsReplyReaction { get; set; }
 }
