@@ -1,14 +1,7 @@
 ﻿namespace Mcsg.Document.Api.Models;
 
 using Common.Core.Enums;
-using Common.Domain.Entities;
 using Dtos;
-
-public class SubPostResponseItem
-{
-    public string HashId { get; set; }
-    public IEnumerable<DocumentResource> Resources { get; set; }
-}
 
 public class SubPostFeedQuery : SubPostFeedResponse
 {
