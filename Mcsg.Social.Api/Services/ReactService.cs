@@ -235,6 +235,7 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         await RemoveCountQueue(request.TargetId);
         await _context.SaveChangesAsync(default);
 
+        await RemoveNotification(request);
         return new ReactionUpdateResponse
         {
             ReactionId = ett.Id,
@@ -245,10 +246,26 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         };
     }
 
+    private async Task RemoveNotification(ReactionReactR request)
+    {
+        var notificationEntitype = NotificationEntityType.ComicPostReaction;
+        Type entityType = typeof(T);
+        if (Enum.TryParse<NotificationEntityType>(entityType.Name, out var notificationType))
+        {
+            notificationEntitype = notificationType;
+        }
+        var notificationObject = await _context.Available<NotificationObject>().FirstOrDefaultAsync(p => p.EntityType == notificationEntitype &&
+                                                                                            p.LocationId == request.TargetId &&
+                                                                                            p.ActorId == request.UserId);
+
+        await _context.Available<Notification>().Where(c => c.NotificationObjectId == notificationObject.Id)
+        .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsDelete, p => true));
+    }
+
     public async Task<T?> GetReactionByUser(ReactionReactR request)
     {
         var set = _context.Set<T>();
-        return await set.FirstOrDefaultAsync(p => !p.IsDelete && p.TargetId == request.TargetId && p.AuthorId == request.UserId);
+        return await set.FirstOrDefaultAsync(p => p.TargetId == request.TargetId && p.AuthorId == request.UserId);
     }
 
     private async Task<T?> AddNewReaction(Guid targetId, ReactionType type, Guid userId)

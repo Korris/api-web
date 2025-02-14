@@ -129,7 +129,7 @@ public class NotificationService : BaseS, INotificationService
                 response.NotificationType = NotificationType.Comment;
                 response.UserAvatar = comment.UserAvatar;
                 response.Order = comment.Order ?? 0;
-
+                response.TotalCreatedBy = await _context.Available<NotificationObject>().Where(p => p.LocationId == response.LocationId && p.EntityType == comment.EntityType).Select(p => p.ActorId).Distinct().CountAsync();
                 await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
                 await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
             }
@@ -222,7 +222,7 @@ public class NotificationService : BaseS, INotificationService
             response.Order = comment.Order ?? 0;
             response.ReplyCommentId = comment.Id;
             response.CommentId = comment.ReplyToCommentId;
-
+            response.TotalCreatedBy = await _context.Available<NotificationObject>().Where(p => p.LocationId == response.LocationId && p.EntityType == comment.EntityType).Select(p => p.ActorId).Distinct().CountAsync();
             await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
         }
@@ -545,7 +545,8 @@ public class NotificationService : BaseS, INotificationService
                     .Where(p => p.NotificationObjectId == notificationObject.Id)
                     .ExecuteUpdateAsync(x => x
                         .SetProperty(p => p.Status, NotificationStatus.UnRead)
-                        .SetProperty(p => p.CreatedOn, DateTime.UtcNow));
+                        .SetProperty(p => p.CreatedOn, DateTime.UtcNow)
+                        .SetProperty(p => p.IsDelete, false));
 
                 response.Id = notification == null ? _uidEmpty : notification.Id;
                 response.Status = NotificationStatus.UnRead;
@@ -582,6 +583,8 @@ public class NotificationService : BaseS, INotificationService
                 response.UserAvatar = reaction.UserAvatar;
                 response.ReactionType = reaction.ReactionType;
             }
+
+            response.TotalCreatedBy = await _context.Available<NotificationObject>().Where(p => p.LocationId == response.LocationId && p.EntityType == reaction.EntityType).Select(p => p.ActorId).Distinct().CountAsync();
 
             await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             await SendFireBaseNotification(new List<Guid> { receiverId }, response, "FocFoc");
@@ -1832,7 +1835,7 @@ public class NotificationService : BaseS, INotificationService
                 PostName = request.PostName,
                 EntityType = notificationEntityType,
                 TargetType = targetType,
-                LocationHashId= request.PostHashId,
+                LocationHashId = request.PostHashId,
                 Order = request.Order,
                 PostThumbnailUrl = request.PostThumbnailUrl
             };

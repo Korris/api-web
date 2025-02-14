@@ -637,6 +637,7 @@ partial class Notification
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime ExpiredDate { get; set; }
+        public int TotalCreatedBy { get; set; }
 
         #endregion
     }

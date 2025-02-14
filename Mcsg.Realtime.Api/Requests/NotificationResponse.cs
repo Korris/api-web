@@ -32,4 +32,5 @@ public class NotificationResponse
     public string? PostName { get; set; }
     public DateTime? ExpiredDate { get; set; }
     public string? PostThumbnailUrl { get; set; }
+    public int TotalCreatedBy { get; set; }
 }
