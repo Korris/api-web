@@ -80,29 +80,33 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         if (req.Type == PostTypes.Post)
         {
             var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
-            if (post != null)
+            if (post == null)
             {
-                pDto.Id = post.Id;
-                pDto.HashId = post.HashId;
-                pDto.CreateBy = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;
-
-                response = await CommentToPost(req, author, resource, pDto);
+                throw new NotFoundException(nameof(E204), E204);
             }
+
+            pDto.Id = post.Id;
+            pDto.HashId = post.HashId;
+            pDto.CreateBy = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;
+
+            response = await CommentToPost(req, author, resource, pDto);
         }
         else
         {
             var subPost = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
-            if (subPost != null)
+            if (subPost == null)
             {
-                order = subPost.Order;
-                pDto.Id = subPost.Id;
-                pDto.HashId = subPost.HashId;
-                pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
+                throw new NotFoundException(nameof(E208), E208);
+            }
 
-                response = await CommentToSubPost(req, author, resource, pDto);
-                response.Order = subPost.Order;
-                response.PostIdOfPost = subPost.PostId;
-            };
+            order = subPost.Order;
+            pDto.Id = subPost.Id;
+            pDto.HashId = subPost.HashId;
+            pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
+
+            response = await CommentToSubPost(req, author, resource, pDto);
+            response.Order = subPost.Order;
+            response.PostIdOfPost = subPost.PostId;
         }
 
         response.PostType = PostType.Feed;
@@ -214,24 +218,30 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         if (req.Type == PostTypes.Post)
         {
             var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
-            if (post != null)
+            if (post == null)
             {
-                pDto.Id = post.Id;
-                pDto.HashId = post.HashId;
-                pDto.CreateBy = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;
-                response = await UpdateCommentToPost(req, author, resource, pDto);
+                throw new NotFoundException(nameof(E204), E204);
             }
+
+            pDto.Id = post.Id;
+            pDto.HashId = post.HashId;
+            pDto.CreateBy = post.CreatedBy != null ? post.CreatedBy.Value : Guid.Empty;
+
+            response = await UpdateCommentToPost(req, author, resource, pDto);
         }
         else
         {
             var subPost = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == req.PostId);
-            if (subPost != null)
+            if (subPost == null)
             {
-                pDto.Id = subPost.Id;
-                pDto.HashId = subPost.HashId;
-                pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
-                response = await UpdateCommentToSubPost(req, author, resource, pDto);
+                throw new NotFoundException(nameof(E208), E208);
             }
+
+            pDto.Id = subPost.Id;
+            pDto.HashId = subPost.HashId;
+            pDto.CreateBy = subPost.CreatedBy != null ? subPost.CreatedBy.Value : Guid.Empty;
+
+            response = await UpdateCommentToSubPost(req, author, resource, pDto);
         }
 
         response.AuthorName = authorName;
@@ -453,7 +463,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
 
     private async Task<PostCommentResp> DeleteCommentInSubPost(DeleteCommentReq req)
     {
-        var comment = await _context.Available<SocialSubPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<SocialSubPostComment>().Include(p => p.Post).FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -463,7 +473,6 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
         }
-        var post = await _context.Available<SocialSubPost>().FirstOrDefaultAsync(p => p.Id == comment.PostId);
 
         var command = string.Format(DeleteCommentCommand, _subPostCommentRepository.TableName, _resourceRepository.TableName, _mentionRepository.TableName);
         await _subPostCommentRepository.Connection.ExecuteAsync(command,
@@ -479,7 +488,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
         await _smartCountService.QueueRemoveCommentCount(req.CommentId, EntityType.SubPost);
         return new PostCommentResp
         {
-            PostIdOfPost = post.PostId,
+            PostIdOfPost = comment.Post.PostId,
             PostId = comment.PostId,
             CommentDate = comment.CreatedOn,
             Type = PostTypes.SubPost,

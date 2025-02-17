@@ -14,4 +14,5 @@ public interface ICommentService
     Task<CommentPagedResults<MostReactionCommentResponse>> GetCommentWithMostReaction(CommentMostReactionR request);
     Task<PagedResponse<MostReactionCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input, Guid? userId);
     Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId, Guid? replyCommentId);
+    Task<bool> CheckPostExisted(CommentCheckPostExistedR request);
 }

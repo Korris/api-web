@@ -15,4 +15,5 @@ public interface ICommentService
     Task<PagedResponse<MostReactionCommentResponse>> GetReplyByCommentId(CommentReplyByCommentR input);
     Task<CommentResponse> GetCommentById(Guid commentId, bool isSubPost, Guid? userId, Guid? replyCommentId);
     Task<CommentPagedResults<CommentResponse>> GetCommentOfSubPostParagraphAsync(CommentParapraphLoadR request, PostType postType);
+    Task<bool> CheckPostExisted(CommentCheckPostExistedR request);
 }

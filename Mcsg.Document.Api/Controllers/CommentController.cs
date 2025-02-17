@@ -148,6 +148,14 @@ public class CommentController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPatch("v1/CheckPostExisted")]
+    public async Task<IActionResult> CheckPostExisted([FromBody] CommentCheckPostExistedR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _commentService.CheckPostExisted(request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --

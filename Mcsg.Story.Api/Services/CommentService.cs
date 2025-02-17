@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Story.Api.Services;
 
@@ -16,6 +17,8 @@ using Extensions;
 using Interfaces;
 using Models;
 using Requests;
+using Validators;
+using static Common.SeedWork.Constants.Error;
 
 public partial class CommentService : ICommentService
 {
@@ -785,6 +788,29 @@ public partial class CommentService : ICommentService
         response.Items = comments;
         response.TotalComments = totalComments;
         return response;
+    }
+
+    public async Task<bool> CheckPostExisted(CommentCheckPostExistedR request)
+    {
+        var vr = new CommentCheckPostExistedV().Validate(request);
+        if (!vr.IsValid)
+        {
+            throw new BadRequestException(nameof(E500), E000);
+        }
+
+        if (request.UserId == null)
+        {
+            throw new UnauthorizedAccessException(nameof(E109), E109);
+        }
+
+        if (request.IsSubPost)
+        {
+            return await _context.Available<StorySubPost>().AnyAsync(p => p.Id == request.PostId);
+        }
+        else
+        {
+            return await _context.Available<StoryPost>().AnyAsync(p => p.Id == request.PostId);
+        }
     }
 
     #region -- Fields --

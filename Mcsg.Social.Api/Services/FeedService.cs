@@ -431,6 +431,11 @@ public partial class FeedService : IFeedService
         {
             Id = hashId
         });
+        if (dataQuery == null)
+        {
+            throw new NotFoundException(nameof(E208), E208);
+        }
+
         var resource = JsonConvert.DeserializeObject<List<ResourceDto>>(dataQuery?.ResourcesStr ?? "") ?? [];
         var data = _mapper.Map<SubPostFeedResponse>(dataQuery);
         data.Resources = resource;

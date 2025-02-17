@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Linq.Expressions;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
@@ -10,6 +11,7 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Extensions;
 using Common.Interfaces;
+using Common.SeedWork;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
@@ -20,6 +22,8 @@ using static Common.SeedWork.Constants.Error;
 
 public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseReaction, new()
 {
+    #region -- Methods --
+
     /// <summary>
     /// Initialize
     /// </summary>
@@ -41,64 +45,18 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         var type = request.Type;
         var isReply = request.IsReply ?? false;
 
-        var postId = Guid.Empty;
-        var subPostId = Guid.Empty;
-        var authorId = Guid.Empty;
-        Type entityType = typeof(T);
-        switch (entityType.Name)
-        {
-            case nameof(SocialPostReaction):
-                postId = targetId;
-                authorId = await _context.Available<SocialPost>(false)
-                    .Where(p => p.Id == targetId)
-                    .Select(p => p.UserId)
-                    .FirstOrDefaultAsync();
-                break;
-
-            case nameof(SocialSubPostReaction):
-                var subPost = await _context.Available<SocialSubPost>(false)
-                    .Where(p => p.Id == targetId)
-                    .FirstOrDefaultAsync();
-
-                postId = subPost!.PostId;
-                subPostId = targetId;
-                authorId = subPost.UserId;
-                break;
-
-            case nameof(SocialPostCommentReaction):
-                var commentPost = await _context.Available<SocialPostComment>(false)
-                    .Where(p => p.Id == targetId)
-                    .FirstOrDefaultAsync();
-
-                postId = commentPost!.PostId;
-                authorId = commentPost.AuthorId;
-                break;
-
-            case nameof(SocialSubPostCommentReaction):
-                var commentSubPost = await _context.Available<SocialSubPostComment>(false)
-                    .Include(p => p.Post)
-                    .Where(p => p.Id == targetId)
-                    .FirstOrDefaultAsync();
-
-                postId = commentSubPost!.Post.PostId;
-                subPostId = commentSubPost.PostId;
-                authorId = commentSubPost.AuthorId;
-                break;
-
-            default:
-                break;
-        }
+        var reactionInfor = await GetReactionInfor(targetId);
 
         var response = new ReactionUpdateResponse
         {
             MicroService = MicroService.Social.ToString(),
-            TargetId = postId,
-            SubPostId = subPostId
+            TargetId = reactionInfor.PostId,
+            SubPostId = reactionInfor.SubPostId
         };
 
-        var ett = await GetReactionByUser(request);
+        var ett = await GetData<T>(p => p.TargetId == request.TargetId && p.AuthorId == request.UserId);
 
-        bool isReactNotification = authorId != userId;
+        bool isReactNotification = reactionInfor.AuthorId != userId;
         bool isChange = false;
         bool newReaction = false;
 
@@ -218,14 +176,9 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
 
     public async Task<ReactionUpdateResponse> RemoveReaction(ReactionReactR request)
     {
-        var targetId = request.TargetId;
+        var reactionInfor = await GetReactionInfor(request.TargetId);
 
-        var postId = await _context.Available<SocialSubPost>()
-                                   .Where(p => p.Id == targetId)
-                                   .Select(p => p.PostId)
-                                   .FirstOrDefaultAsync();
-
-        var ett = await GetReactionByUser(request);
+        var ett = await GetData<T>(p => p.TargetId == request.TargetId && p.AuthorId == request.UserId);
         if (ett == null)
         {
             throw new NotFoundException(nameof(E002), E002);
@@ -240,8 +193,8 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         {
             ReactionId = ett.Id,
             MicroService = MicroService.Social.ToString(),
-            TargetId = postId != Guid.Empty ? postId : targetId,
-            SubPostId = postId != Guid.Empty ? targetId : null,
+            TargetId = reactionInfor.PostId,
+            SubPostId = reactionInfor.SubPostId,
             IsDeleted = ett.IsDelete
         };
     }
@@ -262,10 +215,16 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsDelete, p => true));
     }
 
-    public async Task<T?> GetReactionByUser(ReactionReactR request)
+    private async Task<P?> GetData<P>(Expression<Func<P, bool>> predicate, Func<IQueryable<P>, IQueryable<P>>? includes = null) where P : AuditableEntity
     {
-        var set = _context.Set<T>();
-        return await set.FirstOrDefaultAsync(p => p.TargetId == request.TargetId && p.AuthorId == request.UserId);
+        var query = _context.Available<P>().AsQueryable();
+
+        if (includes != null)
+        {
+            query = includes(query);
+        }
+
+        return await query.FirstOrDefaultAsync(predicate);
     }
 
     private async Task<T?> AddNewReaction(Guid targetId, ReactionType type, Guid userId)
@@ -357,19 +316,115 @@ public partial class ReactService<T> : BaseS, IReactService<T> where T : BaseRea
         }
     }
 
-    private async Task<Guid> GetUserIdByPostId(Guid postId)
+    /// <summary>
+    /// GetReactionInfor
+    /// </summary>
+    /// <param name="targetId">Can be PostId, SubPostId, PostCommentId, or SubPostCommentId, depending on what is being commented on</param>
+    /// <returns></returns>
+    /// <exception cref="NotFoundException"></exception>
+    private async Task<ReactionInfor> GetReactionInfor(Guid targetId)
     {
-        return await _context.Available<SocialPost>(false)
-            .Where(p => p.Id == postId)
-            .Select(p => p.UserId)
-            .FirstOrDefaultAsync();
+        switch (typeof(T).Name)
+        {
+            case nameof(SocialPostReaction):
+                var post = await GetData<SocialPost>(p => p.Id == targetId);
+                if (post == null)
+                {
+                    throw new NotFoundException(nameof(E204), E204);
+                }
+
+                return new ReactionInfor(Guid.Empty, post.Id, post.UserId);
+
+            case nameof(SocialSubPostReaction):
+                var subPost = await GetData<SocialSubPost>(p => p.Id == targetId);
+                if (subPost == null)
+                {
+                    throw new NotFoundException(nameof(E208), E208);
+                }
+
+                return new ReactionInfor(subPost.PostId, subPost.Id, subPost.UserId);
+
+            case nameof(SocialPostCommentReaction):
+                var commentPost = await GetData<SocialPostComment>(p => p.Id == targetId, q => q.Include(p => p.Post));
+                if (commentPost == null || commentPost.Post.IsDelete)
+                {
+                    throw new NotFoundException(nameof(E204), E204);
+                }
+
+                return new ReactionInfor(commentPost.PostId, Guid.Empty, commentPost.AuthorId);
+
+            case nameof(SocialSubPostCommentReaction):
+                var commentSubPost = await GetData<SocialSubPostComment>(p => p.Id == targetId, q => q.Include(p => p.Post));
+                if (commentSubPost == null || commentSubPost.Post.IsDelete)
+                {
+                    throw new NotFoundException(nameof(E208), E208);
+                }
+
+                return new ReactionInfor(commentSubPost.Post.PostId, commentSubPost.PostId, commentSubPost.AuthorId);
+
+            default:
+                return new ReactionInfor();
+        }
     }
+
+    #endregion
 
     #region -- Fields --
 
     private readonly IRepository<T> _reactRepository;
     private readonly INotificationService _notificationService;
     private readonly ISmartCountService _smartCountService;
+
+    #endregion
+
+    #region -- Classes --
+
+    /// <summary>
+    /// ReactionInfo
+    /// </summary>
+    private class ReactionInfor
+    {
+        #region -- Method --
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        public ReactionInfor() { }
+
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="subPostId"></param>
+        /// <param name="authorId"></param>
+        public ReactionInfor(Guid postId, Guid subPostId, Guid authorId)
+        {
+            PostId = postId;
+            SubPostId = subPostId;
+            AuthorId = authorId;
+        }
+
+        #endregion
+
+        #region -- Properties --
+
+        /// <summary>
+        /// PostId
+        /// </summary>
+        public Guid PostId { get; init; } = default!;
+
+        /// <summary>
+        /// SubPostId
+        /// </summary>
+        public Guid SubPostId { get; init; } = default!;
+
+        /// <summary>
+        /// AuthorId
+        /// </summary>
+        public Guid AuthorId { get; init; } = default!;
+
+        #endregion
+    };
 
     #endregion
 }
