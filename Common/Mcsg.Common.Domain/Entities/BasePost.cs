@@ -47,4 +47,6 @@ public partial class BasePost : AuditableHasPrivateEntity
 
     [StringLength(Validator.ShortCustomNote.Max)]
     public string? ShortCustomNote { get; set; }
+
+    public Guid? SharePostId { get; set; }
 }
