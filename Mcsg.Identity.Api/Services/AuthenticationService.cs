@@ -194,6 +194,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             throw new NotFoundException(nameof(E303), E303);
         }
 
+        // Not allowed to register a new account
+        if (user.Status == UserStatus.WillDelete)
+        {
+            throw new ForbiddenAccessException(nameof(E316), E316);
+        }
+
         // Account has been deleted
         if (user.IsDelete)
         {
@@ -335,7 +341,8 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         // Check user exist with email
         if (existUserId == Guid.Empty)
         {
-            var existUser = await _context.UserAvailable.FirstOrDefaultAsync(p => (p.Email == encryptedSocialEmail || p.Email == socialEmail));
+            var qUser = _context.Users.Where(p => p.Status != UserStatus.Deleted);
+            var existUser = await qUser.FirstOrDefaultAsync(p => p.Email == encryptedSocialEmail || p.Email == socialEmail);
             if (existUser != null)
             {
                 existUserId = existUser.Id;
@@ -345,10 +352,17 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         // Social user linked to db. Should return access token
         if (existUserId != Guid.Empty)
         {
-            var user = await _userManager.FindByIdAsync(existUserId);
+            var qUser = _context.Users.Where(p => p.Status != UserStatus.Deleted);
+            var user = await qUser.FirstOrDefaultAsync(p => p.Id == existUserId);
             if (user == null)
             {
                 throw new NotFoundException(nameof(E303), E303);
+            }
+
+            // Not allowed to register a new account
+            if (user.Status == UserStatus.WillDelete)
+            {
+                throw new ForbiddenAccessException(nameof(E316), E316);
             }
 
             // Account has been deleted
@@ -972,6 +986,10 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                           where !string.IsNullOrEmpty(b.UserName) && (b.UserName == encryptedEmail || b.UserName == email)
                           select a
                           ).FirstOrDefaultAsync();
+        }
+        else
+        {
+            qUser = _context.Users.Where(p => p.Status != UserStatus.Deleted);
         }
 
         // Find by Email, UserName or PhoneNumber

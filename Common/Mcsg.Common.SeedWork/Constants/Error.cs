@@ -357,6 +357,11 @@ public static class Error
     /// </summary>
     public const string E315 = "OTP expired";
 
+    /// <summary>
+    /// Not allowed to register a new account
+    /// </summary>
+    public const string E316 = "Not allowed to register a new account";
+
     #endregion
 
     #region -- E4xx --

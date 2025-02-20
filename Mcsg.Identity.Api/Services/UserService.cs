@@ -64,7 +64,7 @@ public partial class UserService : BaseMinioS, IUserService
     {
         var userId = request.UserId;
         var q = _context.Available<UserRefreshToken>(false).Where(p => p.UserId == userId);
-        if (!request.FromMobile && !request.IsLocalhost)
+        if (!request.IsLocalhost)
         {
             q = q.Where(p => p.SessionId == request.SessionId);
         }
