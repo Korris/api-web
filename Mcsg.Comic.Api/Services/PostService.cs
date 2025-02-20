@@ -194,7 +194,7 @@ public partial class PostService : BaseMinioS, IPostService
         return result;
     }
 
-    public async Task<PostSeriesResponse> GetSeries(ComicHashIdR req)
+    public async Task<PostSeriesQueryDbResponse> GetSeries(ComicHashIdR req)
     {
         var isLoadChapters = req.IsLoadChapters;
         var hashId = req.HashId;
@@ -252,6 +252,7 @@ public partial class PostService : BaseMinioS, IPostService
         {
             throw new NotFoundException(nameof(E204), E204);
         }
+        dbPost.LatestCreatedOn = dbPost.Chapters?.Max(p => p.PublishDate) ?? dbPost.CreatedOn;
         dbPost.TotalComment = await _postRepository.Connection.QueryFirstAsync<int>(GetTotalCommentQuery, new { HashId = hashId });
         dbPost.IsFollowing = userId == null ? false : await _context.Available<ComicPostFavorite>().AnyAsync(p => p.CreatedBy == userId && p.PostId == dbPost.Id);
         var result = MappingFeedRespone(dbPost, req.UserId);
@@ -996,11 +997,11 @@ public partial class PostService : BaseMinioS, IPostService
         return result;
     }
 
-    private PostSeriesResponse MappingFeedRespone(PostSeriesQueryDbResponse item, Guid? userId)
+    private PostSeriesQueryDbResponse MappingFeedRespone(PostSeriesQueryDbResponse item, Guid? userId)
     {
         if (item == null)
         {
-            return new PostSeriesResponse();
+            return new PostSeriesQueryDbResponse();
         }
 
         var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
@@ -1009,7 +1010,7 @@ public partial class PostService : BaseMinioS, IPostService
         var totalChapters = item.Chapters.Count;
         var estimateBuyChapters = totalChapters - freeChapters - exclusiveChapters;
 
-        var itemResponse = new PostSeriesResponse()
+        var itemResponse = new PostSeriesQueryDbResponse()
         {
             Id = item.Id,
             Title = item.Title,
@@ -1042,7 +1043,8 @@ public partial class PostService : BaseMinioS, IPostService
             TotalComment = item.TotalComment,
             IsFollowing = item.IsFollowing,
             ExternalResource = item.ExternalResource,
-            Hide = item.Hide
+            Hide = item.Hide,
+            LatestCreatedOn = item.LatestCreatedOn
         };
 
         return itemResponse;

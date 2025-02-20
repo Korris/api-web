@@ -55,10 +55,7 @@ public class PostSeriesAllTopResponse
 public class PostSeriesTopResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
-    public string ProfileName { get; set; }
-    public string UserName { get; set; }
     public int TotalReact { get; set; }
-    public ReactionsResponse? Reaction { get; set; }
     public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
     public PostType PostType => Type;
 }

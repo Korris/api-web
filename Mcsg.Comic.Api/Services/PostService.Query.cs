@@ -137,7 +137,7 @@ LIMIT 1
                                 ORDER BY RANDOM()
                                 LIMIT @Limit";
         private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-                        post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"", post.""ThumbnailUrl"", 
+                        post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"",post.""UserName"", post.""ThumbnailUrl"", 
                         post.""ChapterCount"",
                         post.""Status"", post.""Type"",post.""ViewCount"",post.""TotalComment"",
                         post.""CreatedOn"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"", post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
@@ -146,7 +146,7 @@ LIMIT 1
                             (SELECT  p.""Id"",
                             p.""Title"", p.""Body"",  
                             p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
-                            u.""ProfileName"",u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+                            u.""ProfileName"",u.""ProfileId"",u.""Avatar"",u.""UserName"", p.""ThumbnailUrl"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"", p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                              postid.""SelectType"",
                             p.""Status"", p.""Type"", postview.""ViewCount"",
@@ -190,7 +190,7 @@ LIMIT 1
                             GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
                             p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
                             sp.""Total"",
-                            u.""ProfileName"", u.""ProfileId"",u.""Avatar"", p.""ThumbnailUrl"", 
+                            u.""ProfileName"", u.""ProfileId"",u.""Avatar"",u.""UserName"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"",postview.""ViewCount"",
                             p.""CreatedOn""
                             ) 
@@ -199,7 +199,7 @@ LIMIT 1
                         LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
                         GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
                         post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
-                        post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"", post.""ChapterCount"", post.""TotalComment"",
+                        post.""UserId"",post.""ProfileName"",post.""ProfileId"",post.""Avatar"", post.""ThumbnailUrl"",post.""UserName"", post.""ChapterCount"", post.""TotalComment"",
                         post.""Status"", post.""Type"", post.""ViewCount"",
                         post.""CreatedOn"",
                         post.""SubPostStr""

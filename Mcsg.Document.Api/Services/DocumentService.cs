@@ -33,7 +33,7 @@ public partial class DocumentService : IDocumentService
         _postService = postService;
     }
 
-    public async Task<PostSeriesResponse> Get(DocumentHashIdR req)
+    public async Task<PostSeriesTopResponse> Get(DocumentHashIdR req)
     {
         return await _postService.GetSeries(req);
     }

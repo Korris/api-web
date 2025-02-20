@@ -46,6 +46,7 @@ public class PostSeriesResponse : PostDto
 public class PostSeriesQueryDbResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
 }
 
 public class PostSeriesAllTopResponse

@@ -31,7 +31,7 @@ public partial class StoryService : IStoryService
         _postService = postService;
     }
 
-    public async Task<PostSeriesResponse> Get(StoryHashIdR req)
+    public async Task<PostSeriesQueryDbResponse> Get(StoryHashIdR req)
     {
         return await _postService.GetSeries(req);
     }

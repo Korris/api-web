@@ -14,7 +14,7 @@ public interface IPostService
     Task<bool> Delete(IdBaseR request);
     Task<PostSeriesResponse> PostCreate(ComicPostCreateR request);
     Task<PostSeriesResponse> PostUpdate(ComicPostUpdateR request);
-    Task<PostSeriesResponse> GetSeries(ComicHashIdR req);
+    Task<PostSeriesQueryDbResponse> GetSeries(ComicHashIdR req);
     Task<ChapterResponse> GetSeriesChapter(ChapterOrderR req);
     Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
     Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(ComicHashIdR hashId);

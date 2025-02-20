@@ -7,7 +7,7 @@ using Requests;
 
 public interface IComicService
 {
-    Task<PostSeriesResponse> Get(ComicHashIdR req);
+    Task<PostSeriesQueryDbResponse> Get(ComicHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
     Task<ChapterResponse> GetChapter(ChapterOrderR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(ComicTopPostR req);

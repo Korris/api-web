@@ -33,7 +33,7 @@ public partial class ComicService : IComicService
         _postService = postService;
     }
 
-    public async Task<PostSeriesResponse> Get(ComicHashIdR req)
+    public async Task<PostSeriesQueryDbResponse> Get(ComicHashIdR req)
     {
         return await _postService.GetSeries(req);
     }

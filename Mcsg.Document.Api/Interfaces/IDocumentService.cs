@@ -7,7 +7,7 @@ using Requests;
 
 public interface IDocumentService
 {
-    Task<PostSeriesResponse> Get(DocumentHashIdR req);
+    Task<PostSeriesTopResponse> Get(DocumentHashIdR req);
     Task<List<ChapterResponse>> SwapChapterOrder(string hashId, DocumentChapterOrderSwapR orders);
     Task<ChapterResponse> GetChapter(ChapterOrderR req);
     Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(DocumentTopPostR req);

@@ -195,9 +195,9 @@ public partial class PostService : BaseMinioS, IPostService
         return result;
     }
 
-    public async Task<PostSeriesResponse> GetSeries(DocumentHashIdR req)
+    public async Task<PostSeriesTopResponse> GetSeries(DocumentHashIdR req)
     {
-        PostSeriesResponse res;
+        PostSeriesTopResponse res;
 
         var hashId = req.HashId;
         var userId = req.UserId;
@@ -212,7 +212,7 @@ public partial class PostService : BaseMinioS, IPostService
 
         using (var connection = _context.Database.GetDbConnection())
         {
-            res = (await connection.QueryAsync<PostSeriesResponse>(qPost, pPost)).FirstOrDefault() ?? new PostSeriesResponse();
+            res = (await connection.QueryAsync<PostSeriesTopResponse>(qPost, pPost)).FirstOrDefault() ?? new PostSeriesTopResponse();
             if (res == null || (res.Status == PostStatus.Draft && res.UserId != userId))
             {
                 throw new NotFoundException(nameof(E204), E204);
@@ -267,6 +267,7 @@ public partial class PostService : BaseMinioS, IPostService
                 MapReactionPostSeriesResponse(res, reactions.ToList());
             }
 
+            res.LatestCreatedOn = res.Chapters?.Max(p => p.PublishDate) ?? res.CreatedOn;
             res.FollowCount = await _context.Available<DocumentPostFavorite>().CountAsync(p => p.PostId == res.Id);
             res.IsCensored = !req.IsAdministrator && res.Status == PostStatus.Inactive && req.UserName != res.UserName;
             res.IsBlur = res.Status == PostStatus.Inactive || res.IsMature;
@@ -276,7 +277,7 @@ public partial class PostService : BaseMinioS, IPostService
         return res;
     }
 
-    private void MapReactionPostSeriesResponse(PostSeriesResponse item, List<CommentReactionResponseQuery> reactions)
+    private void MapReactionPostSeriesResponse(PostSeriesTopResponse item, List<CommentReactionResponseQuery> reactions)
     {
         var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
         item.Reaction = new ReactionsResponse
@@ -997,7 +998,7 @@ public partial class PostService : BaseMinioS, IPostService
         return result;
     }
 
-    private void MappingFeedRespone(PostSeriesResponse item)
+    private void MappingFeedRespone(PostSeriesTopResponse item)
     {
         var totalChapterView = item.Chapters.Select(x => x.ViewCount).Sum();
         var freeChapters = item.Chapters.Where(x => x.Permission == PostPermission.Public).Count();
