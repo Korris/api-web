@@ -1,7 +1,7 @@
-﻿using System.Linq.Expressions;
-using Dapper;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 
 namespace Mcsg.Document.Api.Services;
 
@@ -187,6 +187,12 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
 
         ett.IsDelete = true;
         await RemoveCountQueue(request.TargetId);
+
+        if (ett.AuthorId != request.UserId)
+        {
+            await RemoveNotification(request);
+        }
+
         await _context.SaveChangesAsync(default);
 
         return new ReactionUpdateResponse
@@ -197,6 +203,24 @@ public partial class ReactService<T> : BaseSettingS, IReactService<T> where T : 
             SubPostId = reactionInfor.SubPostId,
             IsDeleted = ett.IsDelete
         };
+    }
+
+    private async Task RemoveNotification(ReactionReactR request)
+    {
+        var notificationEntitype = NotificationEntityType.ComicPostReaction;
+        Type entityType = typeof(T);
+        if (Enum.TryParse<NotificationEntityType>(entityType.Name, out var notificationType))
+        {
+            notificationEntitype = notificationType;
+        }
+        var notificationObject = await _context.Available<NotificationObject>().FirstOrDefaultAsync(p => p.EntityType == notificationEntitype &&
+                                                                                            p.LocationId == request.TargetId &&
+                                                                                            p.ActorId == request.UserId);
+        if (notificationObject == null)
+        {
+            await _context.Available<Notification>().Where(c => c.NotificationObjectId == notificationObject.Id)
+            .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsDelete, p => true));
+        }
     }
 
     private async Task<P?> GetData<P>(Expression<Func<P, bool>> predicate, Func<IQueryable<P>, IQueryable<P>>? includes = null) where P : AuditableEntity
