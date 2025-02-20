@@ -270,6 +270,7 @@ public partial class PostService : BaseMinioS, IPostService
             res.FollowCount = await _context.Available<DocumentPostFavorite>().CountAsync(p => p.PostId == res.Id);
             res.IsCensored = !req.IsAdministrator && res.Status == PostStatus.Inactive && req.UserName != res.UserName;
             res.IsBlur = res.Status == PostStatus.Inactive || res.IsMature;
+            res.IsCurrentUserAuthor = req.UserId == res.UserId;
         }
 
         return res;
