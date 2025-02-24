@@ -22,5 +22,17 @@
         "location": "us-east-1",
         "accessKey": "admin",
         "secrectKey": "P@SSnhucu6969"
+    },
+    {
+        "instance": 2,
+        "endPoint": "minio-03.teamsgsite.com",
+        "publicUrl": "https://minio-03.teamsgsite.com",
+        "cdnImageUrl": "https://minio-03.teamsgsite.com/bumcheo-dev",
+        "cdnVideoUrl": "https://minio-03.teamsgsite.com/bumcheo-dev",
+        "publicPrefix": "",
+        "bucketName": "bumcheo-dev",
+        "location": "us-east-1",
+        "accessKey": "admin",
+        "secrectKey": "P@SSnhucu6969"
     }
 ]

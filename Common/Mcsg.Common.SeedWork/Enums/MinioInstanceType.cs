@@ -24,7 +24,12 @@ public enum MinioInstanceType
     Default,
 
     /// <summary>
-    /// Blogtruyen
+    /// Comic
     /// </summary>
-    Blogtruyen,
+    Comic,
+
+    /// <summary>
+    /// Document
+    /// </summary>
+    Document
 }

@@ -8,6 +8,7 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
+using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Dtos;
@@ -82,7 +83,7 @@ public class FileService : IFileService
         var fileTitle = file.FileName;
         var imgWidth = 0;
         var imgHeight = 0;
-        var minioInstance = request.MinioInstance;
+        var minioInstance = MinioInstanceType.Document;
         var bucketName = _setting.GetMinio(minioInstance).BucketName;
         var objectName = "";
         var objectNameOriginal = "";
