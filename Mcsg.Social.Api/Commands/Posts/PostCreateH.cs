@@ -30,6 +30,7 @@ using Common.SeedWork.Responses;
 using Dtos;
 using Extensions;
 using Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Requests;
 using Validators;
 using static Common.Core.GoogleSheet;
@@ -57,7 +58,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="smartLookupService">SmartLookup service</param>
     /// <param name="businessText">BusinessText service</param>
     /// <param name="googleSheet">Sheets service</param>
-    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService, GoogleSheet googleSheet) : base(context, setting, sc)
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService, GoogleSheet googleSheet, IFeedService feedService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -69,6 +70,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         _businessText = businessText;
         _notificationService = notificationService;
         _googleSheet = googleSheet;
+        _feedService = feedService;
     }
 
     /// <summary>
@@ -95,6 +97,14 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             return res.SetError(nameof(E109), E109);
         }
 
+        if (request.SharePostId != null)
+        {
+            if (!await _context.Available<SocialPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)))
+            {
+                return res.SetError(nameof(E002), E002);
+            }
+        }
+
         var userId = request.UserId.Value;
         var userName = request.UserName;
         var profileName = request.ProfileName;
@@ -107,15 +117,23 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
         // Create
-        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, userId);
+        if (request.SharePostId != null)
+        {
+            request.Title = string.Empty;
+            request.ThumbnailUrl = string.Empty;
+            request.MetaData = null;
+            request.Files = null;
+            request.SoundId = null;
+        }
+        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
         await _context.SocialPosts.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-
         request.Content = await _businessText.Process(request.Content);
+
         if (receiverIds.Count() > 0)
         {
-            await _notificationService.AddMentionNotificationAsync(new MentionPostNotificationReq
+            _ = Task.Run(async () => await _notificationService.AddMentionNotificationAsync(new MentionPostNotificationReq
             {
                 ReceiversId = receiverIds,
                 EntityType = NotificationEntityType.SocialPostMention,
@@ -123,8 +141,10 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                 UserId = userId,
                 UserProfileName = profileName,
                 TargetId = ett.Id,
-            });
+            }));
+
         }
+
         var result = new FeedPostDto
         {
             Id = ett.Id,
@@ -142,7 +162,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             UserAvatar = userAvatar,
             Rewards = rewards,
             CustomNote = ett.CustomNote,
-            UserName = userName
+            UserName = userName,
+            SharePostId = ett.SharePostId
         };
 
         if (request.MetaData != null)
@@ -226,7 +247,14 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
-
+        if (ett.SharePostId != null)
+        {
+            var sharePosts = await _feedService.GetSharePosts(request, new List<Guid> { ett.SharePostId.Value });
+            if (sharePosts.Count > 0)
+            {
+                result.SharePost = sharePosts.First();
+            }
+        }
         #region -- WriteDataToSheet --
         var dto = new PostSheetDto
         {
@@ -336,6 +364,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// Notification service
     /// </summary>
     private readonly INotificationService _notificationService;
+
+
+    /// <summary>
+    /// Feed service
+    /// </summary>
+    private readonly IFeedService _feedService;
+
 
     /// <summary>
     /// Google sheet

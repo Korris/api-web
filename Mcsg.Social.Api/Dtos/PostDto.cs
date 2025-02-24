@@ -37,4 +37,5 @@ public class PostDto
     public bool IsArchived => Status == PostStatus.Inactive;
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
+    public Guid? SharePostId { get; set; }
 }

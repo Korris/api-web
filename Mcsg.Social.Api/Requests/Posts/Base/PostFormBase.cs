@@ -69,5 +69,10 @@ public class PostFormBase : IdBaseR
     /// </summary>
     public string? ShortCustomNote { get; set; }
 
+    /// <summary>
+    /// SharePostId
+    /// </summary>
+    public Guid? SharePostId { get; set; }
+
     #endregion
 }

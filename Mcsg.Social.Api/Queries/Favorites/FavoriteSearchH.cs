@@ -37,9 +37,11 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
     /// <param name="setting"></param>
     /// <param name="sc"></param>
     /// <param name="businessBodyText"></param>
-    public FavoriteSearchH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText) : base(context, setting, sc)
+    /// <param name="feedService"></param>
+    public FavoriteSearchH(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IFeedService feedService) : base(context, setting, sc)
     {
         _businessText = businessBodyText;
+        _feedService = feedService;
     }
 
     /// <summary>
@@ -286,6 +288,23 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                     item.IsBlur = item.Status == PostStatus.Inactive;
                 }
 
+                var sharePostIds = listFeedDetails.Where(p => p.SharePostId.HasValue)
+                                       .Select(p => p.SharePostId.Value)
+                                       .ToList();
+
+                var sharePosts = await _feedService.GetSharePosts(req, sharePostIds);
+                if (sharePosts.Count > 0)
+                {
+                    foreach (var item in listFeedDetails)
+                    {
+                        var sharePost = sharePosts.FirstOrDefault(p => p.Id == item.SharePostId);
+                        if (sharePost != null)
+                        {
+                            item.SharePost = sharePost;
+                        }
+                    }
+                }
+
                 if (postReactionResponse.Any())
                 {
                     foreach (var item in listFeedDetails)
@@ -329,7 +348,8 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
             IsFavorite = postId == null ? false : postId.Contains(res.Id),
             IsCurrentUserAuthor = res.UserId == userId,
             Hide = res.Hide,
-            Status = res.Status
+            Status = res.Status,
+            SharePostId = res.SharePostId
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
 
@@ -415,6 +435,11 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
     /// Business text
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    /// <summary>
+    /// Feed service
+    /// </summary>
+    private readonly IFeedService _feedService;
 
     #endregion
 }

@@ -24,9 +24,10 @@ partial class SocialPost
     /// <param name="thumbnailUrl">Thumbnail URL</param>
     /// <param name="authorName">Author name</param>
     /// <param name="customNote">Custom note</param>
+    /// <param name="sharePostId">SharePostId</param>
     /// <param name="createdBy">Created by</param>
     /// <returns>Return the result</returns>
-    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid createdBy)
+    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid? sharePostId, Guid createdBy)
     {
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
 
@@ -41,6 +42,7 @@ partial class SocialPost
             AuthorName = authorName,
             CustomNote = customNote,
             UserId = createdBy,
+            SharePostId = sharePostId,
             CreatedBy = createdBy
         };
 

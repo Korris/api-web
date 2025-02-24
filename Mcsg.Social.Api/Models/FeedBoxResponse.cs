@@ -14,6 +14,7 @@ public class FeedBoxResponse : FeedBox
     public PostLinkDto? Link { get; set; }
     public bool IsFavorite { get; set; }
     public ReactionsResponse Reaction { get; set; }
+    public SharePostResponse? SharePost { get; set; }
 }
 
 public class PostLinkFeedBoxResponse
@@ -60,4 +61,5 @@ public class FeedBox
     public bool IsArchived => Status == PostStatus.Inactive;
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
+    public Guid? SharePostId { get; set; }
 }

@@ -57,6 +57,50 @@ public partial class FeedService : IFeedService
         _feedDisplayConfig = feedDisplayConfig.CurrentValue;
     }
 
+    public async Task<List<SharePostResponse>> GetSharePosts(BaseR req, List<Guid>? ids)
+    {
+        if (ids.Count == 0)
+        {
+            return [];
+        }
+
+        var schema = "social";
+
+        var fn = "social.fn_share_post_by_ids";
+        var @params = "@PostIds, @Hide";
+
+        var paramValues = new
+        {
+            PostIds = ids,
+            Hide = req.Hides,
+        };
+
+        using (var connection = _context.Database.GetDbConnection())
+        {
+            var result = await connection.QueryAsync<FeedBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
+
+            if (result != null && result.Any())
+            {
+                var sharePots = new List<SharePostResponse>();
+
+                var body = string.Join(" ", result.Select(p => p.Body));
+                var profiles = await _businessText.GetProfiles(body);
+
+                foreach (var i in result)
+                {
+                    i.Body = await _businessText.Process(i.Body, profiles);
+                    sharePots.Add(MappingSharePostResponse(i));
+                }
+
+                return sharePots;
+            }
+            else
+            {
+                return [];
+            }
+        }
+    }
+
     public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
     {
         try
@@ -181,6 +225,22 @@ public partial class FeedService : IFeedService
                         if (postReaction.Count > 0)
                         {
                             MapReactionFeedDtoResponse(item, postReaction);
+                        }
+                    }
+                }
+                var sharePostIds = items.Where(p => p.SharePostId.HasValue)
+                                        .Select(p => p.SharePostId.Value)
+                                        .ToList();
+
+                var sharePosts = await GetSharePosts(feedLoadReq, sharePostIds);
+                if (sharePosts.Count > 0)
+                {
+                    foreach (var item in listItemResponse)
+                    {
+                        var sharePost = sharePosts.FirstOrDefault(p => p.Id == item.SharePostId);
+                        if (sharePost != null)
+                        {
+                            item.SharePost = sharePost;
                         }
                     }
                 }
@@ -553,8 +613,13 @@ public partial class FeedService : IFeedService
         dbFeed.IsFavorite = await _context.Available<SocialPostFavorite>().AnyAsync(p => p.UserId == userId && p.PostId == dbFeed.Id);
 
         dbFeed.Body = await _businessText.Process(dbFeed.Body);
-
         var result = MappingFeedRespone(dbFeed, sound);
+        if (dbFeed.SharePostId.HasValue)
+        {
+            var sharePost = await GetSharePosts(req, new List<Guid> { dbFeed.SharePostId.Value });
+            result.SharePost = sharePost.Count > 0 ? sharePost.First() : null;
+        }
+
         var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
         var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
         {
@@ -569,6 +634,75 @@ public partial class FeedService : IFeedService
 
         return result;
     }
+
+    public SharePostResponse MappingSharePostResponse(FeedBoxQueryResponse res)
+    {
+        var itemResponse = new SharePostResponse()
+        {
+            ThumbnailUrl = res.ThumbnailUrl,
+            Body = HttpUtility.HtmlDecode(res.Body),
+            CreatedOn = res.CreatedOn,
+            HashId = res.HashId,
+            Id = res.Id,
+            ProfileId = res.ProfileId,
+            UserId = res.UserId,
+            MetaData = res.MetaDatas != null ? JsonConvert.DeserializeObject<MetaDataDto>(res.MetaDatas) : null,
+            TotalResources = res.TotalResources,
+            UserAvatar = res.UserAvatar,
+            FullName = res.FullName,
+            UserName = res.UserName,
+            Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
+            Hide = res.Hide,
+            Status = res.Status,
+        };
+        itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
+        var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
+        if (res.TotalResources > 0 && !string.IsNullOrEmpty(res.Resources))
+        {
+            itemResponse.Resources = new List<ResourceDto>();
+            var resourceResponses = JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources);
+
+            // Ensure not null
+            resourceResponses = resourceResponses?.Where(p => p != null).OrderBy(p => p.Order).ToList();
+            if (resourceResponses == null)
+            {
+                resourceResponses = [];
+            }
+
+            foreach (var i in resourceResponses)
+            {
+                if (i == null)
+                {
+                    continue;
+                }
+
+                i.Url = _sc.GetCdnUrl(i.Url, i.BucketName, i.MinioInstance, i.Type);
+
+                itemResponse.Resources.Add(i);
+            }
+        }
+        else if (link is not null)
+        {
+            itemResponse.Link = new PostLinkDto
+            {
+                HashId = link.HashId,
+                Url = link.Url,
+                Type = link.Type.ToDisplay()
+            };
+            itemResponse.Resources = new List<ResourceDto>()
+                {
+                    new ResourceDto()
+                    {
+                        HashId = link.HashId,
+                        Url = link.Url,
+                        Type = link.Type.ToResourceType(),
+                }
+                     };
+        }
+
+        return itemResponse;
+    }
+
 
     public FeedBoxResponse MappingFeedBoxResponse(FeedBoxQueryResponse res, List<Guid>? postId, Guid? currentUserId)
     {
@@ -593,6 +727,7 @@ public partial class FeedService : IFeedService
             IsCurrentUserAuthor = res.UserId == currentUserId,
             Hide = res.Hide,
             Status = res.Status,
+            SharePostId = res.SharePostId
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
@@ -708,6 +843,23 @@ public partial class FeedService : IFeedService
                 }
             }
 
+            var sharePostIds = listFeedDetails.Where(p => p.SharePostId.HasValue)
+                                     .Select(p => p.SharePostId.Value)
+                                     .ToList();
+
+            var sharePosts = await GetSharePosts(req, sharePostIds);
+            if (sharePosts.Count > 0)
+            {
+                foreach (var item in listFeedDetails)
+                {
+                    var sharePost = sharePosts.FirstOrDefault(p => p.Id == item.SharePostId);
+                    if (sharePost != null)
+                    {
+                        item.SharePost = sharePost;
+                    }
+                }
+            }
+
             return listFeedDetails;
         }
         else
@@ -819,7 +971,8 @@ public partial class FeedService : IFeedService
             CustomNote = item.CustomNote.ForLexical(),
             IsFavorite = postIds == null ? false : postIds.Contains(item.Id),
             Hide = item.Hide,
-            IsCurrentUserAuthor = isMySelf
+            IsCurrentUserAuthor = isMySelf,
+            SharePostId = item.SharePostId
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
         var subPostHashIds = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostStr);
@@ -909,7 +1062,8 @@ public partial class FeedService : IFeedService
             CustomNote = item.CustomNote.ForLexical(),
             IsFollowing = item.IsFollowing,
             Hide = item.Hide,
-            IsFavorite = item.IsFavorite
+            IsFavorite = item.IsFavorite,
+            SharePostId = item.SharePostId
         };
 
         #region Mapping with db query single

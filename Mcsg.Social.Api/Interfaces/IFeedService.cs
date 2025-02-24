@@ -19,4 +19,5 @@ public interface IFeedService
     Task<SubPostFeedResponse> GetFeedSubPostAsync(IdBaseR request);
     Task<List<FeedBoxResponse>> GetFeedsByIds(PaginatedR req);
     Task<PagedResponse<FeedDto>> GetFeedByUserNameOrKeyword(FeedPostByProFileNameR feedLoadReq);
+    Task<List<SharePostResponse>> GetSharePosts(BaseR req, List<Guid>? ids);
 }

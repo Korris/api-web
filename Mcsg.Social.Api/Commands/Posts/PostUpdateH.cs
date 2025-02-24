@@ -54,7 +54,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// <param name="soundService">Sound service</param>
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
-    public PostUpdateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText) : base(context, setting, sc)
+    /// <param name="feedService">SmartLookup service</param>
+    public PostUpdateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, IFeedService feedService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -64,6 +65,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         _postLinkService = postLinkService;
         _smartLookupService = smartLookupService;
         _businessText = businessText;
+        _feedService = feedService;
     }
 
     /// <summary>
@@ -143,7 +145,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             UserAvatar = userAvatar,
             Rewards = rewards,
             CustomNote = ett.CustomNote,
-            MetaData = request.MetaData
+            MetaData = request.MetaData,
+            SharePostId = ett.SharePostId
         };
 
         await _context.SaveChangesAsync(default);
@@ -223,7 +226,14 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         result.Resources = resourceResponse;
         await _smartLookupService.CalculateSmartLookupWhenCreatePostAsync(profileName);
         result.CustomNote = result.CustomNote.ForLexical();
-
+        if (ett.SharePostId != null)
+        {
+            var sharePosts = await _feedService.GetSharePosts(request, new List<Guid> { ett.SharePostId.Value });
+            if (sharePosts.Count > 0)
+            {
+                result.SharePost = sharePosts.First();
+            }
+        }
         _ = Task.Run(async () => await SyncUpdateToAna(ett));
 
         return res.SetSuccess(result);
@@ -302,6 +312,11 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
     /// BusinessText service
     /// </summary>
     private readonly IBusinessText _businessText;
+
+    /// <summary>
+    /// Feed service
+    /// </summary>
+    private readonly IFeedService _feedService;
 
     #endregion
 }

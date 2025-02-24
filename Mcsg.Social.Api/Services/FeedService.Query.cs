@@ -10,6 +10,7 @@
                         post.""Avatar"" AS UserAvatar,post.""UserId"", post.""ProfileName"", u.""UserName"",post.""ProfileId"", post.""ThumbnailUrl"", 
                         post.""Status"", post.""Type"",
                         post.""CreatedOn"",
+                        post.""SharePostId"",
                         post.""TotalResource"",
                         post.""SubPostStr"",
                         post.""SubPostResourceStr"",
@@ -26,6 +27,7 @@
                             p.""HashId"",p.""UserId"",u.""Avatar"", u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
+                            p.""SharePostId"",
                             p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
@@ -64,6 +66,7 @@
                             u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""ThumbnailUrl"",
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
+                            p.""SharePostId"",
                             p.""CustomNote"",
                             p.""Hide"",
                             sp.""Total"",
@@ -85,6 +88,7 @@
                         post.""Avatar"",post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
                         post.""Status"", post.""Type"", 
                         post.""CreatedOn"",
+                        post.""SharePostId"",
                         post.""TotalResource"",
                         post.""SubPostStr"",
                         post.""SubPostResourceStr"",
@@ -431,6 +435,7 @@ LIMIT @PageSize
             {
                 return @"SELECT 
                         p.""Id"", 
+                        p.""SharePostId"",
                         p.""Title"", 
                         p.""Body"",
                         p.""HashId"", 
@@ -483,7 +488,7 @@ LIMIT @PageSize
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         AND p.""Status"" = ANY (@PostStatus)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
-                        GROUP BY p.""Id"",p.""Title"", p.""Body"", p.""HashId"", 
+                        GROUP BY p.""Id"", p.""SharePostId"", p.""Title"", p.""Body"", p.""HashId"", 
                         p.""UserId"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"", p.""CustomNote"", p.""Hide"",
                         sp.""Id"",sp.""HashId"",sp.""Title"", sp.""Status"",sp.""CreatedOn"",
@@ -509,6 +514,7 @@ LIMIT @PageSize
                 return @"
                     SELECT 
                         p.""Id"", 
+                        p.""SharePostId"",
                         p.""Type"",
                         p.""Body"",
                         p.""HashId"",
@@ -593,6 +599,7 @@ LIMIT @PageSize
                         AND p.""Status"" = ANY (@PostStatus)
                     GROUP BY
                         p.""Id"",
+                        p.""SharePostId"",
                         p.""Type"",
                         p.""Body"",
                         p.""HashId"",
