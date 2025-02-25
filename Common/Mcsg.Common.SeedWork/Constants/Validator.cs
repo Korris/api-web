@@ -580,11 +580,11 @@ public class Validator
         /// <summary>
         /// Minimum range
         /// </summary>
-        public const ushort Min = 1;
+        public const ushort Min = 0;
 
         /// <summary>
         /// Maximum range
         /// </summary>
-        public const ushort Max = 9999;
+        public const float Max = 9999.99f;
     }
 }
