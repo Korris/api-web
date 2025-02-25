@@ -13,6 +13,7 @@
 
 namespace Mcsg.Social.Api.Requests;
 
+using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.Domain.Dtos;
 using Dtos;
@@ -73,6 +74,11 @@ public class PostFormBase : IdBaseR
     /// SharePostId
     /// </summary>
     public Guid? SharePostId { get; set; }
+
+    /// <summary>
+    /// SharePostId
+    /// </summary>
+    public PostType? SharePostType { get; set; }
 
     #endregion
 }

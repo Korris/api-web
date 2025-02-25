@@ -228,7 +228,12 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         result.CustomNote = result.CustomNote.ForLexical();
         if (ett.SharePostId != null)
         {
-            var sharePosts = await _feedService.GetSharePosts(request, new List<Guid> { ett.SharePostId.Value });
+            var sharePostInput = new SharePostInput()
+            {
+                Id = ett.SharePostId.Value,
+                Type = ett.SharePostType.Value
+            };
+            var sharePosts = await _feedService.GetSharePosts(request, new List<SharePostInput> { sharePostInput });
             if (sharePosts.Count > 0)
             {
                 result.SharePost = sharePosts.First();

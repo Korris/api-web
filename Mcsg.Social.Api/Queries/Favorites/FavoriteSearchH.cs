@@ -289,7 +289,11 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                 }
 
                 var sharePostIds = listFeedDetails.Where(p => p.SharePostId.HasValue)
-                                       .Select(p => p.SharePostId.Value)
+                                       .Select(p => new SharePostInput
+                                       {
+                                           Id = p.SharePostId.Value,
+                                           Type = p.SharePostType.Value
+                                       })
                                        .ToList();
 
                 var sharePosts = await _feedService.GetSharePosts(req, sharePostIds);

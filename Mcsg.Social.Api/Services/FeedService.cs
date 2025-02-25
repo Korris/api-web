@@ -57,7 +57,7 @@ public partial class FeedService : IFeedService
         _feedDisplayConfig = feedDisplayConfig.CurrentValue;
     }
 
-    public async Task<List<SharePostResponse>> GetSharePosts(BaseR req, List<Guid>? ids)
+    public async Task<List<SharePostResponse>> GetSharePosts(BaseR req, List<SharePostInput>? ids)
     {
         if (ids.Count == 0)
         {
@@ -66,12 +66,21 @@ public partial class FeedService : IFeedService
 
         var schema = "social";
 
-        var fn = "social.fn_share_post_by_ids";
-        var @params = "@PostIds, @Hide";
+        var fn = "social.fn_share_post_by_list_ids";
+        var @params = "@PostInfoJson, @Hide";
+
+        var postInfoArray = ids.Select(item => new
+        {
+            id = item.Id.ToString(),
+            type = (int)item.Type
+        }).ToList();
+
+        var postInfoJson = System.Text.Json.JsonSerializer.Serialize(postInfoArray);
+
 
         var paramValues = new
         {
-            PostIds = ids,
+            PostInfoJson = postInfoJson,
             Hide = req.Hides,
         };
 
@@ -228,9 +237,15 @@ public partial class FeedService : IFeedService
                         }
                     }
                 }
+
                 var sharePostIds = items.Where(p => p.SharePostId.HasValue)
-                                        .Select(p => p.SharePostId.Value)
+                                        .Select(p => new SharePostInput
+                                        {
+                                            Id = p.SharePostId.Value,
+                                            Type = p.SharePostType.HasValue ? p.SharePostType.Value : PostType.Feed
+                                        })
                                         .ToList();
+
 
                 var sharePosts = await GetSharePosts(feedLoadReq, sharePostIds);
                 if (sharePosts.Count > 0)
@@ -616,7 +631,12 @@ public partial class FeedService : IFeedService
         var result = MappingFeedRespone(dbFeed, sound);
         if (dbFeed.SharePostId.HasValue)
         {
-            var sharePost = await GetSharePosts(req, new List<Guid> { dbFeed.SharePostId.Value });
+            var sharePostInput = new SharePostInput
+            {
+                Id = dbFeed.SharePostId.Value,
+                Type = dbFeed.SharePostType.Value
+            };
+            var sharePost = await GetSharePosts(req, new List<SharePostInput> { sharePostInput });
             result.SharePost = sharePost.Count > 0 ? sharePost.First() : null;
         }
 
@@ -637,6 +657,18 @@ public partial class FeedService : IFeedService
 
     public SharePostResponse MappingSharePostResponse(FeedBoxQueryResponse res)
     {
+        if (res.Type != PostType.Feed)
+        {
+            return new SharePostResponse
+            {
+                Title = res.Title,
+                Id = res.Id,
+                HashId = res.HashId,
+                Body = res.Body,
+                ThumbnailUrl = res.ThumbnailUrl,
+                Type = res.Type
+            };
+        }
         var itemResponse = new SharePostResponse()
         {
             ThumbnailUrl = res.ThumbnailUrl,
@@ -654,6 +686,7 @@ public partial class FeedService : IFeedService
             Resources = res.TotalResources > 0 && res.Resources != null ? JsonConvert.DeserializeObject<List<ResourceDto>>(res.Resources.ToString()) : new List<ResourceDto>(),
             Hide = res.Hide,
             Status = res.Status,
+            Type = res.Type
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
@@ -727,7 +760,8 @@ public partial class FeedService : IFeedService
             IsCurrentUserAuthor = res.UserId == currentUserId,
             Hide = res.Hide,
             Status = res.Status,
-            SharePostId = res.SharePostId
+            SharePostId = res.SharePostId,
+            SharePostType = res.SharePostType,
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
         var link = res.Link != null ? JsonConvert.DeserializeObject<PostLinkFeedBoxResponse>(res.Link) : null;
@@ -844,7 +878,11 @@ public partial class FeedService : IFeedService
             }
 
             var sharePostIds = listFeedDetails.Where(p => p.SharePostId.HasValue)
-                                     .Select(p => p.SharePostId.Value)
+                                     .Select(p => new SharePostInput
+                                     {
+                                         Id = p.SharePostId.Value,
+                                         Type = p.SharePostType.Value
+                                     })
                                      .ToList();
 
             var sharePosts = await GetSharePosts(req, sharePostIds);

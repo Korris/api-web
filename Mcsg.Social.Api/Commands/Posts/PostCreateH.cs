@@ -97,9 +97,17 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             return res.SetError(nameof(E109), E109);
         }
 
-        if (request.SharePostId != null)
+        if (request.SharePostId != null && request.SharePostType != null)
         {
-            if (!await _context.Available<SocialPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)))
+            var isExisted = request.SharePostType switch
+            {
+                PostType.Comic => await _context.Available<ComicPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                PostType.Story => await _context.Available<StoryPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                PostType.Document => await _context.Available<DocumentPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                _ => await _context.Available<SocialPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId))
+            };
+
+            if (!isExisted)
             {
                 return res.SetError(nameof(E002), E002);
             }
@@ -125,7 +133,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             request.Files = null;
             request.SoundId = null;
         }
-        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, userId);
+        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, request.SharePostType, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
         await _context.SocialPosts.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -163,7 +171,8 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             Rewards = rewards,
             CustomNote = ett.CustomNote,
             UserName = userName,
-            SharePostId = ett.SharePostId
+            SharePostId = ett.SharePostId,
+            SharePostType = ett.SharePostType,
         };
 
         if (request.MetaData != null)
@@ -249,7 +258,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         result.CustomNote = result.CustomNote.ForLexical();
         if (ett.SharePostId != null)
         {
-            var sharePosts = await _feedService.GetSharePosts(request, new List<Guid> { ett.SharePostId.Value });
+            var sharePostInPut = new SharePostInput()
+            {
+                Id = ett.SharePostId.Value,
+                Type = ett.SharePostType.Value
+            };
+            var sharePosts = await _feedService.GetSharePosts(request, new List<SharePostInput> { sharePostInPut });
             if (sharePosts.Count > 0)
             {
                 result.SharePost = sharePosts.First();

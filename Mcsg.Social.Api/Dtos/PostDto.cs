@@ -38,4 +38,5 @@ public class PostDto
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
     public Guid? SharePostId { get; set; }
+    public PostType? SharePostType { get; set; }
 }

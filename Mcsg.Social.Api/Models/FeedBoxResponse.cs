@@ -62,4 +62,6 @@ public class FeedBox
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
     public Guid? SharePostId { get; set; }
+    public PostType? SharePostType { get; set; }
+    public string? Title { get; set; }
 }

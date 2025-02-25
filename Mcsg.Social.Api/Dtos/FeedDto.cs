@@ -42,4 +42,12 @@ public class SharePostResponse
     public string? UserAvatar { get; set; }
     public HideOption Hide { get; set; }
     public PostStatus Status { get; set; }
+    public string? Title { get; set; }
+    public PostType Type { get; set; }
+}
+
+public class SharePostInput
+{
+    public Guid Id { get; set; }
+    public PostType Type { get; set; }
 }

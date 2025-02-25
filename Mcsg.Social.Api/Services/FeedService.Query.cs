@@ -11,6 +11,7 @@
                         post.""Status"", post.""Type"",
                         post.""CreatedOn"",
                         post.""SharePostId"",
+                        post.""SharePostType"",
                         post.""TotalResource"",
                         post.""SubPostStr"",
                         post.""SubPostResourceStr"",
@@ -28,6 +29,7 @@
                             p.""Status"", p.""Type"", 
                             p.""CreatedOn"",
                             p.""SharePostId"",
+                            P.""SharePostType"",
                             p.""CustomNote"", p.""Hide"", --sp.""Id"" as ""SPID"",
                             sp.""Total"" AS ""TotalResource"",
                             to_jsonb(array_agg(sp.*)) AS ""SubPostStr"",
@@ -67,6 +69,7 @@
                             p.""Status"", p.""Type"",
                             p.""CreatedOn"",
                             p.""SharePostId"",
+                            p.""SharePostType"",
                             p.""CustomNote"",
                             p.""Hide"",
                             sp.""Total"",
@@ -89,6 +92,7 @@
                         post.""Status"", post.""Type"", 
                         post.""CreatedOn"",
                         post.""SharePostId"",
+                        post.""SharePostType"",
                         post.""TotalResource"",
                         post.""SubPostStr"",
                         post.""SubPostResourceStr"",
@@ -436,6 +440,7 @@ LIMIT @PageSize
                 return @"SELECT 
                         p.""Id"", 
                         p.""SharePostId"",
+                        p.""SharePostType"",
                         p.""Title"", 
                         p.""Body"",
                         p.""HashId"", 
@@ -488,7 +493,7 @@ LIMIT @PageSize
                         p.""HashId"" = @HashId AND p.""IsDelete"" = false AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)
                         AND p.""Status"" = ANY (@PostStatus)
                         -- TODO AND (@IsAccessPrivate = true OR p.""IsPrivate"" = false )
-                        GROUP BY p.""Id"", p.""SharePostId"", p.""Title"", p.""Body"", p.""HashId"", 
+                        GROUP BY p.""Id"", p.""SharePostId"", p.""SharePostType"", p.""Title"", p.""Body"", p.""HashId"", 
                         p.""UserId"",u.""Avatar"",u.""ProfileName"",u.""UserName"",u.""ProfileId"", p.""CreatedOn"",
                         p.""Status"", p.""Type"", p.""CreatedOn"", p.""CustomNote"", p.""Hide"",
                         sp.""Id"",sp.""HashId"",sp.""Title"", sp.""Status"",sp.""CreatedOn"",
@@ -515,6 +520,7 @@ LIMIT @PageSize
                     SELECT 
                         p.""Id"", 
                         p.""SharePostId"",
+                        p.""SharePostType"",
                         p.""Type"",
                         p.""Body"",
                         p.""HashId"",
@@ -600,6 +606,7 @@ LIMIT @PageSize
                     GROUP BY
                         p.""Id"",
                         p.""SharePostId"",
+                        p.""SharePostType"",
                         p.""Type"",
                         p.""Body"",
                         p.""HashId"",
