@@ -1,5 +1,7 @@
 ﻿namespace Mcsg.Common.Domain.Dtos;
 
+using Core.Extensions;
+
 /// <summary>
 /// UploadResource data transfer object
 /// </summary>
@@ -89,7 +91,7 @@ public class UploadResourceDto
     /// <summary>
     /// SubFolder
     /// </summary>
-    public string SubFolder => $"{UserFolder}/posts/{_postHashId}{(Order == null ? "" : $"/chap-{Order:0000.0}")}";
+    public string SubFolder => UserFolder.GetSubFolderPath(_postHashId, Order);
 
     #endregion
 

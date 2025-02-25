@@ -1227,4 +1227,16 @@ public static class StringExtension
 
         return formattedNumber;
     }
+
+    /// <summary>
+    /// GetSubFolderPath
+    /// </summary>
+    /// <param name="userFolder"></param>
+    /// <param name="postHashId"></param>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    public static string GetSubFolderPath(this string? userFolder, string? postHashId, float? order)
+    {
+        return $"{userFolder}/posts/{postHashId}{(order == null ? "" : $"/chap-{order:0000.0}")}";
+    }
 }

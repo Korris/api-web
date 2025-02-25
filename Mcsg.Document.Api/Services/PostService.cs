@@ -31,6 +31,7 @@ using Models.Earning;
 using Requests;
 using Validators;
 using static Common.Core.Constants.Setting;
+using static Common.Core.Extensions.StringExtension;
 using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 
@@ -1960,6 +1961,9 @@ public partial class PostService : BaseMinioS, IPostService
         }
         #endregion
 
+        var oldOrder = subPost.Order;
+        var newOrder = request.Order ?? request.ChapterOrder;
+
         subPost.PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc;
         subPost.Title = request.Title;
         if (!string.IsNullOrEmpty(request.Name))
@@ -1979,13 +1983,51 @@ public partial class PostService : BaseMinioS, IPostService
         subPost.Permission = request.Permission;
         subPost.IsPremium = request.IsPremium;
         subPost.PostHashId = request.PostHashId;
-        subPost.Order = request.Order ?? request.ChapterOrder;
+        subPost.Order = newOrder;
         subPost.Sort = subPost.Sort;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
         subPost.IsAllowDownload = request.IsAllowDownload;
 
         await _context.SaveChangesAsync(default);
+
+        if (oldOrder != newOrder && resourceList.Count > 0)
+        {
+            var minioInstance = MinioInstanceType.Document;
+            var oldSubFolder = userFolder.GetSubFolderPath(request.PostHashId, oldOrder);
+            var newSubFolder = userFolder.GetSubFolderPath(request.PostHashId, newOrder);
+
+            try
+            {
+                foreach (var resource in resourceList)
+                {
+                    var oldObjectName = resource.Url;
+
+                    if (!oldObjectName.Contains(oldSubFolder))
+                    {
+                        continue;
+                    }
+
+                    var newObjectName = oldObjectName.Replace(oldSubFolder, newSubFolder);
+                    var stream = await _sc.GetStrategy(minioInstance).GetObject(oldObjectName, resource.BucketName);
+
+                    if (stream == null)
+                    {
+                        continue;
+                    }
+
+                    await _sc.GetStrategy(minioInstance).PutObject(stream, newObjectName, resource.BucketName);
+                    await _sc.GetStrategy(minioInstance).RemoveObject(oldObjectName, resource.BucketName);
+                    resource.Url = newObjectName;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException(ErrorCodes.QuerySyntaxWrong, ex.Message);
+            }
+
+            await _context.SaveChangesAsync(default);
+        }
 
         var result = MappingChapterResponse(subPost);
         if (request?.Files.Count > 0)
