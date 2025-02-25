@@ -170,7 +170,8 @@ public class FileService : IFileService
             Height = imgHeight,
             Size = file.Length,
             CompressedSize = compressedSize,
-            MinioInstance = minioInstance
+            MinioInstance = minioInstance,
+            IsDelete = true,
         };
 
         await _context.StoryResources.AddAsync(resource);

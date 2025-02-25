@@ -171,7 +171,8 @@ public class FileService : IFileService
             Height = imgHeight,
             Size = file.Length,
             CompressedSize = compressedSize,
-            MinioInstance = minioInstance
+            MinioInstance = minioInstance,
+            IsDelete = true
         };
 
         await _context.DocumentResources.AddAsync(resource);
@@ -431,11 +432,12 @@ public class FileService : IFileService
         }
         var resourceDb = await _context.Available<DocumentResource>().Where(p => p.SubPostId == dto.SubPostId).ToListAsync();
         var resourceHashIdRemove = resourceDb.Where(p => !hashIds.Contains(p.HashId)).Select(p => p.HashId).ToList();
-        var resourceList = await _context.Available<DocumentResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         if (resourceHashIdRemove.Count > 0)
         {
             await RemoveResource(resourceHashIdRemove, new List<Guid?>());
         }
+
+        var resourceList = await _context.DocumentResources.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
         {
             if (resource == null)
@@ -495,6 +497,7 @@ public class FileService : IFileService
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
             resource.Order = resourceReq.Order;
+            resource.IsDelete = false;
             await _context.SaveChangesAsync(default);
 
             await _jobService.CreateConvertJob(resource, dto.UserName, dto.UserAvatar, targetObjectName);

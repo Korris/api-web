@@ -45,6 +45,7 @@ public class BaseResource : AuditableEntity
             Size = file.Length,
             CompressedSize = compressedSize,
             MinioInstance = minioInstance,
+            IsDelete = true,
             CreatedBy = createdBy
         };
 

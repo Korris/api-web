@@ -825,5 +825,29 @@ public static class StringExtension
         return $"SELECT * FROM {value}({@params})";
     }
 
+    /// <summary>
+    /// Extracts the file name without extension from a given URL.
+    /// </summary>
+    /// <param name="url">The URL containing the file.</param>
+    /// <returns>The file name without its extension.</returns>
+    public static string GetResourceHashId(this string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return "";
+        }
+
+        try
+        {
+            var uri = new Uri(url);
+            var fileName = Path.GetFileNameWithoutExtension(uri.LocalPath);
+            return fileName;
+        }
+        catch
+        {
+            return "";
+        }
+    }
+
     #endregion
 }

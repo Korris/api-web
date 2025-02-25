@@ -80,6 +80,9 @@ public partial class PostService : BaseMinioS, IPostService
         {
             await _postRepository.Connection.QueryAsync(ExecSoftDeletePost, new { PostId = postId, Date = DateTime.UtcNow, UserId = userId });
 
+            // Delete ThumbnailUrl and CoverUrl
+            await HandleThumbnailUrlAndCoverUrl(feedDb, true, userId.Value);
+
             await _smartLookupService.CalculateSmartLookupWhenDeletePostAsync(postId, profileName);
 
             _ = Task.Run(async () => await SyncDeleteToAna(postId));
@@ -164,6 +167,9 @@ public partial class PostService : BaseMinioS, IPostService
         await _context.SmartLookups.AddAsync(smartLookup);
 
         await _context.SaveChangesAsync(default);
+
+        // Update IsDelete field of ThumbnailUrl and CoverUrl
+        await HandleThumbnailUrlAndCoverUrl(post, false, userId);
 
         if (request.Tags != null && request.Tags.Count > 0)
         {
@@ -934,6 +940,9 @@ public partial class PostService : BaseMinioS, IPostService
         }
         #endregion
 
+        // Delete old ThumbnailUrl and CoverUrl
+        await HandleThumbnailUrlAndCoverUrl(post, true, userId);
+
         var thumbnailUrl = await GetPublicUrl(request.ThumbnailHashId);
         var coverUrl = await GetPublicUrl(request.CoverHashId);
 
@@ -976,6 +985,9 @@ public partial class PostService : BaseMinioS, IPostService
         };
 
         await _context.SaveChangesAsync(default);
+
+        // Update IsDelete field of ThumbnailUrl and CoverUrl
+        await HandleThumbnailUrlAndCoverUrl(post, false, userId);
 
         if (currentTitle != request.Title)
         {
@@ -2342,6 +2354,32 @@ public partial class PostService : BaseMinioS, IPostService
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// Handles the update or delete of thumbnail and cover resource URLs in the database.
+    /// </summary>
+    /// <param name="post">The story post containing the ThumbnailUrl and CoverUrl.</param>
+    /// <param name="isDelete">A boolean indicating whether to mark the resources as deleted or active.</param>
+    /// <param name="userId">The ID of the user performing the deletion.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task HandleThumbnailUrlAndCoverUrl(StoryPost post, bool isDelete, Guid userId)
+    {
+        var resourceHashIds = new string[]
+        {
+            post.ThumbnailUrl!.GetResourceHashId(),
+            post.CoverUrl!.GetResourceHashId()
+        }.Where(p => !string.IsNullOrWhiteSpace(p));
+
+        if (resourceHashIds.Any())
+        {
+            await _context.StoryResources
+                .Where(p => resourceHashIds.Contains(p.HashId))
+                .ExecuteUpdateAsync(p => p
+                    .SetProperty(p => p.IsDelete, isDelete)
+                    .SetProperty(p => p.ModifiedBy, userId)
+                    .SetProperty(p => p.ModifiedOn, DateTime.UtcNow));
+        }
     }
 
     #region -- Post --

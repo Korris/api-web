@@ -447,7 +447,7 @@ public class FileService : IFileService
             return Tuple.Create(response, subPostResponses);
         }
 
-        var resourceList = await _context.Available<SocialResource>().Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+        var resourceList = await _context.SocialResources.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
         foreach (var resource in resourceList)
         {
             if (resource == null)
@@ -504,6 +504,7 @@ public class FileService : IFileService
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
             resource.Order = resourceReq.Order;
+            resource.IsDelete = false;
             await _context.SaveChangesAsync(default);
 
             await _jobService.CreateConvertJob(resource, dto.UserName, dto.UserAvatar, targetObjectName);
