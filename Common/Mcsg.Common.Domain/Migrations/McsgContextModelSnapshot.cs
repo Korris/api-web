@@ -237,6 +237,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("SharePostId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ShortBody")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
@@ -1557,6 +1560,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("SharePostId")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
                         .HasMaxLength(1024)
@@ -3129,6 +3135,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<Guid?>("SharePostId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ShortBody")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
@@ -4225,6 +4234,9 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Property<Guid?>("SharePostId")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
                         .HasMaxLength(1024)

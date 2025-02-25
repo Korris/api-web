@@ -49,4 +49,6 @@ public partial class BasePost : AuditableHasPrivateEntity
     public string? ShortCustomNote { get; set; }
 
     public Guid? SharePostId { get; set; }
+
+    public PostType? SharePostType { get; set; }
 }

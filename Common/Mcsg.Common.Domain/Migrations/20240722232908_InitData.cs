@@ -829,7 +829,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true)
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -918,7 +919,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true)
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1126,7 +1128,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true)
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1214,7 +1217,8 @@ namespace Mcsg.Common.Domain.Migrations
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     ShortBody = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     ShortCustomNote = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true)
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
