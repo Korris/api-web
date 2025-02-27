@@ -123,8 +123,7 @@ public partial class SocialCommentService : BaseS, ISocialCommentService
             if (commentNotiRequest.Type == "subpost")
             {
                 commentNotiRequest.Order = order;
-                var post = await _context.Available<SocialPost>().FirstOrDefaultAsync(p => p.Id == response.PostIdOfPost);
-                commentNotiRequest.PostHashId = post.HashId;
+                commentNotiRequest.PostHashId = pDto.HashId;
             }
             await _notificationService.AddCommentNotification(commentNotiRequest);
         }

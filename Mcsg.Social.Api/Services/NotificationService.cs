@@ -507,12 +507,12 @@ public partial class NotificationService : BaseSettingS, INotificationService
             .Select(p => p.LocationId);
         await CheckDataCommentOnSubPost<DocumentPost, DocumentSubPost>(dtos, locationIds);
 
-        // Social
-        locationIds = dtos
-            .Where(p => p.EntityType == NotificationEntityType.SocialSubPostComment
-                || p.EntityType == NotificationEntityType.SocialSubPostCommentReply)
-            .Select(p => p.LocationId);
-        await CheckDataCommentOnSubPost<SocialPost, SocialSubPost>(dtos, locationIds);
+        //// Social
+        //locationIds = dtos
+        //    .Where(p => p.EntityType == NotificationEntityType.SocialSubPostComment
+        //        || p.EntityType == NotificationEntityType.SocialSubPostCommentReply)
+        //    .Select(p => p.LocationId);
+        //await CheckDataCommentOnSubPost<SocialPost, SocialSubPost>(dtos, locationIds);
 
         // Story
         locationIds = dtos
