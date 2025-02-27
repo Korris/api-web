@@ -353,7 +353,8 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
             IsCurrentUserAuthor = res.UserId == userId,
             Hide = res.Hide,
             Status = res.Status,
-            SharePostId = res.SharePostId
+            SharePostId = res.SharePostId,
+            SharePostType = res.SharePostType
         };
         itemResponse.MetaData.Description = HttpUtility.HtmlDecode(itemResponse.MetaData.Description);
 
