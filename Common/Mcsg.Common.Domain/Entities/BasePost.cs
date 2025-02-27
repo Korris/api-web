@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mcsg.Common.Domain.Entities;
 
@@ -51,4 +52,10 @@ public partial class BasePost : AuditableHasPrivateEntity
     public Guid? SharePostId { get; set; }
 
     public PostType? SharePostType { get; set; }
+
+    /// <summary>
+    /// NumberOfViews
+    /// </summary>
+    [NotMapped]
+    public int NumberOfViews { get; set; }
 }

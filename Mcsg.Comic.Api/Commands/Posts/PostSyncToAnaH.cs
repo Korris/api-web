@@ -76,6 +76,7 @@ public class PostSyncToAnaH : BaseSettingH, IRequestHandler<PostSyncToAnaR, Sing
                 HashId = p.HashId,
                 UserId = p.UserId.ToString(),
                 Title = p.Title,
+                Permission = (int)p.Permission,
                 CreatedOn = p.CreatedOn.ToString(),
                 CreatedBy = p.CreatedBy == null ? null : p.CreatedBy.ToString(),
                 ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),

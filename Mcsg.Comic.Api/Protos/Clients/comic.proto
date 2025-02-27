@@ -10,6 +10,7 @@ service ComicProto {
     rpc Create (ComicCreateReq) returns (ComicCreateRsp);
     rpc Update (ComicUpdateReq) returns (ComicUpdateRsp);
     rpc Delete (ComicDeleteReq) returns (ComicDeleteRsp);
+    rpc PostView (ComicPostViewReq) returns (ComicPostViewRsp);
 }
 
 message ComicCreateReq {
@@ -19,12 +20,25 @@ message ComicCreateReq {
 message ComicUpdateReq {
     string postId = 1;
     string title = 2;
-    google.protobuf.StringValue modifiedOn = 3;
-    google.protobuf.StringValue modifiedBy = 4;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
 }
 
 message ComicDeleteReq {
     string postId = 1;
+}
+
+message ComicPostViewReq {
+    string userId = 1;
+    bool isAscending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    string keyWord = 5;
+    repeated string postIds = 6;
+    repeated string permissions = 7;
+    google.protobuf.StringValue frDate = 8;
+    google.protobuf.StringValue toDate = 9;
 }
 
 message ComicCreateRsp {
@@ -45,17 +59,27 @@ message ComicDeleteRsp {
     int64 id = 3;
 }
 
+message ComicPostViewRsp {
+   repeated ComicPostViewDto items = 1;
+}
+
 message ComicProtoDto {
     string postId = 1;
     string hashId = 2;
     string userId = 3;
     string title = 4;
-    string createdOn = 5;
-    google.protobuf.StringValue createdBy = 6;
-    google.protobuf.StringValue modifiedOn = 7;
-    google.protobuf.StringValue modifiedBy = 8;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
 }
 
 message ComicOutputDto {
     int64 id = 1;
+}
+
+message ComicPostViewDto {
+    string postId = 1;
+    int32 numberOfViews = 2;
 }

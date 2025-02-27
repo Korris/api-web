@@ -956,6 +956,7 @@ public partial class PostService : BaseMinioS, IPostService
         }
 
         var currentTitle = post.Title;
+        var currentPermission = post.Permission;
         post.Title = request.Title;
         post.HashId = request.HashId;
         post.AuthorId = request.IsCurrentUserAuthor ? userId : null;
@@ -993,7 +994,7 @@ public partial class PostService : BaseMinioS, IPostService
         // Update IsDelete field of ThumbnailUrl and CoverUrl
         await HandleThumbnailUrlAndCoverUrl(post, false, userId);
 
-        if (currentTitle != request.Title)
+        if (currentTitle != request.Title || currentPermission != request.Permission)
         {
             var currentEntity = await _context.SmartLookups.FirstOrDefaultAsync(p => p.KeywordType == LookupKeywordType.Comic && p.Keyword == currentTitle);
             if (currentEntity != null)
@@ -2457,6 +2458,7 @@ public partial class PostService : BaseMinioS, IPostService
                         HashId = ett.HashId,
                         UserId = ett.UserId.ToString(),
                         Title = ett.Title,
+                        Permission= (int)ett.Permission,
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
                         ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
@@ -2491,6 +2493,7 @@ public partial class PostService : BaseMinioS, IPostService
             {
                 PostId = ett.Id.ToString(),
                 Title = ett.Title,
+                Permission = (int)ett.Permission,
                 ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
                 ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
             };
