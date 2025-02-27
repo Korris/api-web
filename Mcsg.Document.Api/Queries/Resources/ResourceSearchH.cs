@@ -69,6 +69,7 @@ public class ResourceSearchH : BaseMinioH, IRequestHandler<ResourceSearchR, Sing
                 {
                     r.Title,
                     r.Url,
+                    sp.Order,
                     r.BucketName,
                     r.MinioInstance
                 };
@@ -81,7 +82,8 @@ public class ResourceSearchH : BaseMinioH, IRequestHandler<ResourceSearchR, Sing
             var dto = new ResourceViewDto
             {
                 Title = i.Title,
-                Url = await _sc.GetPublicUrl(i.Url, i.BucketName, i.MinioInstance)
+                Url = await _sc.GetPublicUrl(i.Url, i.BucketName, i.MinioInstance),
+                Order = i.Order,
             };
 
             data.Add(dto);

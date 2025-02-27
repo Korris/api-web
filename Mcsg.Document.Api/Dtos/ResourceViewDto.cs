@@ -17,5 +17,10 @@ public class ResourceViewDto
     /// </summary>
     public string? Url { get; set; }
 
+    /// <summary>
+    /// Order
+    /// </summary>
+    public float Order { get; set; }
+
     #endregion
 }
