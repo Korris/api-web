@@ -744,7 +744,8 @@ public partial class NotificationService : BaseSettingS, INotificationService
         var notificationEntityTypes = new List<NotificationEntityType>
         {
             NotificationEntityType.RemindExpiredSubscription,
-            NotificationEntityType.BuyPremiumTransaction
+            NotificationEntityType.BuyPremiumTransaction,
+            NotificationEntityType.BuyUpgradePremiumTransaction
         };
 
         var l = dtos

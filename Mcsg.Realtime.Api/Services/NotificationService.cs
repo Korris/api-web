@@ -50,7 +50,7 @@ public class NotificationService : BaseS, INotificationService
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
             TransactionType.Donate => NotificationEntityType.DonateTransaction,
             TransactionType.Deposit => NotificationEntityType.DepositTransaction,
-            TransactionType.BuyPremium => NotificationEntityType.BuyPremiumTransaction,
+            TransactionType.BuyPremium => req.IsUpgradePremium ? NotificationEntityType.BuyUpgradePremiumTransaction : NotificationEntityType.BuyPremiumTransaction,
             _ => NotificationEntityType.TransferTransaction
         };
 
@@ -1615,6 +1615,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.DonateTransaction => nameof(NotificationContent.DonateTransaction),
             NotificationEntityType.DepositTransaction => nameof(NotificationContent.DepositTransaction),
             NotificationEntityType.BuyPremiumTransaction => nameof(NotificationContent.BuyPremiumTransaction),
+            NotificationEntityType.BuyUpgradePremiumTransaction => nameof(NotificationContent.BuyUpgradePremiumTransaction),
             _ => string.Empty
         };
     }
@@ -1627,6 +1628,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.DonateTransaction => NotificationType.DonateTransaction,
             NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
             NotificationEntityType.BuyPremiumTransaction => NotificationType.BuyPremiumTransaction,
+            NotificationEntityType.BuyUpgradePremiumTransaction => NotificationType.BuyUpgradePremiumTransaction,
             _ => string.Empty
         };
     }
@@ -1779,6 +1781,7 @@ public class NotificationService : BaseS, INotificationService
                 break;
 
             case "RemindExpiredSubscription":
+            case NotificationType.BuyUpgradePremiumTransaction:
                 parameters = new Dictionary<string, string>()
                 {
                     ["expiredDate"] = response.ExpiredDate?.ToString("HH:mm, dd.MM.yyyy")

@@ -11,4 +11,5 @@ public class TransactionNotificationReq
     public float Amount { get; set; }
     public string? ReferenceNumber { get; set; }
     public string? CurrencyUnit { get; set; }
+    public bool IsUpgradePremium { get; set; }
 }

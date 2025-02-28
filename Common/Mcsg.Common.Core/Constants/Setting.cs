@@ -363,6 +363,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string BuyPremiumTransaction = "BuyPremiumTransaction";
 
         /// <summary>
+        /// BuyUpgradePremiumTransaction
+        /// </summary>
+        public const string BuyUpgradePremiumTransaction = "BuyUpgradePremiumTransaction";
+
+        /// <summary>
         /// DeleteSocial
         /// </summary>
         public const string DeleteSocial = "DeleteSocial";

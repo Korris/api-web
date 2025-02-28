@@ -343,6 +343,11 @@ partial class Notification
         {
             return nameof(NotificationContent.BuyPremiumTransaction);
         }
+
+        if (noti.EntityType == NotificationEntityType.BuyUpgradePremiumTransaction)
+        {
+            return nameof(NotificationContent.BuyUpgradePremiumTransaction);
+        }
         #endregion
 
         #region -- Subscription --
@@ -451,6 +456,7 @@ partial class Notification
             NotificationEntityType.DonateTransaction => Setting.NotificationTargetType.Transaction,
             NotificationEntityType.DepositTransaction => Setting.NotificationTargetType.Transaction,
             NotificationEntityType.BuyPremiumTransaction => Setting.NotificationTargetType.Transaction,
+            NotificationEntityType.BuyUpgradePremiumTransaction => Setting.NotificationTargetType.Transaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationTargetType.RejectPostReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationTargetType.RejectCommentReport,
@@ -558,6 +564,7 @@ partial class Notification
             NotificationEntityType.DonateTransaction => Setting.NotificationType.DonateTransaction,
             NotificationEntityType.DepositTransaction => Setting.NotificationType.DepositTransaction,
             NotificationEntityType.BuyPremiumTransaction => Setting.NotificationType.BuyPremiumTransaction,
+            NotificationEntityType.BuyUpgradePremiumTransaction => Setting.NotificationType.BuyUpgradePremiumTransaction,
 
             NotificationEntityType.RejectPostReport => Setting.NotificationType.RejectReport,
             NotificationEntityType.RejectCommentReport => Setting.NotificationType.RejectReport,

@@ -31,8 +31,9 @@
     "DonateTransaction": "You received a donation from {{actorName}}.",
     "DepositTransaction": "You just deposited {{amount}} into wallet {{currencyUnit}}.",
 
-    "RemindExpiredSubscription": "Your Premium plan is about to expire. Privileges will remain until {{expiredDate}}",
+    "RemindExpiredSubscription": "Your Premium plan is about to expire. Privileges will remain until {{expiredDate}}.",
     "ExpiredSubscription": "Your Premium plan has expired. Please renew to c ontinue using the privileges.",
-    "BuyPremiumTransaction": "Congratulations! Your Premium is activated! 🎉  Enjoy our privileges now!"
+    "BuyPremiumTransaction": "Congratulations! Your Premium is activated! 🎉  Enjoy our privileges now!",
+    "BuyUpgradePremiumTransaction": "Your Premium plan has upgraded. Privileges will expire on {{expiredDate}}."
   }
 }
