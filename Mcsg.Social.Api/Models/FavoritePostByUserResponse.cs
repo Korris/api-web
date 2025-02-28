@@ -10,7 +10,8 @@ public class FavoritePostByUserResponse
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
-
+    public string? ProfileName { get; set; }
+    public string? UserName { get; set; }
     public string? Title { get; set; }
     public string? Body { get; set; }
     public string? ThumbnailUrl { get; set; }
@@ -18,4 +19,5 @@ public class FavoritePostByUserResponse
     public int TotalSubPost { get; set; }
     public int TotalComment { get; set; }
     public int TotalFollow { get; set; }
+    public int TotalReaction { get; set; }
 }
