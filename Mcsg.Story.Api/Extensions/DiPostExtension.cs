@@ -17,6 +17,7 @@ namespace Mcsg.Story.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
+using Queries;
 using Requests;
 
 /// <summary>
@@ -56,6 +57,7 @@ public static class DiPostExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<MyStorySearchR, SingleResponse>, MyStorySearchH>(life);
     }
 
     #endregion

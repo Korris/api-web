@@ -80,6 +80,20 @@ public class PostController : ControllerBase
         return Ok(response.Data);
     }
 
+    /// <summary>
+    /// MyStorySearch
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPatch("v1/MyStorySearch"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> Search([FromBody] MyStorySearchR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

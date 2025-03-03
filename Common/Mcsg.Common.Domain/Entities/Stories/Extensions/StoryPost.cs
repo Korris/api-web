@@ -1,7 +1,10 @@
-﻿namespace Mcsg.Common.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace Mcsg.Common.Domain.Entities;
 
 using Core.Constants;
 using Core.Enums;
+using SeedWork.Converters;
 using SeedWork.Dtos;
 using SeedWork.Extensions;
 
@@ -97,7 +100,15 @@ partial class StoryPost
     /// <returns>Return the DTO</returns>
     public SearchDto ToSearchDto()
     {
-        return ToBaseDto<SearchDto>();
+        var res = ToBaseDto<SearchDto>();
+
+        res.Permission = Permission;
+        res.NumberOfComments = StoryPostComments.Count;
+        res.NumberOfFavorites = StoryPostFavorites.Count;
+        res.NumberOfSubPosts = StorySubPosts.Count;
+        res.NumberOfViews = NumberOfViews;
+
+        return res;
     }
 
     /// <summary>
@@ -117,7 +128,14 @@ partial class StoryPost
     {
         return new T
         {
-            Id = Id
+            Id = Id,
+            HashId = HashId,
+            Title = Title,
+            Body = Body,
+            CreatedOn = CreatedOn,
+            ThumbnailUrl = ThumbnailUrl,
+            ProfileName = User.ProfileName,
+            UserName = User.UserName
         };
     }
 
@@ -130,6 +148,46 @@ partial class StoryPost
     /// </summary>
     public class BaseDto : IdDto
     {
+        #region -- Properties --
+
+        /// <summary>
+        /// HashId
+        /// </summary>
+        public string? HashId { get; set; }
+
+        /// <summary>
+        /// Title
+        /// </summary>
+        public string? Title { get; set; }
+
+        /// <summary>
+        /// Body
+        /// </summary>
+        public string? Body { get; set; }
+
+        /// <summary>
+        /// CreatedOn
+        /// </summary>
+        [JsonConverter(typeof(IsoDateTimeConverter))]
+        public DateTime? CreatedOn { get; set; }
+
+
+        /// <summary>
+        /// ThumbnailUrl
+        /// </summary>
+        public string? ThumbnailUrl { get; set; }
+
+        /// <summary>
+        /// ProfileName
+        /// </summary>
+        public string? ProfileName { get; set; }
+
+        /// <summary>
+        /// UserName
+        /// </summary>
+        public string? UserName { get; set; }
+
+        #endregion
     }
 
     /// <summary>
@@ -137,6 +195,40 @@ partial class StoryPost
     /// </summary>
     public class SearchDto : BaseDto
     {
+        #region -- Properties --
+
+        /// <summary>
+        /// Permission
+        /// </summary>
+        [JsonIgnore]
+        public PostPermission Permission { get; set; }
+
+        /// <summary>
+        /// PermissionName
+        /// </summary>
+        public string PermissionName => Permission.ToString();
+
+        /// <summary>
+        /// NumberOfComments
+        /// </summary>
+        public int NumberOfComments { get; set; }
+
+        /// <summary>
+        /// NumberOfFavorites
+        /// </summary>
+        public int NumberOfFavorites { get; set; }
+
+        /// <summary>
+        /// NumberOfSubPosts
+        /// </summary>
+        public int NumberOfSubPosts { get; set; }
+
+        /// <summary>
+        /// NumberOfViews
+        /// </summary>
+        public int NumberOfViews { get; set; }
+
+        #endregion
     }
 
     /// <summary>
