@@ -362,6 +362,11 @@ public static class Error
     /// </summary>
     public const string E316 = "Not allowed to register a new account";
 
+    /// <summary>
+    /// SessionId not found
+    /// </summary>
+    public const string E317 = "SessionId not found";
+
     #endregion
 
     #region -- E4xx --

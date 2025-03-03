@@ -71,7 +71,7 @@ public partial class UserService : BaseMinioS, IUserService
         var has = await q.AnyAsync();
         if (!has)
         {
-            throw new UnauthorizedAccessException(nameof(E302), E302);
+            throw new UnauthorizedAccessException(nameof(E317), E317);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
