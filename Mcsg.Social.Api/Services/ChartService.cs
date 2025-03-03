@@ -1,7 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Grpc.Net.Client;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Social.Api.Services;
 
+using Analytic.Application.Protos;
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
@@ -102,18 +105,40 @@ public partial class ChartService : IChartService
         totalReaction = MapChartData(days, timezoneOffset, totalReaction);
         #endregion
 
+        #region -- Share --
+        var qPostShare = await PostShareGetCount(userId, lastDayToGetData, (int)PostType.Feed);
+
+        var totalShare = qPostShare.Items
+            .GroupBy(p => DateTime.Parse(p.CreatedOn))
+            .Select(g => new ChartResponse
+            {
+                Label = g.Key.ToLabel("dd MMMM"),
+                Quantity = g.Count()
+            })
+            .ToList();
+
+        totalShare = MapChartData(days, timezoneOffset, totalShare);
+        #endregion
+
         var interactions = await GetNumberOfInteractionProfile(userId, lastDayToCompare, lastDayToGetData);
 
         return new FeedChartResponse
         {
             ChartResponseComment = totalComment,
             ChartResponseReact = totalReaction,
+            ChartResponseShare = totalShare,
             CommentInteractions = interactions.CommentInteractions,
             ReactionInteractions = interactions.ReactionInteractions,
+            ShareInteractions = interactions.ShareInteractions,
             PostInteractions = interactions.PostInteractions
         };
     }
 
+    /// <summary>
+    /// Chart information for User
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     public async Task<GeneralInfoResponse> GetGeneralInfo(Guid? userId)
     {
         var result = new GeneralInfoResponse();
@@ -122,169 +147,288 @@ public partial class ChartService : IChartService
         var dateToGetData = today.AddDays(-7);
         var dateToCompare = today.AddDays(-14);
 
-        result.Followers = await GetFollowerInteractionsAsync(userId, dateToCompare, dateToGetData);
-        result.PostInteraction = await GetSocialInteractionsAsync(userId, dateToCompare, dateToGetData);
-        result.ComicStoryInteraction = await GetComicStoryInteractionsAsync(userId, dateToCompare, dateToGetData);
+        result.Follower = await GetFollowerInteractionsAsync(userId, dateToCompare, dateToGetData);
+        result.SocialInteraction = await GetSocialInteractionsAsync(userId, dateToCompare, dateToGetData);
+        result.OtherInteraction = await GetComicStoryDocumentInteractionsAsync(userId, dateToCompare, dateToGetData);
 
-        result.PostCount = await _context.Available<SocialPost>().CountAsync(p => p.CreatedBy == userId);
+        result.SocialCount = await _context.Available<SocialPost>().CountAsync(p => p.CreatedBy == userId);
         result.ComicCount = await _context.Available<ComicPost>().CountAsync(p => p.CreatedBy == userId);
         result.StoryCount = await _context.Available<StoryPost>().CountAsync(p => p.CreatedBy == userId);
+        result.DocumentCount = await _context.Available<DocumentPost>().CountAsync(p => p.CreatedBy == userId);
 
         return result;
     }
 
-    public async Task<ComicChartResponse> GetComicOrStoryChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days, bool isComic)
+    /// <summary>
+    /// Chart information for Comic, Document and Story
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="timezoneOffset"></param>
+    /// <param name="isGetDataIn7Days"></param>
+    /// <param name="postType"></param>
+    /// <returns></returns>
+    public async Task<PostChartResponse> GetChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days, PostType postType)
     {
-        var result = new ComicChartResponse();
+        var result = new PostChartResponse();
 
         var days = isGetDataIn7Days ? 7 : 30;
         var today = DateTime.Today.ToUniversalTime();
         DateTime lastDayToGetData = today.AddDays(-days);
         DateTime lastDayToCompare = today.AddDays(-days * 2);
+        var data = 0;
+        var dataCompare = 0;
 
-        if (isComic)
+        switch (postType)
         {
-            var comicPostCommentLast14Days = from post in _context.Available<ComicPost>()
-                                             join postComment in _context.Available<ComicPostComment>()
-                                             on post.Id equals postComment.PostId
-                                             where post.UserId == userId
-                                             && postComment.CreatedOn >= lastDayToCompare
-                                             select postComment;
+            case PostType.Comic:
+                var comicPostCommentLast14Days = from post in _context.Available<ComicPost>()
+                                                 join postComment in _context.Available<ComicPostComment>()
+                                                 on post.Id equals postComment.PostId
+                                                 where post.UserId == userId
+                                                 && postComment.CreatedOn >= lastDayToCompare
+                                                 select postComment;
 
-            var comicReactionsLast14Days = from post in _context.Available<ComicPost>()
-                                           join postReaction in _context.Available<ComicPostReaction>()
-                                           on post.Id equals postReaction.TargetId
-                                           where post.UserId == userId
-                                             && postReaction.CreatedOn >= lastDayToCompare
-                                           select postReaction;
+                var comicReactionsLast14Days = from post in _context.Available<ComicPost>()
+                                               join postReaction in _context.Available<ComicPostReaction>()
+                                               on post.Id equals postReaction.TargetId
+                                               where post.UserId == userId
+                                               && postReaction.CreatedOn >= lastDayToCompare
+                                               select postReaction;
 
-            var comicPostCommentData = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
-            var comicPostCommentCompare = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+                var comicPostCommentData = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var comicPostCommentCompare = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
 
-            result.ComicCommentInteractions = await GetInteractions(comicPostCommentData, comicPostCommentCompare);
+                result.PostCommentInteractions = await GetInteractions(comicPostCommentData, comicPostCommentCompare);
 
-            var comicReactionsData = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
-            var comicReactionCompare = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+                var comicReactionsData = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var comicReactionCompare = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
 
-            result.ComicReactionInteractions = await GetInteractions(comicReactionsData, comicReactionCompare);
+                result.PostReactionInteractions = await GetInteractions(comicReactionsData, comicReactionCompare);
 
+                data = comicPostCommentData + comicReactionsData;
+                dataCompare = comicPostCommentCompare + comicReactionCompare;
+                break;
 
-            var data = comicPostCommentData + comicReactionsData;
-            var dataCompare = comicPostCommentCompare + comicReactionCompare;
+            case PostType.Story:
+                var storyPostCommentLast14Days = from post in _context.Available<StoryPost>()
+                                                 join postComment in _context.Available<StoryPostComment>()
+                                                 on post.Id equals postComment.PostId
+                                                 where post.UserId == userId
+                                                 && postComment.CreatedOn >= lastDayToCompare
+                                                 select postComment;
 
-            result.ComicInteractions = await GetInteractions(data, dataCompare);
+                var storyReactionsLast14Days = from post in _context.Available<StoryPost>()
+                                               join postReaction in _context.Available<StoryPostReaction>()
+                                               on post.Id equals postReaction.TargetId
+                                               where post.UserId == userId
+                                               && postReaction.CreatedOn >= lastDayToCompare
+                                               select postReaction;
 
+                var storyPostCommentData = await storyPostCommentLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var storyPostCommentCompare = await storyPostCommentLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+
+                result.PostCommentInteractions = await GetInteractions(storyPostCommentData, storyPostCommentCompare);
+
+                var storyReactionsData = await storyReactionsLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var storyReactionCompare = await storyReactionsLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+
+                result.PostReactionInteractions = await GetInteractions(storyReactionsData, storyReactionCompare);
+
+                data = storyPostCommentData + storyReactionsData;
+                dataCompare = storyPostCommentCompare + storyReactionCompare;
+                break;
+
+            default:
+                var documentPostCommentLast14Days = from post in _context.Available<DocumentPost>()
+                                                    join postComment in _context.Available<DocumentPostComment>()
+                                                    on post.Id equals postComment.PostId
+                                                    where post.UserId == userId
+                                                    && postComment.CreatedOn >= lastDayToCompare
+                                                    select postComment;
+
+                var documentReactionsLast14Days = from post in _context.Available<DocumentPost>()
+                                                  join postReaction in _context.Available<DocumentPostReaction>()
+                                                  on post.Id equals postReaction.TargetId
+                                                  where post.UserId == userId
+                                                  && postReaction.CreatedOn >= lastDayToCompare
+                                                  select postReaction;
+
+                var documentPostCommentData = await documentPostCommentLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var documentPostCommentCompare = await documentPostCommentLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+
+                result.PostCommentInteractions = await GetInteractions(documentPostCommentData, documentPostCommentCompare);
+
+                var documentReactionsData = await documentReactionsLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
+                var documentReactionCompare = await documentReactionsLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
+
+                result.PostReactionInteractions = await GetInteractions(documentReactionsData, documentReactionCompare);
+
+                data = documentPostCommentData + documentReactionsData;
+                dataCompare = documentPostCommentCompare + documentReactionCompare;
+                break;
         }
-        else
-        {
-            var comicPostCommentLast14Days = from post in _context.Available<StoryPost>()
-                                             join postComment in _context.Available<StoryPostComment>()
-                                             on post.Id equals postComment.PostId
-                                             where post.UserId == userId
-                                             && postComment.CreatedOn >= lastDayToCompare
-                                             select postComment;
 
-            var comicReactionsLast14Days = from post in _context.Available<StoryPost>()
-                                           join postReaction in _context.Available<StoryPostReaction>()
-                                           on post.Id equals postReaction.TargetId
-                                           where post.UserId == userId
-                                             && postReaction.CreatedOn >= lastDayToCompare
-                                           select postReaction;
+        result.PostInteractions = await GetInteractions(data, dataCompare);
 
-            var comicPostCommentData = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
-            var comicPostCommentCompare = await comicPostCommentLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
-
-            result.ComicCommentInteractions = await GetInteractions(comicPostCommentData, comicPostCommentCompare);
-
-            var comicReactionsData = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn >= lastDayToGetData);
-            var comicReactionCompare = await comicReactionsLast14Days.CountAsync(p => p.CreatedOn < lastDayToGetData);
-
-            result.ComicReactionInteractions = await GetInteractions(comicReactionsData, comicReactionCompare);
-
-            var data = comicPostCommentData + comicReactionsData;
-            var dataCompare = comicPostCommentCompare + comicReactionCompare;
-
-            result.ComicInteractions = await GetInteractions(data, dataCompare);
-        }
-
-        result.CommentChartResponse = await GetComicCommentChart(userId, timezoneOffset, days, isComic);
-        result.ReactionChartResponse = await GetComicReactionChart(userId, timezoneOffset, days, isComic);
+        result.CommentChartResponse = await GetPostCommentChart(userId, timezoneOffset, days, postType);
+        result.ReactionChartResponse = await GetPostReactionChart(userId, timezoneOffset, days, postType);
+        result.ShareChartResponse = await GetPostShareChart(userId, timezoneOffset, days, postType);
         return result;
     }
 
-    public async Task<List<ChartResponse>> GetComicReactionChart(Guid? userId, int timezoneOffset, int days, bool isComic)
+    public async Task<List<ChartResponse>> GetPostReactionChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
         IQueryable<ChartResponse> query;
-        if (isComic)
-        {
-            query = from comment in _context.Available<ComicPostReaction>()
-                    join post in _context.Available<ComicPost>()
-                    on comment.TargetId equals post.Id
-                    where post.CreatedBy == userId
-                    && comment.CreatedOn >= date
-                    group comment by comment.CreatedOn.Date into g
-                    select new ChartResponse
-                    {
-                        Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                        Quantity = g.Count()
-                    };
 
-        }
-        else
+        switch (postType)
         {
-            query = from comment in _context.Available<StoryPostReaction>()
-                    join post in _context.Available<StoryPost>()
-                    on comment.TargetId equals post.Id
-                    where post.CreatedBy == userId
-                    && comment.CreatedOn >= date
-                    group comment by comment.CreatedOn.Date into g
-                    select new ChartResponse
-                    {
-                        Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                        Quantity = g.Count()
-                    };
+            case PostType.Comic:
+                query = from comment in _context.Available<ComicPostReaction>()
+                        join post in _context.Available<ComicPost>()
+                        on comment.TargetId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
 
+            case PostType.Story:
+                query = from comment in _context.Available<StoryPostReaction>()
+                        join post in _context.Available<StoryPost>()
+                        on comment.TargetId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
+
+            default:
+                query = from comment in _context.Available<DocumentPostReaction>()
+                        join post in _context.Available<DocumentPost>()
+                        on comment.TargetId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
         }
+
         return MapChartData(days, timezoneOffset, await query.ToListAsync());
     }
 
-    public async Task<List<ChartResponse>> GetComicCommentChart(Guid? userId, int timezoneOffset, int days, bool isComic)
+    public async Task<List<ChartResponse>> GetPostShareChart(Guid? userId, int timezoneOffset, int days, PostType postType)
+    {
+        var today = DateTime.Today.ToUniversalTime();
+        var date = today.AddDays(-days);
+        List<ChartResponse> totalShare;
+
+        switch (postType)
+        {
+            case PostType.Comic:
+                var qComicShare = await PostShareGetCount(userId, date, (int)PostType.Comic);
+                totalShare = qComicShare.Items
+                    .GroupBy(p => DateTime.Parse(p.CreatedOn))
+                    .Select(g => new ChartResponse
+                    {
+                        Label = g.Key.ToLabel("dd MMMM"),
+                        Quantity = g.Count()
+                    })
+                    .ToList();
+                break;
+
+            case PostType.Story:
+                var qStoryShare = await PostShareGetCount(userId, date, (int)PostType.Story);
+                totalShare = qStoryShare.Items
+                    .GroupBy(p => DateTime.Parse(p.CreatedOn))
+                    .Select(g => new ChartResponse
+                    {
+                        Label = g.Key.ToLabel("dd MMMM"),
+                        Quantity = g.Count()
+                    })
+                    .ToList();
+                break;
+
+            default:
+                var qDocumentShare = await PostShareGetCount(userId, date, (int)PostType.Document);
+                totalShare = qDocumentShare.Items
+                    .GroupBy(p => DateTime.Parse(p.CreatedOn))
+                    .Select(g => new ChartResponse
+                    {
+                        Label = g.Key.ToLabel("dd MMMM"),
+                        Quantity = g.Count()
+                    })
+                    .ToList();
+                break;
+        }
+
+        return MapChartData(days, timezoneOffset, totalShare);
+    }
+
+    public async Task<List<ChartResponse>> GetPostCommentChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
         IQueryable<ChartResponse> query;
-        if (isComic)
-        {
-            query = from comment in _context.Available<ComicPostComment>()
-                    join post in _context.Available<ComicPost>()
-                    on comment.PostId equals post.Id
-                    where post.CreatedBy == userId
-                    && comment.CreatedOn >= date
-                    group comment by comment.CreatedOn.Date into g
-                    select new ChartResponse
-                    {
-                        Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                        Quantity = g.Count()
-                    };
 
-        }
-        else
+        switch (postType)
         {
-            query = from comment in _context.Available<StoryPostComment>()
-                    join post in _context.Available<StoryPost>()
-                    on comment.PostId equals post.Id
-                    where post.CreatedBy == userId
-                    && comment.CreatedOn >= date
-                    group comment by comment.CreatedOn.Date into g
-                    select new ChartResponse
-                    {
-                        Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                        Quantity = g.Count()
-                    };
+            case PostType.Comic:
+                query = from comment in _context.Available<ComicPostComment>()
+                        join post in _context.Available<ComicPost>()
+                        on comment.PostId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
 
+            case PostType.Story:
+                query = from comment in _context.Available<StoryPostComment>()
+                        join post in _context.Available<StoryPost>()
+                        on comment.PostId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
+
+            default:
+                query = from comment in _context.Available<DocumentPostComment>()
+                        join post in _context.Available<DocumentPost>()
+                        on comment.PostId equals post.Id
+                        where post.CreatedBy == userId
+                        && comment.CreatedOn >= date
+                        group comment by comment.CreatedOn.Date into g
+                        select new ChartResponse
+                        {
+                            Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                            Quantity = g.Count()
+                        };
+                break;
         }
+
         return MapChartData(days, timezoneOffset, await query.ToListAsync());
     }
 
@@ -369,13 +513,20 @@ public partial class ChartService : IChartService
         var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
         #endregion
 
+        #region -- Share --
+        var qPostShare = await PostShareGetCount(userId, dateToCompare, (int)PostType.Feed);
+        var totalShare = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) >= dateToGetData);
+        var totalShareBefore = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) < dateToGetData);
+        #endregion
+
         #region -- Post --
-        var totalData = totalComment + totalReaction;
-        var totalCompare = totalCommentBefore + totalReactionBefore;
+        var totalData = totalComment + totalReaction + totalShare;
+        var totalCompare = totalCommentBefore + totalReactionBefore + totalShareBefore;
         #endregion
 
         result.CommentInteractions = await GetInteractions(totalComment, totalCommentBefore);
         result.ReactionInteractions = await GetInteractions(totalReaction, totalReactionBefore);
+        result.ShareInteractions = await GetInteractions(totalShare, totalShareBefore);
         result.PostInteractions = await GetInteractions(totalData, totalCompare);
 
         return result;
@@ -435,6 +586,8 @@ public partial class ChartService : IChartService
             .SelectMany(q => q.ComicSubPostReactions)
             .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
+        var qPostShare = await PostShareGetCount(userId, dateToCompare, (int)PostType.Comic);
+
         var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var totalComment = countPostComment + countSubPostComment;
@@ -451,7 +604,51 @@ public partial class ChartService : IChartService
         var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
         var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
 
-        return new Reaction(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
+        var totalSharePost = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) >= dateToGetData);
+        var totalSharePostBefore = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) < dateToGetData);
+
+        return new Reaction(totalComment + totalReaction + totalSharePost, totalCommentBefore + totalReactionBefore + totalSharePostBefore);
+    }
+
+    private async Task<Reaction> GetDocumentInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
+    {
+        var q = _context.Available<DocumentPost>().Where(p => p.UserId == userId);
+
+        var qPostComment = q.SelectMany(p => p.DocumentPostComments).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostComment = q.SelectMany(p => p.DocumentSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.DocumentSubPostComments)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
+
+        var qPostReaction = q.SelectMany(p => p.DocumentPostReactions).Where(q => !q.IsDelete && q.CreatedOn >= dateToCompare);
+        var qSubPostReaction = q.SelectMany(p => p.DocumentSubPosts)
+            .Where(q => !q.IsDelete)
+            .SelectMany(q => q.DocumentSubPostReactions)
+            .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
+
+        var qPostShare = await PostShareGetCount(userId, dateToCompare, (int)PostType.Document);
+
+        var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalComment = countPostComment + countSubPostComment;
+
+        var countCommentPostBefore = await qPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countCommentSubPostBefore = await qSubPostComment.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalCommentBefore = countCommentPostBefore + countCommentSubPostBefore;
+
+        var countPostReaction = await qPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var countSubPostReaction = await qSubPostReaction.CountAsync(p => p.CreatedOn >= dateToGetData);
+        var totalReaction = countPostReaction + countSubPostReaction;
+
+        var countPostReactionBefore = await qPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
+        var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
+
+        var totalSharePost = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) >= dateToGetData);
+
+        var totalSharePostBefore = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) < dateToGetData);
+
+        return new Reaction(totalComment + totalReaction + totalSharePost, totalCommentBefore + totalReactionBefore + totalSharePostBefore);
     }
 
     private async Task<Interactions> GetSocialInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
@@ -470,6 +667,8 @@ public partial class ChartService : IChartService
             .SelectMany(q => q.SocialSubPostReactions)
             .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
+        var qPostShare = await PostShareGetCount(userId, dateToCompare, (int)PostType.Feed);
+
         var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var totalComment = countPostComment + countSubPostComment;
@@ -486,7 +685,10 @@ public partial class ChartService : IChartService
         var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
         var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
 
-        return await GetInteractions(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
+        var totalSharePost = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) >= dateToGetData);
+        var totalSharePostBefore = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) < dateToGetData);
+
+        return await GetInteractions(totalComment + totalReaction + totalSharePost, totalCommentBefore + totalReactionBefore + totalSharePostBefore);
     }
 
     private async Task<Reaction> GetStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
@@ -505,6 +707,8 @@ public partial class ChartService : IChartService
             .SelectMany(q => q.StorySubPostReactions)
             .Where(x => !x.IsDelete && x.CreatedOn >= dateToCompare);
 
+        var qPostShare = await PostShareGetCount(userId, dateToCompare, (int)PostType.Story);
+
         var countPostComment = await qPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var countSubPostComment = await qSubPostComment.CountAsync(p => p.CreatedOn >= dateToGetData);
         var totalComment = countPostComment + countSubPostComment;
@@ -521,16 +725,20 @@ public partial class ChartService : IChartService
         var countSubPostReactionBefore = await qSubPostReaction.CountAsync(p => p.CreatedOn < dateToGetData);
         var totalReactionBefore = countPostReactionBefore + countSubPostReactionBefore;
 
-        return new Reaction(totalComment + totalReaction, totalCommentBefore + totalReactionBefore);
+        var totalSharePost = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) >= dateToGetData);
+        var totalSharePostBefore = qPostShare.Items.Count(p => DateTime.Parse(p.CreatedOn) < dateToGetData);
+
+        return new Reaction(totalComment + totalReaction + totalSharePost, totalCommentBefore + totalReactionBefore + totalSharePostBefore);
     }
 
-    private async Task<Interactions> GetComicStoryInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
+    private async Task<Interactions> GetComicStoryDocumentInteractionsAsync(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
     {
         var comic = await GetComicInteractionsAsync(userId, dateToCompare, dateToGetData);
         var story = await GetStoryInteractionsAsync(userId, dateToCompare, dateToGetData);
+        var document = await GetDocumentInteractionsAsync(userId, dateToCompare, dateToGetData);
 
-        var totalReactionsLast7Days = comic.Last7Days + story.Last7Days;
-        var totalReactionsPreviousLast7Days = comic.PreviousLast7Days + story.PreviousLast7Days;
+        var totalReactionsLast7Days = comic.Last7Days + story.Last7Days + document.Last7Days;
+        var totalReactionsPreviousLast7Days = comic.PreviousLast7Days + story.PreviousLast7Days + document.PreviousLast7Days;
 
         return await GetInteractions(totalReactionsLast7Days, totalReactionsPreviousLast7Days);
     }
@@ -543,6 +751,35 @@ public partial class ChartService : IChartService
             Percent = dataToCompare > 0 ? Math.Abs(((double)(data - dataToCompare) / dataToCompare) * 100) : 0,
             IsIncrease = data > dataToCompare
         });
+    }
+
+    private async Task<TrackingSocialShareGetCountRsp> PostShareGetCount(Guid? userId, DateTime createdOn, int type)
+    {
+        var res = new TrackingSocialShareGetCountRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new TrackingSocialShareProto.TrackingSocialShareProtoClient(channel);
+
+            var request = new TrackingSocialShareGetCountReq
+            {
+                UserId = userId + "",
+                CreatedOn = createdOn + "",
+                Type = type
+            };
+            var rsp = await client.GetCountAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     #region -- Fields --

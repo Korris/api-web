@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Social.Api.Controllers;
 
+using Common.Core.Enums;
 using Common.Core.Requests;
 using Interfaces;
 
@@ -18,6 +19,10 @@ public class ChartController : ControllerBase
         _chartService = chartService;
     }
 
+    /// <summary>
+    /// Chart information for User
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("general-info")]
     public async Task<IActionResult> GetGeneralInfo()
     {
@@ -34,11 +39,17 @@ public class ChartController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("comic-story-chart-info")]
-    public async Task<IActionResult> GetComicOrStoryChartInfo(bool isGetDataIn7Days, bool isComic)
+    /// <summary>
+    /// Chart information for Comic, Document and Story
+    /// </summary>
+    /// <param name="isGetDataIn7Days"></param>
+    /// <param name="postType"></param>
+    /// <returns></returns>
+    [HttpGet("chart-info")]
+    public async Task<IActionResult> GetChartInfo(bool isGetDataIn7Days, PostType postType)
     {
         var req = new BaseR(HttpContext);
-        var result = await _chartService.GetComicOrStoryChartInfo(req.UserId, req.TimezoneOffset, isGetDataIn7Days, isComic);
+        var result = await _chartService.GetChartInfo(req.UserId, req.TimezoneOffset, isGetDataIn7Days, postType);
         return Ok(result);
     }
 

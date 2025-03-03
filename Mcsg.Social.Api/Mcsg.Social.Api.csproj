@@ -21,6 +21,7 @@
         <Protobuf Include="Protos\Clients\favorite_view.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\social.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\social_sub.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Clients\tracking_social_share.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\tracking_summary.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\wallet.proto" GrpcServices="Client" />
     </ItemGroup>

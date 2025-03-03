@@ -139,7 +139,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         await _context.SaveChangesAsync(cancellationToken);
         request.Content = await _businessText.Process(request.Content);
 
-        if (receiverIds.Count() > 0)
+        if (receiverIds.Count > 0)
         {
             _ = Task.Run(async () => await _notificationService.AddMentionNotificationAsync(new MentionPostNotificationReq
             {
@@ -150,7 +150,19 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                 UserProfileName = profileName,
                 TargetId = ett.Id,
             }));
+        }
 
+        if (ett.SharePostId != null && request.SharePostType != null)
+        {
+            var postCreatorId = request.SharePostType switch
+            {
+                PostType.Comic => await _context.Available<ComicPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                PostType.Story => await _context.Available<StoryPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                PostType.Document => await _context.Available<DocumentPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                _ => await _context.Available<SocialPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+            };
+
+            _ = Task.Run(async () => await ShareCreate(request.SessionId, ett.Id, ett.SharePostId.ToGuid(), postCreatorId, userId, true, request.SharePostType.Value));
         }
 
         var result = new FeedPostDto
@@ -321,6 +333,40 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
 
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<TrackingSocialShareCreateRsp> ShareCreate(Guid sessionUid, Guid postId, Guid shareId, Guid postCreatorId, Guid userId, bool isShare, PostType postCreatorType)
+    {
+        var res = new TrackingSocialShareCreateRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new TrackingSocialShareProto.TrackingSocialShareProtoClient(channel);
+
+            var request = new TrackingSocialShareCreateReq
+            {
+                SessionUid = sessionUid + "",
+                PostId = postId + "",
+                ShareId = shareId + "",
+                PostCreatorId = postCreatorId + "",
+                PostCreatorType = (int)postCreatorType,
+                UserId = userId + "",
+                IsShare = isShare
+            };
+            var rsp = await client.CreateAsync(request);
+
+            res.Message = rsp.Message;
+            res.Items.AddRange(rsp.Items);
+            res.TotalRecords = rsp.TotalRecords;
         }
         catch (Exception ex)
         {

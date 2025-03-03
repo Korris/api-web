@@ -13,15 +13,15 @@ public class FollowersChartResponse
     public Interactions FollowerInteractions { get; set; } = new Interactions();
 }
 
-public class ComicChartResponse
+public class PostChartResponse
 {
     public List<ChartResponse> ReactionChartResponse { get; set; } = new List<ChartResponse>();
     public List<ChartResponse> CommentChartResponse { get; set; } = new List<ChartResponse>();
     public List<ChartResponse> ShareChartResponse { get; set; } = new List<ChartResponse>();
-    public Interactions ComicInteractions { get; set; } = new Interactions();
-    public Interactions ComicCommentInteractions { get; set; } = new Interactions();
-    public Interactions ComicReactionInteractions { get; set; } = new Interactions();
-    public Interactions ComicShareInteractions { get; set; } = new Interactions();
+    public Interactions PostInteractions { get; set; } = new Interactions();
+    public Interactions PostCommentInteractions { get; set; } = new Interactions();
+    public Interactions PostReactionInteractions { get; set; } = new Interactions();
+    public Interactions PostShareInteractions { get; set; } = new Interactions();
 }
 
 public class FeedChartResponse
