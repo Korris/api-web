@@ -16,6 +16,7 @@ public class PostBoxResponse : PostBox
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime LatestCreatedOn { get; set; }
+    public CommentPagedResults<MostReactionCommentResponse>? Comments { get; set; }
 }
 public class PostBoxQueryResponse : PostBox
 {

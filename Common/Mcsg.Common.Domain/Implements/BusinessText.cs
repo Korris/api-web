@@ -95,6 +95,11 @@ public class BusinessText : IBusinessText
         }
 
         var userIds = text.ToGuids();
+        if (userIds.Count == 0)
+        {
+            return [];
+        }
+
         return await _context.UserAvailable
             .Where(p => userIds.Contains(p.Id))
             .Select(p => new Entities.User.ProfileDto { Id = p.Id, UserName = p.UserName, ProfileName = p.ProfileName })

@@ -22,6 +22,7 @@ public class FeedDto : PostDto
     public bool IsFollowing { get; set; }
     public ReactionsResponse Reaction { get; set; }
     public SharePostResponse? SharePost { get; set; }
+    public CommentPagedResults<MostReactionCommentResponse> Comments { get; set; }
 }
 
 public class SharePostResponse

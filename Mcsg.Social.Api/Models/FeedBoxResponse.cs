@@ -15,6 +15,7 @@ public class FeedBoxResponse : FeedBox
     public bool IsFavorite { get; set; }
     public ReactionsResponse Reaction { get; set; }
     public SharePostResponse? SharePost { get; set; }
+    public CommentPagedResults<MostReactionCommentResponse>? Comments { get; set; }
 }
 
 public class PostLinkFeedBoxResponse

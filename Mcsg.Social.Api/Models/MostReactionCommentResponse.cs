@@ -8,8 +8,9 @@ using Common.SeedWork.Enums;
 
 public class MostReactionCommentResponse : BasicCommentResponse
 {
-    public int? Order { get; set; }
+    public float? Order { get; set; }
     public int ReplyCount { get; set; }
+    public string? PostHashId { get; set; }
     public List<BasicCommentResponse> ReplyData { get; set; }
 }
 

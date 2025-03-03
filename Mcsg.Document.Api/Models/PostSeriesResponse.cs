@@ -58,6 +58,7 @@ public class PostSeriesTopResponse : PostSeriesResponse
     public int TotalReact { get; set; }
     public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
     public PostType PostType => Type;
+    public CommentPagedResults<MostReactionCommentResponse> Comments { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {

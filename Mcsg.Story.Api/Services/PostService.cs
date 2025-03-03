@@ -44,15 +44,17 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="googleSheet">Sheets service</param>
+    /// <param name="businessText"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="tagService"></param>
-    /// <param name="smartLookupRepository"></param>
     /// <param name="mapper"></param>
+    /// <param name="smartLookupService"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IUnitOfWork unitOfWork, ITagService tagService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IBusinessText businessText, IUnitOfWork unitOfWork, ITagService tagService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
     {
         _googleSheet = googleSheet;
 
+        _businessText = businessText;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
         _tagService = tagService;
@@ -493,6 +495,9 @@ public partial class PostService : BaseMinioS, IPostService
                 UserId = userId
             });
 
+            var commentsResult = await GetMostCommentReaction(items.Select(p => p.HashId).ToList());
+            var comments = await GetReactionAndMentionOfComment(commentsResult.Comments, userId);
+
             foreach (var item in items)
             {
                 var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
@@ -500,8 +505,16 @@ public partial class PostService : BaseMinioS, IPostService
                 {
                     MapReactionPostSeiresTopResponse(item, postReaction);
                 }
+
                 item.IsCensored = request.UserName != item.UserName && !request.IsAdministrator && item.Status == PostStatus.Inactive;
                 item.IsBlur = item.Status == PostStatus.Inactive || item.IsMature == true;
+
+                var totalComments = commentsResult.TotalComment?.FirstOrDefault(p => p.PostHashId == item.HashId)?.TotalCommentCount;
+                item.Comments = new CommentPagedResults<MostReactionCommentResponse>(totalComments ?? 0, 1, 2)
+                {
+                    Items = comments.Where(p => p.PostHashId == item.HashId),
+                    TotalComments = totalComments ?? 0
+                };
             }
 
             var results = new PagedResponse<PostSeriesTopResponse>(totalItems, request.PageNumber, request.PageSize);
@@ -1408,6 +1421,9 @@ public partial class PostService : BaseMinioS, IPostService
                 UserId = userId
             });
 
+            var commentsResult = await GetMostCommentReaction(result.Select(p => p.HashId + "").ToList());
+            var comments = await GetReactionAndMentionOfComment(commentsResult.Comments, userId);
+
             foreach (var res in result)
             {
                 var chapters = res.SubPosts != null ? JsonConvert.DeserializeObject<List<SubPostDto>>(res.SubPosts.ToString()) : new List<SubPostDto>();
@@ -1448,6 +1464,16 @@ public partial class PostService : BaseMinioS, IPostService
                 {
                     MapReactionResponse(postDetails, postReaction);
                 }
+
+                postDetails.IsCensored = req.UserName != postDetails.UserName && !req.IsAdministrator && postDetails.Status == PostStatus.Inactive;
+                postDetails.IsBlur = postDetails.Status == PostStatus.Inactive || postDetails.IsMature == true;
+
+                var totalComments = commentsResult.TotalComment?.FirstOrDefault(p => p.PostHashId == postDetails.HashId)?.TotalCommentCount;
+                postDetails.Comments = new CommentPagedResults<MostReactionCommentResponse>(totalComments ?? 0, 1, 2)
+                {
+                    Items = comments.Where(p => p.PostHashId == postDetails.HashId),
+                    TotalComments = totalComments ?? 0
+                };
 
                 listPostDetails.Add(postDetails);
             }
@@ -2364,7 +2390,7 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="isDelete">A boolean indicating whether to mark the resources as deleted or active.</param>
     /// <param name="userId">The ID of the user performing the deletion.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task HandleThumbnailUrlAndCoverUrl(StoryPost post, bool isDelete, Guid userId)
+    private async Task HandleThumbnailUrlAndCoverUrl(StoryPost post, bool isDelete, Guid userId)
     {
         var resourceHashIds = new string[]
         {
@@ -2381,6 +2407,88 @@ public partial class PostService : BaseMinioS, IPostService
                     .SetProperty(p => p.ModifiedBy, userId)
                     .SetProperty(p => p.ModifiedOn, DateTime.UtcNow));
         }
+    }
+
+    private async Task<CommentsResult> GetMostCommentReaction(List<string> hashIds)
+    {
+        var res = new CommentsResult();
+
+        var paramValues = new
+        {
+            HashIds = hashIds,
+        };
+        var schema = "story";
+        var @params = "@HashIds";
+
+        var fn = "story.fn_get_most_reaction_comments";
+        res.Comments = await _postRepository.Connection.QueryAsync<MostReactionCommentResponse>(fn.ToFn(schema, schema, @params), paramValues);
+
+        fn = "story.fn_get_total_comment_counts";
+        res.TotalComment = await _postRepository.Connection.QueryAsync<CommentCount>(fn.ToFn(schema, schema, @params), paramValues);
+
+        return res;
+    }
+
+    private async Task<IEnumerable<MostReactionCommentResponse>> GetReactionAndMentionOfComment(IEnumerable<MostReactionCommentResponse>? comments, Guid? userId)
+    {
+        if (comments == null)
+        {
+            return [];
+        }
+
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StoryPostCommentReactions""");
+        var postCommentReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = comments.Where(p => p.Order == null).Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        var querySubPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"story.""StorySubPostCommentReactions""");
+        var subPostCommentReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(querySubPostCommentReaction, new
+        {
+            TargetIds = comments.Where(p => p.Order != null).Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        var body = "";
+        foreach (var i in comments)
+        {
+            body += i.Body + " ";
+        }
+        var profiles = await _businessText.GetProfiles(body);
+
+        foreach (var comment in comments)
+        {
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionResponse(comment, postCommentReaction);
+            }
+
+            var subPostCommentReaction = subPostCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (subPostCommentReaction.Count > 0)
+            {
+                MapReactionResponse(comment, subPostCommentReaction);
+            }
+
+            comment.ResourceUrl = await _sc.GetPublicUrl(comment.ResourceUrl, comment.BucketName, comment.MinioInstance);
+            comment.Body = await _businessText.Process(comment.Body, profiles);
+        }
+
+        return comments;
+    }
+
+    private void MapReactionResponse(MostReactionCommentResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Where(p => p.Type != null).Select(x => new ReactionResponse { Count = x.Count, Type = x.Type!.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault()?.Type
+        };
     }
 
     #region -- Post --
@@ -2616,6 +2724,22 @@ public partial class PostService : BaseMinioS, IPostService
 
     #endregion
 
+    #region -- Classes --
+
+    public class CommentCount
+    {
+        public string? PostHashId { get; set; }
+        public int TotalCommentCount { get; set; }
+    }
+
+    public class CommentsResult
+    {
+        public IEnumerable<MostReactionCommentResponse>? Comments { get; set; }
+        public IEnumerable<CommentCount>? TotalComment { get; set; }
+    }
+
+    #endregion
+
     #region -- Fields --
 
     /// <summary>
@@ -2623,6 +2747,7 @@ public partial class PostService : BaseMinioS, IPostService
     /// </summary>
     private readonly GoogleSheet _googleSheet;
 
+    private readonly IBusinessText _businessText;
     private readonly IRepository<StoryPost> _postRepository;
     private readonly IRepository<StoryPostComment> _postCommentRepository;
     private readonly IRepository<StorySubPost> _subPostRepository;

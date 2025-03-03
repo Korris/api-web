@@ -205,67 +205,59 @@ public partial class FeedService : IFeedService
             }
             var profiles = await _businessText.GetProfiles(body);
 
-            foreach (var item in items)
-            {
-                item.Body = await _businessText.Process(item.Body, profiles);
-                listItemResponse.Add(MappingFeedInListRespone(item, postIds, isMySelf));
-            }
-
-            foreach (var item in listItemResponse)
-            {
-                item.IsCensored = !feedLoadReq.IsAdministrator && feedLoadReq.UserName != item.UserName && item.Status == PostStatus.Inactive;
-                item.IsBlur = item.Status == PostStatus.Inactive;
-            }
-
-            if (items != null && items.Count() > 0)
-            {
-                var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
-                var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
+            var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+            var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""),
+                new
                 {
                     TargetIds = items.Select(p => p.Id).ToList(),
                     UserId = userId
                 });
 
-                if (postReactionResponse.Count() > 0)
+            var sharePostIds = items.Where(p => p.SharePostId.HasValue)
+                .Select(p => new SharePostInput
                 {
-                    foreach (var item in listItemResponse)
-                    {
-                        var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
-                        if (postReaction.Count > 0)
-                        {
-                            MapReactionFeedDtoResponse(item, postReaction);
-                        }
-                    }
-                }
+                    Id = p.SharePostId!.Value,
+                    Type = p.SharePostType.HasValue ? p.SharePostType.Value : PostType.Feed
+                })
+                .ToList();
+            var sharePosts = await GetSharePosts(feedLoadReq, sharePostIds);
 
-                var sharePostIds = items.Where(p => p.SharePostId.HasValue)
-                                        .Select(p => new SharePostInput
-                                        {
-                                            Id = p.SharePostId.Value,
-                                            Type = p.SharePostType.HasValue ? p.SharePostType.Value : PostType.Feed
-                                        })
-                                        .ToList();
+            var commentsResult = await GetMostCommentReaction(items.Select(p => p.HashId).ToList());
+            var comments = await GetReactionAndMentionOfComment(commentsResult.Comments, userId);
 
-
-                var sharePosts = await GetSharePosts(feedLoadReq, sharePostIds);
-                if (sharePosts.Count > 0)
-                {
-                    foreach (var item in listItemResponse)
-                    {
-                        var sharePost = sharePosts.FirstOrDefault(p => p.Id == item.SharePostId);
-                        if (sharePost != null)
-                        {
-                            item.SharePost = sharePost;
-                        }
-                    }
-                }
-                results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
-                results.Items = listItemResponse;
-            }
-            else
+            foreach (var item in items)
             {
-                results = new PagedResponse<FeedDto>(0);
+                var feed = MappingFeedInListRespone(item, postIds, isMySelf);
+
+                feed.Body = await _businessText.Process(feed.Body, profiles);
+                feed.IsCensored = !feedLoadReq.IsAdministrator && feedLoadReq.UserName != feed.UserName && feed.Status == PostStatus.Inactive;
+                feed.IsBlur = feed.Status == PostStatus.Inactive;
+
+                var postReaction = postReactionResponse.Where(p => p.TargetId == feed.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapReactionFeedDtoResponse(feed, postReaction);
+                }
+
+                var sharePost = sharePosts.FirstOrDefault(p => p.Id == feed.SharePostId);
+                if (sharePost != null)
+                {
+                    feed.SharePost = sharePost;
+                }
+
+                var totalComments = commentsResult.TotalComment?.FirstOrDefault(p => p.PostHashId == feed.HashId)?.TotalCommentCount;
+                feed.Comments = new CommentPagedResults<MostReactionCommentResponse>(totalComments ?? 0, 1, 2)
+                {
+                    Items = comments.Where(p => p.PostHashId == feed.HashId),
+                    TotalComments = totalComments ?? 0
+                };
+
+                listItemResponse.Add(feed);
             }
+
+            results = new PagedResponse<FeedDto>(totalItems, feedLoadReq.PageNumber, feedLoadReq.PageSize);
+            results.Items = listItemResponse;
+
             return results;
         }
         catch (Exception ex)
@@ -833,76 +825,82 @@ public partial class FeedService : IFeedService
 
         var param = new
         {
-            HashIds = hashIds.Split(',').ToList(),
+            HashIds = hashIds?.Split(',').ToList(),
             Hide = req.Hides,
             PostStatus = StatusUtils.PostStatusIntPublic
         };
         var result = await _postRepository.Connection.QueryAsync<FeedBoxQueryResponse>(GetFeedBoxQuery, param);
 
-        var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId)
-                                                                .Select(p => p.PostId)
-                                                                .ToListAsync();
         if (result != null && result.Any())
         {
-            var listFeedDetails = new List<FeedBoxResponse>();
+            var postIds = await _context.Available<SocialPostFavorite>()
+                .Where(p => p.UserId == userId)
+                .Select(p => p.PostId)
+                .ToListAsync();
 
-            foreach (var res in result)
-            {
-                res.Body = await _businessText.Process(res.Body);
-                listFeedDetails.Add(MappingFeedBoxResponse(res, postIds, userId));
-            }
+            var listFeedDetails = new List<FeedBoxResponse>();
 
             var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
             var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""), new
             {
-                TargetIds = listFeedDetails.Select(p => p.Id).ToList(),
+                TargetIds = result.Select(p => p.Id).ToList(),
                 UserId = userId
             });
 
-            foreach (var item in listFeedDetails)
-            {
-                item.IsCensored = !req.IsAdministrator && req.UserName != item.UserName && item.Status == PostStatus.Inactive;
-                item.IsBlur = item.Status == PostStatus.Inactive;
-            }
-
-            if (postReactionResponse.Count() > 0)
-            {
-                foreach (var item in listFeedDetails)
+            var sharePostIds = result.Where(p => p.SharePostId.HasValue)
+                .Select(p => new SharePostInput
                 {
-                    var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
-                    if (postReaction.Count > 0)
-                    {
-                        MapReactionFeedBoxResponse(item, postReaction);
-                    }
-                }
-            }
-
-            var sharePostIds = listFeedDetails.Where(p => p.SharePostId.HasValue)
-                                     .Select(p => new SharePostInput
-                                     {
-                                         Id = p.SharePostId.Value,
-                                         Type = p.SharePostType.Value
-                                     })
-                                     .ToList();
-
+                    Id = p.SharePostId!.Value,
+                    Type = p.SharePostType!.Value
+                })
+                .ToList();
             var sharePosts = await GetSharePosts(req, sharePostIds);
-            if (sharePosts.Count > 0)
+
+            var body = "";
+            foreach (var i in result)
             {
-                foreach (var item in listFeedDetails)
+                body += i.Body + " ";
+            }
+            var profiles = await _businessText.GetProfiles(body);
+
+            var commentsResult = await GetMostCommentReaction(result.Select(p => p.HashId + "").ToList());
+            var comments = await GetReactionAndMentionOfComment(commentsResult.Comments, userId);
+
+            foreach (var res in result)
+            {
+                var feed = MappingFeedBoxResponse(res, postIds, userId);
+
+                feed.Body = await _businessText.Process(feed.Body, profiles);
+                feed.IsCensored = !req.IsAdministrator && req.UserName != feed.UserName && feed.Status == PostStatus.Inactive;
+                feed.IsBlur = feed.Status == PostStatus.Inactive;
+
+                var postReaction = postReactionResponse.Where(p => p.TargetId == feed.Id).ToList();
+                if (postReaction.Count > 0)
                 {
-                    var sharePost = sharePosts.FirstOrDefault(p => p.Id == item.SharePostId);
-                    if (sharePost != null)
-                    {
-                        item.SharePost = sharePost;
-                    }
+                    MapReactionFeedBoxResponse(feed, postReaction);
                 }
+
+                var sharePost = sharePosts.FirstOrDefault(p => p.Id == feed.SharePostId);
+                if (sharePost != null)
+                {
+                    feed.SharePost = sharePost;
+                }
+
+                var totalComments = commentsResult.TotalComment?.FirstOrDefault(p => p.PostHashId == feed.HashId)?.TotalCommentCount;
+                feed.Comments = new CommentPagedResults<MostReactionCommentResponse>(totalComments ?? 0, 1, 2)
+                {
+                    Items = comments.Where(p => p.PostHashId == feed.HashId),
+                    TotalComments = totalComments ?? 0
+                };
+
+                listFeedDetails.Add(feed);
             }
 
             return listFeedDetails;
         }
         else
         {
-            return new List<FeedBoxResponse>();
+            return [];
         }
     }
 
@@ -926,9 +924,9 @@ public partial class FeedService : IFeedService
         {
             TargetId = item.Id,
             CurrentUserReactType = currentUserReact?.Type,
-            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type!.Value }).ToList(),
             TotalReacts = reactions.Select(x => x.Count).Sum(),
-            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault()?.Type
         };
     }
 
@@ -1254,6 +1252,97 @@ public partial class FeedService : IFeedService
         }
 
         return res;
+    }
+
+    private async Task<CommentsResult> GetMostCommentReaction(List<string> hashIds)
+    {
+        var res = new CommentsResult();
+
+        var paramValues = new
+        {
+            HashIds = hashIds,
+        };
+        var schema = "social";
+        var @params = "@HashIds";
+
+        var fn = "social.fn_get_most_reaction_comments";
+        res.Comments = await _postRepository.Connection.QueryAsync<MostReactionCommentResponse>(fn.ToFn(schema, schema, @params), paramValues);
+
+        fn = "social.fn_get_total_comment_counts";
+        res.TotalComment = await _postRepository.Connection.QueryAsync<CommentCount>(fn.ToFn(schema, schema, @params), paramValues);
+
+        return res;
+    }
+
+    private async Task<IEnumerable<MostReactionCommentResponse>> GetReactionAndMentionOfComment(IEnumerable<MostReactionCommentResponse>? comments, Guid? userId)
+    {
+        if (comments == null)
+        {
+            return [];
+        }
+
+        var queryPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialPostCommentReactions""");
+        var postCommentReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(queryPostCommentReaction, new
+        {
+            TargetIds = comments?.Where(p => p.Order == null).Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        var querySubPostCommentReaction = string.Format(ReactionExtension.GetReactionByTargetIdsQuery, $@"social.""SocialSubPostCommentReactions""");
+        var subPostCommentReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(querySubPostCommentReaction, new
+        {
+            TargetIds = comments?.Where(p => p.Order != null).Select(p => p.Id).ToList(),
+            UserId = userId
+        });
+
+        foreach (var comment in comments)
+        {
+            var postCommentReaction = postCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (postCommentReaction.Count > 0)
+            {
+                MapReactionResponse(comment, postCommentReaction);
+            }
+
+            var subPostCommentReaction = subPostCommentReactionResponse.Where(p => p.TargetId == comment.Id).ToList();
+            if (subPostCommentReaction.Count > 0)
+            {
+                MapReactionResponse(comment, subPostCommentReaction);
+            }
+
+            comment.ResourceUrl = await _sc.GetPublicUrl(comment.ResourceUrl, comment.BucketName, comment.MinioInstance);
+            comment.Body = await _businessText.Process(comment.Body);
+        }
+
+        return comments;
+    }
+
+    private void MapReactionResponse(MostReactionCommentResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Where(p => p.Type != null).Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault()?.Type
+        };
+    }
+
+    #endregion
+
+    #region -- Classes --
+
+    public class CommentCount
+    {
+        public string? PostHashId { get; set; }
+        public int TotalCommentCount { get; set; }
+    }
+
+    public class CommentsResult
+    {
+        public IEnumerable<MostReactionCommentResponse>? Comments { get; set; }
+        public IEnumerable<CommentCount>? TotalComment { get; set; }
     }
 
     #endregion
