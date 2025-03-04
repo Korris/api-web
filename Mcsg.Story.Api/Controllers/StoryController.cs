@@ -276,15 +276,14 @@ public class StoryController : ControllerBase
     }
 
     /// <summary>
-    /// ViewParapraph
+    /// ViewParagraph
     /// </summary>
     /// <returns>Return the result</returns>
-    [HttpPatch("v1/ViewParapraph")]
+    [HttpPatch("v1/ViewParagraph")]
     [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> ViewParapraph([FromForm] StoryPostViewParagraphR request)
+    public async Task<IActionResult> ViewParagraph([FromForm] StoryPostViewParagraphR request)
     {
         request.Analyze(HttpContext);
-
         var response = await _mediator.Send(request);
         return Ok(response);
     }
