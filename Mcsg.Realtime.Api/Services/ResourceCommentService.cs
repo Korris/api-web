@@ -54,7 +54,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddComicResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.Available<ComicResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.ComicResources.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -79,6 +79,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
+            resource.IsDelete = false;
             //resource.SubPostId = Guid.Empty;
             await _context.SaveChangesAsync(default);
         }
@@ -94,7 +95,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddDocumentResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.Available<DocumentResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.DocumentResources.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -119,6 +120,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
+            resource.IsDelete = false;
             await _context.SaveChangesAsync(default);
         }
         #endregion
@@ -133,7 +135,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddSocialResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.Available<SocialResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.SocialResources.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -158,6 +160,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
+            resource.IsDelete = false;
             //resource.SubPostId = Guid.Empty;
             await _context.SaveChangesAsync(default);
         }
@@ -173,7 +176,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
     private async Task<ResourceCommentResp?> AddStoryResourceToComment(ResourceCommentDto dto)
     {
-        var resource = await _context.Available<StoryResource>().FirstOrDefaultAsync(p => p.HashId == dto.HashId);
+        var resource = await _context.StoryResources.FirstOrDefaultAsync(p => p.HashId == dto.HashId);
         if (resource == null)
         {
             return null;
@@ -198,6 +201,7 @@ public partial class ResourceCommentService : IResourceCommentService
 
             resource.Type = resource.Name.GetResourceType();
             resource.Url = targetObjectName;
+            resource.IsDelete = false;
             //resource.SubPostId = Guid.Empty;
             await _context.SaveChangesAsync(default);
         }

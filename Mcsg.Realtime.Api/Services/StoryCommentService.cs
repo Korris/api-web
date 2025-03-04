@@ -349,7 +349,9 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
     #region Update
     private async Task<PostCommentResp> UpdateCommentToPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.Available<StoryPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<StoryPostComment>()
+            .Include(p => p.Resource)
+            .FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -358,6 +360,12 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
         if (comment.AuthorId != author.Id)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
+        }
+
+        // Delete old resource
+        if (comment.Resource != null)
+        {
+            comment.Resource.IsDelete = true;
         }
 
         comment.Body = req.CommentText.RemoveMaliciousText();
@@ -386,7 +394,9 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
     }
     private async Task<PostCommentResp> UpdateCommentToSubPost(UpdateCommentReq req, AuthorDto author, ResourceCommentResp resource, PostDto post)
     {
-        var comment = await _context.Available<StorySubPostComment>().FirstOrDefaultAsync(p => p.Id == req.CommentId);
+        var comment = await _context.Available<StorySubPostComment>()
+            .Include(p => p.Resource)
+            .FirstOrDefaultAsync(p => p.Id == req.CommentId);
         if (comment == null)
         {
             throw new NotFoundException(RealtimeErrorCode.NotFoundComment, RealtimeErrorMessage.NotFoundComment);
@@ -395,6 +405,12 @@ public partial class StoryCommentService : BaseS, IStoryCommentService
         if (comment.AuthorId != author.Id)
         {
             throw new NotFoundException(RealtimeErrorCode.UnAuthorizeUpdate, RealtimeErrorMessage.UnAuthorizeUpdate);
+        }
+
+        // Delete old resource
+        if (comment.Resource != null)
+        {
+            comment.Resource.IsDelete = true;
         }
 
         comment.Body = req.CommentText.RemoveMaliciousText();
