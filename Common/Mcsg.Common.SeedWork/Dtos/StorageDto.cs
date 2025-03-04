@@ -131,7 +131,7 @@ public abstract class StorageDto
         /// <summary>
         /// Gets or sets the allowed media file extensions.
         /// </summary>
-        public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, webm, heic, webp, mov, ppt, pptx, doc, docx, pdf";
+        public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, avi, mkv, webm, heic, webp, mov, ppt, pptx, doc, docx, pdf";
 
         /// <summary>
         /// Gets or sets the image downscaling quality percentage.

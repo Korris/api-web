@@ -163,10 +163,11 @@ public class FileService : IFileService
                     "Fix file error".LogInfor();
                     var targetFile = orgfile.AppendNameSuffix("-output");
                     var command = "-c copy -movflags faststart ";
-                    orgfile.RunFfmpeg(targetFile, command);
 
                     try
                     {
+                        orgfile.RunFfmpeg(targetFile, command);
+
                         var dimensions = orgfile.GetWidthHeightVideo();
                         if (dimensions.Length > 1)
                         {
