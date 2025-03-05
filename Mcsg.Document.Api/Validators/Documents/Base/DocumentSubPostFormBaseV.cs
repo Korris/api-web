@@ -2,6 +2,7 @@
 
 namespace Mcsg.Document.Api.Validators;
 
+using Common.Core.Enums;
 using Requests;
 using static Common.SeedWork.Constants.Validator;
 
@@ -23,15 +24,20 @@ public class DocumentSubPostFormBaseV : AbstractValidator<DocumentSubPostFormBas
 
         t = "Order";
         RuleFor(p => p.Order).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t)
-        .InclusiveBetween(ChapterRange.Min, ChapterRange.Max).WithMessage($"{t} {GreaterThan} {ChapterRange.Min} and {LessThan} {ChapterRange.Max}")
-        .Must(order => ValidateOrder(order ?? 0))
-        .WithMessage($"{t} {LessThan} 2 decimal places.");
+            .InclusiveBetween(ChapterRange.Min, ChapterRange.Max).WithMessage($"{t} {GreaterThan} {ChapterRange.Min} and {LessThan} {ChapterRange.Max}")
+            .Must(order => ValidateOrder(order ?? 0))
+            .WithMessage($"{t} {LessThan} 2 decimal places.");
 
         t = "PublishDate";
         RuleFor(p => p.PublishDate).NotEmpty().WithMessage($"{t} {NotEmpty}").WithName(t);
 
         t = "Permission";
         RuleFor(p => p.Permission).NotNull().WithMessage($"{t} {NotEmpty}").WithName(t);
+
+        t = "Status";
+        RuleFor(p => p.Status).NotNull().WithMessage($"{t} {NotEmpty}")
+            .Must(status => status == PostStatus.Draft || status == PostStatus.Public)
+            .WithMessage(InvalidStatus).WithName(t);
     }
 
     /// <summary>

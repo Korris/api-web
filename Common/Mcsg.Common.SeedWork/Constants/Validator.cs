@@ -94,6 +94,11 @@ public class Validator
     public const string LessThanOrEqualTo = "must be less than or equal to";
 
     /// <summary>
+    /// InvalidStatus
+    /// </summary>
+    public const string InvalidStatus = "Status contains an invalid value. Accepted values are Draft and Public";
+
+    /// <summary>
     /// User name
     /// </summary>
     public class UserName

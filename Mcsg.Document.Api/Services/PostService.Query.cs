@@ -647,7 +647,12 @@ LIMIT 1
 
                     WHERE p.""HashId"" = @PostHashId AND sp.""Order"" = @SubPostOrder AND sp.""IsDelete"" = false
                             AND (NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL) OR (u.""Id"" = @UserId))
-                            AND sp.""Status"" = ANY (@PostStatus)
+                            AND sp.""Status"" = ANY (
+                            CASE 
+                                WHEN u.""Id"" = @UserId THEN @PostStatusForAuthor 
+                                ELSE @PostStatus 
+                            END
+                            )
                     ORDER BY rs.""Order"";";
             }
         }

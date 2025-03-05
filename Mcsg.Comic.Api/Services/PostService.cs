@@ -349,6 +349,7 @@ public partial class PostService : BaseMinioS, IPostService
                 UserId = userId,
                 Hide = req.Hides,
                 PostStatus = StatusUtils.PostStatusInt,
+                PostStatusForAuthor = StatusUtils.PostStatusForAuthorInt
             }, splitOn: "Id, Id");
 
         if (subpost == null)
@@ -1920,7 +1921,7 @@ public partial class PostService : BaseMinioS, IPostService
             Order = newOrder,
             Name = string.IsNullOrEmpty(request.Name) ? newOrder.ToString() : request.Name,
             PostId = post.Id,
-            Status = PostStatus.Public,
+            Status = request.Status,
             PublishDate = request.IsPublicNow ? DateTime.UtcNow : request.PublishDateUtc,
             Title = request.Title,
             UserId = userId,
@@ -2056,6 +2057,7 @@ public partial class PostService : BaseMinioS, IPostService
         subPost.PostHashId = request.PostHashId;
         subPost.Order = newOrder;
         subPost.Sort = subPost.Sort;
+        subPost.Status = subPost.Status == PostStatus.Draft ? request.Status : subPost.Status;
         post.ModifiedOn = DateTime.UtcNow;
         post.ModifiedBy = userId;
 
