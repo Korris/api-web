@@ -132,6 +132,20 @@ public class PostController : ControllerBase
         return Ok(response.Data);
     }
 
+    /// <summary>
+    /// PostHideUpdate
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPost("v1/PostHideUpdate"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> PostHideUpdate([FromBody] PostHideUpdateR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response.Data);
+    }
+
     #endregion
 
     #region -- Fields --

@@ -224,6 +224,11 @@ public static class Error
     /// </summary>
     public const string E132 = "Post not belong to you";
 
+    /// <summary>
+    /// Your own posts cannot be hidden
+    /// </summary>
+    public const string E133 = "Your own posts cannot be hidden";
+
     #endregion
 
     #region -- E2xx --

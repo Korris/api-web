@@ -123,6 +123,7 @@ public partial class FeedService : IFeedService
             var listPostTracking = new TrackingSummaryGetFeedsRsp();
             IEnumerable<FeedsListQueryDbDto> items;
             var totalItems = 0;
+            var userId = feedLoadReq.UserId;
 
             if (feedLoadReq.OrderBy == null)
             {
@@ -168,7 +169,8 @@ public partial class FeedService : IFeedService
             }
             else
             {
-                listPostTracking = await GetFeeds(feedLoadReq.PageNumber, feedLoadReq.PageSize, frDate.ToString(), toDate.ToString(), feedLoadReq.UserId);
+                var postHideIds = await _context.Available<SocialPostHide>(false).Where(p => p.UserId == userId).Select(p => p.PostId.ToString()).ToListAsync();
+                listPostTracking = await GetFeeds(feedLoadReq.PageNumber, feedLoadReq.PageSize, frDate.ToString(), toDate.ToString(), feedLoadReq.UserId, string.Join(",", postHideIds));
                 queryPostIds = listPostTracking.Items.Select(x => Guid.Parse(x.PostId)).ToList();
                 totalItems = listPostTracking.TotalRecords;
                 var param = new
@@ -195,7 +197,6 @@ public partial class FeedService : IFeedService
 
             var listItemResponse = new List<FeedDto>();
 
-            var userId = feedLoadReq.UserId;
             var postIds = await _context.Available<SocialPostFavorite>().Where(p => p.UserId == userId).Select(p => p.PostId).ToListAsync();
 
             var body = "";
@@ -1222,7 +1223,7 @@ public partial class FeedService : IFeedService
         };
     }
 
-    private async Task<TrackingSummaryGetFeedsRsp> GetFeeds(int pageNumber, int pageSize, string frDate, string toDate, Guid? userId)
+    private async Task<TrackingSummaryGetFeedsRsp> GetFeeds(int pageNumber, int pageSize, string frDate, string toDate, Guid? userId, string postHideIds)
     {
         var res = new TrackingSummaryGetFeedsRsp { Success = true };
 
@@ -1237,7 +1238,8 @@ public partial class FeedService : IFeedService
                 PageSize = pageSize,
                 FrDate = frDate,
                 ToDate = toDate,
-                UserId = userId?.ToString()
+                UserId = userId?.ToString(),
+                PostHideIds = postHideIds
             };
             var rsp = await client.GetFeedsAsync(request);
 

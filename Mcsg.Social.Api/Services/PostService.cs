@@ -811,6 +811,8 @@ public partial class PostService : BaseMinioS, IPostService
     {
         var res = new TrackingSummarySearchRsp { Success = true };
 
+        var postHideIds = await _context.Available<SocialPostHide>(false).Where(p => p.UserId == userId).Select(p => p.PostId.ToString()).ToListAsync();
+
         try
         {
             using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
@@ -825,7 +827,8 @@ public partial class PostService : BaseMinioS, IPostService
                 StoryPercent = (float)storyPercent,
                 FrDate = frDate,
                 ToDate = toDate,
-                UserId = userId?.ToString()
+                UserId = userId?.ToString(),
+                PostHideIds = string.Join(",", postHideIds)
             };
             var rsp = await client.SearchAsync(request);
 

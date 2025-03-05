@@ -20,6 +20,7 @@ message TrackingSummarySearchReq {
     google.protobuf.StringValue frDate = 6;
     google.protobuf.StringValue toDate = 7;
     google.protobuf.StringValue userId = 8;
+    google.protobuf.StringValue postHideIds = 9;
 }
 
 message TrackingSummaryGetFeedsReq {
@@ -28,6 +29,7 @@ message TrackingSummaryGetFeedsReq {
     google.protobuf.StringValue frDate = 3;
     google.protobuf.StringValue toDate = 4;
     google.protobuf.StringValue userId = 5;
+    google.protobuf.StringValue postHideIds = 6;
 }
 
 message TrackingSummarySearchRsp {
