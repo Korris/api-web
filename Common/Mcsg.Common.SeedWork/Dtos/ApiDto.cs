@@ -112,22 +112,22 @@ public class ApiDto
         /// Story
         /// </summary>
         public string? Story { get; set; }
-
-        /// <summary>
-        /// Notification
-        /// </summary>
-        public string? Notification { get; set; }
     }
 
     /// <summary>
     /// Wallet
     /// </summary>
-    public class WalletDto : MobileDto
+    public class WalletDto
     {
         /// <summary>
         /// Wallet
         /// </summary>
         public string? Wallet { get; set; }
+
+        /// <summary>
+        /// WalletCoin
+        /// </summary>
+        public string? WalletCoin { get; set; }
     }
 
     /// <summary>

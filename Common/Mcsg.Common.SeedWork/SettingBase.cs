@@ -224,11 +224,11 @@ public class SettingBase : ISettingBase
         if (dic.TryGetValue("ApiMobileIdentity", out val)) Api.Mobile.Identity = val;
         if (dic.TryGetValue("ApiMobileSocial", out val)) Api.Mobile.Social = val;
         if (dic.TryGetValue("ApiMobileStory", out val)) Api.Mobile.Story = val;
-        if (dic.TryGetValue("ApiMobileNotification", out val)) Api.Mobile.Notification = val;
         #endregion
 
         #region -- Api.Wallet --
         if (dic.TryGetValue("ApiWalletWallet", out val)) Api.Wallet.Wallet = val;
+        if (dic.TryGetValue("ApiWalletWalletCoin", out val)) Api.Wallet.WalletCoin = val;
         #endregion
 
         #region -- Api.Web --
@@ -278,11 +278,11 @@ public class SettingBase : ISettingBase
         if (dic.TryGetValue("RpcMobileIdentity", out val)) Rpc.Mobile.Identity = val;
         if (dic.TryGetValue("RpcMobileSocial", out val)) Rpc.Mobile.Social = val;
         if (dic.TryGetValue("RpcMobileStory", out val)) Rpc.Mobile.Story = val;
-        if (dic.TryGetValue("RpcMobileNotification", out val)) Rpc.Mobile.Notification = val;
         #endregion
 
         #region -- Rpc.Wallet --
         if (dic.TryGetValue("RpcWalletWallet", out val)) Rpc.Wallet.Wallet = val;
+        if (dic.TryGetValue("RpcWalletWalletCoin", out val)) Rpc.Wallet.WalletCoin = val;
         #endregion
 
         #region -- Rpc.Web --
@@ -331,9 +331,9 @@ public class SettingBase : ISettingBase
         { "ApiMobileIdentity", "https://localhost:44323" },
         { "ApiMobileSocial", "https://localhost:44324" },
         { "ApiMobileStory", "https://localhost:44325" },
-        { "ApiMobileNotification", "http://bumcheo-dev-service-01:3030" },
 
         { "ApiWalletWallet", "https://localhost:44331" },
+        { "ApiWalletWalletCoin", "http://192.168.1.85:3030" },
 
         { "ApiWebComic", "https://localhost:44341" },
         { "ApiWebDocument", "https://localhost:44342" },
@@ -361,9 +361,9 @@ public class SettingBase : ISettingBase
         { "ApiMobileIdentity", "http://localhost:54123" },
         { "ApiMobileSocial", "http://localhost:54124" },
         { "ApiMobileStory", "http://localhost:54125" },
-        { "ApiMobileNotification", "http://bumcheo-dev-service-01:3030" },
 
         { "ApiWalletWallet", "http://localhost:54131" },
+        { "ApiWalletWalletCoin", "http://192.168.1.85:3030" },
 
         { "ApiWebComic", "http://localhost:54141" },
         { "ApiWebDocument", "http://localhost:54142" },
@@ -391,9 +391,9 @@ public class SettingBase : ISettingBase
         { "RpcMobileIdentity", "http://localhost:54223" },
         { "RpcMobileSocial", "http://localhost:54224" },
         { "RpcMobileStory", "http://localhost:54225" },
-        { "RpcMobileNotification", "http://bumcheo-dev-service-01:3130" },
 
         { "RpcWalletWallet", "http://localhost:54231" },
+        { "RpcWalletWalletCoin", "http://192.168.1.85:3130" },
 
         { "RpcWebComic", "http://localhost:54241" },
         { "RpcWebDocument", "http://localhost:54242" },
