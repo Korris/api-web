@@ -704,7 +704,7 @@ LIMIT 1
                     FROM ""document"".""DocumentSubPosts"" sp
                     INNER JOIN ""document"".""DocumentPosts"" p ON sp.""PostId"" = p.""Id"" AND p.""IsDelete"" = false
                     WHERE p.""HashId"" = @PostHashId AND sp.""IsDelete"" = false AND (sp.""Status"" = ANY (@PostStatus) OR sp.""UserId"" = @UserId)
-                    AND sp.""IsPremium"" = false AND sp.""PublishDate"" < @CurrentDate
+                    AND sp.""PublishDate"" < @CurrentDate
                     ORDER BY sp.""Sort"";
 
                         SELECT COUNT(*) AS TotalItems 
