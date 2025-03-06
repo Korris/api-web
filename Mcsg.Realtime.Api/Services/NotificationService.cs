@@ -232,31 +232,37 @@ public class NotificationService : BaseS, INotificationService
 
     public async Task<NotificationResponse> AddVideoNotification(VideoNotificationR video)
     {
-        var response = new NotificationResponse();
-
         var receiverId = video.AuthorId;
         var postHashId = video.PostHashId + "";
-        var noti = await AddNotificationAsync(
-                                    actorId: video.AuthorId
-                                    , receiverId: receiverId
-                                    , action: video.Action
-                                    , entityType: NotificationEntityType.Video
-                                    , entityId: video.Id
-                                    , locationId: video.PostId
-                                    , locationHashId: postHashId);
 
-        response.Id = noti.Id;
-        response.Status = noti.Status;
-        response.LocationId = video.PostId;
-        response.LocationHashId = postHashId;
-        response.EntityHashId = video.HashId + "";
-        response.Message = GetVideoMessage(video.Action);
-        response.TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : NotificationTargetType.None;
-        response.ActorId = video.AuthorId;
-        response.ActorName = video.AuthorName + "";
-        response.UserAvatar = video.UserAvatar;
-        response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
-        response.NotificationType = NotificationType.Video + video.Action.ToString();
+        var response = new NotificationResponse()
+        {
+            Status = NotificationStatus.UnRead,
+            LocationId = video.PostId,
+            LocationHashId = postHashId,
+            EntityHashId = video.HashId + "",
+            Message = GetVideoMessage(video.Action),
+            TargetType = !string.IsNullOrWhiteSpace(video.TargetType) ? video.TargetType : NotificationTargetType.None,
+            ActorId = video.AuthorId,
+            ActorName = video.AuthorName + "",
+            UserAvatar = video.UserAvatar,
+            NotificationType = NotificationType.Video + video.Action.ToString(),
+            CreatedOn = DateTime.UtcNow
+        };
+
+        // When Processing no need to save Notification to database
+        if (video.Action != NotificationAction.Processing)
+        {
+            var noti = await AddNotificationAsync(
+                                  actorId: video.AuthorId
+                                  , receiverId: receiverId
+                                  , action: video.Action
+                                  , entityType: NotificationEntityType.Video
+                                  , entityId: video.Id
+                                  , locationId: video.PostId
+                                  , locationHashId: postHashId);
+            response.Id = noti.Id;
+        }
 
         await _hc.Clients.Group(receiverId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
 
