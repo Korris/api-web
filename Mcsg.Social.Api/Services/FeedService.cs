@@ -59,13 +59,14 @@ public partial class FeedService : IFeedService
 
     public async Task<List<SharePostResponse>> GetSharePosts(BaseR req, List<SharePostInput>? ids)
     {
-        if (ids.Count == 0)
+        var res = new List<SharePostResponse>();
+
+        if (ids == null || ids.Count == 0)
         {
-            return [];
+            return res;
         }
 
         var schema = "social";
-
         var fn = "social.fn_share_post_by_list_ids";
         var @params = "@PostInfoJson, @Hide";
 
@@ -76,38 +77,33 @@ public partial class FeedService : IFeedService
         }).ToList();
 
         var postInfoJson = System.Text.Json.JsonSerializer.Serialize(postInfoArray);
-
-
         var paramValues = new
         {
             PostInfoJson = postInfoJson,
             Hide = req.Hides,
         };
 
-        using (var connection = _context.Database.GetDbConnection())
+        var connection = _context.Database.GetDbConnection();
+        var result = await connection.QueryAsync<FeedBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
+        if (result == null || !result.Any())
         {
-            var result = await connection.QueryAsync<FeedBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
-
-            if (result != null && result.Any())
-            {
-                var sharePots = new List<SharePostResponse>();
-
-                var body = string.Join(" ", result.Select(p => p.Body));
-                var profiles = await _businessText.GetProfiles(body);
-
-                foreach (var i in result)
-                {
-                    i.Body = await _businessText.Process(i.Body, profiles);
-                    sharePots.Add(MappingSharePostResponse(i));
-                }
-
-                return sharePots;
-            }
-            else
-            {
-                return [];
-            }
+            return res;
         }
+
+        var body = "";
+        foreach (var i in result)
+        {
+            body += i.Body + " ";
+        }
+        var profiles = await _businessText.GetProfiles(body);
+
+        foreach (var i in result)
+        {
+            i.Body = await _businessText.Process(i.Body, profiles);
+            res.Add(MappingSharePostResponse(i));
+        }
+
+        return res;
     }
 
     public async Task<PagedResponse<FeedDto>> GetFeedsAsync(FeedLoadReq feedLoadReq, LoadFeedType loadFeedType)
@@ -629,7 +625,7 @@ public partial class FeedService : IFeedService
                 Id = dbFeed.SharePostId.Value,
                 Type = dbFeed.SharePostType.Value
             };
-            var sharePost = await GetSharePosts(req, new List<SharePostInput> { sharePostInput });
+            var sharePost = await GetSharePosts(req, [sharePostInput]);
             result.SharePost = sharePost.Count > 0 ? sharePost.First() : null;
         }
 

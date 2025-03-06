@@ -263,12 +263,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                 Id = ett.SharePostId.Value,
                 Type = ett.SharePostType.Value
             };
-            var sharePosts = await _feedService.GetSharePosts(request, new List<SharePostInput> { sharePostInPut });
+            var sharePosts = await _feedService.GetSharePosts(request, [sharePostInPut]);
             if (sharePosts.Count > 0)
             {
                 result.SharePost = sharePosts.First();
             }
         }
+
         #region -- WriteDataToSheet --
         var dto = new PostSheetDto
         {

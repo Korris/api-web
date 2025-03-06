@@ -233,7 +233,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
                 Id = ett.SharePostId.Value,
                 Type = ett.SharePostType.Value
             };
-            var sharePosts = await _feedService.GetSharePosts(request, new List<SharePostInput> { sharePostInput });
+            var sharePosts = await _feedService.GetSharePosts(request, [sharePostInput]);
             if (sharePosts.Count > 0)
             {
                 result.SharePost = sharePosts.First();
