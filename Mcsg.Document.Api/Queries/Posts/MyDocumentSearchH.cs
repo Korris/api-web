@@ -12,7 +12,7 @@ using Common.Domain.Entities;
 using Common.SeedWork.Dtos;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
-using Document.Api.Filters;
+using Filters;
 using Interfaces;
 using Requests;
 using static Common.SeedWork.Constants.Error;
@@ -184,9 +184,10 @@ public class MyDocumentSearchH : BaseSettingH, IRequestHandler<MyDocumentSearchR
                                       ProfileName = post.User.ProfileName,
                                       UserName = post.User.UserName
                                   },
-                                  DocumentPostComments = post.DocumentPostComments.Where(cpc => !cpc.IsDelete).Select(p => new DocumentPostComment { Id = p.Id }).ToList(),
-                                  DocumentPostFavorites = post.DocumentPostFavorites.Where(cpf => !cpf.IsDelete).Select(p => new DocumentPostFavorite { Id = p.Id }).ToList(),
+                                  DocumentPostComments = post.DocumentPostComments.Where(pc => !pc.IsDelete).Select(p => new DocumentPostComment { Id = p.Id }).ToList(),
+                                  DocumentPostFavorites = post.DocumentPostFavorites.Where(pf => !pf.IsDelete).Select(p => new DocumentPostFavorite { Id = p.Id }).ToList(),
                                   NumberOfViews = viewCounts.GetValueOrDefault(post.Id.ToString(), 0),
+                                  DocumentTagPosts = post.DocumentTagPosts.Select(tp => new DocumentTagPost { Tag = new Tag { Name = tp.Tag.Name } }).ToList()
                               }.ToSearchDto()).ToListAsync(cancellationToken);
 
             res.SetSuccess(data);

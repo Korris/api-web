@@ -107,6 +107,7 @@ partial class ComicPost
         res.NumberOfFavorites = ComicPostFavorites.Count;
         res.NumberOfSubPosts = ComicSubPosts.Count;
         res.NumberOfViews = NumberOfViews;
+        res.Tags = ComicTagPosts.Select(t => t.Tag.Name).ToList();
 
         return res;
     }
@@ -227,6 +228,11 @@ partial class ComicPost
         /// NumberOfViews
         /// </summary>
         public int NumberOfViews { get; set; }
+
+        /// <summary>
+        /// Tags
+        /// </summary>
+        public List<string?> Tags { get; set; } = [];
 
         #endregion
     }

@@ -107,6 +107,7 @@ partial class StoryPost
         res.NumberOfFavorites = StoryPostFavorites.Count;
         res.NumberOfSubPosts = StorySubPosts.Count;
         res.NumberOfViews = NumberOfViews;
+        res.Tags = StoryTagPosts.Select(t => t.Tag.Name).ToList();
 
         return res;
     }
@@ -227,6 +228,11 @@ partial class StoryPost
         /// NumberOfViews
         /// </summary>
         public int NumberOfViews { get; set; }
+
+        /// <summary>
+        /// Tags
+        /// </summary>
+        public List<string?> Tags { get; set; } = [];
 
         #endregion
     }

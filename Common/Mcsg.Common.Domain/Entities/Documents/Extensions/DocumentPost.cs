@@ -107,6 +107,7 @@ partial class DocumentPost
         res.NumberOfFavorites = DocumentPostFavorites.Count;
         res.NumberOfSubPosts = DocumentSubPosts.Count;
         res.NumberOfViews = NumberOfViews;
+        res.Tags = DocumentTagPosts.Select(t => t.Tag.Name).ToList();
 
         return res;
     }
@@ -227,6 +228,11 @@ partial class DocumentPost
         /// NumberOfViews
         /// </summary>
         public int NumberOfViews { get; set; }
+
+        /// <summary>
+        /// Tags
+        /// </summary>
+        public List<string?> Tags { get; set; } = [];
 
         #endregion
     }

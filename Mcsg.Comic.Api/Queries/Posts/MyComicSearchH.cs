@@ -185,9 +185,10 @@ public class MyComicSearchH : BaseSettingH, IRequestHandler<MyComicSearchR, Sing
                                       ProfileName = post.User.ProfileName,
                                       UserName = post.User.UserName
                                   },
-                                  ComicPostComments = post.ComicPostComments.Where(cpc => !cpc.IsDelete).Select(p => new ComicPostComment { Id = p.Id }).ToList(),
-                                  ComicPostFavorites = post.ComicPostFavorites.Where(cpf => !cpf.IsDelete).Select(p => new ComicPostFavorite { Id = p.Id }).ToList(),
+                                  ComicPostComments = post.ComicPostComments.Where(pc => !pc.IsDelete).Select(p => new ComicPostComment { Id = p.Id }).ToList(),
+                                  ComicPostFavorites = post.ComicPostFavorites.Where(pf => !pf.IsDelete).Select(p => new ComicPostFavorite { Id = p.Id }).ToList(),
                                   NumberOfViews = viewCounts.GetValueOrDefault(post.Id.ToString(), 0),
+                                  ComicTagPosts = post.ComicTagPosts.Select(tp => new ComicTagPost { Tag = new Tag { Name = tp.Tag.Name } }).ToList()
                               }.ToSearchDto()).ToListAsync(cancellationToken);
 
             res.SetSuccess(data);

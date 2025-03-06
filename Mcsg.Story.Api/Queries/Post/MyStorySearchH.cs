@@ -184,9 +184,10 @@ public class MyStorySearchH : BaseSettingH, IRequestHandler<MyStorySearchR, Sing
                                       ProfileName = post.User.ProfileName,
                                       UserName = post.User.UserName
                                   },
-                                  StoryPostComments = post.StoryPostComments.Where(cpc => !cpc.IsDelete).Select(p => new StoryPostComment { Id = p.Id }).ToList(),
-                                  StoryPostFavorites = post.StoryPostFavorites.Where(cpf => !cpf.IsDelete).Select(p => new StoryPostFavorite { Id = p.Id }).ToList(),
+                                  StoryPostComments = post.StoryPostComments.Where(pc => !pc.IsDelete).Select(p => new StoryPostComment { Id = p.Id }).ToList(),
+                                  StoryPostFavorites = post.StoryPostFavorites.Where(pf => !pf.IsDelete).Select(p => new StoryPostFavorite { Id = p.Id }).ToList(),
                                   NumberOfViews = viewCounts.GetValueOrDefault(post.Id.ToString(), 0),
+                                  StoryTagPosts = post.StoryTagPosts.Select(tp => new StoryTagPost { Tag = new Tag { Name = tp.Tag.Name } }).ToList()
                               }.ToSearchDto()).ToListAsync(cancellationToken);
 
             res.SetSuccess(data);
