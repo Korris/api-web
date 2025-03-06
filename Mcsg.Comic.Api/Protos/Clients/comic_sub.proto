@@ -9,6 +9,7 @@ package comic_sub;
 service ComicSubProto {
     rpc Create (ComicSubCreateReq) returns (ComicSubCreateRsp);
     rpc Delete (ComicSubDeleteReq) returns (ComicSubDeleteRsp);
+    rpc SortedSearch(ComicSubSortedSearchReq) returns (ComicSubSortedSearchRsp);
 }
 
 message ComicSubCreateReq {
@@ -17,6 +18,14 @@ message ComicSubCreateReq {
 
 message ComicSubDeleteReq {
     string subPostId = 1;
+}
+
+message ComicSubSortedSearchReq {
+    string postId = 1;
+    bool descending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    repeated string ids = 5;
 }
 
 message ComicSubCreateRsp {
@@ -29,6 +38,12 @@ message ComicSubDeleteRsp {
     bool success = 1;
     string message = 2;
     int64 id = 3;
+}
+
+message ComicSubSortedSearchRsp {
+    bool success = 1;
+    string message = 2;
+    repeated string ids = 3;
 }
 
 message ComicSubProtoDto {
