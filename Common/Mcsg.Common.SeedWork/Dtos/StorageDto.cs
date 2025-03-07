@@ -129,9 +129,24 @@ public abstract class StorageDto
         public int UploadValueLengthLimit { get; set; } = 4;
 
         /// <summary>
-        /// Gets or sets the allowed media file extensions.
+        /// Gets or sets the allowed media file extensions for comic.
         /// </summary>
-        public string MediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, avi, mkv, webm, heic, webp, mov, ppt, pptx, doc, docx, pdf";
+        public string ComicMediaExtensionAllow { get; set; } = "jpg, jpeg, png, gif, bmp, heic, webp";
+
+        /// <summary>
+        /// Gets or sets the allowed media file extensions for document.
+        /// </summary>
+        public string DocumentMediaExtensionAllow { get; set; } = "jpg, jpeg, png, gif, bmp, heic, webp, ppt, pptx, doc, docx, pdf";
+
+        /// <summary>
+        /// Gets or sets the allowed media file extensions for social.
+        /// </summary>
+        public string SocialMediaExtensionAllow { get; set; } = "mp3, wav, ogg, jpg, jpeg, png, gif, bmp, mp4, avi, mkv, webm, heic, webp, mov";
+
+        /// <summary>
+        /// Gets or sets the allowed media file extensions for story.
+        /// </summary>
+        public string StoryMediaExtensionAllow { get; set; } = "jpg, jpeg, png, gif, bmp, heic, webp";
 
         /// <summary>
         /// Gets or sets the image downscaling quality percentage.

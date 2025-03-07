@@ -39,24 +39,6 @@ public static class IFormFileExtension
     }
 
     /// <summary>
-    /// IsImage
-    /// </summary>
-    /// <param name="file"></param>
-    /// <returns></returns>
-    /// <exception cref="FormatException"></exception>
-    public static bool IsImage(this IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-        {
-            throw new FormatException(nameof(E112));
-        }
-
-        string fileExtension = Path.GetExtension(file.FileName);
-
-        return Setting.FileExt.Images.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
     /// IsImageType
     /// </summary>
     /// <param name="file"></param>
@@ -126,22 +108,6 @@ public static class IFormFileExtension
         string fileExtension = Path.GetExtension(file.FileName);
 
         return Setting.FileExt.Audios.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// IsVideo
-    /// </summary>
-    /// <param name="file"></param>
-    /// <returns></returns>
-    /// <exception cref="FormatException"></exception>
-    public static bool IsVideo(this IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-        {
-            throw new FormatException(nameof(E112));
-        }
-
-        return file.OpenReadStream().IsVideo();
     }
 
     /// <summary>

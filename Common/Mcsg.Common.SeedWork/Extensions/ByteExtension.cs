@@ -60,6 +60,12 @@ public static class ByteExtension
     /// <returns>Return the result</returns>
     public static bool IsImage(this byte[] buffer)
     {
+        // Check for null or insufficient length
+        if (buffer == null || buffer.Length < 8)
+        {
+            return false;
+        }
+
         // JPEG/JFIF
         if (buffer[0] == 0xFF && buffer[1] == 0xD8 && buffer[2] == 0xFF)
         {
@@ -88,11 +94,30 @@ public static class ByteExtension
         if (buffer[0] == 0x00 && buffer[1] == 0x00 && buffer[2] == 0x00 && buffer[3] == 0x18 &&
             buffer[4] == 0x66 && buffer[5] == 0x74 && buffer[6] == 0x79 && buffer[7] == 0x70)
         {
-            return true;
+            if (buffer.Length >= 16)
+            {
+                var brand = Encoding.ASCII.GetString(buffer, 8, 4);
+
+                if (brand == "heic" || brand == "heix" || brand == "hevc" || brand == "mif1" ||
+                    brand == "msf1" || brand == "avci" || brand == "hevx" || brand == "heim" ||
+                    brand == "heis" || brand == "avif")
+                {
+                    return true;
+                }
+
+                // MP4
+                if (brand == "mp42" || brand == "isom" || brand == "mp41" || brand == "avc1" ||
+                    brand == "dash" || brand == "qt")
+                {
+                    return false;
+                }
+            }
         }
 
         // WebP
-        if (buffer[8] == 0x57 && buffer[9] == 0x45 && buffer[10] == 0x42 && buffer[11] == 0x50)
+        if (buffer.Length >= 12 &&
+            buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46 &&
+            buffer[8] == 0x57 && buffer[9] == 0x45 && buffer[10] == 0x42 && buffer[11] == 0x50)
         {
             return true;
         }

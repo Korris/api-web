@@ -67,10 +67,39 @@ public class FileService : IFileService
     /// <exception cref="NotFoundException">NotFoundException</exception>
     public async Task<UploadFileDto> UploadFileAsync(FileCreateR request)
     {
+        #region -- Validate on server --
         var file = request.File;
         if (file == null || file.Length == 0)
         {
             throw new NotFoundException(nameof(E201), E201);
+        }
+
+        var isVideo = false;
+        var isImage = file.OpenReadStream().IsImage();
+        if (!isImage)
+        {
+            isVideo = file.OpenReadStream().IsVideo();
+        }
+        else
+        {
+            var fileSize = await _context.GetSettingDouble("SocialImageSize");
+            if (file.Length > fileSize.FromMegabytes())
+            {
+                throw new BadRequestException(nameof(E211), string.Format(E211, fileSize));
+            }
+        }
+
+        if (isVideo)
+        {
+            var fileSize = await _context.GetSettingDouble("SocialVideoSize");
+            if (file.Length > fileSize.FromMegabytes())
+            {
+                throw new BadRequestException(nameof(E211), string.Format(E211, fileSize));
+            }
+        }
+        if (!isImage && !isVideo)
+        {
+            throw new BadRequestException(nameof(E213), E213);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
@@ -78,6 +107,7 @@ public class FileService : IFileService
         {
             throw new NotFoundException(nameof(E303), E303);
         }
+        #endregion
 
         // Upload to temp folder
         var hashId = ResourceConfig.HashLength.GetRandomString();
@@ -108,7 +138,7 @@ public class FileService : IFileService
             objectName = $"{MinioFolder.Social}/{tempBlobName}";
         }
 
-        if (file.IsImage() && !file.IsGifAnimated())
+        if (isImage && !file.IsGifAnimated())
         {
             if (!string.IsNullOrWhiteSpace(objectNameOriginal))
             {
@@ -137,7 +167,7 @@ public class FileService : IFileService
                 await _sc.GetStrategy(minioInstance).PutObject(stream, objectNameOriginal, bucketName);
             }
         }
-        else if (file.IsVideo())
+        else if (isVideo)
         {
             var tempFolder = Path.GetTempPath();
             var orgfile = Path.Combine(tempFolder, hashFileName);

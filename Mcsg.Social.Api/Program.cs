@@ -96,7 +96,7 @@ public class Program
         }
         #endregion
 
-        _mediaExtensionAllow = st.Minio.MediaExtensionAllow;
+        _mediaExtensionAllow = st.Minio.SocialMediaExtensionAllow;
 
         #region -- Setup DI --
         // Setting

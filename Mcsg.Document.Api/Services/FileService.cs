@@ -65,10 +65,40 @@ public class FileService : IFileService
     /// <exception cref="NotFoundException">NotFoundException</exception>
     public async Task<UploadFileDto> UploadFileAsync(FileCreateR request)
     {
+        #region -- Validate on server --
         var file = request.File;
         if (file == null || file.Length == 0)
         {
             throw new NotFoundException(nameof(E201), E201);
+        }
+
+        var isDocument = false;
+        var isImage = file.OpenReadStream().IsImage();
+        if (!isImage)
+        {
+            var ext = Path.GetExtension(file.FileName).ToUpper();
+            isDocument = file.OpenReadStream().IsDocument(ext);
+        }
+        else
+        {
+            var fileSize = await _context.GetSettingDouble("ThumbnailCoverSize");
+            if (file.Length > fileSize.FromMegabytes())
+            {
+                throw new BadRequestException(nameof(E211), string.Format(E211, fileSize));
+            }
+        }
+
+        if (isDocument)
+        {
+            var fileSize = await _context.GetSettingDouble("DocumentFileSize");
+            if (file.Length > fileSize.FromMegabytes())
+            {
+                throw new BadRequestException(nameof(E211), string.Format(E211, fileSize));
+            }
+        }
+        if (!isImage && !isDocument)
+        {
+            throw new BadRequestException(nameof(E212), E212);
         }
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.UserId);
@@ -76,6 +106,7 @@ public class FileService : IFileService
         {
             throw new NotFoundException(nameof(E303), E303);
         }
+        #endregion
 
         // Upload to temp folder
         var hashId = ResourceConfig.HashLength.GetRandomString();
@@ -106,7 +137,7 @@ public class FileService : IFileService
             objectName = $"{MinioFolder.Document}/{tempBlobName}";
         }
 
-        if (file.IsImage() && !file.IsGifAnimated())
+        if (isImage && !file.IsGifAnimated())
         {
             if (!string.IsNullOrWhiteSpace(objectNameOriginal))
             {

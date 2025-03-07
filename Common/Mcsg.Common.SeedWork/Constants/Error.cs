@@ -278,6 +278,20 @@ public static class Error
     /// </summary>
     public const string E210 = "Invalid upload data";
 
+    /// <summary>
+    /// File size exceeds limit
+    /// </summary>
+    public const string E211 = "File size exceeds {0}MB limit";
+
+    /// <summary>
+    /// Only image or document files are allowed
+    /// </summary>
+    public const string E212 = "Only image or document files are allowed";
+
+    /// <summary>
+    /// Only image or video files are allowed
+    /// </summary>
+    public const string E213 = "Only image or video files are allowed";
     #endregion
 
     #region -- E3xx --
