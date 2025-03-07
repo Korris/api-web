@@ -17,6 +17,7 @@ namespace Mcsg.Document.Api.Extensions;
 
 using Commands;
 using Common.SeedWork.Responses;
+using Queries;
 using Requests;
 
 /// <summary>
@@ -54,6 +55,7 @@ public static class DiSubPostExtension
     /// <param name="life">ServiceLifetime</param>
     public static void AddSubPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
+        p.AddBehavior<IRequestHandler<SubPostSearchR, SingleResponse>, SubPostSearchH>(life);
     }
 
     #endregion

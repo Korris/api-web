@@ -148,6 +148,7 @@ public class DocumentController : ControllerBase
         return Ok(result);
     }
 
+    [Obsolete("This method is obsolete, please use v1/SubPost/Search")]
     [HttpGet("{hashId}/chapters")]
     public async Task<IActionResult> GetChapters(string hashId, [FromQuery] DocumentChapterListR request)
     {
