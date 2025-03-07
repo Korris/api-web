@@ -44,6 +44,21 @@ public class SubPostController : BaseController
     }
 
     /// <summary>
+    /// Search
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPatch("Search"), Authorize]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> Search([FromBody] SubPostSearchR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        response.ReturnUrl = AbsoluteUri;
+        return Ok(response);
+    }
+
+    /// <summary>
     /// SyncToAna
     /// </summary>
     /// <param name="request">Request</param>
@@ -54,7 +69,8 @@ public class SubPostController : BaseController
     {
         request.Analyze(HttpContext);
         var response = await _mediator.Send(request);
-        return Ok(response.Data);
+        response.ReturnUrl = AbsoluteUri;
+        return Ok(response);
     }
 
     #endregion

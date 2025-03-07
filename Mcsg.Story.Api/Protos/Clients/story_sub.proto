@@ -9,6 +9,7 @@ package story_sub;
 service StorySubProto {
     rpc Create (StorySubCreateReq) returns (StorySubCreateRsp);
     rpc Delete (StorySubDeleteReq) returns (StorySubDeleteRsp);
+    rpc SortedSearch(StorySubSortedSearchReq) returns (StorySubSortedSearchRsp);
 }
 
 message StorySubCreateReq {
@@ -17,6 +18,14 @@ message StorySubCreateReq {
 
 message StorySubDeleteReq {
     string subPostId = 1;
+}
+
+message StorySubSortedSearchReq {
+    string postId = 1;
+    bool descending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    repeated string ids = 5;
 }
 
 message StorySubCreateRsp {
@@ -29,6 +38,12 @@ message StorySubDeleteRsp {
     bool success = 1;
     string message = 2;
     int64 id = 3;
+}
+
+message StorySubSortedSearchRsp {
+    bool success = 1;
+    string message = 2;
+    repeated string ids = 3;
 }
 
 message StorySubProtoDto {
