@@ -72,6 +72,20 @@ public interface IMcsgContext
     /// <returns>Return the result</returns>
     IQueryable<T> Available<T>(bool isTracking = true) where T : AuditableEntity;
 
+    /// <summary>
+    /// GetSettingDecimal
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    Task<decimal> GetSettingDecimal(string key);
+
+    /// <summary>
+    /// GetSettingDouble
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    Task<double> GetSettingDouble(string key);
+
     #endregion
 
     #region -- Properties --

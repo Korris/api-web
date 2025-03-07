@@ -54,7 +54,7 @@ public static class StringExtension
             Directory.CreateDirectory(directory);
         }
 
-        var fileSizeLimitBytes = 10 * 1024 * 1024; // 10MB file size limit
+        var fileSizeLimitBytes = (long)10d.FromMegabytes(); // 10MB file size limit
         var outputTemplate = "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:t4}] {Message:j}{NewLine}{Exception}";
 
         // Configure Serilog with daily rolling files in daily directories

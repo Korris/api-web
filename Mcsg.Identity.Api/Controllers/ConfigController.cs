@@ -123,11 +123,11 @@ public class ConfigController : ControllerBase
 
         #region -- SystemSettings --
         var dic = _context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToDictionary(p => p.Key + "", p => p.Value + "");
+
         string[] keys = {
             "MaintenanceFrDate",
             "MaintenanceToDate"
         };
-
         foreach (var key in keys)
         {
             if (!dic.TryGetValue(key, out var val))
@@ -138,18 +138,28 @@ public class ConfigController : ControllerBase
             res.SetSuccess(key.ToCamelCase(), val);
         }
 
-        var k = "ClientMaxBodySize";
-        if (dic.TryGetValue(k, out var v))
+        string[] sizeKeys = {
+            "ComicImageSize",
+            "DocumentImageSize",
+            "DocumentFileSize",
+            "SocialVideoSize",
+            "SocialImageSize",
+            "ThumbnailCoverSize",
+            "AvatarSize"
+        };
+        foreach (var key in sizeKeys)
         {
-            if (int.TryParse(v?.ToString(), out var mb))
+            if (!dic.TryGetValue(key, out var val))
             {
-                var bytes = mb * 1024 * 1024;
-                res.SetSuccess(k.ToCamelCase(), bytes);
+                continue;
             }
+
+            var value = val.Cast<double?>("double") ?? 0;
+            res.SetSuccess(key.ToCamelCase(), value.FromMegabytes());
         }
 
-        k = "AllowUploadSeries";
-        if (dic.TryGetValue(k, out v))
+        var k = "AllowUploadSeries";
+        if (dic.TryGetValue(k, out var v))
         {
             res.SetSuccess(k.ToCamelCase(), v == "true");
         }
@@ -168,7 +178,6 @@ public class ConfigController : ControllerBase
         {
             res.SetSuccess(k.ToCamelCase(), v.Cast<decimal?>("decimal") ?? 0);
         }
-
         #endregion
 
         return Ok(res.Data);

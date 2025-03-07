@@ -23,60 +23,74 @@ public static class DoubleExtension
     #region -- Methods --
 
     /// <summary>
+    /// From bytes
+    /// </summary>
+    /// <param name="value">Value</param>
+    /// <returns>Return the result</returns>
+    public static double FromBytes(this double value) => From(value, ByteType.Bytes);
+
+    /// <summary>
     /// From kilobytes
     /// </summary>
-    /// <param name="kilobytes"></param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double FromKilobytes(this double kilobytes) => From(kilobytes, ByteType.Kilobytes);
+    public static double FromKilobytes(this double value) => From(value, ByteType.Kilobytes);
 
     /// <summary>
     /// From megabytes
     /// </summary>
-    /// <param name="megabytes"></param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double FromMegabytes(this double megabytes) => From(megabytes, ByteType.Megabytes);
+    public static double FromMegabytes(this double value) => From(value, ByteType.Megabytes);
 
     /// <summary>
     /// From gigabytes
     /// </summary>
-    /// <param name="gigabytes"></param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double FromGigabytes(this double gigabytes) => From(gigabytes, ByteType.Gigabytes);
+    public static double FromGigabytes(this double value) => From(value, ByteType.Gigabytes);
 
     /// <summary>
     /// From terabytes
     /// </summary>
-    /// <param name="terabytes"></param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double FromTerabytes(this double terabytes) => From(terabytes, ByteType.Terabytes);
+    public static double FromTerabytes(this double value) => From(value, ByteType.Terabytes);
+
+    /// <summary>
+    /// To bytes
+    /// </summary>
+    /// <param name="value">Value</param>
+    /// <returns>Return the result</returns>
+    public static double ToBytes(this double value) => To(value, ByteType.Bytes);
 
     /// <summary>
     /// To kilobytes
     /// </summary>
-    /// <param name="bytes">Bytes</param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double ToKilobytes(this double bytes) => To(bytes, ByteType.Kilobytes);
+    public static double ToKilobytes(this double value) => To(value, ByteType.Kilobytes);
 
     /// <summary>
     /// To megabytes
     /// </summary>
-    /// <param name="bytes">Bytes</param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double ToMegabytes(this double bytes) => To(bytes, ByteType.Megabytes);
+    public static double ToMegabytes(this double value) => To(value, ByteType.Megabytes);
 
     /// <summary>
     /// To gigabytes
     /// </summary>
-    /// <param name="bytes">Bytes</param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double ToGigabytes(this double bytes) => To(bytes, ByteType.Gigabytes);
+    public static double ToGigabytes(this double value) => To(value, ByteType.Gigabytes);
 
     /// <summary>
     /// To terabytes
     /// </summary>
-    /// <param name="bytes">Bytes</param>
+    /// <param name="value">Value</param>
     /// <returns>Return the result</returns>
-    public static double ToTerabytes(this double bytes) => To(bytes, ByteType.Terabytes);
+    public static double ToTerabytes(this double value) => To(value, ByteType.Terabytes);
 
     /// <summary>
     /// To

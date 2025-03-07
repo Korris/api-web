@@ -21,6 +21,7 @@ using System.Text;
 
 namespace Mcsg.Common.Core.Extensions;
 
+using Common.SeedWork.Extensions;
 using Distributor;
 using Interfaces;
 using Notifications;
@@ -135,8 +136,8 @@ public static class IServiceCollectionExtension
     /// <param name="services">The IServiceCollection to configure</param>
     public static void ConfigureMaxRequestSizes(this IServiceCollection services)
     {
-        var maxFileSize = 1024 * 1024 * 1024; // 1024MB
-        var bufferSize = 10 * 1024 * 1024; // 10MB
+        var maxFileSize = (long)1024d.FromMegabytes(); // 1024MB
+        var bufferSize = (long)10d.FromMegabytes(); // 10MB
 
         services.Configure<KestrelServerOptions>(p =>
         {

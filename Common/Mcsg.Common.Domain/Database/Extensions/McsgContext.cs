@@ -101,6 +101,28 @@ partial class McsgContext
         return res;
     }
 
+    /// <summary>
+    /// GetSettingDecimal
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    public async Task<decimal> GetSettingDecimal(string key)
+    {
+        var value = await Available<SystemSetting>().Where(p => p.Key == key).Select(p => p.Value).FirstOrDefaultAsync();
+        return value.Cast<decimal?>("decimal") ?? 0;
+    }
+
+    /// <summary>
+    /// GetSettingDouble
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    public async Task<double> GetSettingDouble(string key)
+    {
+        var value = await Available<SystemSetting>().Where(p => p.Key == key).Select(p => p.Value).FirstOrDefaultAsync();
+        return value.Cast<double?>("double") ?? 0;
+    }
+
     #region -- IQueryable --
     public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
     #endregion
