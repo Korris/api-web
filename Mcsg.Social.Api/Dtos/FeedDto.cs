@@ -45,6 +45,7 @@ public class SharePostResponse
     public PostStatus Status { get; set; }
     public string? Title { get; set; }
     public PostType Type { get; set; }
+    public ReactionsResponse Reaction { get; set; }
 }
 
 public class SharePostInput

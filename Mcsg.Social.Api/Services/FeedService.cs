@@ -103,6 +103,26 @@ public partial class FeedService : IFeedService
             res.Add(MappingSharePostResponse(i));
         }
 
+        var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
+        var postReactionResponse = await _postRepository.Connection.QueryAsync<CommentReactionResponseQuery>(string.Format(queryGetReaction, $@"social.""SocialPostReactions"""),
+            new
+            {
+                TargetIds = res.Select(p => p.Id).ToList(),
+                req.UserId
+            });
+
+        if (postReactionResponse.Any())
+        {
+            foreach (var item in res)
+            {
+                var postReaction = postReactionResponse.Where(p => p.TargetId == item.Id).ToList();
+                if (postReaction.Count > 0)
+                {
+                    MapReactionSharePostResponse(item, postReaction);
+                }
+            }
+        }
+
         return res;
     }
 
@@ -911,6 +931,19 @@ public partial class FeedService : IFeedService
             Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type.Value }).ToList(),
             TotalReacts = reactions.Select(x => x.Count).Sum(),
             MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault().Type
+        };
+    }
+
+    private void MapReactionSharePostResponse(SharePostResponse item, List<CommentReactionResponseQuery> reactions)
+    {
+        var currentUserReact = reactions.Where(x => x.ReactByCurrent > 0).FirstOrDefault();
+        item.Reaction = new ReactionsResponse
+        {
+            TargetId = item.Id,
+            CurrentUserReactType = currentUserReact?.Type,
+            Reactions = reactions.Select(x => new ReactionResponse { Count = x.Count, Type = x.Type!.Value }).ToList(),
+            TotalReacts = reactions.Select(x => x.Count).Sum(),
+            MostReactionType = reactions.OrderByDescending(p => p.Count).FirstOrDefault()?.Type
         };
     }
 
