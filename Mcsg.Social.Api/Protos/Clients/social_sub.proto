@@ -8,11 +8,19 @@ package social_sub;
 
 service SocialSubProto {
     rpc Create (SocialSubCreateReq) returns (SocialSubCreateRsp);
+    rpc Update (SocialSubUpdateReq) returns (SocialSubUpdateRsp);
     rpc Delete (SocialSubDeleteReq) returns (SocialSubDeleteRsp);
 }
 
 message SocialSubCreateReq {
     repeated SocialSubProtoDto items = 1;
+}
+
+message SocialSubUpdateReq {
+    string subPostId = 1;
+    int32 permission = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
 }
 
 message SocialSubDeleteReq {
@@ -25,6 +33,12 @@ message SocialSubCreateRsp {
     repeated SocialSubOutputDto items = 3;
 }
 
+message SocialSubUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
 message SocialSubDeleteRsp {
     bool success = 1;
     string message = 2;
@@ -35,10 +49,11 @@ message SocialSubProtoDto {
     string postId = 1;
     string subPostId = 2;
     string userId = 3;
-    string createdOn = 4;
-    google.protobuf.StringValue createdBy = 5;
-    google.protobuf.StringValue modifiedOn = 6;
-    google.protobuf.StringValue modifiedBy = 7;
+    int32 permission = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
 }
 
 message SocialSubOutputDto {

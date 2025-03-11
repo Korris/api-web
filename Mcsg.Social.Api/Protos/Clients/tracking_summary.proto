@@ -21,6 +21,7 @@ message TrackingSummarySearchReq {
     google.protobuf.StringValue toDate = 7;
     google.protobuf.StringValue userId = 8;
     google.protobuf.StringValue postHideIds = 9;
+    bool isPremium = 10;
 }
 
 message TrackingSummaryGetFeedsReq {

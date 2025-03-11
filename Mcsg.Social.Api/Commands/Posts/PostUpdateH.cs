@@ -257,6 +257,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             {
                 PostId = ett.Id.ToString(),
                 Body = ett.Body,
+                Permission = (int)ett.Permission,
                 ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
                 ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
             };

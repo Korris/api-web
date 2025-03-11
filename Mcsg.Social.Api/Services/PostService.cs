@@ -157,8 +157,9 @@ public partial class PostService : BaseMinioS, IPostService
             var now = DateTime.UtcNow;
             var frDate = now.StartOfDayUtc();
             var toDate = now.EndOfDayUtc();
+            var isPremium = req.IsPremium;
 
-            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, percentFeed, percentComic, percentDocument, percentStory, frDate.ToString(), toDate.ToString(), req.UserId);
+            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, percentFeed, percentComic, percentDocument, percentStory, frDate.ToString(), toDate.ToString(), req.UserId, isPremium);
 
             var listresults = new List<LatestPostsResponse>();
 
@@ -807,7 +808,7 @@ public partial class PostService : BaseMinioS, IPostService
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
 
-    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, double feedPercent, double comicPercent, double documentPercent, double storyPercent, string frDate, string toDate, Guid? userId)
+    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, double feedPercent, double comicPercent, double documentPercent, double storyPercent, string frDate, string toDate, Guid? userId, bool isPremium)
     {
         var res = new TrackingSummarySearchRsp { Success = true };
 
@@ -828,7 +829,8 @@ public partial class PostService : BaseMinioS, IPostService
                 FrDate = frDate,
                 ToDate = toDate,
                 UserId = userId?.ToString(),
-                PostHideIds = string.Join(",", postHideIds)
+                PostHideIds = string.Join(",", postHideIds),
+                IsPremium = isPremium
             };
             var rsp = await client.SearchAsync(request);
 

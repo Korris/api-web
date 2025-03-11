@@ -328,6 +328,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
                         HashId = ett.HashId,
                         UserId = ett.UserId.ToString(),
                         Body = ett.Body,
+                        Permission = (int)ett.Permission,
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
                         ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),

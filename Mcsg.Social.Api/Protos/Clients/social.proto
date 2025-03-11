@@ -19,8 +19,9 @@ message SocialCreateReq {
 message SocialUpdateReq {
     string postId = 1;
     string body = 2;
-    google.protobuf.StringValue modifiedOn = 3;
-    google.protobuf.StringValue modifiedBy = 4;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
 }
 
 message SocialDeleteReq {
@@ -50,10 +51,11 @@ message SocialProtoDto {
     string hashId = 2;
     string userId = 3;
     string body = 4;
-    string createdOn = 5;
-    google.protobuf.StringValue createdBy = 6;
-    google.protobuf.StringValue modifiedOn = 7;
-    google.protobuf.StringValue modifiedBy = 8;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
 }
 
 message SocialOutputDto {

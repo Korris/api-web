@@ -618,6 +618,7 @@ public class FileService : IFileService
                     PostId = p.PostId.ToString(),
                     SubPostId = p.Id.ToString(),
                     UserId = p.UserId.ToString(),
+                    Permission = (int) p.Permission,
                     CreatedOn = p.CreatedOn.ToString(),
                     CreatedBy = p.CreatedBy.ToString()
                 }).ToList()}

@@ -833,6 +833,11 @@ public partial class PostService : BaseMinioS, IPostService
                                   COUNT(pc.""Id"") as CommentCount,
                                   to_jsonb(array_agg(sp.*)) AS ""SubPostStr""
                                   FROM ""comic"".""ComicPosts""  p
+                                  JOIN (
+                                      SELECT DISTINCT ""PostId"" 
+                                      FROM ""comic"".""ComicSubPosts"" 
+                                      WHERE ""IsDelete"" = false AND ""Permission"" = @Permission
+                                  ) sub_posts ON p.""Id"" = sub_posts.""PostId""
                                   JOIN identity.""Users"" u ON  p.""CreatedBy""  = u.""Id"" 
                                   LEFT JOIN comic.""ComicTagPosts"" tp on p.""Id""  = tp.""PostId"" AND tp.""IsDelete"" = FALSE 
                                   LEFT JOIN ""Tags"" t on t.""Id""  = tp.""TagId"" 
@@ -853,6 +858,11 @@ public partial class PostService : BaseMinioS, IPostService
 
                                   SELECT COUNT(*) AS TotalCount
                                   FROM ""comic"".""ComicPosts""  p
+                                  JOIN (
+                                      SELECT DISTINCT ""PostId"" 
+                                      FROM ""comic"".""ComicSubPosts"" 
+                                      WHERE ""IsDelete"" = false AND ""Permission"" = @Permission
+                                  ) sub_posts ON p.""Id"" = sub_posts.""PostId""
                                   JOIN identity.""Users"" u on p.""CreatedBy"" = u.""Id""
                                   [QueryCondition]";
 
@@ -2047,6 +2057,7 @@ public partial class PostService : BaseMinioS, IPostService
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
+        var currentPermission = subPost.Permission;
 
         subPost.ModifiedOn = DateTime.UtcNow;
         subPost.ModifiedBy = userId;
@@ -2110,6 +2121,11 @@ public partial class PostService : BaseMinioS, IPostService
                 Order = subPost.Order
             };
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
+        }
+
+        if (currentPermission != subPost.Permission)
+        {
+            _ = Task.Run(async () => await SyncUpdateSubToAna(subPost));
         }
 
         return result;
@@ -2668,6 +2684,7 @@ public partial class PostService : BaseMinioS, IPostService
                         PostId = ett.PostId.ToString(),
                         SubPostId = ett.Id.ToString(),
                         UserId = ett.UserId.ToString(),
+                        Permission = (int)ett.Permission,
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
                         ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
@@ -2679,6 +2696,36 @@ public partial class PostService : BaseMinioS, IPostService
 
             res.Message = rsp.Message;
             res.Items.AddRange(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<ComicSubUpdateRsp> SyncUpdateSubToAna(ComicSubPost ett)
+    {
+        var res = new ComicSubUpdateRsp() { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new ComicSubProto.ComicSubProtoClient(channel);
+
+            var request = new ComicSubUpdateReq
+            {
+                SubPostId = ett.Id.ToString(),
+                Permission = (int)ett.Permission,
+                ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
+                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+            };
+            var rsp = await client.UpdateAsync(request);
+
+            res.Message = rsp.Message;
+            res.Id = rsp.Id;
         }
         catch (Exception ex)
         {

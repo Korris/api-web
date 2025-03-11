@@ -8,12 +8,20 @@ package story_sub;
 
 service StorySubProto {
     rpc Create (StorySubCreateReq) returns (StorySubCreateRsp);
+    rpc Update (StorySubUpdateReq) returns (StorySubUpdateRsp);
     rpc Delete (StorySubDeleteReq) returns (StorySubDeleteRsp);
     rpc SortedSearch(StorySubSortedSearchReq) returns (StorySubSortedSearchRsp);
 }
 
 message StorySubCreateReq {
     repeated StorySubProtoDto items = 1;
+}
+
+message StorySubUpdateReq {
+    string subPostId = 1;
+    int32 permission = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
 }
 
 message StorySubDeleteReq {
@@ -34,6 +42,12 @@ message StorySubCreateRsp {
     repeated StorySubOutputDto items = 3;
 }
 
+message StorySubUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
 message StorySubDeleteRsp {
     bool success = 1;
     string message = 2;
@@ -50,10 +64,11 @@ message StorySubProtoDto {
     string postId = 1;
     string subPostId = 2;
     string userId = 3;
-    string createdOn = 4;
-    google.protobuf.StringValue createdBy = 5;
-    google.protobuf.StringValue modifiedOn = 6;
-    google.protobuf.StringValue modifiedBy = 7;
+    int32 permission = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
 }
 
 message StorySubOutputDto {
