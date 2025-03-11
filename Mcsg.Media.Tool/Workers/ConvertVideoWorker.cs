@@ -90,30 +90,40 @@ internal class ConvertVideoWorker : BaseWorker, IWorker
                     pool.IsRunning = false;
                 }
 
-                //Send notification when video process completed
-                var video = await DbService.LoadResource(resource.HashId, microService);
+                // If the resource is the final convert then will send notify to user
+                var resourceCount = await DbService.GetResourceCount(resource.Id);
 
-                Console.WriteLine("ConvertVideo Job Id: {0} - Video HashId : {1} - Video Id {2}", jobInfo.Id, resource.HashId, video.Id);
+                $"resourceCount TotalCount: {resourceCount.TotalResourceCount} - Total Compressed : {resourceCount.TotalCompressedFileCount} - Resource Id : {resource.Id} ".LogInfor();
 
-                if (video != null && !string.IsNullOrWhiteSpace(video.HashId))
+                if (resourceCount.TotalCompressedFileCount + 1 >= resourceCount.TotalResourceCount)
                 {
-                    var notiReq = new VideoNotificationR
-                    {
-                        Id = video.Id,
-                        AuthorId = video.AuthorId,
-                        AuthorName = video.AuthorName,
-                        Action = NotificationAction.Completed,
-                        HashId = resource.HashId,
-                        PostId = video.PostId,
-                        PostHashId = video.PostHashId,
-                        TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social
-                    };
+                    // Send notification when video process completed
+                    var video = await DbService.LoadResource(resource.HashId, microService);
 
-                    await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Web.Realtime);
+                    $"ConvertVideo Job Id: {jobInfo.Id} - Video HashId : {resource.HashId} - Video Id {video.Id}".LogInfor();
+
+                    if (video != null && !string.IsNullOrWhiteSpace(video.HashId))
+                    {
+                        var notiReq = new VideoNotificationR
+                        {
+                            Id = video.Id,
+                            AuthorId = video.AuthorId,
+                            AuthorName = video.AuthorName,
+                            Action = NotificationAction.Completed,
+                            HashId = resource.HashId,
+                            PostId = video.PostId,
+                            PostHashId = video.PostHashId,
+                            TargetType = Common.Core.Constants.Setting.NotificationTargetType.Social
+                        };
+
+                        await NotiService.AddVideoNotificationAsync(notiReq, _setting.Api.Web.Realtime!);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                $"ConvertVideo Job Id: {jobInfo.Id} failed - reason {ex.Message}".LogError();
+
                 await DbService.UpdateJobStatus(jobInfo.Id, JobStatus.Failed, ex.Message);
             }
         }));

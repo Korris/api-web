@@ -58,20 +58,6 @@ public class JobService : IJobService
             };
             await _context.Jobs.AddAsync(convertJob);
             await _context.SaveChangesAsync(default);
-
-            // Send notification when video process processing
-            var notiReq = new VideoNotificationR
-            {
-                Id = resource.Id,
-                AuthorId = resource.AuthorId.Value,
-                AuthorName = userName,
-                Action = NotificationAction.Processing,
-                HashId = resource.HashId,
-                TargetType = Setting.NotificationTargetType.None,
-                UserAvatar = userAvatar
-            };
-
-            await AddVideoNotificationAsync(notiReq);
         }
     }
 

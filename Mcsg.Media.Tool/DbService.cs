@@ -54,6 +54,31 @@ internal class DbService
             });
     }
 
+    public async Task<ResourceCountModel> GetResourceCount(Guid resourceId)
+    {
+        var command = @"SELECT 
+                        COUNT(sr.*) AS TotalResourcesInSamePost,
+                        COUNT(CASE WHEN sr.""CompressedSize"" > 0 THEN 1 END)
+                FROM 
+                    social.""SocialResources"" sr
+                INNER JOIN 
+                    social.""SocialSubPosts"" sp ON sr.""SubPostId"" = sp.""Id""
+                INNER JOIN 
+                    social.""SocialPosts"" sc ON sp.""PostId"" = sc.""Id""
+                WHERE 
+                    sc.""Id"" = (
+                        SELECT sc2.""Id""
+                        FROM social.""SocialResources"" sr2
+                        INNER JOIN social.""SocialSubPosts"" sp2 ON sr2.""SubPostId"" = sp2.""Id""
+                        INNER JOIN social.""SocialPosts"" sc2 ON sp2.""PostId"" = sc2.""Id""
+                        WHERE sr2.""Id"" = @resourceId
+                    )";
+
+        using var conn = new NpgsqlConnection(_connectionString);
+
+        return await conn.QueryFirstAsync<ResourceCountModel>(command, new { resourceId });
+    }
+
     public async Task UpdateResourceStatus(Guid resourceId, ResourceStatus resourceStatus, string url, string bucketName, MicroService microService, long compressedSize)
     {
         var command = @"UPDATE {0}.""{1}Resources""

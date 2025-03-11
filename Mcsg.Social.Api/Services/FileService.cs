@@ -1,5 +1,6 @@
 ﻿using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Mcsg.Social.Api.Services;
 
@@ -7,6 +8,7 @@ using Analytic.Application.Protos;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
+using Common.Core.Requests;
 using Common.Domain;
 using Common.Domain.Dtos;
 using Common.Domain.Entities;
@@ -542,6 +544,24 @@ public class FileService : IFileService
             response.Add(resource);
         }
 
+        // Send notification when video process processing
+        var resourceVideo = resourceList.FirstOrDefault(p => p.Type == ResourceType.Video);
+        if (resourceVideo != null)
+        {
+            var notiReq = new VideoNotificationR
+            {
+                Id = resourceVideo.Id,
+                AuthorId = resourceVideo.AuthorId.Value,
+                AuthorName = dto.UserName,
+                Action = NotificationAction.Processing,
+                HashId = resourceVideo.HashId,
+                TargetType = NotificationTargetType.None,
+                UserAvatar = dto.UserAvatar
+            };
+
+            await AddVideoNotificationAsync(notiReq);
+        }
+
         if (subPosts.Count > 0)
         {
             _ = Task.Run(async () => await SyncCreateSubToAna(subPosts));
@@ -550,6 +570,29 @@ public class FileService : IFileService
         response = response.OrderBy(x => x.Order).ToList();
 
         return Tuple.Create(response, subPostResponses);
+    }
+
+    private async Task<bool> AddVideoNotificationAsync(VideoNotificationR req)
+    {
+        var baseUrl = _setting.Api.Web.Realtime;
+        var urlBuilder = new System.Text.StringBuilder();
+        urlBuilder.Append(baseUrl != null ? baseUrl.TrimEnd('/') : "").Append("/notification/video");
+
+        var url = urlBuilder.ToString();
+
+        var response = await url.MakePostRequest(req);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            var responseBody = JsonConvert.DeserializeObject<ApiNotificationDto>(responseContent);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>
