@@ -51,7 +51,7 @@ public partial class BasePost : AuditableHasPrivateEntity
 
     public Guid? SharePostId { get; set; }
 
-    public PostType? SharePostType { get; set; }
+    public SharePostType? SharePostType { get; set; }
 
     /// <summary>
     /// NumberOfViews

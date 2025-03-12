@@ -32,7 +32,25 @@ public class FeedBoxQueryResponse : FeedBox
     public string? MetaDatas { get; set; }
 }
 
-public class FeedBox
+public class ShareBoxQueryResponse : ShareBox
+{
+    public string? SubPosts { get; set; }
+    public string? Resources { get; set; }
+    public string? MetaDatas { get; set; }
+}
+
+public class ShareBox : Box
+{
+    public SharePostType Type { get; set; }
+    public float? Order { get; set; }
+}
+
+public class FeedBox : Box
+{
+    public PostType Type { get; set; }
+}
+
+public class Box
 {
     public Guid Id { get; set; }
 
@@ -48,7 +66,6 @@ public class FeedBox
     public string? ProfileId { get; set; }
     public string? ThumbnailUrl { get; set; }
     public int TotalResources { get; set; }
-    public PostType Type { get; set; }
     public string? Link { get; set; }
     public string? CustomNote { get; set; }
     public bool IsCurrentUserAuthor { get; set; }
@@ -63,6 +80,6 @@ public class FeedBox
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
     public Guid? SharePostId { get; set; }
-    public PostType? SharePostType { get; set; }
+    public SharePostType? SharePostType { get; set; }
     public string? Title { get; set; }
 }

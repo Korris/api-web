@@ -101,9 +101,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         {
             var isExisted = request.SharePostType switch
             {
-                PostType.Comic => await _context.Available<ComicPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
-                PostType.Story => await _context.Available<StoryPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
-                PostType.Document => await _context.Available<DocumentPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.Comic => await _context.Available<ComicPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.Story => await _context.Available<StoryPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.Document => await _context.Available<DocumentPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.SubComic => await _context.Available<ComicSubPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.SubStory => await _context.Available<StorySubPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
+                SharePostType.SubDocument => await _context.Available<DocumentSubPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId)),
                 _ => await _context.Available<SocialPost>(false).AnyAsync(p => p.Id.Equals(request.SharePostId))
             };
 
@@ -156,9 +159,12 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         {
             var postCreatorId = request.SharePostType switch
             {
-                PostType.Comic => await _context.Available<ComicPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
-                PostType.Story => await _context.Available<StoryPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
-                PostType.Document => await _context.Available<DocumentPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.Comic => await _context.Available<ComicPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.Story => await _context.Available<StoryPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.Document => await _context.Available<DocumentPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.SubComic => await _context.Available<ComicSubPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.SubStory => await _context.Available<StorySubPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
+                SharePostType.SubDocument => await _context.Available<DocumentSubPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
                 _ => await _context.Available<SocialPost>(false).Where(p => p.Id == ett.SharePostId).Select(p => p.UserId).FirstOrDefaultAsync(cancellationToken),
             };
 
@@ -343,7 +349,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         return res;
     }
 
-    private async Task<TrackingSocialShareCreateRsp> ShareCreate(Guid sessionUid, Guid postId, Guid shareId, Guid postCreatorId, Guid userId, bool isShare, PostType postCreatorType)
+    private async Task<TrackingSocialShareCreateRsp> ShareCreate(Guid sessionUid, Guid postId, Guid shareId, Guid postCreatorId, Guid userId, bool isShare, SharePostType postCreatorType)
     {
         var res = new TrackingSocialShareCreateRsp { Success = true };
 

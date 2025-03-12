@@ -84,7 +84,7 @@ public partial class FeedService : IFeedService
         };
 
         var connection = _context.Database.GetDbConnection();
-        var result = await connection.QueryAsync<FeedBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
+        var result = await connection.QueryAsync<ShareBoxQueryResponse>(fn.ToFn("social", schema, @params), paramValues);
         if (result == null || !result.Any())
         {
             return res;
@@ -234,7 +234,7 @@ public partial class FeedService : IFeedService
                 .Select(p => new SharePostInput
                 {
                     Id = p.SharePostId!.Value,
-                    Type = p.SharePostType.HasValue ? p.SharePostType.Value : PostType.Feed
+                    Type = p.SharePostType.HasValue ? p.SharePostType.Value : SharePostType.Feed
                 })
                 .ToList();
             var sharePosts = await GetSharePosts(feedLoadReq, sharePostIds);
@@ -664,9 +664,9 @@ public partial class FeedService : IFeedService
         return result;
     }
 
-    public SharePostResponse MappingSharePostResponse(FeedBoxQueryResponse res)
+    public SharePostResponse MappingSharePostResponse(ShareBoxQueryResponse res)
     {
-        if (res.Type != PostType.Feed)
+        if (res.Type != SharePostType.Feed)
         {
             return new SharePostResponse
             {
@@ -675,7 +675,8 @@ public partial class FeedService : IFeedService
                 HashId = res.HashId,
                 Body = res.Body,
                 ThumbnailUrl = res.ThumbnailUrl,
-                Type = res.Type
+                Type = res.Type,
+                Order = res.Order
             };
         }
         var itemResponse = new SharePostResponse()

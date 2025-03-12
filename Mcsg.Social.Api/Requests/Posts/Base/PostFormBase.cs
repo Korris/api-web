@@ -76,9 +76,9 @@ public class PostFormBase : IdBaseR
     public Guid? SharePostId { get; set; }
 
     /// <summary>
-    /// SharePostId
+    /// SharePostType
     /// </summary>
-    public PostType? SharePostType { get; set; }
+    public SharePostType? SharePostType { get; set; }
 
     #endregion
 }

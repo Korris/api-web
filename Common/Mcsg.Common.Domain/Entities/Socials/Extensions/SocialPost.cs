@@ -28,7 +28,7 @@ partial class SocialPost
     /// <param name="sharePostType">SharePostId</param>
     /// <param name="createdBy">Created by</param>
     /// <returns>Return the result</returns>
-    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid? sharePostId, PostType? sharePostType, Guid createdBy)
+    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid? sharePostId, SharePostType? sharePostType, Guid createdBy)
     {
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
 

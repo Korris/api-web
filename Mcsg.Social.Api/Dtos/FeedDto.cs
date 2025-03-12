@@ -44,12 +44,13 @@ public class SharePostResponse
     public HideOption Hide { get; set; }
     public PostStatus Status { get; set; }
     public string? Title { get; set; }
-    public PostType Type { get; set; }
+    public SharePostType Type { get; set; }
     public ReactionsResponse Reaction { get; set; }
+    public float? Order { get; set; }
 }
 
 public class SharePostInput
 {
     public Guid Id { get; set; }
-    public PostType Type { get; set; }
+    public SharePostType Type { get; set; }
 }
