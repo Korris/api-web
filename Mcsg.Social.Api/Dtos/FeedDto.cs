@@ -1,6 +1,7 @@
 ﻿namespace Mcsg.Social.Api.Dtos;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Domain.Entities;
 using Models;
 
@@ -47,6 +48,9 @@ public class SharePostResponse
     public SharePostType Type { get; set; }
     public ReactionsResponse Reaction { get; set; }
     public float? Order { get; set; }
+    public bool IsMature { get; set; }
+    public DateTime LatestCreatedOn { get; set; }
+    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
 }
 
 public class SharePostInput

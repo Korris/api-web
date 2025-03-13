@@ -37,6 +37,8 @@ public class ShareBoxQueryResponse : ShareBox
     public string? SubPosts { get; set; }
     public string? Resources { get; set; }
     public string? MetaDatas { get; set; }
+    public bool IsMature { get; set; }
+    public DateTime LatestCreatedOn { get; set; }
 }
 
 public class ShareBox : Box

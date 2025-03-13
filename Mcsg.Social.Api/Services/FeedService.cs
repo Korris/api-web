@@ -676,7 +676,9 @@ public partial class FeedService : IFeedService
                 Body = res.Body,
                 ThumbnailUrl = res.ThumbnailUrl,
                 Type = res.Type,
-                Order = res.Order
+                Order = res.Order,
+                IsMature = res.IsMature,
+                LatestCreatedOn = res.LatestCreatedOn,
             };
         }
         var itemResponse = new SharePostResponse()
