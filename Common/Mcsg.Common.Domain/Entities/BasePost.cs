@@ -30,8 +30,10 @@ public partial class BasePost : AuditableHasPrivateEntity
     public string? ExternalCode { get; set; }
 
     public string? Body { get; set; }
+    public string? ShortBody { get; set; }
 
     public string? CustomNote { get; set; }
+    public string? ShortCustomNote { get; set; }
 
     public Guid? AuthorId { get; set; }
     public Guid UserId { get; set; }
@@ -43,14 +45,7 @@ public partial class BasePost : AuditableHasPrivateEntity
     public ExternalResource ExternalResource { get; set; }
     public HideOption Hide { get; set; }
 
-    [StringLength(Validator.ShortBody.Max)]
-    public string? ShortBody { get; set; }
-
-    [StringLength(Validator.ShortCustomNote.Max)]
-    public string? ShortCustomNote { get; set; }
-
     public Guid? SharePostId { get; set; }
-
     public SharePostType? SharePostType { get; set; }
 
     /// <summary>

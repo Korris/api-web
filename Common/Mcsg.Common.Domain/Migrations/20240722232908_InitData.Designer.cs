@@ -244,12 +244,10 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ShortCustomNote")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -1568,12 +1566,10 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ShortCustomNote")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -3142,12 +3138,10 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ShortCustomNote")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -4242,12 +4236,10 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ShortBody")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ShortCustomNote")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
