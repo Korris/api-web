@@ -218,7 +218,7 @@ public partial class PostService : BaseMinioS, IPostService
             req.Hides,
             PostStatuses = StatusUtils.PostStatusInt
         };
-        var qPost = @"SELECT * FROM document.fn_document_post(@HashId, @Hides, @PostStatuses)";
+        var qPost = @"SELECT * FROM document.fw_document_post(@HashId, @Hides, @PostStatuses)";
 
         using (var connection = _context.Database.GetDbConnection())
         {
@@ -229,7 +229,7 @@ public partial class PostService : BaseMinioS, IPostService
             }
 
             #region -- Reaction --
-            var qReaction = @"SELECT * FROM document.fn_document_reaction_counts(@TargetIds, @UserId)";
+            var qReaction = @"SELECT * FROM document.fw_document_reaction_counts(@TargetIds, @UserId)";
             var pReaction = new { TargetIds = new List<Guid> { res.Id }, UserId = userId };
             var reactions = await connection.QueryAsync<CommentReactionResponseQuery>(qReaction, pReaction);
             #endregion
@@ -242,7 +242,7 @@ public partial class PostService : BaseMinioS, IPostService
                 PostStatuses = StatusUtils.PostStatusInt,
                 req.IsLoadChapters
             };
-            var qSubPost = @"SELECT * FROM document.fn_document_subposts(@PostId, @UserId, @PostStatuses, @IsLoadChapters)";
+            var qSubPost = @"SELECT * FROM document.fw_document_subposts(@PostId, @UserId, @PostStatuses, @IsLoadChapters)";
             var subposts = await connection.QueryAsync<ChapterBasicResponse>(qSubPost, pSubPost);
             #endregion
 
@@ -2464,10 +2464,10 @@ public partial class PostService : BaseMinioS, IPostService
         var schema = "document";
         var @params = "@HashIds";
 
-        var fn = "document.fn_get_most_reaction_comments";
+        var fn = "document.fw_get_most_reaction_comments";
         res.Comments = await _postRepository.Connection.QueryAsync<MostReactionCommentResponse>(fn.ToFn(schema, schema, @params), paramValues);
 
-        fn = "document.fn_get_total_comment_counts";
+        fn = "document.fw_get_total_comment_counts";
         res.TotalComment = await _postRepository.Connection.QueryAsync<CommentCount>(fn.ToFn(schema, schema, @params), paramValues);
 
         return res;

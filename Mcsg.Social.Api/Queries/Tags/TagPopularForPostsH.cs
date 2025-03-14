@@ -38,7 +38,7 @@ public class TagPopularForPostsH : BaseH, IRequestHandler<TagPopularForPostsR, S
         IEnumerable<PopularTagResponse> data = [];
 
         var schema = "social";
-        var fn = "social.fn_popular_tags_for_posts";
+        var fn = "social.fw_popular_tags_for_posts";
         var @params = "@Hide, @PostStatus, @Amount";
         var paramValues = new
         {

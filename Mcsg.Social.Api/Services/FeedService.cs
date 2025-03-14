@@ -67,7 +67,7 @@ public partial class FeedService : IFeedService
         }
 
         var schema = "social";
-        var fn = "social.fn_share_post_by_list_ids";
+        var fn = "social.fw_share_post_by_list_ids";
         var @params = "@PostInfoJson, @Hide";
 
         var postInfoArray = ids.Select(item => new
@@ -197,7 +197,7 @@ public partial class FeedService : IFeedService
                     MySelf = isMySelf,
                 };
 
-                query = "SELECT * FROM social.fn_get_posts_by_postid_trackings(@PostIds, @Type, @MySelf, @PostStatus)";
+                query = "SELECT * FROM social.fw_get_posts_by_postid_trackings(@PostIds, @Type, @MySelf, @PostStatus)";
 
                 var connection = _context.Database.GetDbConnection();
                 try
@@ -1297,10 +1297,10 @@ public partial class FeedService : IFeedService
         var schema = "social";
         var @params = "@HashIds";
 
-        var fn = "social.fn_get_most_reaction_comments";
+        var fn = "social.fw_get_most_reaction_comments";
         res.Comments = await _postRepository.Connection.QueryAsync<MostReactionCommentResponse>(fn.ToFn(schema, schema, @params), paramValues);
 
-        fn = "social.fn_get_total_comment_counts";
+        fn = "social.fw_get_total_comment_counts";
         res.TotalComment = await _postRepository.Connection.QueryAsync<CommentCount>(fn.ToFn(schema, schema, @params), paramValues);
 
         return res;

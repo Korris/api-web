@@ -2493,10 +2493,10 @@ public partial class PostService : BaseMinioS, IPostService
         var schema = "comic";
         var @params = "@HashIds";
 
-        var fn = "comic.fn_get_most_reaction_comments";
+        var fn = "comic.fw_get_most_reaction_comments";
         res.Comments = await _postRepository.Connection.QueryAsync<MostReactionCommentResponse>(fn.ToFn(schema, schema, @params), paramValues);
 
-        fn = "comic.fn_get_total_comment_counts";
+        fn = "comic.fw_get_total_comment_counts";
         res.TotalComment = await _postRepository.Connection.QueryAsync<CommentCount>(fn.ToFn(schema, schema, @params), paramValues);
 
         return res;

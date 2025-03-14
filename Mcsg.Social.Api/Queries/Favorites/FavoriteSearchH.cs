@@ -133,7 +133,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                 join favorite in qFavorite on post.Id equals favorite
                 select new { post.Id, post.Title, post.Body, post.CreatedOn };
 
-        var fn = "comic.fn_favorite_post_by_user";
+        var fn = "comic.fw_favorite_post_by_user";
         var @params = "@PostIds";
 
         // Sort by views
@@ -238,7 +238,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
     {
         var schema = "social";
 
-        var fn = "social.fn_favorite_post_by_user";
+        var fn = "social.fw_favorite_post_by_user";
         var @params = "@PostIds, @Hide, @PostStatus";
 
         var paramValues = new
@@ -271,7 +271,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                     listFeedDetails.Add(MappingFeedBoxResponse(i, postIds, userId));
                 }
 
-                fn = "social.fn_reaction_by_target_ids";
+                fn = "social.fw_reaction_by_target_ids";
                 @params = "@TargetIds, @UserId";
 
                 var reactionParamValues = new

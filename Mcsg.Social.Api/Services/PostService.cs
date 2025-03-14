@@ -336,7 +336,7 @@ public partial class PostService : BaseMinioS, IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var query = "SELECT * FROM social.fn_visible_post_maybe_you_like(@Limit, @Hide)";
+        var query = "SELECT * FROM social.fw_visible_post_maybe_you_like(@Limit, @Hide)";
         var dataQuery = await _postRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
             Limit = input.PageSize,
@@ -715,7 +715,7 @@ public partial class PostService : BaseMinioS, IPostService
 
                 }
 
-                var query = @$"SELECT * FROM social.fn_social_subposts_random(@TargetDate,@PageSize,@Ids)";
+                var query = @$"SELECT * FROM social.fw_social_subposts_random(@TargetDate,@PageSize,@Ids)";
                 var subPostIds = await _postRepository.Connection.QueryAsync<string>(query, new
                 {
                     Ids = input.PostRandomIds?.ToList(),
@@ -764,7 +764,7 @@ public partial class PostService : BaseMinioS, IPostService
 
                 }
 
-                var query = @$"SELECT * FROM social.fn_social_posts_random(@TargetDate,@PageSize,@Ids)";
+                var query = @$"SELECT * FROM social.fw_social_posts_random(@TargetDate,@PageSize,@Ids)";
                 var postIds = await _postRepository.Connection.QueryAsync<string>(query, new
                 {
                     Ids = input.PostRandomIds?.ToList(),

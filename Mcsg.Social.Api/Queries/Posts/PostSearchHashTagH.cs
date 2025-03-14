@@ -236,7 +236,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// <returns></returns>
     private async Task<Tuple<IEnumerable<PostSeriesTopQueryDbResponse>, int>> GetPostSeriesTop<P, TP>(string? keyword, PostSearchHashTagR request, DbConnection connection) where P : BasePost where TP : BaseTagPost
     {
-        var fn = "comic.fn_search_hashtag";
+        var fn = "comic.fw_search_hashtag";
         var @params = "@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList";
         var schema = typeof(P).Name.ToPrefix().ToLower();
         var type = schema.ToEnum(PostType.Feed);

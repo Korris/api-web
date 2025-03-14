@@ -95,7 +95,7 @@ public partial class NotificationService : BaseSettingS, INotificationService
         };
 
         IEnumerable<Notification.SearchDto> items;
-        var query = "SELECT * FROM social.fn_get_notifications_by_user(@ReceiverId, @PageSize, @PageNumber, @UnreadOnly)";
+        var query = "SELECT * FROM social.fw_get_notifications_by_user(@ReceiverId, @PageSize, @PageNumber, @UnreadOnly)";
 
         var connection = _context.Database.GetDbConnection();
         try
