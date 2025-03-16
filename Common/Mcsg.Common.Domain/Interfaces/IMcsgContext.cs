@@ -86,6 +86,13 @@ public interface IMcsgContext
     /// <returns>Return the result</returns>
     Task<double> GetSettingDouble(string key);
 
+    /// <summary>
+    /// GetSettingInt
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    Task<int> GetSettingInt(string key);
+
     #endregion
 
     #region -- Properties --

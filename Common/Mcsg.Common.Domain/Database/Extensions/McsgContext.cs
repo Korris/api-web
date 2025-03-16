@@ -123,6 +123,17 @@ partial class McsgContext
         return value.Cast<double?>("double") ?? 0;
     }
 
+    /// <summary>
+    /// GetSettingInt
+    /// </summary>
+    /// <param name="key">Key</param>
+    /// <returns>Return the result</returns>
+    public async Task<int> GetSettingInt(string key)
+    {
+        var value = await Available<SystemSetting>().Where(p => p.Key == key).Select(p => p.Value).FirstOrDefaultAsync();
+        return value.Cast<int?>("int") ?? 0;
+    }
+
     #region -- IQueryable --
     public IQueryable<User> UserAvailable => Users.Where(p => p.Status != UserStatus.WillDelete && p.Status != UserStatus.Deleted);
     #endregion
