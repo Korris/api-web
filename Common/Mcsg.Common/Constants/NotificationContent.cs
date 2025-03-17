@@ -37,5 +37,6 @@ public static class NotificationContent
     public const string ExpiredSubscription = "ExpiredSubscription";
     public const string BuyPremiumTransaction = "BuyPremiumTransaction";
     public const string BuyUpgradePremiumTransaction = "BuyUpgradePremiumTransaction";
+    public const string BuyRenewPremiumTransaction = "BuyRenewPremiumTransaction";
     public const string AddSubPost = "{0} vừa ra {1} mới! Xem ngay bây giờ";
 }

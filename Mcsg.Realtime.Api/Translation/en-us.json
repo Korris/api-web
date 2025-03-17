@@ -34,6 +34,7 @@
     "RemindExpiredSubscription": "Your Premium plan is about to expire. Privileges will remain until {{expiredDate}}.",
     "ExpiredSubscription": "Your Premium plan has expired. Please renew to c ontinue using the privileges.",
     "BuyPremiumTransaction": "Congratulations! Your Premium is activated! 🎉  Enjoy our privileges now!",
-    "BuyUpgradePremiumTransaction": "Your Premium plan has upgraded. Privileges will expire on {{expiredDate}}."
+    "BuyUpgradePremiumTransaction": "Your Premium plan has upgraded. Privileges will expire on {{expiredDate}}.",
+    "BuyRenewPremiumTransaction": "Premium plan renewal successful! Your Premium plan is now valid until {{expiredDate}}."
   }
 }

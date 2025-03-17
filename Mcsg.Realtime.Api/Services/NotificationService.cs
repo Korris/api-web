@@ -50,7 +50,11 @@ public class NotificationService : BaseS, INotificationService
             TransactionType.Transfer => NotificationEntityType.TransferTransaction,
             TransactionType.Donate => NotificationEntityType.DonateTransaction,
             TransactionType.Deposit => NotificationEntityType.DepositTransaction,
-            TransactionType.BuyPremium => req.IsUpgradePremium ? NotificationEntityType.BuyUpgradePremiumTransaction : NotificationEntityType.BuyPremiumTransaction,
+            TransactionType.BuyPremium => req.IsRenewPremium
+                ? NotificationEntityType.BuyRenewPremiumTransaction
+                : req.IsUpgradePremium
+                    ? NotificationEntityType.BuyUpgradePremiumTransaction
+                    : NotificationEntityType.BuyPremiumTransaction,
             _ => NotificationEntityType.TransferTransaction
         };
 
@@ -1622,6 +1626,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.DepositTransaction => nameof(NotificationContent.DepositTransaction),
             NotificationEntityType.BuyPremiumTransaction => nameof(NotificationContent.BuyPremiumTransaction),
             NotificationEntityType.BuyUpgradePremiumTransaction => nameof(NotificationContent.BuyUpgradePremiumTransaction),
+            NotificationEntityType.BuyRenewPremiumTransaction => nameof(NotificationContent.BuyRenewPremiumTransaction),
             _ => string.Empty
         };
     }
@@ -1635,6 +1640,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.DepositTransaction => NotificationType.DepositTransaction,
             NotificationEntityType.BuyPremiumTransaction => NotificationType.BuyPremiumTransaction,
             NotificationEntityType.BuyUpgradePremiumTransaction => NotificationType.BuyUpgradePremiumTransaction,
+            NotificationEntityType.BuyRenewPremiumTransaction => NotificationType.BuyRenewPremiumTransaction,
             _ => string.Empty
         };
     }
@@ -1788,6 +1794,7 @@ public class NotificationService : BaseS, INotificationService
 
             case "RemindExpiredSubscription":
             case NotificationType.BuyUpgradePremiumTransaction:
+            case NotificationType.BuyRenewPremiumTransaction:
                 parameters = new Dictionary<string, string>()
                 {
                     ["expiredDate"] = response.ExpiredDate?.ToString("HH:mm, dd.MM.yyyy")

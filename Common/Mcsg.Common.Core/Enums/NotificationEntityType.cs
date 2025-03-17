@@ -440,6 +440,11 @@ public enum NotificationEntityType
     /// BuyUpgradePremiumTransaction
     /// </summary>
     BuyUpgradePremiumTransaction = 515,
+
+    /// <summary>
+    /// BuyRenewPremiumTransaction
+    /// </summary>
+    BuyRenewPremiumTransaction = 516,
     #endregion
 
     #region -- Report --

@@ -34,6 +34,7 @@
     "RemindExpiredSubscription": "Gói Premium của bạn sắp hết hạn. Các quyền lợi sẽ vẫn được duy trì đến ngày {{expiredDate}}.",
     "ExpiredSubscription": "Gói Premium của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng các quyền lợi.",
     "BuyPremiumTransaction": "Chúc mừng! Gói Premium của bạn đã được kích hoạt! 🎉  Hãy tận hưởng các đặc quyền ngay bây giờ!",
-    "BuyUpgradePremiumTransaction": "Gói Premium của bạn đã được nâng cấp. Các quyền lợi sẽ được duy trì đến ngày {{expiredDate}}."
+    "BuyUpgradePremiumTransaction": "Gói Premium của bạn đã được nâng cấp. Các quyền lợi sẽ được duy trì đến ngày {{expiredDate}}.",
+    "BuyRenewPremiumTransaction": "Gia hạn gói Premium thành công! Gói Premium của bạn hiện có hiệu lực đến ngày {{expiredDate}}."
   }
 }

@@ -12,4 +12,5 @@ public class TransactionNotificationReq
     public string? ReferenceNumber { get; set; }
     public string? CurrencyUnit { get; set; }
     public bool IsUpgradePremium { get; set; }
+    public bool IsRenewPremium { get; set; }
 }
