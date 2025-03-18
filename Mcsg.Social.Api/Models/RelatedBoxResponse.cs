@@ -19,6 +19,7 @@ public class RelatedBox
     public string? ThumbnailUrl { get; set; }
     public string? Title { get; set; }
     public int TotalComment { get; set; }
+    public int ChapterCount { get; set; }
     public string? HashId { get; set; }
     public string[] Tags { get; set; }
     public Guid Id { get; set; }

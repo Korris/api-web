@@ -410,6 +410,7 @@ public partial class PostService : BaseMinioS, IPostService
             Id = x.Id,
             Tags = x.Tags,
             TotalComment = x.TotalComment,
+            ChapterCount = x.ChapterCount,
             PostType = x.PostType.ToEnum(PostType.Feed),
         }).ToList();
     }
