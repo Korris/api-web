@@ -1044,10 +1044,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
         if (!string.IsNullOrWhiteSpace(remoteIp))
         {
-            if (user.LastLoginDate != null)
-            {
-                user.LastLoginDate = DateTime.UtcNow;
-            }
+            user.LastLoginDate = DateTime.UtcNow;
             user.LastLoginIp = remoteIp;
             await _context.SaveChangesAsync(default);
         }
