@@ -306,6 +306,7 @@ public partial class PostService : BaseMinioS, IPostService
         var userId = req.UserId;
         var hashId = req.HashId;
         var order = req.Order;
+        var isAdministrator = req.IsAdministrator;
 
         var query = string.Format(GetSeriesChapterByHashIdWithJoinOrder, _postRepository.TableName);
 
@@ -366,7 +367,7 @@ public partial class PostService : BaseMinioS, IPostService
             }
 
             var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
-            if (subpost.UserId != user?.Id && user?.IsPremium != true)
+            if (subpost.UserId != user?.Id && user?.IsPremium != true && !isAdministrator)
             {
                 subpost.Files = [];
                 subpost.Body = "";
@@ -396,7 +397,7 @@ public partial class PostService : BaseMinioS, IPostService
             }
         }
 
-        subpost.IsCensored = !req.IsAdministrator && req.UserId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
+        subpost.IsCensored = !isAdministrator && userId != subpost.CreatedBy && subpost.Status == PostStatus.Inactive;
         if (subpost.IsCensored)
         {
             subpost.Files = [];

@@ -64,7 +64,7 @@ public class StoryPostViewParagraphH : BaseH, IRequestHandler<StoryPostViewParag
             }
 
             var isPremium = await _context.UserAvailable.Where(p => p.Id == userId).Select(p => p.IsPremium).FirstOrDefaultAsync();
-            if (subPost.UserId != userId && isPremium != true)
+            if (subPost.UserId != userId && isPremium != true && !request.IsAdministrator)
             {
                 return res;
             }
