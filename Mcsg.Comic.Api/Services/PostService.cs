@@ -2021,6 +2021,7 @@ public partial class PostService : BaseMinioS, IPostService
         var userAvatar = request.UserAvatar;
         var userName = request.UserName;
         var currentPermission = subPost.Permission;
+        var currentIsPremium = subPost.IsPremium;
 
         subPost.ModifiedOn = DateTime.UtcNow;
         subPost.ModifiedBy = userId;
@@ -2086,7 +2087,7 @@ public partial class PostService : BaseMinioS, IPostService
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 
-        if (currentPermission != subPost.Permission)
+        if (currentPermission != subPost.Permission || currentIsPremium != subPost.IsPremium)
         {
             _ = Task.Run(async () => await SyncUpdateSubToAna(subPost));
         }
@@ -2651,7 +2652,8 @@ public partial class PostService : BaseMinioS, IPostService
                         CreatedOn = ett.CreatedOn.ToString(),
                         CreatedBy = ett.CreatedBy == null ? null : ett.CreatedBy.ToString(),
                         ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
-                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+                        ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString(),
+                        IsPremium = ett.IsPremium
                     }
                 }
             };
@@ -2683,7 +2685,8 @@ public partial class PostService : BaseMinioS, IPostService
                 SubPostId = ett.Id.ToString(),
                 Permission = (int)ett.Permission,
                 ModifiedOn = ett.ModifiedOn == null ? null : ett.ModifiedOn.ToString(),
-                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString()
+                ModifiedBy = ett.ModifiedBy == null ? null : ett.ModifiedBy.ToString(),
+                IsPremium = ett.IsPremium
             };
             var rsp = await client.UpdateAsync(request);
 

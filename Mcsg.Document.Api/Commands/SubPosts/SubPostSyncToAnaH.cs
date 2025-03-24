@@ -78,7 +78,8 @@ public class SubPostSyncToAnaH : BaseSettingH, IRequestHandler<SubPostSyncToAnaR
                 CreatedOn = p.CreatedOn.ToString(),
                 CreatedBy = p.CreatedBy == null ? null : p.CreatedBy.ToString(),
                 ModifiedOn = p.ModifiedOn == null ? null : p.ModifiedOn.ToString(),
-                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString()
+                ModifiedBy = p.ModifiedBy == null ? null : p.ModifiedBy.ToString(),
+                IsPremium = p.IsPremium
             }).OrderBy(p => p.CreatedOn).ToListAsync();
 
             var request = new DocumentSubCreateReq();

@@ -11,6 +11,7 @@ service DocumentSubProto {
     rpc Update (DocumentSubUpdateReq) returns (DocumentSubUpdateRsp);
     rpc Delete (DocumentSubDeleteReq) returns (DocumentSubDeleteRsp);
     rpc SortedSearch(DocumentSubSortedSearchReq) returns (DocumentSubSortedSearchRsp);
+    rpc SubViewSearch(DocumentSubViewSearchReq) returns (DocumentSubViewSearchRsp);
 }
 
 message DocumentSubCreateReq {
@@ -22,6 +23,7 @@ message DocumentSubUpdateReq {
     int32 permission = 2;
     google.protobuf.StringValue modifiedOn = 3;
     google.protobuf.StringValue modifiedBy = 4;
+    bool isPremium = 5;
 }
 
 message DocumentSubDeleteReq {
@@ -34,6 +36,10 @@ message DocumentSubSortedSearchReq {
     int32 pageNum = 3;
     int32 pageSize = 4;
     repeated string ids = 5;
+}
+
+message DocumentSubViewSearchReq {
+    repeated string ids = 1;
 }
 
 message DocumentSubCreateRsp {
@@ -60,6 +66,10 @@ message DocumentSubSortedSearchRsp {
     repeated string ids = 3;
 }
 
+message DocumentSubViewSearchRsp {
+    repeated DocumentSubViewDto items = 1;
+}
+
 message DocumentSubProtoDto {
     string postId = 1;
     string subPostId = 2;
@@ -69,8 +79,14 @@ message DocumentSubProtoDto {
     google.protobuf.StringValue createdBy = 6;
     google.protobuf.StringValue modifiedOn = 7;
     google.protobuf.StringValue modifiedBy = 8;
+    bool isPremium = 9;
 }
 
 message DocumentSubOutputDto {
     int64 id = 1;
+}
+
+message DocumentSubViewDto {
+    string subPostId = 1;
+    int32 numberOfViews = 2;
 }
