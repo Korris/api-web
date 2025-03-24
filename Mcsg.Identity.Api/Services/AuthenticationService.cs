@@ -330,6 +330,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         var encryptedSocialId = _aes.EncryptText(socialId);
         var encryptedSocialEmail = _aes.EncryptText(socialEmail);
         var existUserId = Guid.Empty;
+        var adminTypes = new[] { UserType.ContentAdmin, UserType.Admin, UserType.SystemAdmin };
 
         // Check user exist with socialId
         var userSocial = await _context.Available<UserSocial>().FirstOrDefaultAsync(p => (p.SocialId == encryptedSocialId || p.SocialId == socialId) && p.Type == socialType);
@@ -385,7 +386,6 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             }
 
             // Validate admin role
-            var adminTypes = new[] { UserType.ContentAdmin, UserType.Admin, UserType.SystemAdmin };
             if (request.IsForAdmin && !adminTypes.Contains(user.Type))
             {
                 throw new ForbiddenAccessException(nameof(E309), E309);
@@ -408,6 +408,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
         }
         else
         {
+            // Validate admin role
+            if (request.IsForAdmin)
+            {
+                throw new ForbiddenAccessException(nameof(E309), E309);
+            }
+
             // Case 1 : Can NOT GET email in social token => return error
             if (string.IsNullOrEmpty(socialEmail))
             {
