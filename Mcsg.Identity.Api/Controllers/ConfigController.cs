@@ -178,6 +178,11 @@ public class ConfigController : ControllerBase
         {
             res.SetSuccess(k.ToCamelCase(), v.Cast<decimal?>("decimal") ?? 0);
         }
+        k = "MobileMaintenance";
+        if (dic.TryGetValue(k, out v))
+        {
+            res.SetSuccess(k.ToCamelCase(), v == "true");
+        }
         #endregion
 
         return Ok(res.Data);
