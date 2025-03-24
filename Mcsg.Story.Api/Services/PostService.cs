@@ -8,7 +8,6 @@ using System.Web;
 namespace Mcsg.Story.Api.Services;
 
 using Analytic.Application.Protos;
-using Common.Core;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -30,7 +29,6 @@ using Models.Earning;
 using Requests;
 using Validators;
 using static Common.Core.Constants.Setting;
-using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 
 public partial class PostService : BaseMinioS, IPostService
@@ -43,17 +41,14 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    /// <param name="googleSheet">Sheets service</param>
     /// <param name="businessText"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="tagService"></param>
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IBusinessText businessText, IUnitOfWork unitOfWork, ITagService tagService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessText, IUnitOfWork unitOfWork, ITagService tagService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<StoryPostComment> postCommentRepository) : base(context, setting, sc)
     {
-        _googleSheet = googleSheet;
-
         _businessText = businessText;
         _postRepository = unitOfWork.GetRepository<StoryPost>();
         _subPostRepository = unitOfWork.GetRepository<StorySubPost>();
@@ -177,22 +172,6 @@ public partial class PostService : BaseMinioS, IPostService
         {
             result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
-
-        #region -- WriteDataToSheet --
-        var dto = new PostSheetDto
-        {
-            Type = GoogleFileType.File1,
-            SeriesType = PostType.Story,
-            Environment = _setting.Environment,
-            Link = $"{_setting.Domain}/story/details?id={post.HashId}",
-            HashId = post.HashId,
-            UserName = request.UserName,
-            CreatedOn = post.CreatedOn,
-            Title = post.Title,
-            Platform = request.Platform
-        };
-        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
-        #endregion
 
         _ = Task.Run(async () => await SyncCreateToAna(post));
 
@@ -1962,23 +1941,6 @@ public partial class PostService : BaseMinioS, IPostService
         var result = MappingChapterResponse(subPost);
         result.Rewards = rewards;
 
-        #region -- WriteDataToSheet --
-        var dto = new SubPostSheetDto
-        {
-            SeriesName = post.Title,
-            Type = GoogleFileType.File2,
-            SeriesType = PostType.Story,
-            Environment = _setting.Environment,
-            Link = $"{_setting.Domain}/story/view-chapter?storyid={post.HashId}&order={subPost.Order}",
-            HashId = subPost.HashId,
-            UserName = request.UserName,
-            CreatedOn = subPost.CreatedOn,
-            Title = subPost.Title,
-            Platform = request.Platform
-        };
-        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
-        #endregion
-
         _ = Task.Run(async () => await SyncCreateSubToAna(subPost));
 
         return result;
@@ -2791,11 +2753,6 @@ public partial class PostService : BaseMinioS, IPostService
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// Google sheet
-    /// </summary>
-    private readonly GoogleSheet _googleSheet;
 
     private readonly IBusinessText _businessText;
     private readonly IRepository<StoryPost> _postRepository;

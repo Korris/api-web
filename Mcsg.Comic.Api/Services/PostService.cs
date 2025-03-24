@@ -8,7 +8,6 @@ using System.Web;
 namespace Mcsg.Comic.Api.Services;
 
 using Analytic.Application.Protos;
-using Common.Core;
 using Common.Core.Constants;
 using Common.Core.Enums;
 using Common.Core.Extensions;
@@ -32,7 +31,6 @@ using Requests;
 using Validators;
 using static Common.Core.Constants.Setting;
 using static Common.Core.Extensions.StringExtension;
-using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 
 public partial class PostService : BaseMinioS, IPostService
@@ -45,7 +43,6 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    /// <param name="googleSheet">Sheets service</param>
     /// <param name="businessBodyText"></param>
     /// <param name="unitOfWork"></param>
     /// <param name="tagService"></param>
@@ -53,10 +50,8 @@ public partial class PostService : BaseMinioS, IPostService
     /// <param name="mapper"></param>
     /// <param name="smartLookupService"></param>
     /// <param name="postCommentRepository"></param>
-    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, GoogleSheet googleSheet, IBusinessText businessBodyText, IUnitOfWork unitOfWork, ITagService tagService, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<ComicPostComment> postCommentRepository) : base(context, setting, sc)
+    public PostService(IMcsgContext context, ISetting setting, IStorageClient sc, IBusinessText businessBodyText, IUnitOfWork unitOfWork, ITagService tagService, IFileService fileService, IMapper mapper, ISmartLookupService smartLookupService, IRepository<ComicPostComment> postCommentRepository) : base(context, setting, sc)
     {
-        _googleSheet = googleSheet;
-
         _businessText = businessBodyText;
         _postRepository = unitOfWork.GetRepository<ComicPost>();
         _subPostRepository = unitOfWork.GetRepository<ComicSubPost>();
@@ -181,22 +176,6 @@ public partial class PostService : BaseMinioS, IPostService
         {
             result.Tags = (await _tagService.AddTagsToPost(post.Id, request.Tags, userId)).ToArray();
         }
-
-        #region -- WriteDataToSheet --
-        var dto = new PostSheetDto
-        {
-            Type = GoogleFileType.File1,
-            SeriesType = PostType.Comic,
-            Environment = _setting.Environment,
-            Link = $"{_setting.Domain}/comic/series?id={post.HashId}",
-            HashId = post.HashId,
-            UserName = request.UserName,
-            CreatedOn = post.CreatedOn,
-            Title = post.Title,
-            Platform = request.Platform
-        };
-        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
-        #endregion
 
         _ = Task.Run(async () => await SyncCreateToAna(post));
 
@@ -1971,23 +1950,6 @@ public partial class PostService : BaseMinioS, IPostService
             result.Files = await _fileService.ProcessComicFilesAsync(urDto);
         }
 
-        #region -- WriteDataToSheet --
-        var dto = new SubPostSheetDto
-        {
-            SeriesName = post.Title,
-            Type = GoogleFileType.File2,
-            SeriesType = PostType.Comic,
-            Environment = _setting.Environment,
-            Link = $"{_setting.Domain}/comic/view-chapter?comicid={post.HashId}&order={subPost.Order}",
-            HashId = subPost.HashId,
-            UserName = request.UserName,
-            CreatedOn = subPost.CreatedOn,
-            Title = subPost.Title,
-            Platform = request.Platform
-        };
-        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
-        #endregion
-
         _ = Task.Run(async () => await SyncCreateSubToAna(subPost));
 
         return result;
@@ -2846,11 +2808,6 @@ public partial class PostService : BaseMinioS, IPostService
     #endregion
 
     #region -- Fields --
-
-    /// <summary>
-    /// Google sheet
-    /// </summary>
-    private readonly GoogleSheet _googleSheet;
 
     private readonly IBusinessText _businessText;
     private readonly IRepository<ComicPost> _postRepository;

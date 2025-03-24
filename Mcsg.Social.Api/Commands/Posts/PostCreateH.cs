@@ -18,7 +18,6 @@ using System.Web;
 namespace Mcsg.Social.Api.Commands;
 
 using Analytic.Application.Protos;
-using Common.Core;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
@@ -33,7 +32,6 @@ using Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Requests;
 using Validators;
-using static Common.Core.GoogleSheet;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
@@ -57,8 +55,9 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// <param name="postLinkService">PostLink service</param>
     /// <param name="smartLookupService">SmartLookup service</param>
     /// <param name="businessText">BusinessText service</param>
-    /// <param name="googleSheet">Sheets service</param>
-    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService, GoogleSheet googleSheet, IFeedService feedService) : base(context, setting, sc)
+    /// <param name="notificationService">Notification service</param>
+    /// <param name="feedService">Feed service</param>
+    public PostCreateH(IMcsgContext context, ISetting setting, IStorageClient sc, IPostService postService, IMetaDataService metaDataService, ITagService tagService, IFileService fileService, ISoundService soundService, IPostLinkService postLinkService, ISmartLookupService smartLookupService, IBusinessText businessText, INotificationService notificationService, IFeedService feedService) : base(context, setting, sc)
     {
         _postService = postService;
         _metaDataService = metaDataService;
@@ -69,7 +68,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         _smartLookupService = smartLookupService;
         _businessText = businessText;
         _notificationService = notificationService;
-        _googleSheet = googleSheet;
         _feedService = feedService;
     }
 
@@ -288,22 +286,6 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             }
         }
 
-        #region -- WriteDataToSheet --
-        var dto = new PostSheetDto
-        {
-            Type = GoogleFileType.Social,
-            SeriesType = PostType.Feed,
-            Environment = _setting.Environment,
-            Link = $"{_setting.Domain}/feed/detail?id={ett.HashId}",
-            HashId = ett.HashId,
-            UserName = request.UserName,
-            CreatedOn = ett.CreatedOn,
-            Title = ett.Body,
-            Platform = request.Platform
-        };
-        _ = Task.Run(async () => await _googleSheet.WriteDataToSheet(dto));
-        #endregion
-
         _ = Task.Run(async () => await SyncCreateToAna(ett));
 
         return res.SetSuccess(result);
@@ -433,17 +415,10 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
     /// </summary>
     private readonly INotificationService _notificationService;
 
-
     /// <summary>
     /// Feed service
     /// </summary>
     private readonly IFeedService _feedService;
-
-
-    /// <summary>
-    /// Google sheet
-    /// </summary>
-    private readonly GoogleSheet _googleSheet;
 
     #endregion
 }
