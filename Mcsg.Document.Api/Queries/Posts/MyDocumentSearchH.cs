@@ -178,7 +178,7 @@ public class MyDocumentSearchH : BaseSettingH, IRequestHandler<MyDocumentSearchR
                                   IsDelete = post.IsDelete,
                                   Status = post.Status,
                                   Permission = post.Permission,
-                                  DocumentSubPosts = post.DocumentSubPosts.Where(sp => !sp.IsDelete && sp.PublishDate <= DateTime.UtcNow).ToList(),
+                                  DocumentSubPosts = post.DocumentSubPosts.Where(sp => !sp.IsDelete).ToList(),
                                   User = new User
                                   {
                                       ProfileName = post.User.ProfileName,

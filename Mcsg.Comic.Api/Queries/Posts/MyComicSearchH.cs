@@ -179,7 +179,7 @@ public class MyComicSearchH : BaseSettingH, IRequestHandler<MyComicSearchR, Sing
                                   IsDelete = post.IsDelete,
                                   Status = post.Status,
                                   Permission = post.Permission,
-                                  ComicSubPosts = post.ComicSubPosts.Where(sp => !sp.IsDelete && sp.PublishDate <= DateTime.UtcNow).ToList(),
+                                  ComicSubPosts = post.ComicSubPosts.Where(sp => !sp.IsDelete).ToList(),
                                   User = new User
                                   {
                                       ProfileName = post.User.ProfileName,

@@ -178,7 +178,7 @@ public class MyStorySearchH : BaseSettingH, IRequestHandler<MyStorySearchR, Sing
                                   IsDelete = post.IsDelete,
                                   Status = post.Status,
                                   Permission = post.Permission,
-                                  StorySubPosts = post.StorySubPosts.Where(sp => !sp.IsDelete && sp.PublishDate <= DateTime.UtcNow).ToList(),
+                                  StorySubPosts = post.StorySubPosts.Where(sp => !sp.IsDelete).ToList(),
                                   User = new User
                                   {
                                       ProfileName = post.User.ProfileName,
