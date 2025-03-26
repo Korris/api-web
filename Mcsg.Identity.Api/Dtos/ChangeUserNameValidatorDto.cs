@@ -47,5 +47,10 @@ public class ChangeUserNameValidatorDto
     /// </summary>
     public TimeSpan TimePassed { get; set; }
 
+    /// <summary>
+    /// HasPremium
+    /// </summary>
+    public bool HasPremium { get; set; }
+
     #endregion
 }

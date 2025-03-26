@@ -16,6 +16,8 @@ using Dtos;
 using Interfaces;
 using Requests;
 using Validators;
+using Wallet.Api.Protos;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 using static Common.SeedWork.Constants.Message;
 
@@ -77,18 +79,22 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             return res.SetError(nameof(E107), E107);
         }
 
-        var dto = await Validate(user.Id, request.TimezoneOffset, cancellationToken);
+        var userPremiumPackage = await UserPremiumPackageView(user.Id);
+        var dto = await Validate(user.Id, request.TimezoneOffset, userPremiumPackage.StartDate, userPremiumPackage.EndDate, request.IsPremium, cancellationToken);
 
         if (dto.TimePassed.TotalMinutes < dto.UserNameWaitingChangedAfter)
         {
-            if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
+            if (!(dto.HasPremium && (dto.CanUpdateUserName || !dto.UpdatedUserName)))
             {
-                var errorData = new
+                if ((dto.ModifiedCount == 2 && !dto.CanUpdateUserName) || ((!dto.CanUpdateUserName || dto.UpdatedUserName) && dto.ModifiedCount > 2))
                 {
-                    waitingTime = dto.TimeWaiting
-                };
+                    var errorData = new
+                    {
+                        waitingTime = dto.TimeWaiting
+                    };
 
-                return res.SetErrorData(nameof(E128), E128, errorData);
+                    return res.SetErrorData(nameof(E128), E128, errorData);
+                }
             }
         }
         #endregion
@@ -107,7 +113,8 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         {
             UserId = user.Id,
             UserName = newUserName,
-            CreatedBy = user.Id
+            CreatedBy = user.Id,
+            TagData = user.IsPremium ? TagData.IsPremium : null
         };
 
         await _context.UserNameHistories.AddAsync(userNameHistory, cancellationToken);
@@ -116,7 +123,7 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        dto = await Validate(user.Id, request.TimezoneOffset, cancellationToken);
+        dto = await Validate(user.Id, request.TimezoneOffset, userPremiumPackage.StartDate, userPremiumPackage.EndDate, request.IsPremium, cancellationToken);
 
         string m100 = $"{S100}. You have {dto.TimeRemaining} left to edit username again";
         string m101 = $"{S101}. You need to wait {dto.TimeWaiting} to edit username";
@@ -145,30 +152,54 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
     /// </summary>
     /// <param name="userId">User ID</param>
     /// <param name="timezoneOffset">Timezone offset</param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Returns the validation result as a <see cref="ChangeUserNameValidatorDto"/></returns>
-    private async Task<ChangeUserNameValidatorDto> Validate(Guid userId, int timezoneOffset, CancellationToken cancellationToken)
+    private async Task<ChangeUserNameValidatorDto> Validate(Guid userId, int timezoneOffset, string startDate, string endDate, bool isPremium, CancellationToken cancellationToken)
     {
         var userNameWaitingChangedAfter = _setting.UserNameWaitingChangedAfter;
         var userNameChangedInRemaining = _setting.UserNameChangedInRemaining;
 
         var createdOns = await _context.Available<UserNameHistory>()
             .Where(p => p.UserId == userId)
-            .Select(p => p.CreatedOn)
+            .Select(p => new { p.CreatedOn, p.TagData })
+            .OrderByDescending(p => p.CreatedOn)
             .ToListAsync(cancellationToken);
 
-        var latestChanged = createdOns.OrderByDescending(p => p).FirstOrDefault();
-        var previousChanged = createdOns.OrderByDescending(p => p).Skip(1).FirstOrDefault();
+        var latestChanged = createdOns.FirstOrDefault();
+        var previousChanged = createdOns.Skip(1).FirstOrDefault();
         var modifiedCount = createdOns.Count;
+        var hasPremium = false;
+
+        var latestCreatedOnChanged = latestChanged?.CreatedOn ?? DateTime.MinValue;
+        var previousCreatedOnChanged = previousChanged?.CreatedOn ?? DateTime.MinValue;
 
         var utcNow = DateTime.UtcNow;
-        var remainingTime = utcNow - latestChanged.AddMinutes(userNameChangedInRemaining);
-        var waitTime = latestChanged.AddMinutes(userNameWaitingChangedAfter);
-        var timePassed = utcNow - latestChanged;
-        var timePreviousPassed = utcNow - previousChanged.AddMinutes(userNameChangedInRemaining);
+        var remainingTime = utcNow - latestCreatedOnChanged.AddMinutes(userNameChangedInRemaining);
+        var waitTime = latestCreatedOnChanged.AddMinutes(userNameWaitingChangedAfter);
+        var timePassed = utcNow - latestCreatedOnChanged;
+        var timePreviousPassed = utcNow - previousCreatedOnChanged.AddMinutes(userNameChangedInRemaining);
 
         var canUpdateUserName = remainingTime.TotalMinutes <= 0;
         var updatedUserName = (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= userNameChangedInRemaining;
+
+        if (isPremium && !string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate))
+        {
+            hasPremium = true;
+            var lastestPremium = latestChanged?.TagData?.Contains(TagData.IsPremium) ?? false;
+            var previousPremium = previousChanged?.TagData?.Contains(TagData.IsPremium) ?? false;
+
+            var start = DateTime.Parse(startDate);
+            var end = DateTime.Parse(endDate);
+
+            canUpdateUserName = !lastestPremium && isPremium
+                                || (lastestPremium && !(start <= latestCreatedOnChanged && latestCreatedOnChanged <= end));
+            updatedUserName = previousPremium
+                           && (timePreviousPassed.TotalMinutes - remainingTime.TotalMinutes) <= userNameChangedInRemaining
+                           && (start <= previousCreatedOnChanged && previousCreatedOnChanged <= end);
+        }
+
         var timeRemaining = remainingTime.ToString(@"hh\:mm\:ss");
 
         return new ChangeUserNameValidatorDto
@@ -180,7 +211,8 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
             ModifiedCount = modifiedCount,
             UserNameWaitingChangedAfter = userNameWaitingChangedAfter,
             UserNameChangedInRemaining = userNameChangedInRemaining,
-            TimePassed = timePassed
+            TimePassed = timePassed,
+            HasPremium = hasPremium
         };
     }
 
@@ -206,6 +238,11 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         return false;
     }
 
+    /// <summary>
+    /// SyncUpdateToAna
+    /// </summary>
+    /// <param name="ett"></param>
+    /// <returns></returns>
     private async Task<UserUpdateRsp> SyncUpdateToAna(User ett)
     {
         var res = new UserUpdateRsp() { Success = true };
@@ -230,6 +267,35 @@ public class UserNameUpdateH : BaseSettingH, IRequestHandler<UserNameUpdateR, Si
         catch (Exception ex)
         {
             res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    /// <summary>
+    /// UserPremiumPackageView
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    private async Task<UserPremiumPackageViewRsp> UserPremiumPackageView(Guid userId)
+    {
+        var res = new UserPremiumPackageViewRsp();
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Wallet.Wallet!);
+            var client = new UserWalletProto.UserWalletProtoClient(channel);
+
+            var request = new UserPremiumPackageViewReq
+            {
+                UserId = userId.ToString(),
+            };
+
+            res = await client.UserPremiumPackageViewAsync(request);
+        }
+        catch (Exception ex)
+        {
             ex.Message.LogError();
         }
 

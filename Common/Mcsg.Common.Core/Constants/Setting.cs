@@ -675,6 +675,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Popular
         /// </summary>
         public const string Popular = ";Popular;";
+
+        /// <summary>
+        /// IsPremium
+        /// </summary>
+        public const string IsPremium = ";IsPremium;";
     }
 
     /// <summary>
