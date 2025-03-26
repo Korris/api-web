@@ -22,5 +22,19 @@ public interface IBusinessText
     /// <returns>Return the result</returns>
     Task<List<Entities.User.ProfileDto>> GetProfiles(string? text);
 
+    /// <summary>
+    /// ConvertBodyFromMobile
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    Task<string> ConvertBodyFromMobile(string? text);
+
+    /// <summary>
+    /// ConvertCustomNoteFromMobile
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    string ConvertCustomNoteFromMobile(string? text);
+
     #endregion
 }

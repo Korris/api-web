@@ -134,6 +134,13 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             request.Files = null;
             request.SoundId = null;
         }
+
+        if (request.FromMobile)
+        {
+            request.Content = await _businessText.ConvertBodyFromMobile(request.Content);
+            request.CustomNote = _businessText.ConvertCustomNoteFromMobile(request.CustomNote);
+        }
+
         var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, request.SharePostType, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
         await _context.SocialPosts.AddAsync(ett, cancellationToken);

@@ -125,6 +125,12 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
 
+        if (request.FromMobile)
+        {
+            request.Content = await _businessText.ConvertBodyFromMobile(request.Content);
+            request.CustomNote = _businessText.ConvertCustomNoteFromMobile(request.CustomNote);
+        }
+
         ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
 

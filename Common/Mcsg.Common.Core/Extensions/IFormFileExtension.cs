@@ -164,6 +164,13 @@ public static class IFormFileExtension
                     {
                         magickImage.Density = new Density(dpi);
 
+                        // Add background white for image transparent if not the image will error with black/white color
+                        if (magickImage.HasAlpha)
+                        {
+                            magickImage.BackgroundColor = new MagickColor("white");
+                            magickImage.Alpha(AlphaOption.Remove);
+                        }
+
                         using (var ms = new MemoryStream())
                         {
                             magickImage.Format = MagickFormat.Jpeg;

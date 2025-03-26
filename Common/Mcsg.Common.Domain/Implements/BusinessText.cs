@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -80,6 +81,75 @@ public class BusinessText : IBusinessText
         res = Regex.Replace(res, @"<(?!\/?a(?=>|\s.*>)|br\s*\/?>)\/?.*?>", "", RegexOptions.IgnoreCase);
 
         return res;
+    }
+
+    /// <summary>
+    /// ConvertBodyFromMobile
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public async Task<string> ConvertBodyFromMobile(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return "";
+        }
+
+        var regex = new Regex(@"@(\w+)");
+        var matches = regex.Matches(text);
+        var usernames = matches
+            .Select(m => m.Groups[1].Value)
+            .Distinct()
+            .ToList();
+
+        if (usernames.Count != 0)
+        {
+            var userDict = await _context.UserAvailable
+                                  .AsNoTracking()
+                                  .Where(p => usernames.Contains(p.UserName!))
+                                  .Select(p => new { p.UserName, p.Id })
+                                  .ToDictionaryAsync(p => p.UserName!, p => p.Id.ToString());
+
+            text = regex.Replace(text, match =>
+            {
+                var username = match.Groups[1].Value;
+                if (userDict.TryGetValue(username, out var userId))
+                {
+                    return "@" + userId;
+                }
+
+                return match.Value;
+            });
+        }
+
+        return text;
+    }
+
+    /// <summary>
+    /// ConvertCustomNoteFromMobile
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public string ConvertCustomNoteFromMobile(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return "";
+        }
+
+        var root = JObject.Parse(text);
+
+        foreach (var token in root.SelectTokens("$..[?(@.trigger=='@')]"))
+        {
+            var dataObject = token["data"];
+            if (dataObject != null && dataObject["id"] != null)
+            {
+                token["value"] = dataObject["id"].ToString();
+                dataObject["displayValue"] = dataObject["userName"].ToString();
+            }
+        }
+
+        return root.ToString();
     }
 
     /// <summary>
