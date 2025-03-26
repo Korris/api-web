@@ -9,6 +9,7 @@ package identity;
 service UserProto {
     rpc Update (UserUpdateReq) returns (UserUpdateRsp);
     rpc Search (UserSearchReq) returns (UserSearchRsp);
+    rpc Reset (UserPremiumResetReq) returns (UserPremiumResetRsp);
 }
 
 message UserUpdateReq {
@@ -33,6 +34,16 @@ message UserSearchRsp {
     string id = 3;
     string data = 4;
     repeated UserProtoDto items = 5;
+}
+
+message UserPremiumResetReq {
+    repeated string userIds = 1;
+}
+
+message UserPremiumResetRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
 }
 
 message UserProtoDto {

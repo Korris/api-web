@@ -22,6 +22,16 @@ partial class User
     }
 
     /// <summary>
+    /// Reset
+    /// </summary>
+    public void Reset()
+    {
+        PremiumDate = null;
+        NextCheckPremium = null;
+        IsExpiredSubscriptionSent = null;
+    }
+
+    /// <summary>
     /// Convert to data transfer object
     /// </summary>
     /// <returns>Return the DTO</returns>
