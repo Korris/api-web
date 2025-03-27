@@ -231,7 +231,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             var sharePostInput = new SharePostInput()
             {
                 Id = ett.SharePostId.Value,
-                Type = ett.SharePostType.Value
+                Type = ett.SharePostType ?? SharePostType.Feed
             };
             var sharePosts = await _feedService.GetSharePosts(request, [sharePostInput]);
             if (sharePosts.Count > 0)

@@ -292,7 +292,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                                        .Select(p => new SharePostInput
                                        {
                                            Id = p.SharePostId.Value,
-                                           Type = p.SharePostType.Value
+                                           Type = p.SharePostType ?? SharePostType.Feed
                                        })
                                        .ToList();
 

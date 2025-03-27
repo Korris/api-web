@@ -643,7 +643,7 @@ public partial class FeedService : IFeedService
             var sharePostInput = new SharePostInput
             {
                 Id = dbFeed.SharePostId.Value,
-                Type = dbFeed.SharePostType.Value
+                Type = dbFeed.SharePostType ?? SharePostType.Feed
             };
             var sharePost = await GetSharePosts(req, [sharePostInput]);
             result.SharePost = sharePost.Count > 0 ? sharePost.First() : null;
@@ -871,7 +871,7 @@ public partial class FeedService : IFeedService
                 .Select(p => new SharePostInput
                 {
                     Id = p.SharePostId!.Value,
-                    Type = p.SharePostType!.Value
+                    Type = p.SharePostType ?? SharePostType.Feed
                 })
                 .ToList();
             var sharePosts = await GetSharePosts(req, sharePostIds);
