@@ -46,29 +46,29 @@ public class Setting
     public const string OriginalSuffixFileName = "-original";
 
     /// <summary>
-    /// Role
+    /// RoleName
     /// </summary>
-    public class McsgRole
+    public class RoleName
     {
         /// <summary>
         /// Customer
         /// </summary>
-        public const string User = "Mcsg.User";
+        public const string User = "User";
 
         /// <summary>
         /// SuperAdmin
         /// </summary>
-        public const string SysAdmin = "Mcsg.SysAdmin";
+        public const string SysAdmin = "SystemAdmin";
 
         /// <summary>
         /// Admin
         /// </summary>
-        public const string Admin = "Mcsg.Admin";
+        public const string Admin = "Admin";
 
         /// <summary>
         /// ContentAdmin
         /// </summary>
-        public const string ContentAdmin = "Mcsg.ContentAdmin";
+        public const string ContentAdmin = "ContentAdmin";
     }
 
     /// <summary>

@@ -66,7 +66,7 @@ public partial class User : IdentityUser<Guid>
     public bool IsWalletShowing { get; set; }
 
     /// <summary>
-    /// 0 Guest, 1 Free, 2 Premium, 3 ContentAdmin, 4 Admin, 5 SystemAdmin
+    /// 0 Guest, 1 User, 2 Premium, 3 ContentAdmin, 4 Admin, 5 SystemAdmin
     /// </summary>
     public UserType Type { get; set; }
 

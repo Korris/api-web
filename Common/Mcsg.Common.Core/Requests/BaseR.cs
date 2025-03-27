@@ -380,6 +380,26 @@ public class BaseR : IRequest<SingleResponse>
     }
 
     /// <summary>
+    /// Is logged in
+    /// </summary>
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsLoggedIn
+    {
+        get
+        {
+            var headers = _hc?.Request.Headers;
+
+            var key = nameof(IsLoggedIn);
+            if (headers != null && headers.ContainsKey(key))
+            {
+                return Convert.ToBoolean(headers[key]);
+            }
+
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Device type
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
@@ -449,25 +469,25 @@ public class BaseR : IRequest<SingleResponse>
     /// Is role SysAdmin
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleSysAdmin => _hc?.User?.IsInRole(McsgRole.SysAdmin) == true;
+    public bool IsRoleSysAdmin => _hc?.User?.IsInRole(RoleName.SysAdmin) == true;
 
     /// <summary>
     /// Is role Admin
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleAdmin => _hc?.User?.IsInRole(McsgRole.Admin) == true;
+    public bool IsRoleAdmin => _hc?.User?.IsInRole(RoleName.Admin) == true;
 
     /// <summary>
     /// Is role ContentAdmin
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleContentAdmin => _hc?.User?.IsInRole(McsgRole.ContentAdmin) == true;
+    public bool IsRoleContentAdmin => _hc?.User?.IsInRole(RoleName.ContentAdmin) == true;
 
     /// <summary>
     /// Is role User
     /// </summary>
     [SwaggerSchema(ReadOnly = true)]
-    public bool IsRoleUser => _hc?.User?.IsInRole(McsgRole.User) == true;
+    public bool IsRoleUser => _hc?.User?.IsInRole(RoleName.User) == true;
 
     /// <summary>
     /// UT mode (automatically rollback data when the test is done)

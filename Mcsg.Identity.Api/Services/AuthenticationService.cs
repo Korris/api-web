@@ -23,6 +23,7 @@ using Response;
 using Validators;
 using Wallet.Api.Protos;
 using static Common.SeedWork.Constants.Error;
+using static Common.SeedWork.Constants.Setting;
 using static Constants.SocialMediaConstants;
 using static SSORegister;
 
@@ -136,7 +137,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             user.CreatedIp = request.RemoteIp;
             user.MinioInstance = 0; // default MinIO
             user.StorageLimit = 1024; // 1GB
-            user.Type = UserType.Free;
+            user.Type = UserType.User;
             user.CreatedBy = request.IsForAdmin ? request.UserId : user.Id;
 
             var createResult = await _userManager.CreateAsync(user);
@@ -162,7 +163,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             await _context.SmartLookups.AddAsync(smartLookup);
             await _context.SaveChangesAsync(default);
 
-            await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
+            await _userManager.AddToRoleAsync(user, RoleName.User);
 
             _ = Task.Run(async () => await InitUserWallet(user));
             _ = Task.Run(async () => await SyncCreateToAna(user));
@@ -438,7 +439,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 user.CreatedIp = request.RemoteIp;
                 user.MinioInstance = 0; // default MinIO
                 user.StorageLimit = 1024; // 1GB
-                user.Type = UserType.Free;
+                user.Type = UserType.User;
                 user.CreatedBy = user.Id;
 
                 var createResult = await _userManager.CreateAsync(user);
@@ -458,7 +459,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
                 await _context.SmartLookups.AddAsync(smartLookup);
                 await _context.SaveChangesAsync(default);
 
-                await _userManager.AddToRoleAsync(user, Setting.RoleName.User);
+                await _userManager.AddToRoleAsync(user, RoleName.User);
 
                 _ = Task.Run(async () => await InitUserWallet(user));
                 _ = Task.Run(async () => await SyncCreateToAna(user));

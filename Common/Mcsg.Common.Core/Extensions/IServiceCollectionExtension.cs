@@ -111,7 +111,7 @@ public static class IServiceCollectionExtension
         // Add policy
         service.AddAuthorization(p =>
         {
-            p.AddPolicy(Policy.Admin, q => q.RequireRole(McsgRole.SysAdmin, McsgRole.Admin, McsgRole.ContentAdmin));
+            p.AddPolicy(Policy.Admin, q => q.RequireRole(RoleName.SysAdmin, RoleName.Admin, RoleName.ContentAdmin));
         });
 
         return service;

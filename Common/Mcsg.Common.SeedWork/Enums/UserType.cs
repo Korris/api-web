@@ -24,9 +24,9 @@ public enum UserType
     Guest,
 
     /// <summary>
-    /// Free
+    /// User
     /// </summary>
-    Free,
+    User,
 
     /// <summary>
     /// Premium

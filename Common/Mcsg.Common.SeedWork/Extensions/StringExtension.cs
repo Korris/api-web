@@ -753,7 +753,7 @@ public static class StringExtension
         }
 
         var arr = roles.Split(",");
-        return arr.Contains(McsgRole.SysAdmin) || arr.Contains(McsgRole.Admin) || arr.Contains(McsgRole.ContentAdmin);
+        return arr.Contains(RoleName.SysAdmin) || arr.Contains(RoleName.Admin) || arr.Contains(RoleName.ContentAdmin);
     }
 
     /// <summary>

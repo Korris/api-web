@@ -38,7 +38,7 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("create-account"), Authorize(Roles = McsgRole.Admin)]
+    [HttpPost("create-account"), Authorize(Roles = RoleName.Admin)]
     public async Task<IActionResult> CreateAccount([FromBody] AuthenticationRegisterUserR request)
     {
         request.SetForAdmin(true);
@@ -85,7 +85,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Logout([FromBody] AuthenticationLogoutR request)
     {
         request.Analyze(HttpContext);
-        var result = await _authenticationService.Logout(request.RefreshToken,request.UserId, request.DeviceToken);
+        var result = await _authenticationService.Logout(request.RefreshToken, request.UserId, request.DeviceToken);
         return Ok(result);
     }
 
