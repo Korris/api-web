@@ -48,11 +48,11 @@ public class ConfigController : ControllerBase
 
         var s = _setting;
         var req = new BaseR(HttpContext);
-        var isRoleAdmin = req.IsRoleAdmin;
 
-        if (isRoleAdmin)
+        if (req.IsAdministrator)
         {
             res.SetSuccess(nameof(s.DevMode).ToCamelCase(), s.DevMode);
+            res.SetSuccess(nameof(s.ForTest).ToCamelCase(), s.ForTest);
             res.SetSuccess(nameof(s.IsLocal).ToCamelCase(), s.IsLocal);
             res.SetSuccess(nameof(s.Environment).ToCamelCase(), s.Environment);
             res.SetSuccess(nameof(s.IsProduction).ToCamelCase(), s.IsProduction);
