@@ -29,9 +29,4 @@ public partial class SystemSetting : AuditableEntity
 
     [InverseProperty("SystemSetting")]
     public virtual ICollection<SystemSettingHistory> SystemSettingHistories { get; set; } = new List<SystemSettingHistory>();
-
-    public SystemSetting()
-    {
-        IsActive = true;
-    }
 }

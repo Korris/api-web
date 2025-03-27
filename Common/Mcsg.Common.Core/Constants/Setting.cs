@@ -267,7 +267,7 @@ public class Setting : SeedWork.Constants.Setting
         /// <summary>
         /// Images
         /// </summary>
-        public static string[] Images = { "image/jpeg", "image/png", "image/gif", "image/heic", "image/jpg", "image/bmp", "image/wepb" };
+        public static string[] Images = { "image/jpeg", "image/png", "image/gif", "image/heic", "image/jpg", "image/bmp", "image/webp" };
     }
 
     /// <summary>
@@ -862,6 +862,42 @@ public class Setting : SeedWork.Constants.Setting
         /// DaysUntilPremiumExpiry
         /// </summary>
         public const string DaysUntilPremiumExpiry = "DaysUntilPremiumExpiry";
+    }
+
+    /// <summary>
+    /// SystemSetting type
+    /// </summary>
+    public class SystemSettingType
+    {
+        /// <summary>
+        /// IntType
+        /// </summary>
+        public const string IntType = "int";
+
+        /// <summary>
+        /// BoolType
+        /// </summary>
+        public const string BoolType = "bool";
+
+        /// <summary>
+        /// DecimalType
+        /// </summary>
+        public const string DecimalType = "decimal";
+
+        /// <summary>
+        /// DateTimeType
+        /// </summary>
+        public const string DateTimeType = "datetime";
+
+        /// <summary>
+        /// UintType
+        /// </summary>
+        public const string UintType = "uint";
+
+        /// <summary>
+        /// StringType
+        /// </summary>
+        public const string StringType = "string";
     }
 
     /// <summary>
