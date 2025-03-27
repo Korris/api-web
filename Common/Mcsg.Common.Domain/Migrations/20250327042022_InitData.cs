@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Mcsg.Common.Domain.Migrations
 {
     /// <inheritdoc />
@@ -3909,6 +3911,53 @@ namespace Mcsg.Common.Domain.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                schema: "identity",
+                table: "Roles",
+                columns: new[] { "Id", "ConcurrencyStamp", "DisplayName", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("35e7cb92-d601-4d51-83f7-d327242c8f7e"), null, "Content Admin", "ContentAdmin", "CONTENTADMIN" },
+                    { new Guid("53a787ef-f614-4425-95ed-c1905a917b85"), null, "User", "User", "USER" },
+                    { new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5"), null, "System Admin", "SystemAdmin", "SYSTEMADMIN" },
+                    { new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4"), null, "Admin", "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "identity",
+                table: "UserNameHistories",
+                columns: new[] { "Id", "CreatedBy", "CreatedOn", "IsDelete", "ModifiedBy", "ModifiedOn", "SyncError", "SyncedOn", "TagData", "UserId", "UserName" },
+                values: new object[,]
+                {
+                    { new Guid("07efe4ce-85cb-4949-a2f0-94bad91383b5"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, null, null, null, new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"), "systemadmin" },
+                    { new Guid("c17430aa-37b4-47fc-a461-7faea85cf6ca"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, null, null, null, new Guid("00000000-0000-0000-0000-000000000001"), "system" },
+                    { new Guid("c80574fd-9a67-43ca-8d6f-83d4d2b67701"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, null, null, null, new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"), "admin" },
+                    { new Guid("f087ae65-c26d-42ed-8698-f6d2758097f2"), null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), false, null, null, null, null, null, new Guid("1a07b416-f417-475b-9cef-f50ee8591a91"), "contentadmin" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "identity",
+                table: "Users",
+                columns: new[] { "Id", "AccessFailedCount", "ActivedDate", "Avatar", "ConcurrencyStamp", "CoverPhoto", "CreatedBy", "CreatedIp", "CreatedOn", "DateOfBirth", "DeletedAt", "DeletedBy", "Email", "EmailConfirmed", "FirstName", "Gender", "IsActiveEarning", "IsDelete", "IsExpiredSubscriptionSent", "IsWalletShowing", "Language", "LastLoginDate", "LastLoginIp", "LastName", "Location", "LockoutEnabled", "LockoutEnd", "MinioInstance", "ModifiedBy", "ModifiedOn", "NextCheckPremium", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PremiumDate", "ProfileId", "ProfileName", "ReferralCode", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "Status", "StatusReason", "StorageLimit", "SyncError", "SyncedOn", "TagData", "TwoFactorEnabled", "Type", "UserName" },
+                values: new object[,]
+                {
+                    { new Guid("00000000-0000-0000-0000-000000000001"), 0, null, null, "a625d884-4387-48cf-b584-3a9b1b228832", null, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), null, null, null, "system@focfoc.com", false, null, null, false, false, null, false, null, null, null, null, null, false, null, 0, null, null, null, "SYSTEM@FOCFOC.COM", "SYSTEM", "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", null, false, null, "system", "system", null, null, null, "64be2bdf-b79b-4c0a-9dec-419cda1b67d5", 1, null, 0, null, null, null, false, 3, "system" },
+                    { new Guid("1a07b416-f417-475b-9cef-f50ee8591a91"), 0, null, null, "a625d884-4387-48cf-b584-3a9b1b228832", null, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), null, null, null, "contentadmin@focfoc.com", false, null, null, false, false, null, false, null, null, null, null, null, false, null, 0, null, null, null, "CONTENTADMIN@FOCFOC.COM", "CONTENTADMIN", "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", null, false, null, "contentadmin", "contentadmin", null, null, null, "64be2bdf-b79b-4c0a-9dec-419cda1b67d5", 1, null, 0, null, null, null, false, 3, "contentadmin" },
+                    { new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"), 0, null, null, "a625d884-4387-48cf-b584-3a9b1b228832", null, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), null, null, null, "admin@focfoc.com", false, null, null, false, false, null, false, null, null, null, null, null, false, null, 0, null, null, null, "ADMIN@FOCFOC.COM", "ADMIN", "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", null, false, null, "admin", "admin", null, null, null, "64be2bdf-b79b-4c0a-9dec-419cda1b67d5", 1, null, 0, null, null, null, false, 4, "admin" },
+                    { new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"), 0, null, null, "a625d884-4387-48cf-b584-3a9b1b228832", null, null, null, new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified), null, null, null, "systemadmin@focfoc.com", false, null, null, false, false, null, false, null, null, null, null, null, false, null, 0, null, null, null, "SYSTEMADMIN@FOCFOC.COM", "SYSTEMADMIN", "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==", null, false, null, "systemadmin", "systemadmin", null, null, null, "64be2bdf-b79b-4c0a-9dec-419cda1b67d5", 1, null, 0, null, null, null, false, 5, "systemadmin" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "identity",
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { new Guid("35e7cb92-d601-4d51-83f7-d327242c8f7e"), new Guid("1a07b416-f417-475b-9cef-f50ee8591a91") },
+                    { new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4"), new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb") },
+                    { new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5"), new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf") }
                 });
 
             migrationBuilder.CreateIndex(

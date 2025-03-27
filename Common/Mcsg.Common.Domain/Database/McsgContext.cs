@@ -54,7 +54,7 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
         builder.Entity<OpenIddictEntityFrameworkCoreScope>(p => p.ToTable("OpenIdScopes", DbSchema.OpenId));
         builder.Entity<OpenIddictEntityFrameworkCoreToken>(p => p.ToTable("OpenIdTokens", DbSchema.OpenId));
 
-        //DataSeeder.Seed(builder);
+        DataSeeder.Seed(builder);
     }
 
     #endregion

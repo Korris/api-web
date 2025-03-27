@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcsg.Common.Domain.Migrations
 {
     [DbContext(typeof(McsgContext))]
-    [Migration("20240722232908_InitData")]
+    [Migration("20250327042022_InitData")]
     partial class InitData
     {
         /// <inheritdoc />
@@ -2930,6 +2930,36 @@ namespace Mcsg.Common.Domain.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", "identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("53a787ef-f614-4425-95ed-c1905a917b85"),
+                            DisplayName = "User",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5"),
+                            DisplayName = "System Admin",
+                            Name = "SystemAdmin",
+                            NormalizedName = "SYSTEMADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4"),
+                            DisplayName = "Admin",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("35e7cb92-d601-4d51-83f7-d327242c8f7e"),
+                            DisplayName = "Content Admin",
+                            Name = "ContentAdmin",
+                            NormalizedName = "CONTENTADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.SmartCountAction", b =>
@@ -5750,6 +5780,112 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("ReferralCode");
 
                     b.ToTable("Users", "identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            Email = "systemadmin@focfoc.com",
+                            EmailConfirmed = false,
+                            IsActiveEarning = false,
+                            IsDelete = false,
+                            IsWalletShowing = false,
+                            LockoutEnabled = false,
+                            MinioInstance = 0,
+                            NormalizedEmail = "SYSTEMADMIN@FOCFOC.COM",
+                            NormalizedUserName = "SYSTEMADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==",
+                            PhoneNumberConfirmed = false,
+                            ProfileId = "systemadmin",
+                            ProfileName = "systemadmin",
+                            SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
+                            Status = 1,
+                            StorageLimit = 0,
+                            TwoFactorEnabled = false,
+                            Type = 5,
+                            UserName = "systemadmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            Email = "admin@focfoc.com",
+                            EmailConfirmed = false,
+                            IsActiveEarning = false,
+                            IsDelete = false,
+                            IsWalletShowing = false,
+                            LockoutEnabled = false,
+                            MinioInstance = 0,
+                            NormalizedEmail = "ADMIN@FOCFOC.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==",
+                            PhoneNumberConfirmed = false,
+                            ProfileId = "admin",
+                            ProfileName = "admin",
+                            SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
+                            Status = 1,
+                            StorageLimit = 0,
+                            TwoFactorEnabled = false,
+                            Type = 4,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("1a07b416-f417-475b-9cef-f50ee8591a91"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            Email = "contentadmin@focfoc.com",
+                            EmailConfirmed = false,
+                            IsActiveEarning = false,
+                            IsDelete = false,
+                            IsWalletShowing = false,
+                            LockoutEnabled = false,
+                            MinioInstance = 0,
+                            NormalizedEmail = "CONTENTADMIN@FOCFOC.COM",
+                            NormalizedUserName = "CONTENTADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==",
+                            PhoneNumberConfirmed = false,
+                            ProfileId = "contentadmin",
+                            ProfileName = "contentadmin",
+                            SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
+                            Status = 1,
+                            StorageLimit = 0,
+                            TwoFactorEnabled = false,
+                            Type = 3,
+                            UserName = "contentadmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a625d884-4387-48cf-b584-3a9b1b228832",
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            Email = "system@focfoc.com",
+                            EmailConfirmed = false,
+                            IsActiveEarning = false,
+                            IsDelete = false,
+                            IsWalletShowing = false,
+                            LockoutEnabled = false,
+                            MinioInstance = 0,
+                            NormalizedEmail = "SYSTEM@FOCFOC.COM",
+                            NormalizedUserName = "SYSTEM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIvW0O+erQdOT5gTf8NMInqD6siJ/HJy+3cYsZ0V6NmQFcm4HWvysYxajMisoF6M5A==",
+                            PhoneNumberConfirmed = false,
+                            ProfileId = "system",
+                            ProfileName = "system",
+                            SecurityStamp = "64be2bdf-b79b-4c0a-9dec-419cda1b67d5",
+                            Status = 1,
+                            StorageLimit = 0,
+                            TwoFactorEnabled = false,
+                            Type = 3,
+                            UserName = "system"
+                        });
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserAuthenticator", b =>
@@ -6009,6 +6145,40 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserNameHistories", "identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("07efe4ce-85cb-4949-a2f0-94bad91383b5"),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            IsDelete = false,
+                            UserId = new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"),
+                            UserName = "systemadmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c80574fd-9a67-43ca-8d6f-83d4d2b67701"),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            IsDelete = false,
+                            UserId = new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"),
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("f087ae65-c26d-42ed-8698-f6d2758097f2"),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            IsDelete = false,
+                            UserId = new Guid("1a07b416-f417-475b-9cef-f50ee8591a91"),
+                            UserName = "contentadmin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c17430aa-37b4-47fc-a461-7faea85cf6ca"),
+                            CreatedOn = new DateTime(2024, 8, 8, 18, 45, 4, 0, DateTimeKind.Unspecified),
+                            IsDelete = false,
+                            UserId = new Guid("00000000-0000-0000-0000-000000000001"),
+                            UserName = "system"
+                        });
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserOtp", b =>
@@ -6458,6 +6628,23 @@ namespace Mcsg.Common.Domain.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", "identity");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf"),
+                            RoleId = new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5")
+                        },
+                        new
+                        {
+                            UserId = new Guid("ff09e6eb-8ff5-4073-b8f7-a1bc7dc8d4cb"),
+                            RoleId = new Guid("b0632b0e-8ebd-4303-8ec6-e100ba4204e4")
+                        },
+                        new
+                        {
+                            UserId = new Guid("1a07b416-f417-475b-9cef-f50ee8591a91"),
+                            RoleId = new Guid("35e7cb92-d601-4d51-83f7-d327242c8f7e")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
