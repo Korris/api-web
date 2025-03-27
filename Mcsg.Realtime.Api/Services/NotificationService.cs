@@ -84,7 +84,8 @@ public class NotificationService : BaseS, INotificationService
             NotificationType = GetTransactionType(notificationEntityType),
             UserAvatar = user?.Avatar,
             CurrencyUnit = req.CurrencyUnit,
-            ExpiredDate = user?.PremiumDate
+            ExpiredDateOriginal = user?.PremiumDate,
+            ExpiredDate = user?.PremiumDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
         };
 
         var responseNotify = JsonConvert.SerializeObject(response);
@@ -981,7 +982,8 @@ public class NotificationService : BaseS, INotificationService
             response.Message = NotificationType.RemindExpiredSubscription;
             response.CreatedOn = noti?.CreatedOn ?? DateTime.UtcNow;
             response.NotificationType = NotificationType.RemindExpiredSubscription;
-            response.ExpiredDate = i.ExpiredDate;
+            response.ExpiredDateOriginal = i.ExpiredDate;
+            response.ExpiredDate = i.ExpiredDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             await _hc.Clients.Group(i.UserId.ToString()).SendAsync(RealTimeTopic.ReceiveNotification, JsonConvert.SerializeObject(response));
             await SendFireBaseNotification(new List<Guid> { i.UserId }, response, "FocFoc");
         }
@@ -1797,7 +1799,7 @@ public class NotificationService : BaseS, INotificationService
             case NotificationType.BuyRenewPremiumTransaction:
                 parameters = new Dictionary<string, string>()
                 {
-                    ["expiredDate"] = response.ExpiredDate?.ToString("HH:mm, dd.MM.yyyy")
+                    ["expiredDate"] = response.ExpiredDateOriginal?.ToString("HH:mm, dd.MM.yyyy")
                 };
                 break;
 
