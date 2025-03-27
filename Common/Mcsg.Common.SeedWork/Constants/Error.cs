@@ -386,6 +386,16 @@ public static class Error
     /// </summary>
     public const string E317 = "SessionId not found";
 
+    /// <summary>
+    /// Not allowed to change SysAdmin role
+    /// </summary>
+    public const string E318 = "Not allowed to change SysAdmin role";
+
+    /// <summary>
+    /// Not allowed to change the role to the same as the current role
+    /// </summary>
+    public const string E319 = "Not allowed to change the role to the same as the current role";
+
     #endregion
 
     #region -- E4xx --

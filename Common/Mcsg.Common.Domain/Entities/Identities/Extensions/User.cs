@@ -5,6 +5,7 @@ namespace Mcsg.Common.Domain.Entities;
 using Core;
 using Core.Dtos;
 using SeedWork.Dtos;
+using SeedWork.Enums;
 using SeedWork.Extensions;
 
 partial class User
@@ -19,6 +20,19 @@ partial class User
         Id = Guid.NewGuid();
         CreatedOn = DateTime.UtcNow;
         Roles = [];
+    }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="modifiedBy"></param>
+    public void Update(UserType type, Guid modifiedBy)
+    {
+        Type = type;
+
+        ModifiedOn = DateTime.UtcNow;
+        ModifiedBy = modifiedBy;
     }
 
     /// <summary>

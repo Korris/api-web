@@ -161,6 +161,14 @@ public class AuthenticationController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("change-role"), Authorize(Roles = RoleName.SysAdmin)]
+    public async Task<IActionResult> ChangeRole(AuthenticationChangeRoleR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ChangeRole(request);
+        return Ok(result);
+    }
+
     #endregion
 
     #region -- Fields --

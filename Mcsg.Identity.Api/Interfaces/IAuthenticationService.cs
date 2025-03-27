@@ -11,7 +11,7 @@ public interface IAuthenticationService
     Task<TokenDto> LoginUser(AuthenticationLoginUserR request);
     Task<bool> VerifyOtp(AuthenticationVerifyOtpR request);
     Task<TokenDto> LoginSocial(AuthenticationLoginSocialR request);
-    Task<bool> Logout(string? refreshToken,Guid? userId, string? deviceToken);
+    Task<bool> Logout(string? refreshToken, Guid? userId, string? deviceToken);
     Task<bool> TerminateAllOtherSessions(Guid? userId, string? refreshToken);
     Task<VerifyUserResponse> ResendOtp(AuthenticationResendOtpR request);
     Task<TokenDto> ChangePassword(AuthenticationChangePasswordR request);
@@ -20,4 +20,5 @@ public interface IAuthenticationService
     Task<bool> CreateNewUserPassword(AuthenticationSetPasswordR request);
     Task<RefreshTokenResponse> VerifyRefreshToken(AuthenticationRefreshTokenR request);
     Task<bool> DeleteUser(AuthenticationDeleteUserR request);
+    Task<bool> ChangeRole(AuthenticationChangeRoleR request);
 }

@@ -16,6 +16,7 @@ using Common.Domain.Entities;
 using Common.SeedWork;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Exceptions;
+using Common.SeedWork.Extensions;
 using Constants;
 using Interfaces;
 using Requests;
@@ -818,6 +819,57 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
             RefreshToken = res.RefreshToken,
             RefreshTokenExpiredDate = res.RefreshTokenExpiredDate
         };
+    }
+
+    public async Task<bool> ChangeRole(AuthenticationChangeRoleR request)
+    {
+        var vr = new AuthenticationChangeRoleV().Validate(request);
+        if (!vr.IsValid)
+        {
+            throw new BadRequestException(nameof(E000), E000);
+        }
+
+        var user = await _userManager.FindByIdAsync(request.TargetUserId);
+        if (user == null)
+        {
+            throw new NotFoundException(nameof(E303), E303);
+        }
+
+        var role = await _context.Roles.FirstOrDefaultAsync(p => p.Name == request.RoleName);
+        if (role == null)
+        {
+            throw new NotFoundException(nameof(E304), E304);
+        }
+
+        var currenRoles = await _userManager.GetRolesAsync(user);
+        if (role.Name == RoleName.SysAdmin || currenRoles[0] == RoleName.SysAdmin)
+        {
+            throw new BadRequestException(nameof(E318), E318);
+        }
+
+        if (role.Name == currenRoles[0])
+        {
+            throw new BadRequestException(nameof(E319), E319);
+        }
+
+        var removeRoles = await _userManager.RemoveFromRolesAsync(user, currenRoles);
+        if (!removeRoles.Succeeded)
+        {
+            var error = removeRoles.Errors.FirstOrDefault();
+            throw new BadRequestException(error?.Code + "", error?.Description + "");
+        }
+
+        var addRole = await _userManager.AddToRoleAsync(user, role.Name ?? RoleName.User);
+        if (!addRole.Succeeded)
+        {
+            var error = addRole.Errors.FirstOrDefault();
+            throw new BadRequestException(error?.Code + "", error?.Description + "");
+        }
+
+        var type = role.Name.ToEnum(UserType.User);
+        user.Update(type, request.UserId!.Value);
+
+        return await _context.SaveChangesAsync(default) > 0;
     }
 
     public async Task<bool> DeleteUser(AuthenticationDeleteUserR request)
