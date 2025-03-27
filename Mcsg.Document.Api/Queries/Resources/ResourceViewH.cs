@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Document.Api.Queries;
 
+using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
@@ -60,18 +61,28 @@ public class ResourceViewH : BaseMinioH, IRequestHandler<ResourceViewR, SingleRe
         }
         #endregion
 
+        List<PostPermission> postPermission = request.UserId != ettPost.UserId ? [PostPermission.Public] : [PostPermission.Public, PostPermission.Private];
+
         var q = from sp in _context.Available<DocumentSubPost>()
                 join r in _context.Available<DocumentResource>()
                 on sp.Id equals r.SubPostId
-                where sp.PostId == ettPost.Id && sp.IsAllowDownload && sp.Order == request.Order
+                where sp.PostId == ettPost.Id && sp.IsAllowDownload && sp.Order == request.Order && postPermission.Contains(sp.Permission)
+                                && (sp.Status == PostStatus.Public || ((request.UserId == ettPost.UserId || request.IsAdministrator) && StatusUtils.PostStatuses.Contains(sp.Status)))
                 orderby sp.Order
                 select new
                 {
+                    sp.IsPremium,
                     r.Title,
                     r.Url,
                     r.BucketName,
                     r.MinioInstance
                 };
+
+        // NotPremiumUser
+        if (!request.IsPremium)
+        {
+            q = q.Where(p => p.IsPremium == false);
+        }
 
         var items = await q.ToListAsync(cancellationToken);
 

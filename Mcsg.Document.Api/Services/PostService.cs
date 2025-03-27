@@ -343,6 +343,7 @@ public partial class PostService : BaseMinioS, IPostService
             {
                 subpost.Files = [];
                 subpost.Body = "";
+                subpost.IsAllowDownload = false;
             }
 
             var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
@@ -350,6 +351,7 @@ public partial class PostService : BaseMinioS, IPostService
             {
                 subpost.Files = [];
                 subpost.Body = "";
+                subpost.IsAllowDownload = false;
             }
         }
 
