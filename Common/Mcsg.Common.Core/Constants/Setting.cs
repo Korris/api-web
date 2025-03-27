@@ -878,6 +878,11 @@ public class Setting : SeedWork.Constants.Setting
         /// KindDonateFfc
         /// </summary>
         public const string KindDonateFfc = "KindDonateFfc";
+
+        /// <summary>
+        /// DaysUntilPremiumExpiry
+        /// </summary>
+        public const string DaysUntilPremiumExpiry = "DaysUntilPremiumExpiry";
     }
 
     /// <summary>

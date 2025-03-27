@@ -26,7 +26,7 @@ public partial class Device : AuditableEntity
     public DeviceType Type { get; set; }
 
     /// <summary>
-    /// 0 Guest, 1 Free, 2 Premium, 3 Administrator
+    /// 0 Guest, 1 Free, 2 Premium, 3 ContentAdmin, 4 Admin, 5 SystemAdmin
     /// </summary>
     public UserType UserType { get; set; }
 }

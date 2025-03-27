@@ -537,6 +537,11 @@ public static class Error
     /// </summary>
     public const string E718 = "Can't buy the same package while its usage period is still active";
 
+    /// <summary>
+    /// Can't create wallet address
+    /// </summary>
+    public const string E719 = "Can't create wallet address";
+
     #endregion
 
     #region -- E9xx --

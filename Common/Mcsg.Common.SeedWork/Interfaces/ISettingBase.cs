@@ -72,6 +72,11 @@ public interface ISettingBase
     bool DevMode { get; set; }
 
     /// <summary>
+    /// For test
+    /// </summary>
+    bool ForTest { get; set; }
+
+    /// <summary>
     /// Protocols (An example such as 'Http1_80;Http2_81' means that Http1 runs on port 80 and Http2 runs on port 81)
     /// </summary>
     string? Protocols { get; set; }
