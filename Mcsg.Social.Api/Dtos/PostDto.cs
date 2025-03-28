@@ -39,4 +39,5 @@ public class PostDto
     public bool IsBlur { get; set; }
     public Guid? SharePostId { get; set; }
     public SharePostType? SharePostType { get; set; }
+    public bool IsLongText { get; set; }
 }

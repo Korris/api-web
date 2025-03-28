@@ -26,9 +26,10 @@ partial class SocialPost
     /// <param name="customNote">Custom note</param>
     /// <param name="sharePostId">SharePostId</param>
     /// <param name="sharePostType">SharePostId</param>
+    /// <param name="isLongText">IsLongText</param>
     /// <param name="createdBy">Created by</param>
     /// <returns>Return the result</returns>
-    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid? sharePostId, SharePostType? sharePostType, Guid createdBy)
+    public static SocialPost Create(string? title, string? body, string? thumbnailUrl, string? authorName, string? customNote, Guid? sharePostId, SharePostType? sharePostType, bool isLongText, Guid createdBy)
     {
         var hashId = Setting.PostConfig.HashLength.GetRandomString();
 
@@ -45,6 +46,7 @@ partial class SocialPost
             UserId = createdBy,
             SharePostId = sharePostId,
             SharePostType = sharePostType,
+            IsLongText = isLongText,
             CreatedBy = createdBy
         };
 
@@ -70,13 +72,15 @@ partial class SocialPost
     /// <param name="body">Body</param>
     /// <param name="thumbnailUrl">Thumbnail URL</param>
     /// <param name="customNote">Custom note</param>
+    /// <param name="isLongText">Is long text</param>
     /// <param name="modifiedBy">Modified by</param>
-    public void Update(string? title, string? body, string? thumbnailUrl, string? customNote, Guid modifiedBy)
+    public void Update(string? title, string? body, string? thumbnailUrl, string? customNote, bool isLongText, Guid modifiedBy)
     {
         Title = title;
         Body = body;
         ThumbnailUrl = thumbnailUrl;
         CustomNote = customNote;
+        IsLongText = isLongText;
 
         ModifiedBy = modifiedBy;
         ModifiedOn = DateTime.UtcNow;

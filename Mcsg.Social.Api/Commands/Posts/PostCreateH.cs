@@ -32,6 +32,7 @@ using Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Requests;
 using Validators;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
@@ -121,6 +122,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
         var receiverIds = request.Content.ToGuids();
+        var isLongText = request.Content?.Length >= PostConfig.LongTextLength;
 
         // Check first post
         var rewards = await _postService.CheckRewardsForPost(userId, PostType.Feed);
@@ -141,7 +143,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             request.CustomNote = _businessText.ConvertCustomNoteFromMobile(request.CustomNote);
         }
 
-        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, request.SharePostType, userId);
+        var ett = SocialPost.Create(request.Title, request.Content, request.ThumbnailUrl, profileName, request.CustomNote, request.SharePostId, request.SharePostType, isLongText, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
         await _context.SocialPosts.AddAsync(ett, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -196,6 +198,7 @@ public class PostCreateH : BaseMinioH, IRequestHandler<PostCreateR, SingleRespon
             UserName = userName,
             SharePostId = ett.SharePostId,
             SharePostType = ett.SharePostType,
+            IsLongText = ett.IsLongText
         };
 
         if (request.MetaData != null)

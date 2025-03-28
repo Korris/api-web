@@ -195,6 +195,11 @@ public class Setting : SeedWork.Constants.Setting
         /// Valid video size (8MB)
         /// </summary>
         public const int ValidVideoSize = 8;
+
+        /// <summary>
+        /// Threshold length for classifying long text.
+        /// </summary>
+        public const int LongTextLength = 300;
     }
 
     /// <summary>

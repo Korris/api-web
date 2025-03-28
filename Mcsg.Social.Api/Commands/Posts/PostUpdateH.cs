@@ -32,6 +32,7 @@ using Extensions;
 using Interfaces;
 using Requests;
 using Validators;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
@@ -119,6 +120,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
         var profileId = request.ProfileId;
         var userFolder = request.UserFolder;
         var userAvatar = request.UserAvatar;
+        var isLongText = request.Content?.Length >= PostConfig.LongTextLength;
 
         var content = await _businessText.Process(request.Content);
 
@@ -131,7 +133,7 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             request.CustomNote = _businessText.ConvertCustomNoteFromMobile(request.CustomNote);
         }
 
-        ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, userId);
+        ett.Update(request.Title, request.Content, request.ThumbnailUrl, request.CustomNote, isLongText, userId);
         ett.BuildCustomNote(request.ShortCustomNote);
 
         var result = new FeedPostDto
@@ -152,7 +154,8 @@ public class PostUpdateH : BaseMinioH, IRequestHandler<PostUpdateR, SingleRespon
             Rewards = rewards,
             CustomNote = ett.CustomNote,
             MetaData = request.MetaData,
-            SharePostId = ett.SharePostId
+            SharePostId = ett.SharePostId,
+            IsLongText = ett.IsLongText
         };
 
         await _context.SaveChangesAsync(default);
