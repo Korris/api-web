@@ -34,4 +34,9 @@ public partial class SocialPost : BasePost
     [ForeignKey("UserId")]
     [InverseProperty("SocialPosts")]
     public virtual User User { get; set; } = null!;
+
+    /// <summary>
+    /// IsLongText
+    /// </summary>
+    public bool IsLongText { get; set; }
 }

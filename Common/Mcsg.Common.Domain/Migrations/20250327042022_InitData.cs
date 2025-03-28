@@ -1131,7 +1131,8 @@ namespace Mcsg.Common.Domain.Migrations
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
-                    SharePostType = table.Column<int>(type: "integer", nullable: true)
+                    SharePostType = table.Column<int>(type: "integer", nullable: true),
+                    IsLongText = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

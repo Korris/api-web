@@ -3146,6 +3146,9 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsLongText")
+                        .HasColumnType("boolean");
+
                     b.Property<bool?>("IsMature")
                         .HasColumnType("boolean");
 
