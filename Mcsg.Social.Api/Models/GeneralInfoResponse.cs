@@ -41,15 +41,14 @@ public class Interactions
     public int ComicCount { get; set; }
 }
 
-public class Reaction
+public class InteractionSummary
 {
-    public Reaction(int last7Days, int previousLast7Days)
-    {
-        Last7Days = last7Days;
-        PreviousLast7Days = previousLast7Days;
-    }
-
-    public int Last7Days { get; set; }
-
-    public int PreviousLast7Days { get; set; }
+    public int CurrentCommentCount { get; set; }
+    public int PreviousCommentCount { get; set; }
+    public int CurrentReactionCount { get; set; }
+    public int PreviousReactionCount { get; set; }
+    public int CurrentShareCount { get; set; }
+    public int PreviousShareCount { get; set; }
+    public int CurrentTotal => CurrentCommentCount + CurrentReactionCount + CurrentShareCount;
+    public int PreviousTotal => PreviousCommentCount + PreviousReactionCount + PreviousShareCount;
 }
