@@ -41,7 +41,6 @@ public partial class ChartService : IChartService
             })
             .ToListAsync();
 
-
         var subCommentCounts = await qPost
             .SelectMany(p => p.SocialSubPosts)
             .Where(q => !q.IsDelete)
@@ -54,7 +53,6 @@ public partial class ChartService : IChartService
                 Quantity = g.Count()
             })
             .ToListAsync();
-
 
         var totalComment = commentCounts.Concat(subCommentCounts)
             .GroupBy(x => x.Label)
@@ -219,10 +217,55 @@ public partial class ChartService : IChartService
         result.CommentChartResponse = await GetPostCommentChart(userId, timezoneOffset, days, postType);
         result.ReactionChartResponse = await GetPostReactionChart(userId, timezoneOffset, days, postType);
         result.ShareChartResponse = await GetPostShareChart(userId, timezoneOffset, days, postType);
+
         return result;
     }
 
-    public async Task<List<ChartResponse>> GetPostReactionChart(Guid? userId, int timezoneOffset, int days, PostType postType)
+    public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
+    {
+        var days = isGetDataIn7Days ? 7 : 30;
+        var today = DateTime.Today.ToUniversalTime();
+        var lastDayToGetData = today.AddDays(-days);
+        var lastDayToCompare = today.AddDays(-days * 2);
+
+        var userFollowingIds = await _context.Available<UserFollow>()
+            .Where(p => p.UserFollowerId == userId)
+            .Select(p => p.UserFollowingId)
+            .ToListAsync();
+
+        var userFollowingThisUserForChart = _context.Available<UserFollow>()
+            .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
+            .GroupBy(p => p.CreatedOn.Date)
+            .Select(g => new ChartResponse
+            {
+                Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
+                Quantity = g.Count()
+            })
+            .ToList();
+
+        var userFollowing = from a in _context.UserAvailable
+                            join b in _context.Available<UserFollow>()
+                              on a.Id equals b.UserFollowerId
+                            where b.UserFollowingId == userId
+                            && b.CreatedOn >= lastDayToGetData
+                            select new UserFollowedResponse
+                            {
+                                UserId = a.Id,
+                                ProfileName = a.ProfileName,
+                                Avatar = a.Avatar,
+                                UserName = a.UserName,
+                                IsFollowing = userFollowingIds.Contains(a.Id)
+                            };
+
+        return new FollowersChartResponse
+        {
+            UserFollowedResponses = await userFollowing.ToListAsync(),
+            ChartResponse = MapChartData(days, timezoneOffset, userFollowingThisUserForChart),
+            FollowerInteractions = await GetFollowerInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
+        };
+    }
+
+    private async Task<List<ChartResponse>> GetPostReactionChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
@@ -276,7 +319,7 @@ public partial class ChartService : IChartService
         return MapChartData(days, timezoneOffset, await query.ToListAsync());
     }
 
-    public async Task<List<ChartResponse>> GetPostShareChart(Guid? userId, int timezoneOffset, int days, PostType postType)
+    private async Task<List<ChartResponse>> GetPostShareChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
@@ -324,7 +367,7 @@ public partial class ChartService : IChartService
         return MapChartData(days, timezoneOffset, totalShare);
     }
 
-    public async Task<List<ChartResponse>> GetPostCommentChart(Guid? userId, int timezoneOffset, int days, PostType postType)
+    private async Task<List<ChartResponse>> GetPostCommentChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
         var today = DateTime.Today.ToUniversalTime();
         var date = today.AddDays(-days);
@@ -355,7 +398,6 @@ public partial class ChartService : IChartService
                         Label = g.Key.ToLabel("dd MMMM"),
                         Quantity = g.Count()
                     });
-
                 break;
 
             case PostType.Story:
@@ -381,7 +423,6 @@ public partial class ChartService : IChartService
                         Label = g.Key.ToLabel("dd MMMM"),
                         Quantity = g.Count()
                     });
-
                 break;
 
             default:
@@ -411,50 +452,6 @@ public partial class ChartService : IChartService
         }
 
         return MapChartData(days, timezoneOffset, await query.ToListAsync());
-    }
-
-    public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
-    {
-        var days = isGetDataIn7Days ? 7 : 30;
-        var today = DateTime.Today.ToUniversalTime();
-        var lastDayToGetData = today.AddDays(-days);
-        var lastDayToCompare = today.AddDays(-days * 2);
-
-        var userFollowingIds = await _context.Available<UserFollow>()
-            .Where(p => p.UserFollowerId == userId)
-            .Select(p => p.UserFollowingId)
-            .ToListAsync();
-
-        var userFollowingThisUserForChart = _context.Available<UserFollow>()
-            .Where(p => p.UserFollowingId == userId && p.CreatedOn >= lastDayToGetData)
-            .GroupBy(p => p.CreatedOn.Date)
-            .Select(g => new ChartResponse
-            {
-                Label = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day).ToLabel("dd MMMM"),
-                Quantity = g.Count()
-            })
-            .ToList();
-
-        var userFollowing = from a in _context.UserAvailable
-                            join b in _context.Available<UserFollow>()
-                              on a.Id equals b.UserFollowerId
-                            where b.UserFollowingId == userId
-                            && b.CreatedOn >= lastDayToGetData
-                            select new UserFollowedResponse
-                            {
-                                UserId = a.Id,
-                                ProfileName = a.ProfileName,
-                                Avatar = a.Avatar,
-                                UserName = a.UserName,
-                                IsFollowing = userFollowingIds.Contains(a.Id)
-                            };
-
-        return new FollowersChartResponse
-        {
-            UserFollowedResponses = await userFollowing.ToListAsync(),
-            ChartResponse = MapChartData(days, timezoneOffset, userFollowingThisUserForChart),
-            FollowerInteractions = await GetFollowerInteractionsAsync(userId, lastDayToCompare, lastDayToGetData)
-        };
     }
 
     private async Task<FeedChartResponse> GetNumberOfInteractionProfile(Guid? userId, DateTime dateToCompare, DateTime dateToGetData)
@@ -534,7 +531,9 @@ public partial class ChartService : IChartService
                 Quantity = quantity?.Quantity ?? 0,
             });
         }
+
         result.Reverse();
+
         return result;
     }
 

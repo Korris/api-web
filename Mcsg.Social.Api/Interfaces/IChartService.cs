@@ -5,14 +5,14 @@ using Models;
 
 public interface IChartService
 {
+    Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days);
+
     /// <summary>
     /// Chart information for User
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
     Task<GeneralInfoResponse> GetGeneralInfo(Guid? userId);
-
-    Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days);
 
     /// <summary>
     /// Chart information for Comic, Document and Story
@@ -24,5 +24,5 @@ public interface IChartService
     /// <returns></returns>
     Task<PostChartResponse> GetChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days, PostType postType);
 
-    Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days);
+    Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days);
 }
