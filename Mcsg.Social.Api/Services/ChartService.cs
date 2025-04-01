@@ -22,7 +22,7 @@ public partial class ChartService : IChartService
 
     public async Task<FeedChartResponse> GetInteractionChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
     {
-        var nowUtc = DateTime.Today.ToUniversalTime();
+        var nowUtc = DateTime.UtcNow;
         var days = isGetDataIn7Days ? 7 : 30;
         var daysAgoUtc = nowUtc.AddDays(-days);
         DateTime lastDayToGetData = nowUtc.AddDays(-days);
@@ -141,7 +141,7 @@ public partial class ChartService : IChartService
     {
         var result = new GeneralInfoResponse();
 
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         var dateToGetData = today.AddDays(-7);
         var dateToCompare = today.AddDays(-14);
 
@@ -170,7 +170,7 @@ public partial class ChartService : IChartService
         var result = new PostChartResponse();
 
         var days = isGetDataIn7Days ? 7 : 30;
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         DateTime lastDayToGetData = today.AddDays(-days);
         DateTime lastDayToCompare = today.AddDays(-days * 2);
         var data = 0;
@@ -224,7 +224,7 @@ public partial class ChartService : IChartService
     public async Task<FollowersChartResponse> GetFollowersChartInfo(Guid? userId, int timezoneOffset, bool isGetDataIn7Days)
     {
         var days = isGetDataIn7Days ? 7 : 30;
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         var lastDayToGetData = today.AddDays(-days);
         var lastDayToCompare = today.AddDays(-days * 2);
 
@@ -267,7 +267,7 @@ public partial class ChartService : IChartService
 
     private async Task<List<ChartResponse>> GetPostReactionChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         var date = today.AddDays(-days);
         IQueryable<ChartResponse> query;
 
@@ -321,7 +321,7 @@ public partial class ChartService : IChartService
 
     private async Task<List<ChartResponse>> GetPostShareChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         var date = today.AddDays(-days);
         List<ChartResponse> totalShare;
 
@@ -369,7 +369,7 @@ public partial class ChartService : IChartService
 
     private async Task<List<ChartResponse>> GetPostCommentChart(Guid? userId, int timezoneOffset, int days, PostType postType)
     {
-        var today = DateTime.Today.ToUniversalTime();
+        var today = DateTime.UtcNow;
         var date = today.AddDays(-days);
         IQueryable<ChartResponse> query;
 
@@ -519,7 +519,7 @@ public partial class ChartService : IChartService
             return result;
         }
 
-        var today = DateTime.Today.ToUniversalTime().AddMinutes(-timezoneOffset);
+        var today = DateTime.UtcNow.AddMinutes(-timezoneOffset);
         for (int i = 0; i < days; i++)
         {
             DateTime date = today.AddDays(-i);
