@@ -68,6 +68,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(AuthenticationLoginUserR request)
     {
+        request.SetForAdmin(false);
         request.Analyze(HttpContext);
         var result = await _authenticationService.LoginUser(request);
         return Ok(result);
@@ -76,6 +77,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("social-login")]
     public async Task<IActionResult> LoginSocial(AuthenticationLoginSocialR request)
     {
+        request.SetForAdmin(false);
         request.Analyze(HttpContext);
         var result = await _authenticationService.LoginSocial(request);
         return Ok(result);

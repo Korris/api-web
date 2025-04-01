@@ -112,6 +112,7 @@ public static class IServiceCollectionExtension
         service.AddAuthorization(p =>
         {
             p.AddPolicy(Policy.Admin, q => q.RequireRole(RoleName.SysAdmin, RoleName.Admin, RoleName.ContentAdmin));
+            p.AddPolicy(Policy.Setting, q => q.RequireRole(RoleName.SysAdmin, RoleName.Admin));
         });
 
         return service;

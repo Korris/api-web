@@ -77,9 +77,14 @@ public class Setting
     public class Policy
     {
         /// <summary>
-        /// Admin
+        /// Admin (ContentAdmin, Admin and SystemAdmin role)
         /// </summary>
         public const string Admin = "Admin";
+
+        /// <summary>
+        /// Admin (Admin and SystemAdmin role)
+        /// </summary>
+        public const string Setting = "Setting";
     }
 
     /// <summary>
