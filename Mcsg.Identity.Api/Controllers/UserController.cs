@@ -162,6 +162,20 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// SyncToChat
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Returns the result</returns>
+    [HttpPost("v1/SyncToChat")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> SyncToChat([FromBody] UserSyncToChatR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
     #endregion
 
     #region -- Fields --

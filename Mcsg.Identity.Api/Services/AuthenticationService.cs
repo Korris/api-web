@@ -7,6 +7,7 @@ using OtpNet;
 namespace Mcsg.Identity.Api.Services;
 
 using Analytic.Application.Protos;
+using Chat.Api.Protos;
 using Common.Core.Constants;
 using Common.Core.Dtos;
 using Common.Core.Enums;
@@ -168,6 +169,7 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             _ = Task.Run(async () => await InitUserWallet(user));
             _ = Task.Run(async () => await SyncCreateToAna(user));
+            _ = Task.Run(async () => await SyncCreateToChat(user));
         }
 
         if (request.IsForAdmin)
@@ -1236,6 +1238,42 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             res.Message = rsp.Message;
             res.Items.Add(rsp.Items.Select(item => new UserOutputDto { Id = item.Id }));
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    private async Task<SyncUserRsp> SyncCreateToChat(User ett)
+    {
+        var res = new SyncUserRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Chat.Chat!);
+            var client = new UserSyncProto.UserSyncProtoClient(channel);
+
+
+            var request = new SyncUserReq
+            {
+                Users =
+                {
+                    new SyncUserProtoDto
+                    {
+                        UserId = ett.Id.ToString(),
+                        ProfileName = ett.ProfileName,
+                        UserName = ett.UserName
+                    }
+                }
+            };
+
+            var rsp = await client.SyncUsersAsync(request);
+
+            res.Message = rsp.Message;
         }
         catch (Exception ex)
         {

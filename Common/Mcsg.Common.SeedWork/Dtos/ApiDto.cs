@@ -30,6 +30,7 @@ public class ApiDto
         Mobile = new MobileDto();
         Wallet = new WalletDto();
         Web = new WebDto();
+        Chat = new ChatDto();
     }
 
     #endregion
@@ -45,6 +46,11 @@ public class ApiDto
     /// Analytic
     /// </summary>
     public AnalyticDto Analytic { get; }
+
+    /// <summary>
+    /// Chat
+    /// </summary>
+    public ChatDto Chat { get; }
 
     /// <summary>
     /// Mobile
@@ -81,6 +87,17 @@ public class ApiDto
         /// Analytic
         /// </summary>
         public string? Analytic { get; set; }
+    }
+
+    /// <summary>
+    /// Chat
+    /// </summary>
+    public class ChatDto : MobileDto
+    {
+        /// <summary>
+        /// Chat
+        /// </summary>
+        public string? Chat { get; set; }
     }
 
     /// <summary>

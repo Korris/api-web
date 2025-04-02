@@ -298,6 +298,10 @@ public class SettingBase : ISettingBase
         if (dic.TryGetValue("RpcWebStory", out val)) Rpc.Web.Story = val;
         if (dic.TryGetValue("RpcWebRealtime", out val)) Rpc.Web.Realtime = val;
         #endregion
+
+        #region -- Rpc.Chat--
+        if (dic.TryGetValue("RpcChatChat", out val)) Rpc.Chat.Chat = val;
+        #endregion
     }
 
     #endregion
@@ -390,6 +394,8 @@ public class SettingBase : ISettingBase
         { "RpcAdminStory", "http://localhost:54205" },
 
         { "RpcAnalyticAnalytic", "http://localhost:54211" },
+
+        { "RpcChatChat", "http://localhost:4100" },
 
         { "RpcMobileComic", "http://localhost:54221" },
         { "RpcMobileDocument", "http://localhost:54222" },

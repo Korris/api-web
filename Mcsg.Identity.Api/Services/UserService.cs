@@ -1,8 +1,10 @@
 ﻿using Dapper;
+using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mcsg.Identity.Api.Services;
 
+using Chat.Api.Protos;
 using Common.Core.Constants;
 using Common.Core.Distributor;
 using Common.Core.Enums;
@@ -262,6 +264,9 @@ public partial class UserService : BaseMinioS, IUserService
 
         await _context.SaveChangesAsync(default);
 
+        // Update avatar to chat api
+        _ = Task.Run(async () => await SyncCreateToChat(user));
+
         await SyncWalletUserInfo(user);
 
         return await CreateUserRespone(user, true);
@@ -327,6 +332,9 @@ public partial class UserService : BaseMinioS, IUserService
 
                 user.Avatar = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
                 await _context.SaveChangesAsync(default);
+
+                // Update avatar to chat api
+                _ = Task.Run(async () => await SyncCreateToChat(user));
             }
         }
         catch (Exception ex)
@@ -335,6 +343,42 @@ public partial class UserService : BaseMinioS, IUserService
         }
 
         return new UserAvatarUpdateResponse { Avatar = user.Avatar };
+    }
+
+    private async Task<SyncUserRsp> SyncCreateToChat(User ett)
+    {
+        var res = new SyncUserRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Chat.Chat!);
+            var client = new UserSyncProto.UserSyncProtoClient(channel);
+
+            var request = new SyncUserReq
+            {
+                Users =
+                {
+                    new SyncUserProtoDto
+                    {
+                        UserId = ett.Id.ToString(),
+                        ProfileName = ett.ProfileName,
+                        Avatar = ett.Avatar,
+                        UserName = ett.UserName
+                    }
+                }
+            };
+
+            var rsp = await client.SyncUsersAsync(request);
+
+            res.Message = rsp.Message;
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
     }
 
     public async Task<UserCoverPhotoUpdateResponse> UpdateUserCoverPhoto(UserCoverPhotoUpdateR request)

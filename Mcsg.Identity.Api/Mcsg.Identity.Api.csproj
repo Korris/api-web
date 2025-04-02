@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <Protobuf Include="Protos\Clients\analytic.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Clients\chat.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\user.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Clients\wallet.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Servers\user_recovery.proto" GrpcServices="Server" />
