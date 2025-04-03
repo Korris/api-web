@@ -279,7 +279,7 @@ LEFT JOIN LATERAL (
                                 WHERE ""EntityId"" = sp.""Id"" AND ""EntityType"" = 1 AND ""ActionType"" = 2
 LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
-                                WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false  AND sp.""IsDelete"" = false  
+                                WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
                                 AND (sp.""PublishDate"" IS NULL OR sp.""PublishDate"" < TIMEZONE('UTC', now()))
 
                                 GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order"",subpostview.""ViewCount""
@@ -1069,8 +1069,9 @@ ranked_story AS (
     WHERE sp.""IsDelete"" = false
     AND ssp.""IsDelete"" = false
     AND sp.""Type"" = 1
-    AND sp.""Status"" = 1
-    AND sp.""Permission"" = 0
+    AND sp.""Status"" = 1 AND ssp.""Status"" = ANY(@Status)
+    AND sp.""Permission"" = 0 AND ssp.""Permission"" = 0
+    AND (ssp.""PublishDate"" IS NULL OR ssp.""PublishDate"" < TIMEZONE('UTC', now()))
     AND t.""Name"" ILIKE @ExactKeyword
     GROUP BY sp.""Id"", sp.""CreatedOn"", sp.""HashId""
 ),
@@ -1086,8 +1087,9 @@ ranked_comic AS (
     WHERE cp.""IsDelete"" = false
     AND csp.""IsDelete"" = false
     AND cp.""Type"" = 2
-    AND cp.""Status"" = 1
-    AND cp.""Permission"" = 0
+    AND cp.""Status"" = 1 AND csp.""Status"" = ANY(@Status)
+    AND cp.""Permission"" = 0 AND csp.""Permission"" = 0
+    AND (csp.""PublishDate"" IS NULL OR csp.""PublishDate"" < TIMEZONE('UTC', now()))
     AND t.""Name"" ILIKE @ExactKeyword   
     GROUP BY cp.""Id"", cp.""CreatedOn"", cp.""HashId""
 ),
@@ -1103,8 +1105,9 @@ ranked_document AS (
     WHERE dp.""IsDelete"" = false
     AND dsp.""IsDelete"" = false
     AND dp.""Type"" = 4
-    AND dp.""Status"" = 1
-    AND dp.""Permission"" = 0
+    AND dp.""Status"" = 1 AND dsp.""Status"" = ANY(@Status)
+    AND dp.""Permission"" = 0 AND dsp.""Permission"" = 0
+    AND (dsp.""PublishDate"" IS NULL OR dsp.""PublishDate"" < TIMEZONE('UTC', now()))
     AND t.""Name"" ILIKE @ExactKeyword
     GROUP BY dp.""Id"", dp.""CreatedOn"", dp.""HashId""
 ),

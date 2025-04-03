@@ -49,10 +49,10 @@ public class FavoriteViewH : BaseH, IRequestHandler<FavoriteViewR, SingleRespons
 
         var userId = request.UserId.Value;
 
-        var comicCount = await Count<ComicPost, ComicPostFavorite>(userId);
-        var documentCount = await Count<DocumentPost, DocumentPostFavorite>(userId);
-        var socialCount = await Count<SocialPost, SocialPostFavorite>(userId);
-        var storyCount = await Count<StoryPost, StoryPostFavorite>(userId);
+        var comicCount = await Count<ComicPost, ComicPostFavorite, ComicSubPost>(userId, request);
+        var documentCount = await Count<DocumentPost, DocumentPostFavorite, DocumentSubPost>(userId, request);
+        var socialCount = await Count<SocialPost, SocialPostFavorite, SocialSubPost>(userId, request);
+        var storyCount = await Count<StoryPost, StoryPostFavorite, StorySubPost>(userId, request);
 
         var data = new
         {
@@ -70,19 +70,26 @@ public class FavoriteViewH : BaseH, IRequestHandler<FavoriteViewR, SingleRespons
     /// </summary>
     /// <typeparam name="P"></typeparam>
     /// <typeparam name="PF"></typeparam>
+    /// <typeparam name="SP"></typeparam>
     /// <param name="userId"></param>
     /// <returns></returns>
-    private async Task<int> Count<P, PF>(Guid userId) where P : BasePost where PF : BasePostFavorite
+    private async Task<int> Count<P, PF, SP>(Guid userId, FavoriteViewR request) where P : BasePost where PF : BasePostFavorite where SP : BaseSubPost
     {
-        var qPost = _context.Set<P>().Where(p => !p.IsDelete && p.Status == PostStatus.Public);
+        var qPost = _context.Set<P>().Where(p => !p.IsDelete && p.Status == PostStatus.Public && p.Permission == PostPermission.Public);
         var qPostFavorite = _context.Set<PF>().Where(p => !p.IsDelete);
+        var qSubPost = _context.Set<SP>().Where(p => !p.IsDelete);
 
         var q = from post in qPost
-                join favorite in qPostFavorite
-                on post.Id equals favorite.PostId
+                join favorite in qPostFavorite on post.Id equals favorite.PostId
+                join sp in qSubPost on post.Id equals sp.PostId into spGroup
+                from sp in spGroup.DefaultIfEmpty()
+                where !request.Hides.Contains((int)post.Hide)
+                           && (post.Type == PostType.Feed ||
+                               (sp != null && StatusUtils.PostStatuses.Contains(sp.Status)
+                                && sp.Permission != PostPermission.Private && sp.PublishDate < DateTime.UtcNow))
                 select favorite;
 
-        return await q.CountAsync(p => p.UserId == userId);
+        return await q.Distinct().CountAsync(p => p.UserId == userId);
     }
 
     #endregion

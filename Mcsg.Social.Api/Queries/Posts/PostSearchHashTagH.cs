@@ -81,7 +81,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
         {
             if (type == PostType.All || type == PostType.Comic)
             {
-                var postSeries = await GetPostSeriesTop<ComicPost, ComicTagPost>(keyword, request, connection);
+                var postSeries = await GetPostSeriesTop<ComicPost, ComicTagPost, ComicSubPost>(keyword, request, connection);
                 dataComic = postSeries.Item1;
                 recordComic = postSeries.Item2;
                 await MapReactionPostSeriesTop<ComicPostReaction>(dataComic, userId, request);
@@ -89,7 +89,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (type == PostType.All || type == PostType.Document)
             {
-                var postSeries = await GetPostSeriesTop<DocumentPost, DocumentTagPost>(keyword, request, connection);
+                var postSeries = await GetPostSeriesTop<DocumentPost, DocumentTagPost, DocumentSubPost>(keyword, request, connection);
                 dataDocument = postSeries.Item1;
                 recordDocument = postSeries.Item2;
                 await MapReactionPostSeriesTop<DocumentPostReaction>(dataDocument, userId, request);
@@ -97,7 +97,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (type == PostType.All || type == PostType.Feed)
             {
-                var postSeries = await GetPostSeriesTop<SocialPost, SocialTagPost>(keyword, request, connection);
+                var postSeries = await GetPostSeriesTop<SocialPost, SocialTagPost, SocialSubPost>(keyword, request, connection);
                 dataSocial = postSeries.Item1;
                 recordSocial = postSeries.Item2;
                 foreach (var item in dataSocial)
@@ -110,7 +110,7 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
             if (type == PostType.All || type == PostType.Story)
             {
-                var postSeries = await GetPostSeriesTop<StoryPost, StoryTagPost>(keyword, request, connection);
+                var postSeries = await GetPostSeriesTop<StoryPost, StoryTagPost, StorySubPost>(keyword, request, connection);
                 dataStory = postSeries.Item1;
                 recordStory = postSeries.Item2;
                 await MapReactionPostSeriesTop<StoryPostReaction>(dataStory, userId, request);
@@ -229,12 +229,13 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// </summary>
     /// <typeparam name="P"></typeparam>
     /// <typeparam name="TP"></typeparam>
+    /// <typeparam name="SP"></typeparam>
     /// <param name="keyword"></param>
     /// <param name="request"></param>
     /// <param name="postType"></param>
     /// <param name="connection"></param>
     /// <returns></returns>
-    private async Task<Tuple<IEnumerable<PostSeriesTopQueryDbResponse>, int>> GetPostSeriesTop<P, TP>(string? keyword, PostSearchHashTagR request, DbConnection connection) where P : BasePost where TP : BaseTagPost
+    private async Task<Tuple<IEnumerable<PostSeriesTopQueryDbResponse>, int>> GetPostSeriesTop<P, TP, SP>(string? keyword, PostSearchHashTagR request, DbConnection connection) where P : BasePost where TP : BaseTagPost where SP : BaseSubPost
     {
         var fn = "comic.fw_search_hashtag";
         var @params = "@TagName, @PostType, @StatusList, @PageSize, @OffSetPara, @HideList";
@@ -253,18 +254,22 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
 
         var qPost = _context.Set<P>().Where(p => !p.IsDelete);
         var qTagPost = _context.Set<TP>().Where(p => !p.IsDelete);
-
+        var qSubPost = _context.Set<SP>().Where(p => !p.IsDelete);
         var count = (from qpost in qPost
                      join qtp in qTagPost on qpost.Id equals qtp.PostId
                      join qtag in _context.Tags on qtp.TagId equals qtag.Id
+                     join sp in qSubPost on qpost.Id equals sp.PostId into spGroup
+                     from sp in spGroup.DefaultIfEmpty()
                      where qtag.Name == keyword
                            && qpost.Type == type
                            && StatusUtils.PostStatuses.Contains(qpost.Status)
                            && qpost.Permission != PostPermission.Private
                            && !request.Hides.Contains((int)qpost.Hide)
+                           && (qpost.Type == PostType.Feed ||
+                               (sp != null && StatusUtils.PostStatuses.Contains(sp.Status)
+                                && sp.Permission != PostPermission.Private && sp.PublishDate < DateTime.UtcNow))
                      select qpost.Id
-                     )
-                     .Distinct().Count();
+              ).Distinct().Count();
 
         var postSeries = await connection.QueryAsync<PostSeriesTopQueryDbResponse>(fn.ToFn("comic", schema, @params), paramValues);
 
@@ -278,7 +283,6 @@ public class PostSearchHashTagH : BaseMinioH, IRequestHandler<PostSearchHashTagR
     /// <param name="dtos"></param>
     /// <param name="userId"></param>
     /// <param name="request"></param>
-    /// <param name="postType"></param>
     /// <returns></returns>
     private async Task MapReactionPostSeriesTop<PR>(IEnumerable<PostSeriesTopQueryDbResponse> dtos, Guid? userId, PostSearchHashTagR request) where PR : BaseReaction
     {

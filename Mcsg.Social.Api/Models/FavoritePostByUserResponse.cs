@@ -2,11 +2,13 @@
 
 namespace Mcsg.Social.Api.Models;
 
+using Common.Core.Enums;
 using Common.SeedWork.Converters;
 
 public class FavoritePostByUserResponse
 {
     public Guid Id { get; set; }
+    public string? HashId { get; set; }
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
     public DateTime CreatedOn { get; set; }
@@ -20,4 +22,5 @@ public class FavoritePostByUserResponse
     public int TotalComment { get; set; }
     public int TotalFollow { get; set; }
     public int TotalReaction { get; set; }
+    public PostType Type { get; set; }
 }

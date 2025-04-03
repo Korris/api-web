@@ -827,6 +827,7 @@ public partial class PostService : BaseMinioS, IPostService
                                             SELECT sp.""PostId"",sp.""Title"",sp.""Order"",sp.""CreatedOn"", sp.""PublishDate""
                                             FROM ""comic"".""ComicSubPosts"" sp 
                                             WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false AND sp.""PublishDate"" < @CurrentDate
+                                            AND sp.""Permission"" = @Permission AND sp.""Status"" = ANY (@PostStatus)
                                             GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order""
                                             ORDER BY sp.""Order"" DESC
                                         ) sp ON sp.""PostId"" = p.""Id""    
@@ -1401,7 +1402,8 @@ public partial class PostService : BaseMinioS, IPostService
             HashIds = hashIds.Split(',').ToList(),
             Hide = req.Hides,
             PostStatus = StatusUtils.PostStatusInt,
-            CurrentDate = DateTime.UtcNow
+            CurrentDate = DateTime.UtcNow,
+            Permission = (int)PostPermission.Public
         };
 
         var result = await _postRepository.Connection.QueryAsync<PostBoxQueryResponse>(GetPostDetailsQuery, param);
@@ -1598,6 +1600,7 @@ public partial class PostService : BaseMinioS, IPostService
             Status = x.Status,
             LatestCreatedOn = x.LatestCreatedOn,
             UserId = x.UserId,
+            ChapterCount = x.ChapterCount
         }).ToList();
     }
 
@@ -2254,7 +2257,7 @@ public partial class PostService : BaseMinioS, IPostService
     private string AddWithPermission(string query, Guid? currentUserId)
     {
         //TODO Premium
-        string withPermission = (currentUserId == null ? @" AND (sp.""Permission"" = 0 OR sp.""Permission"" = 2) " : @" AND ((sp.""Permission"" = 0 OR sp.""Permission"" = 2) OR ( sp.""UserId"" = @UserId )) ");
+        string withPermission = @" AND (sp.""Permission"" = 0 ) ";
         query = query.Replace("[WithPermission]", withPermission);
         return query;
     }

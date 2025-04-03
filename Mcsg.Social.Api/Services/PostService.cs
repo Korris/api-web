@@ -209,7 +209,8 @@ public partial class PostService : BaseMinioS, IPostService
                 storyPercent,
                 comicPercent,
                 documentPercent,
-                ExactKeyword = nameTag
+                ExactKeyword = nameTag,
+                Status = StatusUtils.PostStatusInt
             };
 
             var query = GetLatestPostsByTagQuery;
@@ -336,11 +337,12 @@ public partial class PostService : BaseMinioS, IPostService
 
     public async Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input)
     {
-        var query = "SELECT * FROM social.fw_visible_post_maybe_you_like(@Limit, @Hide)";
+        var query = "SELECT * FROM social.fw_visible_post_maybe_you_like(@Limit, @Hide, @PostStatus)";
         var dataQuery = await _postRepository.Connection.QueryAsync<RelatedBoxQueryResponse>(query, new
         {
             Limit = input.PageSize,
-            Hide = input.Hides
+            Hide = input.Hides,
+            PostStatus = StatusUtils.PostStatusInt
         });
         var items = MappingRelatedBoxResponse(dataQuery);
 

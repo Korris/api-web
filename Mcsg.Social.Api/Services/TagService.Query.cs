@@ -141,28 +141,40 @@
                             GROUP BY tp.""TagId""
                         ) tp ON t.""Id"" = tp.""TagId""
                         LEFT JOIN (
-                        SELECT ""TagId"", COUNT(*) AS comic_count
+                        SELECT ctp.""TagId"", COUNT(DISTINCT cp.""Id"") AS comic_count
                         FROM comic.""ComicTagPosts"" ctp
                         JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
                         AND cp.""Status"" = ANY (@PostStatus)
+                        LEFT JOIN comic.""ComicSubPosts"" csp ON cp.""Id"" = csp.""PostId""
                         WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
-                        GROUP BY  ""TagId""
-                        ) tc ON t.""Id"" = tc.""TagId""
+                        AND (csp.""IsDelete"" = false AND csp.""Status"" = ANY (@PostStatus) AND csp.""Permission"" != 1)
+                        AND csp.""PublishDate"" < TIMEZONE('UTC', now())
+                        GROUP BY  ctp.""TagId""
+                        HAVING COUNT(DISTINCT csp.""Id"") > 0
+                        ) tc ON t.""Id"" = tc.""TagId"" 
                         LEFT JOIN (
-                        SELECT stp.""TagId"", COUNT(*) AS story_count
+                        SELECT stp.""TagId"", COUNT(DISTINCT sp.""Id"") AS story_count
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
                         AND sp.""Status"" = ANY (@PostStatus)
+                        JOIN story.""StorySubPosts"" ssp ON sp.""Id"" = ssp.""PostId""
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
+                        AND ssp.""IsDelete"" = false AND ssp.""Status"" = ANY (@PostStatus) AND ssp.""Permission"" != 1
+                        AND ssp.""PublishDate"" < TIMEZONE('UTC', now())
                         GROUP BY stp.""TagId""
+                        HAVING COUNT(DISTINCT ssp.""Id"") > 0
                         ) stp ON t.""Id"" = stp.""TagId""
                         LEFT JOIN (
-                        SELECT dcp.""TagId"", COUNT(*) AS document_count
+                        SELECT dcp.""TagId"", COUNT(DISTINCT dp.""Id"") AS document_count
                         FROM Document.""DocumentTagPosts"" dcp
-                        JOIN Document.""DocumentPosts"" sp ON dcp.""PostId"" = sp.""Id""
-                        AND sp.""Status"" = ANY (@PostStatus)
-                        WHERE dcp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
+                        JOIN Document.""DocumentPosts"" dp ON dcp.""PostId"" = dp.""Id""
+                        AND dp.""Status"" = ANY (@PostStatus)
+                        JOIN document.""DocumentSubPosts"" dsp ON dp.""Id"" = dsp.""PostId""
+                        WHERE dcp.""IsDelete"" = false AND dp.""IsDelete"" = false AND dp.""Permission"" != 1
+                        AND dsp.""IsDelete"" = false  AND dsp.""Status"" = ANY (@PostStatus) AND dsp.""Permission"" != 1
+                        AND dsp.""PublishDate"" < TIMEZONE('UTC', now())
                         GROUP BY dcp.""TagId""
+                        HAVING COUNT(DISTINCT dsp.""Id"") > 0
                         ) dcp ON t.""Id"" = dcp.""TagId""
                         [QueryCondition]
                         OFFSET @Offset
@@ -174,7 +186,7 @@
                             SELECT  tp.""TagId""
                             FROM social.""SocialTagPosts"" tp
                             JOIN social.""SocialPosts"" p ON tp.""PostId"" = p.""Id""
-                            AND p.""Status"" = ANY (@PostStatus)
+                            AND p.""Status"" = ANY (@PostStatus) AND p.""Permission"" != 1
                             WHERE tp.""IsDelete"" = false AND p.""IsDelete"" = false
                             GROUP BY tp.""TagId""
                         ) tp ON t.""Id"" = tp.""TagId""
@@ -182,7 +194,7 @@
                         SELECT ""TagId""
                         FROM comic.""ComicTagPosts"" ctp
                         JOIN comic.""ComicPosts"" cp ON ctp.""PostId"" = cp.""Id""
-                        AND cp.""Status"" = ANY (@PostStatus)
+                        AND cp.""Status"" = ANY (@PostStatus) 
                         WHERE ctp.""IsDelete"" = false AND cp.""IsDelete"" = false AND cp.""Permission"" != 1
                         GROUP BY  ""TagId""
                         ) tc ON t.""Id"" = tc.""TagId""
@@ -190,16 +202,16 @@
                         SELECT stp.""TagId""
                         FROM story.""StoryTagPosts"" stp
                         JOIN story.""StoryPosts"" sp ON stp.""PostId"" = sp.""Id""
-                        AND sp.""Status"" = ANY (@PostStatus)
+                        AND sp.""Status"" = ANY (@PostStatus) 
                         WHERE stp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
                         GROUP BY stp.""TagId""
                         ) stp ON t.""Id"" = stp.""TagId""
                         LEFT JOIN (
                         SELECT dcp.""TagId""
                         FROM document.""DocumentTagPosts"" dcp
-                        JOIN document.""DocumentPosts"" sp ON dcp.""PostId"" = sp.""Id""
-                        AND sp.""Status"" = ANY (@PostStatus)
-                        WHERE dcp.""IsDelete"" = false AND sp.""IsDelete"" = false AND sp.""Permission"" != 1
+                        JOIN document.""DocumentPosts"" dp ON dcp.""PostId"" = dp.""Id""
+                        AND dp.""Status"" = ANY (@PostStatus) 
+                        WHERE dcp.""IsDelete"" = false AND dp.""IsDelete"" = false AND dp.""Permission"" != 1
                         GROUP BY dcp.""TagId""
                         ) dcp ON t.""Id"" = dcp.""TagId""
                         [QueryCondition]

@@ -33,6 +33,9 @@
                           WHERE [AddPostType] post.""IsDelete"" = false 
                           AND NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" = ANY (@Hide) IS NOT NULL) 
                           AND subpost.""IsDelete"" = false 
+                          AND subpost.""Permission"" = (@Permission)
+                          AND subpost.""Status"" = ANY (@PostStatus)
+                          AND (subpost.""PublishDate"" IS NULL OR subpost.""PublishDate"" < TIMEZONE('UTC', now()))
                           AND tagpost.""IsDelete"" = false 
                           AND post.""Permission"" = (@Permission)
                           AND post.""Status"" = ANY (@PostStatus)
@@ -52,6 +55,9 @@
                               AND NOT (post.""Hide"" = ANY (@Hide) AND post.""Hide"" = ANY (@Hide) IS NOT NULL) 
                               AND post.""Status"" = ANY (@PostStatus)                              
                               AND subpost.""IsDelete"" = false 
+                              AND subpost.""Permission"" = (@Permission)
+                              AND subpost.""Status"" = ANY (@PostStatus)
+                              AND (subpost.""PublishDate"" IS NULL OR subpost.""PublishDate"" < TIMEZONE('UTC', now()))
                               AND tagpost.""IsDelete"" = false 
                       ) q";
             }

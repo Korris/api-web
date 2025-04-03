@@ -271,7 +271,8 @@ LIMIT 1
                         post.""SubPostStr"",
                         u.""UserName"",
                         post.""LatestCreatedOn""
-                        ORDER BY ""LatestCreatedOn"" desc;
+                        HAVING post.""ChapterCount"" > 0
+                        ORDER BY ""LatestCreatedOn"" DESC;
 
                         [CountResults] ";
             }
@@ -299,7 +300,7 @@ LEFT JOIN LATERAL (
                                 WHERE ""EntityId"" = sp.""Id"" AND ""EntityType"" = 1 AND ""ActionType"" = 2
 LIMIT 1
                                 ) subpostview ON subpostview.""EntityId"" = sp.""Id""
-                                WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false  AND sp.""IsDelete"" = false  
+                                WHERE sp.""PostId"" = p.""Id"" AND sp.""IsDelete"" = false AND sp.""Permission"" = @PostPermission
                                 AND (sp.""PublishDate"" IS NULL OR sp.""PublishDate"" < TIMEZONE('UTC', now()))
 
                                 GROUP BY sp.""Id"", sp.""PostId"", sp.""Title"",sp.""Order"",subpostview.""ViewCount""
@@ -405,7 +406,8 @@ LIMIT 1
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -436,7 +438,8 @@ LIMIT 1
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -461,7 +464,8 @@ LIMIT 1
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
@@ -485,7 +489,8 @@ LIMIT 1
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
@@ -509,7 +514,8 @@ LIMIT 1
                                     SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
                                     ORDER BY sp1.""CreatedOn"" DESC
                                     LIMIT 1
@@ -539,7 +545,8 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                                     SELECT sp1.""Id"", sp1.""PostId""
                                     FROM ""comic"".""ComicSubPosts"" sp1 
                                     WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus)
+                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
+                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
                                     GROUP BY sp1.""Id"", sp1.""PostId""
                                     -- LIMIT 1
                                 ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
@@ -712,11 +719,15 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                 return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, qpost1.""ModifiedOn"" AS ""CreatedOn"", 3 AS ""SelectType""
                                  FROM ""comic"".""ComicPosts"" qpost1        
                                  INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
+                                 LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = qpost1.""Id"" AND sp.""IsDelete"" = false
+                                 AND sp.""Permission"" != 1 AND sp.""Status"" = ANY (@PostStatus)
+                                 AND (sp.""PublishDate"" IS NULL OR sp.""PublishDate"" < TIMEZONE('UTC', now()))
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false                                 
                                                             
                                 GROUP BY qpost1.""Id"", qpost1.""ModifiedOn""
+                                HAVING COUNT(sp.""Id"") > 0
                                 ORDER BY qpost1.""ModifiedOn"" DESC
                                 LIMIT @PageSize
                                 OFFSET @Offet";
@@ -730,10 +741,14 @@ INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
                 return @"SELECT qpost1.""Id""
                                  FROM ""comic"".""ComicPosts"" qpost1
                                  INNER JOIN identity.""Users"" user1 ON user1.""Id"" = qpost1.""UserId"" 
+                                 LEFT JOIN ""comic"".""ComicSubPosts"" sp ON sp.""PostId"" = qpost1.""Id"" AND sp.""IsDelete"" = false
+                                 AND sp.""Permission"" != 1 AND sp.""Status"" = ANY (@PostStatus)
+                                 AND (sp.""PublishDate"" IS NULL OR sp.""PublishDate"" < TIMEZONE('UTC', now()))
                                 WHERE  user1.""UserName"" = @ProfileName AND qpost1.""Type"" = @PostType 
                                 AND qpost1.""Status"" = ANY (@PostStatus)
                                 AND qpost1.""IsDelete"" = false
-                                GROUP BY qpost1.""Id""";
+                                GROUP BY qpost1.""Id""
+                                HAVING COUNT(sp.""Id"") > 0";
             }
         }
         #endregion
@@ -1118,12 +1133,14 @@ sp.""IsEnableComment""
                            ""PublishDate"",
                            ROW_NUMBER() OVER (PARTITION BY ""PostId"" ORDER BY ""Order"" desc) AS rn
                     FROM ""comic"".""ComicSubPosts""
-                    WHERE ""IsDelete"" = false
+                    WHERE ""IsDelete"" = false AND ""Permission"" = @Permission 
+                    AND (""PublishDate"" IS NULL OR ""PublishDate"" < TIMEZONE('UTC', now()))
                 ) sp ON p.""Id"" = sp.""PostId""
                 LEFT JOIN (
                     SELECT ""PostId"", MAX(""PublishDate"") AS ""LatestSubPostPublishDate""
                     FROM ""comic"".""ComicSubPosts""
-                    WHERE ""IsDelete"" = false AND ""PublishDate"" < @CurrentDate
+                    WHERE ""IsDelete"" = false AND ""PublishDate"" < @CurrentDate AND ""Permission"" = @Permission
+                    AND (""PublishDate"" IS NULL OR ""PublishDate"" < TIMEZONE('UTC', now()))
                     GROUP BY ""PostId""
                 ) sp_max ON p.""Id"" = sp_max.""PostId""
                 WHERE p.""HashId"" = ANY(@HashIds) AND NOT (p.""Hide"" = ANY (@Hide) AND p.""Hide"" = ANY (@Hide) IS NOT NULL)

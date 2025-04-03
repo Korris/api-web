@@ -134,7 +134,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                 select new { post.Id, post.Title, post.Body, post.CreatedOn };
 
         var fn = "comic.fw_favorite_post_by_user";
-        var @params = "@PostIds";
+        var @params = "@PostIds, @Hides, @Status";
 
         // Sort by views
         if (request.Sort?.Any(s => s.Field.Equals("views", StringComparison.OrdinalIgnoreCase)) == true)
@@ -146,7 +146,12 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
             var postIds = postfav.Items.Select(p => Guid.Parse(p.Id)).ToList();
             using (var connection = _context.Database.GetDbConnection())
             {
-                var paramValues = new { PostIds = postIds };
+                var paramValues = new
+                {
+                    PostIds = postIds,
+                    Hides = request.Hides,
+                    Status = StatusUtils.PostStatusInt
+                };
 
                 data = await connection.QueryAsync<FavoritePostByUserResponse>(fn.ToFn("comic", schema, @params), paramValues);
             }
@@ -180,7 +185,12 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         }
         else
         {
-            var paramValues = new { PostIds = finalPostIds };
+            var paramValues = new
+            {
+                PostIds = finalPostIds,
+                Hides = request.Hides,
+                Status = StatusUtils.PostStatusInt
+            };
 
             using (var connection = _context.Database.GetDbConnection())
             {
