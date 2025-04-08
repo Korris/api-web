@@ -131,7 +131,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         IEnumerable<FavoritePostByUserResponse> data = [];
         var q = from post in qPost
                 join favorite in qFavorite on post.Id equals favorite
-                select new { post.Id, post.Title, post.Body, post.CreatedOn };
+                select new { post.Id, post.Title, post.Body, post.CreatedOn, post.AuthorName };
 
         var fn = "comic.fw_favorite_post_by_user";
         var @params = "@PostIds, @Hides, @Status";
@@ -160,11 +160,20 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
         }
 
         // Keyword
-        if (!string.IsNullOrWhiteSpace(keyword) && type != PostType.Feed)
+        if (!string.IsNullOrWhiteSpace(keyword))
         {
-            q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || EF.Functions.ILike(
+            if (type != PostType.Feed)
+            {
+                q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || EF.Functions.ILike(
                 EF.Functions.Unaccent((p.Title + "").ToLower()),
                 EF.Functions.Unaccent($"%{keyword.ToLower()}%")));
+            }
+            else
+            {
+                q = q.Where(p => string.IsNullOrWhiteSpace(keyword) ||
+                EF.Functions.ILike(EF.Functions.Unaccent((p.Body + "").ToLower()), EF.Functions.Unaccent($"%{keyword.ToLower()}%")) ||
+                EF.Functions.ILike(EF.Functions.Unaccent((p.AuthorName + "").ToLower()), EF.Functions.Unaccent($"%{keyword.ToLower()}%")));
+            }
         }
 
         // Paging
