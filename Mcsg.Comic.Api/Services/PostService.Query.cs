@@ -103,39 +103,6 @@ LIMIT 1
             }
         }
 
-        private string GetRelatedBoxPostQuery => @"
-                                select p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"", 
-                                COALESCE(pr.reaction_count, 0) AS TotalReacts,
-                                COALESCE(pc.comment_count, 0) + COALESCE(spc.sub_comment_count, 0) AS TotalComment,
-                                CASE WHEN COUNT(r.""Type"") > 0 THEN jsonb_agg(DISTINCT jsonb_build_object('Type', r.""Type"")) ELSE NULL END AS ReactionStr,
-                                CASE WHEN COUNT(t.""Id"") > 0 THEN array_agg(DISTINCT t.""Name"") ELSE NULL END as Tags
-                                from ""comic"".""ComicPosts"" p
-                                LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = p.""Id""
-                                LEFT JOIN ""Tags"" t ON tp.""TagId"" = t.""Id"" 
-                                LEFT JOIN 
-                                    (SELECT ""TargetId"", COUNT(*) AS reaction_count 
-                                     FROM ""comic"".""ComicPostReactions"" 
-                                         WHERE ""IsDelete"" = false
-                                     GROUP BY ""TargetId"") pr ON p.""Id""= pr.""TargetId""
-                                LEFT JOIN 
-                                    (SELECT ""PostId"", COUNT(*) AS comment_count 
-                                     FROM ""comic"".""ComicPostComments"" 
-                                                  WHERE ""IsDelete"" = false
-                                     GROUP BY ""PostId"") pc ON p.""Id"" = pc.""PostId""
-                                LEFT JOIN 
-                                    (SELECT sp.""PostId"", COUNT(spc.""Id"") AS sub_comment_count 
-                                     FROM ""comic"".""ComicSubPostComments"" spc
-                                     JOIN ""comic"".""ComicSubPosts"" sp ON spc.""PostId""= sp.""Id""
-                                     WHERE spc.""IsDelete""= false
-                                     GROUP BY sp.""PostId"") spc ON p.""Id"" = spc.""PostId""
-                                LEFT JOIN 
-                                    ""comic"".""ComicPostReactions"" r ON p.""Id"" = r.""TargetId"" AND r.""IsDelete"" = false
-                                WHERE p.""Type"" != 0
-                                And p.""IsDelete"" = false
-                                [QueryCondition]
-                                GROUP BY p.""Title"",p.""HashId"",p.""Id"",p.""ThumbnailUrl"",pr.reaction_count,pc.comment_count,spc.sub_comment_count
-                                ORDER BY RANDOM()
-                                LIMIT @Limit";
         private string GetRelatedPostQuery => @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
                         post.""UserId"", post.""ProfileName"",post.""ProfileId"",post.""Avatar"" as ""UserAvatar"",post.""UserName"", post.""ThumbnailUrl"", 
                         post.""ChapterCount"",
@@ -395,38 +362,6 @@ LIMIT 1
 
         #region Top latestByTag
 
-        private string GetTopLatestPostByTagQuery
-        {
-            get
-            {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
-                                 FROM ""comic"".""ComicPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
-                                    FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
-                                    ORDER BY sp1.""CreatedOn"" DESC
-                                    LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""Permission"" = @PostPermission
-                                AND qpost1.""IsDelete"" = false
-                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL)
-                                GROUP BY qpost1.""Id"", psp1.""CreatedOn"", qpost1.""Hide""
-                                ORDER BY psp1.""CreatedOn"" DESC
-                                LIMIT @PageSize
-                                OFFSET @Offet";
-            }
-        }
-
         private string GetTopLatestPostByMultiTagQuery
         {
             get
@@ -453,31 +388,7 @@ LIMIT 1
                                 OFFSET @Offet";
             }
         }
-        private string GetTopLatestPostByTagToCountQuery
-        {
-            get
-            {
-                return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId""
-                                    FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"", sp1.""PostId""
-                                    -- LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
-                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL) 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
-                                GROUP BY qpost1.""Id""";
-            }
-        }
+
         private string GetTopLatestPostByMultiTagToCountQuery
         {
             get
@@ -497,65 +408,6 @@ LIMIT 1
                                 LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 [WhereMainQuery]                                 
-                                GROUP BY qpost1.""Id""";
-            }
-        }
-        #endregion
-        #region Top latestByTag - Favorite
-
-        private string GetTopLatestPostByFavoriteQuery
-        {
-            get
-            {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
-                                 FROM ""comic"".""ComicPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
-                                    FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
-                                    ORDER BY sp1.""CreatedOn"" DESC
-                                    LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-
-                                INNER JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
-                                INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
-                                GROUP BY qpost1.""Id"", psp1.""CreatedOn""
-                                ORDER BY psp1.""CreatedOn"" DESC
-                                LIMIT @PageSize
-                                OFFSET @Offet";
-            }
-        }
-        private string GetTopLatestPostByFavoriteToCountQuery
-        {
-            get
-            {
-                return @"SELECT qpost1.""Id""
-                                 FROM ""comic"".""ComicPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId""
-                                    FROM ""comic"".""ComicSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"", sp1.""PostId""
-                                    -- LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""comic"".""ComicTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }
         }
@@ -891,63 +743,6 @@ LIMIT 1
             }
         }
         #endregion
-        private string PaginationGetAllPostTopByTagQuery
-        {
-            get
-            {
-                return @"SELECT post.""SelectType"",post.""Id"",post.""Title"", post.""Body"", post.""HashId"",
-                        post.""UserId"", post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", 
-                        post.""ChapterCount"",
-                        post.""Status"", post.""Type"",post.""ViewCount"",
-                        post.""CreatedOn"",post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"", post.""AuthorId"",
-                        post.""SubPostStr"", 
-                        array_agg(tag.""Name"") as Tags from
-                            (SELECT  p.""Id"",
-                            p.""Title"", p.""Body"",  
-                            p.""HashId"",p.""UserId"", sp.""Total"" AS ""ChapterCount"",
-                            u.""ProfileName"",u.""ProfileId"", p.""ThumbnailUrl"", 
-                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-                             postid.""SelectType"",
-                            p.""Status"", p.""Type"", p.""ViewCount"",
-                            p.""CreatedOn"",--sp.""Id"" as ""SPID"",
-                            --sp.""ChapterCount"" AS ""ChapterCount"",
-                            to_jsonb(array_agg(sp.*)) AS ""SubPostStr"" 
-                             
-                            FROM ""comic"".""ComicPosts"" p
-                              INNER JOIN-- Select Id
-                             (
-                                [SelectPostIdsQuery] 
-                            ) postid 
-                             ON postid.""Id"" = p.""Id""
-                            LEFT JOIN identity.""Users"" u ON p.""UserId"" = u.""Id"" 
-                            LEFT JOIN LATERAL 
-                            (
-                                SELECT ""Id"",""PostId"",""CreatedOn"",""Title"",""Order"", count(*) OVER() AS ""Total"" 
-                                FROM ""comic"".""ComicSubPosts"" sp 
-                                WHERE ""PostId"" = p.""Id"" AND sp.""IsDelete"" = false
-                                GROUP BY ""Id"", ""PostId"", ""Title"",""Order""
-                                ORDER BY ""Order"" DESC
-                                LIMIT 2
-                            ) sp ON sp.""PostId"" = p.""Id"" 
-                            
-                            GROUP BY postid.""SelectType"", p.""Id"",p.""Title"", p.""Body"", p.""HashId"", p.""UserId"", 
-                            p.""AuthorName"", p.""CoverUrl"", p.""IsMature"",p.""IsCompleted"", p.""Permission"",p.""AuthorId"",
-                            sp.""Total"",
-                            u.""ProfileName"", u.""ProfileId"", p.""ThumbnailUrl"", 
-                            p.""Status"", p.""Type"",p.""ViewCount"",
-                            p.""CreatedOn""
-                            ) 
-                        AS post
-                        LEFT JOIN ""comic"".""ComicTagPosts"" tp ON tp.""PostId"" = post.""Id""
-                        LEFT JOIN ""Tags"" tag ON tp.""TagId"" = tag.""Id"" 
-                        GROUP BY post.""SelectType"", post.""Id"",post.""Title"", post.""Body"", post.""HashId"", 
-                        post.""AuthorName"", post.""CoverUrl"", post.""IsMature"",post.""IsCompleted"", post.""Permission"",post.""AuthorId"",
-                        post.""UserId"",post.""ProfileName"",post.""ProfileId"", post.""ThumbnailUrl"", post.""ChapterCount"",
-                        post.""Status"", post.""Type"", post.""ViewCount"",
-                        post.""CreatedOn"",
-                        post.""SubPostStr"";";
-            }
-        }
 
         private string PaginationCountResult
         {
@@ -1013,22 +808,6 @@ LIMIT 1
 
 
         #region Delete Subpost
-        private string GetSubPostsWithHashIdAndOrders
-
-        {
-            get
-            {
-                return @"SELECT sp.""Id"", sp.""Title"", sp.""PostId"", sp.""Sort"", sp.""Order"", sp.""Body"", sp.""IsExclusive"",
-                sp.""Status"", sp.""CreatedOn"", sp.""CreatedBy"", sp.""ModifiedOn"", 
-                sp.""ModifiedBy"", sp.""IsDelete"", sp.""ViewCount"", sp.""AuthorId"", 
-                sp.""UserId"", sp.""PublishDate"", sp.""Permission"", sp.""CreatorNote"",
-sp.""IsEnableComment"" 
-            FROM ""comic"".""ComicSubPosts"" sp
-            INNER JOIN ""comic"".""ComicPosts"" p ON sp.""PostId"" = p.""Id""
-            WHERE p.""HashId"" = @HashId AND (sp.""Sort"" = @Order1 OR sp.""Sort"" = @Order2 )
-            AND p.""IsDelete"" = false AND sp.""IsDelete"" = false;";
-            }
-        }
         private string ExecSoftDeleteSubPost
         {
             get
@@ -1056,45 +835,6 @@ sp.""IsEnableComment""
         }
         #endregion
 
-        private string GetCountPostByTypeQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""comic"".""ComicPosts"" 
-                                                   WHERE ""IsDelete"" = false 
-                                                   AND ""Status"" = {(int)PostStatus.Public}";
-
-        private string GetCountPostByTagQuery => $@"SELECT COUNT(*) 
-                                                   FROM ""comic"".""ComicPosts"" p
-                                                   LEFT JOIN ""comic"".""ComicTagPosts"" tp on p.""Id"" = tp.""PostId""
-                                                   LEFT JOIN ""Tags"" t on t.""Id"" = tp.""TagId""
-                                                   WHERE p.""IsDelete"" = false 
-                                                   AND p.""Status"" = {(int)PostStatus.Public}
-                                                   AND t.""Name"" ILIKE @ExactKeyword";
-        private string PremiumWhereQuery
-        {
-            get
-            {
-                return @" AND (0). ";
-            }
-        }
-
-        private string GetPostRandomIdsQuery
-        {
-            get
-            {
-                return @"
-                        WITH newtable 
-                        AS
-                        (
-                        SELECT * FROM ""comic"".""ComicPosts"" p
-                            WHERE p.""IsDelete"" = false
-                            ORDER BY RANDOM()
-                            LIMIT @numOfItemNeedFilter
-                        )
-                        SELECT ""Id"" FROM newtable nt
-                        WHERE NOT nt.""Id"" = ANY(@postRandomIds)
-                        LIMIT @numOfItem
-                 ";
-            }
-        }
         private string GetPostDetailsQuery
         {
             get

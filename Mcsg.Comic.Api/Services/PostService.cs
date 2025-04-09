@@ -427,50 +427,54 @@ public partial class PostService : BaseMinioS, IPostService
     public async Task<PagedResponse<PostSeriesTopResponse>> GetTopSeriesAsync(PostType type, ComicPostListSeriesR request)
     {
         var userId = request.UserId;
-        var isFavorite = userId == null ? false : request.IsFavorite;
         var offset = request.PageSize * (request.PageNumber - 1);
 
-        string allSubQuery = $@"
-                        ({GetTopLatestPostByTagQuery})";
-        string countTopQuery = PaginationCountResult;
+        var q = _context.Available<ComicPost>(false);
 
-        if (isFavorite && request.HashTag == null)
+        if (request.Hides.Count > 0)
         {
-            allSubQuery = $@"
-                        ({GetTopLatestPostByFavoriteQuery})";
-            countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostByFavoriteToCountQuery);
-        }
-        else
-        {
-            countTopQuery = countTopQuery.Replace("[WhereCountQuery]", GetTopLatestPostByTagToCountQuery);
+            q = q.Where(p => !request.Hides.Contains((int)p.Hide));
         }
 
-        var query = GetTopAllPostAllTypeByTagQuery.Replace("[AddNewUserNameContidion]", "")
-            .Replace("[SelectPostIdsQuery]", allSubQuery)
-            .Replace("[CountResults]", countTopQuery)
-            .Replace("[JoinSubPostSubQuery]", GetTopSubQueryJoinSubPostQuery)
-            .Replace("[OrderBy]", "CreatedOn")
-            .Replace("[Permission]", "");
+        if (!string.IsNullOrWhiteSpace(request.HashTag))
+        {
+            q = q.Where(p => p.ComicTagPosts.Select(p => p.Tag.Name).Contains(request.HashTag));
+        }
 
-        var multi = await _postRepository
-                .Connection.QueryMultipleAsync(query, new
-                {
-                    PostType = type,
-                    PageSize = request.PageSize,
-                    Offet = offset,
-                    LastWeek = (DateTime.UtcNow.AddDays(-7)),
-                    PostStatus = StatusUtils.PostStatusInt,
-                    PostPermission = (int)PostPermission.Public,
-                    TagName = request.HashTag,
-                    UserId = userId,
-                    Hide = request.Hides
-                });
+        var dbFeed = await q.Include(p => p.User)
+            .Include(p => p.ComicSubPosts)
+            .Include(p => p.ComicTagPosts).ThenInclude(p => p.Tag)
+            .Select(p => new PostSeriesTopQueryDbResponse
+            {
+                Id = p.Id,
+                HashId = p.HashId,
+                Title = p.Title,
+                Body = p.Body,
+                CreatedOn = p.CreatedOn,
+                ThumbnailUrl = p.ThumbnailUrl,
+                CoverUrl = p.CoverUrl,
+                UserId = p.UserId,
+                ProfileName = p.User.ProfileName,
+                ProfileId = p.User.ProfileId,
+                UserName = p.User.UserName,
+                UserAvatar = p.User.Avatar,
+                Type = p.Type,
+                ChapterCount = p.ComicSubPosts.Count,
+                IsMature = p.IsMature ?? false,
+                IsCompleted = p.IsCompleted ?? false,
+                LatestCreatedOn = p.ComicSubPosts.Max(p => p.PublishDate),
+                Tags = p.ComicTagPosts.Select(p => p.Tag.Name).ToArray(),
+                Status = p.Status,
+                Hide = p.Hide
+            })
+            .OrderByDescending(p => p.LatestCreatedOn != null ? p.LatestCreatedOn : p.CreatedOn)
+            .Skip(offset)
+            .Take(request.PageSize)
+            .ToListAsync();
 
-        var dbFeed = await multi.ReadAsync<PostSeriesTopQueryDbResponse>().ConfigureAwait(false);
+        var totalItems = await q.CountAsync();
 
-        var totalItems = await multi.ReadFirstAsync<int>().ConfigureAwait(false);
-
-        var items = MapTopSeries(dbFeed.ToList(), request.UserId);
+        var items = MapTopSeries(dbFeed, request.UserId);
         if (items != null && items.Count() > 0)
         {
             var queryGetReaction = ReactionExtension.GetReactionByTargetIdsQuery;
@@ -1636,11 +1640,6 @@ public partial class PostService : BaseMinioS, IPostService
             SeriesStatus = x.ToSeriesStatus(),
             TotalComment = x.TotalComment,
             Hide = x.Hide,
-            Reaction = new ReactionsResponse
-            {
-                TotalReacts = x.TotalReact,
-                Reactions = x.ReactionByPostStr != null ? JsonConvert.DeserializeObject<List<ReactionResponse>>(x.ReactionByPostStr) : new List<ReactionResponse>()
-            },
             LatestCreatedOn = x.LatestCreatedOn,
             ExternalResource = x.ExternalResource
         }).ToList();
@@ -2126,6 +2125,11 @@ public partial class PostService : BaseMinioS, IPostService
 
     private List<ChapterBasicResponse> MappingTopChapter(string subPostStr)
     {
+        if (string.IsNullOrWhiteSpace(subPostStr))
+        {
+            return [];
+        }
+
         var listChapter = (JsonConvert.DeserializeObject<List<ChapterBasicResponse>>(subPostStr))?.Where(x => x != null).
             OrderByDescending(x => x.Order).ToList();
 

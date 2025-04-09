@@ -12,12 +12,12 @@ public class PostSeriesResponse : PostDto
     public int? ViewCount { get; set; }
     public int? CommentCount { get; set; }
     public int ChapterCount { get; set; }
-    public string CoverUrl { get; set; }
+    public string? CoverUrl { get; set; }
     public string CoverHashId { get; set; }
     public string ThumbnailHashId { get; set; }
     public bool IsMature { get; set; }
     public bool? IsCompleted { get; set; }
-    public string ProfileName { get; set; }
+    public string? ProfileName { get; set; }
     public string? UserName { get; set; }
     public ChaptersExclusiveData FreeChapters { get; set; }
     public ChaptersExclusiveData ExclusiveChapters { get; set; }
@@ -28,7 +28,7 @@ public class PostSeriesResponse : PostDto
     public int TotalComment { get; set; }
     public bool IsFollowing { get; set; }
     public ReactionsResponse Reaction { get; set; }
-    public DateTime LatestCreatedOn { get; set; }
+    public DateTime? LatestCreatedOn { get; set; }
     public int FollowCount { get; set; }
     public bool IsAllowDownload { get; set; }
 
@@ -56,15 +56,15 @@ public class PostSeriesTopResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
     public int TotalReact { get; set; }
-    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+    public bool IsNewChapter => LatestCreatedOn?.IsNewChapter() ?? false;
     public PostType PostType => Type;
     public CommentPagedResults<MostReactionCommentResponse> Comments { get; set; }
 }
 public class PostSeriesTopQueryDbResponse : PostSeriesResponse
 {
     public Guid? AuthorId { get; set; }
-    public string ProfileName { get; set; }
-    public string UserName { get; set; }
+    public string? ProfileName { get; set; }
+    public string? UserName { get; set; }
     public int TotalSubPostComment { get; set; }
     public string SubPostStr { get; set; }
     public PostSeriesSelectedType SelectType { get; set; }
@@ -114,9 +114,9 @@ public class PostBoxResposne
     public bool IsArchived => Status == PostStatus.Inactive;
     public bool IsCensored { get; set; }
     public bool IsBlur { get; set; }
-    public bool IsNewChapter => LatestCreatedOn.IsNewChapter();
+    public bool IsNewChapter => LatestCreatedOn?.IsNewChapter() ?? false;
 
     [JsonConverter(typeof(IsoDateTimeConverter))]
-    public DateTime LatestCreatedOn { get; set; }
+    public DateTime? LatestCreatedOn { get; set; }
     public Guid UserId { get; set; }
 }

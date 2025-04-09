@@ -262,38 +262,6 @@ LIMIT 1
 
         #region Top latestByTag
 
-        private string GetTopLatestPostByTagQuery
-        {
-            get
-            {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
-                                 FROM ""document"".""DocumentPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
-                                    FROM ""document"".""DocumentSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
-                                    ORDER BY sp1.""CreatedOn"" DESC
-                                    LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""Permission"" = @PostPermission
-                                AND qpost1.""IsDelete"" = false
-                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL)
-                                GROUP BY qpost1.""Id"", psp1.""CreatedOn"", qpost1.""Hide""
-                                ORDER BY psp1.""CreatedOn"" DESC
-                                LIMIT @PageSize
-                                OFFSET @Offet";
-            }
-        }
-
         private string GetTopLatestPostByMultiTagQuery
         {
             get
@@ -320,32 +288,7 @@ LIMIT 1
                                 OFFSET @Offet";
             }
         }
-        private string GetTopLatestPostByTagToCountQuery
-        {
-            get
-            {
-                return @"SELECT qpost1.""Id""
-                                 FROM ""document"".""DocumentPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId""
-                                    FROM ""document"".""DocumentSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"", sp1.""PostId""
-                                    -- LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE (@TagName IS NULL OR qtag.""Name"" = @TagName) AND qpost1.""Type"" = @PostType
-                                AND NOT (qpost1.""Hide"" = ANY (@Hide) AND qpost1.""Hide"" = ANY (@Hide) IS NOT NULL) 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false
-                                AND qpost1.""Permission"" = @PostPermission
-                                GROUP BY qpost1.""Id""";
-            }
-        }
+
         private string GetTopLatestPostByMultiTagToCountQuery
         {
             get
@@ -365,66 +308,6 @@ LIMIT 1
                                 LEFT JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
                                 LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
                                 [WhereMainQuery]                                 
-                                GROUP BY qpost1.""Id""";
-            }
-        }
-        #endregion
-
-        #region Top latestByTag - Favorite
-
-        private string GetTopLatestPostByFavoriteQuery
-        {
-            get
-            {
-                return @"SELECT DISTINCT qpost1.""Id"", 0 as COUNTCM, psp1.""CreatedOn"", 1 AS ""SelectType"", qpost1.""Hide""
-                                 FROM ""document"".""DocumentPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId"", sp1.""CreatedOn"" 
-                                    FROM ""document"".""DocumentSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false 
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"",sp1.""PostId"",sp1.""CreatedOn""
-                                    ORDER BY sp1.""CreatedOn"" DESC
-                                    LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-
-                                INNER JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
-                                INNER JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
-                                GROUP BY qpost1.""Id"", psp1.""CreatedOn""
-                                ORDER BY psp1.""CreatedOn"" DESC
-                                LIMIT @PageSize
-                                OFFSET @Offet";
-            }
-        }
-        private string GetTopLatestPostByFavoriteToCountQuery
-        {
-            get
-            {
-                return @"SELECT qpost1.""Id""
-                                 FROM ""document"".""DocumentPosts"" qpost1
-                                 INNER JOIN LATERAL (
-                                --Lastest subpost                                     
-                                    SELECT sp1.""Id"", sp1.""PostId""
-                                    FROM ""document"".""DocumentSubPosts"" sp1 
-                                    WHERE sp1.""PostId"" = qpost1.""Id"" AND sp1.""IsDelete"" = false  
-                                    AND sp1.""Status"" = ANY (@PostStatus) AND sp1.""Permission"" = @PostPermission
-                                    AND (sp1.""PublishDate"" IS NULL OR sp1.""PublishDate"" < TIMEZONE('UTC', now()))
-                                    GROUP BY sp1.""Id"", sp1.""PostId""
-                                    -- LIMIT 1
-                                ) psp1 ON psp1.""PostId"" = qpost1.""Id"" 
-                                LEFT JOIN ""document"".""DocumentTagPosts"" qtp ON qtp.""PostId"" = qpost1.""Id""
-INNER JOIN ""TagFavorites"" tagfa ON qtp.""TagId"" = tagfa.""TagId""
-                                LEFT JOIN ""Tags"" qtag ON qtp.""TagId"" = qtag.""Id"" 
-                                WHERE tagfa.""UserId"" = @UserId AND qpost1.""Type"" = @PostType 
-                                AND qpost1.""Status"" = ANY (@PostStatus)
-                                AND qpost1.""IsDelete"" = false                                 
                                 GROUP BY qpost1.""Id""";
             }
         }
