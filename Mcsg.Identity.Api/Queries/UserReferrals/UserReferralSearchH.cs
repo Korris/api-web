@@ -109,7 +109,8 @@ public class UserReferralSearchH : BaseH, IRequestHandler<UserReferralSearchR, S
                     UserName = p.UserReferee.UserName,
                     ProfileName = p.UserReferee.ProfileName,
                     Avatar = p.UserReferee.Avatar
-                }
+                },
+                CreatedOn = p.CreatedOn
             }).ToSearchDto())
             .ToListAsync(cancellationToken);
 
