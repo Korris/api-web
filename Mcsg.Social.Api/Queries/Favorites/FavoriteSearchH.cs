@@ -88,6 +88,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
 
         #region -- Filter --
         string? keyword = null;
+        string? mediaType = null;
 
         if (request.Filter != null)
         {
@@ -96,9 +97,10 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
             if (ft != null)
             {
                 keyword = ft.Keyword;
+                mediaType = ft.MediaType;
             }
 
-            if (type == PostType.Feed && !string.IsNullOrWhiteSpace(keyword))
+            if (type == PostType.Feed && !string.IsNullOrWhiteSpace(mediaType))
             {
                 var qSubPost = from post in qPost
                                join subpost in _context.Available<SocialSubPost>()
@@ -110,7 +112,7 @@ public class FavoriteSearchH : BaseMinioH, IRequestHandler<FavoriteSearchR, Sing
                                 on s.Id equals resource.SubPostId
                                 select new { s.post, resource.Type };
 
-                var resourceType = keyword.ToEnum(ResourceType.Other);
+                var resourceType = mediaType.ToEnum(ResourceType.Other);
                 if (resourceType == ResourceType.Video || resourceType == ResourceType.Image)
                 {
                     var postIds = await qResource.Where(p => p.Type == resourceType).Select(p => p.post.Id).ToListAsync(cancellationToken);

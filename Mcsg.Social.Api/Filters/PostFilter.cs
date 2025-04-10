@@ -27,6 +27,14 @@ public class PostFilter : BaseFilter
     /// </summary>
     public new class Search : BaseFilter.Search
     {
+        #region -- Properties --
+
+        /// <summary>
+        /// MediaType
+        /// </summary>
+        public string? MediaType { get; set; }
+
+        #endregion
     }
 
     #endregion
