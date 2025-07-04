@@ -39,7 +39,7 @@ pipeline {
                     def SERVICE_SUFFIX = match[0][1] // e.g. 'comic'
                     def SERVICE = "api-web-${SERVICE_SUFFIX}"
 
-                    def IMAGE_PREFIX = "harbor.local/nvt87x/${SERVICE}"
+                    def IMAGE_PREFIX = "harbor.local/focfoc/${SERVICE}"
                     def IMAGE_NAME = "${IMAGE_PREFIX}_${ENV}"
                     def DOCKER_IMAGE = "${IMAGE_NAME}:${BUILD_NUMBER}"
 
