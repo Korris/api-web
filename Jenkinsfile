@@ -99,7 +99,7 @@ pipeline {
                             git clone -b ops https://${GIT_USER}:${GIT_PASS}@repo.ntadamedia.com/focfoc/argo.git .
 
                             echo ">>> Update kustomization.yaml"
-                            yq e '.images[] |= select(.name == "${IMAGE_NAME}").newTag = "${BUILD_NUMBER}"' -i apps/${ENV}/${SERVICE}/kustomization.yaml
+                            yq e '.images[] |= select(.name == "harbor.local/placeholder").newTag = "${BUILD_NUMBER}"' -i apps/${ENV}/${SERVICE}/kustomization.yaml
 
                             echo ">>> Git Commit"
                             git config user.email "jenkins@ci.com"
@@ -109,19 +109,6 @@ pipeline {
                             git push origin ops
                         """
                     }
-                }
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                script {
-                    // Remove built images (tagged)
-                    sh "docker rmi ${env.DOCKER_IMAGE} || true"
-                    sh "docker rmi ${env.IMAGE_NAME}:latest || true"
-
-                    // Remove dangling images
-                    sh "docker image prune -f"
                 }
             }
         }
