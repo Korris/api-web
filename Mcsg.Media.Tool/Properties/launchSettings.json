@@ -1,0 +1,10 @@
+{
+    "profiles": {
+        "Mcsg.Media.Tool": {
+            "commandName": "Project"
+        },
+        "Container (Dockerfile)": {
+            "commandName": "Docker"
+        }
+    }
+}

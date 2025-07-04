@@ -47,8 +47,8 @@ public static class StringExtension
     /// <param name="name">Log file name</param>
     public static void StartLogger(this string name)
     {
-        // Ensure the logs directory exists
-        var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"..\\..\\logs\\{name}").ToPathPlatform();
+        // Change: Use a relative path inside the container (safe location)
+        var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", name);
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
@@ -70,7 +70,7 @@ public static class StringExtension
                     Date = new DateTime(logEvent.Timestamp.Year, logEvent.Timestamp.Month, logEvent.Timestamp.Day)
                 },
                 (key, wt) => wt.File(
-                    path: $"{directory}/{key.Date:yyyy-MM-dd}/{key.Level}-.log",
+                    path: Path.Combine(directory, $"{key.Date:yyyy-MM-dd}", $"{key.Level}-.log"),
                     rollingInterval: RollingInterval.Day,
                     fileSizeLimitBytes: fileSizeLimitBytes,
                     rollOnFileSizeLimit: true,  // create new file when size limit is reached

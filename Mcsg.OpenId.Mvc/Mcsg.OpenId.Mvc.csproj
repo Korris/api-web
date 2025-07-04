@@ -6,10 +6,16 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>False</GenerateDocumentationFile>
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <UserSecretsId>47fc3ab2-365c-432b-b449-c99e47d643aa</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj" />
     </ItemGroup>
 
 </Project>
