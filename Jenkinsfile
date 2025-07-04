@@ -16,38 +16,33 @@ pipeline {
                     // Detect environment
                     def ENV
                     switch (BRANCH) {
-                        case 'dev-k8s':
-                            ENV = 'dev'
-                            break
-                        case 'uat-k8s':
-                            ENV = 'uat'
-                            break
-                        case 'pro-k8s':
-                            ENV = 'pro'
-                            break
+                        case 'dev-k8s': ENV = 'dev'; break
+                        case 'uat-k8s': ENV = 'uat'; break
+                        case 'pro-k8s': ENV = 'pro'; break
                         default:
                             error "❌ Unknown branch ${BRANCH}. Expect dev-k8s, uat-k8s, or pro-k8s."
                     }
 
-                    // Extract service name (comic) from JOB_NAME like Dev-Web-Focfoc.Comic.Api
+                    // Parse service info from JOB_NAME
                     def job = env.JOB_NAME.toLowerCase()
-                    def match = job =~ /web-focfoc\.([a-z]+)\.api$/
+                    def match = job =~ /web-focfoc\.([a-z]+)\.(api|job)$/
                     if (!match) {
-                        error "❌ Cannot extract service suffix from JOB_NAME: ${env.JOB_NAME}"
+                        error "❌ Cannot extract service suffix and type from JOB_NAME: ${env.JOB_NAME}"
                     }
 
-                    def SERVICE_SUFFIX = match[0][1] // e.g. 'comic'
-                    def SERVICE = "api-web-${SERVICE_SUFFIX}"
+                    def SERVICE_SUFFIX = match[0][1]     // e.g. 'identity'
+                    def SERVICE_TYPE   = match[0][2]     // 'api' or 'job'
+                    def SERVICE        = "${SERVICE_TYPE}-web-${SERVICE_SUFFIX}"
+                    def IMAGE_PREFIX   = "harbor.local/focfoc/${SERVICE}"
+                    def IMAGE_NAME     = "${IMAGE_PREFIX}_${ENV}"
+                    def DOCKER_IMAGE   = "${IMAGE_NAME}:${BUILD_NUMBER}"
 
-                    def IMAGE_PREFIX = "harbor.local/focfoc/${SERVICE}"
-                    def IMAGE_NAME = "${IMAGE_PREFIX}_${ENV}"
-                    def DOCKER_IMAGE = "${IMAGE_NAME}:${BUILD_NUMBER}"
-
-                    // Export to env for later stages
+                    // Export to env
                     env.BRANCH = BRANCH
                     env.ENV = ENV
-                    env.SERVICE = SERVICE
                     env.SERVICE_SUFFIX = SERVICE_SUFFIX
+                    env.SERVICE_TYPE = SERVICE_TYPE
+                    env.SERVICE = SERVICE
                     env.IMAGE_PREFIX = IMAGE_PREFIX
                     env.IMAGE_NAME = IMAGE_NAME
                     env.DOCKER_IMAGE = DOCKER_IMAGE
@@ -57,7 +52,8 @@ pipeline {
                     Job Name     : ${env.JOB_NAME}
                     Branch       : ${env.BRANCH}
                     Environment  : ${env.ENV}
-                    SERVICE      : ${env.SERVICE}
+                    SERVICE TYPE : ${env.SERVICE_TYPE}
+                    SERVICE NAME : ${env.SERVICE}
                     Docker Image : ${env.DOCKER_IMAGE}
                     =============================
                     """
@@ -68,9 +64,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    def capitalSuffix = env.SERVICE_SUFFIX.capitalize()
+                    def dockerfilePath = "Mcsg.${capitalSuffix}.${env.SERVICE_TYPE.capitalize()}/Dockerfile"
+
                     def dockerImage = docker.build(
                         env.DOCKER_IMAGE,
-                        "-f Mcsg.${env.SERVICE_SUFFIX.capitalize()}.Api/Dockerfile ."
+                        "-f ${dockerfilePath} ."
                     )
                     env.DOCKER_IMAGE_ID = dockerImage.id
                 }
