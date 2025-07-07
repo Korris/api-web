@@ -24,15 +24,15 @@ pipeline {
                     }
 
                     // Parse service info from JOB_NAME
-                    def job = env.JOB_NAME.toLowerCase()
-                    def match = job =~ /web-focfoc\.([a-z]+)\.(api|job)$/
+                    def job = env.JOB_NAME
+                    def match = job =~ /.*Web-Focfoc\.([A-Za-z0-9]+)\.(Api|Job|Mvc|Tool)$/
                     if (!match) {
                         error "❌ Cannot extract service suffix and type from JOB_NAME: ${env.JOB_NAME}"
                     }
 
-                    def SERVICE_SUFFIX = match[0][1]     // e.g. 'identity'
-                    def SERVICE_TYPE   = match[0][2]     // 'api' or 'job'
-                    def SERVICE        = "${SERVICE_TYPE}-web-${SERVICE_SUFFIX}"
+                    def SERVICE_SUFFIX = match[0][1]                    // e.g. 'OpenId'
+                    def SERVICE_TYPE   = match[0][2].toLowerCase()      // e.g. 'mvc'
+                    def SERVICE        = "${SERVICE_TYPE}-Web-${SERVICE_SUFFIX}".toLowerCase()
                     def IMAGE_PREFIX   = "harbor.local/focfoc/${SERVICE}"
                     def IMAGE_NAME     = "${IMAGE_PREFIX}_${ENV}"
                     def DOCKER_IMAGE   = "${IMAGE_NAME}:${BUILD_NUMBER}"
