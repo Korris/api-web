@@ -16,11 +16,11 @@ pipeline {
                     // Detect environment
                     def ENV
                     switch (BRANCH) {
-                        case 'dev-k8s': ENV = 'dev'; break
-                        case 'uat-k8s': ENV = 'uat'; break
-                        case 'pro-k8s': ENV = 'pro'; break
+                        case 'dev': ENV = 'dev'; break
+                        case 'uat': ENV = 'uat'; break
+                        case 'pro': ENV = 'pro'; break
                         default:
-                            error "❌ Unknown branch ${BRANCH}. Expect dev-k8s, uat-k8s, or pro-k8s."
+                            error "❌ Unknown branch ${BRANCH}. Expect dev, uat, or pro."
                     }
 
                     // Parse service info from JOB_NAME
