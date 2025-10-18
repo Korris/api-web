@@ -10,11 +10,11 @@ using Common.Domain;
 using Common.Domain.Entities;
 using Common.Domain.Extensions;
 using Common.Mail;
-using Common.Models;
 using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
+using Mcsg.Common.Models;
 using Quartz;
 using Services;
 using static Common.SeedWork.Constants.Setting;
@@ -49,6 +49,7 @@ public class Program
         Console.WriteLine($"[DATABASE CONNECTION] {cs}");
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
+
         #endregion
 
         // Start logger
@@ -95,26 +96,6 @@ public class Program
         // DbContext
         builder.Services.AddDataLibrary(cs);
 
-        // Notification sent via email (using SMTP)
-        builder.Services.AddNotification(p =>
-        {
-            p.Host = st.Email.Host;
-            p.Port = st.Email.Port;
-            p.UserName = st.Email.UserName;
-            p.Password = st.Email.Password;
-            p.SenderEmail = st.Email.SenderEmail;
-            p.SenderName = st.Email.SenderName;
-        });
-        builder.Services.Configure<SmtpSettings>(p =>
-        {
-            p.SmtpHost = st.Email.Host;
-            p.SmtpPort = st.Email.Port;
-            p.SmtpUser = st.Email.UserName;
-            p.SmtpPass = st.Email.Password;
-            p.SmtpFrom = st.Email.SenderEmail;
-            p.SmtpDisplayFrom = st.Email.SenderName;
-        });
-
         #region -- Load settings --
         var serviceProvider = builder.Services.BuildServiceProvider();
         using (var ss = serviceProvider.GetService<IServiceScopeFactory>()!.CreateScope())
@@ -132,6 +113,7 @@ public class Program
             // Load config
             var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
             LoadSettings.LoadSettingsFromDatabase(st, configs);
+            LoadSettings.LoadEmailSettings(st, configs);
 
             builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
@@ -144,6 +126,28 @@ public class Program
             //st.LoadRpcUrl(dic, st.IsLocal);
         }
         #endregion
+
+        // Notification sent via email (using SMTP)
+        builder.Services.AddNotification(p =>
+        {
+            p.Host = st.Email.Host;
+            p.Port = st.Email.Port;
+            p.UserName = st.Email.UserName;
+            p.Password = st.Email.Password;
+            p.SenderEmail = st.Email.SenderEmail;
+            p.SenderName = st.Email.SenderName;
+        });
+
+
+        builder.Services.Configure<SmtpSettings>(p =>
+        {
+            p.SmtpHost = st.Email.Host;
+            p.SmtpPort = st.Email.Port;
+            p.SmtpUser = st.Email.UserName;
+            p.SmtpPass = st.Email.Password;
+            p.SmtpFrom = st.Email.SenderEmail;
+            p.SmtpDisplayFrom = st.Email.SenderName;
+        });
 
         // Service
         builder.Services.AddScoped<IDeleteAccountService, DeleteAccountService>();

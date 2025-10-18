@@ -65,6 +65,23 @@ public class LoadSettings
         }
     }
 
+    public static void LoadEmailSettings(dynamic st, List<SystemConfig> configs)
+    {
+        st.Email ??= new NotificationDto();
+        var emailKeys = new[] {
+            "Host", "Port", "UserName", "Password", "SenderEmail", "SenderName"
+        };
+
+        foreach (var key in emailKeys)
+        {
+            if (configs.FirstOrDefault(c => c.Key == $"Email_{key}") is { } cfg)
+            {
+                var val = ConvertByDataType(cfg.Value, cfg.DataType);
+                SetPropertySafe(st.Email, key, val);
+            }
+        }
+    }
+
     private static object? ConvertByDataType(string? value, string? dataType)
     {
         if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(dataType))

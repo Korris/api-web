@@ -42,7 +42,7 @@ public abstract class ConnectionDto
     /// <summary>
     /// Port
     /// </summary>
-    public ushort Port { get; set; }
+    public int Port { get; set; }
 
     /// <summary>
     /// User name
@@ -103,11 +103,6 @@ public abstract class ConnectionDto
         #endregion
 
         #region -- Properties --
-
-        /// <summary>
-        /// Port
-        /// </summary>
-        public new int Port { get; set; }
 
         /// <summary>
         /// Sender email

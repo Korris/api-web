@@ -31,6 +31,10 @@ public static class IConfigurationRootExtension
         {
             setting.Origins = config[$"Origins"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Environment))
+        {
+            setting.Origins = config[$"Environment"] + "";
+        }
     }
 
     #endregion

@@ -42,6 +42,7 @@ public class EmailDistributeService : BaseDistributor
         {
             DevName = emailItem.Id.ToString()
         };
+
         _setting.SendMessageToQueue(_setting.NotificationExchange, _setting.NotificationQueueEmail, msg);
     }
 
