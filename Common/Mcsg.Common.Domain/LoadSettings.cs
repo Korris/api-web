@@ -82,6 +82,23 @@ public class LoadSettings
         }
     }
 
+    public static void LoadRedisSettings(dynamic st, List<SystemConfig> configs)
+    {
+        st.Redis ??= new RedisDto();
+        var emailKeys = new[] {
+            "Host", "Port", "UserName", "Password", "Database",
+        };
+
+        foreach (var key in emailKeys)
+        {
+            if (configs.FirstOrDefault(c => c.Key == $"Redis_{key}") is { } cfg)
+            {
+                var val = ConvertByDataType(cfg.Value, cfg.DataType);
+                SetPropertySafe(st.Redis, key, val);
+            }
+        }
+    }
+
     private static object? ConvertByDataType(string? value, string? dataType)
     {
         if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(dataType))
