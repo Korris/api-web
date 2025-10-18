@@ -55,7 +55,7 @@ public class EmailService : IEmailService
             case JobType.VerifyByEmailOtp:
                 template = await DownloadEmailTemplateAsync("verify-email-otp.html");
                 email.Subject = _setting.Information + FunctionConstant.OtpEmailTitle;
-                //email.Body = template.RenderEmailOtpBody(email);
+                email.Body = template.RenderEmailOtpBody(email);
 
                 break;
             case JobType.ResetByEmailOtp:

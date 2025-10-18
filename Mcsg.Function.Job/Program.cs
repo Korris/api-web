@@ -35,6 +35,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddHealthChecks();
 
+        // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         // Get assembly name
         var me = typeof(Program);
         var assembly = me.Assembly.GetName().Name;
@@ -205,11 +208,6 @@ public class Program
         builder.Services.ConfigureMaxRequestSizes();
 
         var app = builder.Build();
-
-        // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
-
 
         Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();

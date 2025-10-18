@@ -49,7 +49,7 @@ public class LoadSettings
             var fields = new[]
             {
                 "EndPoint", "PublicUrl", "CdnImageUrl", "CdnVideoUrl",
-                "BucketName", "Location", "AccessKey", "SecretKey"
+                "BucketName", "Location", "AccessKey", "SecrectKey"
             };
 
             foreach (var field in fields)
