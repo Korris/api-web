@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
 
 namespace Mcsg.Document.Api;
-
 using Attributes;
 using Common.Core.Extensions;
 using Common.Core.Middlewares;
@@ -20,7 +19,6 @@ using Interfaces;
 using Models;
 using Services;
 using Validators;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -39,6 +37,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddHealthChecks();
 
+        // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         // Get assembly name
         var me = typeof(Program);
         var assembly = me.Assembly.GetName().Name;
@@ -50,13 +51,10 @@ public class Program
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
-
+        Console.WriteLine($"[DATABASE CONNECTION] {cs}");
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
         #endregion
-
-        // Update connection string
-        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -92,24 +90,46 @@ public class Program
         }
         #endregion
 
-        _mediaExtensionAllow = st.Minio.DocumentMediaExtensionAllow;
-
         #region -- Setup DI --
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
-
         // Business
         builder.Services.AddScoped<IBusinessText, BusinessText>();
 
-        // Storage
-        st.LoadStorages();
-        builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
-
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddDataLibrary(cs);
 
         // Attribute
         builder.Services.AddScoped<MediaOnlyAttribute>();
+
+        #region -- Load settings --
+        var serviceProvider = builder.Services.BuildServiceProvider();
+        using (var ss = serviceProvider.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
+
+            // Load config
+            var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
+            LoadSettings.LoadSettingsFromDatabase(st, configs);
+
+            _mediaExtensionAllow = st.Minio.DocumentMediaExtensionAllow;
+            builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
+
+            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            //st.LoadRpcUrl(dic, st.IsLocal);
+        }
+        #endregion
 
         // Service
         builder.Services.AddScoped<IFileService, FileService>();
@@ -181,33 +201,8 @@ public class Program
 
         var app = builder.Build();
 
-        // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
-        #region -- Load settings --
-        using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-        {
-            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
-                .Select(p => new SystemSetting
-                {
-                    Key = p.Key,
-                    Value = p.Value,
-                    DataType = p.DataType
-                })
-                .ToList();
-
-            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
-            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
-
-            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            st.LoadRpcUrl(dic, st.IsLocal);
-        }
-
         Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
-        #endregion
 
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
@@ -222,10 +217,6 @@ public class Program
                 app.UseSwagger(p =>
                 {
                     p.RouteTemplate = "swagger/{documentName}/swagger.json";
-                    p.PreSerializeFilters.Add((q, r) =>
-                    {
-                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}".ToLower() }];
-                    });
                 });
             }
 

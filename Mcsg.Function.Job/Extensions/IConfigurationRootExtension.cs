@@ -55,6 +55,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationRoutingKey = config[$"{prefix}:RoutingKey"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Origins))
+        {
+            setting.Origins = config[$"Origins"] + "";
+        }
     }
 
     #endregion

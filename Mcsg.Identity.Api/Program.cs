@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
 
@@ -20,8 +19,8 @@ using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
+using Microsoft.AspNetCore.Builder;
 using Services;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -39,6 +38,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddHealthChecks();
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         // Get assembly name
         var me = typeof(Program);
@@ -51,14 +51,12 @@ public class Program
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
+        Console.WriteLine($"[DATABASE CONNECTION] {cs}");
 
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
         config.LoadSettingOtp(st, "OtpSetting");
         #endregion
-
-        // Update connection string
-        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -81,7 +79,12 @@ public class Program
                     }
 
                     var port = Convert.ToInt32(arr[1]);
-                    var protocol = nameof(HttpProtocols.Http2) == arr[0] ? HttpProtocols.Http2 : HttpProtocols.Http1;
+                    var protocol = HttpProtocols.Http1;
+
+                    if (nameof(HttpProtocols.Http2) == arr[0])
+                    {
+                        protocol = HttpProtocols.Http2;
+                    }
 
                     p.ListenAnyIP(port, q => q.Protocols = protocol);
                 }
@@ -97,14 +100,43 @@ public class Program
         builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddDataLibrary(cs);
 
         // Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
 
-        // Storage
-        st.LoadStorages();
-        builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
+        #region -- Load settings --
+        var serviceProvider = builder.Services.BuildServiceProvider();
+        using (var ss = serviceProvider.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
+
+            // Load config
+            var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
+            LoadSettings.LoadSettingsFromDatabase(st, configs);
+            builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
+
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
+            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UserNameChangedInRemaining), out ett)) st.UserNameChangedInRemaining = ett.Value.Cast<double?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
+
+            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            //st.LoadRpcUrl(dic, st.IsLocal);
+        }
+        #endregion
 
         // MediatR
         builder.Services.AddMediatR(p =>
@@ -168,37 +200,10 @@ public class Program
         var app = builder.Build();
 
         // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        #region -- Load settings --
-        using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-        {
-            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
-                .Select(p => new SystemSetting
-                {
-                    Key = p.Key,
-                    Value = p.Value,
-                    DataType = p.DataType
-                })
-                .ToList();
-
-            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
-            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
-            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UserNameChangedInRemaining), out ett)) st.UserNameChangedInRemaining = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
-
-            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            st.LoadRpcUrl(dic, st.IsLocal);
-        }
 
         Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
-        #endregion
 
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
@@ -213,10 +218,6 @@ public class Program
                 app.UseSwagger(p =>
                 {
                     p.RouteTemplate = "swagger/{documentName}/swagger.json";
-                    p.PreSerializeFilters.Add((q, r) =>
-                    {
-                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}".ToLower() }];
-                    });
                 });
             }
 
@@ -231,7 +232,13 @@ public class Program
         var origins = st.Origins == null ? [] : st.Origins.Split(';');
         if (origins.Length > 0)
         {
-            app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
+            app.UseCors(p => p
+        .WithOrigins(origins)
+        .SetIsOriginAllowed(_ => true) // Cho phép tất cả origins được khai báo
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+            // app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
         }
         #endregion
 

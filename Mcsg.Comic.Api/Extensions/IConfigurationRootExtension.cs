@@ -35,6 +35,11 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueViewHistory = config[$"{prefix}:QueueViewHistory"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Origins))
+        {
+            setting.Origins = config[$"Origins"] + "";
+        }
+
     }
 
     #endregion

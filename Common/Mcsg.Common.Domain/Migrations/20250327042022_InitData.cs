@@ -508,6 +508,30 @@ namespace Mcsg.Common.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SystemConfigs",
+                schema: "system",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    Key = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true),
+                    DataType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemConfigs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SystemSettings",
                 schema: "system",
                 columns: table => new
@@ -1101,6 +1125,7 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    IsLongText = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -1131,8 +1156,7 @@ namespace Mcsg.Common.Domain.Migrations
                     ExternalResource = table.Column<int>(type: "integer", nullable: false),
                     Hide = table.Column<int>(type: "integer", nullable: false),
                     SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
-                    SharePostType = table.Column<int>(type: "integer", nullable: true),
-                    IsLongText = table.Column<bool>(type: "boolean", nullable: false)
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -4846,6 +4870,13 @@ namespace Mcsg.Common.Domain.Migrations
                 columns: new[] { "TagId", "PostId" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_SystemConfigs_Key",
+                schema: "system",
+                table: "SystemConfigs",
+                column: "Key",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SystemResources_FeedbackId",
                 schema: "system",
                 table: "SystemResources",
@@ -5239,6 +5270,10 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.DropTable(
                 name: "StoryTagPosts",
                 schema: "story");
+
+            migrationBuilder.DropTable(
+                name: "SystemConfigs",
+                schema: "system");
 
             migrationBuilder.DropTable(
                 name: "SystemResources",

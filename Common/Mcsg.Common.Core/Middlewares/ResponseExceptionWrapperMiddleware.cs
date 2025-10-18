@@ -49,12 +49,12 @@ public class ResponseExceptionWrapperMiddleware
         }
 
         // Skip the middleware logic for XApiKey requests
-        if (!IsAuthenticated(context))
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsJsonAsync(new { message = "Oops server error..." });
-            return;
-        }
+        //if (!IsAuthenticated(context))
+        //{
+        //    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        //    await context.Response.WriteAsJsonAsync(new { message = "Oops server error..." });
+        //    return;
+        //}
 
         // Handle other requests
         if (SkipApiResponseMiddleware(context))

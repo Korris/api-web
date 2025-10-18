@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace Mcsg.Function.Job;
@@ -18,7 +17,6 @@ using Extensions;
 using Interfaces;
 using Quartz;
 using Services;
-using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -48,13 +46,10 @@ public class Program
         // Load connection string appsettings.json
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
         var cs = config.GetConnectionString("McsgConnectionString");
-
+        Console.WriteLine($"[DATABASE CONNECTION] {cs}");
         #region -- Load settings --
         config.LoadSettings(st, "Queue:Notification");
         #endregion
-
-        // Update connection string
-        var csDb = cs.SetDbParams(st.Db);
 
         // Start logger
         builder.Host.UseSerilog();
@@ -98,7 +93,7 @@ public class Program
         builder.Services.AddSingleton<ISecurityAes>(p => new SecurityAes(st.EncryptKey));
 
         // DbContext
-        builder.Services.AddDataLibrary(csDb);
+        builder.Services.AddDataLibrary(cs);
 
         // Notification sent via email (using SMTP)
         builder.Services.AddNotification(p =>
@@ -120,9 +115,35 @@ public class Program
             p.SmtpDisplayFrom = st.Email.SenderName;
         });
 
-        // Storage
-        st.LoadStorages();
-        builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
+        #region -- Load settings --
+        var serviceProvider = builder.Services.BuildServiceProvider();
+        using (var ss = serviceProvider.GetService<IServiceScopeFactory>()!.CreateScope())
+        {
+            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
+            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
+                .Select(p => new SystemSetting
+                {
+                    Key = p.Key,
+                    Value = p.Value,
+                    DataType = p.DataType
+                })
+                .ToList();
+
+            // Load config
+            var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
+            LoadSettings.LoadSettingsFromDatabase(st, configs);
+
+            builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
+            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
+            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
+            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
+
+            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            //st.LoadRpcUrl(dic, st.IsLocal);
+        }
+        #endregion
 
         // Service
         builder.Services.AddScoped<IDeleteAccountService, DeleteAccountService>();
@@ -184,32 +205,10 @@ public class Program
         // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        #region -- Load settings --
-        using (var ss = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-        {
-            var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
-                .Select(p => new SystemSetting
-                {
-                    Key = p.Key,
-                    Value = p.Value,
-                    DataType = p.DataType
-                })
-                .ToList();
 
-            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
-            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
-            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-
-            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            st.LoadRpcUrl(dic, st.IsLocal);
-        }
 
         Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
-        #endregion
 
         #region -- Swagger and CORS --
         // Configure the HTTP request pipeline.
@@ -224,10 +223,6 @@ public class Program
                 app.UseSwagger(p =>
                 {
                     p.RouteTemplate = "swagger/{documentName}/swagger.json";
-                    p.PreSerializeFilters.Add((q, r) =>
-                    {
-                        q.Servers = [new OpenApiServer { Url = $"{st.Domain}/api/{MicroServices.GetValueOrDefault(_prefix)}".ToLower() }];
-                    });
                 });
             }
 

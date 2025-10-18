@@ -23,6 +23,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueuePostComment = config[$"{prefix}:QueuePostComment"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Origins))
+        {
+            setting.Origins = config[$"Origins"] + "";
+        }
     }
 
     #endregion

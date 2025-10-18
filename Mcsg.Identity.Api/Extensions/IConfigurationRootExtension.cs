@@ -27,6 +27,10 @@ public static class IConfigurationRootExtension
         {
             setting.NotificationQueueSms = config[$"{prefix}:QueueSms"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Origins))
+        {
+            setting.Origins = config[$"Origins"] + "";
+        }
     }
 
     #endregion

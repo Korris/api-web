@@ -252,6 +252,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<StoryTagPost> StoryTagPosts { get; set; }
 
+    public virtual DbSet<SystemConfig> SystemConfigs { get; set; }
+
     public virtual DbSet<SystemResource> SystemResources { get; set; }
 
     public virtual DbSet<SystemSetting> SystemSettings { get; set; }

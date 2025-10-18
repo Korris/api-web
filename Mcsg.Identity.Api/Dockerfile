@@ -32,3 +32,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Mcsg.Identity.Api.dll"]
+
+
+ENV ASPNETCORE_ENVIRONMENT=Dev
+
+CMD echo "[ENVIRONMENT] ${ASPNETCORE_ENVIRONMENT}" && dotnet Mcsg.Identity.Api.dll

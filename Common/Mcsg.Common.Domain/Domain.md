@@ -6,6 +6,7 @@ Run command below:
 Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.11
 Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.14
 Add-Migration InitData -Args "host=localhost;port=5433;database=local_focfoc;username=local;password=Local+54321z@"
+Add-Migration InitData -Args "host=localhost;port=5432;database=dev_focfoc;username=dev;password=Dev+54321z@"
 Note:
 Revert Mcsg.Common.Domain.csproj file
 
@@ -26,5 +27,6 @@ CREATE DATABASE local_focfoc OWNER local;
 Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.11
 Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.14
 Update-Database InitData -Args "host=ntada.win;Port=65432;database=local_focfoc;username=local;password=Local+54321z@"
+Update-Database  InitData -Args "host=localhost;port=5432;database=dev_focfoc;username=postgres;password=Minh@123"
 Note:
 Revert Mcsg.Common.Domain.csproj file

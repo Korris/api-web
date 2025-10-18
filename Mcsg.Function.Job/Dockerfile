@@ -32,3 +32,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Mcsg.Function.Job.dll"]
+
+
+ENV ASPNETCORE_ENVIRONMENT=Dev
+
+CMD echo "[ENVIRONMENT] ${ASPNETCORE_ENVIRONMENT}" && dotnet Mcsg.Function.Job.dll

@@ -167,9 +167,9 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             await _userManager.AddToRoleAsync(user, RoleName.User);
 
-            _ = Task.Run(async () => await InitUserWallet(user));
-            _ = Task.Run(async () => await SyncCreateToAna(user));
-            _ = Task.Run(async () => await SyncCreateToChat(user));
+            //_ = Task.Run(async () => await InitUserWallet(user));
+            //_ = Task.Run(async () => await SyncCreateToAna(user));
+            //_ = Task.Run(async () => await SyncCreateToChat(user));
         }
 
         if (request.IsForAdmin)
