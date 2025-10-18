@@ -243,7 +243,10 @@ public class Program
         }
         #endregion
 
-        app.UseHttpsRedirection();
+        if (!st.IsLocal)
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseAuthorization();
 
         app.MapControllers();

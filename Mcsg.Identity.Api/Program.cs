@@ -242,7 +242,10 @@ public class Program
         }
         #endregion
 
-        app.UseHttpsRedirection();
+        if (!st.IsLocal)
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();

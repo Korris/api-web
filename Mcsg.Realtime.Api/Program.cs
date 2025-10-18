@@ -92,8 +92,6 @@ public class Program
         // Setting
         builder.Services.AddSingleton<ISetting>(st!);
 
-
-
         // Business
         builder.Services.AddScoped<IBusinessText, BusinessText>();
 
@@ -237,7 +235,10 @@ public class Program
         }
         #endregion
 
-        app.UseHttpsRedirection();
+        if (!st.IsLocal)
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
