@@ -187,7 +187,10 @@ public class Program
         }
         #endregion
 
-        app.UseHttpsRedirection();
+        if (!st.IsLocal)
+        {
+            app.UseHttpsRedirection();
+        }
         app.UseStaticFiles();
 
         app.UseRouting();
