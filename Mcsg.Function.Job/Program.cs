@@ -124,9 +124,9 @@ public class Program
             if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
 
-            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            //st.LoadRpcUrl(dic, st.IsLocal);
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         #endregion
 

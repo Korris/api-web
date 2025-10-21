@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Mcsg.Media.Tool;
@@ -11,6 +12,7 @@ using Common.Core.Interfaces;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Extensions;
+using Interfaces;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -26,10 +28,7 @@ internal class Program
     /// <param name="args">Arguments</param>
     static async Task Main(string[] args)
     {
-        var configurationBuilder = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddEnvironmentVariables()
-            .AddCommandLine(args);
+        var builder = WebApplication.CreateBuilder(args);
 
         // Get assembly name
         var me = typeof(Program);
@@ -39,28 +38,23 @@ internal class Program
         var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = _prefix;
 
-        // Update connection string
-        st.DefaultConnection = st.DefaultConnection.SetDbParams(st.Db);
-
+        // Load connection string and additional settings
+        var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
+        st.DefaultConnection = config.GetConnectionString("McsgConnectionString");
+        Console.WriteLine($"[DATABASE CONNECTION] {st.DefaultConnection}");
         Console.WriteLine($"{st.AppName} - v{st.AppVersion}");
 
-        var builder = new HostBuilder();
-        var services = new ServiceCollection();
-
-        // Start logger
-        builder.UseSerilog();
+        // Cấu hình Serilog
+        builder.Host.UseSerilog();
         assembly!.StartLogger();
-        services.AddSingleton(Log.Logger);
+        builder.Services.AddSingleton(Log.Logger);
+        builder.Services.AddSingleton<ISetting>(st);
 
         // DbContext
-        services.AddDbContext<McsgContext>(p => p.UseNpgsql(st.DefaultConnection, p => p.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
-        services.AddScoped<IMcsgContext>(p => p.GetService<McsgContext>()!);
+        builder.Services.AddDbContext<McsgContext>(options => options.UseNpgsql(st.DefaultConnection, x => x.MigrationsAssembly(assembly).EnableRetryOnFailure()), ServiceLifetime.Scoped);
+        builder.Services.AddScoped<IMcsgContext, McsgContext>();
 
-        // Storage
-        st.LoadStorages();
-        services.AddStorage(p => { p.Storages = st.Minio.Storages; });
-
-        var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = builder.Services.BuildServiceProvider();
         var sc = serviceProvider.GetService<IStorageClient>();
 
         #region -- Load settings --
@@ -75,6 +69,12 @@ internal class Program
                     DataType = p.DataType
                 })
                 .ToList();
+
+            // Load config from database
+            var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
+
+            LoadSettings.LoadSettingsFromDatabase(st, configs);
+            builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
 
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
             if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";

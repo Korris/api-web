@@ -126,9 +126,9 @@ public class Program
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
             if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
 
-            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            //st.LoadRpcUrl(dic, st.IsLocal);
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         #endregion
 

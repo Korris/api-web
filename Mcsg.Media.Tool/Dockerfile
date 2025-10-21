@@ -30,3 +30,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Mcsg.Media.Tool.dll"]
+
+ENV ASPNETCORE_ENVIRONMENT=Stg
+
+CMD echo "[ENVIRONMENT] ${ASPNETCORE_ENVIRONMENT}" && dotnet Mcsg.Media.Tool.dll

@@ -131,9 +131,9 @@ public class Program
             if (set.TryGetValue(nameof(st.PercentStory), out ett)) st.PercentStory = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.NumberOfPosts), out ett)) st.NumberOfPosts = ett.Value.Cast<int?>(ett.DataType) ?? 0;
 
-            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            //st.LoadRpcUrl(dic, st.IsLocal);
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         #endregion
 

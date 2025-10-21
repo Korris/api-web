@@ -132,9 +132,9 @@ public class Program
             if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
             if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
 
-            //var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            //st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            //st.LoadRpcUrl(dic, st.IsLocal);
+            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
+            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
+            st.LoadRpcUrl(dic, st.IsLocal);
         }
         #endregion
 

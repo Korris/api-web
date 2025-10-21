@@ -28,5 +28,6 @@ Install-Package Npgsql.EntityFrameworkCore.PostgreSQL -Version 8.0.11
 Install-Package Microsoft.EntityFrameworkCore.Tools -Version 8.0.14
 Update-Database InitData -Args "host=ntada.win;Port=65432;database=local_focfoc;username=local;password=Local+54321z@"
 Update-Database  InitData -Args "host=localhost;port=5432;database=dev_focfoc;username=postgres;password=Minh@123"
+Update-Database  InitData -Args "host=172.16.0.5;port=30432;database=stg_focfoc;username=stg;password=Stg+54321z@"
 Note:
 Revert Mcsg.Common.Domain.csproj file

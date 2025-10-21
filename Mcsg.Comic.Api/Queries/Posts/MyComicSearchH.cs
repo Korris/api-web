@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Comic.Api.Queries;
 
 using Analytic.Application.Protos;
-using Commands;
 using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Domain;
@@ -76,7 +75,7 @@ public class MyComicSearchH : BaseSettingH, IRequestHandler<MyComicSearchR, Sing
             }
 
             // Keyword
-            q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || (p.Title + "").ToLower().Contains(keyword.ToLower()));
+            // q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || (p.Title + "").ToLower().Contains(keyword.ToLower()));
 
             #region -- CreatedOn --
             if (frDate != null)
