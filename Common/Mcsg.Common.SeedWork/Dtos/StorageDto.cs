@@ -94,9 +94,9 @@ public abstract class StorageDto
         public string AccessKey { get; set; } = default!;
 
         /// <summary>
-        /// Secrect key
+        /// Secret key
         /// </summary>
-        public string SecrectKey { get; set; } = default!;
+        public string SecretKey { get; set; } = default!;
 
         /// <summary>
         /// Bucket name public

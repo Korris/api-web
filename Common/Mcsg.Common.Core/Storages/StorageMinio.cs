@@ -396,10 +396,15 @@ public class StorageMinio : StorageStrategy
 
             ArgumentNullException.ThrowIfNull(_auth, nameof(_auth));
 
-            _mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecrectKey).WithRegion(_auth.Location);
+            _mc = new MinioClient().WithEndpoint(_auth.EndPoint).WithCredentials(_auth.AccessKey, _auth.SecretKey).WithRegion(_auth.Location);
             if (_auth.PublicUrl.Contains("https"))
             {
-                _mc.WithSSL();
+                _mc = _mc
+                    .WithSSL(true)
+                    .WithHttpClient(new HttpClient(new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (_, __, ___, ____) => true
+                    }));
             }
 
             _mc = _mc.Build();
