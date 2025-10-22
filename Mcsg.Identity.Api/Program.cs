@@ -197,6 +197,17 @@ public class Program
         builder.Services.AddSSOService();
         builder.Services.AddScoped<IOtpService, OtpService>();
 
+        builder.WebHost.ConfigureKestrel(serverOptions =>
+        {
+            var port = LoadSettings.GetPortFromUrl(st.Rpc.Web.Identity!);
+            serverOptions.ListenAnyIP(port, options =>
+            {
+                options.Protocols = HttpProtocols.Http2;
+            });
+
+            Console.WriteLine($"Service Port: {port}");
+        });
+
         var app = builder.Build();
 
         // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty

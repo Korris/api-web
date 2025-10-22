@@ -138,4 +138,23 @@ public class LoadSettings
         }
     }
 
+    /// <summary>
+    /// GetPortFromUrl
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="defaultPort"></param>
+    /// <returns></returns>
+    public static int GetPortFromUrl(
+    string url,
+    int defaultPort = 54211)
+    {
+        try
+        {
+            return new Uri(url).Port;
+        }
+        catch
+        {
+            return defaultPort;
+        }
+    }
 }
