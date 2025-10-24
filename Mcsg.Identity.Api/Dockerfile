@@ -31,9 +31,20 @@ RUN dotnet publish "./Mcsg.Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# -------- Add environment mapping --------
+ARG ENV=dev
+# Normalize environment (case-insensitive)
+RUN echo "Building for ENV=$ENV"
+
+# Default to Dev if not specified
+ENV ASPNETCORE_ENVIRONMENT=${ENV}
+
+# Optional: map lowercase → .NET naming convention (Dev, Stg, Prod)
+RUN if [ "$ENV" = "dev" ]; then export ASPNETCORE_ENVIRONMENT=Dev; fi && \
+    if [ "$ENV" = "staging" ]; then export ASPNETCORE_ENVIRONMENT=Stg; fi && \
+    if [ "$ENV" = "prod" ]; then export ASPNETCORE_ENVIRONMENT=Prod; fi && \
+    echo "Final ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT" > /app/env-info.txt
+
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Mcsg.Identity.Api.dll"]
-
-
-ENV ASPNETCORE_ENVIRONMENT=Dev
-
-CMD echo "[ENVIRONMENT] ${ASPNETCORE_ENVIRONMENT}" && dotnet Mcsg.Identity.Api.dll

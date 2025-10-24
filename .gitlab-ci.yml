@@ -1,0 +1,318 @@
+workflow:
+  rules:
+    - when: always
+
+variables:
+  DEPLOY_ENV:
+    value: "dev"
+    options:
+      - dev
+      - staging
+      - prod
+    description: "Select the environment to deploy"
+
+  IMAGE_TAG: $ENV-$CI_COMMIT_SHORT_SHA
+
+  # List of microservices (Dockerfile in each)
+  SERVICES: "Mcsg.Comic.Api Mcsg.Document.Api Mcsg.Function.Job Mcsg.Identity.Api Mcsg.Media.Tool Mcsg.Realtime.Api Mcsg.Social.Api Mcsg.Story.Api"
+#  SERVICES: "Mcsg.Comic.Api"
+
+stages:
+  - build
+  - push
+  - deploy
+
+image: docker:24.0.7-cli
+
+before_script:
+  - echo "Logging in to Azure Container Registry..."
+  - echo $AZURE_ACR_PASSWORD | docker login $AZURE_ACR_LOGIN_SERVER -u $AZURE_ACR_USERNAME --password-stdin
+
+# ---------- BUILD ----------
+.build_template: &build_template
+  stage: build
+  script:
+    - echo "Building Docker images for services..."
+    - |
+      for dir in $SERVICES; do
+        IMAGE_NAME=$(echo "$dir" | tr '[:upper:]' '[:lower:]' | sed 's/^mcsg/focfoc/' | tr '.' '-')
+        echo "Building $IMAGE_NAME..."
+        docker build \
+          --build-arg ENV=$ENV \
+          -f $dir/Dockerfile \
+          -t $AZURE_ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG . || exit 1
+      done
+
+
+
+# ---------- PUSH ----------
+.push_template: &push_template
+  stage: push
+  script:
+    - echo "Pushing Docker images to ACR..."
+    - for dir in $SERVICES; do
+      IMAGE_NAME=$(echo "$dir" | tr '[:upper:]' '[:lower:]' | sed 's/^mcsg/focfoc/' | tr '.' '-');
+      echo "Pushing $IMAGE_NAME...";
+      docker push $AZURE_ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG || exit 1;
+      docker rmi $AZURE_ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG || true;
+      done
+    - docker system prune -f || true
+
+# ---------- DEPLOY (base templates) ----------
+.deploy_base_aks: &deploy_base_aks
+  image: binhhieu001/k8saz:latest
+  before_script:
+    - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+    - az aks get-credentials --resource-group rg-grid-$ENV-aks --name grid-$ENV-aks --overwrite-existing
+    - kubelogin convert-kubeconfig -l azurecli
+
+.deploy_base_local: &deploy_base_local
+  image: binhhieu001/k8saz:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_B64" | base64 -d > ~/.kube/config
+    - chmod 600 ~/.kube/config
+    - if [ -n "$KUBE_CONTEXT" ]; then kubectl config use-context "$KUBE_CONTEXT" || true; fi
+    - kubectl version --client
+    - helm version
+
+# ---------- FUNCTION TO DEPLOY ONE SERVICE ----------
+.deploy_service_template: &deploy_service_template
+  stage: deploy
+  script:
+    - echo "Deploying $SERVICE_NAME in $ENV..."
+    - export ENV=$ENV
+    - export SERVICE_KEY=$(echo $SERVICE_NAME | tr '[:upper:]' '[:lower:]' | sed 's/^mcsg/focfoc/' | tr '.' '-')
+    - echo "Using Helm values file values-$ENV.yaml"
+    - echo "Service key $SERVICE_KEY"
+    - git clone --depth=1 https://${REPOSITORY_USERNAME}:${REPOSITORY_PASSWORD}@repo.ntadamedia.com/devops/ntada-azure-infra.git
+    - cd ntada-azure-infra/helm_local
+    - |
+      if [ ! -f "values-$ENV.yaml" ]; then
+        echo "Missing values-$ENV.yaml for environment: $ENV"
+        exit 1
+      fi
+
+      helm template -f values-$ENV.yaml \
+        --set namespace=focfoc-$ENV \
+        --set ${SERVICE_KEY}.enabled=true \
+        --set ${SERVICE_KEY}.imageTag=$IMAGE_TAG \
+        --set ${SERVICE_KEY}.env=$ENV . \
+      | kubectl apply -f -
+
+    - kubectl rollout status deployment/${SERVICE_KEY} -n focfoc-$ENV
+
+# ---------- DEV ----------
+build_dev:
+  <<: *build_template
+  variables:
+    ENV: dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+push_dev:
+  <<: *push_template
+  variables:
+    ENV: dev
+  needs: ["build_dev"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+# ---- deploy each microservice (DEV) ----
+.deploy_dev_common: &deploy_dev_common
+  <<: *deploy_service_template
+  <<: *deploy_base_local
+  variables:
+    ENV: dev
+  needs: ["push_dev"]
+  tags:
+    - k8s-local
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+deploy_dev_comic:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Comic.Api
+
+deploy_dev_document:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Document.Api
+
+deploy_dev_function:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Function.Job
+
+deploy_dev_identity:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Identity.Api
+
+deploy_dev_media:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Media.Tool
+
+deploy_dev_realtime:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Realtime.Api
+
+deploy_dev_social:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Social.Api
+
+deploy_dev_story:
+  <<: *deploy_dev_common
+  variables:
+    SERVICE_NAME: Mcsg.Story.Api
+
+
+# ---------- STAGING ----------
+build_staging:
+  <<: *build_template
+  variables:
+    ENV: staging
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+
+push_staging:
+  <<: *push_template
+  variables:
+    ENV: staging
+  needs: ["build_staging"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+
+# ---- deploy each microservice (STAGING) ----
+.deploy_staging_common: &deploy_staging_common
+  <<: *deploy_service_template
+  <<: *deploy_base_local
+  variables:
+    ENV: staging
+  needs: ["push_staging"]
+  tags:
+    - k8s-local
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+
+deploy_staging_comic:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Comic.Api
+
+deploy_staging_document:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Document.Api
+
+deploy_staging_function:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Function.Job
+
+deploy_staging_identity:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Identity.Api
+
+deploy_staging_media:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Media.Tool
+
+deploy_staging_realtime:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Realtime.Api
+
+deploy_staging_social:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Social.Api
+
+deploy_staging_story:
+  <<: *deploy_staging_common
+  variables:
+    ENV: staging
+    SERVICE_NAME: Mcsg.Story.Api
+
+
+# ---------- PRODUCTION ----------
+build_production:
+  <<: *build_template
+  variables:
+    ENV: prod
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+push_production:
+  <<: *push_template
+  variables:
+    ENV: prod
+  needs: ["build_production"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+# ---- deploy each microservice (PROD via AKS) ----
+.deploy_prod_common: &deploy_prod_common
+  <<: *deploy_service_template
+  <<: *deploy_base_aks
+  variables:
+    ENV: prod
+  needs: ["push_production"]
+  tags:
+    - runner-dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+
+deploy_prod_comic:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Comic.Api
+
+deploy_prod_document:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Document.Api
+
+deploy_prod_function:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Function.Job
+
+deploy_prod_identity:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Identity.Api
+
+deploy_prod_media:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Media.Tool
+
+deploy_prod_realtime:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Realtime.Api
+
+deploy_prod_social:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Social.Api
+
+deploy_prod_story:
+  <<: *deploy_prod_common
+  variables:
+    SERVICE_NAME: Mcsg.Story.Api

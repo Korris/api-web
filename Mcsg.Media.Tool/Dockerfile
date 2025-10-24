@@ -4,7 +4,8 @@
 FROM mcr.microsoft.com/dotnet/runtime:8.0-bookworm-slim AS base
 USER $APP_UID
 WORKDIR /app
-
+EXPOSE 8080
+EXPOSE 8081
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
@@ -29,8 +30,20 @@ RUN dotnet publish "./Mcsg.Media.Tool.csproj" -c $BUILD_CONFIGURATION -o /app/pu
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# -------- Add environment mapping --------
+ARG ENV=dev
+# Normalize environment (case-insensitive)
+RUN echo "Building for ENV=$ENV"
+
+# Default to Dev if not specified
+ENV ASPNETCORE_ENVIRONMENT=${ENV}
+
+# Optional: map lowercase → .NET naming convention (Dev, Stg, Prod)
+RUN if [ "$ENV" = "dev" ]; then export ASPNETCORE_ENVIRONMENT=Dev; fi && \
+    if [ "$ENV" = "staging" ]; then export ASPNETCORE_ENVIRONMENT=Stg; fi && \
+    if [ "$ENV" = "prod" ]; then export ASPNETCORE_ENVIRONMENT=Prod; fi && \
+    echo "Final ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT" > /app/env-info.txt
+
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Mcsg.Media.Tool.dll"]
-
-ENV ASPNETCORE_ENVIRONMENT=Stg
-
-CMD echo "[ENVIRONMENT] ${ASPNETCORE_ENVIRONMENT}" && dotnet Mcsg.Media.Tool.dll
