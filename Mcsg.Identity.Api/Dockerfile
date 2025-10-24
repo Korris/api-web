@@ -4,8 +4,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
 
 # This stage is used to build the service project
@@ -46,5 +44,4 @@ RUN if [ "$ENV" = "dev" ]; then export ASPNETCORE_ENVIRONMENT=Dev; fi && \
     if [ "$ENV" = "prod" ]; then export ASPNETCORE_ENVIRONMENT=Prod; fi && \
     echo "Final ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT" > /app/env-info.txt
 
-ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Mcsg.Identity.Api.dll"]
