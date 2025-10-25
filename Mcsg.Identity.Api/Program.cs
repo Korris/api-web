@@ -19,8 +19,8 @@ using Common.SeedWork;
 using Common.SeedWork.Extensions;
 using Extensions;
 using Interfaces;
-using Microsoft.AspNetCore.Builder;
 using Services;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -240,6 +240,9 @@ public class Program
         {
             app.UseHttpsRedirection();
         }
+        app.UseApiPathRewrite(MicroServices.GetValueOrDefault(_prefix).ToLower());
+        app.UseRouting();
+        app.UseRouting();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();

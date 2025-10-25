@@ -20,6 +20,7 @@ using Interfaces;
 using Models;
 using Services;
 using Validators;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -249,6 +250,8 @@ public class Program
         {
             app.UseHttpsRedirection();
         }
+        app.UseApiPathRewrite(MicroServices.GetValueOrDefault(_prefix).ToLower());
+        app.UseRouting();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();

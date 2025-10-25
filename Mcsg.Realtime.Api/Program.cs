@@ -17,6 +17,7 @@ using Interfaces;
 using Mcsg.Common.Core;
 using Mcsg.Common.Core.Interfaces;
 using Services;
+using static Common.Core.Constants.Setting;
 using static Common.SeedWork.Constants.Setting;
 
 /// <summary>
@@ -239,6 +240,8 @@ public class Program
         {
             app.UseHttpsRedirection();
         }
+        app.UseApiPathRewrite(MicroServices.GetValueOrDefault(_prefix).ToLower());
+        app.UseRouting();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
