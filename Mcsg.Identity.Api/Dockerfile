@@ -39,6 +39,12 @@ RUN echo "Building for ENV=$ENV"
 # Default to Dev if not specified
 ENV ASPNETCORE_ENVIRONMENT=${ENV}
 
+ARG ORIGINS=http://localhost:3000;https://focfoc-web-stg.nulyxa.dev
+ARG PROTOCOLS=Http1_80;Http2_80
+
+ENV Protocols=${PROTOCOLS}
+ENV Origins=${ORIGINS}
+
 # Optional: map lowercase → .NET naming convention (Dev, Stg, Prod)
 RUN if [ "$ENV" = "dev" ]; then export ASPNETCORE_ENVIRONMENT=Dev; fi && \
     if [ "$ENV" = "staging" ]; then export ASPNETCORE_ENVIRONMENT=Stg; fi && \

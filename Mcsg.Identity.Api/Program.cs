@@ -197,17 +197,6 @@ public class Program
         builder.Services.AddSSOService();
         builder.Services.AddScoped<IOtpService, OtpService>();
 
-        builder.WebHost.ConfigureKestrel(serverOptions =>
-        {
-            var port = LoadSettings.GetPortFromUrl(st.Rpc.Web.Identity!);
-            serverOptions.ListenAnyIP(port, options =>
-            {
-                options.Protocols = HttpProtocols.Http2;
-            });
-
-            Console.WriteLine($"Service Port: {port}");
-        });
-
         var app = builder.Build();
 
         // https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty
@@ -243,13 +232,7 @@ public class Program
         var origins = st.Origins == null ? [] : st.Origins.Split(';');
         if (origins.Length > 0)
         {
-            app.UseCors(p => p
-        .WithOrigins(origins)
-        .SetIsOriginAllowed(_ => true) // Cho phép tất cả origins được khai báo
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
-            // app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
+            app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().WithOrigins(origins).AllowCredentials());
         }
         #endregion
 

@@ -33,8 +33,13 @@ public static class IConfigurationRootExtension
         }
         if (string.IsNullOrEmpty(setting.Environment))
         {
-            setting.Origins = config[$"Environment"] + "";
+            setting.Environment = config[$"Environment"] + "";
         }
+        if (string.IsNullOrEmpty(setting.Protocols))
+        {
+            setting.Protocols = config[$"Protocols"] + "";
+        }
+
     }
 
     #endregion
