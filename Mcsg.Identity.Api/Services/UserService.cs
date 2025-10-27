@@ -66,15 +66,16 @@ public partial class UserService : BaseMinioS, IUserService
     {
         var userId = request.UserId;
         var q = _context.Available<UserRefreshToken>(false).Where(p => p.UserId == userId);
-        if (!request.IsLocalhost)
-        {
-            q = q.Where(p => p.SessionId == request.SessionId);
-        }
-        var has = await q.AnyAsync();
-        if (!has)
-        {
-            throw new UnauthorizedAccessException(nameof(E317), E317);
-        }
+        // TODO
+        //if (!request.IsLocalhost)
+        //{
+        //    q = q.Where(p => p.SessionId == request.SessionId);
+        //}
+        //var has = await q.AnyAsync();
+        //if (!has)
+        //{
+        //    throw new UnauthorizedAccessException(nameof(E317), E317);
+        //}
 
         var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == userId);
         return await CreateUserRespone(user, true);

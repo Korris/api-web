@@ -242,7 +242,6 @@ public class Program
         }
         app.UseApiPathRewrite(MicroServices.GetValueOrDefault(_prefix).ToLower());
         app.UseRouting();
-        app.UseRouting();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();

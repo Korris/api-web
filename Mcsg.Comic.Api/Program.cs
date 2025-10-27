@@ -202,7 +202,6 @@ public class Program
 
         var app = builder.Build();
 
-
         Setting.DevelopmentMode = st.DevMode;
         st.LogInfor();
 
