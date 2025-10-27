@@ -75,7 +75,7 @@ public class MyComicSearchH : BaseSettingH, IRequestHandler<MyComicSearchR, Sing
             }
 
             // Keyword
-            // q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || (p.Title + "").ToLower().Contains(keyword.ToLower()));
+            q = q.Where(p => string.IsNullOrWhiteSpace(keyword) || (p.Title + "").ToLower().Contains(keyword.ToLower()));
 
             #region -- CreatedOn --
             if (frDate != null)
