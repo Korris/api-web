@@ -406,6 +406,7 @@ public class FileService : IFileService
 
                 tempBlobName = $"{MinioFolder.Comic}/{tempBlobName}";
                 var isExistTempFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(tempBlobName, null);
+                // TODO Check targetFile
                 if (isExistTempFile != null)
                 {
                     await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempBlobName, null);
@@ -470,7 +471,8 @@ public class FileService : IFileService
             var targetObjectName = $"{MinioFolder.Comic}/{targetBlobName}";
             var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
 
-            if (isExistTempFile != null && isExistTargetFile == null)
+            // TODO Check targetFile
+            if (isExistTempFile != null)
             {
                 await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 

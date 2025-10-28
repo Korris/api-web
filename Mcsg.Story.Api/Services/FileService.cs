@@ -444,7 +444,8 @@ public class FileService : IFileService
             var targetObjectName = $"{MinioFolder.Story}/{targetBlobName}";
             var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
 
-            if (isExistTempFile != null && isExistTargetFile == null)
+            // TODO Check targetFile
+            if (isExistTempFile != null)
             {
                 await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 

@@ -7,7 +7,6 @@ using Common.Core.Enums;
 using Common.Core.Extensions;
 using Common.Core.Interfaces;
 using Common.Domain;
-using Common.Domain.Entities;
 using Dtos;
 using Interfaces;
 using Requests;
@@ -69,8 +68,8 @@ public partial class ResourceCommentService : IResourceCommentService
 
         var targetObjectName = $"{Setting.MinioFolder.Comic}/{targetBlobName}";
         var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
-
-        if (isExistTempFile != null && isExistTargetFile == null)
+        // TODO Check targetFile
+        if (isExistTempFile != null)
         {
             await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 
@@ -110,8 +109,8 @@ public partial class ResourceCommentService : IResourceCommentService
 
         var targetObjectName = $"{Setting.MinioFolder.Document}/{targetBlobName}";
         var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
-
-        if (isExistTempFile != null && isExistTargetFile == null)
+        // TODO Check targetFile
+        if (isExistTempFile != null)
         {
             await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 
@@ -150,8 +149,8 @@ public partial class ResourceCommentService : IResourceCommentService
 
         var targetObjectName = $"{Setting.MinioFolder.Social}/{targetBlobName}";
         var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
-
-        if (isExistTempFile != null && isExistTargetFile == null)
+        // TODO Check targetFile
+        if (isExistTempFile != null)
         {
             await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 
@@ -191,8 +190,8 @@ public partial class ResourceCommentService : IResourceCommentService
 
         var targetObjectName = $"{Setting.MinioFolder.Story}/{targetBlobName}";
         var isExistTargetFile = await _sc.GetStrategy(resource.MinioInstance).StatObject(targetObjectName, null);
-
-        if (isExistTempFile != null && isExistTargetFile == null)
+        // TODO Check targetFile
+        if (isExistTempFile != null)
         {
             await _sc.GetStrategy(resource.MinioInstance).CopyObject(tempObjectName, targetObjectName, null, null);
 
