@@ -21,6 +21,7 @@ namespace Mcsg.Common.Core.Storages;
 
 using Dtos;
 using Enums;
+using Minio.Exceptions;
 using static Common.Core.Constants.Setting;
 
 /// <summary>
@@ -250,6 +251,12 @@ public class StorageMinio : StorageStrategy
         {
             var statArg = new StatObjectArgs().WithBucket(bucketName).WithObject(objectName);
             return await Mc.StatObjectAsync(statArg);
+        }
+        catch (MinioException me)
+        {
+            // File không tồn tại
+            Console.WriteLine($"[StatObject] MinioException - {objectName}: {me.Message}");
+            return null;
         }
         catch
         {
