@@ -40,7 +40,7 @@ RUN echo "Building for ENV=$ENV"
 ENV ASPNETCORE_ENVIRONMENT=${ENV}
 
 ARG ORIGINS=http://localhost:3000;https://focfoc-web-stg.nulyxa.dev
-ARG PROTOCOLS=Http1_80;Http2_14243
+ARG PROTOCOLS=Http1_8080;Http2_14243
 
 ENV Protocols=${PROTOCOLS}
 ENV Origins=${ORIGINS}

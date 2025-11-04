@@ -1199,9 +1199,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             var rsp = await client.CreateAsync(request);
             res.Id = rsp.Id;
+            Console.WriteLine("Create New Wallet Success");
         }
         catch (Exception ex)
         {
+            Console.WriteLine("Connect WalletRPC fail" + ex.Message);
+            Console.WriteLine("WalletRPC Port" + _setting.Rpc.Wallet.Wallet);
             res.Message = ex.Message;
             ex.Message.LogError();
         }
@@ -1239,9 +1242,12 @@ public partial class AuthenticationService : BaseSettingS, IAuthenticationServic
 
             res.Message = rsp.Message;
             res.Items.Add(rsp.Items.Select(item => new UserOutputDto { Id = item.Id }));
+            Console.WriteLine("Create New Analytic Success");
         }
         catch (Exception ex)
         {
+            Console.WriteLine("Connect AnalyticRPC fail" + ex.Message);
+            Console.WriteLine("AnalyticRPC Port" + _setting.Rpc.Wallet.Wallet);
             res.Message = ex.Message;
             ex.Message.LogError();
         }
