@@ -240,7 +240,6 @@ push_dev:
   variables:
     ENV: dev
   needs: ["push_dev"]
-  tags: [k8s-local]
   rules:
     - exists:
         - no_changes.flag
@@ -310,7 +309,6 @@ push_staging:
   variables:
     ENV: staging
   needs: ["push_staging"]
-  tags: [k8s-local]
   rules:
     - exists:
         - no_changes.flag
