@@ -25,7 +25,7 @@ stages:
   - push
   - deploy
 
-image: docker:24.0.7-cli
+image: docker:29-cli
 
 before_script:
   - apk add --no-cache git
@@ -183,7 +183,7 @@ detect_changes:
     - export SERVICE_KEY=$(echo $SERVICE_NAME | tr '[:upper:]' '[:lower:]' | sed 's/^mcsg/focfoc/' | tr '.' '-')
     - echo "🔧 Service key → $SERVICE_KEY"
     - echo "🔧 Image tag → $IMAGE_TAG"
-    - git clone --depth=1 https://${REPOSITORY_USERNAME}:${REPOSITORY_PASSWORD}@repo.ntadamedia.com/devops/ntada-azure-infra.git
+    - git clone --depth=1 https://${REPOSITORY_USERNAME}:${REPOSITORY_PASSWORD}@repo.ntada.vn/devops/ntada-azure-infra.git
     - cd ntada-azure-infra/helm_local
     - |
       if [ ! -f "values-$ENV.yaml" ]; then
