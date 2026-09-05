@@ -83,7 +83,7 @@ public class HostedSmartLoopkup : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueSmartLookup, false, false, false, null);
+            _channel.QueueDeclare(st.NotificationQueueSmartLookup, true, false, false, null);
             _channel.QueueBind(st.NotificationQueueSmartLookup, st.NotificationExchange, st.NotificationQueueSmartLookup, null);
             _channel.BasicQos(0, 1, false);
 

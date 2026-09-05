@@ -82,7 +82,7 @@ public class HostedSms : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueSms, false, false, false, null);
+            _channel.QueueDeclare(st.NotificationQueueSms, true, false, false, null);
             _channel.QueueBind(st.NotificationQueueSms, st.NotificationExchange, st.NotificationQueueSms, null);
             _channel.BasicQos(0, 1, false);
 

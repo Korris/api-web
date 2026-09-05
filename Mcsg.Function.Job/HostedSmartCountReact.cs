@@ -81,7 +81,7 @@ public class HostedSmartCountReact : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueuePostReact, false, false, false, null);
+            _channel.QueueDeclare(st.NotificationQueuePostReact, true, false, false, null);
             _channel.QueueBind(st.NotificationQueuePostReact, st.NotificationExchange, st.NotificationQueuePostReact, null);
             _channel.BasicQos(0, 1, false);
 

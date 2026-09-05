@@ -82,7 +82,7 @@ public class HostedEmail : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueEmail, false, false, false, null);
+            _channel.QueueDeclare(st.NotificationQueueEmail, true, false, false, null);
             _channel.QueueBind(st.NotificationQueueEmail, st.NotificationExchange, st.NotificationQueueEmail, null);
             _channel.BasicQos(0, 1, false);
 

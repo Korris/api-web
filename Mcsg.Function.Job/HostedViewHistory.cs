@@ -84,7 +84,7 @@ public class HostedViewHistory : BackgroundService
             "_channel created".LogInfor();
 
             _channel.ExchangeDeclare(st.NotificationExchange, ExchangeType.Direct);
-            _channel.QueueDeclare(st.NotificationQueueViewHistory, false, false, false, null);
+            _channel.QueueDeclare(st.NotificationQueueViewHistory, true, false, false, null);
             _channel.QueueBind(st.NotificationQueueViewHistory, st.NotificationExchange, st.NotificationQueueViewHistory, null);
             _channel.BasicQos(0, 1, false);
 
