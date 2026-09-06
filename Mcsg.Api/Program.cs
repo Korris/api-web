@@ -48,11 +48,9 @@ public class Program
 
         // Override Environment from ASPNETCORE_ENVIRONMENT if not set via env vars
         var aspEnv = builder.Environment.EnvironmentName;
-        Log.Information("[STARTUP] ASPNETCORE_ENVIRONMENT={AspEnv}, st.Environment={StEnv}, IsLocal={IsLocal}, CommitRef=7aeffadd", aspEnv, st.Environment, st.IsLocal);
         if (st.IsLocal && !string.Equals(aspEnv, "Development", StringComparison.OrdinalIgnoreCase))
         {
             st.Environment = aspEnv;
-            Log.Information("[STARTUP] Overridden Environment to {AspEnv}, IsLocal now={IsLocal}", aspEnv, st.IsLocal);
         }
 
         // Database connection
@@ -74,6 +72,7 @@ public class Program
         builder.Host.UseSerilog();
         assembly!.StartLogger();
         builder.Services.AddSingleton(Log.Logger);
+        Log.Information("[STARTUP] ASPNETCORE_ENVIRONMENT={AspEnv}, Environment={Env}, IsLocal={IsLocal}, Commit=984ac9b2", aspEnv, st.Environment, st.IsLocal);
 
         #region -- Load HTTP protocols --
         if (!string.IsNullOrWhiteSpace(st.Protocols))
