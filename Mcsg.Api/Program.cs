@@ -46,12 +46,7 @@ public class Program
         var st = _prefix.ConvertEnvironmentVariable<Setting>(CommonPrefix);
         st.Prefix = _prefix;
 
-        // Override Environment from ASPNETCORE_ENVIRONMENT if not set via env vars
         var aspEnv = builder.Environment.EnvironmentName;
-        if (st.IsLocal && !string.Equals(aspEnv, "Development", StringComparison.OrdinalIgnoreCase))
-        {
-            st.Environment = aspEnv;
-        }
 
         // Database connection
         var config = new ConfigurationBuilder().AddConfiguration(builder.Configuration).Build();
@@ -67,6 +62,12 @@ public class Program
         Areas.Document.Extensions.IConfigurationRootExtension.LoadSettings(config, st, "Queue:Notification");
         Areas.Social.Extensions.IConfigurationRootExtension.LoadSettings(config, st, "Queue:Notification");
         #endregion
+
+        // Override Environment from ASPNETCORE_ENVIRONMENT after LoadSettings
+        if (st.IsLocal && !string.Equals(aspEnv, "Development", StringComparison.OrdinalIgnoreCase))
+        {
+            st.Environment = aspEnv;
+        }
 
         // Logger
         builder.Host.UseSerilog();
