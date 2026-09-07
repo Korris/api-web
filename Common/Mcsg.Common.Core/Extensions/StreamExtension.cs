@@ -12,7 +12,6 @@
 #endregion
 
 using ImageMagick;
-using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace Mcsg.Common.Core.Extensions;
 
@@ -60,21 +59,13 @@ public static class StreamExtension
 
             // Optionally crop the image to ensure it fits the exact dimensions
             magickImage.Crop(width, height, Gravity.Center);
-            using (var ms = new MemoryStream())
-            {
-                magickImage.Format = MagickFormat.Jpeg;
-                magickImage.Quality = quality;
-                magickImage.Write(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                using (var image = SixLabors.ImageSharp.Image.Load(ms))
-                {
-                    var output = new MemoryStream();
-                    image.Save(output, new JpegEncoder { Quality = (int)quality });
-                    output.Seek(0, SeekOrigin.Begin);
-                    return output;
-                }
-            }
+            // Single encode: the former ImageSharp decode + re-encode of Magick's JPEG doubled the CPU time for thumbnails
+            var output = new MemoryStream();
+            magickImage.Format = MagickFormat.Jpeg;
+            magickImage.Quality = quality;
+            magickImage.Write(output);
+            output.Seek(0, SeekOrigin.Begin);
+            return output;
         }
     }
 

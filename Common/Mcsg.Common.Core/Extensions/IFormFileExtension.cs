@@ -1,7 +1,6 @@
 ﻿using ImageMagick;
 using Microsoft.AspNetCore.Http;
 using OpenMcdf;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO.Compression;
@@ -171,28 +170,20 @@ public static class IFormFileExtension
                             magickImage.Alpha(AlphaOption.Remove);
                         }
 
-                        using (var ms = new MemoryStream())
+                        // Single encode: Magick.NET already produces the JPEG and knows the pixel size.
+                        // The former ImageSharp decode + re-encode doubled the CPU time and re-compressed a lossy image.
+                        var output = new MemoryStream();
+                        magickImage.Format = MagickFormat.Jpeg;
+                        magickImage.Quality = quality;
+                        magickImage.Write(output);
+                        output.Seek(0, SeekOrigin.Begin);
+
+                        return new CompressImage
                         {
-                            magickImage.Format = MagickFormat.Jpeg;
-                            magickImage.Quality = quality;
-                            magickImage.Write(ms);
-                            ms.Seek(0, SeekOrigin.Begin);
-
-                            using (var image = SixLabors.ImageSharp.Image.Load(ms))
-                            {
-                                var output = new MemoryStream();
-                                image.Save(output, new JpegEncoder { Quality = (int)quality });
-                                output.Seek(0, SeekOrigin.Begin);
-                                var compressedFile = new FormFile(output, 0, output.Length, file.Name, file.FileName);
-
-                                return new CompressImage
-                                {
-                                    Image = compressedFile,
-                                    Width = image.Width,
-                                    Height = image.Height
-                                };
-                            }
-                        }
+                            Image = new FormFile(output, 0, output.Length, file.Name, file.FileName),
+                            Width = (int)magickImage.Width,
+                            Height = (int)magickImage.Height
+                        };
                     }
                 }
                 catch
