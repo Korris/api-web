@@ -252,16 +252,67 @@ public class StorageMinio : StorageStrategy
             var statArg = new StatObjectArgs().WithBucket(bucketName).WithObject(objectName);
             return await Mc.StatObjectAsync(statArg);
         }
+        catch (ObjectNotFoundException)
+        {
+            // Trường hợp bình thường: file không tồn tại
+            return null;
+        }
         catch (MinioException me)
         {
-            // File không tồn tại, hoặc bucket/region/endpoint sai: caller không phân biệt được nên ghi rõ loại lỗi và bucket
+            // Bucket/region/endpoint sai: caller không phân biệt được nên ghi rõ loại lỗi và bucket
             Console.WriteLine($"[StatObject] {me.GetType().Name} bucket={bucketName} object={objectName}: {me.Message}");
             return null;
+        }
+        catch (NullReferenceException)
+        {
+            // Minio SDK 6.0.5: HEAD bị MinIO trả mã lỗi khác 404 (403/400/405/501) làm vỡ bộ parse lỗi của SDK
+            // (ParseWellKnownErrorNoContent gọi response.Exception.ToString() khi Exception null), mã lỗi thật bị mất.
+            // Dùng list theo prefix để vẫn nhận ra file đang tồn tại, tránh việc bỏ qua bước move ở caller.
+            Console.WriteLine($"[StatObject] HEAD rejected with a non-404 status (hidden by Minio SDK 6.0.5) bucket={bucketName} object={objectName}; falling back to list");
+            return await StatByListing(objectName, bucketName);
         }
         catch (Exception ex)
         {
             // Lỗi ngoài MinIO (DNS, TLS, timeout) trước đây bị nuốt hoàn toàn
             Console.WriteLine($"[StatObject] {ex.GetType().Name} bucket={bucketName} object={objectName}: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Existence check that does not depend on HEAD: lists the exact key and rebuilds an ObjectStat from the listing entry
+    /// </summary>
+    private async Task<ObjectStat?> StatByListing(string objectName, string? bucketName)
+    {
+        try
+        {
+            var listArg = new ListObjectsArgs().WithBucket(bucketName).WithPrefix(objectName).WithRecursive(true);
+            await foreach (var item in Mc.ListObjectsEnumAsync(listArg))
+            {
+                if (item.IsDir || !string.Equals(item.Key, objectName, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                var headers = new Dictionary<string, string>
+                {
+                    ["Content-Length"] = item.Size.ToString(),
+                    ["ETag"] = item.ETag ?? string.Empty
+                };
+                if (!string.IsNullOrWhiteSpace(item.LastModified))
+                {
+                    headers["Last-Modified"] = item.LastModified;
+                }
+
+                return ObjectStat.FromResponseHeaders(objectName, headers);
+            }
+
+            Console.WriteLine($"[StatObject] list fallback: object not found bucket={bucketName} object={objectName}");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[StatObject] list fallback failed {ex.GetType().Name} bucket={bucketName} object={objectName}: {ex.Message}");
             return null;
         }
     }
