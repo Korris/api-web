@@ -36,7 +36,10 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddHealthChecks();
+        // Readiness check (/health/ready) waits for StartupWarmupHostedService; plain /health stays a liveness probe
+        builder.Services.AddHealthChecks()
+            .AddCheck<Services.WarmupReadinessHealthCheck>("warmup", tags: [Services.WarmupReadinessHealthCheck.Tag]);
+        builder.Services.AddHostedService<Services.StartupWarmupHostedService>();
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         var me = typeof(Program);
@@ -415,7 +418,15 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
-        app.MapHealthChecks("/health");
+        // Liveness: everything except the warm-up gate, so a cold pod is not restarted. Readiness: the warm-up gate only.
+        app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = c => !c.Tags.Contains(Services.WarmupReadinessHealthCheck.Tag)
+        });
+        app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+        {
+            Predicate = c => c.Tags.Contains(Services.WarmupReadinessHealthCheck.Tag)
+        });
         app.UseResponseCaching();
 
         // gRPC services (Identity)
