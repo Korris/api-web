@@ -1,0 +1,17 @@
+﻿namespace Mcsg.Api.Areas.Identity.Models;
+
+using Common.Core.Distributor;
+using Common.Core.Enums;
+using Common.Models;
+
+public class EmailJobDistributeItem : DistributedItem
+{
+    public EmailJobDistributeItem()
+    {
+        Id = Guid.NewGuid();
+        Email = new Email();
+    }
+
+    public Email Email { get; set; }
+    public JobType JobType { get; set; }
+}

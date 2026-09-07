@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>False</GenerateDocumentationFile>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="14.0.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.70.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+        <PackageReference Include="Otp.NET" Version="1.4.0" />
+        <PackageReference Include="QRCoder" Version="1.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common\Mcsg.Common.Domain\Mcsg.Common.Domain.csproj" />
+        <ProjectReference Include="..\Common\Mcsg.Common\Mcsg.Common.csproj" />
+    </ItemGroup>
+
+    <!-- Identity gRPC proto files -->
+    <ItemGroup>
+        <Protobuf Include="Areas\Identity\Protos\Clients\analytic.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Identity\Protos\Clients\chat.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Identity\Protos\Clients\user.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Identity\Protos\Clients\wallet.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Identity\Protos\Servers\user_recovery.proto" GrpcServices="Server" />
+        <Protobuf Include="Areas\Identity\Protos\Servers\user_authenticator.proto" GrpcServices="Server" />
+        <Protobuf Include="Areas\Identity\Protos\Servers\identity.proto" GrpcServices="Server" />
+    </ItemGroup>
+
+    <!-- Comic gRPC proto files -->
+    <ItemGroup>
+        <Protobuf Include="Areas\Comic\Protos\Clients\comic.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Comic\Protos\Clients\comic_sub.proto" GrpcServices="Client" />
+    </ItemGroup>
+
+    <!-- Story gRPC proto files -->
+    <ItemGroup>
+        <Protobuf Include="Areas\Story\Protos\Clients\story.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Story\Protos\Clients\story_sub.proto" GrpcServices="Client" />
+    </ItemGroup>
+
+    <!-- Document gRPC proto files -->
+    <ItemGroup>
+        <Protobuf Include="Areas\Document\Protos\Clients\document.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Document\Protos\Clients\document_sub.proto" GrpcServices="Client" />
+    </ItemGroup>
+
+    <!-- Social gRPC proto files -->
+    <ItemGroup>
+        <Protobuf Include="Areas\Social\Protos\Clients\social.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Social\Protos\Clients\social_sub.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Social\Protos\Clients\tracking_social_share.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Social\Protos\Clients\tracking_summary.proto" GrpcServices="Client" />
+        <Protobuf Include="Areas\Social\Protos\Clients\favorite_view.proto" GrpcServices="Client" />
+        <!-- wallet.proto is already included via Identity area (same csharp_namespace) -->
+    </ItemGroup>
+
+</Project>

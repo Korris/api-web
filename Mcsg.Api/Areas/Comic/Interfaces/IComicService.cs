@@ -1,0 +1,30 @@
+﻿namespace Mcsg.Api.Areas.Comic.Interfaces;
+
+using Common.Core.Requests;
+using Common.SeedWork.Responses;
+using Mcsg.Api.Areas.Comic.Models;
+using Mcsg.Api.Areas.Comic.Requests;
+
+public interface IComicService
+{
+    Task<PostSeriesQueryDbResponse> Get(ComicHashIdR req);
+    Task<List<ChapterResponse>> SwapChapterOrder(string hashId, ComicChapterOrderSwapR orders);
+    Task<ChapterResponse> GetChapter(ChapterOrderR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopHitList(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopLatestList(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopCompletedList(ComicTopPostR req);
+    Task<PagedResponse<PostSeriesTopResponse>> GetMy(ComicPostListSeriesR loadReq);
+    Task<PostSeriesAllTopResponse> GetTop();
+    Task<PagedResponse<PostSeriesTopResponse>> GetTopAsync(ComicPostListSeriesR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetRelationAsync(ComicRelationPostSeriesR request);
+    Task<PagedResponse<ChapterResponse>> GetChapters(string hashId, ComicChapterListR request);
+    Task<PagedResponse<ChapterTOCResponse>> GetChaptersListSimple(ComicHashIdR hashId);
+    Task<PagedResponse<PostBoxResposne>> GetByUserProfileName(ComicPostByProFileNameR request);
+    Task<PagedResponse<PostBoxResposne>> GetByTagName(ComicPostByTagNameR request);
+    Task<PagedResponse<PostSeriesTopResponse>> GetFollowedPost(PaginatedR input);
+    Task<FavoritePostResponse> FollowPost(IdBaseR request);
+    Task<float> GetLatestOrderChapter(string hashPostId);
+    Task<List<PostSeriesTopResponse>> GetRecommended(ComicRecommendedR req);
+    Task MoveChapterOrder(string hashId, ComicChapterOrderSwapR orders);
+    Task<List<ChapterList>> GetAllChapters(string hashId);
+}

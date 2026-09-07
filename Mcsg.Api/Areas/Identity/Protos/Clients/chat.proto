@@ -1,0 +1,27 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Mcsg.Chat.Api.Protos";
+
+package chat;
+
+service UserSyncProto {
+    rpc SyncUsers (SyncUserReq) returns (SyncUserRsp);
+}
+
+message SyncUserReq {
+    repeated SyncUserProtoDto users = 1;
+}
+
+message SyncUserProtoDto {
+    string userId = 1;
+    string avatar = 2;
+    string profileName = 3;
+    string userName = 4;
+}
+
+message SyncUserRsp {
+    bool success = 1;
+    string message = 2;
+}

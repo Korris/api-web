@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Wallet.Api.Protos";
+
+package wallet;
+
+service UserWalletProto {
+    rpc Create (UserWalletCreateReq) returns (BaseRsp);
+    rpc Delete (UserWalletDeleteReq) returns (UserWalletDeleteRsp);
+    rpc GetTransactionInfo (TransactionGetReq) returns (BaseRsp);
+    rpc AddAmount (UserWalletAddAmountReq) returns (BaseRsp);
+    rpc UserPremiumPackageView (UserPremiumPackageViewReq) returns (UserPremiumPackageViewRsp);
+}
+
+message BaseRsp {
+    bool success = 1;
+    string message = 2;
+    string id = 3;
+    repeated TransactionProtoDto transactions = 4;
+}
+
+message UserWalletCreateReq {
+    string userId = 1;
+}
+
+message UserWalletDeleteReq {
+    string userId = 1;
+    bool isDelete = 2;
+}
+
+message TransactionGetReq {
+    string transactionId = 1;
+}
+
+message UserWalletAddAmountReq {
+    string currencyUnit = 1;
+    string amount = 2;
+    string externalId = 3;
+    string userAddress = 4;
+    string lastedBlockNumber = 5;
+}
+
+message UserPremiumPackageViewReq {
+    string userId = 1;
+}
+
+message UserWalletDeleteRsp {
+    bool success = 1;
+    string message = 2;
+}
+
+message TransactionProtoDto {
+    string transactionId = 1;
+    string referenceNumber = 2;
+    string amount = 3;
+    string currencyUnit = 4;
+    int32 type = 5;
+    double conversionRate = 6;
+}
+
+message UserPremiumPackageViewRsp {
+    google.protobuf.StringValue startDate = 1;
+    google.protobuf.StringValue endDate = 2;
+}

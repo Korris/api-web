@@ -1,0 +1,41 @@
+﻿#region Information
+/*
+ * Author       : Toan Nguyen Van
+ * Email        : nvt87x@gmail.com
+ * Phone        : +84 345 515 010
+ * ------------------------------- *
+ * Create       : 2024-Jan-21 08:37
+ * Update       : 2024-Jan-21 08:37
+ * Checklist    : 1.0
+ * Status       : New
+ */
+#endregion
+
+namespace Mcsg.Api.Areas.Social.Filters;
+
+using Common.Core.Filters;
+
+/// <summary>
+/// Filter
+/// </summary>
+public class PostFilter : BaseFilter
+{
+    #region -- Classes --
+
+    /// <summary>
+    /// Search
+    /// </summary>
+    public new class Search : BaseFilter.Search
+    {
+        #region -- Properties --
+
+        /// <summary>
+        /// MediaType
+        /// </summary>
+        public string? MediaType { get; set; }
+
+        #endregion
+    }
+
+    #endregion
+}

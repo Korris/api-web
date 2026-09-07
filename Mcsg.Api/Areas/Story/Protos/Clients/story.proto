@@ -1,0 +1,85 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package story;
+
+service StoryProto {
+    rpc Create (StoryCreateReq) returns (StoryCreateRsp);
+    rpc Update (StoryUpdateReq) returns (StoryUpdateRsp);
+    rpc Delete (StoryDeleteReq) returns (StoryDeleteRsp);
+    rpc PostView (StoryPostViewReq) returns (StoryPostViewRsp);
+}
+
+message StoryCreateReq {
+    repeated StoryProtoDto items = 1;
+}
+
+message StoryUpdateReq {
+    string postId = 1;
+    string title = 2;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
+}
+
+message StoryDeleteReq {
+    string postId = 1;
+}
+
+message StoryPostViewReq {
+    string userId = 1;
+    bool isAscending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    string keyWord = 5;
+    repeated string postIds = 6;
+    repeated string permissions = 7;
+    google.protobuf.StringValue frDate = 8;
+    google.protobuf.StringValue toDate = 9;
+}
+
+message StoryCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated StoryOutputDto items = 3;
+}
+
+message StoryUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StoryDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StoryPostViewRsp {
+   repeated StoryPostViewDto items = 1;
+}
+
+message StoryProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string title = 4;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
+}
+
+message StoryOutputDto {
+    int64 id = 1;
+}
+
+message StoryPostViewDto {
+    string postId = 1;
+    int32 numberOfViews = 2;
+}

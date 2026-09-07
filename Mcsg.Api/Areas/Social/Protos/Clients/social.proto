@@ -1,0 +1,63 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package social;
+
+service SocialProto {
+    rpc Create (SocialCreateReq) returns (SocialCreateRsp);
+    rpc Update (SocialUpdateReq) returns (SocialUpdateRsp);
+    rpc Delete (SocialDeleteReq) returns (SocialDeleteRsp);
+}
+
+message SocialCreateReq {
+    repeated SocialProtoDto items = 1;
+}
+
+message SocialUpdateReq {
+    string postId = 1;
+    string body = 2;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
+}
+
+message SocialDeleteReq {
+    string postId = 1;
+}
+
+message SocialCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated SocialOutputDto items = 3;
+}
+
+message SocialUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message SocialDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message SocialProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string body = 4;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
+}
+
+message SocialOutputDto {
+    int64 id = 1;
+}

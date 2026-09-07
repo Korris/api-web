@@ -54,6 +54,8 @@ public class PagedResponse<T>
     /// <param name="pageSize"></param>
     private void Init(int totalItems, int pageNumber, int pageSize)
     {
+        if (pageSize <= 0) pageSize = 10;
+
         // Calculate total pages
         var totalPages = (int)Math.Ceiling(totalItems / (decimal)pageSize);
 

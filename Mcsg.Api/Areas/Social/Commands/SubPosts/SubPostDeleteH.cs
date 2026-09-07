@@ -1,0 +1,123 @@
+﻿using Grpc.Net.Client;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Mcsg.Api.Interfaces;
+
+namespace Mcsg.Api.Areas.Social.Commands;
+
+using Analytic.Application.Protos;
+using Common.Core.Extensions;
+using Common.Domain;
+using Common.Domain.Entities;
+using Common.SeedWork.Dtos;
+using Common.SeedWork.Extensions;
+using Common.SeedWork.Responses;
+using Mcsg.Api.Areas.Social.Interfaces;
+using Mcsg.Api.Areas.Social.Requests;
+using Mcsg.Api.Areas.Social.Validators;
+using static Common.SeedWork.Constants.Error;
+
+/// <summary>
+/// Handler
+/// </summary>
+public class SubPostsDeleteH : BaseSettingH, IRequestHandler<SubPostDeleteR, SingleResponse>
+{
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="context">DB context</param>
+    public SubPostsDeleteH(IMcsgContext context, ISetting setting) : base(context, setting) { }
+
+    /// <summary>
+    /// Handle
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Return the result</returns>
+    public async Task<SingleResponse> Handle(SubPostDeleteR request, CancellationToken cancellationToken)
+    {
+        var res = new SingleResponse();
+
+        var vr = new SubPostDeleteV().Validate(request);
+        if (!vr.IsValid)
+        {
+            var t = vr.Errors.ToDic();
+            return res.SetError(nameof(E000), E000, t);
+        }
+
+        if (request.UserId == null)
+        {
+            return res.SetError(nameof(E109), E109);
+        }
+
+        var userId = request.UserId.Value;
+
+        #region -- Validate on server --
+        // SubPost
+        var ett = await _context.Available<SocialSubPost>()
+            .Include(p => p.SocialResources)
+            .Include(p => p.SocialSubPostComments)
+                .ThenInclude(p => p.SocialSubPostCommentReactions)
+            .Include(p => p.SocialSubPostReactions)
+            .FirstOrDefaultAsync(p => p.Id == request.Id || p.HashId == request.HashId, cancellationToken);
+        if (ett == null)
+        {
+            var t = new List<DicDto> { new() { Key = nameof(request.Id).ToCamelCase(), Value = request.Id } };
+            res.SetError(nameof(E002), E002, t);
+            return res;
+        }
+
+        if (ett.UserId != userId)
+        {
+            return res.SetError(nameof(E309), E309);
+        }
+        #endregion
+
+        if (ett.IsDelete)
+        {
+            return res.SetError(nameof(E003), E003);
+        }
+
+        // Delete
+        ett.Delete(userId);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        _ = Task.Run(async () => await SyncDeleteToAna(ett.Id));
+
+        return res;
+    }
+
+    private async Task<SocialSubDeleteRsp> SyncDeleteToAna(Guid id)
+    {
+        var res = new SocialSubDeleteRsp { Success = true };
+
+        try
+        {
+            using var channel = GrpcChannel.ForAddress(_setting.Rpc.Analytic.Analytic!);
+            var client = new SocialSubProto.SocialSubProtoClient(channel);
+
+            var request = new SocialSubDeleteReq
+            {
+                Items =
+                {
+                    new SocialSubDeleteDto {Id = id.ToString()}
+                }
+            };
+
+            var rsp = await client.DeleteAsync(request);
+            res.Message = rsp.Message;
+            res.Items.Add(rsp.Items);
+        }
+        catch (Exception ex)
+        {
+            res.Message = ex.Message;
+            ex.Message.LogError();
+        }
+
+        return res;
+    }
+
+    #endregion
+}

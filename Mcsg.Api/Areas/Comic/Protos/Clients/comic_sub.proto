@@ -1,0 +1,92 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package comic_sub;
+
+service ComicSubProto {
+    rpc Create (ComicSubCreateReq) returns (ComicSubCreateRsp);
+    rpc Update (ComicSubUpdateReq) returns (ComicSubUpdateRsp);
+    rpc Delete (ComicSubDeleteReq) returns (ComicSubDeleteRsp);
+    rpc SortedSearch(ComicSubSortedSearchReq) returns (ComicSubSortedSearchRsp);
+    rpc SubViewSearch(ComicSubViewSearchReq) returns (ComicSubViewSearchRsp);
+}
+
+message ComicSubCreateReq {
+    repeated ComicSubProtoDto items = 1;
+}
+
+message ComicSubUpdateReq {
+    string subPostId = 1;
+    int32 permission = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
+    bool isPremium = 5;
+}
+
+message ComicSubDeleteReq {
+    string subPostId = 1;
+}
+
+message ComicSubSortedSearchReq {
+    string postId = 1;
+    bool descending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    repeated string ids = 5;
+}
+
+message ComicSubViewSearchReq {
+    repeated string ids = 1;
+}
+
+message ComicSubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated ComicSubOutputDto items = 3;
+}
+
+message ComicSubUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicSubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicSubSortedSearchRsp {
+    bool success = 1;
+    string message = 2;
+    repeated string ids = 3;
+}
+
+message ComicSubViewSearchRsp {
+    repeated ComicSubViewDto items = 1;
+}
+
+message ComicSubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    int32 permission = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
+    bool isPremium = 9;
+}
+
+message ComicSubOutputDto {
+    int64 id = 1;
+}
+
+message ComicSubViewDto {
+    string subPostId = 1;
+    int32 numberOfViews = 2;
+}

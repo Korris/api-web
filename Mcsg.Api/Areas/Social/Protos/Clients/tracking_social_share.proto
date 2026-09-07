@@ -1,0 +1,52 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package tracking_social_share;
+
+service TrackingSocialShareProto {
+    rpc Create (TrackingSocialShareCreateReq) returns (TrackingSocialShareCreateRsp);
+    rpc GetCount (TrackingSocialShareGetCountReq) returns (TrackingSocialShareGetCountRsp);
+}
+
+message TrackingSocialShareCreateReq {
+    string sessionUid = 1;
+    string postId = 2;
+    string shareId = 3;
+    string postCreatorId = 4;
+    int32 postCreatorType = 5;
+    string userId = 6;
+    bool isShare = 7;
+}
+
+message TrackingSocialShareGetCountReq {
+    string userId = 1;
+    google.protobuf.StringValue createdOn = 2;
+    int32 type = 3;
+}
+
+message TrackingSocialShareCreateRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSocialShareCreateDto items = 4;
+}
+
+message TrackingSocialShareGetCountRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSocialShareGetCountDto items = 4;
+}
+
+message TrackingSocialShareCreateDto {
+    string id = 1;
+}
+
+message TrackingSocialShareGetCountDto {
+    string id = 1;
+    google.protobuf.StringValue createdOn = 2;
+}
+

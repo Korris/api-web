@@ -1,0 +1,56 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package tracking_summary;
+
+service TrackingSummaryProto {
+    rpc Search (TrackingSummarySearchReq) returns (TrackingSummarySearchRsp);
+    rpc GetFeeds (TrackingSummaryGetFeedsReq) returns (TrackingSummaryGetFeedsRsp);
+}
+
+message TrackingSummarySearchReq {
+    int32 quantity = 1;
+    float feedPercent = 2;
+    float comicPercent = 3;
+    float documentPercent = 4;
+    float storyPercent = 5;
+    google.protobuf.StringValue frDate = 6;
+    google.protobuf.StringValue toDate = 7;
+    google.protobuf.StringValue userId = 8;
+    google.protobuf.StringValue postHideIds = 9;
+    bool isPremium = 10;
+}
+
+message TrackingSummaryGetFeedsReq {
+    int32 pageNumber = 1;
+    int32 pageSize = 2;
+    google.protobuf.StringValue frDate = 3;
+    google.protobuf.StringValue toDate = 4;
+    google.protobuf.StringValue userId = 5;
+    google.protobuf.StringValue postHideIds = 6;
+}
+
+message TrackingSummarySearchRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSummaryDto items = 4;
+}
+
+message TrackingSummaryGetFeedsRsp {
+    bool success = 1;
+    string message = 2;
+    int32 totalRecords = 3;
+    repeated TrackingSummaryDto items = 4;
+}
+
+message TrackingSummaryDto {
+    string postId = 1;
+    string hashId = 2;
+    int32 type = 3;
+    int32 point = 4;
+    google.protobuf.StringValue createdOn = 6;
+}

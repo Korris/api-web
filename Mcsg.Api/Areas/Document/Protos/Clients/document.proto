@@ -1,0 +1,85 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package document;
+
+service DocumentProto {
+    rpc Create (DocumentCreateReq) returns (DocumentCreateRsp);
+    rpc Update (DocumentUpdateReq) returns (DocumentUpdateRsp);
+    rpc Delete (DocumentDeleteReq) returns (DocumentDeleteRsp);
+    rpc PostView (DocumentPostViewReq) returns (DocumentPostViewRsp);
+}
+
+message DocumentCreateReq {
+    repeated DocumentProtoDto items = 1;
+}
+
+message DocumentUpdateReq {
+    string postId = 1;
+    string title = 2;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
+}
+
+message DocumentDeleteReq {
+    string postId = 1;
+}
+
+message DocumentPostViewReq {
+    string userId = 1;
+    bool isAscending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    string keyWord = 5;
+    repeated string postIds = 6;
+    repeated string permissions = 7;
+    google.protobuf.StringValue frDate = 8;
+    google.protobuf.StringValue toDate = 9;
+}
+
+message DocumentCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated DocumentOutputDto items = 3;
+}
+
+message DocumentUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentPostViewRsp {
+   repeated DocumentPostViewDto items = 1;
+}
+
+message DocumentProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string title = 4;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
+}
+
+message DocumentOutputDto {
+    int64 id = 1;
+}
+
+message DocumentPostViewDto {
+    string postId = 1;
+    int32 numberOfViews = 2;
+}

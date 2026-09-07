@@ -1,0 +1,92 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package document_sub;
+
+service DocumentSubProto {
+    rpc Create (DocumentSubCreateReq) returns (DocumentSubCreateRsp);
+    rpc Update (DocumentSubUpdateReq) returns (DocumentSubUpdateRsp);
+    rpc Delete (DocumentSubDeleteReq) returns (DocumentSubDeleteRsp);
+    rpc SortedSearch(DocumentSubSortedSearchReq) returns (DocumentSubSortedSearchRsp);
+    rpc SubViewSearch(DocumentSubViewSearchReq) returns (DocumentSubViewSearchRsp);
+}
+
+message DocumentSubCreateReq {
+    repeated DocumentSubProtoDto items = 1;
+}
+
+message DocumentSubUpdateReq {
+    string subPostId = 1;
+    int32 permission = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
+    bool isPremium = 5;
+}
+
+message DocumentSubDeleteReq {
+    string subPostId = 1;
+}
+
+message DocumentSubSortedSearchReq {
+    string postId = 1;
+    bool descending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    repeated string ids = 5;
+}
+
+message DocumentSubViewSearchReq {
+    repeated string ids = 1;
+}
+
+message DocumentSubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated DocumentSubOutputDto items = 3;
+}
+
+message DocumentSubUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentSubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message DocumentSubSortedSearchRsp {
+    bool success = 1;
+    string message = 2;
+    repeated string ids = 3;
+}
+
+message DocumentSubViewSearchRsp {
+    repeated DocumentSubViewDto items = 1;
+}
+
+message DocumentSubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    int32 permission = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
+    bool isPremium = 9;
+}
+
+message DocumentSubOutputDto {
+    int64 id = 1;
+}
+
+message DocumentSubViewDto {
+    string subPostId = 1;
+    int32 numberOfViews = 2;
+}

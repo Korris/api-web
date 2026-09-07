@@ -1,0 +1,32 @@
+namespace Mcsg.Api.Areas.Realtime.Requests;
+
+using Common.Core.Enums;
+using Mcsg.Api.Areas.Realtime.Dtos;
+
+public class ReplyCommentResp
+{
+    public Guid Id { get; set; }
+    public Guid ReplyToCommentId { get; set; }
+    public string ReplyText { get; set; }
+    public DateTime ReplyDate { get; set; }
+    public string Type { get; set; }
+    public Guid PostId { get; set; }
+    public string PostHashId { get; set; }
+    public Guid PostCreatedBy { get; set; }
+    public string ResourceHashId { get; set; }
+    public string ResourceUrl { get; set; }
+    public string GifId { get; set; }
+    public Guid AuthorId { get; set; }
+    public Guid? QuoteId { get; set; }
+    public string AuthorName { get; set; }
+    public string UserAvatar { get; set; }
+    public string UserName { get; set; }
+    public string? CustomNote { get; set; }
+    public float? Order { get; set; }
+    public List<MentionDto> Mentions { get; set; } = new List<MentionDto>();
+    public PostType PostType { get; set; }
+    public Guid PostIdOfPost { get; set; }
+    public Guid ReplyCommentId { get; set; }
+    public Guid CommentId { get; set; }
+    public bool IsDeleted { get; set; }
+}

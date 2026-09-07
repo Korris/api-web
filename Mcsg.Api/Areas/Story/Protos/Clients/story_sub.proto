@@ -1,0 +1,92 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package story_sub;
+
+service StorySubProto {
+    rpc Create (StorySubCreateReq) returns (StorySubCreateRsp);
+    rpc Update (StorySubUpdateReq) returns (StorySubUpdateRsp);
+    rpc Delete (StorySubDeleteReq) returns (StorySubDeleteRsp);
+    rpc SortedSearch(StorySubSortedSearchReq) returns (StorySubSortedSearchRsp);
+    rpc SubViewSearch(StorySubViewSearchReq) returns (StorySubViewSearchRsp);
+}
+
+message StorySubCreateReq {
+    repeated StorySubProtoDto items = 1;
+}
+
+message StorySubUpdateReq {
+    string subPostId = 1;
+    int32 permission = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
+    bool isPremium = 5;
+}
+
+message StorySubDeleteReq {
+    string subPostId = 1;
+}
+
+message StorySubSortedSearchReq {
+    string postId = 1;
+    bool descending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    repeated string ids = 5;
+}
+
+message StorySubViewSearchReq {
+    repeated string ids = 1;
+}
+
+message StorySubCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated StorySubOutputDto items = 3;
+}
+
+message StorySubUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StorySubDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message StorySubSortedSearchRsp {
+    bool success = 1;
+    string message = 2;
+    repeated string ids = 3;
+}
+
+message StorySubViewSearchRsp {
+    repeated StorySubViewDto items = 1;
+}
+
+message StorySubProtoDto {
+    string postId = 1;
+    string subPostId = 2;
+    string userId = 3;
+    int32 permission = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
+    bool isPremium = 9;
+}
+
+message StorySubOutputDto {
+    int64 id = 1;
+}
+
+message StorySubViewDto {
+    string subPostId = 1;
+    int32 numberOfViews = 2;
+}

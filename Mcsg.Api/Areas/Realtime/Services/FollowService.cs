@@ -1,0 +1,117 @@
+using Microsoft.EntityFrameworkCore;
+
+namespace Mcsg.Api.Areas.Realtime.Services;
+
+using Common.Domain;
+using Common.Domain.Entities;
+using Common.SeedWork.Exceptions;
+using Mcsg.Api.Areas.Realtime.Interfaces;
+using Mcsg.Api.Areas.Realtime.Requests;
+using static Common.SeedWork.Constants.Error;
+
+public partial class FollowService : IFollowService
+{
+    private readonly IMcsgContext _context;
+    private readonly INotificationService _notificationService;
+
+    public FollowService(IMcsgContext context, INotificationService notificationService)
+    {
+        _context = context;
+        _notificationService = notificationService;
+    }
+
+    public async Task<UserFollowResp> FollowUser(FollowUserR request)
+    {
+        if (request.FollowedId == Guid.Empty)
+        {
+            throw new BadRequestException(nameof(E119), E119);
+        }
+
+        var user = await _context.UserAvailable.FirstOrDefaultAsync(p => p.Id == request.CreatedByUserId);
+        if (user == null)
+        {
+            throw new BadRequestException(nameof(E119), E119);
+        }
+        if (request.CreatedByUserId == request.FollowedId)
+        {
+            throw new BadRequestException(nameof(E120), E120);
+        }
+
+        var qUserFollow = _context.UserFollows.Where(p => p.UserFollowerId == request.CreatedByUserId && p.UserFollowingId == request.FollowedId);
+        var userFollow = await qUserFollow.FirstOrDefaultAsync();
+        if (userFollow != null)
+        {
+            if (!userFollow.IsDelete)
+            {
+                userFollow.IsDelete = true;
+                userFollow.ModifiedOn = DateTime.UtcNow;
+                userFollow.ModifiedBy = request.CreatedByUserId;
+                _context.UserFollows.Update(userFollow);
+                await _context.SaveChangesAsync(default);
+
+                var resp = new UserFollowResp
+                {
+                    CreatedByUserId = userFollow.UserFollowerId,
+                    FollowedId = userFollow.UserFollowingId,
+                    CreatedOn = userFollow.CreatedOn,
+                    Status = !userFollow.IsDelete,
+                    CreatedByUserName = user.UserName + "",
+                    CreatedByUserAvata = user.Avatar + "",
+                };
+
+                await _context.SaveChangesAsync(default);
+                return resp;
+            }
+            else
+            {
+                userFollow.IsDelete = false;
+                userFollow.ModifiedOn = DateTime.UtcNow;
+                userFollow.ModifiedBy = request.CreatedByUserId;
+                _context.UserFollows.Update(userFollow);
+                await _context.SaveChangesAsync(default);
+
+                var resp = new UserFollowResp
+                {
+                    CreatedByUserId = userFollow.UserFollowerId,
+                    FollowedId = userFollow.UserFollowingId,
+                    CreatedOn = userFollow.CreatedOn,
+                    Status = !userFollow.IsDelete,
+                    CreatedByUserName = user.UserName + "",
+                    CreatedByUserAvata = user.Avatar + "",
+                };
+
+                await _notificationService.FollowNotification(resp);
+                await _context.SaveChangesAsync(default);
+                return resp;
+            }
+        }
+
+        userFollow = new UserFollow
+        {
+            UserFollowerId = request.CreatedByUserId,
+            UserFollowingId = request.FollowedId,
+            CreatedOn = DateTime.UtcNow,
+            CreatedBy = request.CreatedByUserId,
+            ModifiedOn = DateTime.UtcNow,
+            ModifiedBy = request.CreatedByUserId,
+            IsDelete = false
+        };
+
+        await _context.UserFollows.AddAsync(userFollow);
+
+        var newResp = new UserFollowResp
+        {
+            CreatedByUserId = userFollow.UserFollowerId,
+            FollowedId = userFollow.UserFollowingId,
+            CreatedOn = userFollow.CreatedOn,
+            Status = !userFollow.IsDelete,
+            CreatedByUserName = user.UserName + "",
+            CreatedByUserAvata = user.Avatar + "",
+        };
+
+        await _notificationService.FollowNotification(newResp);
+        await _context.SaveChangesAsync(default);
+
+        return newResp;
+    }
+}

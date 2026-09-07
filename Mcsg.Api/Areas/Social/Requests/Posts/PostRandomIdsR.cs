@@ -1,0 +1,9 @@
+namespace Mcsg.Api.Areas.Social.Requests;
+
+public class PostRandomIdsR
+{
+    public int AmountItem { get; set; }
+    public List<string>? PostRandomIds { get; set; }
+    public bool IsGetAllType { get; set; }
+    public DateTime? CurrentDate { get; set; }
+}

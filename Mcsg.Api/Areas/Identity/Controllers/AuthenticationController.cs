@@ -1,0 +1,181 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Mcsg.Api.Areas.Identity.Controllers;
+
+using Mcsg.Api.Areas.Identity.Interfaces;
+using Requests;
+using static Common.SeedWork.Constants.Setting;
+
+[ApiController]
+[Route("api/identity/[controller]")]
+public class AuthenticationController : ControllerBase
+{
+    #region -- Methods --
+
+    /// <summary>
+    /// Initialize
+    /// </summary>
+    /// <param name="authenticationService"></param>
+    public AuthenticationController(IAuthenticationService authenticationService)
+    {
+        _authenticationService = authenticationService;
+    }
+
+    [HttpPost("check-register-info")]
+    public async Task<IActionResult> CheckRegisterUser(AuthenticationRegisterUserR request)
+    {
+        request.Analyze(HttpContext);
+        await _authenticationService.CheckRegisterUser(request);
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(AuthenticationRegisterUserR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.RegisterUser(request);
+        return Ok(result);
+    }
+
+    [HttpPost("create-account"), Authorize(Roles = RoleName.Admin)]
+    public async Task<IActionResult> CreateAccount([FromBody] AuthenticationRegisterUserR request)
+    {
+        request.SetForAdmin(true);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.RegisterUser(request);
+        return Ok(result);
+    }
+
+    [HttpPost("login-admin")]
+    public async Task<IActionResult> LoginAdmin(AuthenticationLoginUserR request)
+    {
+        request.SetForAdmin(true);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginUser(request);
+        return Ok(result);
+    }
+
+    [HttpPost("social-login-admin")]
+    public async Task<IActionResult> LoginSocialAdmin(AuthenticationLoginSocialR request)
+    {
+        request.SetForAdmin(true);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginSocial(request);
+        return Ok(result);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(AuthenticationLoginUserR request)
+    {
+        request.SetForAdmin(false);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginUser(request);
+        return Ok(result);
+    }
+
+    [HttpPost("social-login")]
+    public async Task<IActionResult> LoginSocial(AuthenticationLoginSocialR request)
+    {
+        request.SetForAdmin(false);
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.LoginSocial(request);
+        return Ok(result);
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout([FromBody] AuthenticationLogoutR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.Logout(request.RefreshToken, request.UserId, request.DeviceToken);
+        return Ok(result);
+    }
+
+    [HttpPost("terminate-all-other-sessions")]
+    public async Task<IActionResult> TerminateAllOtherSessions([FromBody] AuthenticationTerminateR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.TerminateAllOtherSessions(request.UserId, request.RefreshToken);
+        return Ok(result);
+    }
+
+    [HttpPost("resend-otp")]
+    public async Task<IActionResult> ResendOtp(AuthenticationResendOtpR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ResendOtp(request);
+        return Ok(result);
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken(AuthenticationRefreshTokenR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.VerifyRefreshToken(request);
+        return Ok(result);
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(AuthenticationForgotPasswordR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ForgotPassword(request);
+        return Ok(result);
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(AuthenticationResetPasswordR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ResetPassword(request);
+        return Ok(result);
+    }
+
+    [HttpPut("change-password"), Authorize]
+    public async Task<IActionResult> ChangePassword(AuthenticationChangePasswordR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ChangePassword(request);
+        return Ok(result);
+    }
+
+    [HttpPost("create-new-user-password")]
+    public async Task<IActionResult> CreateNewUserPassword(AuthenticationSetPasswordR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.CreateNewUserPassword(request);
+        return Ok(result);
+    }
+
+    [HttpDelete("delete-account"), Authorize]
+    public async Task<IActionResult> DeleteUser(AuthenticationDeleteUserR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.DeleteUser(request);
+        return Ok(result);
+    }
+
+    [HttpPost("verify-otp"), Authorize]
+    public async Task<IActionResult> VerifyOtp(AuthenticationVerifyOtpR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.VerifyOtp(request);
+        return Ok(result);
+    }
+
+    [HttpPost("change-role"), Authorize(Roles = RoleName.SysAdmin)]
+    public async Task<IActionResult> ChangeRole(AuthenticationChangeRoleR request)
+    {
+        request.Analyze(HttpContext);
+        var result = await _authenticationService.ChangeRole(request);
+        return Ok(result);
+    }
+
+    #endregion
+
+    #region -- Fields --
+
+    private readonly IAuthenticationService _authenticationService;
+
+    #endregion
+}

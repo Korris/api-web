@@ -1,0 +1,61 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package user;
+
+service UserProto {
+    rpc Create (UserCreateReq) returns (UserCreateRsp);
+    rpc Update (UserUpdateReq) returns (UserUpdateRsp);
+    rpc Delete (UserDeleteReq) returns (UserDeleteRsp);
+}
+
+message UserCreateReq {
+    repeated UserProtoDto items = 1;
+}
+
+message UserUpdateReq {
+    string userId = 1;
+    string username = 2;
+    google.protobuf.StringValue modifiedOn = 3;
+    google.protobuf.StringValue modifiedBy = 4;
+}
+
+message UserDeleteReq {
+    string userId = 1;
+}
+
+message UserCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated UserOutputDto items = 3;
+}
+
+message UserUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message UserDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message UserProtoDto {
+    string userId = 1;
+    string username = 2;
+    int32 userStatus = 3;
+    string profileId = 4;
+    string createdOn = 5;
+    google.protobuf.StringValue createdBy = 6;
+    google.protobuf.StringValue modifiedOn = 7;
+    google.protobuf.StringValue modifiedBy = 8;
+}
+
+message UserOutputDto {
+    int64 id = 1;
+}

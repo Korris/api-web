@@ -17,7 +17,7 @@ variables:
     description: "Set true to force build/push all services regardless of diff"
 
   # List of all microservices (each has its own Dockerfile)
-  SERVICES: "Mcsg.Comic.Api Mcsg.Document.Api Mcsg.Function.Job Mcsg.Identity.Api Mcsg.Media.Tool Mcsg.Realtime.Api Mcsg.Social.Api Mcsg.Story.Api"
+  SERVICES: "Mcsg.Api Mcsg.Function.Job Mcsg.Media.Tool"
 
 stages:
   - detect
@@ -246,37 +246,17 @@ push_dev:
       when: never   # 🟡 skip build if no_changes.flag exists
     - if: '$CI_COMMIT_BRANCH == "dev"'
 
-deploy_dev_comic:
+deploy_dev_api:
   <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Comic.Api }
-
-deploy_dev_document:
-  <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Document.Api }
+  variables: { SERVICE_NAME: Mcsg.Api }
 
 deploy_dev_function:
   <<: *deploy_dev_common
   variables: { SERVICE_NAME: Mcsg.Function.Job }
 
-deploy_dev_identity:
-  <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Identity.Api }
-
 deploy_dev_media:
   <<: *deploy_dev_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
-
-deploy_dev_realtime:
-  <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Realtime.Api }
-
-deploy_dev_social:
-  <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Social.Api }
-
-deploy_dev_story:
-  <<: *deploy_dev_common
-  variables: { SERVICE_NAME: Mcsg.Story.Api }
 
 
 ########################################
@@ -315,37 +295,17 @@ push_staging:
       when: never   # 🟡 skip build if no_changes.flag exists
     - if: '$CI_COMMIT_BRANCH == "release"'
 
-deploy_staging_comic:
+deploy_staging_api:
   <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Comic.Api }
-
-deploy_staging_document:
-  <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Document.Api }
+  variables: { SERVICE_NAME: Mcsg.Api }
 
 deploy_staging_function:
   <<: *deploy_staging_common
   variables: { SERVICE_NAME: Mcsg.Function.Job }
 
-deploy_staging_identity:
-  <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Identity.Api }
-
 deploy_staging_media:
   <<: *deploy_staging_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
-
-deploy_staging_realtime:
-  <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Realtime.Api }
-
-deploy_staging_social:
-  <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Social.Api }
-
-deploy_staging_story:
-  <<: *deploy_staging_common
-  variables: { SERVICE_NAME: Mcsg.Story.Api }
 
 
 ########################################
@@ -377,34 +337,14 @@ push_production:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: manual
 
-deploy_prod_comic:
+deploy_prod_api:
   <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Comic.Api }
-
-deploy_prod_document:
-  <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Document.Api }
+  variables: { SERVICE_NAME: Mcsg.Api }
 
 deploy_prod_function:
   <<: *deploy_prod_common
   variables: { SERVICE_NAME: Mcsg.Function.Job }
 
-deploy_prod_identity:
-  <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Identity.Api }
-
 deploy_prod_media:
   <<: *deploy_prod_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
-
-deploy_prod_realtime:
-  <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Realtime.Api }
-
-deploy_prod_social:
-  <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Social.Api }
-
-deploy_prod_story:
-  <<: *deploy_prod_common
-  variables: { SERVICE_NAME: Mcsg.Story.Api }

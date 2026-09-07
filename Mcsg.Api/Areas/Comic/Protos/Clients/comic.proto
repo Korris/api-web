@@ -1,0 +1,85 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package comic;
+
+service ComicProto {
+    rpc Create (ComicCreateReq) returns (ComicCreateRsp);
+    rpc Update (ComicUpdateReq) returns (ComicUpdateRsp);
+    rpc Delete (ComicDeleteReq) returns (ComicDeleteRsp);
+    rpc PostView (ComicPostViewReq) returns (ComicPostViewRsp);
+}
+
+message ComicCreateReq {
+    repeated ComicProtoDto items = 1;
+}
+
+message ComicUpdateReq {
+    string postId = 1;
+    string title = 2;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
+}
+
+message ComicDeleteReq {
+    string postId = 1;
+}
+
+message ComicPostViewReq {
+    string userId = 1;
+    bool isAscending = 2;
+    int32 pageNum = 3;
+    int32 pageSize = 4;
+    string keyWord = 5;
+    repeated string postIds = 6;
+    repeated string permissions = 7;
+    google.protobuf.StringValue frDate = 8;
+    google.protobuf.StringValue toDate = 9;
+}
+
+message ComicCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated ComicOutputDto items = 3;
+}
+
+message ComicUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message ComicPostViewRsp {
+   repeated ComicPostViewDto items = 1;
+}
+
+message ComicProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string title = 4;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
+}
+
+message ComicOutputDto {
+    int64 id = 1;
+}
+
+message ComicPostViewDto {
+    string postId = 1;
+    int32 numberOfViews = 2;
+}

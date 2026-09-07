@@ -1,0 +1,40 @@
+﻿{
+  "notificationContent": {
+    "CommentOnComic": "{{actorName}} đã bình luận trong truyện tranh của bạn.",
+    "CommentOnDocument": "{{actorName}} đã bình luận trong tài liệu của bạn.",
+    "CommentOnFeed": "{{actorName}} đã bình luận trong bài viết của bạn.",
+    "CommentOnStory": "{{actorName}} đã bình luận trong truyện chữ của bạn.",
+
+    "ReactOnComic": "{{actorName}} đã bày tỏ cảm xúc về truyện tranh của bạn.",
+    "ReactOnDocument": "{{actorName}} đã bày tỏ cảm xúc về tài liệu của bạn.",
+    "ReactOnFeed": "{{actorName}} đã bày tỏ cảm xúc về bài viết của bạn.",
+    "ReactOnStory": "{{actorName}} đã bày tỏ cảm xúc về truyện chữ của bạn.",
+
+    "FollowComic": "{{actorName}} đã theo dõi truyện tranh {{postName}} của bạn.",
+    "FollowDocument": "{{actorName}} đã theo dõi tài liệu {{postName}} của bạn.",
+    "FollowStory": "{{actorName}} đã theo dõi truyện chữ {{postName}} của bạn.",
+    "FollowUser": "{{actorName}} đã theo dõi bạn.",
+
+    "ReplyOnComment": "{{actorName}} đã trả lời bình luận của bạn trong một bài viết:",
+    "MentionOnComment": "{{actorName}} đã nhắc đến bạn trong bài viết.",
+    "MentionOnPost": "{{actorName}} đã đề cập bạn trong một bài viết của họ.",
+    "MentionOnReply": "{{actorName}} đã nhắc đến bạn trong một trả lời bình luận.",
+
+    "ReactOnComment": "{{actorName}} đã bày tỏ cảm xúc về bình luận của bạn.",
+    "ReactOnReply": "{{actorName}} đã bày tỏ cảm xúc về trả lời của bạn.",
+
+    "VideoUploadProcessing": "Video của bạn đang được đăng tải.",
+    "VideoUploadCompleted": "Video của bạn đã đăng tải thành công.",
+    "VideoUploadFailed": "Video của bạn đã bị lỗi và đăng tải không thành công.",
+
+    "TransferTransaction": "Bạn vừa nhận {{amount}} {{currencyUnit}} từ {{actorName}}.",
+    "DonateTransaction": "Bạn đã nhận được Donate từ {{actorName}}.",
+    "DepositTransaction": "Bạn vừa nạp {{amount}} vào ví {{currencyUnit}}.",
+
+    "RemindExpiredSubscription": "Gói Premium của bạn sắp hết hạn. Các quyền lợi sẽ vẫn được duy trì đến ngày {{expiredDate}}.",
+    "ExpiredSubscription": "Gói Premium của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng các quyền lợi.",
+    "BuyPremiumTransaction": "Chúc mừng! Gói Premium của bạn đã được kích hoạt! 🎉  Hãy tận hưởng các đặc quyền ngay bây giờ!",
+    "BuyUpgradePremiumTransaction": "Gói Premium của bạn đã được nâng cấp. Các quyền lợi sẽ được duy trì đến ngày {{expiredDate}}.",
+    "BuyRenewPremiumTransaction": "Gia hạn gói Premium thành công! Gói Premium của bạn hiện có hiệu lực đến ngày {{expiredDate}}."
+  }
+}
