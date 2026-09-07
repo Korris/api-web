@@ -405,6 +405,9 @@ public class Program
             app.UseHttpsRedirection();
         }
 
+        // First in the pipeline so its timestamp is "headers reached the pod"
+        app.UseMiddleware<Middlewares.RequestTimingMiddleware>();
+
         // No more UseApiPathRewrite - controllers have full route prefixes now
         app.UseRouting();
         app.UseMiddleware<ResponseExceptionWrapperMiddleware>();

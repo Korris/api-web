@@ -14,9 +14,10 @@ public class FileController : ControllerBase
 {
     #region -- Methods --
 
-    public FileController(IFileService fileService)
+    public FileController(IFileService fileService, ILogger<FileController> logger)
     {
         _fileService = fileService;
+        _logger = logger;
     }
 
     [DisableRequestSizeLimit]
@@ -24,6 +25,10 @@ public class FileController : ControllerBase
     [HttpPost("upload-media")]
     public async Task<IActionResult> UploadMedia([FromForm] FileCreateR request)
     {
+        // Gap between headers reaching the pod and the multipart body being fully read + bound
+        _logger.LogInformation("[UPLOAD-MEDIA] body read+bound {Ms}ms after headers reached pod, contentLength={Bytes}",
+            Middlewares.RequestTimingMiddleware.ElapsedSinceRequestStart(HttpContext).ToString("F0"), Request.ContentLength);
+
         request.Analyze(HttpContext);
         var result = await _fileService.UploadFileAsync(request);
         return Ok(result);
@@ -44,6 +49,8 @@ public class FileController : ControllerBase
     #region -- Fields --
 
     private readonly IFileService _fileService;
+
+    private readonly ILogger<FileController> _logger;
 
     #endregion
 }
