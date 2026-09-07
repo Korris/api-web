@@ -34,12 +34,13 @@ public class FileService : IFileService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="jobService">Job service</param>
-    public FileService(IMcsgContext context, ISetting setting, IStorageClient sc, IJobService jobService)
+    public FileService(IMcsgContext context, ISetting setting, IStorageClient sc, IJobService jobService, ILogger<FileService> logger)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
         _jobService = jobService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -482,6 +483,15 @@ public class FileService : IFileService
         }
 
         var resourceList = await _context.SocialResources.Where(p => hashIds.Contains(p.HashId)).ToListAsync();
+
+        // Diagnostics for "post created but image still in temp": every silent branch below is logged with the hashId
+        var missingHashIds = hashIds.Except(resourceList.Select(r => r.HashId)).ToList();
+        if (missingHashIds.Count > 0)
+        {
+            _logger.LogWarning("[SOCIAL-FILES] post={PostHashId} {Count} hashId(s) not found in SocialResources (uploaded via another area?): {HashIds}",
+                dto.SubFolder, missingHashIds.Count, string.Join(",", missingHashIds));
+        }
+
         foreach (var resource in resourceList)
         {
             if (resource == null)
@@ -507,6 +517,14 @@ public class FileService : IFileService
 
                 resource.Size = isExistTempFile!.Size;
                 await _sc.GetStrategy(resource.MinioInstance).RemoveObject(tempObjectName, null);
+                _logger.LogInformation("[SOCIAL-FILES] hashId={HashId} moved {Temp} -> {Target} size={Size}B instance={Instance}",
+                    resource.HashId, tempObjectName, targetObjectName, resource.Size, resource.MinioInstance);
+            }
+            else
+            {
+                // StatObject returns null for "not found" AND for any MinIO error, so this is where a missing move hides
+                _logger.LogWarning("[SOCIAL-FILES] hashId={HashId} temp object NOT found, move skipped. temp={Temp} bucketInResource={Bucket} resourceUrl={Url} instance={Instance} targetExists={TargetExists}",
+                    resource.HashId, tempObjectName, resource.BucketName, resource.Url, resource.MinioInstance, isExistTargetFile != null);
             }
             #endregion
 
@@ -735,6 +753,8 @@ public class FileService : IFileService
     /// Job service
     /// </summary>
     private readonly IJobService _jobService;
+
+    private readonly ILogger<FileService> _logger;
 
     #endregion
 }

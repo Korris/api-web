@@ -254,12 +254,14 @@ public class StorageMinio : StorageStrategy
         }
         catch (MinioException me)
         {
-            // File không tồn tại
-            Console.WriteLine($"[StatObject] MinioException - {objectName}: {me.Message}");
+            // File không tồn tại, hoặc bucket/region/endpoint sai: caller không phân biệt được nên ghi rõ loại lỗi và bucket
+            Console.WriteLine($"[StatObject] {me.GetType().Name} bucket={bucketName} object={objectName}: {me.Message}");
             return null;
         }
-        catch
+        catch (Exception ex)
         {
+            // Lỗi ngoài MinIO (DNS, TLS, timeout) trước đây bị nuốt hoàn toàn
+            Console.WriteLine($"[StatObject] {ex.GetType().Name} bucket={bucketName} object={objectName}: {ex.Message}");
             return null;
         }
     }
