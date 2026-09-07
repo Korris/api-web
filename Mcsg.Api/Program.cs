@@ -412,10 +412,11 @@ public class Program
         app.MapGrpcService<Areas.Identity.Protos.Services.UserAuthenticatorService>();
         app.MapGrpcService<Areas.Identity.Protos.Services.UserRecoveryService>();
 
-        // SignalR hubs (Realtime)
-        app.MapHub<Areas.Realtime.Hubs.CommentHub>("/commentHub");
-        app.MapHub<Areas.Realtime.Hubs.NotificationHub>("/notificationHub");
-        app.MapHub<Areas.Realtime.Hubs.FollowHub>("/followHub");
+        // SignalR hubs (Realtime). Full prefix like the controllers: the old Realtime service had it stripped by UseApiPathRewrite,
+        // clients connect to /api/realtime/{hub}
+        app.MapHub<Areas.Realtime.Hubs.CommentHub>("/api/realtime/commentHub");
+        app.MapHub<Areas.Realtime.Hubs.NotificationHub>("/api/realtime/notificationHub");
+        app.MapHub<Areas.Realtime.Hubs.FollowHub>("/api/realtime/followHub");
 
         app.Run();
     }
