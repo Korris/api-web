@@ -19,11 +19,17 @@ variables:
   # List of all microservices (each has its own Dockerfile)
   SERVICES: "Mcsg.Api Mcsg.Function.Job Mcsg.Media.Tool"
 
+  # Telegram deploy notification (placeholders – replace with real values,
+  # or override via Settings → CI/CD → Variables which takes precedence over this file)
+  TELEGRAM_BOT_TOKEN: "8848286070:AAExs-LkRb0QjjgtREBVjcS8i_zw1yXkqbk"
+  TELEGRAM_CHAT_ID: "-5408358582"
+
 stages:
   - detect
   - build
   - push
   - deploy
+  - notify
 
 image: docker:29-cli
 
@@ -209,6 +215,53 @@ detect_changes:
   resource_group: deploy-$ENV   # Prevent concurrent deploys per environment
 
 
+# ---------- TELEGRAM NOTIFY TEMPLATE ----------
+# Uses TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID from the top-level variables block
+# (or CI/CD project variables, which override the file):
+#   TELEGRAM_BOT_TOKEN  – token from @BotFather
+#   TELEGRAM_CHAT_ID    – channel id (e.g. -1001234567890) or @channelusername; bot must be channel admin
+.notify_telegram_template: &notify_telegram_template
+  stage: notify
+  image: curlimages/curl:latest
+  before_script: []
+  script:
+    - |
+      if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+        echo "⚠️ TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set → skipping notification."
+        exit 0
+      fi
+
+      CHANGED=$(cat changed_services.txt 2>/dev/null | xargs)
+      if [ -z "$CHANGED" ] && [ "$DEPLOY_STATUS" = "success" ]; then
+        echo "🚫 No services deployed → skipping notification."
+        exit 0
+      fi
+      [ -z "$CHANGED" ] && CHANGED="(unknown)"
+
+      if [ "$DEPLOY_STATUS" = "success" ]; then
+        ICON="✅"; TITLE="Deploy SUCCESS"
+      else
+        ICON="❌"; TITLE="Deploy FAILED"
+      fi
+
+      # Escape HTML special chars for Telegram parse_mode=HTML
+      esc() { printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
+      COMMIT_TITLE=$(esc "$CI_COMMIT_TITLE")
+      AUTHOR=$(esc "$GITLAB_USER_NAME")
+
+      ENV_UPPER=$(echo "$ENV" | tr '[:lower:]' '[:upper:]')
+      TEXT=$(printf '%s <b>%s</b> · <b>%s</b>\n<b>Project:</b> %s\n<b>Branch:</b> %s\n<b>Services:</b> %s\n<b>Commit:</b> <code>%s</code> %s\n<b>By:</b> %s\n<a href="%s">Pipeline #%s</a>' \
+        "$ICON" "$TITLE" "$ENV_UPPER" "$CI_PROJECT_NAME" "$CI_COMMIT_BRANCH" "$CHANGED" \
+        "$CI_COMMIT_SHORT_SHA" "$COMMIT_TITLE" "$AUTHOR" "$CI_PIPELINE_URL" "$CI_PIPELINE_ID")
+
+      echo "📨 Sending Telegram notification ($DEPLOY_STATUS)..."
+      curl -sS --fail-with-body -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+        --data-urlencode "parse_mode=HTML" \
+        --data-urlencode "disable_web_page_preview=true" \
+        --data-urlencode "text=${TEXT}"
+
+
 ########################################
 #                DEV
 ########################################
@@ -257,6 +310,22 @@ deploy_dev_function:
 deploy_dev_media:
   <<: *deploy_dev_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
+
+notify_dev_success:
+  <<: *notify_telegram_template
+  variables: { ENV: dev, DEPLOY_STATUS: success }
+  needs: ["detect_changes", "deploy_dev_api", "deploy_dev_function", "deploy_dev_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: on_success
+
+notify_dev_failure:
+  <<: *notify_telegram_template
+  variables: { ENV: dev, DEPLOY_STATUS: failure }
+  needs: ["detect_changes", "build_dev", "push_dev", "deploy_dev_api", "deploy_dev_function", "deploy_dev_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: on_failure
 
 
 ########################################
@@ -307,6 +376,22 @@ deploy_staging_media:
   <<: *deploy_staging_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
 
+notify_staging_success:
+  <<: *notify_telegram_template
+  variables: { ENV: staging, DEPLOY_STATUS: success }
+  needs: ["detect_changes", "deploy_staging_api", "deploy_staging_function", "deploy_staging_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+      when: on_success
+
+notify_staging_failure:
+  <<: *notify_telegram_template
+  variables: { ENV: staging, DEPLOY_STATUS: failure }
+  needs: ["detect_changes", "build_staging", "push_staging", "deploy_staging_api", "deploy_staging_function", "deploy_staging_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "release"'
+      when: on_failure
+
 
 ########################################
 #              PRODUCTION
@@ -348,3 +433,20 @@ deploy_prod_function:
 deploy_prod_media:
   <<: *deploy_prod_common
   variables: { SERVICE_NAME: Mcsg.Media.Tool }
+
+# Prod deploy jobs are manual → notify runs after all three have been triggered and finished
+notify_prod_success:
+  <<: *notify_telegram_template
+  variables: { ENV: prod, DEPLOY_STATUS: success }
+  needs: ["detect_changes", "deploy_prod_api", "deploy_prod_function", "deploy_prod_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+
+notify_prod_failure:
+  <<: *notify_telegram_template
+  variables: { ENV: prod, DEPLOY_STATUS: failure }
+  needs: ["detect_changes", "build_production", "push_production", "deploy_prod_api", "deploy_prod_function", "deploy_prod_media"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_failure

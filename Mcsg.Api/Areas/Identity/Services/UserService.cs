@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Grpc.Net.Client;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Mcsg.Api.Areas.Identity.Services;
 
@@ -42,9 +43,11 @@ public partial class UserService : BaseMinioS, IUserService
     /// <param name="userRepository"></param>
     /// <param name="configuration"></param>
     /// <param name="distributeManager"></param>
-    public UserService(IMcsgContext context, ISetting setting, IStorageClient sc, ApplicationUserManager userManager, IRepository<User> userRepository, IConfiguration configuration, DistributeManager distributeManager) : base(context, setting, sc)
+    /// <param name="logger"></param>
+    public UserService(IMcsgContext context, ISetting setting, IStorageClient sc, ApplicationUserManager userManager, IRepository<User> userRepository, IConfiguration configuration, DistributeManager distributeManager, ILogger<UserService> logger) : base(context, setting, sc)
     {
         _aes = new SecurityAes(_setting.EncryptKey);
+        _logger = logger;
 
         _userManager = userManager;
         _userRepository = userRepository;
@@ -324,6 +327,12 @@ public partial class UserService : BaseMinioS, IUserService
             throw new BadRequestException(nameof(E202), E202);
         }
 
+        // Diagnostic: public bucket is derived as "{BucketName}-public" (see MinioInstanceDto.BucketNamePublic)
+        var minio = _setting.GetMinio(request.MinioInstance);
+        _logger.LogInformation(
+            "UpdateUserAvatar upload: UserId={UserId} MinioInstance={MinioInstance} EndPoint={EndPoint} PublicUrl={PublicUrl} PublicPrefix={PublicPrefix} BucketName={BucketName} BucketNamePublic={BucketNamePublic} ObjectName={ObjectName}",
+            user.Id, request.MinioInstance, minio.EndPoint, minio.PublicUrl, minio.PublicPrefix, minio.BucketName, bucketName, objectName);
+
         try
         {
             var fs = file.OpenReadStream().ResizeImage(500, 500, 85);
@@ -332,7 +341,8 @@ public partial class UserService : BaseMinioS, IUserService
                 await _sc.GetStrategy(request.MinioInstance).PutObject(fs, objectName, bucketName);
                 fs.Close();
 
-                user.Avatar = _setting.GetMinio(request.MinioInstance).GetPublicUrl(bucketName, objectName);
+                user.Avatar = minio.GetPublicUrl(bucketName, objectName);
+                _logger.LogInformation("UpdateUserAvatar done: UserId={UserId} Bucket={Bucket} ObjectName={ObjectName} AvatarUrl={AvatarUrl}", user.Id, bucketName, objectName, user.Avatar);
                 await _context.SaveChangesAsync(default);
 
                 // Update avatar to chat api
@@ -341,6 +351,7 @@ public partial class UserService : BaseMinioS, IUserService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "UpdateUserAvatar failed: UserId={UserId} Bucket={Bucket} ObjectName={ObjectName}", user.Id, bucketName, objectName);
             throw new BadRequestException(E500, ex.Message);
         }
 
@@ -579,6 +590,7 @@ public partial class UserService : BaseMinioS, IUserService
     private readonly IRepository<User> _userRepository;
     private IConfiguration _configuration;
     private readonly DistributeManager _distributeManager;
+    private readonly ILogger<UserService> _logger;
 
     #endregion
 }
