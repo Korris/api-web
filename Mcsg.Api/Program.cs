@@ -121,6 +121,14 @@ public class Program
 
             var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
             LoadSettings.LoadSettingsFromDatabase(st, configs);
+
+            // Allowed upload extensions per area, read by each area's MediaOnlyAttribute.
+            // The standalone services set these in their own Program.cs; without them every upload is rejected with "Only media files are allowed."
+            Areas.Comic.Constants.ComicConfig.MediaExtensionAllow = st.Minio.ComicMediaExtensionAllow;
+            Areas.Story.Constants.StoryConfig.MediaExtensionAllow = st.Minio.StoryMediaExtensionAllow;
+            Areas.Social.Constants.SocialConfig.MediaExtensionAllow = st.Minio.SocialMediaExtensionAllow;
+            Areas.Document.Constants.DocumentConfig.MediaExtensionAllow = st.Minio.DocumentMediaExtensionAllow;
+
             builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
             builder.Services.AddNotification(p =>
             {
