@@ -53,6 +53,18 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Same ranking as latest-posts-by-type, but every item already carries its Story/Comic/Document/Feed box.
+    /// One call replaces latest-posts-by-type + the per-area get-*-by-list-id calls.
+    /// </summary>
+    [HttpGet("latest-posts-by-type/detail")]
+    public async Task<IActionResult> GetLatestPostsByTypeWithDetail([FromServices] IHomeFeedAggregationService homeFeedAggregation)
+    {
+        // Injected per action: the aggregator pulls in the Story/Comic/Document/Feed services, no need to build them for every other post action
+        var result = await homeFeedAggregation.GetLatestPostsWithDetail(HttpContext);
+        return Ok(result);
+    }
+
     [HttpGet("latest-posts-by-tag")]
     public async Task<IActionResult> GetLatestPostsByTag([FromQuery] string tagName)
     {

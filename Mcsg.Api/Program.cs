@@ -344,6 +344,7 @@ public class Program
         builder.Services.AddScoped<Areas.Social.Interfaces.IPostLinkService, Areas.Social.Services.PostLinkService>();
         builder.Services.AddScoped<Areas.Social.Interfaces.ISmartLookupService, Areas.Social.Services.SmartLookupService>();
         builder.Services.AddScoped<Areas.Social.Interfaces.IFeedService, Areas.Social.Services.FeedService>();
+        builder.Services.AddScoped<Areas.Social.Interfaces.IHomeFeedAggregationService, Areas.Social.Services.HomeFeedAggregationService>(); // home page: ranked ids + hydrated boxes in one call
         builder.Services.AddScoped<Areas.Social.Interfaces.ILinkPreviewService, Areas.Social.Services.LinkPreviewService>();
         builder.Services.AddScoped<Areas.Social.Interfaces.IUserService, Areas.Social.Services.UserService>(); // Social-specific IUserService (not Identity)
         builder.Services.AddScoped<Areas.Social.Interfaces.ICommentService, Areas.Social.Services.CommentService>();
