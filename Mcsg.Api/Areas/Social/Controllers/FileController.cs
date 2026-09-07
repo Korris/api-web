@@ -8,7 +8,7 @@ using Mcsg.Api.Areas.Social.Interfaces;
 using Mcsg.Api.Areas.Social.Requests;
 
 [ApiController]
-[Route("[controller]"), Authorize]
+[Route("api/social/[controller]"), Authorize]
 public class FileController : ControllerBase
 {
     #region -- Methods --

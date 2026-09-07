@@ -27,6 +27,8 @@ using Mcsg.Api.Areas.Social.Requests;
 /// <summary>
 /// Report controller
 /// </summary>
+// Full prefix: the old service stripped /api/social via UseApiPathRewrite; BaseController alone would map to /v1/Report and collide across areas
+[Route("api/social/v1/[controller]")]
 public class ReportController : BaseController
 {
     #region -- Methods --

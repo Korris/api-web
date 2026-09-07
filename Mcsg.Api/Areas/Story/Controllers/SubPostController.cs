@@ -15,6 +15,8 @@ using static Common.SeedWork.Constants.Setting;
 /// <summary>
 /// SubPost controller
 /// </summary>
+// Full prefix: the old service stripped /api/story via UseApiPathRewrite; BaseController alone would map to /v1/SubPost and collide across areas
+[Route("api/story/v1/[controller]")]
 public class SubPostController : BaseController
 {
     #region -- Methods --

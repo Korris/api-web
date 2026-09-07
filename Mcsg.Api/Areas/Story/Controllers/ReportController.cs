@@ -14,6 +14,8 @@ using Mcsg.Api.Areas.Story.Requests;
 /// <summary>
 /// Report controller
 /// </summary>
+// Full prefix: the old service stripped /api/story via UseApiPathRewrite; BaseController alone would map to /v1/Report and collide across areas
+[Route("api/story/v1/[controller]")]
 public class ReportController : BaseController
 {
     #region -- Methods --

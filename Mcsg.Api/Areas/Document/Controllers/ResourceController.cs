@@ -12,6 +12,8 @@ using Mcsg.Api.Areas.Document.Requests;
 /// <summary>
 /// Resource controller
 /// </summary>
+// Full prefix: the old service stripped /api/document via UseApiPathRewrite; BaseController alone would map to /v1/Resource and collide across areas
+[Route("api/document/v1/[controller]")]
 public class ResourceController : BaseController
 {
     #region -- Methods --
