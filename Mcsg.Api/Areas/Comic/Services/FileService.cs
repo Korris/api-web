@@ -30,12 +30,13 @@ public class FileService : IFileService
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
     /// <param name="jobService">Job service</param>
-    public FileService(IMcsgContext context, ISetting setting, IStorageClient sc, IJobService jobService)
+    public FileService(IMcsgContext context, ISetting setting, IStorageClient sc, IJobService jobService, ILogger<FileService> logger)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
         _jobService = jobService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -66,6 +67,12 @@ public class FileService : IFileService
     /// <exception cref="NotFoundException">NotFoundException</exception>
     public async Task<UploadFileDto> UploadFileAsync(FileCreateR request)
     {
+        // Step timings: staging reported this endpoint as slow, log each stage so the culprit (DB, image encode, MinIO) is visible
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var fileName = request.File?.FileName;
+        var fileLength = request.File?.Length ?? 0;
+        _logger.LogInformation("[UPLOAD-MEDIA] start file={File} size={Size}B type={Type} public={Public} user={UserId}", fileName, fileLength, request.Type, request.IsPublic, request.UserId);
+
         #region -- Validate on server --
         var file = request.File;
         if (file == null || file.Length == 0)
@@ -91,6 +98,8 @@ public class FileService : IFileService
             throw new NotFoundException(nameof(E303), E303);
         }
         #endregion
+
+        _logger.LogInformation("[UPLOAD-MEDIA] validate+db done in {Ms}ms", sw.ElapsedMilliseconds);
 
         // Upload to temp folder
         var hashId = ResourceConfig.HashLength.GetRandomString();
@@ -121,18 +130,23 @@ public class FileService : IFileService
             objectName = $"{MinioFolder.Comic}/{tempBlobName}";
         }
 
-        if (isImage && !file.IsGifAnimated())
+        var isAnimatedGif = file.IsGifAnimated();
+        _logger.LogInformation("[UPLOAD-MEDIA] gif-check done at {Ms}ms animated={Animated} bucket={Bucket} object={Object}", sw.ElapsedMilliseconds, isAnimatedGif, bucketName, objectName);
+
+        if (isImage && !isAnimatedGif)
         {
             if (!string.IsNullOrWhiteSpace(objectNameOriginal))
             {
                 // Compress and save thumbnail
                 var compressedThumb = file.CompressAndConvertToJpeg(288, 432, 100);
+                _logger.LogInformation("[UPLOAD-MEDIA] thumb resize done at {Ms}ms", sw.ElapsedMilliseconds);
                 if (compressedThumb != null)
                 {
                     using (var thumbStream = compressedThumb.Image.OpenReadStream())
                     {
                         await _sc.GetStrategy(minioInstance).PutObject(thumbStream, objectName, bucketName);
                     }
+                    _logger.LogInformation("[UPLOAD-MEDIA] thumb minio put done at {Ms}ms", sw.ElapsedMilliseconds);
                 }
             }
             else
@@ -143,12 +157,14 @@ public class FileService : IFileService
             var compressedImage = file.CompressAndConvertToJpeg(_setting.Minio.ImageDownQuality);
             imgWidth = compressedImage.Width;
             imgHeight = compressedImage.Height;
+            _logger.LogInformation("[UPLOAD-MEDIA] image compress done at {Ms}ms {Width}x{Height}", sw.ElapsedMilliseconds, imgWidth, imgHeight);
 
             using (var stream = compressedImage.Image.OpenReadStream())
             {
                 compressedSize = stream.Length;
                 await _sc.GetStrategy(minioInstance).PutObject(stream, objectNameOriginal, bucketName);
             }
+            _logger.LogInformation("[UPLOAD-MEDIA] image minio put done at {Ms}ms compressedSize={Size}B", sw.ElapsedMilliseconds, compressedSize);
         }
         else
         {
@@ -163,6 +179,7 @@ public class FileService : IFileService
                 {
                     await _sc.GetStrategy(minioInstance).PutObject(stream, objectName, bucketName);
                 }
+                _logger.LogInformation("[UPLOAD-MEDIA] gif minio put done at {Ms}ms", sw.ElapsedMilliseconds);
             }
             else
             {
@@ -191,6 +208,7 @@ public class FileService : IFileService
 
         await _context.ComicResources.AddAsync(resource);
         await _context.SaveChangesAsync(default);
+        _logger.LogInformation("[UPLOAD-MEDIA] db insert done at {Ms}ms", sw.ElapsedMilliseconds);
 
         var shareUrl = "";
         if (request.IsPublic == true)
@@ -201,6 +219,7 @@ public class FileService : IFileService
         {
             shareUrl = await _sc.GetPublicUrl(resource.Url, resource.BucketName, minioInstance);
         }
+        _logger.LogInformation("[UPLOAD-MEDIA] finished in {Ms}ms hashId={HashId}", sw.ElapsedMilliseconds, hashId);
 
         return new UploadFileDto
         {
@@ -592,6 +611,8 @@ public class FileService : IFileService
     /// Job service
     /// </summary>
     private readonly IJobService _jobService;
+
+    private readonly ILogger<FileService> _logger;
 
     #endregion
 }
