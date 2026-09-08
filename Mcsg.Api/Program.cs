@@ -40,6 +40,8 @@ public class Program
         builder.Services.AddHealthChecks()
             .AddCheck<Services.WarmupReadinessHealthCheck>("warmup", tags: [Services.WarmupReadinessHealthCheck.Tag]);
         builder.Services.AddHostedService<Services.StartupWarmupHostedService>();
+        // Re-applies system.SystemSettings every 30s so DB edits (e.g. RpcChatChat) reach every replica without a restart
+        builder.Services.AddHostedService<Services.SystemSettingsRefreshHostedService>();
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         var me = typeof(Program);
@@ -113,14 +115,8 @@ public class Program
         using (var ss = serviceProvider.GetService<IServiceScopeFactory>()!.CreateScope())
         {
             var context = ss.ServiceProvider.GetRequiredService<IMcsgContext>();
-            var systemSettings = context.SystemSettings.Where(p => !string.IsNullOrWhiteSpace(p.Key))
-                .Select(p => new SystemSetting
-                {
-                    Key = p.Key,
-                    Value = p.Value,
-                    DataType = p.DataType
-                })
-                .ToList();
+            // Same loader SystemSettingsRefreshHostedService re-runs every 30s (and config/v1/Reload on demand)
+            var systemSettings = Services.SystemSettingsLoader.LoadAsync(context).GetAwaiter().GetResult();
 
             var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
             LoadSettings.LoadSettingsFromDatabase(st, configs);
@@ -149,25 +145,10 @@ public class Program
                 p.SenderName = st.Email.SenderName;
             });
 
-            var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
-            if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
-            if (set.TryGetValue(nameof(st.AccountDeletedAfter), out ett)) st.AccountDeletedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.AccountCreatedAfter), out ett)) st.AccountCreatedAfter = ett.Value.Cast<uint?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UserNameChangedInRemaining), out ett)) st.UserNameChangedInRemaining = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UserNameWaitingChangedAfter), out ett)) st.UserNameWaitingChangedAfter = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.UsernameIsReserved), out ett)) st.UsernameIsReserved = ett.Value.Cast<string?>(ett.DataType) ?? "";
-            if (set.TryGetValue(nameof(st.PercentFeed), out ett)) st.PercentFeed = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.PercentComic), out ett)) st.PercentComic = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.PercentDocument), out ett)) st.PercentDocument = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.PercentStory), out ett)) st.PercentStory = ett.Value.Cast<double?>(ett.DataType) ?? 0;
-            if (set.TryGetValue(nameof(st.NumberOfPosts), out ett)) st.NumberOfPosts = ett.Value.Cast<int?>(ett.DataType) ?? 0;
+            Services.SystemSettingsLoader.Apply(st, systemSettings);
 
             Log.Information("[FEED SETTINGS] NumberOfPosts={NumberOfPosts}, PercentFeed={PercentFeed}, PercentComic={PercentComic}, PercentDocument={PercentDocument}, PercentStory={PercentStory}", st.NumberOfPosts, st.PercentFeed, st.PercentComic, st.PercentDocument, st.PercentStory);
-
-            var dic = systemSettings.ToDictionary(p => p.Key + "", p => p.Value + "");
-            st.LoadApiUrl(dic, st.IsLocal, !string.IsNullOrWhiteSpace(st.Protocols));
-            st.LoadRpcUrl(dic, st.IsLocal);
-            Log.Information("[RPC CONFIG] Analytic={Analytic}, IsLocal={IsLocal}", st.Rpc.Analytic.Analytic, st.IsLocal);
+            Log.Information("[RPC CONFIG] Analytic={Analytic}, Chat={Chat}, IsLocal={IsLocal}", st.Rpc.Analytic.Analytic, st.Rpc.Chat.Chat, st.IsLocal);
         }
         #endregion
 

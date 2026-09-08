@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text;
@@ -187,6 +188,24 @@ public class ConfigController : ControllerBase
         #endregion
 
         return Ok(res.Data);
+    }
+
+    /// <summary>
+    /// Re-reads system.SystemSettings and applies it onto the in-memory Setting singleton.
+    /// SystemSettingsRefreshHostedService does the same every 30s on every replica; call this to skip the wait on this pod.
+    /// Only SystemSettings is reloaded; SystemConfigs (JWT, MinIO, email, Redis) is captured by other services at boot.
+    /// </summary>
+    /// <returns>Number of rows applied and the resulting Api/Rpc URL maps for verification</returns>
+    [HttpPost("v1/Reload"), Authorize(Policy = Setting.Policy.Admin)]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> Reload()
+    {
+        var res = new SingleResponse();
+
+        var rows = await Mcsg.Api.Services.SystemSettingsLoader.LoadAsync(_context);
+        Mcsg.Api.Services.SystemSettingsLoader.Apply((Mcsg.Api.Setting)_setting, rows);
+
+        return Ok(res.SetSuccess(new { rows.Count, _setting.Api, _setting.Rpc }));
     }
 
     #endregion
