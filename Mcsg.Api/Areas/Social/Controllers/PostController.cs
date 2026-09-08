@@ -10,6 +10,7 @@ using Common.Core.Enums;
 using Common.Core.Requests;
 using Common.SeedWork.Responses;
 using Mcsg.Api.Areas.Social.Interfaces;
+using Mcsg.Api.Areas.Social.Models;
 using Mcsg.Api.Areas.Social.Requests;
 using static Common.SeedWork.Constants.Setting;
 
@@ -69,6 +70,19 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetLatestPostsByTag([FromQuery] string tagName)
     {
         var result = await _postService.GetLatestPostsByTag(tagName);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Newest public posts across all content types (feed, story, comic, document), newest first.
+    /// Returns ids/hashIds only, same shape as latest-posts-by-tag; fetch details with get-post-by-list-id.
+    /// </summary>
+    /// <param name="take">How many posts, default 4, max 50</param>
+    [HttpGet("latest")]
+    [ProducesResponseType(typeof(ListIdForHomePage), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetLatestPosts([FromQuery] int take = 4)
+    {
+        var result = await _postService.GetLatestPosts(take);
         return Ok(result);
     }
 
