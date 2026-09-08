@@ -99,6 +99,27 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Posts the caller is commenting on, most recently active first, across feed, story, comic and document.
+    /// Each card carries title, total comments, comments newer than the caller's last one, and the newest comment
+    /// with its author. The user comes from the token; anonymous callers get an empty list instead of 401 so the
+    /// home page can call this together with the public endpoints.
+    /// </summary>
+    /// <param name="take">How many cards, default 10, max 50</param>
+    [HttpGet("my-commented")]
+    [ProducesResponseType(typeof(List<ActiveCommentPostResponse>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetMyCommentedPosts([FromQuery] int take = 10)
+    {
+        var req = new BaseR(HttpContext);
+        if (req.UserId == null)
+        {
+            return Ok(new List<ActiveCommentPostResponse>());
+        }
+
+        var result = await _postService.GetActiveCommentPosts(req.UserId.Value, take);
+        return Ok(result);
+    }
+
     [HttpPost("get-random-ids")]
     public async Task<IActionResult> GetPostRandomIds([FromBody] PostRandomIdsR request)
     {

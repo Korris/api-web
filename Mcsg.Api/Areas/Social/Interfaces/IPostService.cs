@@ -20,6 +20,7 @@ public interface IPostService
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<ListIdForHomePage> GetLatestPosts(int take);
     Task<List<UpcomingSubPostResponse>> GetUpcomingSubPosts(int take);
+    Task<List<ActiveCommentPostResponse>> GetActiveCommentPosts(Guid userId, int take);
     Task<List<PostBoxResponse>> GetPostDetails(string hashIds, BaseR request);
     Task<IEnumerable<string>> GetSubPostRandomIdsAsync(PostRandomIdsR input);
     Task<PagedResponse<RelatedBoxResponse>> GetPostMaybeYouLike(UserNamePagingR input);
