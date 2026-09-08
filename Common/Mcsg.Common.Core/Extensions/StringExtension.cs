@@ -60,6 +60,12 @@ public static class StringExtension
         // Configure Serilog with daily rolling files in daily directories
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
+            // Framework chatter that drowned the useful lines in pod logs. Request start/finish (Hosting.Diagnostics) stays.
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning) // SQL text + "Executed DbCommand"
+            .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)                       // Route matched / Executing action / Executed endpoint
+            .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Cors", LogEventLevel.Warning)                      // "CORS policy execution successful"
+            .MinimumLevel.Override("Microsoft.AspNetCore.ResponseCaching", LogEventLevel.Warning)           // "The response could not be cached"
             .WriteTo.Console()
 
             // Map log events by their level and date to different files

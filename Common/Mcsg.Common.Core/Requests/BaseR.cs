@@ -160,7 +160,8 @@ public class BaseR : IRequest<SingleResponse>
         var dic = _hc.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString());
         var json = JsonConvert.SerializeObject(dic, Formatting.Indented);
 
-        $"HTTP headers: {json}".LogInfor();
+        // Debug only: ~25 lines per request and it contains Authorization / x-api-key, which must not sit in pod logs
+        $"HTTP headers: {json}".LogDebug();
     }
 
     #endregion

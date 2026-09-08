@@ -125,6 +125,12 @@ public class Program
             var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
             LoadSettings.LoadSettingsFromDatabase(st, configs);
 
+            // Fingerprint of the JWT signing secret (never the raw value) so it can be compared with api-chat's "[JWT SECRET]" log line.
+            var signing = st.Jwt.Signing ?? "";
+            var signingHash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(signing)))[..12];
+            Log.Information("[JWT SIGNING] Length={Length}, Prefix={Prefix}, Sha256={Sha256}, Issuer={Issuer}, Audience={Audience}",
+                signing.Length, signing.Length >= 4 ? signing[..4] : signing, signingHash, st.Jwt.Issuer, st.Jwt.Audience);
+
             // Allowed upload extensions per area, read by each area's MediaOnlyAttribute.
             // The standalone services set these in their own Program.cs; without them every upload is rejected with "Only media files are allowed."
             Areas.Comic.Constants.ComicConfig.MediaExtensionAllow = st.Minio.ComicMediaExtensionAllow;
