@@ -75,11 +75,12 @@ public class PostController : ControllerBase
 
     /// <summary>
     /// Newest public posts across all content types (feed, story, comic, document), newest first.
-    /// Returns ids/hashIds only, same shape as latest-posts-by-tag; fetch details with get-post-by-list-id.
+    /// Card shape: id, hashId, type, title and one image. Story/Comic/Document use the post thumbnail,
+    /// Feed uses the first image of the post (null when it has none).
     /// </summary>
     /// <param name="take">How many posts, default 4, max 50</param>
     [HttpGet("latest")]
-    [ProducesResponseType(typeof(ListIdForHomePage), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<LatestPostCardResponse>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetLatestPosts([FromQuery] int take = 4)
     {
         var result = await _postService.GetLatestPosts(take);
