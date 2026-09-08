@@ -86,6 +86,19 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Chapters (sub posts) scheduled for a future publish date across story, comic and document, soonest first.
+    /// Titles and identifiers only, no images.
+    /// </summary>
+    /// <param name="take">How many rows, default 10, max 50</param>
+    [HttpGet("upcoming")]
+    [ProducesResponseType(typeof(List<UpcomingSubPostResponse>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetUpcomingSubPosts([FromQuery] int take = 10)
+    {
+        var result = await _postService.GetUpcomingSubPosts(take);
+        return Ok(result);
+    }
+
     [HttpPost("get-random-ids")]
     public async Task<IActionResult> GetPostRandomIds([FromBody] PostRandomIdsR request)
     {
