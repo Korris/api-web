@@ -124,24 +124,28 @@ internal class DataSeeder
         {
             entity.HasData(new UserNameHistory
             {
+                Id = Guid.Parse("07efe4ce-85cb-4949-a2f0-94bad91383b5"),
                 UserId = systemAdminUserId,
                 UserName = systemAdminUsername,
                 CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });
             entity.HasData(new UserNameHistory
             {
+                Id = Guid.Parse("c80574fd-9a67-43ca-8d6f-83d4d2b67701"),
                 UserId = adminUserId,
                 UserName = adminUsername,
                 CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });
             entity.HasData(new UserNameHistory
             {
+                Id = Guid.Parse("f087ae65-c26d-42ed-8698-f6d2758097f2"),
                 UserId = contentAdminUserId,
                 UserName = contentAdminUsername,
                 CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04)
             });
             entity.HasData(new UserNameHistory
             {
+                Id = Guid.Parse("c17430aa-37b4-47fc-a461-7faea85cf6ca"),
                 UserId = CreatedBy.System,
                 UserName = systemUsername,
                 CreatedOn = new DateTime(2024, 08, 08, 18, 45, 04)

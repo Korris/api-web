@@ -133,6 +133,7 @@ public class Program
             Areas.Story.Constants.StoryConfig.MediaExtensionAllow = st.Minio.StoryMediaExtensionAllow;
             Areas.Social.Constants.SocialConfig.MediaExtensionAllow = st.Minio.SocialMediaExtensionAllow;
             Areas.Document.Constants.DocumentConfig.MediaExtensionAllow = st.Minio.DocumentMediaExtensionAllow;
+            Areas.Game.Constants.GameConfig.MediaExtensionAllow = st.Minio.ComicMediaExtensionAllow;
 
             builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
             builder.Services.AddNotification(p =>
@@ -257,6 +258,9 @@ public class Program
         // Shared services (used across Comic, Story, Document, Social)
         builder.Services.AddScoped<IBusinessText, BusinessText>();
         Areas.Comic.Extensions.ServiceCollectionExtensions.AddFileUploadLimit(builder.Services, st.Minio);
+
+        // Game services
+        Areas.Game.Extensions.ServiceCollectionExtensions.AddGameServices(builder.Services);
 
         // Comic services
         builder.Services.AddScoped<Areas.Comic.Attributes.MediaOnlyAttribute>();

@@ -33,5 +33,10 @@ public enum PostType
     /// <summary>
     /// All
     /// </summary>
-    All
+    All,
+
+    /// <summary>
+    /// Game (HTML game post)
+    /// </summary>
+    Game
 }

@@ -630,6 +630,11 @@ public class Setting : SeedWork.Constants.Setting
         public const string Document = "document";
 
         /// <summary>
+        /// Game
+        /// </summary>
+        public const string Game = "game";
+
+        /// <summary>
         /// Image
         /// </summary>
         public const string Image = "images";

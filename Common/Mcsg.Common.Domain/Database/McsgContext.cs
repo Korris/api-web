@@ -84,6 +84,16 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
 
     public virtual DbSet<ComicPost> ComicPosts { get; set; }
 
+    public virtual DbSet<GamePost> GamePosts { get; set; }
+
+    public virtual DbSet<GamePostComment> GamePostComments { get; set; }
+
+    public virtual DbSet<GamePostCommentReaction> GamePostCommentReactions { get; set; }
+
+    public virtual DbSet<GamePostReaction> GamePostReactions { get; set; }
+
+    public virtual DbSet<GameResource> GameResources { get; set; }
+
     public virtual DbSet<ComicPostComment> ComicPostComments { get; set; }
 
     public virtual DbSet<ComicPostCommentReaction> ComicPostCommentReactions { get; set; }

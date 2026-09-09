@@ -185,6 +185,7 @@ SELECT pg_temp.seed_comments('story',  'StoryPostComments',     'StoryPosts',   
 SELECT pg_temp.seed_comments('story',  'StorySubPostComments',  'StorySubPosts',  80, 5, 0.5);
 SELECT pg_temp.seed_comments('comic',  'ComicPostComments',     'ComicPosts',     50, 6, 0.5);
 SELECT pg_temp.seed_comments('comic',  'ComicSubPostComments',  'ComicSubPosts',  80, 5, 0.5);
+SELECT pg_temp.seed_comments('game',   'GamePostComments',      'GamePosts',      50, 6, 0.5);
 
 COMMIT;
 
@@ -197,3 +198,4 @@ COMMIT;
 -- DELETE FROM story."StorySubPostComments"   WHERE "TagData" = 'seed:comments';
 -- DELETE FROM comic."ComicPostComments"      WHERE "TagData" = 'seed:comments';
 -- DELETE FROM comic."ComicSubPostComments"   WHERE "TagData" = 'seed:comments';
+-- DELETE FROM game."GamePostComments"        WHERE "TagData" = 'seed:comments';

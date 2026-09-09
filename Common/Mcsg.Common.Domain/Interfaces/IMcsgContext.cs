@@ -111,6 +111,31 @@ public interface IMcsgContext
 
     DbSet<ComicPost> ComicPosts { get; set; }
 
+    /// <summary>
+    /// GamePosts
+    /// </summary>
+    DbSet<GamePost> GamePosts { get; set; }
+
+    /// <summary>
+    /// GamePostComments
+    /// </summary>
+    DbSet<GamePostComment> GamePostComments { get; set; }
+
+    /// <summary>
+    /// GamePostCommentReactions
+    /// </summary>
+    DbSet<GamePostCommentReaction> GamePostCommentReactions { get; set; }
+
+    /// <summary>
+    /// GamePostReactions
+    /// </summary>
+    DbSet<GamePostReaction> GamePostReactions { get; set; }
+
+    /// <summary>
+    /// GameResources
+    /// </summary>
+    DbSet<GameResource> GameResources { get; set; }
+
     DbSet<ComicPostComment> ComicPostComments { get; set; }
 
     DbSet<ComicPostCommentReaction> ComicPostCommentReactions { get; set; }

@@ -187,6 +187,21 @@ public partial class User : IdentityUser<Guid>
     public virtual ICollection<ComicPost> ComicPosts { get; set; } = new List<ComicPost>();
 
     [InverseProperty("User")]
+    public virtual ICollection<GamePost> GamePosts { get; set; } = new List<GamePost>();
+
+    [InverseProperty("Author")]
+    public virtual ICollection<GamePostComment> GamePostComments { get; set; } = new List<GamePostComment>();
+
+    [InverseProperty("Author")]
+    public virtual ICollection<GamePostCommentReaction> GamePostCommentReactions { get; set; } = new List<GamePostCommentReaction>();
+
+    [InverseProperty("Author")]
+    public virtual ICollection<GamePostReaction> GamePostReactions { get; set; } = new List<GamePostReaction>();
+
+    [InverseProperty("Author")]
+    public virtual ICollection<GameResource> GameResources { get; set; } = new List<GameResource>();
+
+    [InverseProperty("User")]
     public virtual ICollection<ComicReportDetail> ComicReportDetails { get; set; } = new List<ComicReportDetail>();
 
     [InverseProperty("Author")]

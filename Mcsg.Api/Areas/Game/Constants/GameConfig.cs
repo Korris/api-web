@@ -1,0 +1,68 @@
+namespace Mcsg.Api.Areas.Game.Constants;
+
+/// <summary>
+/// Game area runtime configuration (values assigned in Program.cs at startup)
+/// </summary>
+public static class GameConfig
+{
+    /// <summary>
+    /// Allowed image extensions for thumbnail upload (comma separated), read by MediaOnlyAttribute.
+    /// Program.cs reuses Minio.ComicMediaExtensionAllow.
+    /// </summary>
+    public static string MediaExtensionAllow { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Only extension accepted for the game file upload
+    /// </summary>
+    public const string GameFileExtension = ".html";
+
+    /// <summary>
+    /// Content type stored on the uploaded game object so browsers render it inside the sandboxed iframe
+    /// </summary>
+    public const string GameFileContentType = "text/html; charset=utf-8";
+
+    /// <summary>
+    /// Max size (MB) of the uploaded game file
+    /// </summary>
+    public const double GameFileMaxMb = 5;
+
+    /// <summary>
+    /// Kestrel request cap for upload-game: max file + small multipart overhead
+    /// </summary>
+    public const long GameFileRequestLimitBytes = 6L * 1024 * 1024;
+
+    /// <summary>
+    /// Thumbnails are re-encoded to JPEG, so the stored key always uses this extension
+    /// </summary>
+    public const string ThumbnailExtension = ".jpg";
+
+    /// <summary>
+    /// Content type of the stored thumbnail
+    /// </summary>
+    public const string ThumbnailContentType = "image/jpeg";
+
+    /// <summary>
+    /// Thumbnail folder under the user folder
+    /// </summary>
+    public const string ThumbnailFolder = "thumbnails";
+
+    /// <summary>
+    /// Game file folder under the user folder
+    /// </summary>
+    public const string GameFolder = "games";
+
+    /// <summary>
+    /// Error message when the uploaded game file is not .html
+    /// </summary>
+    public const string OnlyHtmlFileMessage = "Only .html file is allowed";
+
+    /// <summary>
+    /// Error message when the thumbnail extension is not allowed
+    /// </summary>
+    public const string OnlyMediaFileMessage = "Only media files are allowed.";
+
+    /// <summary>
+    /// Error message when ThumbnailUrl/GameUrl is not a file this user uploaded through the game upload API
+    /// </summary>
+    public const string InvalidResourceUrlMessage = "ThumbnailHashId and GameHashId must reference your own uploads from the game upload API";
+}

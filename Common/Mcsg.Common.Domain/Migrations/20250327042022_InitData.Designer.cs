@@ -2622,6 +2622,422 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("Feedbacks", "system");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CoverUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GameUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<int>("Hide")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsMature")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Permission")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("SharePostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShortBody")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortCustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StatusReason")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("HashId", "UserId", "Type", "Id")
+                        .IsUnique();
+
+                    b.ToTable("GamePosts", "game");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GifId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("QuoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("PostId", "ParentId", "AuthorId");
+
+                    b.ToTable("GamePostComments", "game");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostCommentReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
+
+                    b.ToTable("GamePostCommentReactions", "game");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
+
+                    b.ToTable("GamePostReactions", "game");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GameResource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BucketName")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int?>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExternalUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MinioInstance")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("SubPostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("HashId")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("GameResources", "game");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Job", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7483,6 +7899,89 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePost", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("GamePosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostComment", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("GamePostComments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.GamePost", "Post")
+                        .WithMany("GamePostComments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostCommentReaction", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("GamePostCommentReactions")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.GamePostComment", "Target")
+                        .WithMany("GamePostCommentReactions")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostReaction", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("GamePostReactions")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.GamePost", "Target")
+                        .WithMany("GamePostReactions")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GameResource", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("GameResources")
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.GamePost", "Post")
+                        .WithMany("GameResources")
+                        .HasForeignKey("PostId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.NotificationObject", "NotificationObject")
@@ -8419,6 +8918,20 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("SystemResources");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePost", b =>
+                {
+                    b.Navigation("GamePostComments");
+
+                    b.Navigation("GamePostReactions");
+
+                    b.Navigation("GameResources");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostComment", b =>
+                {
+                    b.Navigation("GamePostCommentReactions");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.NotificationObject", b =>
                 {
                     b.Navigation("Notifications");
@@ -8601,6 +9114,16 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("DocumentSubPosts");
 
                     b.Navigation("Feedbacks");
+
+                    b.Navigation("GamePostCommentReactions");
+
+                    b.Navigation("GamePostComments");
+
+                    b.Navigation("GamePostReactions");
+
+                    b.Navigation("GamePosts");
+
+                    b.Navigation("GameResources");
 
                     b.Navigation("Notifications");
 

@@ -71,6 +71,11 @@ public class StorageStrategy : IStorageStrategy
         throw new NotImplementedException();
     }
 
+    public virtual Task PutObject(Stream fs, string objectName, string? bucketName, string contentType)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Uploads an object to a bucket.
     /// </summary>

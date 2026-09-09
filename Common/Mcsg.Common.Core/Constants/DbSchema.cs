@@ -16,6 +16,11 @@ public class DbSchema
     public const string Document = "document";
 
     /// <summary>
+    /// Game
+    /// </summary>
+    public const string Game = "game";
+
+    /// <summary>
     /// Default
     /// </summary>
     public const string Default = "public.";
@@ -54,6 +59,11 @@ public class DbSchema
     /// Document tables
     /// </summary>
     public const string DocumentTables = "DocumentMetaDatas;DocumentPostCommentReactions;DocumentPostComments;DocumentPostFavorites;DocumentPostHides;DocumentPostLinks;DocumentPostReactions;DocumentPostReports;DocumentReports;DocumentReportDetails;DocumentPosts;DocumentResources;DocumentSubPostCommentReactions;DocumentSubPostComments;DocumentSubPostReactions;DocumentSubPosts;DocumentTagPosts";
+
+    /// <summary>
+    /// Game tables
+    /// </summary>
+    public const string GameTables = "GamePosts";
 
     /// <summary>
     /// Identity tables

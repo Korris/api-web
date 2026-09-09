@@ -90,6 +90,18 @@ public class StorageMinio : StorageStrategy
     /// <param name="objectName">Object name (include full path and file extension)</param>
     /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
     /// <returns>Return the result</returns>
+    public override async Task PutObject(Stream fs, string objectName, string? bucketName, string contentType)
+    {
+        if (string.IsNullOrWhiteSpace(bucketName))
+        {
+            bucketName = _auth?.BucketName;
+        }
+
+        fs.Position = 0;
+        var putArg = new PutObjectArgs().WithBucket(bucketName).WithObject(objectName).WithStreamData(fs).WithObjectSize(fs.Length).WithContentType(contentType);
+        await Mc.PutObjectAsync(putArg);
+    }
+
     public override async Task PutObject(Stream fs, string objectName, string? bucketName)
     {
         if (string.IsNullOrWhiteSpace(bucketName))

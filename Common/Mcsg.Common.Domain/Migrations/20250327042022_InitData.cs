@@ -35,6 +35,9 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.EnsureSchema(
                 name: "story");
 
+            migrationBuilder.EnsureSchema(
+                name: "game");
+
             migrationBuilder.CreateTable(
                 name: "BackgroundMedias",
                 columns: table => new
@@ -3985,6 +3988,304 @@ namespace Mcsg.Common.Domain.Migrations
                     { new Guid("ae2fac1e-dbbd-4ed9-b4c9-160375bf28d5"), new Guid("ff5727ac-4b12-4e03-9e02-25bfb9086cbf") }
                 });
 
+            migrationBuilder.CreateTable(
+                name: "GamePosts",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    GameUrl = table.Column<string>(type: "text", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Permission = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    CoverUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    AuthorName = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    StatusReason = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ExternalCode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    ShortBody = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    IsMature = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GamePosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GamePosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GamePostComments",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GamePostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GamePostComments_GamePosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "game",
+                        principalTable: "GamePosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GamePostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GamePostReactions",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GamePostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GamePostReactions_GamePosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "game",
+                        principalTable: "GamePosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GamePostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GamePostCommentReactions",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GamePostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GamePostCommentReactions_GamePostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "game",
+                        principalTable: "GamePostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GamePostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostCommentReactions_AuthorId",
+                schema: "game",
+                table: "GamePostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "game",
+                table: "GamePostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostComments_AuthorId",
+                schema: "game",
+                table: "GamePostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostComments_PostId_ParentId_AuthorId",
+                schema: "game",
+                table: "GamePostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostReactions_AuthorId",
+                schema: "game",
+                table: "GamePostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePostReactions_TargetId_ParentId_AuthorId",
+                schema: "game",
+                table: "GamePostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateTable(
+                name: "GameResources",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GameResources_GamePosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "game",
+                        principalTable: "GamePosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GameResources_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameResources_AuthorId",
+                schema: "game",
+                table: "GameResources",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameResources_HashId",
+                schema: "game",
+                table: "GameResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameResources_Name",
+                schema: "game",
+                table: "GameResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameResources_PostId",
+                schema: "game",
+                table: "GameResources",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePosts_HashId_UserId_Type_Id",
+                schema: "game",
+                table: "GamePosts",
+                columns: new[] { "HashId", "UserId", "Type", "Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GamePosts_UserId",
+                schema: "game",
+                table: "GamePosts",
+                column: "UserId");
+
+
             migrationBuilder.CreateIndex(
                 name: "IX_BackgroundMediaPosts_BackgroundMediaId",
                 table: "BackgroundMediaPosts",
@@ -5046,6 +5347,26 @@ namespace Mcsg.Common.Domain.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GameResources",
+                schema: "game");
+
+            migrationBuilder.DropTable(
+                name: "GamePostCommentReactions",
+                schema: "game");
+
+            migrationBuilder.DropTable(
+                name: "GamePostReactions",
+                schema: "game");
+
+            migrationBuilder.DropTable(
+                name: "GamePostComments",
+                schema: "game");
+
+            migrationBuilder.DropTable(
+                name: "GamePosts",
+                schema: "game");
+
             migrationBuilder.DropTable(
                 name: "BackgroundMediaPosts");
 

@@ -60,6 +60,16 @@ public interface IStorageStrategy
     Task PutObject(Stream fs, string objectName, string? bucketName);
 
     /// <summary>
+    /// Put object with an explicit content type (e.g. text/html for uploaded game files)
+    /// </summary>
+    /// <param name="fs">Stream</param>
+    /// <param name="objectName">Object name (include full path and file extension)</param>
+    /// <param name="bucketName">Bucket name (if it is null, get the default from the setting)</param>
+    /// <param name="contentType">MIME type stored on the object</param>
+    /// <returns>Return the result</returns>
+    Task PutObject(Stream fs, string objectName, string? bucketName, string contentType);
+
+    /// <summary>
     /// Uploads an object to a bucket.
     /// </summary>
     /// <param name="url">The URL of the file to upload.</param>

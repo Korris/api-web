@@ -91,6 +91,7 @@ END $fn$;
 SELECT pg_temp.seed_reactions('social', 'SocialPostReactions', 'SocialPosts', '"Status" = 1', 80, 3, 25);
 SELECT pg_temp.seed_reactions('story',  'StoryPostReactions',  'StoryPosts',  '"Status" = 1', 80, 3, 25);
 SELECT pg_temp.seed_reactions('comic',  'ComicPostReactions',  'ComicPosts',  '"Status" = 1', 80, 3, 25);
+SELECT pg_temp.seed_reactions('game',   'GamePostReactions',   'GamePosts',   '"Status" = 1', 80, 3, 25);
 
 -- Sub-posts / chapters
 SELECT pg_temp.seed_reactions('social', 'SocialSubPostReactions', 'SocialSubPosts', '"Status" = 1', 100, 1, 15);
@@ -101,6 +102,7 @@ SELECT pg_temp.seed_reactions('comic',  'ComicSubPostReactions',  'ComicSubPosts
 SELECT pg_temp.seed_reactions('social', 'SocialPostCommentReactions', 'SocialPostComments', '"Status" = 1', 300, 0, 8);
 SELECT pg_temp.seed_reactions('story',  'StoryPostCommentReactions',  'StoryPostComments',  '"Status" = 1', 300, 0, 8);
 SELECT pg_temp.seed_reactions('comic',  'ComicPostCommentReactions',  'ComicPostComments',  '"Status" = 1', 300, 0, 8);
+SELECT pg_temp.seed_reactions('game',   'GamePostCommentReactions',   'GamePostComments',   '"Status" = 1', 300, 0, 8);
 
 -- Sub-post comments
 SELECT pg_temp.seed_reactions('social', 'SocialSubPostCommentReactions', 'SocialSubPostComments', '"Status" = 1', 300, 0, 8);
@@ -124,3 +126,5 @@ COMMIT;
 -- DELETE FROM comic."ComicSubPostReactions"          WHERE "TagData" = 'seed:reactions';
 -- DELETE FROM comic."ComicPostCommentReactions"      WHERE "TagData" = 'seed:reactions';
 -- DELETE FROM comic."ComicSubPostCommentReactions"   WHERE "TagData" = 'seed:reactions';
+-- DELETE FROM game."GamePostReactions"             WHERE "TagData" = 'seed:reactions';
+-- DELETE FROM game."GamePostCommentReactions"      WHERE "TagData" = 'seed:reactions';
