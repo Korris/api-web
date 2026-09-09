@@ -171,3 +171,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS "IX_GameResources_Name" ON game."GameResources
 CREATE INDEX IF NOT EXISTS "IX_GameResources_PostId" ON game."GameResources" ("PostId");
 
 COMMIT;
+
+-- =====================================================================
+-- SystemSettings: max game file size (MB). Read by api/game/file/upload-game.
+-- Missing or 0 → API falls back to 5 MB; values above 50 are capped to 50.
+-- =====================================================================
+INSERT INTO system."SystemSettings"
+    ("Id", "Key", "Value", "Description", "IsActive", "Order", "DataType", "Group", "MicroService", "IsDelete", "CreatedOn")
+SELECT gen_random_uuid(), 'GameFileSize', '5', 'Max size (MB) of an uploaded HTML game file', true, 0, 'double', 'Upload', 'Game', false, now()
+WHERE NOT EXISTS (SELECT 1 FROM system."SystemSettings" WHERE "Key" = 'GameFileSize');

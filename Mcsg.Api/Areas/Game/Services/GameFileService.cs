@@ -73,7 +73,7 @@ public class GameFileService : IGameFileService
     }
 
     /// <summary>
-    /// Game file: single .html, max GameConfig.GameFileMaxMb, stored as text/html so the browser renders it.
+    /// Game file: single .html, max size from SystemSettings "GameFileSize" (MB), stored as text/html so the browser renders it.
     /// The HTML is user-controlled code: it must only ever be embedded through a sandboxed iframe on the media domain.
     /// </summary>
     public async Task<UploadFileDto> UploadGameAsync(FileCreateR request)
@@ -84,7 +84,7 @@ public class GameFileService : IGameFileService
         {
             throw new BadRequestException(nameof(E202), GameConfig.OnlyHtmlFileMessage);
         }
-        EnsureSize(file, GameConfig.GameFileMaxMb);
+        EnsureSize(file, await GetGameFileMaxMbAsync());
         var user = await RequireUserAsync(request.UserId);
 
         var hashId = ResourceConfig.HashLength.GetRandomString();
@@ -115,6 +115,19 @@ public class GameFileService : IGameFileService
             throw new NotFoundException(nameof(E201), E201);
         }
         return request.File;
+    }
+
+    /// <summary>
+    /// Max game file size from SystemSettings, default when missing, never above the fixed ceiling
+    /// </summary>
+    private async Task<double> GetGameFileMaxMbAsync()
+    {
+        var maxMb = await _context.GetSettingDouble(GameConfig.GameFileSizeSettingKey);
+        if (maxMb <= 0)
+        {
+            maxMb = GameConfig.GameFileDefaultMaxMb;
+        }
+        return Math.Min(maxMb, GameConfig.GameFileCeilingMb);
     }
 
     private static void EnsureSize(IFormFile file, double maxMb)

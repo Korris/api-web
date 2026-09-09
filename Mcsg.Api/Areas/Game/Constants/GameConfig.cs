@@ -22,14 +22,24 @@ public static class GameConfig
     public const string GameFileContentType = "text/html; charset=utf-8";
 
     /// <summary>
-    /// Max size (MB) of the uploaded game file
+    /// SystemSettings key holding the max game file size in MB (editable at runtime like ThumbnailCoverSize)
     /// </summary>
-    public const double GameFileMaxMb = 5;
+    public const string GameFileSizeSettingKey = "GameFileSize";
 
     /// <summary>
-    /// Kestrel request cap for upload-game: max file + small multipart overhead
+    /// Fallback max size (MB) when the setting row is missing or 0
     /// </summary>
-    public const long GameFileRequestLimitBytes = 6L * 1024 * 1024;
+    public const double GameFileDefaultMaxMb = 5;
+
+    /// <summary>
+    /// Hard ceiling (MB): the setting can never exceed this, it matches the Kestrel request cap below
+    /// </summary>
+    public const double GameFileCeilingMb = 50;
+
+    /// <summary>
+    /// Kestrel request cap for upload-game (compile-time constant): ceiling + multipart overhead
+    /// </summary>
+    public const long GameFileRequestLimitBytes = 51L * 1024 * 1024;
 
     /// <summary>
     /// Thumbnails are re-encoded to JPEG, so the stored key always uses this extension
