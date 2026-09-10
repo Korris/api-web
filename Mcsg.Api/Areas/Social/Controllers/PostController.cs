@@ -197,6 +197,20 @@ public class PostController : ControllerBase
     }
 
     /// <summary>
+    /// Get the list of random id subpost (MediatR-based, same as api-mobile)
+    /// </summary>
+    /// <param name="request">Request</param>
+    /// <returns>Return the result</returns>
+    [HttpPatch("v1/Post/GetRandomIds")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetRandomIds([FromBody] PostGetRandomIdsR request)
+    {
+        request.Analyze(HttpContext);
+        var response = await _mediator.Send(request);
+        return Ok(response);
+    }
+
+    /// <summary>
     /// PostHideUpdate
     /// </summary>
     /// <param name="request">Request</param>
