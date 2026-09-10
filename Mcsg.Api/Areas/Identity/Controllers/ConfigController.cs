@@ -11,6 +11,7 @@ using Common.Domain;
 using Common.SeedWork.Constants;
 using Common.SeedWork.Enums;
 using Common.SeedWork.Extensions;
+using Common.SeedWork;
 using Common.SeedWork.Responses;
 using Mcsg.Api.Areas.Identity.Interfaces;
 using Mcsg.Api.Interfaces;
@@ -31,11 +32,12 @@ public class ConfigController : ControllerBase
     /// <param name="context">DB context</param>
     /// <param name="setting">Setting</param>
     /// <param name="sc">Storage client</param>
-    public ConfigController(IMcsgContext context, ISetting setting, IStorageClient sc)
+    public ConfigController(IMcsgContext context, ISetting setting, IStorageClient sc, ISecurityAes aes)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
+        _aes = aes;
     }
 
     /// <summary>
@@ -209,6 +211,29 @@ public class ConfigController : ControllerBase
         return Ok(res.SetSuccess(new { rows.Count, _setting.Api, _setting.Rpc }));
     }
 
+    /// <summary>
+    /// Decrypt an AES-encrypted string. Requires a SHA-256 hashed passkey.
+    /// </summary>
+    [HttpPost("v1/Decrypt")]
+    [ProducesResponseType(typeof(SingleResponse), (int)HttpStatusCode.OK)]
+    public IActionResult Decrypt([FromBody] DecryptRequest request)
+    {
+        var res = new SingleResponse();
+
+        // Verify hashed passkey
+        using var sha = System.Security.Cryptography.SHA256.Create();
+        var hash = BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.Passkey ?? "")))
+            .Replace("-", "").ToLowerInvariant();
+
+        if (hash != "447caef32890425e8bf464d11c6d65b3556a6e7ed67b2c332642384d80364cca")
+        {
+            return Unauthorized(res.SetError("Invalid passkey"));
+        }
+
+        var plain = _aes.DecryptText(request.CipherText);
+        return Ok(res.SetSuccess(plain));
+    }
+
     #endregion
 
     #region -- Fields --
@@ -228,5 +253,26 @@ public class ConfigController : ControllerBase
     /// </summary>
     private readonly IStorageClient _sc;
 
+    /// <summary>
+    /// AES encryption service
+    /// </summary>
+    private readonly ISecurityAes _aes;
+
     #endregion
+}
+
+/// <summary>
+/// Decrypt request model
+/// </summary>
+public class DecryptRequest
+{
+    /// <summary>
+    /// The AES-encrypted cipher text
+    /// </summary>
+    public string? CipherText { get; set; }
+
+    /// <summary>
+    /// The passkey (plain text, will be hashed server-side for verification)
+    /// </summary>
+    public string? Passkey { get; set; }
 }
