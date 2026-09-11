@@ -58,6 +58,7 @@ public static class DiPostExtension
     public static void AddPostQueries(this MediatRServiceConfiguration p, ServiceLifetime life = ServiceLifetime.Scoped)
     {
         p.AddBehavior<IRequestHandler<MyComicSearchR, SingleResponse>, MyComicSearchH>(life);
+        p.AddBehavior<IRequestHandler<PostLoadFeedR, SingleResponse>, PostLoadFeedH>(life);
     }
 
     #endregion

@@ -32,6 +32,11 @@ public class PostFilter : BaseFilter
         /// </summary>
         public List<PostPermission>? Permissions { get; set; }
 
+        /// <summary>
+        /// Hashtag (LoadFeed)
+        /// </summary>
+        public string? Hashtag { get; set; }
+
         #endregion
     }
 

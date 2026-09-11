@@ -1,0 +1,1 @@
+- [Mobile-port Dapper column naming](project-mobile-port-dapper-column-naming.md) — fm_ (mobile) vs fw_ (web) functions return different column names; check before reusing web mappers

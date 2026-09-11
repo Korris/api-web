@@ -1081,7 +1081,7 @@ public partial class FeedService : IFeedService
             SharePostId = item.SharePostId
         };
         itemResponse.Body = HttpUtility.HtmlDecode(item.Body);
-        var subPostHashIds = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostStr);
+        var subPostHashIds = JsonConvert.DeserializeObject<List<ResourceDto>>(item.SubPostStr ?? "[]") ?? [];
         #region Mapping with db query list
         if (item.TotalResource > 0 && !string.IsNullOrEmpty(item.SubPostResourceStr))
         {
