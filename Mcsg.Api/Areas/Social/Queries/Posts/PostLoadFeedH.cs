@@ -47,6 +47,7 @@ public class PostLoadFeedH : BaseMinioH, IRequestHandler<PostLoadFeedR, SingleRe
     public async Task<SingleResponse> Handle(PostLoadFeedR request, CancellationToken cancellationToken)
     {
         var res = new SearchResponse(request.PageNum, request.PageSize, request.Paging);
+        // api-mobile function; its column names are bound by FeedsByUserNameQueryDbDto (not the web FeedsListQueryDbDto)
         const string sql = "SELECT * FROM social.fm_posts_by_username (@UserName, @Hides, @PageSize, @Offset, @IsMyseft)";
 
         try
@@ -92,7 +93,7 @@ public class PostLoadFeedH : BaseMinioH, IRequestHandler<PostLoadFeedR, SingleRe
                 IsMyseft = true
             };
             var connection = _context.Database.GetDbConnection();
-            var rows = (await connection.QueryAsync<FeedsListQueryDbDto>(sql, param)).ToList();
+            var rows = (await connection.QueryAsync<FeedsByUserNameQueryDbDto>(sql, param)).ToList();
 
             var sharePostInputs = rows.Where(p => p.SharePostId.HasValue)
                 .Select(p => new SharePostInput { Id = p.SharePostId!.Value, Type = p.SharePostType ?? SharePostType.Feed })
