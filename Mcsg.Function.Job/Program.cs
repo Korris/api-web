@@ -118,6 +118,11 @@ public class Program
             LoadSettings.LoadSettingsFromDatabase(st, configs);
             LoadSettings.LoadEmailSettings(st, configs);
 
+            // Never log the raw password, only its length/whitespace flag, to verify what was actually loaded from SystemConfigs (Email_*).
+            var emailPass = st.Email?.Password ?? "";
+            Log.Information("[EMAIL CONFIG] Host={Host}, Port={Port}, UserName={UserName}, PasswordLength={PasswordLength}, PasswordHasWhitespace={PasswordHasWhitespace}, SenderEmail={SenderEmail}",
+                st.Email?.Host, st.Email?.Port, st.Email?.UserName, emailPass.Length, emailPass.Any(char.IsWhiteSpace), st.Email?.SenderEmail);
+
             builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
             var set = systemSettings.ToDictionary(p => p.Key + "", p => p);
             if (set.TryGetValue("XApiKey", out var ett)) Setting.XApiKey = ett.Value.Cast<string?>(ett.DataType) ?? "";
