@@ -116,6 +116,8 @@ public class Program
             // Load config
             var configs = context.SystemConfigs.Where(p => !string.IsNullOrWhiteSpace(p.Key)).ToList();
             LoadSettings.LoadSettingsFromDatabase(st, configs);
+            // Email_* rows are read ONCE here at startup (no periodic refresh like Mcsg.Api's SystemSettings),
+            // so this pod must be restarted/redeployed after changing SMTP credentials in SystemConfigs.
             LoadSettings.LoadEmailSettings(st, configs);
 
             // Never log the raw password, only its length/whitespace flag, to verify what was actually loaded from SystemConfigs (Email_*).
