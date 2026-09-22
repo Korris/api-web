@@ -134,6 +134,7 @@ public class Program
             Areas.Social.Constants.SocialConfig.MediaExtensionAllow = st.Minio.SocialMediaExtensionAllow;
             Areas.Document.Constants.DocumentConfig.MediaExtensionAllow = st.Minio.DocumentMediaExtensionAllow;
             Areas.Game.Constants.GameConfig.MediaExtensionAllow = st.Minio.ComicMediaExtensionAllow;
+            Areas.TapShow.Constants.TapShowConfig.MediaExtensionAllow = st.Minio.ComicMediaExtensionAllow;
 
             builder.Services.AddStorage(p => { p.Storages = st.Minio.Storages; });
             builder.Services.AddNotification(p =>
@@ -261,6 +262,9 @@ public class Program
 
         // Game services
         Areas.Game.Extensions.ServiceCollectionExtensions.AddGameServices(builder.Services);
+
+        // TapShow services
+        Areas.TapShow.Extensions.ServiceCollectionExtensions.AddTapShowServices(builder.Services);
 
         // Comic services
         builder.Services.AddScoped<Areas.Comic.Attributes.MediaOnlyAttribute>();

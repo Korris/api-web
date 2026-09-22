@@ -135,6 +135,49 @@ public interface IMcsgContext
     /// GameResources
     /// </summary>
     DbSet<GameResource> GameResources { get; set; }
+    /// <summary>
+    /// TapShowPosts
+    /// </summary>
+    DbSet<TapShowPost> TapShowPosts { get; set; }
+
+    /// <summary>
+    /// TapShowChapters
+    /// </summary>
+    DbSet<TapShowChapter> TapShowChapters { get; set; }
+    /// <summary>
+    /// TapShowCharacters
+    /// </summary>
+    DbSet<TapShowCharacter> TapShowCharacters { get; set; }
+
+    /// <summary>
+    /// TapShowSegments
+    /// </summary>
+    DbSet<TapShowSegment> TapShowSegments { get; set; }
+
+    /// <summary>
+    /// TapShowSegmentChoices
+    /// </summary>
+    DbSet<TapShowSegmentChoice> TapShowSegmentChoices { get; set; }
+
+    /// <summary>
+    /// TapShowResources
+    /// </summary>
+    DbSet<TapShowResource> TapShowResources { get; set; }
+
+    /// <summary>
+    /// TapShowPostComments
+    /// </summary>
+    DbSet<TapShowPostComment> TapShowPostComments { get; set; }
+
+    /// <summary>
+    /// TapShowPostReactions
+    /// </summary>
+    DbSet<TapShowPostReaction> TapShowPostReactions { get; set; }
+
+    /// <summary>
+    /// TapShowPostCommentReactions
+    /// </summary>
+    DbSet<TapShowPostCommentReaction> TapShowPostCommentReactions { get; set; }
 
     DbSet<ComicPostComment> ComicPostComments { get; set; }
 

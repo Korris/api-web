@@ -150,6 +150,7 @@ public class ConfigController : ControllerBase
             "SocialImageSize",
             "ThumbnailCoverSize",
             "GameFileSize",
+            "TapShowAudioSize",
             "AvatarSize"
         };
         foreach (var key in sizeKeys)

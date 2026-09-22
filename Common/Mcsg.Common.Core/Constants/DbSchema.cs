@@ -19,6 +19,10 @@ public class DbSchema
     /// Game
     /// </summary>
     public const string Game = "game";
+    /// <summary>
+    /// TapShow
+    /// </summary>
+    public const string TapShow = "tapshow";
 
     /// <summary>
     /// Default
@@ -64,6 +68,10 @@ public class DbSchema
     /// Game tables
     /// </summary>
     public const string GameTables = "GamePosts";
+    /// <summary>
+    /// TapShow tables
+    /// </summary>
+    public const string TapShowTables = "TapShowPosts;TapShowChapters;TapShowSegments;TapShowSegmentChoices;TapShowResources;TapShowPostComments;TapShowPostReactions;TapShowPostCommentReactions";
 
     /// <summary>
     /// Identity tables

@@ -38,5 +38,9 @@ public enum PostType
     /// <summary>
     /// Game (HTML game post)
     /// </summary>
-    Game
+    Game,
+    /// <summary>
+    /// TapShow (interactive branching visual story: chapters -> segments -> choices)
+    /// </summary>
+    TapShow
 }

@@ -6062,6 +6062,712 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("TagFavorites", (string)null);
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowChapter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CreatorNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnableComment")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsExclusive")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<float>("Order")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Permission")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("PublishDate")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HashId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("PostId", "HashId", "AuthorId")
+                        .IsUnique();
+
+                    b.ToTable("TapShowChapters", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowCharacter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId", "Order");
+
+                    b.ToTable("TapShowCharacters", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CoverUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExternalCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<int>("Hide")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsMature")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Permission")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("SharePostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("SharePostType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShortBody")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortCustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StatusReason")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("HashId", "UserId", "Type", "Id")
+                        .IsUnique();
+
+                    b.ToTable("TapShowPosts", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CustomNote")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GifId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("QuoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("PostId", "ParentId", "AuthorId");
+
+                    b.ToTable("TapShowPostComments", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostCommentReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
+
+                    b.ToTable("TapShowPostCommentReactions", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("TargetId", "ParentId", "AuthorId");
+
+                    b.ToTable("TapShowPostReactions", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowResource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BucketName")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid?>("CharacterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("CompressedSize")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int?>("ExternalResource")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ExternalUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("HashId")
+                        .IsRequired()
+                        .HasMaxLength(33)
+                        .HasColumnType("character varying(33)");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MinioInstance")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SegmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("Size")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("SubPostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("HashId")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("SegmentId");
+
+                    b.ToTable("TapShowResources", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowSegment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("AudioUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("ChapterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CharacterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnding")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Narration")
+                        .HasColumnType("text");
+
+                    b.Property<float>("Order")
+                        .HasColumnType("real");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("ChapterId", "Order");
+
+                    b.ToTable("TapShowSegments", "tapshow");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowSegmentChoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SegmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TargetSegmentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetSegmentId");
+
+                    b.HasIndex("SegmentId", "Order");
+
+                    b.ToTable("TapShowSegmentChoices", "tapshow");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8626,6 +9332,167 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowChapter", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Post")
+                        .WithMany("TapShowChapters")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("TapShowChapters")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowCharacter", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Post")
+                        .WithMany("TapShowCharacters")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPost", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "User")
+                        .WithMany("TapShowPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostComment", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("TapShowPostComments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Post")
+                        .WithMany("TapShowPostComments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostCommentReaction", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("TapShowPostCommentReactions")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPostComment", "Target")
+                        .WithMany("TapShowPostCommentReactions")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostReaction", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("TapShowPostReactions")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Target")
+                        .WithMany("TapShowPostReactions")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Target");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowResource", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.User", "Author")
+                        .WithMany("TapShowResources")
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowCharacter", "Character")
+                        .WithMany("TapShowResources")
+                        .HasForeignKey("CharacterId");
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Post")
+                        .WithMany("TapShowResources")
+                        .HasForeignKey("PostId");
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowSegment", "Segment")
+                        .WithMany("TapShowResources")
+                        .HasForeignKey("SegmentId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Segment");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowSegment", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowChapter", "Chapter")
+                        .WithMany("TapShowSegments")
+                        .HasForeignKey("ChapterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowCharacter", "Character")
+                        .WithMany("TapShowSegments")
+                        .HasForeignKey("CharacterId");
+
+                    b.Navigation("Chapter");
+
+                    b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowSegmentChoice", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowSegment", "Segment")
+                        .WithMany("Choices")
+                        .HasForeignKey("SegmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowSegment", "TargetSegment")
+                        .WithMany("IncomingChoices")
+                        .HasForeignKey("TargetSegmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Segment");
+
+                    b.Navigation("TargetSegment");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserBlock", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId1Navigation")
@@ -9056,6 +9923,45 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("TagFavorites");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowChapter", b =>
+                {
+                    b.Navigation("TapShowSegments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowCharacter", b =>
+                {
+                    b.Navigation("TapShowResources");
+
+                    b.Navigation("TapShowSegments");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPost", b =>
+                {
+                    b.Navigation("TapShowChapters");
+
+                    b.Navigation("TapShowCharacters");
+
+                    b.Navigation("TapShowPostComments");
+
+                    b.Navigation("TapShowPostReactions");
+
+                    b.Navigation("TapShowResources");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostComment", b =>
+                {
+                    b.Navigation("TapShowPostCommentReactions");
+                });
+
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowSegment", b =>
+                {
+                    b.Navigation("Choices");
+
+                    b.Navigation("IncomingChoices");
+
+                    b.Navigation("TapShowResources");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
                 {
                     b.Navigation("ComicPostCommentReactions");
@@ -9185,6 +10091,18 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("TagFavorites");
 
                     b.Navigation("Tags");
+
+                    b.Navigation("TapShowChapters");
+
+                    b.Navigation("TapShowPostCommentReactions");
+
+                    b.Navigation("TapShowPostComments");
+
+                    b.Navigation("TapShowPostReactions");
+
+                    b.Navigation("TapShowPosts");
+
+                    b.Navigation("TapShowResources");
 
                     b.Navigation("UserBlockUserId1Navigations");
 

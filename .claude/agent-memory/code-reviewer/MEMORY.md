@@ -1,1 +1,2 @@
 - [Mobile-port Dapper column naming](project-mobile-port-dapper-column-naming.md) — fm_ (mobile) vs fw_ (web) functions return different column names; check before reusing web mappers
+- [Verify EF translation without DB](reference-verify-ef-translation-without-db.md) — scratch console + McsgContext.UseNpgsql(dummy) + ToQueryString() catches untranslatable projections in 1 run

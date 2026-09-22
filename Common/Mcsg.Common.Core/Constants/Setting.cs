@@ -633,6 +633,10 @@ public class Setting : SeedWork.Constants.Setting
         /// Game
         /// </summary>
         public const string Game = "game";
+        /// <summary>
+        /// TapShow
+        /// </summary>
+        public const string TapShow = "tapshow";
 
         /// <summary>
         /// Image

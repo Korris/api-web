@@ -38,6 +38,9 @@ namespace Mcsg.Common.Domain.Migrations
             migrationBuilder.EnsureSchema(
                 name: "game");
 
+            migrationBuilder.EnsureSchema(
+                name: "tapshow");
+
             migrationBuilder.CreateTable(
                 name: "BackgroundMedias",
                 columns: table => new
@@ -4272,6 +4275,539 @@ namespace Mcsg.Common.Domain.Migrations
                 table: "GameResources",
                 column: "PostId");
 
+            migrationBuilder.CreateTable(
+                name: "TapShowPosts",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Permission = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    CoverUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    AuthorName = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    StatusReason = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    ExternalCode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    ShortBody = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ShortCustomNote = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    IsMature = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Hide = table.Column<int>(type: "integer", nullable: false),
+                    SharePostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SharePostType = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowPosts_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowChapters",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Permission = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CreatorNote = table.Column<string>(type: "text", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    ViewCount = table.Column<int>(type: "integer", nullable: false),
+                    IsEnableComment = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalCode = table.Column<string>(type: "text", nullable: true),
+                    IsExclusive = table.Column<bool>(type: "boolean", nullable: false),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowChapters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowChapters_TapShowPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowChapters_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowCharacters",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    AvatarUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowCharacters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowCharacters_TapShowPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowPostComments",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    CustomNote = table.Column<string>(type: "text", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ResourceId = table.Column<Guid>(type: "uuid", nullable: true),
+                    GifId = table.Column<string>(type: "text", nullable: true),
+                    QuoteId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowPostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostComments_TapShowPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostComments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowPostReactions",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowPostReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostReactions_TapShowPosts_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowSegments",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    ImageUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Narration = table.Column<string>(type: "text", nullable: true),
+                    AudioUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Order = table.Column<float>(type: "real", nullable: false),
+                    IsEnding = table.Column<bool>(type: "boolean", nullable: false),
+                    ChapterId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CharacterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowSegments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowSegments_TapShowChapters_ChapterId",
+                        column: x => x.ChapterId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowChapters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowSegments_TapShowCharacters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowCharacters",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowPostCommentReactions",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TargetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowPostCommentReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostCommentReactions_TapShowPostComments_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowPostCommentReactions_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowResources",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SegmentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CharacterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    HashId = table.Column<string>(type: "character varying(33)", maxLength: 33, nullable: false),
+                    Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    BucketName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    MinioInstance = table.Column<int>(type: "integer", nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SubPostId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Size = table.Column<double>(type: "double precision", nullable: false),
+                    CompressedSize = table.Column<double>(type: "double precision", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    LocationType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExternalUrl = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ExternalResource = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowResources", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowResources_TapShowCharacters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowCharacters",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TapShowResources_TapShowPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TapShowResources_TapShowSegments_SegmentId",
+                        column: x => x.SegmentId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowSegments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TapShowResources_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowSegmentChoices",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    Label = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    SegmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TargetSegmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowSegmentChoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowSegmentChoices_TapShowSegments_SegmentId",
+                        column: x => x.SegmentId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowSegments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowSegmentChoices_TapShowSegments_TargetSegmentId",
+                        column: x => x.TargetSegmentId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowSegments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowChapters_HashId",
+                schema: "tapshow",
+                table: "TapShowChapters",
+                column: "HashId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowChapters_PostId_HashId_AuthorId",
+                schema: "tapshow",
+                table: "TapShowChapters",
+                columns: new[] { "PostId", "HashId", "AuthorId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowChapters_UserId",
+                schema: "tapshow",
+                table: "TapShowChapters",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowCharacters_PostId_Order",
+                schema: "tapshow",
+                table: "TapShowCharacters",
+                columns: new[] { "PostId", "Order" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostCommentReactions_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostCommentReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostCommentReactions_TargetId_ParentId_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostCommentReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostComments_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostComments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostComments_PostId_ParentId_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostComments",
+                columns: new[] { "PostId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostReactions_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostReactions",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPostReactions_TargetId_ParentId_AuthorId",
+                schema: "tapshow",
+                table: "TapShowPostReactions",
+                columns: new[] { "TargetId", "ParentId", "AuthorId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPosts_HashId_UserId_Type_Id",
+                schema: "tapshow",
+                table: "TapShowPosts",
+                columns: new[] { "HashId", "UserId", "Type", "Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowPosts_UserId",
+                schema: "tapshow",
+                table: "TapShowPosts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_AuthorId",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_CharacterId",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "CharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_HashId",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "HashId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_Name",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_PostId",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowResources_SegmentId",
+                schema: "tapshow",
+                table: "TapShowResources",
+                column: "SegmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowSegmentChoices_SegmentId_Order",
+                schema: "tapshow",
+                table: "TapShowSegmentChoices",
+                columns: new[] { "SegmentId", "Order" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowSegmentChoices_TargetSegmentId",
+                schema: "tapshow",
+                table: "TapShowSegmentChoices",
+                column: "TargetSegmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowSegments_ChapterId_Order",
+                schema: "tapshow",
+                table: "TapShowSegments",
+                columns: new[] { "ChapterId", "Order" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowSegments_CharacterId",
+                schema: "tapshow",
+                table: "TapShowSegments",
+                column: "CharacterId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_GamePosts_HashId_UserId_Type_Id",
                 schema: "game",
@@ -5347,6 +5883,42 @@ namespace Mcsg.Common.Domain.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TapShowPostCommentReactions",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowPostReactions",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowResources",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowSegmentChoices",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowPostComments",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowSegments",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowChapters",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowCharacters",
+                schema: "tapshow");
+
+            migrationBuilder.DropTable(
+                name: "TapShowPosts",
+                schema: "tapshow");
+
             migrationBuilder.DropTable(
                 name: "GameResources",
                 schema: "game");
