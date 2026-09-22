@@ -29,7 +29,7 @@ public static class GameConfig
     /// <summary>
     /// Fallback max size (MB) when the setting row is missing or 0
     /// </summary>
-    public const double GameFileDefaultMaxMb = 5;
+    public const double GameFileDefaultMaxMb = 30;
 
     /// <summary>
     /// Hard ceiling (MB): the setting can never exceed this, it matches the Kestrel request cap below

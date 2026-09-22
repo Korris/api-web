@@ -21,7 +21,7 @@ Flow, same as Comic: upload files first, then create the post with the returned 
 | Method | Route | Auth | Note |
 |---|---|---|---|
 | POST | `file/upload-media` | yes | multipart `File`; image only; re-encoded JPEG; returns `{ hashId, url, width, height, size }` |
-| POST | `file/upload-game` | yes | multipart `File`; `.html` only, max = SystemSettings `GameFileSize` MB (default 5, ceiling 50), stored `text/html`; returns `{ hashId, url, ... }` |
+| POST | `file/upload-game` | yes | multipart `File`; `.html` only, max = SystemSettings `GameFileSize` MB (default 30, ceiling 50), stored `text/html`; returns `{ hashId, url, ... }` |
 | POST | `game` | yes | body: `title, summary, thumbnailHashId, gameHashId, isCurrentUserAuthor, authorName, isMature, permission` |
 | PUT | `game/{hashId}` | owner | same body; a new hashId replaces the file, the old object is deleted from Minio |
 | DELETE | `game/{hashId}` | owner | soft delete post + resources, objects deleted from Minio |

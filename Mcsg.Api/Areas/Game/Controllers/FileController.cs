@@ -37,7 +37,7 @@ public class FileController : ControllerBase
 
     /// <summary>
     /// Upload the game .html file → hashId to send as GameHashId.
-    /// Request body is capped at 6 MB (5 MB file + multipart overhead) before the service-level check.
+    /// Request body is capped at 51 MB by Kestrel (50 MB ceiling + multipart overhead); the service then enforces SystemSettings "GameFileSize" (default 30 MB).
     /// Frontend must embed it with &lt;iframe sandbox="allow-scripts"&gt; (no allow-same-origin).
     /// </summary>
     [RequestSizeLimit(GameConfig.GameFileRequestLimitBytes)]
