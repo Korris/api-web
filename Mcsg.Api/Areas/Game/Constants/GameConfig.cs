@@ -17,9 +17,12 @@ public static class GameConfig
     public const string GameFileExtension = ".html";
 
     /// <summary>
-    /// Content type stored on the uploaded game object so browsers render it inside the sandboxed iframe
+    /// Content type stored on the uploaded game object so browsers render it inside the sandboxed iframe.
+    /// Must stay parameter-free: Minio SDK 6.0.5 signs the raw value but cannot build a MediaTypeHeaderValue
+    /// from "text/html; charset=utf-8", so it appends it next to the default "text/plain; charset=utf-8"
+    /// and Minio answers SignatureDoesNotMatch. The uploaded HTML must declare its own &lt;meta charset&gt;.
     /// </summary>
-    public const string GameFileContentType = "text/html; charset=utf-8";
+    public const string GameFileContentType = "text/html";
 
     /// <summary>
     /// SystemSettings key holding the max game file size in MB (editable at runtime like ThumbnailCoverSize)
