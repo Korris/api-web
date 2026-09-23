@@ -85,6 +85,8 @@ public partial class TapShowPostService
             throw new NotFoundException(nameof(E204), E204);
         }
         await AttachReactionsAsync(new List<TapShowPostResponse> { post }, currentUserId);
+        // Cast list travels with the detail so the client can pick a speaker without a second call
+        post.Characters = await _characters.ListByPostIdAsync(post.Id, isOwner);
         return post;
     }
 

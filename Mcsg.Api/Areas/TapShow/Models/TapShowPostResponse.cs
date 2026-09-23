@@ -42,4 +42,9 @@ public class TapShowPostResponse
     /// Reaction summary (same shape as Social / Comic)
     /// </summary>
     public ReactionSummaryResponse? Reaction { get; set; }
+
+    /// <summary>
+    /// Characters ordered by Order. Filled on create / update / detail only (null in lists); avatarHashId only for the owner
+    /// </summary>
+    public List<CharacterResponse>? Characters { get; set; }
 }

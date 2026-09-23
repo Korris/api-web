@@ -16,8 +16,9 @@ using static Common.SeedWork.Constants.Error;
 /// <summary>
 /// Characters of a TapShow post. Writes are owner-only; the list follows the post visibility rule.
 /// Deleting a character detaches it from its segments (CharacterId → null) and releases its avatar.
+/// Inline creation for POST api/tapshow/tapshow: TapShowCharacterService.Inline.cs.
 /// </summary>
-public class TapShowCharacterService : ITapShowCharacterService
+public partial class TapShowCharacterService : ITapShowCharacterService
 {
     #region -- Methods --
 
@@ -43,15 +44,8 @@ public class TapShowCharacterService : ITapShowCharacterService
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
 
-        var avatar = string.IsNullOrWhiteSpace(request.AvatarHashId) ? null : await _resources.GetTempResourceAsync(request.AvatarHashId, userId);
         var order = request.Order ?? await NextOrderAsync(post.Id);
-
-        var character = TapShowCharacter.Create(post.Id, request.Name!.Trim(), avatar == null ? null : _resources.PublicUrl(avatar), order, userId);
-        await _context.TapShowCharacters.AddAsync(character);
-        if (avatar != null)
-        {
-            _resources.Attach(avatar, post, character: character);
-        }
+        var character = await AddAsync(post, request.Name!, request.AvatarHashId, order, userId);
         await _context.SaveChangesAsync(default);
 
         return await GetByIdAsync(character.Id, true);
@@ -67,27 +61,7 @@ public class TapShowCharacterService : ITapShowCharacterService
         var userId = RequireUser(request.UserId);
         var character = await GetOwnedCharacterAsync(request.Id, userId);
 
-        // Avatar: same hashId → keep; new hashId → swap; null → remove
-        var current = character.TapShowResources.FirstOrDefault(r => !r.IsDelete);
-        var avatar = current;
-        if (string.IsNullOrWhiteSpace(request.AvatarHashId))
-        {
-            avatar = null;
-        }
-        else if (current == null || current.HashId != request.AvatarHashId)
-        {
-            avatar = await _resources.GetTempResourceAsync(request.AvatarHashId, userId);
-        }
-        if (current != null && avatar != current)
-        {
-            _resources.Release(current, userId);
-        }
-
-        character.Update(request.Name!.Trim(), avatar == null ? null : _resources.PublicUrl(avatar), request.Order ?? character.Order, userId);
-        if (avatar != null)
-        {
-            _resources.Attach(avatar, character.Post, character: character);
-        }
+        await ApplyUpdateAsync(character, character.Post, request.Name!, request.AvatarHashId, request.Order, userId);
         await _context.SaveChangesAsync(default);
 
         await _resources.RemoveReleasedObjectsAsync();
@@ -99,19 +73,7 @@ public class TapShowCharacterService : ITapShowCharacterService
         var userId = RequireUser(currentUserId);
         var character = await GetOwnedCharacterAsync(id, userId);
 
-        // Segments keep their content, they just lose the speaker
-        var segments = await _context.Available<TapShowSegment>().Where(s => s.CharacterId == id).ToListAsync();
-        foreach (var segment in segments)
-        {
-            segment.CharacterId = null;
-            segment.ModifiedBy = userId;
-            segment.ModifiedOn = DateTime.UtcNow;
-        }
-        character.Delete(userId);
-        foreach (var resource in character.TapShowResources.Where(r => !r.IsDelete))
-        {
-            _resources.Release(resource, userId);
-        }
+        await DetachAndDeleteAsync(character, userId);
         await _context.SaveChangesAsync(default);
 
         await _resources.RemoveReleasedObjectsAsync();
@@ -133,7 +95,12 @@ public class TapShowCharacterService : ITapShowCharacterService
             throw new NotFoundException(nameof(E204), E204);
         }
 
-        return await Project(_context.Available<TapShowCharacter>(false).Where(c => c.PostId == post.Id), isOwner).ToListAsync();
+        return await ListByPostIdAsync(post.Id, isOwner);
+    }
+
+    public async Task<List<CharacterResponse>> ListByPostIdAsync(Guid postId, bool isOwner)
+    {
+        return await Project(_context.Available<TapShowCharacter>(false).Where(c => c.PostId == postId), isOwner).ToListAsync();
     }
 
     #endregion

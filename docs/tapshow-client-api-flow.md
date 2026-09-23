@@ -9,19 +9,22 @@ Base: `/api/tapshow/...` · Auth: `Authorization: Bearer <jwt>` on every write. 
 2. `POST tapshow`
    ```json
    { "title": "Bánh mì: Một miếng, hai lựa chọn", "summary": "...", "thumbnailHashId": "<A1.1>",
-     "isCurrentUserAuthor": true, "authorName": "", "isMature": false, "isCompleted": false, "permission": 0 }
+     "isCurrentUserAuthor": true, "authorName": "", "isMature": false, "isCompleted": false, "permission": 0,
+     "characters": [
+       { "name": "VIPHIEN", "avatarHashId": "<upload-media hash|null>", "order": 0 },
+       { "name": "Bà bán bánh", "avatarHashId": null, "order": 1 }
+     ] }
    ```
-   `permission`: 0 Public · 1 Private · 2 Premium. → `TapShowPostResponse` (`hashId` dùng cho mọi bước sau).
+   `permission`: 0 Public · 1 Private · 2 Premium. `characters` tuỳ chọn (tối đa 50), avatar upload trước qua `POST file/upload-media`.
+   → `TapShowPostResponse` (`hashId` dùng cho mọi bước sau) kèm `characters[]` `{ id, name, avatarUrl, avatarHashId, order }` — `id` là `characterId` khi tạo segment.
 
-### A2. Tạo nhân vật (1 lần cho cả post)
-1. `POST file/upload-media` → avatar `hashId` (tuỳ chọn).
-2. `POST character`
-   ```json
-   { "postHashId": "<post>", "name": "VIPHIEN", "avatarHashId": "<hash|null>", "order": null }
-   ```
-   → `{ id, postId, name, avatarUrl, avatarHashId, order, ... }`. Lặp cho từng nhân vật.
-3. `GET character/post/{postHashId}` → danh sách để chọn khi soạn segment.
-4. `PUT character/{id}` (`name, avatarHashId, order`) · `DELETE character/{id}` (segment đang dùng giữ nội dung, `characterId` → null).
+### A2. Nhân vật: thêm / sửa / xoá sau khi tạo
+`PUT tapshow/{hashId}` **không** nhận `characters` (gửi cũng bị bỏ qua) — tránh xoá nhầm cả dàn. Mỗi thao tác đụng đúng một nhân vật:
+- Thêm: `POST character` `{ "postHashId": "<post>", "name": "...", "avatarHashId": "<hash|null>", "order": null }` (`order` null → cuối danh sách).
+- Sửa: `PUT character/{id}` `{ "name", "avatarHashId", "order" }` (`avatarHashId`: giữ nguyên = giữ, mới = thay, null = bỏ avatar).
+- Xoá: `DELETE character/{id}` (segment đang dùng giữ nội dung, `characterId` → null).
+
+Danh sách để chọn khi soạn segment: `characters[]` trong `GET tapshow/{hashId}` hoặc `GET character/post/{postHashId}`.
 
 ### A3. Tạo chapter
 - `POST chapter` `{ "postHashId": "<post>", "title": "Một miếng, hai lựa chọn", "order": null, "status": 0 }`
@@ -94,4 +97,4 @@ Base: `/api/tapshow/...` · Auth: `Authorization: Bearer <jwt>` on every write. 
 `GET /api/identity/config` (route hiện có) → `thumbnailCoverSize` (bytes, ảnh) và `tapShowAudioSize` (bytes, audio) để chặn file quá lớn phía client.
 
 ## Thứ tự gọi tối thiểu để có 1 truyện đọc được
-upload-media → POST tapshow → POST character (×n) → POST chapter → [upload-media / upload-audio → POST segment] (×n, màn kết `isEnding: true`) → PUT segment/{id}/choices (chỉ ở màn rẽ nhánh) → PUT chapter/{hashId} `status: 1`.
+upload-media (thumbnail + avatar) → POST tapshow (kèm `characters`) → POST chapter → [upload-media / upload-audio → POST segment] (×n, màn kết `isEnding: true`) → PUT segment/{id}/choices (chỉ ở màn rẽ nhánh) → PUT chapter/{hashId} `status: 1`.

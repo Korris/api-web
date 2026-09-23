@@ -24,10 +24,10 @@ Flow: upload images first, then reference them by `hashId`. All write endpoints 
 |---|---|---|---|
 | POST | `file/upload-media` | yes | multipart `File`; image only; re-encoded JPEG; limit = SystemSettings `ThumbnailCoverSize` MB; returns `{ hashId, url, width, height, size }` |
 | POST | `file/upload-audio` | yes | multipart `File`; mp3 / m4a / aac / wav / ogg; limit = SystemSettings `TapShowAudioSize` MB (default 10, ceiling 30); returns `{ hashId, url, size }` → `audioHashId` of a segment |
-| POST | `tapshow` | yes | `title, summary, thumbnailHashId, isCurrentUserAuthor, authorName, isMature, isCompleted, permission` |
-| PUT | `tapshow/{hashId}` | owner | same body; new `thumbnailHashId` replaces the file (old object deleted) |
+| POST | `tapshow` | yes | `title, summary, thumbnailHashId, isCurrentUserAuthor, authorName, isMature, isCompleted, permission, characters?[]`; each `{ name, avatarHashId?, order? }` created in the same transaction (max 50); response carries `characters[]` with ids |
+| PUT | `tapshow/{hashId}` | owner | same body without `characters` (ignored if sent); new `thumbnailHashId` replaces the file (old object deleted). Characters are changed only through `character` endpoints |
 | DELETE | `tapshow/{hashId}` | owner | soft-deletes post + chapters + segments + choices, all images removed from Minio |
-| GET | `tapshow/{hashId}` | no | `chapterCount` (public chapters; owner: all), `commentCount`, `reaction`; non-public / Private → owner only (404 otherwise) |
+| GET | `tapshow/{hashId}` | no | `chapterCount` (public chapters; owner: all), `commentCount`, `reaction`, `characters[]` (null in lists); non-public / Private → owner only (404 otherwise) |
 | GET | `tapshow/list?PageNumber&PageSize&ProfileName&Keyword` | no | Public + non-Private, newest first, max 50/page; mobile hides mature |
 | GET | `tapshow/my?PageNumber&PageSize` | yes | own posts, all statuses |
 | GET | `chapter/post/{postHashId}` | no | chapters by `order`; owner sees Draft too; each with `segmentCount`, `endingCount` |

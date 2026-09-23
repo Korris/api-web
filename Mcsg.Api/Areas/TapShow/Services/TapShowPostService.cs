@@ -21,11 +21,13 @@ public partial class TapShowPostService : ITapShowPostService
 {
     #region -- Methods --
 
-    public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService, ISetting setting)
+    public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService,
+        ITapShowCharacterService characters, ISetting setting)
     {
         _context = context;
         _resources = resources;
         _reactService = reactService;
+        _characters = characters;
         _setting = setting;
     }
 
@@ -48,6 +50,8 @@ public partial class TapShowPostService : ITapShowPostService
 
         await _context.TapShowPosts.AddAsync(post);
         _resources.Attach(thumbnail, post);
+        // Inline characters are committed in the same SaveChanges as the post
+        await _characters.AddInlineAsync(post, request.Characters, userId);
         await _context.SaveChangesAsync(default);
 
         _ = Task.Run(() => SyncCreateToAna(post));
@@ -163,6 +167,7 @@ public partial class TapShowPostService : ITapShowPostService
     private readonly IMcsgContext _context;
     private readonly ITapShowResourceService _resources;
     private readonly ITapShowReactService _reactService;
+    private readonly ITapShowCharacterService _characters;
     private readonly ISetting _setting;
 
     #endregion

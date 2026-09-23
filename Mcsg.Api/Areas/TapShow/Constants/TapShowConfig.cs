@@ -89,6 +89,11 @@ public static class TapShowConfig
     public const int NarrationMaxLength = 4000;
 
     /// <summary>
+    /// Max inline characters accepted in one POST / PUT api/tapshow/tapshow request
+    /// </summary>
+    public const int MaxCharactersPerPost = 50;
+
+    /// <summary>
     /// Error message when the uploaded file extension is not allowed
     /// </summary>
     public const string OnlyMediaFileMessage = "Only media files are allowed.";
