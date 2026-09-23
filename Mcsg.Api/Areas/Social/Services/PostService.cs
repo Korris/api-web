@@ -155,12 +155,13 @@ public partial class PostService : BaseMinioS, IPostService
             var percentComic = _setting.PercentComic;
             var percentDocument = _setting.PercentDocument;
             var percentStory = _setting.PercentStory;
+            var percentTapShow = _setting.PercentTapShow;
             var now = DateTime.UtcNow;
             var frDate = now.StartOfDayUtc();
             var toDate = now.EndOfDayUtc();
             var isPremium = req.IsPremium;
 
-            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, percentFeed, percentComic, percentDocument, percentStory, frDate.ToString(), toDate.ToString(), req.UserId, isPremium);
+            var mostEngagedPosts = await GetMostEngagedPosts(numberOfPosts, percentFeed, percentComic, percentDocument, percentStory, percentTapShow, frDate.ToString(), toDate.ToString(), req.UserId, isPremium);
 
             Console.WriteLine($"[LATEST-BY-TYPE] Analytic Success={mostEngagedPosts.Success}, Items={mostEngagedPosts.Items.Count}, TotalRecords={mostEngagedPosts.TotalRecords}, Message={mostEngagedPosts.Message}");
 
@@ -814,7 +815,7 @@ public partial class PostService : BaseMinioS, IPostService
         return Tuple.Create(followedComicCount, followedStoryCount);
     }
 
-    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, double feedPercent, double comicPercent, double documentPercent, double storyPercent, string frDate, string toDate, Guid? userId, bool isPremium)
+    private async Task<TrackingSummarySearchRsp> GetMostEngagedPosts(int quantity, double feedPercent, double comicPercent, double documentPercent, double storyPercent, double tapShowPercent, string frDate, string toDate, Guid? userId, bool isPremium)
     {
         var res = new TrackingSummarySearchRsp { Success = true };
 
@@ -832,6 +833,7 @@ public partial class PostService : BaseMinioS, IPostService
                 ComicPercent = (float)comicPercent,
                 DocumentPercent = (float)documentPercent,
                 StoryPercent = (float)storyPercent,
+                TapShowPercent = (float)tapShowPercent,
                 FrDate = frDate,
                 ToDate = toDate,
                 UserId = userId?.ToString(),

@@ -149,7 +149,7 @@ public class Program
 
             Services.SystemSettingsLoader.Apply(st, systemSettings);
 
-            Log.Information("[FEED SETTINGS] NumberOfPosts={NumberOfPosts}, PercentFeed={PercentFeed}, PercentComic={PercentComic}, PercentDocument={PercentDocument}, PercentStory={PercentStory}", st.NumberOfPosts, st.PercentFeed, st.PercentComic, st.PercentDocument, st.PercentStory);
+            Log.Information("[FEED SETTINGS] NumberOfPosts={NumberOfPosts}, PercentFeed={PercentFeed}, PercentComic={PercentComic}, PercentDocument={PercentDocument}, PercentStory={PercentStory}, PercentTapShow={PercentTapShow}", st.NumberOfPosts, st.PercentFeed, st.PercentComic, st.PercentDocument, st.PercentStory, st.PercentTapShow);
             Log.Information("[RPC CONFIG] Analytic={Analytic}, Chat={Chat}, IsLocal={IsLocal}", st.Rpc.Analytic.Analytic, st.Rpc.Chat.Chat, st.IsLocal);
         }
         #endregion

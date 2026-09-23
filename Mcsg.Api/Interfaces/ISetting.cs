@@ -56,6 +56,7 @@ public interface ISetting : ISettingBase
     double PercentComic { get; set; }
     double PercentStory { get; set; }
     double PercentDocument { get; set; }
+    double PercentTapShow { get; set; }
 
     #endregion
 

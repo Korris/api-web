@@ -22,6 +22,7 @@ message TrackingSummarySearchReq {
     google.protobuf.StringValue userId = 8;
     google.protobuf.StringValue postHideIds = 9;
     bool isPremium = 10;
+    float tapShowPercent = 11;
 }
 
 message TrackingSummaryGetFeedsReq {

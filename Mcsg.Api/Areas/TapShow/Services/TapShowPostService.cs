@@ -10,21 +10,23 @@ using Mcsg.Api.Areas.TapShow.Interfaces;
 using Mcsg.Api.Areas.TapShow.Models;
 using Mcsg.Api.Areas.TapShow.Requests;
 using Mcsg.Api.Areas.TapShow.Validators;
+using Mcsg.Api.Interfaces;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
-/// TapShow post create / update / delete. Queries: TapShowPostService.Query.cs.
+/// TapShow post create / update / delete. Queries: TapShowPostService.Query.cs. Analytic sync: TapShowPostService.Sync.cs.
 /// Delete cascades (soft) to chapters, segments, choices and releases every attached image.
 /// </summary>
 public partial class TapShowPostService : ITapShowPostService
 {
     #region -- Methods --
 
-    public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService)
+    public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService, ISetting setting)
     {
         _context = context;
         _resources = resources;
         _reactService = reactService;
+        _setting = setting;
     }
 
     public async Task<TapShowPostResponse> CreateAsync(TapShowPostCreateR request)
@@ -48,6 +50,7 @@ public partial class TapShowPostService : ITapShowPostService
         _resources.Attach(thumbnail, post);
         await _context.SaveChangesAsync(default);
 
+        _ = Task.Run(() => SyncCreateToAna(post));
         return await GetByHashIdAsync(post.HashId, userId);
     }
 
@@ -80,6 +83,7 @@ public partial class TapShowPostService : ITapShowPostService
         _resources.Attach(thumbnail!, post);
         await _context.SaveChangesAsync(default);
 
+        _ = Task.Run(() => SyncUpdateToAna(post));
         await _resources.RemoveReleasedObjectsAsync();
         return await GetByHashIdAsync(post.HashId, userId);
     }
@@ -112,6 +116,7 @@ public partial class TapShowPostService : ITapShowPostService
         }
         await _context.SaveChangesAsync(default);
 
+        _ = Task.Run(() => SyncDeleteToAna(post.Id));
         await _resources.RemoveReleasedObjectsAsync();
         return true;
     }
@@ -158,6 +163,7 @@ public partial class TapShowPostService : ITapShowPostService
     private readonly IMcsgContext _context;
     private readonly ITapShowResourceService _resources;
     private readonly ITapShowReactService _reactService;
+    private readonly ISetting _setting;
 
     #endregion
 }

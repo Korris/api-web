@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Mcsg.Analytic.Application.Protos";
+
+package tapshow;
+
+// TapShow post sync from api-web into sync.tap_show_posts (same contract as comic.proto without PostView)
+service TapShowProto {
+    rpc Create (TapShowCreateReq) returns (TapShowCreateRsp);
+    rpc Update (TapShowUpdateReq) returns (TapShowUpdateRsp);
+    rpc Delete (TapShowDeleteReq) returns (TapShowDeleteRsp);
+}
+
+message TapShowCreateReq {
+    repeated TapShowProtoDto items = 1;
+}
+
+message TapShowUpdateReq {
+    string postId = 1;
+    string title = 2;
+    int32 permission = 3;
+    google.protobuf.StringValue modifiedOn = 4;
+    google.protobuf.StringValue modifiedBy = 5;
+}
+
+message TapShowDeleteReq {
+    string postId = 1;
+}
+
+message TapShowCreateRsp {
+    bool success = 1;
+    string message = 2;
+    repeated TapShowOutputDto items = 3;
+}
+
+message TapShowUpdateRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message TapShowDeleteRsp {
+    bool success = 1;
+    string message = 2;
+    int64 id = 3;
+}
+
+message TapShowProtoDto {
+    string postId = 1;
+    string hashId = 2;
+    string userId = 3;
+    string title = 4;
+    int32 permission = 5;
+    string createdOn = 6;
+    google.protobuf.StringValue createdBy = 7;
+    google.protobuf.StringValue modifiedOn = 8;
+    google.protobuf.StringValue modifiedBy = 9;
+}
+
+message TapShowOutputDto {
+    int64 id = 1;
+}

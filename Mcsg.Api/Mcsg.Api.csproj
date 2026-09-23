@@ -51,6 +51,11 @@
         <Protobuf Include="Areas\Document\Protos\Clients\document_sub.proto" GrpcServices="Client" />
     </ItemGroup>
 
+    <!-- TapShow gRPC proto files (sync posts to Analytic) -->
+    <ItemGroup>
+        <Protobuf Include="Areas\TapShow\Protos\Clients\tapshow.proto" GrpcServices="Client" />
+    </ItemGroup>
+
     <!-- Social gRPC proto files -->
     <ItemGroup>
         <Protobuf Include="Areas\Social\Protos\Clients\social.proto" GrpcServices="Client" />

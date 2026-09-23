@@ -60,6 +60,7 @@ public class Setting : SettingBase, ISetting
     public double PercentComic { get; set; }
     public double PercentStory { get; set; }
     public double PercentDocument { get; set; }
+    public double PercentTapShow { get; set; }
 
     #endregion
 
