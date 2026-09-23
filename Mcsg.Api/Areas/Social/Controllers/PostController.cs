@@ -55,7 +55,7 @@ public class PostController : ControllerBase
     }
 
     /// <summary>
-    /// Same ranking as latest-posts-by-type, but every item already carries its Story/Comic/Document/Feed box.
+    /// Same ranking as latest-posts-by-type, but every item already carries its Story/Comic/Document/Feed/TapShow box.
     /// One call replaces latest-posts-by-type + the per-area get-*-by-list-id calls.
     /// </summary>
     [HttpGet("latest-posts-by-type/detail")]

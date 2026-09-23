@@ -49,6 +49,24 @@ public partial class TapShowPostService
         return PageAsync(query, request);
     }
 
+    /// <summary>
+    /// Home feed hydration: same visibility rule as ListAsync (Public status, not Private). Order is left to the caller.
+    /// </summary>
+    public async Task<List<TapShowPostResponse>> GetByHashIdsAsync(IEnumerable<string> hashIds, Guid? currentUserId)
+    {
+        var ids = hashIds.Where(h => !string.IsNullOrWhiteSpace(h)).Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return new List<TapShowPostResponse>();
+        }
+        var query = BaseQuery()
+            .Where(p => p.HashId != null && ids.Contains(p.HashId) && p.Status == PostStatus.Public && p.Permission != PostPermission.Private);
+
+        var items = await Project(query, currentUserId).ToListAsync();
+        await AttachReactionsAsync(items, currentUserId);
+        return items;
+    }
+
     #endregion
 
     #region -- Helpers --

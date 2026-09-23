@@ -4,12 +4,14 @@ using Common.Core.Enums;
 using Common.Core.Requests;
 using Mcsg.Api.Areas.Social.Interfaces;
 using Mcsg.Api.Areas.Social.Models;
+using Mcsg.Api.Areas.TapShow.Interfaces;
 using ComicPost = Mcsg.Api.Areas.Comic.Interfaces.IPostService;
 using DocumentPost = Mcsg.Api.Areas.Document.Interfaces.IPostService;
 using StoryPost = Mcsg.Api.Areas.Story.Interfaces.IPostService;
 
 /// <summary>
 /// Replaces the client-side fan-out (latest-posts-by-type + 3-4 get-*-by-list-id calls) with one server-side pass.
+/// Hydrates Feed / Story / Comic / Document / TapShow; any other PostType is logged and returned with Data = null.
 /// Area services are called sequentially on purpose: they share one scoped IDbConnection/DbContext, which is not thread-safe.
 /// </summary>
 public class HomeFeedAggregationService : IHomeFeedAggregationService
@@ -22,6 +24,7 @@ public class HomeFeedAggregationService : IHomeFeedAggregationService
         StoryPost storyPostService,
         ComicPost comicPostService,
         DocumentPost documentPostService,
+        ITapShowPostService tapShowPostService,
         ILogger<HomeFeedAggregationService> logger)
     {
         _socialPostService = socialPostService;
@@ -29,6 +32,7 @@ public class HomeFeedAggregationService : IHomeFeedAggregationService
         _storyPostService = storyPostService;
         _comicPostService = comicPostService;
         _documentPostService = documentPostService;
+        _tapShowPostService = tapShowPostService;
         _logger = logger;
     }
 
@@ -85,6 +89,11 @@ public class HomeFeedAggregationService : IHomeFeedAggregationService
                 case PostType.Document:
                     foreach (var p in await _documentPostService.GetPostDetails(req)) Put(details, type, p.HashId, p);
                     break;
+                case PostType.TapShow:
+                    // TapShow has no PaginatedR-based "by list id" query; pass the hashIds and the viewer directly
+                    var tapShowIds = (req.HashIds ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    foreach (var p in await _tapShowPostService.GetByHashIdsAsync(tapShowIds, req.UserId)) Put(details, type, p.HashId, p);
+                    break;
                 default:
                     _logger.LogWarning("[HOME-FEED] Unsupported PostType {Type} for hashIds {HashIds}", type, req.HashIds);
                     break;
@@ -117,6 +126,7 @@ public class HomeFeedAggregationService : IHomeFeedAggregationService
     private readonly StoryPost _storyPostService;
     private readonly ComicPost _comicPostService;
     private readonly DocumentPost _documentPostService;
+    private readonly ITapShowPostService _tapShowPostService;
     private readonly ILogger<HomeFeedAggregationService> _logger;
 
     #endregion
