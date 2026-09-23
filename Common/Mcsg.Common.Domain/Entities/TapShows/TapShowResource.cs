@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mcsg.Common.Domain.Entities;
 
 /// <summary>
-/// Uploaded image for the TapShow area (post thumbnail or segment image), copy of GameResource.
-/// Created as a temp row (IsDelete = true) by the upload API, attached to a post / segment on use.
-/// SubPostId from BaseResource is unused.
+/// Uploaded image for the TapShow area (post thumbnail, chapter thumbnail, segment image, character avatar), copy of GameResource.
+/// Created as a temp row (IsDelete = true) by the upload API, attached to a post / segment / character on use.
+/// SubPostId from BaseResource = chapter id for a chapter thumbnail (no FK, looked up by value).
 /// </summary>
 public partial class TapShowResource : BaseResource
 {

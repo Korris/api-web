@@ -36,7 +36,12 @@ public partial class TapShowChapterService
         {
             query = query.Where(c => c.Status == PostStatus.Public);
         }
-        return await ProjectSummary(query.OrderBy(c => c.Order).ThenBy(c => c.CreatedOn)).ToListAsync();
+        var items = await ProjectSummary(query.OrderBy(c => c.Order).ThenBy(c => c.CreatedOn)).ToListAsync();
+        if (isOwner)
+        {
+            await AttachThumbnailHashIdsAsync(items);
+        }
+        return items;
     }
 
     public async Task<ChapterDetailResponse> GetAsync(TapShowHashIdR request)
@@ -61,7 +66,7 @@ public partial class TapShowChapterService
             throw new NotFoundException(nameof(E204), E204);
         }
 
-        var summary = await GetSummaryAsync(chapter.Id);
+        var summary = await GetSummaryAsync(chapter.Id, isOwner);
         var result = new ChapterDetailResponse
         {
             Id = summary.Id,
@@ -69,6 +74,8 @@ public partial class TapShowChapterService
             PostId = summary.PostId,
             PostHashId = summary.PostHashId,
             Title = summary.Title,
+            ThumbnailUrl = summary.ThumbnailUrl,
+            ThumbnailHashId = summary.ThumbnailHashId,
             Order = summary.Order,
             Status = summary.Status,
             PublishDate = summary.PublishDate,
@@ -92,10 +99,39 @@ public partial class TapShowChapterService
 
     #region -- Helpers --
 
-    private async Task<ChapterResponse> GetSummaryAsync(Guid chapterId)
+    /// <summary>
+    /// Summary of one chapter; ThumbnailHashId filled only for the owner
+    /// </summary>
+    private async Task<ChapterResponse> GetSummaryAsync(Guid chapterId, bool isOwner)
     {
-        return await ProjectSummary(_context.Available<TapShowChapter>(false).Where(c => c.Id == chapterId)).FirstOrDefaultAsync()
-               ?? throw new NotFoundException(nameof(E204), E204);
+        var summary = await ProjectSummary(_context.Available<TapShowChapter>(false).Where(c => c.Id == chapterId)).FirstOrDefaultAsync()
+                      ?? throw new NotFoundException(nameof(E204), E204);
+        if (isOwner)
+        {
+            await AttachThumbnailHashIdsAsync(new List<ChapterResponse> { summary });
+        }
+        return summary;
+    }
+
+    /// <summary>
+    /// One query for the live chapter thumbnails (TapShowResources.SubPostId = chapter id, no navigation) → ThumbnailHashId
+    /// </summary>
+    private async Task AttachThumbnailHashIdsAsync(List<ChapterResponse> items)
+    {
+        if (items.Count == 0)
+        {
+            return;
+        }
+        var ids = items.Select(i => i.Id).ToList();
+        var hashIds = await _context.TapShowResources
+            .Where(r => r.SubPostId != null && ids.Contains(r.SubPostId.Value) && !r.IsDelete)
+            .Select(r => new { r.SubPostId, r.HashId })
+            .ToListAsync();
+        var byChapter = hashIds.GroupBy(h => h.SubPostId!.Value).ToDictionary(g => g.Key, g => g.First().HashId);
+        foreach (var item in items)
+        {
+            item.ThumbnailHashId = byChapter.TryGetValue(item.Id, out var hashId) ? hashId : null;
+        }
     }
 
     /// <summary>
@@ -143,6 +179,7 @@ public partial class TapShowChapterService
             PostId = c.PostId,
             PostHashId = c.Post.HashId,
             Title = c.Title,
+            ThumbnailUrl = c.ThumbnailUrl,
             Order = c.Order,
             Status = c.Status,
             PublishDate = c.PublishDate,

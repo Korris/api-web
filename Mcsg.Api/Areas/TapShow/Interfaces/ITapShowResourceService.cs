@@ -16,9 +16,9 @@ public interface ITapShowResourceService
     Task<TapShowResource> GetTempResourceAsync(string? hashId, Guid userId, ResourceType type = ResourceType.Image);
 
     /// <summary>
-    /// Attach a resource to a post (thumbnail), or to a segment (image) / character (avatar) of that post
+    /// Attach a resource to a post (thumbnail), or to a segment (image) / character (avatar) / chapter (thumbnail, via SubPostId) of that post
     /// </summary>
-    void Attach(TapShowResource resource, TapShowPost post, TapShowSegment? segment = null, TapShowCharacter? character = null);
+    void Attach(TapShowResource resource, TapShowPost post, TapShowSegment? segment = null, TapShowCharacter? character = null, TapShowChapter? chapter = null);
 
     /// <summary>
     /// Soft-delete the row and remember its object for deletion after SaveChanges

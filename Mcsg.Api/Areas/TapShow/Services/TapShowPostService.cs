@@ -71,7 +71,7 @@ public partial class TapShowPostService : ITapShowPostService
         var post = await GetOwnedPostAsync(request.HashId, userId);
 
         // Same hashId as the attached thumbnail → keep it; new hashId → take the new upload and release the old one
-        var current = post.TapShowResources.FirstOrDefault(r => !r.IsDelete && r.SegmentId == null && r.CharacterId == null);
+        var current = post.TapShowResources.FirstOrDefault(r => !r.IsDelete && r.SegmentId == null && r.CharacterId == null && r.SubPostId == null);
         var thumbnail = current;
         if (current == null || current.HashId != request.ThumbnailHashId)
         {

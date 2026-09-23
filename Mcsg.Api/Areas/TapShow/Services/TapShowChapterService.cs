@@ -43,11 +43,17 @@ public partial class TapShowChapterService : ITapShowChapterService
 
         // Null order → append after the last chapter
         var order = request.Order ?? await NextOrderAsync(post.Id);
-        var chapter = TapShowChapter.Create(post, request.Title!.Trim(), order, request.Status, userId);
+        var thumbnail = string.IsNullOrWhiteSpace(request.ThumbnailHashId) ? null : await _resources.GetTempResourceAsync(request.ThumbnailHashId, userId);
+
+        var chapter = TapShowChapter.Create(post, request.Title!.Trim(), thumbnail == null ? null : _resources.PublicUrl(thumbnail), order, request.Status, userId);
         await _context.TapShowChapters.AddAsync(chapter);
+        if (thumbnail != null)
+        {
+            _resources.Attach(thumbnail, post, chapter: chapter);
+        }
         await _context.SaveChangesAsync(default);
 
-        return await GetSummaryAsync(chapter.Id);
+        return await GetSummaryAsync(chapter.Id, true);
     }
 
     public async Task<ChapterResponse> UpdateAsync(ChapterUpdateR request)
@@ -60,14 +66,35 @@ public partial class TapShowChapterService : ITapShowChapterService
         var userId = RequireUser(request.UserId);
         var chapter = await GetOwnedChapterAsync(request.HashId, userId);
 
-        chapter.Update(request.Title!.Trim(), request.Order ?? chapter.Order, request.Status, userId);
+        // Thumbnail: same hashId → keep; new hashId → swap (old object deleted); null → remove
+        var current = await GetThumbnailAsync(chapter.Id);
+        var thumbnail = current;
+        if (string.IsNullOrWhiteSpace(request.ThumbnailHashId))
+        {
+            thumbnail = null;
+        }
+        else if (current == null || current.HashId != request.ThumbnailHashId)
+        {
+            thumbnail = await _resources.GetTempResourceAsync(request.ThumbnailHashId, userId);
+        }
+        if (current != null && thumbnail != current)
+        {
+            _resources.Release(current, userId);
+        }
+
+        chapter.Update(request.Title!.Trim(), thumbnail == null ? null : _resources.PublicUrl(thumbnail), request.Order ?? chapter.Order, request.Status, userId);
+        if (thumbnail != null)
+        {
+            _resources.Attach(thumbnail, chapter.Post, chapter: chapter);
+        }
         await _context.SaveChangesAsync(default);
 
-        return await GetSummaryAsync(chapter.Id);
+        await _resources.RemoveReleasedObjectsAsync();
+        return await GetSummaryAsync(chapter.Id, true);
     }
 
     /// <summary>
-    /// Soft-delete the chapter with its segments and choices; segment images are released from the bucket
+    /// Soft-delete the chapter with its segments and choices; chapter thumbnail and segment images are released from the bucket
     /// </summary>
     public async Task<bool> DeleteAsync(TapShowHashIdR request)
     {
@@ -82,6 +109,11 @@ public partial class TapShowChapterService : ITapShowChapterService
         var choices = await _context.Available<TapShowSegmentChoice>().Where(c => segmentIds.Contains(c.SegmentId)).ToListAsync();
 
         chapter.Delete(userId);
+        var thumbnail = await GetThumbnailAsync(chapter.Id);
+        if (thumbnail != null)
+        {
+            _resources.Release(thumbnail, userId);
+        }
         choices.ForEach(c => c.Delete(userId));
         foreach (var segment in segments)
         {
@@ -127,6 +159,14 @@ public partial class TapShowChapterService : ITapShowChapterService
             throw new ForbiddenAccessException(nameof(E309), E309);
         }
         return chapter;
+    }
+
+    /// <summary>
+    /// Live thumbnail of a chapter (resource attached via SubPostId), tracked
+    /// </summary>
+    private async Task<TapShowResource?> GetThumbnailAsync(Guid chapterId)
+    {
+        return await _context.TapShowResources.FirstOrDefaultAsync(r => r.SubPostId == chapterId && !r.IsDelete);
     }
 
     private async Task<float> NextOrderAsync(Guid postId)

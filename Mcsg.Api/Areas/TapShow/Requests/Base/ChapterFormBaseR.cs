@@ -25,5 +25,11 @@ public class ChapterFormBaseR : IdBaseR
     /// </summary>
     public PostStatus Status { get; set; } = PostStatus.Draft;
 
+    /// <summary>
+    /// hashId returned by POST api/tapshow/file/upload-media; null → no thumbnail.
+    /// On update: same hashId keeps the current thumbnail, a new one replaces it, null removes it.
+    /// </summary>
+    public string? ThumbnailHashId { get; set; }
+
     #endregion
 }

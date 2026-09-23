@@ -6,11 +6,11 @@ Interactive branching visual story: **post → chapters → segments (image + na
 | Table | Base | Note |
 |---|---|---|
 | `TapShowPosts` | BasePost | `PostType.TapShow = 7`. `CoverUrl` unused |
-| `TapShowChapters` | BaseSubPost | `HashId`, `Title`, `Order` (float), `Status` Draft/Public, `PublishDate` set on first publish |
+| `TapShowChapters` | BaseSubPost | `HashId`, `Title`, `ThumbnailUrl?`, `Order` (float), `Status` Draft/Public, `PublishDate` set on first publish |
 | `TapShowCharacters` | AuditableEntity | `PostId`, `Name`, `AvatarUrl?`, `Order`. Characters of a post (name + avatar) |
 | `TapShowSegments` | AuditableEntity | `ChapterId`, `CharacterId?` (speaker, same post), `Title?`, `ImageUrl?`, `Narration?` (dialogue), `AudioUrl?` (voice-over), `Order` (float), `IsEnding`. Lowest `Order` = chapter entry point |
 | `TapShowSegmentChoices` | AuditableEntity | `SegmentId` → `TargetSegmentId` (same chapter), `Label`, `Order`. Both FKs cascade. Only Choice segments have rows |
-| `TapShowResources` | BaseResource | + `PostId?`, `SegmentId?`, `CharacterId?`. Temp row `IsDelete = true` until attached. Thumbnail: `PostId` only; segment image / audio: `PostId` + `SegmentId` (distinguished by `Type` Image / Audio); avatar: `PostId` + `CharacterId` |
+| `TapShowResources` | BaseResource | + `PostId?`, `SegmentId?`, `CharacterId?`. Temp row `IsDelete = true` until attached. Post thumbnail: `PostId` only; chapter thumbnail: `PostId` + `SubPostId` (= chapter id, no FK); segment image / audio: `PostId` + `SegmentId` (distinguished by `Type` Image / Audio); avatar: `PostId` + `CharacterId` |
 | `TapShowPostComments`, `TapShowPostReactions`, `TapShowPostCommentReactions` | Game counterparts | post-level only |
 | `TapShowTagPosts` | BaseTagPost (= ComicTagPosts) | `PostId`, `TagId` → shared `public."Tags"`. Soft-deleted when a tag is removed from the post. Script `Database/Scripts/20260923-add-game-tapshow-hashtags.sql` |
 
@@ -31,11 +31,11 @@ Flow: upload images first, then reference them by `hashId`. All write endpoints 
 | GET | `tapshow/{hashId}` | no | `chapterCount` (public chapters; owner: all), `commentCount`, `reaction`, `characters[]` (null in lists); non-public / Private → owner only (404 otherwise) |
 | GET | `tapshow/list?PageNumber&PageSize&ProfileName&Keyword&HashTag` | no | Public + non-Private, newest first, max 50/page; mobile hides mature; `HashTag` = one tag name (no `#`) |
 | GET | `tapshow/my?PageNumber&PageSize` | yes | own posts, all statuses |
-| GET | `chapter/post/{postHashId}` | no | chapters by `order`; owner sees Draft too; each with `segmentCount`, `endingCount` |
+| GET | `chapter/post/{postHashId}` | no | chapters by `order`; owner sees Draft too; each with `thumbnailUrl`, `segmentCount`, `endingCount`; `thumbnailHashId` only for the owner |
 | GET | `chapter/{hashId}` | no | chapter + `startSegmentId` + `segments[]` (each with `kind` Next/Choice/Ending, `nextSegmentId`, `choices[]`, `characterId/characterName/characterAvatarUrl`). Draft → owner only. Premium post + viewer not premium/owner → `isLocked: true`, `segments: []`. `imageHashId` only for the owner |
-| POST | `chapter` | owner | `postHashId, title, order?, status (Draft/Public)`; `order` null → appended |
-| PUT | `chapter/{hashId}` | owner | `title, order?, status` |
-| DELETE | `chapter/{hashId}` | owner | soft-deletes segments + choices, images removed |
+| POST | `chapter` | owner | `postHashId, title, thumbnailHashId?, order?, status (Draft/Public)`; `thumbnailHashId` from `file/upload-media`; `order` null → appended |
+| PUT | `chapter/{hashId}` | owner | `title, thumbnailHashId?, order?, status`; `thumbnailHashId`: same = keep, new = replace (old object deleted), null = remove |
+| DELETE | `chapter/{hashId}` | owner | soft-deletes segments + choices, chapter thumbnail + segment images removed |
 | GET | `character/post/{postHashId}` | no | characters by `order`; same post visibility as chapter list; `avatarHashId` only for the owner |
 | POST | `character` | owner | `postHashId, name, avatarHashId?, order?`; `order` null → appended |
 | PUT | `character/{id}` | owner | `name, avatarHashId?, order?`; `avatarHashId`: same = keep, new = replace, null = remove |

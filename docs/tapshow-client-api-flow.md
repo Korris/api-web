@@ -28,9 +28,9 @@ Base: `/api/tapshow/...` · Auth: `Authorization: Bearer <jwt>` on every write. 
 Danh sách để chọn khi soạn segment: `characters[]` trong `GET tapshow/{hashId}` hoặc `GET character/post/{postHashId}`.
 
 ### A3. Tạo chapter
-- `POST chapter` `{ "postHashId": "<post>", "title": "Một miếng, hai lựa chọn", "order": null, "status": 0 }`
+- `POST chapter` `{ "postHashId": "<post>", "title": "Một miếng, hai lựa chọn", "thumbnailHashId": "<upload-media hash|null>", "order": null, "status": 0 }`
   `status`: 0 Draft (chỉ owner thấy) · 1 Public. → `{ id, hashId, title, order, status, segmentCount, endingCount, ... }`.
-- `PUT chapter/{hashId}` (`title, order, status`) — publish bằng cách đổi `status: 1`.
+- `PUT chapter/{hashId}` (`title, thumbnailHashId, order, status`) — publish bằng cách đổi `status: 1`. `thumbnailHashId`: gửi lại hash cũ = giữ, hash mới = thay, null = bỏ ảnh. Response có `thumbnailUrl` (+ `thumbnailHashId` cho owner).
 - `DELETE chapter/{hashId}` — xoá cả segment + choice.
 - `GET chapter/post/{postHashId}` — danh sách chapter (owner thấy cả Draft).
 

@@ -12,6 +12,17 @@ public class ChapterResponse
     public Guid PostId { get; set; }
     public string? PostHashId { get; set; }
     public string? Title { get; set; }
+
+    /// <summary>
+    /// Public URL of the chapter thumbnail (optional)
+    /// </summary>
+    public string? ThumbnailUrl { get; set; }
+
+    /// <summary>
+    /// hashId of the attached thumbnail (owner only, used to keep it on update); null otherwise
+    /// </summary>
+    public string? ThumbnailHashId { get; set; }
+
     public float Order { get; set; }
     public PostStatus Status { get; set; }
     public DateTime? PublishDate { get; set; }

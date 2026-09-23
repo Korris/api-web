@@ -21,7 +21,7 @@ partial class TapShowChapter
     /// <summary>
     /// Create a chapter under a post. Draft chapters are only visible to the owner.
     /// </summary>
-    public static TapShowChapter Create(TapShowPost post, string? title, float order, PostStatus status, Guid createdBy)
+    public static TapShowChapter Create(TapShowPost post, string? title, string? thumbnailUrl, float order, PostStatus status, Guid createdBy)
     {
         return new TapShowChapter
         {
@@ -31,6 +31,7 @@ partial class TapShowChapter
             AuthorId = post.AuthorId,
             HashId = Setting.PostConfig.SubHashLength.GetRandomString(),
             Title = title,
+            ThumbnailUrl = thumbnailUrl,
             Order = order,
             Status = status,
             PublishDate = status == PostStatus.Public ? DateTime.UtcNow : null,
@@ -42,9 +43,10 @@ partial class TapShowChapter
     /// <summary>
     /// Update editable fields
     /// </summary>
-    public void Update(string? title, float order, PostStatus status, Guid modifiedBy)
+    public void Update(string? title, string? thumbnailUrl, float order, PostStatus status, Guid modifiedBy)
     {
         Title = title;
+        ThumbnailUrl = thumbnailUrl;
         Order = order;
         if (status == PostStatus.Public && Status != PostStatus.Public)
         {

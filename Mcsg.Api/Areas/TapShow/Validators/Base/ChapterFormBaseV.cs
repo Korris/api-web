@@ -21,5 +21,8 @@ public class ChapterFormBaseV : AbstractValidator<ChapterFormBaseR>
         t = "Status";
         RuleFor(p => p.Status).Must(s => s == PostStatus.Draft || s == PostStatus.Public)
             .WithMessage($"{t} must be Draft or Public").WithName(t);
+
+        t = "ThumbnailHashId";
+        RuleFor(p => p.ThumbnailHashId).MaximumLength(Hashtag.Max).WithMessage($"{t} {MaximumLength} {Hashtag.Max}").WithName(t);
     }
 }

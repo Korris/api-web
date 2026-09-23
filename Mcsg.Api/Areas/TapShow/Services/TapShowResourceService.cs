@@ -14,7 +14,8 @@ using Mcsg.Api.Interfaces;
 using static Common.SeedWork.Constants.Error;
 
 /// <summary>
-/// Uploaded image handling shared by post (thumbnail) and segment (image) services. Mirrors GamePostService.Resources.
+/// Uploaded image handling shared by post (thumbnail), chapter (thumbnail), segment (image) and character (avatar) services.
+/// Mirrors GamePostService.Resources.
 /// </summary>
 public class TapShowResourceService : ITapShowResourceService
 {
@@ -35,15 +36,17 @@ public class TapShowResourceService : ITapShowResourceService
         return resource ?? throw new BadRequestException(nameof(E000), TapShowConfig.InvalidResourceUrlMessage);
     }
 
-    public void Attach(TapShowResource resource, TapShowPost post, TapShowSegment? segment = null, TapShowCharacter? character = null)
+    public void Attach(TapShowResource resource, TapShowPost post, TapShowSegment? segment = null, TapShowCharacter? character = null, TapShowChapter? chapter = null)
     {
-        if (resource.PostId == post.Id && resource.SegmentId == segment?.Id && resource.CharacterId == character?.Id && !resource.IsDelete)
+        if (resource.PostId == post.Id && resource.SegmentId == segment?.Id && resource.CharacterId == character?.Id
+            && resource.SubPostId == chapter?.Id && !resource.IsDelete)
         {
             return;
         }
         resource.Post = post;
         resource.Segment = segment;
         resource.Character = character;
+        resource.SubPostId = chapter?.Id;
         resource.IsDelete = false;
         resource.ModifiedBy = post.UserId;
         resource.ModifiedOn = DateTime.UtcNow;
