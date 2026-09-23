@@ -19,5 +19,10 @@ public class GamePostListR : PaginatedR
     /// </summary>
     public string? Keyword { get; set; }
 
+    /// <summary>
+    /// Optional: only posts carrying this hashtag (name without '#')
+    /// </summary>
+    public string? HashTag { get; set; }
+
     #endregion
 }

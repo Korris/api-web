@@ -26,4 +26,7 @@ public partial class GamePost : BasePost
 
     [InverseProperty("Post")]
     public virtual ICollection<GameResource> GameResources { get; set; } = new List<GameResource>();
+
+    [InverseProperty("Post")]
+    public virtual ICollection<GameTagPost> GameTagPosts { get; set; } = new List<GameTagPost>();
 }

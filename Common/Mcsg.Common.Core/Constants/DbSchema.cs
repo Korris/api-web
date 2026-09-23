@@ -67,11 +67,11 @@ public class DbSchema
     /// <summary>
     /// Game tables
     /// </summary>
-    public const string GameTables = "GamePosts";
+    public const string GameTables = "GamePosts;GamePostComments;GamePostReactions;GamePostCommentReactions;GameResources;GameTagPosts";
     /// <summary>
     /// TapShow tables
     /// </summary>
-    public const string TapShowTables = "TapShowPosts;TapShowChapters;TapShowSegments;TapShowSegmentChoices;TapShowResources;TapShowPostComments;TapShowPostReactions;TapShowPostCommentReactions";
+    public const string TapShowTables = "TapShowPosts;TapShowChapters;TapShowCharacters;TapShowSegments;TapShowSegmentChoices;TapShowResources;TapShowPostComments;TapShowPostReactions;TapShowPostCommentReactions;TapShowTagPosts";
 
     /// <summary>
     /// Identity tables

@@ -12,6 +12,7 @@ Interactive branching visual story: **post → chapters → segments (image + na
 | `TapShowSegmentChoices` | AuditableEntity | `SegmentId` → `TargetSegmentId` (same chapter), `Label`, `Order`. Both FKs cascade. Only Choice segments have rows |
 | `TapShowResources` | BaseResource | + `PostId?`, `SegmentId?`, `CharacterId?`. Temp row `IsDelete = true` until attached. Thumbnail: `PostId` only; segment image / audio: `PostId` + `SegmentId` (distinguished by `Type` Image / Audio); avatar: `PostId` + `CharacterId` |
 | `TapShowPostComments`, `TapShowPostReactions`, `TapShowPostCommentReactions` | Game counterparts | post-level only |
+| `TapShowTagPosts` | BaseTagPost (= ComicTagPosts) | `PostId`, `TagId` → shared `public."Tags"`. Soft-deleted when a tag is removed from the post. Script `Database/Scripts/20260923-add-game-tapshow-hashtags.sql` |
 
 - Team convention: no new migrations. Tables merged into `20250327042022_InitData.cs` + Designer + snapshot. Verified: temp `dotnet ef migrations add` produces an empty `Up()`.
 - How it was done (repeatable): `cd Common/Mcsg.Common.Domain && dotnet ef migrations add Tmp -- "Host=x;Database=x;Username=x;Password=x"` (factory needs a connection string arg, no DB access), copy `Up()` blocks into InitData, `git diff` of the snapshot applied as a patch to the Designer, delete the temp migration, rebuild, re-run `migrations add` → empty, delete again.
@@ -24,11 +25,11 @@ Flow: upload images first, then reference them by `hashId`. All write endpoints 
 |---|---|---|---|
 | POST | `file/upload-media` | yes | multipart `File`; image only; re-encoded JPEG; limit = SystemSettings `ThumbnailCoverSize` MB; returns `{ hashId, url, width, height, size }` |
 | POST | `file/upload-audio` | yes | multipart `File`; mp3 / m4a / aac / wav / ogg; limit = SystemSettings `TapShowAudioSize` MB (default 10, ceiling 30); returns `{ hashId, url, size }` → `audioHashId` of a segment |
-| POST | `tapshow` | yes | `title, summary, thumbnailHashId, isCurrentUserAuthor, authorName, isMature, isCompleted, permission, characters?[]`; each `{ name, avatarHashId?, order? }` created in the same transaction (max 50); response carries `characters[]` with ids |
-| PUT | `tapshow/{hashId}` | owner | same body without `characters` (ignored if sent); new `thumbnailHashId` replaces the file (old object deleted). Characters are changed only through `character` endpoints |
+| POST | `tapshow` | yes | `title, summary, thumbnailHashId, isCurrentUserAuthor, authorName, isMature, isCompleted, permission, tags?[], characters?[]`; `tags`: names with or without `#`, max 10, letters / digits / `_`, stored lower-case; each character `{ name, avatarHashId?, order? }` created in the same transaction (max 50); response carries `tags[]` and `characters[]` with ids |
+| PUT | `tapshow/{hashId}` | owner | same body without `characters` (ignored if sent); new `thumbnailHashId` replaces the file (old object deleted). `tags` is the full set: names left out are unlinked, null / empty = no tags. Characters are changed only through `character` endpoints |
 | DELETE | `tapshow/{hashId}` | owner | soft-deletes post + chapters + segments + choices, all images removed from Minio |
 | GET | `tapshow/{hashId}` | no | `chapterCount` (public chapters; owner: all), `commentCount`, `reaction`, `characters[]` (null in lists); non-public / Private → owner only (404 otherwise) |
-| GET | `tapshow/list?PageNumber&PageSize&ProfileName&Keyword` | no | Public + non-Private, newest first, max 50/page; mobile hides mature |
+| GET | `tapshow/list?PageNumber&PageSize&ProfileName&Keyword&HashTag` | no | Public + non-Private, newest first, max 50/page; mobile hides mature; `HashTag` = one tag name (no `#`) |
 | GET | `tapshow/my?PageNumber&PageSize` | yes | own posts, all statuses |
 | GET | `chapter/post/{postHashId}` | no | chapters by `order`; owner sees Draft too; each with `segmentCount`, `endingCount` |
 | GET | `chapter/{hashId}` | no | chapter + `startSegmentId` + `segments[]` (each with `kind` Next/Choice/Ending, `nextSegmentId`, `choices[]`, `characterId/characterName/characterAvatarUrl`). Draft → owner only. Premium post + viewer not premium/owner → `isLocked: true`, `segments: []`. `imageHashId` only for the owner |

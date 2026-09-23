@@ -47,4 +47,9 @@ public class TapShowPostResponse
     /// Characters ordered by Order. Filled on create / update / detail only (null in lists); avatarHashId only for the owner
     /// </summary>
     public List<CharacterResponse>? Characters { get; set; }
+
+    /// <summary>
+    /// Hashtag names (without '#')
+    /// </summary>
+    public string[] Tags { get; set; } = Array.Empty<string>();
 }

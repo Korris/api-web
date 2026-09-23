@@ -27,6 +27,12 @@ public partial class Tag : AuditableEntity
     public virtual ICollection<DocumentTagPost> DocumentTagPosts { get; set; } = new List<DocumentTagPost>();
 
     [InverseProperty("Tag")]
+    public virtual ICollection<GameTagPost> GameTagPosts { get; set; } = new List<GameTagPost>();
+
+    [InverseProperty("Tag")]
+    public virtual ICollection<TapShowTagPost> TapShowTagPosts { get; set; } = new List<TapShowTagPost>();
+
+    [InverseProperty("Tag")]
     public virtual ICollection<SocialTagPost> SocialTagPosts { get; set; } = new List<SocialTagPost>();
 
     [InverseProperty("Tag")]

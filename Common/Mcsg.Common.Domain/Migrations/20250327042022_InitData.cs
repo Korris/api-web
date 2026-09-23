@@ -4672,6 +4672,76 @@ namespace Mcsg.Common.Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "GameTagPosts",
+                schema: "game",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameTagPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GameTagPosts_GamePosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "game",
+                        principalTable: "GamePosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GameTagPosts_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TapShowTagPosts",
+                schema: "tapshow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    ModifiedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    IsDelete = table.Column<bool>(type: "boolean", nullable: false),
+                    SyncedOn = table.Column<DateTime>(type: "timestamp", nullable: true),
+                    SyncError = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    TagData = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TapShowTagPosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TapShowTagPosts_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TapShowTagPosts_TapShowPosts_PostId",
+                        column: x => x.PostId,
+                        principalSchema: "tapshow",
+                        principalTable: "TapShowPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_TapShowChapters_HashId",
                 schema: "tapshow",
@@ -5878,11 +5948,43 @@ namespace Mcsg.Common.Domain.Migrations
                 name: "IX_ViewHistories_UserId",
                 table: "ViewHistories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameTagPosts_PostId",
+                schema: "game",
+                table: "GameTagPosts",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameTagPosts_TagId_PostId",
+                schema: "game",
+                table: "GameTagPosts",
+                columns: new[] { "TagId", "PostId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowTagPosts_PostId",
+                schema: "tapshow",
+                table: "TapShowTagPosts",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TapShowTagPosts_TagId_PostId",
+                schema: "tapshow",
+                table: "TapShowTagPosts",
+                columns: new[] { "TagId", "PostId" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GameTagPosts",
+                schema: "game");
+
+            migrationBuilder.DropTable(
+                name: "TapShowTagPosts",
+                schema: "tapshow");
+
             migrationBuilder.DropTable(
                 name: "TapShowPostCommentReactions",
                 schema: "tapshow");

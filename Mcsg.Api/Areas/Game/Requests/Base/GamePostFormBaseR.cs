@@ -4,7 +4,7 @@ using Common.Core.Enums;
 using Common.Core.Requests;
 
 /// <summary>
-/// Shared fields for create / update game post (mirrors ComicPostFormBaseR without cover / tags / chapters)
+/// Shared fields for create / update game post (mirrors ComicPostFormBaseR without cover / chapters)
 /// </summary>
 public class GamePostFormBaseR : IdBaseR
 {
@@ -49,6 +49,11 @@ public class GamePostFormBaseR : IdBaseR
     /// Permission (Public / Private / Premium)
     /// </summary>
     public PostPermission Permission { get; set; }
+
+    /// <summary>
+    /// Hashtags (with or without leading '#'), max Validator.Hashtag.MaxQuantity. PUT replaces the whole set; null / empty → no tags.
+    /// </summary>
+    public List<string>? Tags { get; set; }
 
     #endregion
 }

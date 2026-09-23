@@ -9,6 +9,7 @@ Trimmed copy of the Comic area: one post = one HTML game. Post CRUD, uploads, co
 | `GameResources` | ComicResources | + `PostId` (nullable FK). Temp row `IsDelete = true` until attached to a post. `SubPostId` unused |
 | `GamePostComments` | ComicPostComments | no Resource FK |
 | `GamePostReactions`, `GamePostCommentReactions` | Comic counterparts | one row per user per target |
+| `GameTagPosts` | ComicTagPosts | `PostId`, `TagId` → shared `public."Tags"`. Soft-deleted when a tag is removed from the post. Script `Database/Scripts/20260923-add-game-tapshow-hashtags.sql` |
 
 - `PostType.Game = 6` (appended, existing ints unchanged).
 - Team convention: no new migrations. Tables are merged into `20250327042022_InitData.cs` + Designer + snapshot. Snapshot verified equal to the model (temp `migrations add` produces 0 operations).
@@ -22,11 +23,11 @@ Flow, same as Comic: upload files first, then create the post with the returned 
 |---|---|---|---|
 | POST | `file/upload-media` | yes | multipart `File`; image only; re-encoded JPEG; returns `{ hashId, url, width, height, size }` |
 | POST | `file/upload-game` | yes | multipart `File`; `.html` only, max = SystemSettings `GameFileSize` MB (default 30, ceiling 50), stored `text/html`; returns `{ hashId, url, ... }` |
-| POST | `game` | yes | body: `title, summary, thumbnailHashId, gameHashId, isCurrentUserAuthor, authorName, isMature, permission` |
-| PUT | `game/{hashId}` | owner | same body; a new hashId replaces the file, the old object is deleted from Minio |
+| POST | `game` | yes | body: `title, summary, thumbnailHashId, gameHashId, isCurrentUserAuthor, authorName, isMature, permission, tags?[]`; `tags`: names with or without `#`, max 10, letters / digits / `_`, stored lower-case; response carries `tags[]` |
+| PUT | `game/{hashId}` | owner | same body; a new hashId replaces the file, the old object is deleted from Minio. `tags` is the full set: names left out are unlinked, null / empty = no tags |
 | DELETE | `game/{hashId}` | owner | soft delete post + resources, objects deleted from Minio |
 | GET | `game/{hashId}` | no | includes `commentCount`, `reaction`; non-public / Private → owner only (404 otherwise) |
-| GET | `game/list?PageNumber&PageSize&ProfileName&Keyword` | no | Public + non-Private, newest first, max 50/page; mobile hides mature |
+| GET | `game/list?PageNumber&PageSize&ProfileName&Keyword&HashTag` | no | Public + non-Private, newest first, max 50/page; mobile hides mature; `HashTag` = one tag name (no `#`) |
 | GET | `game/my?PageNumber&PageSize` | yes | own posts, all statuses |
 | GET | `comment/post/{hashId}?PageNumber&PageSize` | no | root comments, newest first, each with `replyCount` + `reaction` |
 | GET | `comment/{id}/replies?PageNumber&PageSize` | no | replies, oldest first |

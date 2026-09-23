@@ -3035,6 +3035,54 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("GameResources", "game");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GameTagPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TagId", "PostId");
+
+                    b.ToTable("GameTagPosts", "game");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Job", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6768,6 +6816,54 @@ namespace Mcsg.Common.Domain.Migrations
                     b.ToTable("TapShowSegmentChoices", "tapshow");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowTagPost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SyncError")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<DateTime?>("SyncedOn")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("TagData")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TagId", "PostId");
+
+                    b.ToTable("TapShowTagPosts", "tapshow");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8685,6 +8781,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.GameTagPost", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.GamePost", "Post")
+                        .WithMany("GameTagPosts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("GameTagPosts")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.NotificationObject", "NotificationObject")
@@ -9493,6 +9608,25 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("TargetSegment");
                 });
 
+            modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowTagPost", b =>
+                {
+                    b.HasOne("Mcsg.Common.Domain.Entities.TapShowPost", "Post")
+                        .WithMany("TapShowTagPosts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mcsg.Common.Domain.Entities.Tag", "Tag")
+                        .WithMany("TapShowTagPosts")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.UserBlock", b =>
                 {
                     b.HasOne("Mcsg.Common.Domain.Entities.User", "UserId1Navigation")
@@ -9789,6 +9923,8 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("GamePostReactions");
 
                     b.Navigation("GameResources");
+
+                    b.Navigation("GameTagPosts");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.GamePostComment", b =>
@@ -9916,11 +10052,15 @@ namespace Mcsg.Common.Domain.Migrations
 
                     b.Navigation("DocumentTagPosts");
 
+                    b.Navigation("GameTagPosts");
+
                     b.Navigation("SocialTagPosts");
 
                     b.Navigation("StoryTagPosts");
 
                     b.Navigation("TagFavorites");
+
+                    b.Navigation("TapShowTagPosts");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowChapter", b =>
@@ -9946,6 +10086,8 @@ namespace Mcsg.Common.Domain.Migrations
                     b.Navigation("TapShowPostReactions");
 
                     b.Navigation("TapShowResources");
+
+                    b.Navigation("TapShowTagPosts");
                 });
 
             modelBuilder.Entity("Mcsg.Common.Domain.Entities.TapShowPostComment", b =>

@@ -10,12 +10,13 @@ Base: `/api/tapshow/...` · Auth: `Authorization: Bearer <jwt>` on every write. 
    ```json
    { "title": "Bánh mì: Một miếng, hai lựa chọn", "summary": "...", "thumbnailHashId": "<A1.1>",
      "isCurrentUserAuthor": true, "authorName": "", "isMature": false, "isCompleted": false, "permission": 0,
+     "tags": ["banhmi", "hai_huoc"],
      "characters": [
        { "name": "VIPHIEN", "avatarHashId": "<upload-media hash|null>", "order": 0 },
        { "name": "Bà bán bánh", "avatarHashId": null, "order": 1 }
      ] }
    ```
-   `permission`: 0 Public · 1 Private · 2 Premium. `characters` tuỳ chọn (tối đa 50), avatar upload trước qua `POST file/upload-media`.
+   `permission`: 0 Public · 1 Private · 2 Premium. `tags` tuỳ chọn (tối đa 10, chữ / số / `_`, có hoặc không `#`, lưu chữ thường; `PUT tapshow/{hashId}` gửi lại **cả bộ** tag, bỏ tên nào là gỡ tên đó). `characters` tuỳ chọn (tối đa 50), avatar upload trước qua `POST file/upload-media`.
    → `TapShowPostResponse` (`hashId` dùng cho mọi bước sau) kèm `characters[]` `{ id, name, avatarUrl, avatarHashId, order }` — `id` là `characterId` khi tạo segment.
 
 ### A2. Nhân vật: thêm / sửa / xoá sau khi tạo

@@ -26,4 +26,7 @@ public partial class TapShowPost : BasePost
 
     [InverseProperty("Post")]
     public virtual ICollection<TapShowResource> TapShowResources { get; set; } = new List<TapShowResource>();
+
+    [InverseProperty("Post")]
+    public virtual ICollection<TapShowTagPost> TapShowTagPosts { get; set; } = new List<TapShowTagPost>();
 }

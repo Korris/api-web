@@ -135,6 +135,11 @@ public interface IMcsgContext
     /// GameResources
     /// </summary>
     DbSet<GameResource> GameResources { get; set; }
+
+    /// <summary>
+    /// GameTagPosts
+    /// </summary>
+    DbSet<GameTagPost> GameTagPosts { get; set; }
     /// <summary>
     /// TapShowPosts
     /// </summary>
@@ -168,6 +173,11 @@ public interface IMcsgContext
     /// TapShowPostComments
     /// </summary>
     DbSet<TapShowPostComment> TapShowPostComments { get; set; }
+
+    /// <summary>
+    /// TapShowTagPosts
+    /// </summary>
+    DbSet<TapShowTagPost> TapShowTagPosts { get; set; }
 
     /// <summary>
     /// TapShowPostReactions

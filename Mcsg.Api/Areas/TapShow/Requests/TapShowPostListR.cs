@@ -16,4 +16,9 @@ public class TapShowPostListR : PaginatedR
     /// Optional: search in title
     /// </summary>
     public string? Keyword { get; set; }
+
+    /// <summary>
+    /// Optional: only posts carrying this hashtag (name without '#')
+    /// </summary>
+    public string? HashTag { get; set; }
 }

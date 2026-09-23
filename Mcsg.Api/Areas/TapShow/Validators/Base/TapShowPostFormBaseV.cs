@@ -3,6 +3,7 @@ using FluentValidation;
 namespace Mcsg.Api.Areas.TapShow.Validators;
 
 using Mcsg.Api.Areas.TapShow.Requests;
+using Mcsg.Api.Validators;
 using static Common.SeedWork.Constants.Validator;
 
 /// <summary>
@@ -31,5 +32,11 @@ public class TapShowPostFormBaseV : AbstractValidator<TapShowPostFormBaseR>
         t = "AuthorName";
         RuleFor(p => p.AuthorName).NotEmpty().When(p => !p.IsCurrentUserAuthor).WithMessage($"{t} {NotEmpty}").WithName(t)
             .MaximumLength(Title.Max).WithMessage($"{t} {MaximumLength} {Title.Max}");
+
+        // Hashtags: same rules as Comic (shape, no duplicates, max quantity)
+        t = "Tags";
+        RuleForEach(p => p.Tags).Must(HashtagRules.Valid).WithMessage(Tag);
+        RuleFor(p => p.Tags).Must(HashtagRules.NoDuplicate).WithMessage(DuplicateTag).WithName(t)
+            .Must(HashtagRules.MaxQuantity).WithMessage($"{t} {LessThanOrEqualTo} {Hashtag.MaxQuantity}");
     }
 }

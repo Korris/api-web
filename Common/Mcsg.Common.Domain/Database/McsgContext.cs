@@ -93,6 +93,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<GamePostReaction> GamePostReactions { get; set; }
 
     public virtual DbSet<GameResource> GameResources { get; set; }
+
+    public virtual DbSet<GameTagPost> GameTagPosts { get; set; }
     public virtual DbSet<TapShowPost> TapShowPosts { get; set; }
 
     public virtual DbSet<TapShowChapter> TapShowChapters { get; set; }
@@ -109,6 +111,8 @@ public partial class McsgContext : IdentityDbContext<User, Role, Guid>, IMcsgCon
     public virtual DbSet<TapShowPostReaction> TapShowPostReactions { get; set; }
 
     public virtual DbSet<TapShowPostCommentReaction> TapShowPostCommentReactions { get; set; }
+
+    public virtual DbSet<TapShowTagPost> TapShowTagPosts { get; set; }
 
     public virtual DbSet<ComicPostComment> ComicPostComments { get; set; }
 

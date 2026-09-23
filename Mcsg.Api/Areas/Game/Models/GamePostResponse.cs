@@ -37,4 +37,9 @@ public class GamePostResponse
     /// Reaction summary (same shape as Social / Comic)
     /// </summary>
     public ReactionSummaryResponse? Reaction { get; set; }
+
+    /// <summary>
+    /// Hashtag names (without '#')
+    /// </summary>
+    public string[] Tags { get; set; } = Array.Empty<string>();
 }

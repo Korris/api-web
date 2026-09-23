@@ -87,6 +87,11 @@ public partial class GamePostService
             var keyword = request.Keyword.Trim();
             query = query.Where(p => p.Title != null && EF.Functions.ILike(p.Title, $"%{keyword}%"));
         }
+        if (!string.IsNullOrWhiteSpace(request.HashTag))
+        {
+            var tag = request.HashTag.Trim().TrimStart('#').ToLowerInvariant();
+            query = query.Where(p => p.GameTagPosts.Any(l => !l.IsDelete && !l.Tag.IsDelete && l.Tag.Name == tag));
+        }
 
         var pageNumber = request.PageNumber < 1 ? 1 : request.PageNumber;
         var pageSize = request.PageSize < 1 ? DefaultPageSize : Math.Min(request.PageSize, MaxPageSize);
@@ -150,7 +155,8 @@ public partial class GamePostService
             ProfileName = p.User.ProfileName,
             ProfileId = p.User.ProfileId,
             UserAvatar = p.User.Avatar,
-            CommentCount = p.GamePostComments.Count(c => !c.IsDelete && c.Status == CommentStatus.Public)
+            CommentCount = p.GamePostComments.Count(c => !c.IsDelete && c.Status == CommentStatus.Public),
+            Tags = p.GameTagPosts.Where(l => !l.IsDelete && !l.Tag.IsDelete).Select(l => l.Tag.Name!).ToArray()
         });
     }
 

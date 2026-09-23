@@ -50,5 +50,10 @@ public class TapShowPostFormBaseR : IdBaseR
     /// </summary>
     public PostPermission Permission { get; set; }
 
+    /// <summary>
+    /// Hashtags (with or without leading '#'), max Validator.Hashtag.MaxQuantity. PUT replaces the whole set; null / empty → no tags.
+    /// </summary>
+    public List<string>? Tags { get; set; }
+
     #endregion
 }

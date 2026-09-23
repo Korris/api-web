@@ -102,6 +102,11 @@ public partial class TapShowPostService
             var keyword = request.Keyword.Trim();
             query = query.Where(p => p.Title != null && EF.Functions.ILike(p.Title, $"%{keyword}%"));
         }
+        if (!string.IsNullOrWhiteSpace(request.HashTag))
+        {
+            var tag = request.HashTag.Trim().TrimStart('#').ToLowerInvariant();
+            query = query.Where(p => p.TapShowTagPosts.Any(l => !l.IsDelete && !l.Tag.IsDelete && l.Tag.Name == tag));
+        }
 
         var pageNumber = request.PageNumber < 1 ? 1 : request.PageNumber;
         var pageSize = request.PageSize < 1 ? DefaultPageSize : Math.Min(request.PageSize, MaxPageSize);
@@ -157,7 +162,8 @@ public partial class TapShowPostService
             ProfileId = p.User.ProfileId,
             UserAvatar = p.User.Avatar,
             ChapterCount = p.TapShowChapters.Count(c => !c.IsDelete && (c.Status == PostStatus.Public || (currentUserId != null && p.UserId == currentUserId))),
-            CommentCount = p.TapShowPostComments.Count(c => !c.IsDelete && c.Status == CommentStatus.Public)
+            CommentCount = p.TapShowPostComments.Count(c => !c.IsDelete && c.Status == CommentStatus.Public),
+            Tags = p.TapShowTagPosts.Where(l => !l.IsDelete && !l.Tag.IsDelete).Select(l => l.Tag.Name!).ToArray()
         });
     }
 

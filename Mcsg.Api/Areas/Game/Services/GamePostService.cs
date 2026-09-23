@@ -22,12 +22,14 @@ public partial class GamePostService : IGamePostService
 {
     #region -- Methods --
 
-    public GamePostService(IMcsgContext context, ISetting setting, IStorageClient sc, IGameReactService reactService, ILogger<GamePostService> logger)
+    public GamePostService(IMcsgContext context, ISetting setting, IStorageClient sc, IGameReactService reactService,
+        IPostHashtagService hashtags, ILogger<GamePostService> logger)
     {
         _context = context;
         _setting = setting;
         _sc = sc;
         _reactService = reactService;
+        _hashtags = hashtags;
         _logger = logger;
     }
 
@@ -52,6 +54,7 @@ public partial class GamePostService : IGamePostService
         await _context.GamePosts.AddAsync(post);
         Attach(thumbnail, post);
         Attach(game, post);
+        await _hashtags.SetAsync<GameTagPost>(post.Id, request.Tags, userId);
         await _context.SaveChangesAsync(default);
 
         return await GetByHashIdAsync(post.HashId, userId, true);
@@ -77,6 +80,8 @@ public partial class GamePostService : IGamePostService
             request.IsMature, request.Permission, userId);
         Attach(thumbnail, post);
         Attach(game, post);
+        // PUT carries the full tag set: names left out are unlinked
+        await _hashtags.SetAsync<GameTagPost>(post.Id, request.Tags, userId);
         await _context.SaveChangesAsync(default);
 
         await RemoveReleasedObjectsAsync();
@@ -146,6 +151,7 @@ public partial class GamePostService : IGamePostService
     private readonly ISetting _setting;
     private readonly IStorageClient _sc;
     private readonly IGameReactService _reactService;
+    private readonly IPostHashtagService _hashtags;
     private readonly ILogger<GamePostService> _logger;
 
     #endregion

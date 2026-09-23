@@ -109,6 +109,8 @@ public class Program
 
         // Identity: Checker
         builder.Services.AddScoped<IUserNameUniquenessChecker, UserNameUniquenessChecker>();
+        // Hashtag links shared by the Game and TapShow areas
+        builder.Services.AddScoped<Mcsg.Api.Interfaces.IPostHashtagService, Mcsg.Api.Services.PostHashtagService>();
 
         #region -- Load settings from DB --
         var serviceProvider = builder.Services.BuildServiceProvider();
