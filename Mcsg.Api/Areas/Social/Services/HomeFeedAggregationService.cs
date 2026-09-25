@@ -4,6 +4,7 @@ using Common.Core.Enums;
 using Common.Core.Requests;
 using Mcsg.Api.Areas.Social.Interfaces;
 using Mcsg.Api.Areas.Social.Models;
+using Mcsg.Api.Areas.Social.Requests;
 using Mcsg.Api.Areas.TapShow.Interfaces;
 using ComicPost = Mcsg.Api.Areas.Comic.Interfaces.IPostService;
 using DocumentPost = Mcsg.Api.Areas.Document.Interfaces.IPostService;
@@ -42,6 +43,23 @@ public class HomeFeedAggregationService : IHomeFeedAggregationService
         var req = new PaginatedR(hc);
 
         var ranked = await _socialPostService.GetLatestPostsByType(req);
+        return await HydrateAsync(ranked, req);
+    }
+
+    public async Task<LatestPostsDetailResponse> GetHomeFeedWithDetail(PostHomeFeedR request)
+    {
+        var ranked = await _socialPostService.GetHomeFeedIds(request);
+        var response = await HydrateAsync(ranked, request);
+        response.PageNumber = request.PageNumber < 1 ? 1 : request.PageNumber;
+        response.PageSize = request.PageSize < 1 ? 10 : Math.Min(request.PageSize, 50);
+        return response;
+    }
+
+    /// <summary>
+    /// Hydrates ranked ids with each area's get-post-by-list-id, keeping the ranking order
+    /// </summary>
+    private async Task<LatestPostsDetailResponse> HydrateAsync(ListIdForHomePage ranked, PaginatedR req)
+    {
         var rankedItems = ranked.LatestPostsResponses ?? new List<LatestPostsResponse>();
 
         // (type, hashId) -> hydrated box. HashIds are per-area random strings, so the same value could exist in two areas

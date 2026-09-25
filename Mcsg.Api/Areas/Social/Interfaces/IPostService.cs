@@ -17,6 +17,7 @@ public interface IPostService
     Task<List<MyPostSeriesResponse>> GetMyAllSeries(BaseR request);
     Task<IEnumerable<string>> GetPostRandomIdsAsync(PostRandomIdsR req);
     Task<ListIdForHomePage> GetLatestPostsByType(BaseR req);
+    Task<ListIdForHomePage> GetHomeFeedIds(PostHomeFeedR req);
     Task<ListIdForHomePage> GetLatestPostsByTag(string nameTag);
     Task<List<LatestPostCardResponse>> GetLatestPosts(int take);
     Task<List<UpcomingSubPostResponse>> GetUpcomingSubPosts(int take);

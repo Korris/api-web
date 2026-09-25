@@ -66,6 +66,20 @@ public class PostController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Home page feed across Feed / Story / Comic / Document / TapShow.
+    /// type = ForYou (default) | Following | New | Trending; paged with pageNumber / pageSize (max 50).
+    /// Every item carries the same box as its area's get-post-by-list-id in Data.
+    /// </summary>
+    [HttpGet("home-feed")]
+    [ProducesResponseType(typeof(LatestPostsDetailResponse), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetHomeFeed([FromQuery] PostHomeFeedR request, [FromServices] IHomeFeedAggregationService homeFeedAggregation)
+    {
+        request.Analyze(HttpContext);
+        var result = await homeFeedAggregation.GetHomeFeedWithDetail(request);
+        return Ok(result);
+    }
+
     [HttpGet("latest-posts-by-tag")]
     public async Task<IActionResult> GetLatestPostsByTag([FromQuery] string tagName)
     {

@@ -29,5 +29,15 @@ public class LatestPostsDetailResponse
 {
     public int TotalItems { get; set; }
 
+    /// <summary>
+    /// Set by the paged home feed (api/social/post/home-feed) only
+    /// </summary>
+    public int? PageNumber { get; set; }
+
+    /// <summary>
+    /// Set by the paged home feed (api/social/post/home-feed) only
+    /// </summary>
+    public int? PageSize { get; set; }
+
     public List<LatestPostDetailItem> Items { get; set; } = new();
 }
