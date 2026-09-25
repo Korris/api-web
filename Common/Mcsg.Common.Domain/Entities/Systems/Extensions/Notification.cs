@@ -75,7 +75,10 @@ partial class Notification
             NotificationEntityType.StoryPostComment,
             NotificationEntityType.StorySubPostComment,
             NotificationEntityType.StoryPostCommentReply,
-            NotificationEntityType.StorySubPostCommentReply
+            NotificationEntityType.StorySubPostCommentReply,
+
+            NotificationEntityType.TapShowPostComment,
+            NotificationEntityType.TapShowPostCommentReply
         ];
 
         List<NotificationEntityType> rejectReportEntities =
@@ -274,6 +277,9 @@ partial class Notification
                 case NotificationEntityType.StorySubPostComment:
                     return nameof(NotificationContent.CommentOnStory);
 
+                case NotificationEntityType.TapShowPostComment:
+                    return nameof(NotificationContent.CommentOnTapShow);
+
                 case NotificationEntityType.SocialSubPostComment:
                     return nameof(NotificationContent.CommentOnFeed);
 
@@ -455,6 +461,10 @@ partial class Notification
             NotificationEntityType.StoryPostLock => Setting.NotificationTargetType.Story,
             NotificationEntityType.StorySubPostLock => Setting.NotificationTargetType.SubStory,
 
+            NotificationEntityType.TapShowPostComment => Setting.NotificationTargetType.TapShow,
+            NotificationEntityType.TapShowPostCommentReply => Setting.NotificationTargetType.TapShow,
+            NotificationEntityType.TapShowPostCommentMention => Setting.NotificationTargetType.TapShow,
+
             NotificationEntityType.FollowUser => Setting.NotificationTargetType.FollowUser,
 
             NotificationEntityType.TransferTransaction => Setting.NotificationTargetType.Transaction,
@@ -563,6 +573,10 @@ partial class Notification
             NotificationEntityType.StorySubPostDelete => Setting.NotificationType.DeleteSubPost,
             NotificationEntityType.StoryPostLock => Setting.NotificationType.LockPost,
             NotificationEntityType.StorySubPostLock => Setting.NotificationType.LockSubPost,
+
+            NotificationEntityType.TapShowPostComment => Setting.NotificationType.Comment,
+            NotificationEntityType.TapShowPostCommentReply => Setting.NotificationType.Reply,
+            NotificationEntityType.TapShowPostCommentMention => Setting.NotificationType.Mention,
 
             NotificationEntityType.FollowUser => Setting.NotificationType.FollowUser,
 

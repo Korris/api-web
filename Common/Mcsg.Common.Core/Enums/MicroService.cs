@@ -78,5 +78,10 @@ public enum MicroService
     /// <summary>
     /// Document
     /// </summary>
-    Document
+    Document,
+
+    /// <summary>
+    /// TapShow
+    /// </summary>
+    TapShow
 }

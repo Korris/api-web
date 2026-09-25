@@ -63,6 +63,11 @@ public partial class Repository<TEntity> : IRepository<TEntity>
         {
             dbSchema = $"{DbSchema.System}.";
         }
+        tables = DbSchema.TapShowTables.Split(';');
+        if (tables.Contains(table))
+        {
+            dbSchema = $"{DbSchema.TapShow}.";
+        }
 
         _tableName = $"{dbSchema}\"{table}\"";
     }

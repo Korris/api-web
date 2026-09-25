@@ -6,6 +6,7 @@ public static class NotificationContent
     public const string CommentOnDocument = " đã bình luận trong tài liệu của bạn.";
     public const string CommentOnFeed = " đã bình luận trong bài viết của bạn.";
     public const string CommentOnStory = " đã bình luận trong truyện chữ của bạn.";
+    public const string CommentOnTapShow = " đã bình luận trong TapShow của bạn.";
 
     public const string ReactOnComic = " đã bày tỏ cảm xúc về truyện tranh của bạn.";
     public const string ReactOnDocument = " đã bày tỏ cảm xúc về tài liệu của bạn.";

@@ -194,6 +194,11 @@ public class NotificationService : BaseS, INotificationService
                 qAuthorId = _context.Available<StorySubPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
                 qHashId = _context.Available<StoryPost>().Where(p => p.StorySubPosts.Any(p => p.Id == postId)).Select(p => p.HashId);
                 break;
+
+            case NotificationTargetType.TapShow:
+                qAuthorId = _context.Available<TapShowPostComment>().Where(p => p.Id == id).Select(p => p.AuthorId);
+                qHashId = _context.Available<TapShowPost>().Where(p => p.Id == postId).Select(p => p.HashId);
+                break;
         }
 
         var receiverId = await qAuthorId.FirstOrDefaultAsync();
@@ -624,6 +629,7 @@ public class NotificationService : BaseS, INotificationService
                 NotificationEntityType.DocumentPostCommentMention => _context.Available<DocumentPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
                 NotificationEntityType.SocialPostCommentMention => _context.Available<SocialPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
                 NotificationEntityType.StoryPostCommentMention => _context.Available<StoryPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
+                NotificationEntityType.TapShowPostCommentMention => _context.Available<TapShowPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
 
                 NotificationEntityType.ComicSubPostCommentMention => _context.Available<ComicSubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
                 NotificationEntityType.DocumentSubPostCommentMention => _context.Available<DocumentSubPostComment>().Where(p => p.Id == request.TargetId).Select(p => p.PostId),
@@ -644,6 +650,7 @@ public class NotificationService : BaseS, INotificationService
             NotificationEntityType.DocumentPostCommentMention => _context.Available<DocumentPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
             NotificationEntityType.SocialPostMention => _context.Available<SocialPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
             NotificationEntityType.StoryPostCommentMention => _context.Available<StoryPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
+            NotificationEntityType.TapShowPostCommentMention => _context.Available<TapShowPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, Order = 0f, PostId = _uidEmpty }),
 
             NotificationEntityType.ComicSubPostCommentMention => _context.Available<ComicSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
             NotificationEntityType.DocumentSubPostCommentMention => _context.Available<DocumentSubPost>().Where(p => p.Id == targetId).Select(p => new { p.Id, p.HashId, p.Order, p.PostId }),
@@ -680,6 +687,7 @@ public class NotificationService : BaseS, INotificationService
                 NotificationEntityType.DocumentPostCommentMention => NotificationTargetType.Document,
                 NotificationEntityType.SocialPostMention or NotificationEntityType.SocialPostCommentMention => NotificationTargetType.Social,
                 NotificationEntityType.StoryPostCommentMention => NotificationTargetType.Story,
+                NotificationEntityType.TapShowPostCommentMention => NotificationTargetType.TapShow,
 
                 NotificationEntityType.ComicSubPostCommentMention => NotificationTargetType.SubComic,
                 NotificationEntityType.DocumentSubPostCommentMention => NotificationTargetType.SubDocument,
@@ -1614,6 +1622,9 @@ public class NotificationService : BaseS, INotificationService
             case PostType.Story:
                 return comment.Type == PostTypes.Post ? NotificationTargetType.Story : NotificationTargetType.SubStory;
 
+            case PostType.TapShow:
+                return NotificationTargetType.TapShow;
+
             default:
                 return comment.Type == PostTypes.Post ? NotificationTargetType.Social : NotificationTargetType.SubSocial;
         }
@@ -1659,6 +1670,9 @@ public class NotificationService : BaseS, INotificationService
 
             case PostType.Story:
                 return nameof(NotificationContent.CommentOnStory);
+
+            case PostType.TapShow:
+                return nameof(NotificationContent.CommentOnTapShow);
 
             default:
                 return nameof(NotificationContent.CommentOnFeed);
@@ -1746,6 +1760,7 @@ public class NotificationService : BaseS, INotificationService
             case "CommentOnDocument":
             case "CommentOnFeed":
             case "CommentOnStory":
+            case "CommentOnTapShow":
             case "ReactOnComic":
             case "ReactOnDocument":
             case "ReactOnFeed":

@@ -48,6 +48,11 @@ public partial class ResourceCommentService : IResourceCommentService
             return await AddStoryResourceToComment(dto);
         }
 
+        if (dto.MicroService == MicroService.TapShow.ToString())
+        {
+            return await AddTapShowResourceToComment(dto);
+        }
+
         return await AddSocialResourceToComment(dto);
     }
 
@@ -205,6 +210,37 @@ public partial class ResourceCommentService : IResourceCommentService
             await _context.SaveChangesAsync(default);
         }
         #endregion
+
+        return new ResourceCommentResp
+        {
+            HashId = resource.HashId,
+            Url = await _sc.GetCdnUrlAsync(resource.Url, resource.BucketName, resource.MinioInstance, resource.Type),
+            Id = resource.Id
+        };
+    }
+
+    /// <summary>
+    /// TapShow uploads (api/tapshow/file/upload-media) are stored directly at their final object
+    /// ({Setting.MinioFolder.TapShow}/{userFolder}/images/{hashId}.jpg) in the public bucket with a temp row (IsDelete = true),
+    /// so there is no temp file to copy: only the temp row uploaded by the commenter is claimed.
+    /// </summary>
+    /// <param name="dto">Resource comment DTO</param>
+    /// <returns>Return the resource</returns>
+    private async Task<ResourceCommentResp?> AddTapShowResourceToComment(ResourceCommentDto dto)
+    {
+        var resource = await _context.TapShowResources
+            .FirstOrDefaultAsync(p => p.HashId == dto.HashId && p.PostId == null && p.SegmentId == null && p.CharacterId == null);
+        if (resource == null || string.IsNullOrWhiteSpace(resource.Url)
+            || !resource.Url.StartsWith($"{Setting.MinioFolder.TapShow}/{dto.UserFolder}/"))
+        {
+            return null;
+        }
+
+        if (resource.IsDelete)
+        {
+            resource.IsDelete = false;
+            await _context.SaveChangesAsync(default);
+        }
 
         return new ResourceCommentResp
         {

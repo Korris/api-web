@@ -470,4 +470,21 @@ public enum NotificationEntityType
     /// </summary>
     ExpiredSubscription = 532,
     #endregion
+
+    #region -- TapShow --
+    /// <summary>
+    /// TapShowPostComment
+    /// </summary>
+    TapShowPostComment = 601,
+
+    /// <summary>
+    /// TapShowPostCommentReply
+    /// </summary>
+    TapShowPostCommentReply = 602,
+
+    /// <summary>
+    /// TapShowPostCommentMention
+    /// </summary>
+    TapShowPostCommentMention = 603,
+    #endregion
 }

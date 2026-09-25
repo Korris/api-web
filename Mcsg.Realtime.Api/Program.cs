@@ -190,6 +190,10 @@ public class Program
         builder.Services.AddScoped<IStoryCommentService, StoryCommentService>();
         builder.Services.AddScoped<IStoryReplyService, StoryReplyService>();
 
+        // TapShow
+        builder.Services.AddScoped<ITapShowCommentService, TapShowCommentService>();
+        builder.Services.AddScoped<ITapShowReplyService, TapShowReplyService>();
+
         builder.Services.AddScoped<ISmartCountService, SmartCountService>();
         builder.Services.AddScoped<IResourceCommentService, ResourceCommentService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();

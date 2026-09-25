@@ -602,6 +602,11 @@ public class Setting : SeedWork.Constants.Setting
         /// StorySubPostAdd
         /// </summary>
         public const string StorySubPostAdd = "StorySubPostAdd";
+
+        /// <summary>
+        /// TapShow
+        /// </summary>
+        public const string TapShow = "TapShow";
     }
 
     /// <summary>
