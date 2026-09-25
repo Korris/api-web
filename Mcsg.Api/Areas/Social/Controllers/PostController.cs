@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 using Mcsg.Api.Interfaces;
 
 namespace Mcsg.Api.Areas.Social.Controllers;
@@ -77,7 +78,10 @@ public class PostController : ControllerBase
     {
         request.Analyze(HttpContext);
         var json = await homeFeedAggregation.GetHomeFeedJson(request);
-        return Content(json, "application/json");
+        // Not Content(json): ContentResult sets Content-Length and ResponseExceptionWrapperMiddleware then rewrites the body
+        // into { status, data, path }, so the length no longer matches (HTTP/2 protocol error). Ok() lets the wrapper size it.
+        using var doc = JsonDocument.Parse(json);
+        return Ok(doc.RootElement.Clone());
     }
 
     [HttpGet("latest-posts-by-tag")]
