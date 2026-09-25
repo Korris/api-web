@@ -130,8 +130,8 @@ public partial class TapShowPostService
         var top = await _comments.GetTopByPostIdsAsync(items.Select(p => p.Id).ToList(), currentUserId, PreviewCommentCount);
         foreach (var item in items)
         {
-            var comments = top.TryGetValue(item.Id, out var list) ? list : new List<CommentResponse>();
-            item.Comments = new CommentPagedResults<CommentResponse>(comments, item.CommentCount, 1, PreviewCommentCount)
+            var comments = top.TryGetValue(item.Id, out var list) ? list : new List<MostReactionCommentResponse>();
+            item.Comments = new CommentPagedResults<MostReactionCommentResponse>(comments, item.CommentCount, 1, PreviewCommentCount)
             {
                 TotalComments = item.CommentCount
             };

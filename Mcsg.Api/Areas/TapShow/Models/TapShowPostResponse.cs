@@ -51,7 +51,7 @@ public class TapShowPostResponse
     /// <summary>
     /// Most-reacted root comments (preview, same as Story list). Filled in lists only (null in detail)
     /// </summary>
-    public CommentPagedResults<CommentResponse>? Comments { get; set; }
+    public CommentPagedResults<MostReactionCommentResponse>? Comments { get; set; }
 
     /// <summary>
     /// Hashtag names (without '#')

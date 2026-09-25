@@ -52,32 +52,62 @@ public partial class TapShowCommentService
     }
 
     /// <summary>
-    /// Top root comments of each post for list previews: most reactions first, newest first on ties (like Story list)
+    /// Top root comments of each post for list previews: most reactions first, newest first on ties.
+    /// Same selection and shape as Story / Comic list (MostReactionCommentResponse).
     /// </summary>
-    public async Task<Dictionary<Guid, List<CommentResponse>>> GetTopByPostIdsAsync(IReadOnlyCollection<Guid> postIds, Guid? currentUserId, int take)
+    public async Task<Dictionary<Guid, List<MostReactionCommentResponse>>> GetTopByPostIdsAsync(IReadOnlyCollection<Guid> postIds, Guid? currentUserId, int take)
     {
         if (postIds.Count == 0 || take < 1)
         {
-            return new Dictionary<Guid, List<CommentResponse>>();
+            return new Dictionary<Guid, List<MostReactionCommentResponse>>();
         }
 
         var ids = await _context.Available<TapShowPost>(false)
             .Where(p => postIds.Contains(p.Id))
             .SelectMany(p => p.TapShowPostComments
-                .Where(c => !c.IsDelete && c.ParentId == null && c.Status == CommentStatus.Public)
+                .Where(c => !c.IsDelete && c.ParentId == null && c.Status == CommentStatus.Public && !c.Author.IsDelete)
                 .OrderByDescending(c => c.TapShowPostCommentReactions.Count(r => !r.IsDelete))
                 .ThenByDescending(c => c.CreatedOn)
                 .Take(take)
                 .Select(c => c.Id))
             .ToListAsync();
 
-        var items = await Project(BaseQuery().Where(c => ids.Contains(c.Id)), currentUserId).ToListAsync();
-        await AttachReactionsAsync(items, currentUserId);
+        var items = await BaseQuery()
+            .Where(c => ids.Contains(c.Id))
+            .Select(c => new MostReactionCommentResponse
+            {
+                AuthorId = c.AuthorId,
+                Id = c.Id,
+                Body = c.Body,
+                CustomNote = c.CustomNote,
+                CreatedOn = c.CreatedOn,
+                GifId = c.GifId,
+                QuoteId = c.QuoteId,
+                ParentId = c.ParentId,
+                PostId = c.PostId,
+                PostHashId = c.Post.HashId,
+                Title = c.Post.Title,
+                Order = null,
+                UserAvatar = c.Author.Avatar,
+                AuthorName = c.Author.ProfileName,
+                UserName = c.Author.UserName,
+                ProfileId = c.Author.ProfileId,
+                IsDeletedUser = c.Author.IsDelete,
+                ReplyCount = c.Post.TapShowPostComments.Count(r => r.ParentId == c.Id && !r.IsDelete && r.Status == CommentStatus.Public)
+            })
+            .ToListAsync();
+
+        var summaries = await _reactService.GetCommentSummariesAsync(items.Select(c => c.Id), currentUserId);
+        foreach (var item in items)
+        {
+            item.Reaction = summaries.TryGetValue(item.Id, out var summary) ? summary : new ReactionSummaryResponse { TargetId = item.Id };
+            item.Replies = new ReplyResponse { TotalReply = item.ReplyCount };
+        }
 
         return items
             .GroupBy(c => c.PostId)
             .ToDictionary(g => g.Key, g => g
-                .OrderByDescending(c => c.Reaction?.TotalReacts ?? 0)
+                .OrderByDescending(c => c.Reaction.TotalReacts)
                 .ThenByDescending(c => c.CreatedOn)
                 .ToList());
     }
