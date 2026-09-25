@@ -115,7 +115,11 @@ partial class Notification
             NotificationEntityType.StoryPostCommentReaction,
             NotificationEntityType.StorySubPostCommentReaction,
             NotificationEntityType.StoryPostCommentReplyReaction,
-            NotificationEntityType.StorySubPostCommentReplyReaction
+            NotificationEntityType.StorySubPostCommentReplyReaction,
+
+            NotificationEntityType.TapShowPostReaction,
+            NotificationEntityType.TapShowPostCommentReaction,
+            NotificationEntityType.TapShowPostCommentReplyReaction
         ];
 
         List<NotificationEntityType> followEntities =
@@ -193,6 +197,7 @@ partial class Notification
                     NotificationEntityType.ComicPostReaction => nameof(NotificationContent.ReactOnComic),
                     NotificationEntityType.DocumentPostReaction => nameof(NotificationContent.ReactOnDocument),
                     NotificationEntityType.StoryPostReaction => nameof(NotificationContent.ReactOnStory),
+                    NotificationEntityType.TapShowPostReaction => nameof(NotificationContent.ReactOnTapShow),
                     _ => nameof(NotificationContent.ReactOnFeed),
                 };
 
@@ -464,6 +469,9 @@ partial class Notification
             NotificationEntityType.TapShowPostComment => Setting.NotificationTargetType.TapShow,
             NotificationEntityType.TapShowPostCommentReply => Setting.NotificationTargetType.TapShow,
             NotificationEntityType.TapShowPostCommentMention => Setting.NotificationTargetType.TapShow,
+            NotificationEntityType.TapShowPostReaction => Setting.NotificationTargetType.TapShow,
+            NotificationEntityType.TapShowPostCommentReaction => Setting.NotificationTargetType.TapShow,
+            NotificationEntityType.TapShowPostCommentReplyReaction => Setting.NotificationTargetType.TapShow,
 
             NotificationEntityType.FollowUser => Setting.NotificationTargetType.FollowUser,
 
@@ -577,6 +585,9 @@ partial class Notification
             NotificationEntityType.TapShowPostComment => Setting.NotificationType.Comment,
             NotificationEntityType.TapShowPostCommentReply => Setting.NotificationType.Reply,
             NotificationEntityType.TapShowPostCommentMention => Setting.NotificationType.Mention,
+            NotificationEntityType.TapShowPostReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.TapShowPostCommentReaction => Setting.NotificationType.Reaction,
+            NotificationEntityType.TapShowPostCommentReplyReaction => Setting.NotificationType.Reaction,
 
             NotificationEntityType.FollowUser => Setting.NotificationType.FollowUser,
 

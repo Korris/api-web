@@ -10,6 +10,7 @@
     "ReactOnDocument": "{{actorName}} đã bày tỏ cảm xúc về tài liệu của bạn.",
     "ReactOnFeed": "{{actorName}} đã bày tỏ cảm xúc về bài viết của bạn.",
     "ReactOnStory": "{{actorName}} đã bày tỏ cảm xúc về truyện chữ của bạn.",
+    "ReactOnTapShow": "{{actorName}} đã bày tỏ cảm xúc về TapShow của bạn.",
 
     "FollowComic": "{{actorName}} đã theo dõi truyện tranh {{postName}} của bạn.",
     "FollowDocument": "{{actorName}} đã theo dõi tài liệu {{postName}} của bạn.",

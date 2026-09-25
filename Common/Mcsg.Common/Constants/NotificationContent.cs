@@ -12,6 +12,7 @@ public static class NotificationContent
     public const string ReactOnDocument = " đã bày tỏ cảm xúc về tài liệu của bạn.";
     public const string ReactOnFeed = " đã bày tỏ cảm xúc về bài viết của bạn.";
     public const string ReactOnStory = " đã bày tỏ cảm xúc về truyện chữ của bạn.";
+    public const string ReactOnTapShow = " đã bày tỏ cảm xúc về TapShow của bạn.";
 
     public const string FollowComic = "{0} đã theo dõi truyện tranh {1} của bạn.";
     public const string FollowDocument = "{0} đã theo dõi tài liệu {1} của bạn.";

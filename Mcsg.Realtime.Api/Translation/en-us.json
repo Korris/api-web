@@ -10,6 +10,7 @@
     "ReactOnDocument": "{{actorName}} reacted to your document.",
     "ReactOnFeed": "{{actorName}} reacted to your post.",
     "ReactOnStory": "{{actorName}} reacted to your story.",
+    "ReactOnTapShow": "{{actorName}} reacted to your TapShow.",
 
     "FollowComic": "{{actorName}} followed your comic {{postName}}.",
     "FollowDocument": "{{actorName}} followed your document {{postName}}.",

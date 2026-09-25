@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Mcsg.Api.Areas.TapShow.Comments;
 
 using Common.Core.Enums;
+using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.Extensions;
@@ -11,6 +12,7 @@ using Common.Interfaces;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Extensions;
 using Common.SeedWork.Responses;
+using Mcsg.Api.Interfaces;
 using static Common.SeedWork.Constants.Error;
 
 public interface ITapShowReactionService<T> where T : BaseReaction, new()
@@ -29,9 +31,10 @@ public partial class TapShowReactionService<T> : ITapShowReactionService<T> wher
 {
     #region -- Methods --
 
-    public TapShowReactionService(IMcsgContext context, IUnitOfWork unitOfWork)
+    public TapShowReactionService(IMcsgContext context, ISetting setting, IUnitOfWork unitOfWork)
     {
         _context = context;
+        _setting = setting;
         _connection = unitOfWork.Connection;
     }
 
@@ -101,7 +104,7 @@ public partial class TapShowReactionService<T> : ITapShowReactionService<T> wher
 
         if ((isChange || newReaction) && reactionInfor.AuthorId != userId)
         {
-            await OnReactedAsync(ett, request);
+            await SendReactNotificationAsync(ett.Id, request, targetId, type, request.IsReply ?? false);
         }
 
         return response;
@@ -196,15 +199,38 @@ public partial class TapShowReactionService<T> : ITapShowReactionService<T> wher
     #region -- Helpers --
 
     /// <summary>
-    /// Hook after a new / changed reaction by someone else than the target author (notification)
+    /// Same as Story: POST {Realtime}/notification/reaction with the TapShow entity type
     /// </summary>
-    partial void OnReacted(T ett, ReactionReactR request, List<Task> tasks);
-
-    private Task OnReactedAsync(T ett, ReactionReactR request)
+    private async Task SendReactNotificationAsync(Guid reactionId, ReactionReactR request, Guid targetId, ReactionType reactionType, bool isReply)
     {
-        var tasks = new List<Task>();
-        OnReacted(ett, request, tasks);
-        return Task.WhenAll(tasks);
+        var authorName = !string.IsNullOrWhiteSpace(request.ProfileName) ? request.ProfileName : request.UserName;
+
+        var notiReq = new ReactionNotificationReq
+        {
+            Id = reactionId,
+            TargetId = targetId,
+            AuthorId = request.UserId ?? Guid.Empty,
+            AuthorName = authorName,
+            ReactionType = reactionType,
+            UserAvatar = request.UserAvatar ?? "",
+            IsReplyReaction = isReply,
+            EntityType = typeof(T).Name switch
+            {
+                nameof(TapShowPostCommentReaction) => isReply ? NotificationEntityType.TapShowPostCommentReplyReaction : NotificationEntityType.TapShowPostCommentReaction,
+                _ => NotificationEntityType.TapShowPostReaction
+            }
+        };
+
+        var baseUrl = _setting.Api.Web.Realtime;
+        var url = (baseUrl != null ? baseUrl.TrimEnd('/') : "") + "/notification/reaction";
+        try
+        {
+            await url.MakePostRequest(notiReq);
+        }
+        catch
+        {
+            // Notification is best effort: the reaction itself is already saved
+        }
     }
 
     /// <summary>
@@ -276,6 +302,18 @@ public partial class TapShowReactionService<T> : ITapShowReactionService<T> wher
                         WHERE r.""TargetId"" = @TargetId AND r.""IsDelete"" = false
                         AND r.""Type"" = (CASE WHEN @Type IS NULL THEN r.""Type"" ELSE @Type END) ; ";
 
+    private sealed class ReactionNotificationReq
+    {
+        public Guid Id { get; set; }
+        public Guid TargetId { get; set; }
+        public Guid AuthorId { get; set; }
+        public string? AuthorName { get; set; }
+        public string? UserAvatar { get; set; }
+        public NotificationEntityType EntityType { get; set; }
+        public ReactionType ReactionType { get; set; }
+        public bool IsReplyReaction { get; set; }
+    }
+
     private sealed record ReactionInfor(Guid PostId, Guid SubPostId, Guid AuthorId);
 
     #endregion
@@ -288,6 +326,7 @@ public partial class TapShowReactionService<T> : ITapShowReactionService<T> wher
     public const string TapShowMicroService = "TapShow";
 
     private readonly IMcsgContext _context;
+    private readonly ISetting _setting;
     private readonly System.Data.IDbConnection _connection;
 
     #endregion

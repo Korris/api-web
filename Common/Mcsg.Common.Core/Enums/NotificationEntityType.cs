@@ -486,5 +486,20 @@ public enum NotificationEntityType
     /// TapShowPostCommentMention
     /// </summary>
     TapShowPostCommentMention = 603,
+
+    /// <summary>
+    /// TapShowPostReaction
+    /// </summary>
+    TapShowPostReaction = 604,
+
+    /// <summary>
+    /// TapShowPostCommentReaction
+    /// </summary>
+    TapShowPostCommentReaction = 605,
+
+    /// <summary>
+    /// TapShowPostCommentReplyReaction
+    /// </summary>
+    TapShowPostCommentReplyReaction = 606,
     #endregion
 }
