@@ -21,17 +21,32 @@ public partial class PostService
         var pageNumber = req.PageNumber < 1 ? 1 : req.PageNumber;
         var pageSize = req.PageSize < 1 ? DefaultHomeFeedPageSize : Math.Min(req.PageSize, MaxHomeFeedPageSize);
 
+        if (req.Type is HomeFeedTab.New or HomeFeedTab.Following)
+        {
+            if (req.Type == HomeFeedTab.Following && req.UserId == null)
+            {
+                return EmptyHomeFeed();
+            }
+            return await GetNewestPostIds(req.Type == HomeFeedTab.Following ? req.UserId : null, pageNumber, pageSize);
+        }
+
+        var ranked = await GetHomeFeedRankedIds(req, int.MaxValue);
+        return Page(ranked.LatestPostsResponses, pageNumber, pageSize);
+    }
+
+    /// <summary>
+    /// Whole ranking of a tab, meant to be cached and paged by the caller.
+    /// For you / Trending: the full Analytic list (TotalItems = its length). New / Following: the first <paramref name="limit"/> rows + the real total.
+    /// </summary>
+    public async Task<ListIdForHomePage> GetHomeFeedRankedIds(PostHomeFeedR req, int limit)
+    {
         switch (req.Type)
         {
             case HomeFeedTab.Following:
-                if (req.UserId == null)
-                {
-                    return new ListIdForHomePage { TotalItems = 0, LatestPostsResponses = new List<LatestPostsResponse>() };
-                }
-                return await GetNewestPostIds(req.UserId, pageNumber, pageSize);
+                return req.UserId == null ? EmptyHomeFeed() : await GetNewestPostIds(req.UserId, 1, limit);
 
             case HomeFeedTab.New:
-                return await GetNewestPostIds(null, pageNumber, pageSize);
+                return await GetNewestPostIds(null, 1, limit);
 
             case HomeFeedTab.Trending:
             {
@@ -43,14 +58,14 @@ public partial class PostService
                     .OrderByDescending(p => p.Point)
                     .Select(p => new LatestPostsResponse { PostId = p.PostId.ToGuid(), HashId = p.HashId, Type = (PostType)p.Type, Point = p.Point })
                     .ToList();
-                return Page(items, pageNumber, pageSize);
+                return new ListIdForHomePage { TotalItems = items.Count, LatestPostsResponses = items };
             }
 
             default:
             {
                 // For you = the existing personalized home ranking
-                var ranked = await GetLatestPostsByType(req);
-                return Page(ranked.LatestPostsResponses ?? new List<LatestPostsResponse>(), pageNumber, pageSize);
+                var items = (await GetLatestPostsByType(req)).LatestPostsResponses ?? new List<LatestPostsResponse>();
+                return new ListIdForHomePage { TotalItems = items.Count, LatestPostsResponses = items };
             }
         }
     }
@@ -58,6 +73,11 @@ public partial class PostService
     #endregion
 
     #region -- Helpers --
+
+    private static ListIdForHomePage EmptyHomeFeed()
+    {
+        return new ListIdForHomePage { TotalItems = 0, LatestPostsResponses = new List<LatestPostsResponse>() };
+    }
 
     private static ListIdForHomePage Page(List<LatestPostsResponse> items, int pageNumber, int pageSize)
     {
@@ -99,8 +119,8 @@ public partial class PostService
 
     #region -- Queries --
 
-    private const int DefaultHomeFeedPageSize = 10;
-    private const int MaxHomeFeedPageSize = 50;
+    public const int DefaultHomeFeedPageSize = 10;
+    public const int MaxHomeFeedPageSize = 50;
     private const int TrendingDays = 7;
 
     /// <summary>

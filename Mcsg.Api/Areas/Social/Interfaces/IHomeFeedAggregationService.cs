@@ -14,4 +14,9 @@ public interface IHomeFeedAggregationService
     /// Home page tab (For you / Following / New / Trending), paged, every item hydrated like get-post-by-list-id
     /// </summary>
     Task<LatestPostsDetailResponse> GetHomeFeedWithDetail(PostHomeFeedR request);
+
+    /// <summary>
+    /// Same as GetHomeFeedWithDetail, serialized with the MVC JSON options; anonymous pages are served from Redis
+    /// </summary>
+    Task<string> GetHomeFeedJson(PostHomeFeedR request);
 }

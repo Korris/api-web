@@ -76,8 +76,8 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetHomeFeed([FromQuery] PostHomeFeedR request, [FromServices] IHomeFeedAggregationService homeFeedAggregation)
     {
         request.Analyze(HttpContext);
-        var result = await homeFeedAggregation.GetHomeFeedWithDetail(request);
-        return Ok(result);
+        var json = await homeFeedAggregation.GetHomeFeedJson(request);
+        return Content(json, "application/json");
     }
 
     [HttpGet("latest-posts-by-tag")]
