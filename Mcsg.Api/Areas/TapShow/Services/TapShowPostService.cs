@@ -6,6 +6,7 @@ using Common.Core.Extensions;
 using Common.Domain;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
+using Mcsg.Api.Areas.TapShow.Comments;
 using Mcsg.Api.Areas.TapShow.Interfaces;
 using Mcsg.Api.Areas.TapShow.Models;
 using Mcsg.Api.Areas.TapShow.Requests;
@@ -22,7 +23,7 @@ public partial class TapShowPostService : ITapShowPostService
     #region -- Methods --
 
     public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService,
-        ITapShowCharacterService characters, IPostHashtagService hashtags, ISetting setting, ITapShowCommentService comments)
+        ITapShowCharacterService characters, IPostHashtagService hashtags, ISetting setting, ITapShowCommentReadService comments)
     {
         _context = context;
         _resources = resources;
@@ -175,7 +176,7 @@ public partial class TapShowPostService : ITapShowPostService
     private readonly ITapShowCharacterService _characters;
     private readonly IPostHashtagService _hashtags;
     private readonly ISetting _setting;
-    private readonly ITapShowCommentService _comments;
+    private readonly ITapShowCommentReadService _comments;
 
     #endregion
 }

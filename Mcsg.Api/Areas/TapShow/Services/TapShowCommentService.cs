@@ -130,21 +130,6 @@ public partial class TapShowCommentService : ITapShowCommentService
         return true;
     }
 
-    public async Task<bool> CheckPostExistedAsync(CommentCheckPostExistedR request)
-    {
-        var vr = new CommentCheckPostExistedV().Validate(request);
-        if (!vr.IsValid)
-        {
-            throw new BadRequestException(nameof(E000), vr.Errors.ToValue());
-        }
-        RequireUser(request.UserId);
-
-        var query = _context.Available<TapShowPost>(false);
-        return request.PostId != null
-            ? await query.AnyAsync(p => p.Id == request.PostId)
-            : await query.AnyAsync(p => p.HashId == request.PostHashId);
-    }
-
     #endregion
 
     #region -- Helpers --

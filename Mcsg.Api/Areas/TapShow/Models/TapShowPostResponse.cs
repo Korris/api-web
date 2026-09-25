@@ -1,6 +1,7 @@
 namespace Mcsg.Api.Areas.TapShow.Models;
 
 using Common.Core.Enums;
+using Mcsg.Api.Areas.TapShow.Comments;
 
 /// <summary>
 /// TapShow post returned by create / update / detail / list

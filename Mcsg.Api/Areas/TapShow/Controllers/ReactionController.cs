@@ -21,27 +21,6 @@ public class ReactionController : ControllerBase
         _reactService = reactService;
     }
 
-    [HttpGet("post/{postId}")]
-    public async Task<IActionResult> GetPostReacts(Guid postId)
-    {
-        var request = Analyze(postId);
-        var map = await _reactService.GetPostSummariesAsync(new[] { postId }, request.UserId);
-        return Ok(map.TryGetValue(postId, out var summary) ? summary : new ReactionSummaryResponse { TargetId = postId });
-    }
-
-    [HttpPost("post"), Authorize]
-    public async Task<IActionResult> AddPostReact([FromBody] ReactionReactR request)
-    {
-        request.Analyze(HttpContext);
-        return Ok(await _reactService.ReactToPostAsync(request));
-    }
-
-    [HttpDelete("post/{postId}"), Authorize]
-    public async Task<IActionResult> DeletePostReact(Guid postId)
-    {
-        return Ok(await _reactService.RemovePostReactionAsync(Analyze(postId)));
-    }
-
     [HttpGet("comment/{commentId}")]
     public async Task<IActionResult> GetCommentReacts(Guid commentId)
     {

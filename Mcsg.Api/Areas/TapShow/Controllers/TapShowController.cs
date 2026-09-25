@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mcsg.Api.Areas.TapShow.Controllers;
 
+using Common.Domain.Entities;
+using Mcsg.Api.Areas.TapShow.Comments;
 using Mcsg.Api.Areas.TapShow.Interfaces;
 using Mcsg.Api.Areas.TapShow.Requests;
 
@@ -15,9 +17,10 @@ public class TapShowController : ControllerBase
 {
     #region -- Methods --
 
-    public TapShowController(ITapShowPostService postService)
+    public TapShowController(ITapShowPostService postService, ITapShowReactionService<TapShowPostReaction> postReactService)
     {
         _postService = postService;
+        _postReactService = postReactService;
     }
 
     /// <summary>
@@ -80,11 +83,22 @@ public class TapShowController : ControllerBase
         return Ok(await _postService.ListMineAsync(request));
     }
 
+    /// <summary>
+    /// Users who reacted to a post (same as api/story/story/{id}/reactions)
+    /// </summary>
+    [HttpGet("{id}/reactions")]
+    public async Task<IActionResult> GetReactionsByTargetAsync(Guid id, [FromQuery] FeedReactionByTargetR request)
+    {
+        request.Analyze(HttpContext);
+        return Ok(await _postReactService.GetReactionsByTargetAsync(id, request));
+    }
+
     #endregion
 
     #region -- Fields --
 
     private readonly ITapShowPostService _postService;
+    private readonly ITapShowReactionService<TapShowPostReaction> _postReactService;
 
     #endregion
 }

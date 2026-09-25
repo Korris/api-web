@@ -6,6 +6,7 @@ using Common.Core.Enums;
 using Common.Domain.Entities;
 using Common.SeedWork.Exceptions;
 using Common.SeedWork.Responses;
+using Mcsg.Api.Areas.TapShow.Comments;
 using Mcsg.Api.Areas.TapShow.Models;
 using Mcsg.Api.Areas.TapShow.Requests;
 using static Common.SeedWork.Constants.Error;
@@ -127,12 +128,12 @@ public partial class TapShowPostService
     /// </summary>
     private async Task AttachCommentsAsync(List<TapShowPostResponse> items, Guid? currentUserId)
     {
-        var top = await _comments.GetTopByPostIdsAsync(items.Select(p => p.Id).ToList(), currentUserId, PreviewCommentCount);
+        var top = await _comments.GetMostReactionCommentsOfPostsAsync(items.Select(p => p.Id).ToList(), currentUserId, PreviewCommentCount);
         foreach (var item in items)
         {
-            var comments = top.TryGetValue(item.Id, out var list) ? list : new List<MostReactionCommentResponse>();
-            item.Comments = new CommentPagedResults<MostReactionCommentResponse>(comments, item.CommentCount, 1, PreviewCommentCount)
+            item.Comments = new CommentPagedResults<MostReactionCommentResponse>(item.CommentCount, 1, PreviewCommentCount)
             {
+                Items = top.TryGetValue(item.Id, out var list) ? list : new List<MostReactionCommentResponse>(),
                 TotalComments = item.CommentCount
             };
         }
