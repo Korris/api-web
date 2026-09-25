@@ -51,6 +51,37 @@ public partial class TapShowCommentService
         return new PagedResponse<CommentResponse>(items, total, pageNumber, pageSize);
     }
 
+    /// <summary>
+    /// Top root comments of each post for list previews: most reactions first, newest first on ties (like Story list)
+    /// </summary>
+    public async Task<Dictionary<Guid, List<CommentResponse>>> GetTopByPostIdsAsync(IReadOnlyCollection<Guid> postIds, Guid? currentUserId, int take)
+    {
+        if (postIds.Count == 0 || take < 1)
+        {
+            return new Dictionary<Guid, List<CommentResponse>>();
+        }
+
+        var ids = await _context.Available<TapShowPost>(false)
+            .Where(p => postIds.Contains(p.Id))
+            .SelectMany(p => p.TapShowPostComments
+                .Where(c => !c.IsDelete && c.ParentId == null && c.Status == CommentStatus.Public)
+                .OrderByDescending(c => c.TapShowPostCommentReactions.Count(r => !r.IsDelete))
+                .ThenByDescending(c => c.CreatedOn)
+                .Take(take)
+                .Select(c => c.Id))
+            .ToListAsync();
+
+        var items = await Project(BaseQuery().Where(c => ids.Contains(c.Id)), currentUserId).ToListAsync();
+        await AttachReactionsAsync(items, currentUserId);
+
+        return items
+            .GroupBy(c => c.PostId)
+            .ToDictionary(g => g.Key, g => g
+                .OrderByDescending(c => c.Reaction?.TotalReacts ?? 0)
+                .ThenByDescending(c => c.CreatedOn)
+                .ToList());
+    }
+
     #endregion
 
     #region -- Helpers --

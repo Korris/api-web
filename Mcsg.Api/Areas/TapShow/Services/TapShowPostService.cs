@@ -22,7 +22,7 @@ public partial class TapShowPostService : ITapShowPostService
     #region -- Methods --
 
     public TapShowPostService(IMcsgContext context, ITapShowResourceService resources, ITapShowReactService reactService,
-        ITapShowCharacterService characters, IPostHashtagService hashtags, ISetting setting)
+        ITapShowCharacterService characters, IPostHashtagService hashtags, ISetting setting, ITapShowCommentService comments)
     {
         _context = context;
         _resources = resources;
@@ -30,6 +30,7 @@ public partial class TapShowPostService : ITapShowPostService
         _characters = characters;
         _hashtags = hashtags;
         _setting = setting;
+        _comments = comments;
     }
 
     public async Task<TapShowPostResponse> CreateAsync(TapShowPostCreateR request)
@@ -174,6 +175,7 @@ public partial class TapShowPostService : ITapShowPostService
     private readonly ITapShowCharacterService _characters;
     private readonly IPostHashtagService _hashtags;
     private readonly ISetting _setting;
+    private readonly ITapShowCommentService _comments;
 
     #endregion
 }

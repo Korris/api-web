@@ -49,6 +49,11 @@ public class TapShowPostResponse
     public List<CharacterResponse>? Characters { get; set; }
 
     /// <summary>
+    /// Most-reacted root comments (preview, same as Story list). Filled in lists only (null in detail)
+    /// </summary>
+    public CommentPagedResults<CommentResponse>? Comments { get; set; }
+
+    /// <summary>
     /// Hashtag names (without '#')
     /// </summary>
     public string[] Tags { get; set; } = Array.Empty<string>();

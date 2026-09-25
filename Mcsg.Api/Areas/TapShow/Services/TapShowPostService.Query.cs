@@ -118,7 +118,24 @@ public partial class TapShowPostService
             .ToListAsync();
 
         await AttachReactionsAsync(items, request.UserId);
+        await AttachCommentsAsync(items, request.UserId);
         return new PagedResponse<TapShowPostResponse>(items, total, pageNumber, pageSize);
+    }
+
+    /// <summary>
+    /// Comment preview per post (Story list shape: top PreviewCommentCount comments + total)
+    /// </summary>
+    private async Task AttachCommentsAsync(List<TapShowPostResponse> items, Guid? currentUserId)
+    {
+        var top = await _comments.GetTopByPostIdsAsync(items.Select(p => p.Id).ToList(), currentUserId, PreviewCommentCount);
+        foreach (var item in items)
+        {
+            var comments = top.TryGetValue(item.Id, out var list) ? list : new List<CommentResponse>();
+            item.Comments = new CommentPagedResults<CommentResponse>(comments, item.CommentCount, 1, PreviewCommentCount)
+            {
+                TotalComments = item.CommentCount
+            };
+        }
     }
 
     /// <summary>
@@ -172,6 +189,7 @@ public partial class TapShowPostService
     #region -- Fields --
 
     private const int DefaultPageSize = 10;
+    private const int PreviewCommentCount = 2;
     private const int MaxPageSize = 50;
 
     #endregion
