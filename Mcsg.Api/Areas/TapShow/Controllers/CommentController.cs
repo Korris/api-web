@@ -72,6 +72,13 @@ public class CommentController : ControllerBase
         return Ok(await _commentService.DeleteAsync(id, request.UserId));
     }
 
+    [HttpPatch("v1/CheckPostExisted"), Authorize]
+    public async Task<IActionResult> CheckPostExisted([FromBody] CommentCheckPostExistedR request)
+    {
+        request.Analyze(HttpContext);
+        return Ok(await _commentService.CheckPostExistedAsync(request));
+    }
+
     #endregion
 
     #region -- Fields --

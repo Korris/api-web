@@ -13,4 +13,5 @@ public interface ITapShowCommentService
     Task<CommentResponse> UpdateAsync(CommentUpdateR request);
     Task<bool> DeleteAsync(Guid id, Guid? userId);
     Task<PagedResponse<CommentResponse>> ListAsync(CommentListR request);
+    Task<bool> CheckPostExistedAsync(CommentCheckPostExistedR request);
 }
