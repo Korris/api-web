@@ -4,11 +4,13 @@
     "CommentOnDocument": "{{actorName}} commented on your document.",
     "CommentOnFeed": "{{actorName}} commented on your post.",
     "CommentOnStory": "{{actorName}} commented on your story.",
+    "CommentOnTapShow": "{{actorName}} commented on your TapShow.",
 
     "ReactOnComic": "{{actorName}} reacted to your comic.",
     "ReactOnDocument": "{{actorName}} reacted to your document.",
     "ReactOnFeed": "{{actorName}} reacted to your post.",
     "ReactOnStory": "{{actorName}} reacted to your story.",
+    "ReactOnTapShow": "{{actorName}} reacted to your TapShow.",
 
     "FollowComic": "{{actorName}} followed your comic {{postName}}.",
     "FollowDocument": "{{actorName}} followed your document {{postName}}.",

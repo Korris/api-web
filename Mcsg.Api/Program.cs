@@ -249,6 +249,8 @@ public class Program
         builder.Services.AddScoped<Areas.Realtime.Interfaces.ISocialReplyService, Areas.Realtime.Services.SocialReplyService>();
         builder.Services.AddScoped<Areas.Realtime.Interfaces.IStoryCommentService, Areas.Realtime.Services.StoryCommentService>();
         builder.Services.AddScoped<Areas.Realtime.Interfaces.IStoryReplyService, Areas.Realtime.Services.StoryReplyService>();
+        builder.Services.AddScoped<Areas.Realtime.Interfaces.ITapShowCommentService, Areas.Realtime.Services.TapShowCommentService>();
+        builder.Services.AddScoped<Areas.Realtime.Interfaces.ITapShowReplyService, Areas.Realtime.Services.TapShowReplyService>();
         builder.Services.AddScoped<Areas.Realtime.Interfaces.ISmartCountService, Areas.Realtime.Services.SmartCountService>();
         builder.Services.AddScoped<Areas.Realtime.Interfaces.IResourceCommentService, Areas.Realtime.Services.ResourceCommentService>();
         builder.Services.AddScoped<Areas.Realtime.Interfaces.INotificationService, Areas.Realtime.Services.NotificationService>();

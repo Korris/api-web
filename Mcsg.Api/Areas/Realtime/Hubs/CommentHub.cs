@@ -47,7 +47,9 @@ public class CommentHub : Hub
         ISocialCommentService socialCommentService,
         ISocialReplyService socialReplyService,
         IStoryCommentService storyCommentService,
-        IStoryReplyService storyReplyService)
+        IStoryReplyService storyReplyService,
+        ITapShowCommentService tapShowCommentService,
+        ITapShowReplyService tapShowReplyService)
     {
         _comicCommentService = comicCommentService;
         _comicReplyService = comicReplyService;
@@ -57,6 +59,8 @@ public class CommentHub : Hub
         _socialReplyService = socialReplyService;
         _storyCommentService = storyCommentService;
         _storyReplyService = storyReplyService;
+        _tapShowCommentService = tapShowCommentService;
+        _tapShowReplyService = tapShowReplyService;
     }
 
     /// <summary>
@@ -148,6 +152,7 @@ public class CommentHub : Hub
             nameof(MicroService.Comic) => _comicCommentService,
             nameof(MicroService.Document) => _documentCommentService,
             nameof(MicroService.Story) => _storyCommentService,
+            nameof(MicroService.TapShow) => _tapShowCommentService,
             _ => _socialCommentService
         };
     }
@@ -159,6 +164,7 @@ public class CommentHub : Hub
             nameof(MicroService.Comic) => _comicReplyService,
             nameof(MicroService.Document) => _documentReplyService,
             nameof(MicroService.Story) => _storyReplyService,
+            nameof(MicroService.TapShow) => _tapShowReplyService,
             _ => _socialReplyService
         };
     }
@@ -191,6 +197,8 @@ public class CommentHub : Hub
     private readonly ISocialReplyService _socialReplyService;
     private readonly IStoryCommentService _storyCommentService;
     private readonly IStoryReplyService _storyReplyService;
+    private readonly ITapShowCommentService _tapShowCommentService;
+    private readonly ITapShowReplyService _tapShowReplyService;
 
     #endregion
 }

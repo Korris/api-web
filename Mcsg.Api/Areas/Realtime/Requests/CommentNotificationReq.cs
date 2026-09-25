@@ -76,6 +76,10 @@ public class CommentNotificationReq : PostCommentResp, IMapFrom<PostCommentResp>
                     return !isReply ? NotificationEntityType.StorySubPostComment : NotificationEntityType.StorySubPostCommentReply;
                 }
 
+            case PostType.TapShow:
+                // TapShow only supports comments on the post (no chapter comments)
+                return !isReply ? NotificationEntityType.TapShowPostComment : NotificationEntityType.TapShowPostCommentReply;
+
             default:
                 if (type == PostTypes.Post)
                 {
