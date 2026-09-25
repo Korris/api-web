@@ -33,7 +33,7 @@ public partial class TapShowReplyService : BaseS, ITapShowReplyService
     /// <param name="notificationService"></param>
     /// <param name="mentionService"></param>
     /// <param name="mapper"></param>
-    public TapShowReplyService(IMcsgContext context, IBusinessText businessText, IRepository<TapShowPostComment> postCommentRepository, IResourceCommentService resourceCommentService, IRepository<TapShowResource> resourceRepository, IRepository<Mention> mentionRepository, INotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
+    public TapShowReplyService(IMcsgContext context, IBusinessText businessText, IRepository<TapShowPostComment> postCommentRepository, IResourceCommentService resourceCommentService, IRepository<TapShowResource> resourceRepository, IRepository<Mention> mentionRepository, INotificationService notificationService, IMentionService mentionService, IMapper mapper, ILogger<TapShowReplyService> logger) : base(context)
     {
         _businessText = businessText;
 
@@ -44,6 +44,7 @@ public partial class TapShowReplyService : BaseS, ITapShowReplyService
         _notificationService = notificationService;
         _mentionService = mentionService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<ReplyCommentResp> ReplyComment(ReplyCommentReq req)
@@ -93,9 +94,17 @@ public partial class TapShowReplyService : BaseS, ITapShowReplyService
             response.QuoteId = req.QuoteId;
             // Send notification
             response.PostType = PostType.TapShow;
-            var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
-            commentNotiRequest.CommentId = req.ReplyToCommentId;
-            await _notificationService.AddReplyNotification(commentNotiRequest);
+            // Best effort: the reply is already saved, a notification failure must not block the hub response
+            try
+            {
+                var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
+                commentNotiRequest.CommentId = req.ReplyToCommentId;
+                await _notificationService.AddReplyNotification(commentNotiRequest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "TapShow reply notification failed. ReplyId: {ReplyId}", response.Id);
+            }
         }
 
         response.UserAvatar = userAvatar;
@@ -338,6 +347,7 @@ public partial class TapShowReplyService : BaseS, ITapShowReplyService
     private readonly INotificationService _notificationService;
     private readonly IMentionService _mentionService;
     private readonly IMapper _mapper;
+    private readonly ILogger<TapShowReplyService> _logger;
 
     #endregion
 }

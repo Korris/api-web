@@ -34,7 +34,7 @@ public partial class TapShowCommentService : BaseS, ITapShowCommentService
     /// <param name="notificationService"></param>
     /// <param name="mentionService"></param>
     /// <param name="mapper"></param>
-    public TapShowCommentService(IMcsgContext context, IBusinessText businessText, IRepository<TapShowPostComment> postCommentRepository, IRepository<TapShowResource> resourceRepository, IRepository<Mention> mentionRepository, IResourceCommentService resourceCommentService, INotificationService notificationService, IMentionService mentionService, IMapper mapper) : base(context)
+    public TapShowCommentService(IMcsgContext context, IBusinessText businessText, IRepository<TapShowPostComment> postCommentRepository, IRepository<TapShowResource> resourceRepository, IRepository<Mention> mentionRepository, IResourceCommentService resourceCommentService, INotificationService notificationService, IMentionService mentionService, IMapper mapper, ILogger<TapShowCommentService> logger) : base(context)
     {
         _postCommentRepository = postCommentRepository;
         _mentionRepository = mentionRepository;
@@ -44,6 +44,7 @@ public partial class TapShowCommentService : BaseS, ITapShowCommentService
         _mentionService = mentionService;
         _businessText = businessText;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<PostCommentResp> PostComment(PostCommentReq req)
@@ -94,22 +95,36 @@ public partial class TapShowCommentService : BaseS, ITapShowCommentService
             response.PostCreatedBy = pDto.CreateBy;
             response.UserAvatar = userAvatar;
 
-            // Send notification
-            var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
-            await _notificationService.AddCommentNotification(commentNotiRequest);
+            // Send notification (best effort: the comment is already saved, a notification failure must not block the hub response)
+            try
+            {
+                var commentNotiRequest = _mapper.Map<CommentNotificationReq>(response);
+                await _notificationService.AddCommentNotification(commentNotiRequest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "TapShow comment notification failed. CommentId: {CommentId}", response.Id);
+            }
         }
 
         if (receiverIds.Count > 0)
         {
-            await _notificationService.AddPostMentionNotification(new MentionPostNotificationReq
+            try
             {
-                ReceiversId = receiverIds,
-                UserAvatar = userAvatar,
-                UserProfileName = profileName,
-                TargetId = response.Id,
-                UserId = userId.Value,
-                EntityType = NotificationEntityType.TapShowPostCommentMention
-            });
+                await _notificationService.AddPostMentionNotification(new MentionPostNotificationReq
+                {
+                    ReceiversId = receiverIds,
+                    UserAvatar = userAvatar,
+                    UserProfileName = profileName,
+                    TargetId = response.Id,
+                    UserId = userId.Value,
+                    EntityType = NotificationEntityType.TapShowPostCommentMention
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "TapShow comment mention notification failed. CommentId: {CommentId}", response.Id);
+            }
         }
 
         var userIds = response.Mentions.Select(p => p.EntityId).ToList();
@@ -368,6 +383,7 @@ public partial class TapShowCommentService : BaseS, ITapShowCommentService
     private readonly INotificationService _notificationService;
     private readonly IMentionService _mentionService;
     private readonly IMapper _mapper;
+    private readonly ILogger<TapShowCommentService> _logger;
 
     #endregion
 }
